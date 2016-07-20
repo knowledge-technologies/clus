@@ -1,0 +1,20 @@
+
+size 12 12
+
+begin graph
+	data "closuretest.csv"
+	d1 marker triangle
+	yaxis min 200 max 300
+	xaxis min 120 max 280
+end graph
+
+i = 0
+set just lc
+fopen "closuretest.csv" f1 read
+until feof(f1)
+	fread f1 x y
+	amove xg(x)+0.3 yg(y)
+	write i
+	i = i + 1
+next
+fclose f1

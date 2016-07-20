@@ -1,0 +1,1088 @@
+Clus run iris
+*************
+
+Date: 7/23/08 10:42 AM
+File: iris-classify.xval
+Attributes: 5 (input: 4, output: 1)
+Missing values: No
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 0
+ResourceInfoLoaded = No
+
+[Data]
+File = ../data/iris/iris.arff
+TestSet = None
+PruneSet = None
+XVal = 10
+
+[Attributes]
+Target = 5
+Clustering = 5
+Descriptive = 1-4
+Key = None
+Disable = None
+Weights = Normalize
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = Yes
+WriteErrorFile = Yes
+UnknownFrequency = Yes
+BranchFrequency = Yes
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WritePredictions = {Test, Train}
+ModelIDFiles = Yes
+OutputPythonModel = No
+OutputDatabaseQueries = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+
+[Tree]
+Heuristic = Gain
+MaxDepth = Infinity
+BinarySplit = Yes
+PruningMethod = Default
+MSENominal = No
+ConvertToRules = No
+AlternativeSplits = No
+
+[SIT]
+Main_target = Default
+Recursive = No
+Search = OneTarget
+Learner = ClusLearner
+Error = MSE
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.04 sec
+Pruning Time: 0.01 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 9 (Leaves: 5)
+     Pruned: Nodes = 9 (Leaves: 5)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           0 |               5 |              0 |  5
+     Iris-versicolor |           0 |               3 |              0 |  3
+      Iris-virginica |           0 |               7 |              0 |  7
+     ---------------------------------------------------------------------
+                     |           0 |              15 |              0 | 15
+     Accuracy: 0.2
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           5 |               0 |              0 |  5
+     Iris-versicolor |           0 |               3 |              0 |  3
+      Iris-virginica |           0 |               1 |              6 |  7
+     ---------------------------------------------------------------------
+                     |           5 |               4 |              6 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.906327
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           5 |               0 |              0 |  5
+     Iris-versicolor |           0 |               3 |              0 |  3
+      Iris-virginica |           0 |               1 |              6 |  7
+     ---------------------------------------------------------------------
+                     |           5 |               4 |              6 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.906327
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.0125]
+   Original       : [0.201]
+   Pruned         : [0.201]
+
+Default Model
+*************
+
+[Iris-versicolor] [47.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (66.7%) (miss: 0%)
++--yes: petalwidth > 1.7 (44.4%) (miss: 0%)
+|       +--yes: [Iris-virginica] [39.0]: 40
+|       +--no:  petallength > 4.9 (10%) (miss: 0%)
+|               +--yes: petalwidth > 1.5 (40%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 2
+|               |       +--no:  [Iris-virginica] [3.0]: 3
+|               +--no:  [Iris-versicolor] [44.0]: 45
++--no:  [Iris-setosa] [45.0]: 45
+
+Pruned Model
+************
+
+petallength > 1.9 (66.7%) (miss: 0%)
++--yes: petalwidth > 1.7 (44.4%) (miss: 0%)
+|       +--yes: [Iris-virginica] [39.0]: 40
+|       +--no:  petallength > 4.9 (10%) (miss: 0%)
+|               +--yes: petalwidth > 1.5 (40%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 2
+|               |       +--no:  [Iris-virginica] [3.0]: 3
+|               +--no:  [Iris-versicolor] [44.0]: 45
++--no:  [Iris-setosa] [45.0]: 45
+
+Run: 02
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.009 sec
+Pruning Time: 0.002 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 7 (Leaves: 4)
+     Pruned: Nodes = 7 (Leaves: 4)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           4 |               0 |              0 |  4
+     Iris-versicolor |           5 |               0 |              0 |  5
+      Iris-virginica |           6 |               0 |              0 |  6
+     ---------------------------------------------------------------------
+                     |          15 |               0 |              0 | 15
+     Accuracy: 0.266667
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           4 |               0 |              0 |  4
+     Iris-versicolor |           0 |               5 |              0 |  5
+      Iris-virginica |           0 |               2 |              4 |  6
+     ---------------------------------------------------------------------
+                     |           4 |               7 |              4 | 15
+     Accuracy: 0.866667
+     Cramer's coefficient: 0.859125
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           4 |               0 |              0 |  4
+     Iris-versicolor |           0 |               5 |              0 |  5
+      Iris-virginica |           0 |               2 |              4 |  6
+     ---------------------------------------------------------------------
+                     |           4 |               7 |              4 | 15
+     Accuracy: 0.866667
+     Cramer's coefficient: 0.859125
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.0031]
+   Original       : [0.4225]
+   Pruned         : [0.4225]
+
+Default Model
+*************
+
+[Iris-setosa] [46.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (65.9%) (miss: 0%)
++--yes: petalwidth > 1.7 (48.3%) (miss: 0%)
+|       +--yes: [Iris-virginica] [42.0]: 43
+|       +--no:  petallength > 5.0 (6.5%) (miss: 0%)
+|               +--yes: [Iris-virginica] [2.0]: 3
+|               +--no:  [Iris-versicolor] [43.0]: 43
++--no:  [Iris-setosa] [46.0]: 46
+
+Pruned Model
+************
+
+petallength > 1.9 (65.9%) (miss: 0%)
++--yes: petalwidth > 1.7 (48.3%) (miss: 0%)
+|       +--yes: [Iris-virginica] [42.0]: 43
+|       +--no:  petallength > 5.0 (6.5%) (miss: 0%)
+|               +--yes: [Iris-virginica] [2.0]: 3
+|               +--no:  [Iris-versicolor] [43.0]: 43
++--no:  [Iris-setosa] [46.0]: 46
+
+Run: 03
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.006 sec
+Pruning Time: 0.001 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 13 (Leaves: 7)
+     Pruned: Nodes = 7 (Leaves: 4)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           0 |               0 |              8 |  8
+     Iris-versicolor |           0 |               0 |              4 |  4
+      Iris-virginica |           0 |               0 |              3 |  3
+     ---------------------------------------------------------------------
+                     |           0 |               0 |             15 | 15
+     Accuracy: 0.2
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           8 |               0 |              0 |  8
+     Iris-versicolor |           0 |               3 |              1 |  4
+      Iris-virginica |           0 |               0 |              3 |  3
+     ---------------------------------------------------------------------
+                     |           8 |               3 |              4 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.883883
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           8 |               0 |              0 |  8
+     Iris-versicolor |           0 |               3 |              1 |  4
+      Iris-virginica |           0 |               0 |              3 |  3
+     ---------------------------------------------------------------------
+                     |           8 |               3 |              4 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.883883
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.0219]
+   Original       : [0.2]
+   Pruned         : [0.1913]
+
+Default Model
+*************
+
+[Iris-virginica] [47.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (68.9%) (miss: 0%)
++--yes: petalwidth > 1.6 (47.3%) (miss: 0%)
+|       +--yes: petallength > 4.8 (90.9%) (miss: 0%)
+|       |       +--yes: [Iris-virginica] [40.0]: 40
+|       |       +--no:  sepallength > 5.9 (50%) (miss: 0%)
+|       |               +--yes: [Iris-virginica] [2.0]: 2
+|       |               +--no:  [Iris-versicolor] [1.0]: 2
+|       +--no:  petallength > 4.9 (10.2%) (miss: 0%)
+|               +--yes: sepallength > 6.0 (60%) (miss: 0%)
+|               |       +--yes: [Iris-virginica] [3.0]: 3
+|               |       +--no:  [Iris-versicolor] [1.0]: 2
+|               +--no:  [Iris-versicolor] [44.0]: 44
++--no:  [Iris-setosa] [42.0]: 42
+
+Pruned Model
+************
+
+petallength > 1.9 (68.9%) (miss: 0%)
++--yes: petalwidth > 1.6 (47.3%) (miss: 0%)
+|       +--yes: [Iris-virginica] [43.0]: 44
+|       +--no:  petallength > 4.9 (10.2%) (miss: 0%)
+|               +--yes: [Iris-virginica] [4.0]: 5
+|               +--no:  [Iris-versicolor] [44.0]: 44
++--no:  [Iris-setosa] [42.0]: 42
+
+Run: 04
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.002 sec
+Pruning Time: 0.002 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 9 (Leaves: 5)
+     Pruned: Nodes = 9 (Leaves: 5)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           0 |               0 |              6 |  6
+     Iris-versicolor |           0 |               0 |              5 |  5
+      Iris-virginica |           0 |               0 |              4 |  4
+     ---------------------------------------------------------------------
+                     |           0 |               0 |             15 | 15
+     Accuracy: 0.266667
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           6 |               0 |              0 |  6
+     Iris-versicolor |           0 |               5 |              0 |  5
+      Iris-virginica |           0 |               0 |              4 |  4
+     ---------------------------------------------------------------------
+                     |           6 |               5 |              4 | 15
+     Accuracy: 1
+     Cramer's coefficient: 1
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           6 |               0 |              0 |  6
+     Iris-versicolor |           0 |               5 |              0 |  5
+      Iris-virginica |           0 |               0 |              4 |  4
+     ---------------------------------------------------------------------
+                     |           6 |               5 |              4 | 15
+     Accuracy: 1
+     Cramer's coefficient: 1
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.0031]
+   Original       : [0.001]
+   Pruned         : [0.001]
+
+Default Model
+*************
+
+[Iris-virginica] [46.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (67.4%) (miss: 0%)
++--yes: petalwidth > 1.7 (46.2%) (miss: 0%)
+|       +--yes: [Iris-virginica] [41.0]: 42
+|       +--no:  petallength > 4.9 (12.2%) (miss: 0%)
+|               +--yes: petalwidth > 1.5 (50%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 3
+|               |       +--no:  [Iris-virginica] [3.0]: 3
+|               +--no:  [Iris-versicolor] [42.0]: 43
++--no:  [Iris-setosa] [44.0]: 44
+
+Pruned Model
+************
+
+petallength > 1.9 (67.4%) (miss: 0%)
++--yes: petalwidth > 1.7 (46.2%) (miss: 0%)
+|       +--yes: [Iris-virginica] [41.0]: 42
+|       +--no:  petallength > 4.9 (12.2%) (miss: 0%)
+|               +--yes: petalwidth > 1.5 (50%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 3
+|               |       +--no:  [Iris-virginica] [3.0]: 3
+|               +--no:  [Iris-versicolor] [42.0]: 43
++--no:  [Iris-setosa] [44.0]: 44
+
+Run: 05
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.002 sec
+Pruning Time: 0.001 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 9 (Leaves: 5)
+     Pruned: Nodes = 9 (Leaves: 5)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           0 |               5 |              0 |  5
+     Iris-versicolor |           0 |               1 |              0 |  1
+      Iris-virginica |           0 |               9 |              0 |  9
+     ---------------------------------------------------------------------
+                     |           0 |              15 |              0 | 15
+     Accuracy: 0.066667
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           5 |               0 |              0 |  5
+     Iris-versicolor |           0 |               1 |              0 |  1
+      Iris-virginica |           0 |               2 |              7 |  9
+     ---------------------------------------------------------------------
+                     |           5 |               3 |              7 | 15
+     Accuracy: 0.866667
+     Cramer's coefficient: 0.793492
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           5 |               0 |              0 |  5
+     Iris-versicolor |           0 |               1 |              0 |  1
+      Iris-virginica |           0 |               2 |              7 |  9
+     ---------------------------------------------------------------------
+                     |           5 |               3 |              7 | 15
+     Accuracy: 0.866667
+     Cramer's coefficient: 0.793492
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.05]
+   Original       : [0.3829]
+   Pruned         : [0.3829]
+
+Default Model
+*************
+
+[Iris-versicolor] [49.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (66.7%) (miss: 0%)
++--yes: petallength > 4.8 (48.9%) (miss: 0%)
+|       +--yes: petalwidth > 1.7 (81.8%) (miss: 0%)
+|       |       +--yes: [Iris-virginica] [36.0]: 36
+|       |       +--no:  petallength > 5.1 (25%) (miss: 0%)
+|       |               +--yes: [Iris-virginica] [2.0]: 2
+|       |               +--no:  [Iris-versicolor] [4.0]: 6
+|       +--no:  [Iris-versicolor] [45.0]: 46
++--no:  [Iris-setosa] [45.0]: 45
+
+Pruned Model
+************
+
+petallength > 1.9 (66.7%) (miss: 0%)
++--yes: petallength > 4.8 (48.9%) (miss: 0%)
+|       +--yes: petalwidth > 1.7 (81.8%) (miss: 0%)
+|       |       +--yes: [Iris-virginica] [36.0]: 36
+|       |       +--no:  petallength > 5.1 (25%) (miss: 0%)
+|       |               +--yes: [Iris-virginica] [2.0]: 2
+|       |               +--no:  [Iris-versicolor] [4.0]: 6
+|       +--no:  [Iris-versicolor] [45.0]: 46
++--no:  [Iris-setosa] [45.0]: 45
+
+Run: 06
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.002 sec
+Pruning Time: 0.001 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 9 (Leaves: 5)
+     Pruned: Nodes = 9 (Leaves: 5)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           0 |               0 |              9 |  9
+     Iris-versicolor |           0 |               0 |              4 |  4
+      Iris-virginica |           0 |               0 |              2 |  2
+     ---------------------------------------------------------------------
+                     |           0 |               0 |             15 | 15
+     Accuracy: 0.133333
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           9 |               0 |              0 |  9
+     Iris-versicolor |           0 |               4 |              0 |  4
+      Iris-virginica |           0 |               0 |              2 |  2
+     ---------------------------------------------------------------------
+                     |           9 |               4 |              2 | 15
+     Accuracy: 1
+     Cramer's coefficient: 1
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           9 |               0 |              0 |  9
+     Iris-versicolor |           0 |               4 |              0 |  4
+      Iris-virginica |           0 |               0 |              2 |  2
+     ---------------------------------------------------------------------
+                     |           9 |               4 |              2 | 15
+     Accuracy: 1
+     Cramer's coefficient: 1
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.0407]
+   Original       : [0.0006]
+   Pruned         : [0.0006]
+
+Default Model
+*************
+
+[Iris-virginica] [48.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (69.6%) (miss: 0%)
++--yes: petalwidth > 1.7 (46.8%) (miss: 0%)
+|       +--yes: [Iris-virginica] [43.0]: 44
+|       +--no:  petallength > 4.9 (12%) (miss: 0%)
+|               +--yes: petalwidth > 1.5 (50%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 3
+|               |       +--no:  [Iris-virginica] [3.0]: 3
+|               +--no:  [Iris-versicolor] [43.0]: 44
++--no:  [Iris-setosa] [41.0]: 41
+
+Pruned Model
+************
+
+petallength > 1.9 (69.6%) (miss: 0%)
++--yes: petalwidth > 1.7 (46.8%) (miss: 0%)
+|       +--yes: [Iris-virginica] [43.0]: 44
+|       +--no:  petallength > 4.9 (12%) (miss: 0%)
+|               +--yes: petalwidth > 1.5 (50%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 3
+|               |       +--no:  [Iris-virginica] [3.0]: 3
+|               +--no:  [Iris-versicolor] [43.0]: 44
++--no:  [Iris-setosa] [41.0]: 41
+
+Run: 07
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.002 sec
+Pruning Time: 0.003 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 9 (Leaves: 5)
+     Pruned: Nodes = 9 (Leaves: 5)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           1 |               0 |              0 |  1
+     Iris-versicolor |           5 |               0 |              0 |  5
+      Iris-virginica |           9 |               0 |              0 |  9
+     ---------------------------------------------------------------------
+                     |          15 |               0 |              0 | 15
+     Accuracy: 0.066667
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           1 |               0 |              0 |  1
+     Iris-versicolor |           0 |               5 |              0 |  5
+      Iris-virginica |           0 |               1 |              8 |  9
+     ---------------------------------------------------------------------
+                     |           1 |               6 |              8 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.932936
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           1 |               0 |              0 |  1
+     Iris-versicolor |           0 |               5 |              0 |  5
+      Iris-virginica |           0 |               1 |              8 |  9
+     ---------------------------------------------------------------------
+                     |           1 |               6 |              8 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.932936
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.05]
+   Original       : [0.0905]
+   Pruned         : [0.0905]
+
+Default Model
+*************
+
+[Iris-setosa] [49.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (63.7%) (miss: 0%)
++--yes: petalwidth > 1.7 (44.2%) (miss: 0%)
+|       +--yes: [Iris-virginica] [37.0]: 38
+|       +--no:  petallength > 4.9 (10.4%) (miss: 0%)
+|               +--yes: sepalwidth > 2.6 (60%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 3
+|               |       +--no:  [Iris-virginica] [2.0]: 2
+|               +--no:  [Iris-versicolor] [42.0]: 43
++--no:  [Iris-setosa] [49.0]: 49
+
+Pruned Model
+************
+
+petallength > 1.9 (63.7%) (miss: 0%)
++--yes: petalwidth > 1.7 (44.2%) (miss: 0%)
+|       +--yes: [Iris-virginica] [37.0]: 38
+|       +--no:  petallength > 4.9 (10.4%) (miss: 0%)
+|               +--yes: sepalwidth > 2.6 (60%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 3
+|               |       +--no:  [Iris-virginica] [2.0]: 2
+|               +--no:  [Iris-versicolor] [42.0]: 43
++--no:  [Iris-setosa] [49.0]: 49
+
+Run: 08
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.002 sec
+Pruning Time: 0.001 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 11 (Leaves: 6)
+     Pruned: Nodes = 5 (Leaves: 3)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           0 |               0 |              6 |  6
+     Iris-versicolor |           0 |               0 |              9 |  9
+      Iris-virginica |           0 |               0 |              0 |  0
+     ---------------------------------------------------------------------
+                     |           0 |               0 |             15 | 15
+     Accuracy: 0
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           6 |               0 |              0 |  6
+     Iris-versicolor |           0 |               8 |              1 |  9
+      Iris-virginica |           0 |               0 |              0 |  0
+     ---------------------------------------------------------------------
+                     |           6 |               8 |              1 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.707107
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           6 |               0 |              0 |  6
+     Iris-versicolor |           0 |               7 |              2 |  9
+      Iris-virginica |           0 |               0 |              0 |  0
+     ---------------------------------------------------------------------
+                     |           6 |               7 |              2 | 15
+     Accuracy: 0.866667
+     Cramer's coefficient: 0.707107
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.0657]
+   Original       : [0.201]
+   Pruned         : [0.3429]
+
+Default Model
+*************
+
+[Iris-virginica] [50.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (67.4%) (miss: 0%)
++--yes: petallength > 4.7 (58.2%) (miss: 0%)
+|       +--yes: petalwidth > 1.7 (86.8%) (miss: 0%)
+|       |       +--yes: [Iris-virginica] [45.0]: 46
+|       |       +--no:  sepalwidth > 2.6 (71.4%) (miss: 0%)
+|       |               +--yes: petallength > 5.0 (60%) (miss: 0%)
+|       |               |       +--yes: [Iris-virginica] [2.0]: 3
+|       |               |       +--no:  [Iris-versicolor] [2.0]: 2
+|       |               +--no:  [Iris-virginica] [2.0]: 2
+|       +--no:  [Iris-versicolor] [37.0]: 38
++--no:  [Iris-setosa] [44.0]: 44
+
+Pruned Model
+************
+
+petallength > 1.9 (67.4%) (miss: 0%)
++--yes: petallength > 4.7 (58.2%) (miss: 0%)
+|       +--yes: [Iris-virginica] [49.0]: 53
+|       +--no:  [Iris-versicolor] [37.0]: 38
++--no:  [Iris-setosa] [44.0]: 44
+
+Run: 09
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.002 sec
+Pruning Time: 0.001 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 9 (Leaves: 5)
+     Pruned: Nodes = 9 (Leaves: 5)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           0 |               0 |              4 |  4
+     Iris-versicolor |           0 |               0 |             11 | 11
+      Iris-virginica |           0 |               0 |              0 |  0
+     ---------------------------------------------------------------------
+                     |           0 |               0 |             15 | 15
+     Accuracy: 0
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           4 |               0 |              0 |  4
+     Iris-versicolor |           0 |              10 |              1 | 11
+      Iris-virginica |           0 |               0 |              0 |  0
+     ---------------------------------------------------------------------
+                     |           4 |              10 |              1 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.707107
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           4 |               0 |              0 |  4
+     Iris-versicolor |           0 |              10 |              1 | 11
+      Iris-virginica |           0 |               0 |              0 |  0
+     ---------------------------------------------------------------------
+                     |           4 |              10 |              1 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.707107
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.097]
+   Original       : [0.2014]
+   Pruned         : [0.2014]
+
+Default Model
+*************
+
+[Iris-virginica] [50.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (65.9%) (miss: 0%)
++--yes: petalwidth > 1.7 (50.6%) (miss: 0%)
+|       +--yes: [Iris-virginica] [45.0]: 45
+|       +--no:  petallength > 4.9 (13.6%) (miss: 0%)
+|               +--yes: petalwidth > 1.5 (50%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 3
+|               |       +--no:  [Iris-virginica] [3.0]: 3
+|               +--no:  [Iris-versicolor] [37.0]: 38
++--no:  [Iris-setosa] [46.0]: 46
+
+Pruned Model
+************
+
+petallength > 1.9 (65.9%) (miss: 0%)
++--yes: petalwidth > 1.7 (50.6%) (miss: 0%)
+|       +--yes: [Iris-virginica] [45.0]: 45
+|       +--no:  petallength > 4.9 (13.6%) (miss: 0%)
+|               +--yes: petalwidth > 1.5 (50%) (miss: 0%)
+|               |       +--yes: [Iris-versicolor] [2.0]: 3
+|               |       +--no:  [Iris-virginica] [3.0]: 3
+|               +--no:  [Iris-versicolor] [37.0]: 38
++--no:  [Iris-setosa] [46.0]: 46
+
+Run: 10
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.002 sec
+Pruning Time: 0.002 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 15 (Leaves: 8)
+     Pruned: Nodes = 9 (Leaves: 5)
+
+Testing error
+-------------
+
+Number of examples: 15
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           2 |               0 |              0 |  2
+     Iris-versicolor |           3 |               0 |              0 |  3
+      Iris-virginica |          10 |               0 |              0 | 10
+     ---------------------------------------------------------------------
+                     |          15 |               0 |              0 | 15
+     Accuracy: 0.133333
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           2 |               0 |              0 |  2
+     Iris-versicolor |           0 |               2 |              1 |  3
+      Iris-virginica |           0 |               0 |             10 | 10
+     ---------------------------------------------------------------------
+                     |           2 |               2 |             11 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.89612
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ---------------------------------------------------------------------
+         Iris-setosa |           2 |               0 |              0 |  2
+     Iris-versicolor |           0 |               2 |              1 |  3
+      Iris-virginica |           0 |               0 |             10 | 10
+     ---------------------------------------------------------------------
+                     |           2 |               2 |             11 | 15
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.89612
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.0594]
+   Original       : [0.2002]
+   Pruned         : [0.2002]
+
+Default Model
+*************
+
+[Iris-setosa] [48.0]: 135
+
+Original Model
+**************
+
+petallength > 1.9 (64.4%) (miss: 0%)
++--yes: petallength > 4.7 (50.6%) (miss: 0%)
+|       +--yes: petallength > 5.0 (70.5%) (miss: 0%)
+|       |       +--yes: [Iris-virginica] [31.0]: 31
+|       |       +--no:  sepallength > 6.3 (23.1%) (miss: 0%)
+|       |               +--yes: [Iris-versicolor] [3.0]: 3
+|       |               +--no:  petallength > 4.9 (30%) (miss: 0%)
+|       |                       +--yes: [Iris-virginica] [3.0]: 3
+|       |                       +--no:  sepallength > 6.2 (28.6%) (miss: 0%)
+|       |                               +--yes: [Iris-versicolor] [1.0]: 2
+|       |                               +--no:  sepallength > 5.9 (60%) (miss: 0%)
+|       |                                       +--yes: [Iris-virginica] [3.0]: 3
+|       |                                       +--no:  [Iris-versicolor] [1.0]: 2
+|       +--no:  [Iris-versicolor] [42.0]: 43
++--no:  [Iris-setosa] [48.0]: 48
+
+Pruned Model
+************
+
+petallength > 1.9 (64.4%) (miss: 0%)
++--yes: petallength > 4.7 (50.6%) (miss: 0%)
+|       +--yes: petallength > 5.0 (70.5%) (miss: 0%)
+|       |       +--yes: [Iris-virginica] [31.0]: 31
+|       |       +--no:  sepallength > 6.3 (23.1%) (miss: 0%)
+|       |               +--yes: [Iris-versicolor] [3.0]: 3
+|       |               +--no:  [Iris-virginica] [8.0]: 10
+|       +--no:  [Iris-versicolor] [42.0]: 43
++--no:  [Iris-setosa] [48.0]: 48
+
+Summary
+*******
+
+Runs: 10
+Induction time: 0.069 sec
+Preprocessing time: 0 sec
+Mean number of tests
+     Original: 10
+     Pruned: 8.2
+
+Training error
+--------------
+
+Number of examples: 1350
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     -----------------------------------------------------------------------
+         Iris-setosa |         143 |              90 |            217 |  450
+     Iris-versicolor |         137 |              96 |            217 |  450
+      Iris-virginica |         125 |              84 |            241 |  450
+     -----------------------------------------------------------------------
+                     |         405 |             270 |            675 | 1350
+     Accuracy: 0.355556
+     Cramer's coefficient: 0.037273
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     -----------------------------------------------------------------------
+         Iris-setosa |         450 |               0 |              0 |  450
+     Iris-versicolor |           0 |             442 |              8 |  450
+      Iris-virginica |           0 |              18 |            432 |  450
+     -----------------------------------------------------------------------
+                     |         450 |             460 |            440 | 1350
+     Accuracy: 0.980741
+     Cramer's coefficient: 0.971654
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     -----------------------------------------------------------------------
+         Iris-setosa |         450 |               0 |              0 |  450
+     Iris-versicolor |           0 |             436 |             14 |  450
+      Iris-virginica |           0 |              14 |            436 |  450
+     -----------------------------------------------------------------------
+                     |         450 |             450 |            450 | 1350
+     Accuracy: 0.979259
+     Cramer's coefficient: 0.969388
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [0.9979]
+   Original       : [0.0467]
+   Pruned         : [0.0543]
+
+Testing error
+-------------
+
+Number of examples: 150
+Classification Error
+   Default: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ----------------------------------------------------------------------
+         Iris-setosa |           7 |              10 |             33 |  50
+     Iris-versicolor |          13 |               4 |             33 |  50
+      Iris-virginica |          25 |              16 |              9 |  50
+     ----------------------------------------------------------------------
+                     |          45 |              30 |             75 | 150
+     Accuracy: 0.133333
+     Cramer's coefficient: 0.33546
+
+   Original: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ----------------------------------------------------------------------
+         Iris-setosa |          50 |               0 |              0 |  50
+     Iris-versicolor |           0 |              46 |              4 |  50
+      Iris-virginica |           0 |               6 |             44 |  50
+     ----------------------------------------------------------------------
+                     |          50 |              52 |             48 | 150
+     Accuracy: 0.933333
+     Cramer's coefficient: 0.905822
+
+   Pruned: 
+   Attribute: class
+           REAL\PRED | Iris-setosa | Iris-versicolor | Iris-virginica |
+     ----------------------------------------------------------------------
+         Iris-setosa |          50 |               0 |              0 |  50
+     Iris-versicolor |           0 |              45 |              5 |  50
+      Iris-virginica |           0 |               6 |             44 |  50
+     ----------------------------------------------------------------------
+                     |          50 |              51 |             49 | 150
+     Accuracy: 0.926667
+     Cramer's coefficient: 0.89684
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [1.5])
+   Default        : [1.0403]
+   Original       : [0.1901]
+   Pruned         : [0.2034]
+

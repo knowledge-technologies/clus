@@ -1,0 +1,153 @@
+Clus run iris
+*************
+
+Date: 4/14/10 8:04 PM
+File: iris-ilevelc.out
+Attributes: 5 (input: 4, output: 4)
+Missing values: No
+Memory usage: 12000 kB (initial), 12240 kB (data loaded)
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 0
+ResourceInfoLoaded = Yes
+
+[Data]
+File = ../data/iris/iris.arff
+TestSet = None
+PruneSet = None
+XVal = 10
+RemoveMissingTarget = No
+NormalizeData = None
+
+[Attributes]
+Target = 1-4
+Clustering = 1-4
+Descriptive = 1-4
+Key = None
+Disable = None
+Weights = 1.0
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = No
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WriteErrorFile = No
+WritePredictions = {None}
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+OutputDatabaseQueries = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+NominalSubsetTests = Yes
+
+[Tree]
+Heuristic = VarianceReduction
+PruningMethod = None
+FTest = 1.0
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = {}
+MSENominal = No
+
+[ILevelC]
+Alpha = 0.5
+File = None
+NbRandomConstraints = 20
+RunCOPKMeans = No
+RunMPCKMeans = No
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.004 sec (CPU)
+Pruning Time: 0 sec (CPU)
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 5 (Leaves: 3)
+
+Training error
+--------------
+
+Number of examples: 150
+Mean absolute error (MAE)
+   Default        : [0.6876,0.3331,1.5619,0.6589]: 0.8104
+   Original       : [0.3461,0.2668,0.3202,0.1964]: 0.2824
+Mean squared error (MSE)
+   Default        : [0.6811,0.1868,3.0924,0.5785]: 1.1347
+   Original       : [0.188,0.1236,0.1938,0.0707]: 0.144
+Root mean squared error (RMSE)
+   Default        : [0.8253,0.4321,1.7585,0.7606]: 1.0652
+   Original       : [0.4336,0.3516,0.4402,0.2659]: 0.3795
+Pearson correlation coefficient
+   Default        : [?,0,0,0], Avg r^2: ?
+   Original       : [0.8509,0.5813,0.9682,0.9369], Avg r^2: 0.7192
+Rand index
+   Default        : 0.3288590604026846
+   Original       : 0.8579865771812081
+
+Testing error
+-------------
+
+Number of examples: 150
+Mean absolute error (MAE)
+   Default        : [0.6876,0.3331,1.5619,0.6589]: 0.8104
+   Original       : [0.365,0.2582,0.3143,0.1735]: 0.2778
+Mean squared error (MSE)
+   Default        : [0.6811,0.1868,3.0924,0.5785]: 1.1347
+   Original       : [0.2165,0.1117,0.1768,0.0534]: 0.1396
+Root mean squared error (RMSE)
+   Default        : [0.8253,0.4321,1.7585,0.7606]: 1.0652
+   Original       : [0.4652,0.3342,0.4204,0.2311]: 0.3736
+Pearson correlation coefficient
+   Default        : [0,0,?,?], Avg r^2: ?
+   Original       : [0.8261,0.6354,0.9712,0.9532], Avg r^2: 0.7345
+Rand index
+   Default        : 0.40857142857142853 (cnt = 10)
+   Original       : 0.9285714285714285 (cnt = 10)
+
+Default Model
+*************
+
+[5.843333,3.054,3.758667,1.198667]: 150 L=-1
+
+Original Model
+**************
+
+petallength > 3.4
++--yes: petallength > 5.15
+|       +--yes: [6.861765,3.070588,5.826471,2.094118]: 34 L=0
+|       +--no:  [5.998413,2.787302,4.490476,1.480952]: 63 L=2
++--no:  [5.00566,3.360377,1.562264,0.288679]: 53 L=1
+

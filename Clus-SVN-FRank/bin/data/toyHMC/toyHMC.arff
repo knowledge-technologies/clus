@@ -1,0 +1,12 @@
+@relation simple
+
+@attribute A     {a,b}
+@attribute B     {1,2}
+@attribute class hierarchical rec/sport/swim,rec/sport/run,rec/auto
+
+@data
+a, 1, rec/sport/swim
+a, 2, rec/sport/run
+a, 2, rec/sport/run@rec/sport/swim
+b, 1, rec/sport
+b, 2, rec/auto

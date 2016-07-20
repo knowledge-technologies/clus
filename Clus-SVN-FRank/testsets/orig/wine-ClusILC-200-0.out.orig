@@ -1,0 +1,167 @@
+Clus run wine
+*************
+
+Date: 4/14/10 8:04 PM
+File: wine-ClusILC-200-0.out
+Attributes: 14 (input: 13, output: 13)
+Missing values: No
+Memory usage: 11996 kB (initial), 12320 kB (data loaded)
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 0
+ResourceInfoLoaded = Yes
+
+[Data]
+File = ../data/wine/wine.arff
+TestSet = None
+PruneSet = None
+XVal = 10
+RemoveMissingTarget = No
+NormalizeData = None
+
+[Attributes]
+Target = 1-13
+Clustering = 1-13
+Descriptive = 1-13
+Key = None
+Disable = None
+Weights = 1.0
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = No
+AllFoldErrors = Yes
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WriteErrorFile = No
+WritePredictions = {None}
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+OutputDatabaseQueries = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+NominalSubsetTests = Yes
+
+[Tree]
+Heuristic = VarianceReduction
+PruningMethod = None
+FTest = 1.0
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = {}
+MSENominal = No
+
+[ILevelC]
+Alpha = 0.5
+File = None
+NbRandomConstraints = 200
+RunCOPKMeans = No
+RunMPCKMeans = No
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.12 sec (CPU)
+Pruning Time: 0 sec (CPU)
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 19 (Leaves: 10)
+
+Training error
+--------------
+
+Number of examples: 178
+Mean absolute error (MAE)
+   Default        : [0.6885,0.9203,0.2092,2.595,10.9992,0.5363,0.8589,0.1047,0.4459,1.8358,0.1869,0.6117,259.3323]: 21.4865
+   Original       : [0.4177,0.6753,0.195,2.0464,7.7542,0.3309,0.3514,0.0836,0.3516,1.1806,0.1241,0.3086,91.5786]: 8.1075
+Mean squared error (MSE)
+   Default        : [0.6554,1.241,0.0748,11.09,202.8433,0.3895,0.9921,0.0154,0.3258,5.3443,0.052,0.5013,98609.601]: 7602.5481
+   Original       : [0.2703,0.8722,0.0615,6.8898,100.2739,0.1823,0.2172,0.0115,0.2121,2.4413,0.025,0.153,13547.3656]: 1050.6904
+Root mean squared error (RMSE)
+   Default        : [0.8095,1.114,0.2736,3.3302,14.2423,0.6241,0.996,0.1241,0.5707,2.3118,0.2279,0.708,314.0217]: 87.1926
+   Original       : [0.5199,0.9339,0.248,2.6248,10.0137,0.427,0.466,0.1072,0.4605,1.5625,0.1582,0.3912,116.3932]: 32.4144
+Pearson correlation coefficient
+   Default        : [0,?,?,?,0,0,?,0,?,?,?,0,0], Avg r^2: ?
+   Original       : [0.7665,0.5451,0.4221,0.6154,0.7111,0.7293,0.8838,0.5042,0.5907,0.737,0.72,0.8335,0.9288], Avg r^2: 0.4986
+Rand index
+   Default        : 0.3379673712943566
+   Original       : 0.9540405002221799
+
+Testing error
+-------------
+
+Number of examples: 178
+Mean absolute error (MAE)
+   Default        : [0.6885,0.9203,0.2092,2.595,10.9992,0.5363,0.8589,0.1047,0.4459,1.8358,0.1869,0.6117,259.3323]: 21.4865
+   Original       : [0.4032,0.6507,0.1839,2.0809,8.9805,0.3295,0.3727,0.0776,0.3669,1.2006,0.1286,0.3138,75.5178]: 6.9698
+Mean squared error (MSE)
+   Default        : [0.6554,1.241,0.0748,11.09,202.8433,0.3895,0.9921,0.0154,0.3258,5.3443,0.052,0.5013,98609.601]: 7602.5481
+   Original       : [0.2572,0.8225,0.0579,7.9879,141.7429,0.1905,0.302,0.0104,0.2343,2.6256,0.0277,0.1765,10245.7186]: 800.0118
+Root mean squared error (RMSE)
+   Default        : [0.8095,1.114,0.2736,3.3302,14.2423,0.6241,0.996,0.1241,0.5707,2.3118,0.2279,0.708,314.0217]: 87.1926
+   Original       : [0.5071,0.9069,0.2406,2.8263,11.9056,0.4364,0.5495,0.1021,0.484,1.6204,0.1665,0.4202,101.2211]: 28.2845
+Pearson correlation coefficient
+   Default        : [0,?,0,0,?,?,0,0,-0,?,0,?,0], Avg r^2: ?
+   Original       : [0.7805,0.5832,0.4788,0.5314,0.553,0.7172,0.8357,0.5698,0.5307,0.7196,0.6886,0.809,0.9467], Avg r^2: 0.4714
+Rand index
+   Default        : 0.36446078431372547 (cnt = 10)
+   Original       : 0.7941993464052288 (cnt = 10)
+
+Default Model
+*************
+
+[13.000618,2.336348,2.366517,19.494944,99.741573,2.295112,2.02927,0.361854,1.590899,5.05809,0.957449,2.611685,746.893258]: 178 L=-1
+
+Original Model
+**************
+
+proline > 765.0
++--yes: proline > 1017.5
+|       +--yes: [13.837381,1.905714,2.431667,16.733333,104.809524,2.863333,3.031667,0.286905,1.910238,5.819524,1.07619,3.088571,1219.690476]: 42 L=0
+|       +--no:  flavanoids > 2.205
+|               +--yes: magnesium > 132.5
+|               |       +--yes: [12.73,1.595,2.4,24.5,150.5,2.9,2.58,0.265,2.62,2.975,1.235,3.065,961]: 2 L=1
+|               |       +--no:  [13.505,2.002143,2.505714,17.907143,108.785714,2.776429,2.876429,0.296429,1.876429,4.855,1.050714,3.366429,887.5]: 14 L=0
+|               +--no:  [12.73875,2.82625,2.31,20.9875,105.5,1.7375,0.8675,0.3975,1.2675,6.38375,0.71325,2.00125,847]: 8 L=2
++--no:  flavanoids > 1.4
+        +--yes: magnesium > 102.5
+        |       +--yes: proline > 584.5
+        |       |       +--yes: magnesium > 110.5
+        |       |       |       +--yes: [13.263333,2.523333,2.443333,16.333333,127.333333,2.566667,2.526667,0.313333,2.22,4.273333,0.996667,2.923333,748.333333]: 3 L=1
+        |       |       |       +--no:  [12.5,3.33,2.605,18.75,103,2.195,2.33,0.46,1.355,4.08,1.025,2.75,643.5]: 2 L=0
+        |       |       +--no:  [12.222,2.394,2.478,22.7,112.2,2.33,2.614,0.344,1.868,4.502,0.956,2.598,445.4]: 5 L=1
+        |       +--no:  [12.290577,1.9875,2.238654,20.496154,88.096154,2.306538,2.185192,0.364423,1.642885,3.076731,1.054808,2.8725,479.730769]: 52 L=1
+        +--no:  color_intensity > 3.725
+                +--yes: [13.176098,3.34122,2.448537,21.402439,97.658537,1.701463,0.78439,0.453171,1.148537,7.356341,0.691951,1.669512,602.804878]: 41 L=2
+                +--no:  [12.363333,1.717778,2.113333,17.377778,105.555556,1.806667,1.156667,0.376667,1.118889,2.871111,1.033333,2.312222,575.222222]: 9 L=1
+

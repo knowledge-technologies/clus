@@ -1,0 +1,171 @@
+Clus run "2DData"
+*****************
+
+Date: 10/3/07 12:23 PM
+File: halfsquare.out
+Attributes: 3 (input: 2, output: 2)
+Missing values: No
+Rows: 78
+
+[General]
+Verbose = 1
+RandomSeed = 0
+XVal = 10
+ResourceInfoLoaded = No
+Compatibility = Latest
+
+[Data]
+File = halfsquare.arff
+TestSet = None
+PruneSet = None
+PruneSetMax = Infinity
+
+[Attributes]
+Target = 1-2
+Disable = None
+Clustering = 1-2
+Descriptive = 1-2
+Key = None
+Weights = 1.0
+ClusteringWeights = 1.0
+
+[Model]
+MinimalWeight = 1.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+
+[Tree]
+Heuristic = Default
+MaxDepth = Infinity
+BinarySplit = Yes
+PruningMethod = None
+1-SE-Rule = No
+M5PruningMult = 2.0
+ConvertToRules = No
+
+[Rules]
+CoveringMethod = RulesFromTree
+PredictionMethod = DecisionList
+RuleAddingMethod = Always
+CoveringWeight = 0.9
+InstCoveringWeightThreshold = 0.1
+MaxRulesNb = 1000
+HeurCoveragePar = 1.0
+CompHeurRuleDistPar = 0.0
+HeurPrototypeDistPar = 0.0
+RuleSignificanceLevel = 0.05
+RuleNbSigAtts = 0
+ComputeCompactness = No
+NumCompNormWeight = 4.0
+CompactnessWeights = 
+  TargetWeight = 1.0
+  NonTargetWeight = 1.0
+  NumericWeight = 1.0
+  NominalWeight = 1.0
+RandomRules = 0
+PrintRuleWiseErrors = No
+OptDEPopSize = 500
+OptDENumEval = 10000
+OptDECrossProb = 0.3
+OptDEWeight = 0.5
+OptDESeed = 0
+OptRegPar = 0.0
+OptRuleWeightThreshold = 0.1
+
+[Numeric]
+FTest = 1.0
+MultiScore = None
+
+[Nominal]
+GainRatio = No
+MEstimate = 1.0
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+
+[Output]
+AllFoldModels = Yes
+AllFoldErrors = No
+TrainErrors = Yes
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+ShowModels = {Default, Pruned, Others}
+PrintModelAndExamples = No
+WritePredictions = {None}
+ModelIDFiles = No
+OutputPythonModel = No
+OutputDatabaseQueries = No
+
+[Exhaustive]
+Exhaustive = Yes
+StartTreeCpt = 0
+StartItemCpt = 0
+
+[ILevelC]
+Alpha = 0.5
+File = halfsquare.ilevelc
+NbRandomConstraints = 0
+RunCOPKMeans = No
+RunMPCKMeans = No
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.072 sec
+Pruning Time: 0.001 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 5 (Leaves: 3)
+     Pruned: Nodes = 5 (Leaves: 3)
+
+Training error
+--------------
+
+Number of examples: 78
+Mean absolute error (MAE)
+   Default        : [46.4043,51.9888], Avg: 3837.3308
+   Original       : [24.9876,13.9542], Avg: 1518.7309
+   Pruned         : [24.9876,13.9542], Avg: 1518.7309
+Root mean squared error (RMSE)
+   Default        : [49.8016,55.1502]: 52.544
+   Original       : [34.2496,18.1823]: 27.4193
+   Pruned         : [34.2496,18.1823]: 27.4193
+Pearson correlation coefficient
+   Default        : [0,0], Avg r^2: 0
+   Original       : [0.726,0.9441], Avg r^2: 0.7092
+   Pruned         : [0.726,0.9441], Avg r^2: 0.7092
+Rand index
+   Default        : 0.6013986013986014
+   Original       : 1.0
+   Pruned         : 1.0
+
+Default Model
+*************
+
+[103.269231,106.511538]: 78 L=-1
+
+Original Model
+**************
+
+Y > 103.5
++--yes: X > 113.5
+|       +--yes: [160.058824,155.858824]: 17 L=1
+|       +--no:  [55.904762,163.114286]: 21 L=0
++--no:  [104,55.8225]: 40 L=1
+
+Pruned Model
+************
+
+Y > 103.5
++--yes: X > 113.5
+|       +--yes: [160.058824,155.858824]: 17 L=1
+|       +--no:  [55.904762,163.114286]: 21 L=0
++--no:  [104,55.8225]: 40 L=1
+

@@ -1,0 +1,31 @@
+#!/bin/sh
+VERS="2.11"
+rm -rf release
+mkdir -p release
+mkdir -p release/Clus
+cp addon/script/compile.sh release/Clus/
+cp addon/script/clus.sh release/Clus/
+cp -r clus addon jars jeans sit docs LICENSE.txt README.txt release/Clus/
+rm -rf release/Clus/jeans/graph/trayicon
+rm -rf release/Clus/data/test_m5_prune
+rm -rf release/Clus/jars/weka.jar
+find release/Clus/ -name "CVS" -exec rm -rf {} \;
+find release/Clus/ -name ".svn" -exec rm -rf {} \;
+find release/Clus/ -name ".cvsignore" -exec rm -f {} \;
+perl addon/script/makereleasedata.pl
+cp data/cleanall release/Clus/data/
+cp data/.cvsignore release/Clus/data/
+cd release/Clus/
+. addon/script/killspace
+./compile.sh
+cd bin
+jar xvf ../jars/commons-math-1.0.jar
+jar xvf ../jars/jgap.jar
+jar cvfm ../Clus.jar ../../../addon/script/manifest *
+cd ../../
+rm -rf Clus/bin
+mkdir -p Clus/bin
+echo $VERS > Clus/VERSION.txt
+zip -r Clus-$VERS.zip Clus
+cd ..
+ls -al release

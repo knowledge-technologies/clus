@@ -1,0 +1,25 @@
+K 10
+svn:ignore
+V 150
+*.so
+*.jar
+.project
+bin2
+Clus.zip
+build
+.fatjar
+*.class
+ClusHMC.jar
+.settings
+addlicense.pl
+.classpath
+update.txt
+*.s
+.svn
+bin
+*.arff
+diff*
+dist
+Clus
+
+END

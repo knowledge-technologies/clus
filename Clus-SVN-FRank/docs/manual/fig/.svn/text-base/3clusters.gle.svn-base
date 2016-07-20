@@ -1,0 +1,39 @@
+
+size 8 5
+
+sub drawcluster c1 name$ str$
+   begin box add 0.2 name name$ round 0.2
+      fopen file$ f1 read
+      until feof(f1)
+         fread f1 xp yp clust
+         if clust = c1 then
+            amove xg(xp) yg(yp)
+            set color red
+            circle 0.04 fill red
+            set color black
+         end if
+      next
+      fclose f1
+      set lstyle 2
+   end box
+   set just bl
+   amove pointx(name$.tl) pointy(name$.tl)+0.1
+   write str$
+end sub
+
+amove 0.1 0.2
+begin graph
+   nobox
+   scale 0.8 0.8
+   xaxis min 0 max 10
+   yaxis min 0 max 6 dticks 1
+   xtitle "\tex{$a_1$}"
+   ytitle "\tex{$a_2$}"
+end graph
+
+file$ = "3clusters.dat"
+
+amove xofs yofs
+drawcluster 1 "c1" "\tex{$C_1$}"
+drawcluster 2 "c2" "\tex{$C_2$}"
+drawcluster 3 "c3" "\tex{$C_3$}"

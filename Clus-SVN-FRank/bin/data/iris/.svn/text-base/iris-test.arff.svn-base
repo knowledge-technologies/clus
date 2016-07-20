@@ -1,0 +1,39 @@
+@RELATION "iris"
+
+@ATTRIBUTE sepallength   numeric
+@ATTRIBUTE sepalwidth    numeric
+@ATTRIBUTE petallength   numeric
+@ATTRIBUTE petalwidth    numeric
+@ATTRIBUTE class         {Iris-setosa,Iris-versicolor,Iris-virginica}
+
+@DATA
+5.1,3.5,1.4,0.2,Iris-setosa
+4.7,3.2,1.3,0.2,Iris-setosa
+5.0,3.4,1.5,0.2,Iris-setosa
+4.4,2.9,1.4,0.2,Iris-setosa
+4.8,3.4,1.6,0.2,Iris-setosa
+5.7,3.8,1.7,0.3,Iris-setosa
+5.1,3.3,1.7,0.5,Iris-setosa
+4.8,3.4,1.9,0.2,Iris-setosa
+4.7,3.2,1.6,0.2,Iris-setosa
+5.0,3.5,1.6,0.6,Iris-setosa
+5.1,3.8,1.6,0.2,Iris-setosa
+5.5,2.3,4.0,1.3,Iris-versicolor
+5.2,2.7,3.9,1.4,Iris-versicolor
+5.6,3.0,4.5,1.5,Iris-versicolor
+5.6,2.5,3.9,1.1,Iris-versicolor
+6.1,2.8,4.7,1.2,Iris-versicolor
+6.6,3.0,4.4,1.4,Iris-versicolor
+5.4,3.0,4.5,1.5,Iris-versicolor
+6.0,3.4,4.5,1.6,Iris-versicolor
+6.3,2.3,4.4,1.3,Iris-versicolor
+5.0,2.3,3.3,1.0,Iris-versicolor
+7.6,3.0,6.6,2.1,Iris-virginica
+4.9,2.5,4.5,1.7,Iris-virginica
+6.4,3.2,5.3,2.3,Iris-virginica
+7.7,3.8,6.7,2.2,Iris-virginica
+7.2,3.2,6.0,1.8,Iris-virginica
+7.2,3.0,5.8,1.6,Iris-virginica
+6.8,3.2,5.9,2.3,Iris-virginica
+6.7,3.3,5.7,2.5,Iris-virginica
+5.9,3.0,5.1,1.8,Iris-virginica

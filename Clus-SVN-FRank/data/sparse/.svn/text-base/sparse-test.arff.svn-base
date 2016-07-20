@@ -1,0 +1,22 @@
+@relation 'sparse-test'
+
+@attribute a1  numeric
+@attribute a2  numeric
+@attribute a3  numeric
+@attribute a4  numeric
+@attribute a5  numeric
+@attribute a6  numeric
+@attribute a7  numeric
+@attribute a8  numeric
+@attribute a9  numeric
+@attribute a10 numeric
+@attribute a11 numeric
+@attribute cl  {pos,neg}
+
+@data
+{1 3.1, 8 2.5, 12 pos}
+{4 3.5, 7 2.3, 12 neg}
+{2 8.5, 3 1.3, 12 neg}
+{1 3.2, 8 2.6, 12 pos}
+{1 3.3, 8 2.7, 12 pos}
+

@@ -1,0 +1,582 @@
+Clus run bridges
+****************
+
+Date: 4/14/10 8:17 PM
+File: bridges-multitarget-trees.out
+Attributes: 13 (input: 7, output: 5)
+Missing values: Yes
+Memory usage: 12012 kB (initial), 12052 kB (data loaded)
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 0
+ResourceInfoLoaded = Yes
+
+[Data]
+File = ../data/bridges/bridges.arff
+TestSet = None
+PruneSet = 0.33
+PruneSetMax = Infinity
+XVal = 10
+RemoveMissingTarget = No
+NormalizeData = None
+
+[Attributes]
+Target = 9-13
+Clustering = 9-13
+Descriptive = 2-8
+Key = None
+Disable = 1
+Weights = Normalize
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = No
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WriteErrorFile = No
+WritePredictions = {None}
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+OutputDatabaseQueries = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+NominalSubsetTests = Yes
+
+[Tree]
+Heuristic = Gain
+PruningMethod = CartVSB
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = {}
+MSENominal = No
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.1 sec (CPU)
+Pruning Time: 0.02 sec (CPU)
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 39 (Leaves: 20)
+     Pruned: Nodes = 9 (Leaves: 5)
+
+Training error
+--------------
+
+Number of examples: 70
+Classification Error
+   Default: 
+   Attribute: t-or-d
+     REAL\PRED | THROUGH | DECK | ? |
+     -----------------------------------
+       THROUGH |      59 |    0 | 0 | 59
+          DECK |       7 |    0 | 0 |  7
+             ? |       4 |    0 | 0 |  4
+     -----------------------------------
+               |      70 |    0 | 0 | 70
+     Accuracy: 0.893939
+     Cramer's coefficient: 0.058849
+
+
+   Attribute: material
+     REAL\PRED | WOOD | IRON | STEEL | ? |
+     ----------------------------------------
+          WOOD |    0 |    0 |     8 | 0 |  8
+          IRON |    0 |    0 |     7 | 0 |  7
+         STEEL |    0 |    0 |    53 | 0 | 53
+             ? |    0 |    0 |     2 | 0 |  2
+     ----------------------------------------
+               |    0 |    0 |    70 | 0 | 70
+     Accuracy: 0.779412
+     Cramer's coefficient: 0.020498
+
+
+   Attribute: span
+     REAL\PRED | SHORT | MEDIUM | LONG | ? |
+     ------------------------------------------
+         SHORT |     0 |      4 |    0 | 0 |  4
+        MEDIUM |     0 |     36 |    0 | 0 | 36
+          LONG |     0 |     20 |    0 | 0 | 20
+             ? |     0 |     10 |    0 | 0 | 10
+     ------------------------------------------
+               |     0 |     70 |    0 | 0 | 70
+     Accuracy: 0.6
+     Cramer's coefficient: 0.109109
+
+
+   Attribute: rel-l
+     REAL\PRED | S | S-F |  F | ? |
+     ---------------------------------
+             S | 0 |   0 | 19 | 0 | 19
+           S-F | 0 |   0 |  7 | 0 |  7
+             F | 0 |   0 | 40 | 0 | 40
+             ? | 0 |   0 |  4 | 0 |  4
+     ---------------------------------
+               | 0 |   0 | 70 | 0 | 70
+     Accuracy: 0.606061
+     Cramer's coefficient: 0.041613
+
+
+   Attribute: type
+     REAL\PRED | WOOD | SUSPEN | SIMPLE-T | ARCH | CANTILEV | NIL | CONT-T | ? |
+     ------------------------------------------------------------------------------
+          WOOD |    0 |      0 |        8 |    0 |        0 |   0 |      0 | 0 |  8
+        SUSPEN |    0 |      0 |        8 |    0 |        0 |   0 |      0 | 0 |  8
+      SIMPLE-T |    0 |      0 |       27 |    0 |        0 |   0 |      0 | 0 | 27
+          ARCH |    0 |      0 |       10 |    0 |        0 |   0 |      0 | 0 | 10
+      CANTILEV |    0 |      0 |        8 |    0 |        0 |   0 |      0 | 0 |  8
+           NIL |    0 |      0 |        1 |    0 |        0 |   0 |      0 | 0 |  1
+        CONT-T |    0 |      0 |        6 |    0 |        0 |   0 |      0 | 0 |  6
+             ? |    0 |      0 |        2 |    0 |        0 |   0 |      0 | 0 |  2
+     ------------------------------------------------------------------------------
+               |    0 |      0 |       70 |    0 |        0 |   0 |      0 | 0 | 70
+     Accuracy: 0.397059
+     Cramer's coefficient: 0.011835
+
+   Original: 
+   Attribute: t-or-d
+     REAL\PRED | THROUGH | DECK | ? |
+     -----------------------------------
+       THROUGH |      59 |    0 | 0 | 59
+          DECK |       4 |    3 | 0 |  7
+             ? |       4 |    0 | 0 |  4
+     -----------------------------------
+               |      67 |    3 | 0 | 70
+     Accuracy: 0.939394
+     Cramer's coefficient: 0.655094
+
+
+   Attribute: material
+     REAL\PRED | WOOD | IRON | STEEL | ? |
+     ----------------------------------------
+          WOOD |    7 |    1 |     0 | 0 |  8
+          IRON |    2 |    5 |     0 | 0 |  7
+         STEEL |    0 |    1 |    52 | 0 | 53
+             ? |    0 |    0 |     2 | 0 |  2
+     ----------------------------------------
+               |    9 |    7 |    54 | 0 | 70
+     Accuracy: 0.941176
+     Cramer's coefficient: 0.804275
+
+
+   Attribute: span
+     REAL\PRED | SHORT | MEDIUM | LONG | ? |
+     ------------------------------------------
+         SHORT |     4 |      0 |    0 | 0 |  4
+        MEDIUM |     2 |     34 |    0 | 0 | 36
+          LONG |     0 |      1 |   19 | 0 | 20
+             ? |     0 |      8 |    2 | 0 | 10
+     ------------------------------------------
+               |     6 |     43 |   21 | 0 | 70
+     Accuracy: 0.95
+     Cramer's coefficient: 0.958357
+
+
+   Attribute: rel-l
+     REAL\PRED |  S | S-F |  F | ? |
+     ----------------------------------
+             S | 19 |   0 |  0 | 0 | 19
+           S-F |  1 |   5 |  1 | 0 |  7
+             F |  1 |   2 | 37 | 0 | 40
+             ? |  1 |   0 |  3 | 0 |  4
+     ----------------------------------
+               | 22 |   7 | 41 | 0 | 70
+     Accuracy: 0.924242
+     Cramer's coefficient: 0.844523
+
+
+   Attribute: type
+     REAL\PRED | WOOD | SUSPEN | SIMPLE-T | ARCH | CANTILEV | NIL | CONT-T | ? |
+     ------------------------------------------------------------------------------
+          WOOD |    7 |      0 |        1 |    0 |        0 |   0 |      0 | 0 |  8
+        SUSPEN |    2 |      4 |        1 |    0 |        1 |   0 |      0 | 0 |  8
+      SIMPLE-T |    0 |      0 |       27 |    0 |        0 |   0 |      0 | 0 | 27
+          ARCH |    0 |      0 |        3 |    7 |        0 |   0 |      0 | 0 | 10
+      CANTILEV |    0 |      1 |        1 |    0 |        6 |   0 |      0 | 0 |  8
+           NIL |    0 |      0 |        1 |    0 |        0 |   0 |      0 | 0 |  1
+        CONT-T |    0 |      0 |        0 |    0 |        0 |   0 |      6 | 0 |  6
+             ? |    0 |      0 |        0 |    0 |        1 |   0 |      1 | 0 |  2
+     ------------------------------------------------------------------------------
+               |    9 |      5 |       34 |    7 |        8 |   0 |      7 | 0 | 70
+     Accuracy: 0.838235
+     Cramer's coefficient: 0.761926
+
+   Pruned: 
+   Attribute: t-or-d
+     REAL\PRED | THROUGH | DECK | ? |
+     -----------------------------------
+       THROUGH |      59 |    0 | 0 | 59
+          DECK |       7 |    0 | 0 |  7
+             ? |       4 |    0 | 0 |  4
+     -----------------------------------
+               |      70 |    0 | 0 | 70
+     Accuracy: 0.893939
+     Cramer's coefficient: 0.058849
+
+
+   Attribute: material
+     REAL\PRED | WOOD | IRON | STEEL | ? |
+     ----------------------------------------
+          WOOD |    8 |    0 |     0 | 0 |  8
+          IRON |    3 |    0 |     4 | 0 |  7
+         STEEL |    0 |    0 |    53 | 0 | 53
+             ? |    0 |    0 |     2 | 0 |  2
+     ----------------------------------------
+               |   11 |    0 |    59 | 0 | 70
+     Accuracy: 0.897059
+     Cramer's coefficient: 0.647636
+
+
+   Attribute: span
+     REAL\PRED | SHORT | MEDIUM | LONG | ? |
+     ------------------------------------------
+         SHORT |     0 |      4 |    0 | 0 |  4
+        MEDIUM |     0 |     36 |    0 | 0 | 36
+          LONG |     0 |      1 |   19 | 0 | 20
+             ? |     0 |      5 |    5 | 0 | 10
+     ------------------------------------------
+               |     0 |     46 |   24 | 0 | 70
+     Accuracy: 0.916667
+     Cramer's coefficient: 0.743341
+
+
+   Attribute: rel-l
+     REAL\PRED |  S | S-F |  F | ? |
+     ----------------------------------
+             S |  9 |   0 | 10 | 0 | 19
+           S-F |  1 |   0 |  6 | 0 |  7
+             F |  0 |   0 | 40 | 0 | 40
+             ? |  1 |   0 |  3 | 0 |  4
+     ----------------------------------
+               | 11 |   0 | 59 | 0 | 70
+     Accuracy: 0.742424
+     Cramer's coefficient: 0.427096
+
+
+   Attribute: type
+     REAL\PRED | WOOD | SUSPEN | SIMPLE-T | ARCH | CANTILEV | NIL | CONT-T | ? |
+     ------------------------------------------------------------------------------
+          WOOD |    8 |      0 |        0 |    0 |        0 |   0 |      0 | 0 |  8
+        SUSPEN |    2 |      0 |        5 |    0 |        1 |   0 |      0 | 0 |  8
+      SIMPLE-T |    1 |      0 |       20 |    0 |        4 |   0 |      2 | 0 | 27
+          ARCH |    0 |      0 |        6 |    0 |        4 |   0 |      0 | 0 | 10
+      CANTILEV |    0 |      0 |        2 |    0 |        6 |   0 |      0 | 0 |  8
+           NIL |    0 |      0 |        0 |    0 |        0 |   0 |      1 | 0 |  1
+        CONT-T |    0 |      0 |        2 |    0 |        0 |   0 |      4 | 0 |  6
+             ? |    0 |      0 |        0 |    0 |        1 |   0 |      1 | 0 |  2
+     ------------------------------------------------------------------------------
+               |   11 |      0 |       35 |    0 |       16 |   0 |      8 | 0 | 70
+     Accuracy: 0.558824
+     Cramer's coefficient: 0.49448
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [4.346,2.43,1.809,1.798,1.325])
+   Default        : [0.9782,0.9126,0.9363,0.9603,1.0011]: 0.9577
+   Original       : [0.4967,0.209,0.2688,0.2579,0.2903]: 0.3045
+   Pruned         : [0.764,0.45,0.408,0.6336,0.7799]: 0.6071
+
+Validation error
+----------------
+
+Number of examples: 34
+Classification Error
+   Default: 
+   Attribute: t-or-d
+     REAL\PRED | THROUGH | DECK | ? |
+     -----------------------------------
+       THROUGH |      26 |    0 | 0 | 26
+          DECK |       6 |    0 | 0 |  6
+             ? |       2 |    0 | 0 |  2
+     -----------------------------------
+               |      34 |    0 | 0 | 34
+     Accuracy: 0.8125
+     Cramer's coefficient: 0.060634
+
+
+   Attribute: material
+     REAL\PRED | WOOD | IRON | STEEL | ? |
+     ----------------------------------------
+          WOOD |    0 |    0 |     7 | 0 |  7
+          IRON |    0 |    0 |     4 | 0 |  4
+         STEEL |    0 |    0 |    23 | 0 | 23
+             ? |    0 |    0 |     0 | 0 |  0
+     ----------------------------------------
+               |    0 |    0 |    34 | 0 | 34
+     Accuracy: 0.676471
+     Cramer's coefficient: 0
+
+
+   Attribute: span
+     REAL\PRED | SHORT | MEDIUM | LONG | ? |
+     ------------------------------------------
+         SHORT |     0 |      4 |    0 | 0 |  4
+        MEDIUM |     0 |     14 |    0 | 0 | 14
+          LONG |     0 |     10 |    0 | 0 | 10
+             ? |     0 |      6 |    0 | 0 |  6
+     ------------------------------------------
+               |     0 |     34 |    0 | 0 | 34
+     Accuracy: 0.5
+     Cramer's coefficient: 0.137505
+
+
+   Attribute: rel-l
+     REAL\PRED | S | S-F |  F | ? |
+     ---------------------------------
+             S | 0 |   0 | 10 | 0 | 10
+           S-F | 0 |   0 |  5 | 0 |  5
+             F | 0 |   0 | 18 | 0 | 18
+             ? | 0 |   0 |  1 | 0 |  1
+     ---------------------------------
+               | 0 |   0 | 34 | 0 | 34
+     Accuracy: 0.545455
+     Cramer's coefficient: 0.02111
+
+
+   Attribute: type
+     REAL\PRED | WOOD | SUSPEN | SIMPLE-T | ARCH | CANTILEV | NIL | CONT-T | ? |
+     ------------------------------------------------------------------------------
+          WOOD |    0 |      0 |        7 |    0 |        0 |   0 |      0 | 0 |  7
+        SUSPEN |    0 |      0 |        3 |    0 |        0 |   0 |      0 | 0 |  3
+      SIMPLE-T |    0 |      0 |       16 |    0 |        0 |   0 |      0 | 0 | 16
+          ARCH |    0 |      0 |        3 |    0 |        0 |   0 |      0 | 0 |  3
+      CANTILEV |    0 |      0 |        3 |    0 |        0 |   0 |      0 | 0 |  3
+           NIL |    0 |      0 |        0 |    0 |        0 |   0 |      0 | 0 |  0
+        CONT-T |    0 |      0 |        2 |    0 |        0 |   0 |      0 | 0 |  2
+             ? |    0 |      0 |        0 |    0 |        0 |   0 |      0 | 0 |  0
+     ------------------------------------------------------------------------------
+               |    0 |      0 |       34 |    0 |        0 |   0 |      0 | 0 | 34
+     Accuracy: 0.470588
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: t-or-d
+     REAL\PRED | THROUGH | DECK | ? |
+     -----------------------------------
+       THROUGH |      26 |    0 | 0 | 26
+          DECK |       6 |    0 | 0 |  6
+             ? |       2 |    0 | 0 |  2
+     -----------------------------------
+               |      34 |    0 | 0 | 34
+     Accuracy: 0.8125
+     Cramer's coefficient: 0.060634
+
+
+   Attribute: material
+     REAL\PRED | WOOD | IRON | STEEL | ? |
+     ----------------------------------------
+          WOOD |    5 |    1 |     1 | 0 |  7
+          IRON |    1 |    0 |     3 | 0 |  4
+         STEEL |    0 |    5 |    18 | 0 | 23
+             ? |    0 |    0 |     0 | 0 |  0
+     ----------------------------------------
+               |    6 |    6 |    22 | 0 | 34
+     Accuracy: 0.676471
+     Cramer's coefficient: 0.543579
+
+
+   Attribute: span
+     REAL\PRED | SHORT | MEDIUM | LONG | ? |
+     ------------------------------------------
+         SHORT |     0 |      4 |    0 | 0 |  4
+        MEDIUM |     2 |     11 |    1 | 0 | 14
+          LONG |     0 |      5 |    5 | 0 | 10
+             ? |     1 |      4 |    1 | 0 |  6
+     ------------------------------------------
+               |     3 |     24 |    7 | 0 | 34
+     Accuracy: 0.571429
+     Cramer's coefficient: 0.46733
+
+
+   Attribute: rel-l
+     REAL\PRED |  S | S-F |  F | ? |
+     ----------------------------------
+             S |  7 |   0 |  3 | 0 | 10
+           S-F |  3 |   0 |  2 | 0 |  5
+             F |  4 |   2 | 12 | 0 | 18
+             ? |  0 |   0 |  1 | 0 |  1
+     ----------------------------------
+               | 14 |   2 | 18 | 0 | 34
+     Accuracy: 0.575758
+     Cramer's coefficient: 0.340173
+
+
+   Attribute: type
+     REAL\PRED | WOOD | SUSPEN | SIMPLE-T | ARCH | CANTILEV | NIL | CONT-T | ? |
+     ------------------------------------------------------------------------------
+          WOOD |    5 |      0 |        2 |    0 |        0 |   0 |      0 | 0 |  7
+        SUSPEN |    1 |      0 |        1 |    0 |        1 |   0 |      0 | 0 |  3
+      SIMPLE-T |    0 |      1 |       13 |    1 |        1 |   0 |      0 | 0 | 16
+          ARCH |    0 |      0 |        2 |    0 |        1 |   0 |      0 | 0 |  3
+      CANTILEV |    0 |      0 |        2 |    0 |        0 |   0 |      1 | 0 |  3
+           NIL |    0 |      0 |        0 |    0 |        0 |   0 |      0 | 0 |  0
+        CONT-T |    0 |      0 |        1 |    1 |        0 |   0 |      0 | 0 |  2
+             ? |    0 |      0 |        0 |    0 |        0 |   0 |      0 | 0 |  0
+     ------------------------------------------------------------------------------
+               |    6 |      1 |       21 |    2 |        3 |   0 |      1 | 0 | 34
+     Accuracy: 0.529412
+     Cramer's coefficient: 0.459671
+
+   Pruned: 
+   Attribute: t-or-d
+     REAL\PRED | THROUGH | DECK | ? |
+     -----------------------------------
+       THROUGH |      26 |    0 | 0 | 26
+          DECK |       6 |    0 | 0 |  6
+             ? |       2 |    0 | 0 |  2
+     -----------------------------------
+               |      34 |    0 | 0 | 34
+     Accuracy: 0.8125
+     Cramer's coefficient: 0.060634
+
+
+   Attribute: material
+     REAL\PRED | WOOD | IRON | STEEL | ? |
+     ----------------------------------------
+          WOOD |    6 |    0 |     1 | 0 |  7
+          IRON |    1 |    0 |     3 | 0 |  4
+         STEEL |    2 |    0 |    21 | 0 | 23
+             ? |    0 |    0 |     0 | 0 |  0
+     ----------------------------------------
+               |    9 |    0 |    25 | 0 | 34
+     Accuracy: 0.794118
+     Cramer's coefficient: 0.49051
+
+
+   Attribute: span
+     REAL\PRED | SHORT | MEDIUM | LONG | ? |
+     ------------------------------------------
+         SHORT |     0 |      3 |    1 | 0 |  4
+        MEDIUM |     0 |     12 |    2 | 0 | 14
+          LONG |     0 |      4 |    6 | 0 | 10
+             ? |     0 |      5 |    1 | 0 |  6
+     ------------------------------------------
+               |     0 |     24 |   10 | 0 | 34
+     Accuracy: 0.642857
+     Cramer's coefficient: 0.377447
+
+
+   Attribute: rel-l
+     REAL\PRED | S | S-F |  F | ? |
+     ---------------------------------
+             S | 7 |   0 |  3 | 0 | 10
+           S-F | 2 |   0 |  3 | 0 |  5
+             F | 0 |   0 | 18 | 0 | 18
+             ? | 0 |   0 |  1 | 0 |  1
+     ---------------------------------
+               | 9 |   0 | 25 | 0 | 34
+     Accuracy: 0.757576
+     Cramer's coefficient: 0.505841
+
+
+   Attribute: type
+     REAL\PRED | WOOD | SUSPEN | SIMPLE-T | ARCH | CANTILEV | NIL | CONT-T | ? |
+     ------------------------------------------------------------------------------
+          WOOD |    6 |      0 |        1 |    0 |        0 |   0 |      0 | 0 |  7
+        SUSPEN |    1 |      0 |        1 |    0 |        1 |   0 |      0 | 0 |  3
+      SIMPLE-T |    0 |      0 |       10 |    0 |        3 |   0 |      3 | 0 | 16
+          ARCH |    0 |      0 |        1 |    0 |        2 |   0 |      0 | 0 |  3
+      CANTILEV |    1 |      0 |        2 |    0 |        0 |   0 |      0 | 0 |  3
+           NIL |    0 |      0 |        0 |    0 |        0 |   0 |      0 | 0 |  0
+        CONT-T |    1 |      0 |        0 |    0 |        1 |   0 |      0 | 0 |  2
+             ? |    0 |      0 |        0 |    0 |        0 |   0 |      0 | 0 |  0
+     ------------------------------------------------------------------------------
+               |    9 |      0 |       15 |    0 |        7 |   0 |      3 | 0 | 34
+     Accuracy: 0.470588
+     Cramer's coefficient: 0.373712
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [4.346,2.43,1.809,1.798,1.325])
+   Default        : [1.5076,1.2264,1.0733,1.0602,0.9654]: 1.1666
+   Original       : [1.648,1.3303,1.3155,1.3934,1.1323]: 1.3639
+   Pruned         : [1.6006,0.9832,1.1797,0.7771,0.9024]: 1.0886
+
+Default Model
+*************
+
+[THROUGH,STEEL,MEDIUM,F,SIMPLE-T] [59.0,53.0,36.0,40.0,27.0]: 70
+
+Original Model
+**************
+
+location in {1,7,9,13,14,19,21,28,37,39,40,41,42,43,44,46,47,48,49}
++--yes: location in {14,28,37,39,47}
+|       +--yes: erected > 1857.0
+|       |       +--yes: erected > 1914.0
+|       |       |       +--yes: location in {14,37}
+|       |       |       |       +--yes: [DECK,STEEL,LONG,F,CONT-T] [3.0,3.0,3.0,3.0,3.0]: 3
+|       |       |       |       +--no:  [THROUGH,STEEL,LONG,F,CONT-T] [1.0,1.0,1.0,2.0,1.0]: 2
+|       |       |       +--no:  [THROUGH,STEEL,MEDIUM,F,SIMPLE-T] [2.0,3.0,0.0,3.0,2.0]: 3
+|       |       +--no:  [THROUGH,WOOD,MEDIUM,S,WOOD] [1.0,2.0,0.0,2.0,2.0]: 2
+|       +--no:  location in {1,19,43,46,48,49}
+|               +--yes: [THROUGH,STEEL,LONG,F,CANTILEV] [7.0,7.0,7.0,7.0,6.0]: 8
+|               +--no:  erected > 1915.0
+|                       +--yes: [THROUGH,STEEL,LONG,F,ARCH] [4.0,4.0,4.0,4.0,4.0]: 4
+|                       +--no:  [THROUGH,STEEL,LONG,F,SIMPLE-T] [4.0,4.0,4.0,4.0,4.0]: 4
++--no:  clear-g = N
+        +--yes: location in {3,25,27}
+        |       +--yes: [THROUGH,WOOD,SHORT,S,WOOD] [4.0,2.0,3.0,3.0,2.0]: 4
+        |       +--no:  river = M
+        |               +--yes: [THROUGH,IRON,MEDIUM,S,SIMPLE-T] [2.2093023255813953,1.2093023255813953,2.0,1.0,1.2093023255813953]: 2.209302
+        |               +--no:  [THROUGH,WOOD,MEDIUM,S,WOOD] [3.0,3.0,2.0,3.0,3.0]: 3
+        +--no:  location in {6,20,22,25,26,27,33,34}
+                +--yes: erected > 1902.0
+                |       +--yes: length > 884.0
+                |       |       +--yes: erected > 1931.0
+                |       |       |       +--yes: [THROUGH,STEEL,MEDIUM,S-F,CONT-T] [1.0,2.0,2.0,1.0,2.0]: 2
+                |       |       |       +--no:  [THROUGH,STEEL,MEDIUM,S-F,SUSPEN] [1.0,2.0,1.0,1.0,1.0]: 2
+                |       |       +--no:  [THROUGH,STEEL,MEDIUM,S-F,SUSPEN] [3.0,3.0,3.0,3.0,3.0]: 3
+                |       +--no:  [THROUGH,STEEL,MEDIUM,F,SIMPLE-T] [5.0,5.0,5.0,4.0,3.0]: 5
+                +--no:  location in {11,16,30,45}
+                        +--yes: river = A
+                        |       +--yes: [THROUGH,IRON,MEDIUM,F,SIMPLE-T] [1.0,1.0,2.0,2.0,1.0]: 2
+                        |       +--no:  [THROUGH,IRON,SHORT,F,SIMPLE-T] [2.7906976744186047,2.7906976744186047,1.0,2.0,2.7906976744186047]: 2.790698
+                        +--no:  location in {10,23,24,31,51}
+                                +--yes: [THROUGH,STEEL,MEDIUM,F,SIMPLE-T] [6.0,7.0,6.0,6.0,6.0]: 7
+                                +--no:  location in {3,32,38,52}
+                                        +--yes: location = 38
+                                        |       +--yes: [THROUGH,STEEL,MEDIUM,S,SIMPLE-T] [2.0,2.0,2.0,1.0,1.0]: 2
+                                        |       +--no:  [THROUGH,STEEL,MEDIUM,S,ARCH] [3.0,3.0,3.0,3.0,3.0]: 3
+                                        +--no:  [THROUGH,STEEL,MEDIUM,S,SIMPLE-T] [6.0,6.0,6.0,6.0,6.0]: 6
+
+Pruned Model
+************
+
+location in {1,7,9,13,14,19,21,28,37,39,40,41,42,43,44,46,47,48,49}
++--yes: location in {14,28,37,39,47}
+|       +--yes: erected > 1857.0
+|       |       +--yes: [THROUGH,STEEL,LONG,F,CONT-T] [3.0,7.0,4.0,8.0,4.0]: 8
+|       |       +--no:  [THROUGH,WOOD,MEDIUM,S,WOOD] [1.0,2.0,0.0,2.0,2.0]: 2
+|       +--no:  [THROUGH,STEEL,LONG,F,CANTILEV] [15.0,15.0,15.0,15.0,6.0]: 16
++--no:  clear-g = N
+        +--yes: [THROUGH,WOOD,MEDIUM,S,WOOD] [9.209302325581396,6.0,5.0,7.0,6.0]: 9.209302
+        +--no:  [THROUGH,STEEL,MEDIUM,F,SIMPLE-T] [30.790697674418606,31.0,31.0,17.0,19.790697674418603]: 34.790698
+

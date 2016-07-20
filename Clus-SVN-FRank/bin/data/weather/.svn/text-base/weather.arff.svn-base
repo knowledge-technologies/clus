@@ -1,0 +1,16 @@
+@RELATION "weather"
+
+@ATTRIBUTE outlook     {sunny,rainy,overcast}
+@ATTRIBUTE windy       {yes,no}
+@ATTRIBUTE temperature numeric
+@ATTRIBUTE humidity    numeric
+
+@DATA
+sunny,    no,  34, 50
+sunny,    no,  30, 55
+overcast, no,  20, 70 
+overcast, yes, 11, 75
+rainy,    no,  20, 88
+rainy,    no,  18, 95 
+rainy,    yes, 10, 95 
+rainy,    yes, 8,  90

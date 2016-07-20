@@ -1,0 +1,257 @@
+Clus run 'cpu'
+**************
+
+Date: 4/14/10 8:17 PM
+File: cpu-singletarget-rules-ordered.out
+Attributes: 8 (input: 7, output: 1)
+Missing values: No
+Memory usage: 12028 kB (initial), 12308 kB (data loaded)
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 0
+ResourceInfoLoaded = Yes
+
+[Data]
+File = ../data/cpu/cpu.arff
+TestSet = None
+PruneSet = None
+XVal = 10
+RemoveMissingTarget = Yes
+NormalizeData = None
+
+[Attributes]
+Target = 8
+Clustering = 1-8
+Descriptive = 1-7
+Key = None
+Disable = None
+Weights = Normalize
+ClusteringWeights = 
+  TargetWeight = 1.0
+  NonTargetWeight = 0.0
+  NumericWeight = 1.0
+  NominalWeight = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = Yes
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WriteErrorFile = No
+WritePredictions = {None}
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+OutputDatabaseQueries = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+NominalSubsetTests = Yes
+
+[Tree]
+Heuristic = RDispersionMlt
+PruningMethod = Default
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = {}
+MSENominal = No
+
+[Rules]
+CoveringMethod = Standard
+PredictionMethod = DecisionList
+RuleAddingMethod = IfBetter
+CoveringWeight = 0.0
+InstCoveringWeightThreshold = 0.1
+MaxRulesNb = 1000
+HeurDispOffset = 0.0
+HeurCoveragePar = 1.0
+HeurRuleDistPar = 0.0
+HeurPrototypeDistPar = 0.0
+RuleSignificanceLevel = 0.05
+RuleNbSigAtts = 0
+ComputeDispersion = Yes
+VarBasedDispNormWeight = 4.0
+DispersionWeights = 
+  TargetWeight = 1.0
+  NonTargetWeight = 1.0
+  NumericWeight = 1.0
+  NominalWeight = 1.0
+RandomRules = 0
+PrintRuleWiseErrors = Yes
+PrintAllRules = Yes
+ConstrainedToFirstAttVal = No
+OptDEPopSize = 500
+OptDENumEval = 10000
+OptDECrossProb = 0.3
+OptDEWeight = 0.5
+OptDESeed = 0
+OptDERegulPower = 1.0
+OptDEProbMutationZero = 0.0
+OptDEProbMutationNonZero = 0.0
+OptRegPar = 0.0
+OptNbZeroesPar = 0.0
+OptRuleWeightThreshold = 0.1
+OptDELossFunction = Squared
+OptDefaultShiftPred = Yes
+OptAddLinearTerms = No
+OptNormalizeLinearTerms = Yes
+OptLinearTermsTruncate = Yes
+OptOmitRulePredictions = Yes
+OptWeightGenerality = No
+OptNormalization = Yes
+OptHuberAlpha = 0.9
+OptGDMaxIter = 1000
+OptGDGradTreshold = 1.0
+OptGDStepSize = 0.1
+OptGDMaxNbWeights = 0
+OptGDEarlyStopAmount = 0.0
+OptGDEarlyStopTreshold = 1.1
+OptGDNbOfStepSizeReduce = Infinity
+OptGDExternalMethod = update
+OptGDMTGradientCombine = Avg
+OptGDNbOfTParameterTry = 0
+
+[Beam]
+SizePenalty = 0.1
+BeamWidth = 10
+BeamBestN = 5
+MaxSize = Infinity
+AttributeHeuristic = Default
+FastSearch = Yes
+PostPrune = No
+RemoveEqualHeur = No
+BeamSimilarity = 0.0
+BeamSortOnTrainParameteres = No
+DistSyntacticConstr = None
+BeamToForest = No
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.396 sec (CPU)
+Pruning Time: 0 sec (CPU)
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Rules = 3 (Tests: 6 and linear terms: 0)
+
+Training error
+--------------
+
+Number of examples: 209
+Mean absolute error (MAE)
+   Default        : [87.3828]
+   Original       : [38.4443]
+Mean squared error (MSE)
+   Default        : [23835.1685]
+   Original       : [4548.4989]
+Root mean squared error (RMSE)
+   Default        : [154.3864]
+   Original       : [67.4426]
+Weighted root mean squared error (RMSE) (Weights [0])
+   Default        : [1]
+   Original       : [0.4368]
+Pearson correlation coefficient
+   Default        : [0], Avg r^2: 0
+   Original       : [0.8995], Avg r^2: 0.8092
+
+Default Model
+*************
+
+[99.330144]: 209
+
+Original Model
+**************
+
+Rule 1:
+=======
+IF MMAX <= 24,000 AND
+   CACH <= 142
+THEN [52.877778]: 180
+   Dispersion (train): [0.948825 : 0.000369 , 0.948456]
+   Coverage   (train): 180
+   Cover*Disp (train): 170.788481
+
+Training error
+Number of examples: 209 (covered: 180)
+Mean absolute error (MAE): [29.1091]
+Mean squared error (MSE): [1395.3962]
+Root mean squared error (RMSE): [37.355]
+Weighted root mean squared error (RMSE) (Weights [0]): [0.242]
+Pearson correlation coefficient: [0], Avg r^2: 0
+
+Rule 2:
+=======
+IF MMAX <= 32,000 AND
+   CACH <= 160
+THEN [285.043478]: 23
+   Dispersion (train): [0.949013 : 0.001256 , 0.947757]
+   Coverage   (train): 203
+   Cover*Disp (train): 192.649685
+
+Training error
+Number of examples: 209 (covered: 203)
+Mean absolute error (MAE): [212.8229]
+Mean squared error (MSE): [49634.84]
+Root mean squared error (RMSE): [222.7888]
+Weighted root mean squared error (RMSE) (Weights [0]): [1.4431]
+Pearson correlation coefficient: [?], Avg r^2: ?
+
+Rule 3:
+=======
+IF CHMIN <= 16 AND
+   MMAX > 32000.0
+THEN [882]: 3
+   Dispersion (train): [0.449831 : 0.00074 , 0.449091]
+   Coverage   (train): 3
+   Cover*Disp (train): 1.349493
+
+Training error
+Number of examples: 209 (covered: 3)
+Mean absolute error (MAE): [88.6667]
+Mean squared error (MSE): [9424.6667]
+Root mean squared error (RMSE): [97.0807]
+Weighted root mean squared error (RMSE) (Weights [0]): [0.6288]
+Pearson correlation coefficient: [?], Avg r^2: ?
+
+Default rule:
+=============
+Default = [680]: 3
+
+
+Rule set dispersion:
+=====================
+   Avg_Dispersion  (train): 0.782556 = 0.000788 + 0.781768
+   Avg_Coverage    (train): 128.666667
+   Avg_Cover*Disp  (train): 121.595886 = 0.107902 + 121.487984
+   Avg_Dispersion  (test):  0 = 0 + 0
+   Avg_Coverage    (test):  0
+   Avg_Cover*Disp  (test):  0 = 0 + 0
+

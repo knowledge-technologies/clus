@@ -1,0 +1,59 @@
+/*************************************************************************
+ * Clus - Software for Predictive Clustering                             *
+ * Copyright (C) 2007                                                    *
+ *    Katholieke Universiteit Leuven, Leuven, Belgium                    *
+ *    Jozef Stefan Institute, Ljubljana, Slovenia                        *
+ *                                                                       *
+ * This program is free software: you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation, either version 3 of the License, or     *
+ * (at your option) any later version.                                   *
+ *                                                                       *
+ * This program is distributed in the hope that it will be useful,       *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ * GNU General Public License for more details.                          *
+ *                                                                       *
+ * You should have received a copy of the GNU General Public License     *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                       *
+ * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>.         *
+ *************************************************************************/
+
+package jeans.list;
+
+public class PriorityQueue {
+
+	ListElement head = null;
+
+	public void addElement(ListElement element) {
+		if (isEmpty()) {
+			head = element;
+		} else {
+			if (((ComparableElement)element).compare((ComparableElement)head) != 1) {
+				element.setNext(head);
+				head = element;
+			} else {
+				ListElement prev = head;
+				ListElement next = head.getNext();
+				while (!prev.isTail() && ((ComparableElement)element).compare((ComparableElement)next) == 1) {
+					prev = next;
+					next = next.getNext();
+				}
+				element.setNext(next);
+				prev.setNext(element);
+			}
+		}
+	}
+
+	public boolean isEmpty() {
+		return head == null;
+	}
+
+	public ListElement removeFront() {
+		ListElement res = head;
+		head = res.getNext();
+		return res;
+	}
+
+}

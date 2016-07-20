@@ -1,0 +1,11 @@
+@RELATION 2DData
+
+@ATTRIBUTE X                                       numeric
+@ATTRIBUTE Y                                       numeric
+@ATTRIBUTE CLASS                                   {pos,neg}
+
+@DATA
+154,211,pos
+138,252,pos
+167,281,pos
+256,233,neg

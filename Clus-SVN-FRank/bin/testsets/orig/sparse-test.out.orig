@@ -1,0 +1,150 @@
+Clus run 'sparse-test'
+**********************
+
+Date: 21/07/08 13:30
+File: sparse-test.out
+Attributes: 12 (input: 11, output: 1)
+Missing values: No
+Rows: 5
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 0
+ResourceInfoLoaded = No
+
+[Data]
+File = sparse-test.arff
+TestSet = None
+PruneSet = None
+XVal = 10
+
+[Attributes]
+Target = 12
+Clustering = 12
+Descriptive = 1-11
+Key = None
+Disable = None
+Weights = Normalize
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WritePredictions = {None}
+ModelIDFiles = No
+OutputPythonModel = No
+OutputDatabaseQueries = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 1.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+
+[Tree]
+Heuristic = Gain
+MaxDepth = Infinity
+BinarySplit = Yes
+PruningMethod = C4.5
+MSENominal = No
+ConvertToRules = No
+AlternativeSplits = No
+
+[SIT]
+Main_target = Default
+Recursive = No
+Search = OneTarget
+Learner = ClusLearner
+Error = MSE
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.013 sec
+Pruning Time: 0.003 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 3 (Leaves: 2)
+     Pruned: Nodes = 3 (Leaves: 2)
+
+Training error
+--------------
+
+Number of examples: 5
+Classification Error
+   Default: 
+   Attribute: cl
+     REAL\PRED | pos | neg |
+     -------------------------
+           pos |   3 |   0 | 3
+           neg |   2 |   0 | 2
+     -------------------------
+               |   5 |   0 | 5
+     Accuracy: 0.6
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: cl
+     REAL\PRED | pos | neg |
+     -------------------------
+           pos |   3 |   0 | 3
+           neg |   0 |   2 | 2
+     -------------------------
+               |   3 |   2 | 5
+     Accuracy: 1
+     Cramer's coefficient: 1
+
+   Pruned: 
+   Attribute: cl
+     REAL\PRED | pos | neg |
+     -------------------------
+           pos |   3 |   0 | 3
+           neg |   0 |   2 | 2
+     -------------------------
+               |   3 |   2 | 5
+     Accuracy: 1
+     Cramer's coefficient: 1
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [2.083])
+   Default        : [1]
+   Original       : [0]
+   Pruned         : [0]
+
+Default Model
+*************
+
+[pos] [3.0]: 5
+
+Original Model
+**************
+
+a1 > 0.0
++--yes: [pos] [3.0]: 3
++--no:  [neg] [2.0]: 2
+
+Pruned Model
+************
+
+a1 > 0.0
++--yes: [pos] [3.0]: 3
++--no:  [neg] [2.0]: 2
+

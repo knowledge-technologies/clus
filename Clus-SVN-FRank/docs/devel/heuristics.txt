@@ -1,0 +1,24 @@
+Rules:
+clus/algo/rules/ClusRuleHeuristicError.java
+clus/algo/rules/ClusRuleHeuristicMEstimate.java
+
+Beam search:
+clus/ext/beamsearch/ClusBeamHeuristicError.java
+clus/ext/beamsearch/ClusBeamHeuristicMEstimate.java
+clus/ext/beamsearch/ClusBeamHeuristicSS.java
+
+clus/ext/hierarchical/DHierHeuristic.java
+
+Heuristic with xtAx:
+clus/ext/hierarchical/SPMDHeuristic.java
+
+Matrix:
+clus/ext/sspd/SSPDHeuristic.java
+
+General reduction of SS heuristic:
+clus/heuristic/SSDHeuristic.java
+
+Standard heuristics:
+clus/heuristic/GainHeuristic.jav
+clus/heuristic/ReducedErrorHeuristic.java
+clus/heuristic/SSReductionHeuristic.java

@@ -1,0 +1,16 @@
+K 10
+svn:ignore
+V 87
+*.model
+*.distr
+*.bmstats
+*.out*
+*.xval*
+*.tree
+hierarchy.*
+*.test*
+*.id*
+.svn
+*.class
+
+END

@@ -1,0 +1,65 @@
+K 25
+svn:wc:ra_dav:version-url
+V 51
+/svnroot/clus/!svn/ver/777/trunk/clus/ext/ensembles
+END
+ClusEnsembleFeatureRanking.java
+K 25
+svn:wc:ra_dav:version-url
+V 83
+/svnroot/clus/!svn/ver/629/trunk/clus/ext/ensembles/ClusEnsembleFeatureRanking.java
+END
+ClusBoostingInduce.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/clus/!svn/ver/584/trunk/clus/ext/ensembles/ClusBoostingInduce.java
+END
+ClusEnsembleInduce.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/clus/!svn/ver/777/trunk/clus/ext/ensembles/ClusEnsembleInduce.java
+END
+ClusEnsembleInduceOptimization.java
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svnroot/clus/!svn/ver/730/trunk/clus/ext/ensembles/ClusEnsembleInduceOptimization.java
+END
+ClusOOBErrorEstimate.java
+K 25
+svn:wc:ra_dav:version-url
+V 77
+/svnroot/clus/!svn/ver/730/trunk/clus/ext/ensembles/ClusOOBErrorEstimate.java
+END
+ClusEnsembleInduceOptRegHMLC.java
+K 25
+svn:wc:ra_dav:version-url
+V 85
+/svnroot/clus/!svn/ver/729/trunk/clus/ext/ensembles/ClusEnsembleInduceOptRegHMLC.java
+END
+ClusForest.java
+K 25
+svn:wc:ra_dav:version-url
+V 67
+/svnroot/clus/!svn/ver/734/trunk/clus/ext/ensembles/ClusForest.java
+END
+ClusBoostingForest.java
+K 25
+svn:wc:ra_dav:version-url
+V 75
+/svnroot/clus/!svn/ver/537/trunk/clus/ext/ensembles/ClusBoostingForest.java
+END
+ClusEnsembleClassifier.java
+K 25
+svn:wc:ra_dav:version-url
+V 79
+/svnroot/clus/!svn/ver/405/trunk/clus/ext/ensembles/ClusEnsembleClassifier.java
+END
+ClusEnsembleInduceOptClassification.java
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svnroot/clus/!svn/ver/730/trunk/clus/ext/ensembles/ClusEnsembleInduceOptClassification.java
+END

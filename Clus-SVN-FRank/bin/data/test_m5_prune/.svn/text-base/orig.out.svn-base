@@ -1,0 +1,199 @@
+Clus run 'all_data_actsit_max10.txt-weka.filters.unsupervised.attribute.Remove-R1-6,10-11,56-60,67,69,100,131,204-205,218-219'
+******************************************************************************************************************************
+
+Date: 5/29/05 6:24 PM
+File: ecogen.out
+Attributes: 199 (input: 139, output: 1)
+Rows: 1944
+
+[General]
+RandomSeed = 0
+Verbose = 1
+XValNumberFolds = 10
+
+[Data]
+File = ecogen.arff
+TestProportion = 0
+PruneProportion = 0.0
+TestFile = None
+PruneFile = None
+
+[Attributes]
+Target = 186
+Disable = 140-199
+Key = None
+Weights = Normalize
+
+[Model]
+MinimalWeight = 5.0
+ParamTuneNumberFolds = 10
+
+[Tree]
+Heuristic = Default
+MaxDepth = -1
+BinarySplit = Yes
+ConvertToRules = No
+
+[Rules]
+Ordered = Yes
+
+[Output]
+AllFoldModels = Yes
+AllFoldErrors = No
+TrainErrors = Yes
+UnknownFrequency = No
+BranchFrequency = No
+
+[Numeric]
+FTest = 1.0
+Normalize = No
+MultiScore = None
+
+[Nominal]
+GainRatio = No
+MEstimate = 1.0
+
+[Constraints]
+Syntactic = None
+MaxSize = -1
+MaxError = -1
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+FoldsInfo
+Nodes:  [1.0, 2.0, 4.0, 8.0, 12.0, 16.0, 9.0, 9.0, 11.0, 15.0, 16.0, 14.0, 14.0, 10.0, 7.0, 9.0, 7.0, 8.0, 8.0, 6.0, 7.0, 2.0, 1.0, 1.0, 1.0, 0.0, 0.0]
+f(i-1): [1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 1.0, 0.0, 0.0]
+Time:   [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
+Time: 13.98 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 397 (Leaves: 199)
+     Pruned: Nodes = 93 (Leaves: 47)
+
+Training error
+--------------
+
+Number of examples: 1944
+Mean absolute error (MAE)
+   Default        : [0.4759]
+   Original       : [0.2995]
+   Pruned         : [0.3283]
+Root mean squared error (RMSE)
+   Default        : [0.6118]: 
+   Original       : [0.3858]: 
+   Pruned         : [0.4215]: 
+Pearson correlation coefficient
+   Default        : [?]
+   Original       : [0.7761]
+   Pruned         : [0.7248]
+
+
+Default Model
+*************
+
+[2.059842]
+
+
+Pruned Model
+************
+
+actsit_mo > 4
++--yes: sotr_2 > 1
+|       +--yes: soil_JB > 3
+|       |       +--yes: tr_fert_time > 0.7
+|       |       |       +--yes: [1.735209]
+|       |       |       +--no:  tr_deep_till > 0.04
+|       |       |               +--yes: [1.996812]
+|       |       |               +--no:  [2.3167]
+|       |       +--no:  tr_shal_till > 0
+|       |               +--yes: Current_crop=ba-ch > 0
+|       |               |       +--yes: [1.278228]
+|       |               |       +--no:  actsit_mo > 6
+|       |               |               +--yes: [2.229714]
+|       |               |               +--no:  Current_crop=ba > 0
+|       |               |                       +--yes: [2.046033]
+|       |               |                       +--no:  [1.719901]
+|       |               +--no:  [0.857671]
+|       +--no:  crop3=wh > 0
+|               +--yes: [2.727381]
+|               +--no:  tr_packing > 0
+|                       +--yes: [1.5749]
+|                       +--no:  AC_3 > 0
+|                               +--yes: Current_crop=lu > 0
+|                               |       +--yes: [1.707368]
+|                               |       +--no:  [2.234472]
+|                               +--no:  Current_crop=fa > 0
+|                                       +--yes: [2.853226]
+|                                       +--no:  Current_crop=fa-clgr > 0
+|                                               +--yes: [2.825913]
+|                                               +--no:  [2.362435]
++--no:  soil_JB > 1
+        +--yes: tr_packing > 0
+        |       +--yes: MC_3 > 0
+        |       |       +--yes: [0.765319]
+        |       |       +--no:  [1.437986]
+        |       +--no:  crop1=le > 0
+        |               +--yes: tr_shal_till > 0
+        |               |       +--yes: [1.768105]
+        |               |       +--no:  [0.758881]
+        |               +--no:  Current_crop=po > 0
+        |                       +--yes: [1.129213]
+        |                       +--no:  actsit_mo > 0
+        |                               +--yes: samp_time > 1
+        |                               |       +--yes: crop2=ba-gr > 0
+        |                               |       |       +--yes: [2.867336]
+        |                               |       |       +--no:  Current_crop=be > 0
+        |                               |       |               +--yes: [1.653582]
+        |                               |       |               +--no:  tr_subshal_till > 0.81
+        |                               |       |                       +--yes: [2.501109]
+        |                               |       |                       +--no:  sepl > 0
+        |                               |       |                               +--yes: [1.511465]
+        |                               |       |                               +--no:  crop1=fa > 0
+        |                               |       |                                       +--yes: [2.642755]
+        |                               |       |                                       +--no:  soil_JB > 5
+        |                               |       |                                               +--yes: crop1=lu > 0
+        |                               |       |                                               |       +--yes: [1.600638]
+        |                               |       |                                               |       +--no:  samp_time > 3
+        |                               |       |                                               |               +--yes: [2.297086]
+        |                               |       |                                               |               +--no:  [1.975645]
+        |                               |       |                                               +--no:  tr_fert_time > 0.8
+        |                               |       |                                                       +--yes: [2.580044]
+        |                               |       |                                                       +--no:  crop2=wh > 0
+        |                               |       |                                                               +--yes: crop3=wh > 0
+        |                               |       |                                                               |       +--yes: [1.194923]
+        |                               |       |                                                               |       +--no:  [1.955817]
+        |                               |       |                                                               +--no:  tr_deep_till > 0.49
+        |                               |       |                                                                       +--yes: [1.959466]
+        |                               |       |                                                                       +--no:  sf > 0
+        |                               |       |                                                                               +--yes: tr_deep_till > 0.25
+        |                               |       |                                                                               |       +--yes: MC_1 > 0
+        |                               |       |                                                                               |       |       +--yes: [1.815236]
+        |                               |       |                                                                               |       |       +--no:  [2.436996]
+        |                               |       |                                                                               |       +--no:  [1.698188]
+        |                               |       |                                                                               +--no:  tr_fert_time > 0.5
+        |                               |       |                                                                                       +--yes: actsit_mo > 3
+        |                               |       |                                                                                       |       +--yes: [2.391576]
+        |                               |       |                                                                                       |       +--no:  [1.877906]
+        |                               |       |                                                                                       +--no:  [2.310723]
+        |                               |       +--no:  [1.390761]
+        |                               +--no:  soil_JB > 2
+        |                                       +--yes: tr_fert_time > 0.7
+        |                                       |       +--yes: soil_JB > 5
+        |                                       |       |       +--yes: [1.604055]
+        |                                       |       |       +--no:  [2.396907]
+        |                                       |       +--no:  crop3=clgr > 0
+        |                                       |               +--yes: [2.036985]
+        |                                       |               +--no:  [1.58667]
+        |                                       +--no:  [0.985128]
+        +--no:  actsit_mo > 2
+                +--yes: Current_crop=wh > 0
+                |       +--yes: [1.552904]
+                |       +--no:  [0.76669]
+                +--no:  [1.811045]
+

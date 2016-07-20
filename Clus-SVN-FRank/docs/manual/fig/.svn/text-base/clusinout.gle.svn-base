@@ -1,0 +1,208 @@
+
+size 16 7.1
+
+include "shape.gle"
+
+set texlabels 1 alabelscale 0.9 atitlescale 1 hei 0.3
+
+x = 4.4
+dy = 0.3
+dxl = 1.5
+
+begin object sfile
+   gsave
+   set hei 0.15
+   begin text
+   [Model]
+   MinimalWeight = 2.0
+   [Tree]
+   FTest = 1.0
+   ...
+   end text
+   grestore
+end object
+
+begin object arff
+   gsave
+   set hei 0.15
+   begin text
+   @relation data
+   @attribute x {0,1}
+   @attribute y numeric
+   @data
+   0,0.5
+   1,0.75
+   ...
+   end text
+   grestore
+end object
+
+amove x pageheight()-0.05
+draw disk.tc 1.5 1.5 0.1 name sdisk
+
+amove ptx(sdisk.cc) pty(sdisk.cc)-0.2
+draw sfile.cc
+
+set just cc
+amove ptx(sdisk.lc)-dxl pty(sdisk.lc)
+begin tex
+\begin{tabular}{c}
+Settings file\\
+(filename.s)\\
+\end{tabular}
+end tex
+
+amove x pty(sdisk.bc)-0.3
+draw disk.tc 1.5 1.5 0.1 name tdisk
+
+amove ptx(tdisk.cc) pty(tdisk.cc)-0.2
+draw arff.cc
+
+set just cc
+amove ptx(tdisk.lc)-dxl pty(tdisk.lc)
+begin tex
+\begin{tabular}{c}
+Training data\\
+(filename.arff)\\
+\end{tabular}
+end tex
+
+amove x pty(tdisk.bc)-0.3
+draw disk.tc 1.5 1.5 0.1 name vdisk
+
+amove ptx(vdisk.cc) pty(vdisk.cc)-0.2
+draw arff.cc
+
+set just cc
+amove ptx(vdisk.lc)-dxl pty(vdisk.lc)
+begin tex name vdata
+\begin{tabular}{c}
+Validation data\\
+(optional)\\
+\end{tabular}
+end tex
+
+amove x pty(vdisk.bc)-0.3
+draw disk.tc 1.5 1.5 0.1 name tsdisk
+
+amove ptx(tsdisk.cc) pty(tsdisk.cc)-0.2
+draw arff.cc
+
+set just cc
+amove ptx(tsdisk.lc)-dxl pty(tsdisk.lc)
+begin tex
+\begin{tabular}{c}
+Test data\\
+(optional)\\
+\end{tabular}
+end tex
+
+amove ptx(vdata.lc)-0.1 pty(tsdisk.bc)
+draw curly_bracket_left.bc 0.3 pty(tdisk.tc)-pty(tsdisk.bc) name brace
+
+set just bc
+amove ptx(brace.lc)-0.1 pty(brace.lc)
+begin rotate 90
+   tex "Input data in ARFF format"
+end rotate
+
+diskr = ptx(tsdisk.rc)
+
+dx = 2.25
+
+set just lc
+amove diskr+dx+0.15 (pty(tdisk.rc)+pty(vdisk.rc))/2
+begin box add 0.15 round 0.2 name clus
+   begin tex name clus
+   Clus system
+   end tex
+   abound ptx(clus.cc) pty(clus.tc)+0.5
+   abound ptx(clus.cc) pty(clus.bc)-0.5
+end box
+
+set arrowsize 0.3 arrowangle 20
+
+amove ptx(sdisk.rc) pty(sdisk.rc)
+aline diskr+dx/2 pty(sdisk.rc)
+aline diskr+dx/2 pty(tsdisk.rc)
+amove ptx(tdisk.rc) pty(tdisk.rc)
+aline diskr+dx/2 pty(tdisk.rc)
+amove ptx(vdisk.rc) pty(vdisk.rc)
+aline diskr+dx/2 pty(vdisk.rc)
+amove ptx(tsdisk.rc) pty(tsdisk.rc)
+aline diskr+dx/2 pty(tsdisk.rc)
+amove diskr+dx/2 pty(clus.lc)
+aline diskr+dx pty(clus.lc) arrow end
+
+x = ptx(clus.rc)+dx+1.5/2
+
+amove x pageheight()-0.05
+draw disk.tc 1.5 1.5 0.1 name odisk
+
+set just cc
+amove ptx(odisk.rc)+dxl pty(odisk.rc)
+begin tex
+\begin{tabular}{c}
+Output file\\
+(filename.out)\\
+\end{tabular}
+end tex
+
+amove ptx(odisk.cc) pty(odisk.cc)-0.15
+draw l_tree.cc 0.9 0.9 0.3 0.2
+
+amove x pty(odisk.bc)-0.3
+draw disk.tc 1.5 1.5 0.1 name xdisk
+
+set just cc
+amove ptx(xdisk.rc)+dxl pty(xdisk.rc)
+begin tex
+\begin{tabular}{c}
+Cross-validation\\
+details\\
+(filename.xval)\\
+\end{tabular}
+end tex
+
+amove ptx(xdisk.cc) pty(xdisk.cc)-0.15
+rmove -0.35 0.2
+draw l_tree.cc 0.4 0.4 0.3 0.2
+rmove +0.7 -0.05
+draw r_tree.cc 0.4 0.4 0.3 0.2
+rmove -0.4 -0.35
+draw l_tree.cc 0.4 0.4 0.3 0.2
+
+amove x pty(xdisk.bc)-0.3
+draw disk.tc 1.5 1.5 0.1 name pdisk
+
+amove ptx(pdisk.cc) pty(pdisk.cc)-0.2
+draw arff.cc
+
+set just cc
+amove ptx(pdisk.rc)+dxl pty(pdisk.rc)
+begin tex
+\begin{tabular}{c}
+Predictions\\
+(ARFF format)\\
+\end{tabular}
+end tex
+
+gsave
+set hei 0.5
+amove x pty(pdisk.bc)-0.5
+tex "\ldots"
+grestore
+
+amove ptx(clus.rc) pty(clus.rc)
+aline ptx(clus.rc)+dx/2 pty(clus.rc)
+amove ptx(clus.rc)+dx/2 pty(odisk.lc)
+aline ptx(clus.rc)+dx/2 pty(pdisk.lc)
+amove ptx(clus.rc)+dx/2 pty(odisk.lc)
+aline ptx(odisk.lc) pty(odisk.lc) arrow end
+amove ptx(clus.rc)+dx/2 pty(xdisk.lc)
+aline ptx(xdisk.lc) pty(xdisk.lc) arrow end
+amove ptx(clus.rc)+dx/2 pty(pdisk.lc)
+aline ptx(pdisk.lc) pty(pdisk.lc) arrow end
+
+
+

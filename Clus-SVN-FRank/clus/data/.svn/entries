@@ -1,0 +1,77 @@
+10
+
+dir
+794
+https://clus.svn.sourceforge.net/svnroot/clus/trunk/clus/data
+https://clus.svn.sourceforge.net/svnroot/clus
+
+
+
+2013-02-06T17:13:33.493518Z
+778
+dkocev
+has-props
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+1ed6275f-fa47-4a32-9272-b133f8fb113e
+
+ClusData.java
+file
+
+
+
+
+2013-02-07T13:56:28.000000Z
+0b3e3acac8a32c7397a2d68200f2ad9d
+2008-10-23T12:14:26.000000Z
+380
+jan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+2675
+
+attweights
+dir
+
+cols
+dir
+
+io
+dir
+
+rows
+dir
+
+type
+dir
+

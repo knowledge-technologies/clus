@@ -1,0 +1,16 @@
+@relation sspd
+
+@attribute key		key
+@attribute attr_a	{a,b}
+@attribute attr_b	binary
+@attribute attr_c	numeric
+
+@data
+e1,a,1,0
+e2,a,1,0
+e3,a,1,0
+e4,a,1,1
+e5,b,1,1.2
+e6,b,1,1.3
+e7,b,0,1.4
+e8,b,0,1.5

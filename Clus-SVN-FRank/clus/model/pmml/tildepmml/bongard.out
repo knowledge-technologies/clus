@@ -1,0 +1,111 @@
+--------------------------
+
+** Output of Tilde 2.2 (ilProlog) **
+Run on leetah: i686 running linux
+
+Command: tilde
+Settings:
+** Common ** 
+*  load  :  key (default) 
+*  talking  :  3 (default) 
+*  outerloop  :  queries (default) 
+*  use_packs  :  0 
+*  classes  :  [pos,neg] (default) 
+*  leave_out  :  false (default) 
+*  granularity  :  10 (default) 
+*  huge  :  off (default) 
+*  odbc  :  off (default) 
+*  expert_implicit_language  :  off (default) 
+*  mi_distance_maxsample  :  100 (default) 
+*  generation_order  :  old (default) 
+*  old_expand  :  on (default) 
+*  default_preprocessing  :  off (default) 
+*  default_min  :  1 (default) 
+*  report_timings  :  off (default) 
+*  randomise  :  none (default) 
+*  repeat_run  :  1 (default) 
+** Tilde ** 
+*  tilde_mode  :  classify (default) 
+*  output_options  :  [c45,prolog] (default) 
+*  heuristic  :  gain 
+*  ftest  :  0.05 (default) 
+*  minimal_cases  :  2 (default) 
+*  accuracy  :  1.0 (default) 
+*  max_querytime  :  100 (default) 
+*  sampling_strategy  :  none 
+*  multiscore  :  off (default) 
+*  discretization  :  none (default) 
+*  pruning  :  c45 (default) 
+*  random_validation_set  :  0 (default) 
+*  random_test_set  :  0 (default) 
+*  confidence_level  :  0.25 (default) 
+*  prune_rules  :  false (default) 
+*  output_options  :  [c45,prolog] (default) 
+*  discretization  :  none (default) 
+*  heuristic  :  gain 
+*  prune_rules  :  false (default) 
+*  resume  :  off 
+*  precompute  :  [] (default) 
+*  complexity_penalty  :  1.0 (default) 
+*  classify_mode  :  0 (default) 
+*  show_averages  :  0 (default) 
+************** 
+Language:
+                                      
+--------------------------
+
+Discretization time: 0.0 seconds.
+Induction time: 0.09 seconds.
+
+--------------------------
+
+After safe pruning:
+Sorry, no error measures available for this mode
+
+--------------------------
+
+After pruning:
+Sorry, no error measures available for this mode
+
+--------------------------
+
+Compact notation of pruned tree:
+
+bongard(A,B)
+triangle(A,C) ? 
++--yes: in(A,C,D) ? 
+|       +--yes: triangle(A,D) ? 
+|       |       +--yes: pos 82.0 [pos:82.0,neg:0.0]
+|       |       +--no:  circle(A,E) ? 
+|       |               +--yes: in(A,E,F) ? 
+|       |               |       +--yes: neg 28.0 [pos:0.0,neg:28.0]
+|       |               |       +--no:  pos 34.0 [pos:34.0,neg:0.0]
+|       |               +--no:  neg 36.0 [pos:0.0,neg:36.0]
+|       +--no:  circle(A,G) ? 
+|               +--yes: in(A,G,H) ? 
+|               |       +--yes: neg 79.0 [pos:0.0,neg:79.0]
+|               |       +--no:  pos 12.0 [pos:12.0,neg:0.0]
+|               +--no:  neg 34.0 [pos:0.0,neg:34.0]
++--no:  neg 87.0 [pos:0.0,neg:87.0]
+
+--------------------------
+
+Equivalent prolog program:
+
+bongard(A,pos) :- triangle(A,B),in(A,B,C),triangle(A,C), !.
+% 82.0 examples.
+bongard(A,neg) :- triangle(A,B),in(A,B,C),circle(A,D),in(A,D,E), !.
+% 28.0 examples.
+bongard(A,pos) :- triangle(A,B),in(A,B,C),circle(A,D), !.
+% 34.0 examples.
+bongard(A,neg) :- triangle(A,B),in(A,B,C), !.
+% 36.0 examples.
+bongard(A,neg) :- triangle(A,B),circle(A,C),in(A,C,D), !.
+% 79.0 examples.
+bongard(A,pos) :- triangle(A,B),circle(A,C), !.
+% 12.0 examples.
+bongard(A,neg) :- triangle(A,B), !.
+% 34.0 examples.
+bongard(A,neg).
+% 87.0 examples.
+

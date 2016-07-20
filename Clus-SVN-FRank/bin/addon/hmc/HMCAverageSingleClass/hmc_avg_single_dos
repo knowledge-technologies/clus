@@ -1,0 +1,8 @@
+#!/bin/sh
+export HOME=c:/cygwin/home/jan
+export WEKA_DIR=$HOME/Clus
+export CLUS_DIR=$HOME/Clus
+export HMC_AVG_SINGLE_DIR=$CLUS_DIR/addon/hmc/HMCAverageSingleClass
+echo "CLUS_DIR: $CLUS_DIR"
+echo "HMC_AVG_SINGLE_DIR: $HMC_AVG_SINGLE_DIR"
+java -cp "$HMC_AVG_SINGLE_DIR/bin;$CLUS_DIR/bin;$WEKA_DIR/weka.jar;$CLUS_DIR/commons-math-1.0.jar" HMCAverageSingleClass $*

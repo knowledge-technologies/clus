@@ -1,0 +1,100 @@
+--------------------------
+
+** Output of Tilde 2.2 (%PRE%PROLOG%) **
+Run on leetah: i686 running linux
+
+Command: tilde
+Settings:
+** Common ** 
+*  load  :  key (default) 
+*  talking  :  3 (default) 
+*  outerloop  :  queries (default) 
+*  use_packs  :  2 (default) 
+*  classes  :  [ok,fix,sendback] 
+*  leave_out  :  false (default) 
+*  granularity  :  10 (default) 
+*  huge  :  off (default) 
+*  odbc  :  off (default) 
+*  expert_implicit_language  :  off (default) 
+*  mi_distance_maxsample  :  100 (default) 
+*  generation_order  :  old (default) 
+*  old_expand  :  on (default) 
+*  default_preprocessing  :  off (default) 
+*  default_min  :  1 (default) 
+*  report_timings  :  off (default) 
+*  randomise  :  none (default) 
+*  repeat_run  :  1 (default) 
+** Tilde ** 
+*  tilde_mode  :  classify (default) 
+*  output_options  :  [c45,prolog] (default) 
+*  heuristic  :  gain 
+*  ftest  :  0.05 (default) 
+*  minimal_cases  :  2 (default) 
+*  accuracy  :  1.0 (default) 
+*  max_querytime  :  100 (default) 
+*  sampling_strategy  :  fixed(1000) (default) 
+*  multiscore  :  off (default) 
+*  discretization  :  none (default) 
+*  pruning  :  c45 (default) 
+*  random_validation_set  :  0 (default) 
+*  random_test_set  :  0 (default) 
+*  confidence_level  :  0.25 (default) 
+*  prune_rules  :  false (default) 
+*  output_options  :  [c45,prolog] (default) 
+*  discretization  :  none (default) 
+*  heuristic  :  gain 
+*  prune_rules  :  false (default) 
+*  resume  :  off 
+*  precompute  :  [] (default) 
+*  complexity_penalty  :  1.0 (default) 
+*  classify_mode  :  0 (default) 
+*  show_averages  :  0 (default) 
+************** 
+Language:
+  predict(machine(+machine,-action))
+  rmode(replaceable(+A))
+  rmode(not_replaceable(+A))
+  rmode(worn(+A,+-B))
+  type(replaceable(comp))
+  type(not_replaceable(comp))
+  type(worn(machine,comp))
+  type(A=B)
+  type(machine(machine,action))
+
+--------------------------
+
+Discretization time: 0.0 seconds.
+Induction time: 0.0 seconds.
+
+--------------------------
+
+After safe pruning:
+Sorry, no error measures available for this mode
+
+--------------------------
+
+After pruning:
+Sorry, no error measures available for this mode
+
+--------------------------
+
+Compact notation of pruned tree:
+
+machine(A,B)
+worn(A,C) ? 
++--yes: not_replaceable(C) ? 
+|       +--yes: sendback 6.0 [ok:0.0,fix:0.0,sendback:6.0]
+|       +--no:  fix 6.0 [ok:0.0,fix:6.0,sendback:0.0]
++--no:  ok 3.0 [ok:3.0,fix:0.0,sendback:0.0]
+
+--------------------------
+
+Equivalent prolog program:
+
+machine(A,sendback) :- worn(A,B),not_replaceable(B), !.
+% 6.0 examples.
+machine(A,fix) :- worn(A,B), !.
+% 6.0 examples.
+machine(A,ok).
+% 3.0 examples.
+

@@ -1,0 +1,14 @@
+
+date in {august,september,october}
++--no: temp
+|      +-- ?: ?
++--yes: fruiting-bodies = ?
+        +--yes: ?
+        +--no: ?
+
+
+% +--no: temp
+%        +--lt-norm: ?
+%        +--norm: ?
+%        +--gt-norm: ?
+%        +--miss: ?

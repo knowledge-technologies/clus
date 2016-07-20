@@ -1,0 +1,144 @@
+10
+
+dir
+794
+https://clus.svn.sourceforge.net/svnroot/clus/trunk/clus
+https://clus.svn.sourceforge.net/svnroot/clus
+
+
+
+2013-03-27T10:58:01.530751Z
+794
+dkocev
+has-props
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+1ed6275f-fa47-4a32-9272-b133f8fb113e
+
+.nbattrs
+file
+
+
+
+
+2013-02-07T13:56:11.000000Z
+2299f5a325c6650027d3a505196965c1
+2005-05-24T13:09:24.000000Z
+2
+jan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+526
+
+Clus.java
+file
+
+
+
+
+2013-03-21T14:38:11.000000Z
+b075e834c833263ef364d41ecf275c9d
+2013-03-27T10:58:01.530751Z
+794
+dkocev
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+62773
+
+algo
+dir
+
+data
+dir
+
+error
+dir
+
+ext
+dir
+
+gui
+dir
+
+heuristic
+dir
+
+io
+dir
+
+main
+dir
+
+model
+dir
+
+nominal
+dir
+
+pruning
+dir
+
+selection
+dir
+
+statistic
+dir
+
+tools
+dir
+
+util
+dir
+
+weka
+dir
+

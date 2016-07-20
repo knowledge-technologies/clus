@@ -1,0 +1,152 @@
+Clus run ionosphere
+*******************
+
+Date: 3/21/12 4:59 PM
+File: ionosphere_50_.oob
+Attributes: 35 (input: 34, output: 1)
+Missing values: No
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 0
+ResourceInfoLoaded = No
+
+[Data]
+File = ionosphere.arff
+TestSet = None
+PruneSet = None
+XVal = 10
+RemoveMissingTarget = No
+NormalizeData = None
+
+[Attributes]
+Target = 35
+Clustering = 35
+Descriptive = 1-34
+Key = None
+Disable = None
+Weights = Normalize
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = No
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WriteErrorFile = No
+WritePredictions = {Test}
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+OutputDatabaseQueries = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 1.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+NominalSubsetTests = Yes
+
+[Tree]
+Heuristic = Gain
+PruningMethod = None
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = {}
+MSENominal = No
+SplitSampling = None
+InductionOrder = DepthFirst
+EntropyType = StandardEntropy
+ConsiderUnlableInstancesInIGCalc = No
+
+[Ensemble]
+Iterations = 50
+EnsembleMethod = RForest
+VotingType = Majority
+SelectRandomSubspaces = 6
+PrintAllModels = No
+PrintAllModelFiles = No
+PrintPaths = Yes
+Optimize = Yes
+OOBestimate = Yes
+FeatureRanking = No
+WriteEnsemblePredictions = No
+EnsembleRandomDepth = No
+BagSelection = -1
+BagSize = 0
+
+Run: 50
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.318 sec
+Pruning Time: 0 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: FOREST with 0 models (Total nodes: 0 and leaves: 0)
+
+
+Out-Of-Bag Estimate of Error
+--------------
+
+Number of examples: 351
+Classification Error
+   Default: 
+   Attribute: class
+     REAL\PRED |  +1 | -1 |
+     --------------------------
+            +1 | 225 |  0 | 225
+            -1 | 126 |  0 | 126
+     --------------------------
+               | 351 |  0 | 351
+     Accuracy: 0.641026
+     Cramer's coefficient: 0
+
+   Original: 
+   Attribute: class
+     REAL\PRED |  +1 |  -1 |
+     ---------------------------
+            +1 | 220 |   5 | 225
+            -1 |  18 | 108 | 126
+     ---------------------------
+               | 238 | 113 | 351
+     Accuracy: 0.934473
+     Cramer's coefficient: 0.857223
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [2.173])
+   Default        : [1.0013]
+   Original       : [2.1729]
+
+Default Model
+*************
+
+[+1] [231.0]: 351
+
+Original Model
+**************
+
+Forest with 0 models
+

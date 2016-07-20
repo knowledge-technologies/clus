@@ -1,0 +1,23 @@
+#!/usr/local/bin/perl
+
+$cnt = 0; $dos = 0;
+
+$fname = $ARGV[0];
+open(IN, $fname) || die "Can't open '$fname'";
+while ($line = <IN>) {
+	$cnt ++;
+	if ($line =~ /\r/) {
+		$dos++;
+	}
+}
+close(IN);
+
+if ($cnt != 0) {
+	$perc = 100.0*$dos/$cnt;
+} else {
+	$perc = 0;
+}
+
+if ($dos > 0) {
+	printf "File: $fname DOS: $dos/$cnt = %.1f\%\n", $perc;
+}

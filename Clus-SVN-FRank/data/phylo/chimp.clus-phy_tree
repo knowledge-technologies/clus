@@ -1,0 +1,25 @@
+Phylogenetic tree structure:
+
++-- CLUSTER
+|       +--   orangutang
+|       +--   gibbonxxxx
++-- CLUSTER
+        +-- CLUSTER
+        |       +--   chimpanzee
+        |       +--   homosapien
+        +--   gorillaexx
+
+
+
+Phylogenetic tree with all splits listed:
+
+p18 = C and p43 = T and p52 = A and p53 = C and p121 = A and p151 = C and p227 = A and p230 = A and p250 = C and p257 = A and p326 = C and p332 = A and p392 = C and p434 = A and p483 = C and p497 = A and p502 = C and p557 in {A,G} and p558 = A and p567 in {A,G} and p661 = A and p672 = C and p714 = C and p715 = A and p716 = C and p718 = A and p735 = C and p759 = C and p769 = A and p771 = G and p773 = C and p838 = A and p840 = C and p862 = A and p877 = A and p879 = A
++--yes: p7 = C and p10 = A and p13 = C and p20 = A and p21 = C and p28 = A and p31 = C and p37 = C and p43 = A and p46 = A and p49 = C and p55 = A and p58 = A and p67 = A and p91 = C and p112 = A and p117 = A and p121 = C and p124 = C and p128 = A and p130 = C and p131 = C and p139 = A and p142 = A and p149 = C and p160 = C and p161 = C and p162 = C and p173 = A and p181 = C and p190 = A and p196 = C and p199 = C and p205 = C and p211 = A and p219 = C and p229 = A and p233 = A and p234 = C and p235 = A and p241 = C and p244 = A and p245 = G and p247 = A and p252 = C and p253 = C and p256 = C and p259 = C and p260 = A and p261 = C and p265 = A and p268 = A and p271 = A and p278 = A and p289 = A and p290 = A and p301 = C and p304 = C and p307 = C and p313 = C and p315 = C and p318 = C and p331 = C and p336 = C and p337 = C and p349 = C and p352 = A and p364 = C and p367 = A and p368 = C and p376 = A and p382 = C and p384 = C and p385 = A and p386 = C and p388 = A and p391 = A and p394 = C and p397 = A and p403 = A and p405 = C and p410 = A and p419 = C and p422 = A and p433 = C and p435 = A and p442 = C and p443 = A and p448 = C and p451 = C and p452 = A and p454 = C and p455 = C and p456 = A and p464 = C and p474 = C and p499 = C and p505 = A and p507 = C and p509 = C and p511 = A and p512 = A and p517 = C and p521 = A and p522 = C and p536 = C and p556 = C and p557 = C and p559 = C and p560 = C and p567 = A and p587 = A and p611 = A and p624 = C and p659 = C and p663 = A and p668 = A and p669 = C and p679 = A and p681 = C and p682 = A and p683 = C and p684 = C and p687 = A and p690 = C and p691 = C and p696 = C and p705 = C and p717 = A and p720 = C and p726 = C and p738 = C and p744 = A and p748 = C and p749 = C and p756 = C and p762 = C and p770 = C and p772 = A and p777 = C and p780 = A and p783 = C and p784 = A and p791 = C and p792 = A and p801 = A and p802 = A and p804 = C and p807 = A and p812 = C and p819 = C and p822 = C and p826 = A and p827 = C and p830 = A and p831 = A and p843 = C and p844 = A and p846 = C and p847 = A and p856 = C and p857 = A and p864 = A and p865 = A and p867 = A and p873 = A and p876 = A and p880 = C and p888 = A
+|       +--yes:  orangutang
+|       +--no:   gibbonxxxx
++--no:  p20 = A and p25 = C and p31 = C and p49 = A and p88 = A and p97 = C and p124 = C and p130 = C and p149 = C and p163 = A and p175 = C and p214 = A and p223 = A and p256 = C and p259 = C and p260 = C and p273 = C and p274 = C and p304 = C and p307 = C and p332 = C and p340 = A and p349 = C and p351 = A and p370 = C and p384 = C and p397 = A and p439 = C and p499 = C and p513 = A and p538 = A and p544 = A and p563 = A and p567 = C and p623 = A and p663 = C and p670 = A and p688 = A and p711 = C and p724 = C and p729 = C and p732 = C and p746 = A and p762 = C and p771 = C and p774 = C and p819 = C and p820 = A and p851 = A and p878 = C and p879 = C and p882 = A
+        +--yes: p17 = A and p19 = C and p22 = C and p56 = C and p79 = C and p82 = C and p91 = C and p109 = C and p115 = C and p148 = C and p160 = C and p185 = C and p193 = C and p196 = C and p202 = C and p205 = A and p208 = A and p211 = A and p220 = C and p233 = A and p252 = C and p265 = C and p272 = C and p284 = A and p295 = A and p310 = A and p352 = C and p361 = A and p382 = C and p385 = C and p391 = A and p394 = C and p395 = A and p412 = C and p418 = C and p430 = C and p433 = C and p436 = C and p442 = C and p445 = C and p448 = A and p451 = C and p452 = A and p457 = C and p510 = C and p537 = C and p539 = C and p552 = C and p557 = A and p558 = C and p566 = C and p569 = A and p606 = C and p611 = A and p667 = C and p669 = C and p675 = C and p685 = C and p693 = A and p697 = C and p700 = C and p707 = C and p717 = C and p727 = A and p753 = C and p765 = A and p775 = A and p780 = A and p792 = C and p795 = C and p798 = C and p801 = C and p822 = A and p839 = C and p849 = A and p855 = A and p864 = A
+        |       +--yes:  chimpanzee
+        |       +--no:   homosapien
+        +--no:   gorillaexx
+

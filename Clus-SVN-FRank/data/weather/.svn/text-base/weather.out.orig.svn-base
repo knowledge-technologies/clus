@@ -1,0 +1,143 @@
+Clus run weather
+****************
+
+Date: 6/30/05 9:48 AM
+File: weather.out
+Attributes: 6 (input: 4, output: 1)
+Rows: 13
+
+[General]
+Verbose = 1
+RandomSeed = 0
+XVal = 10
+
+[Data]
+File = weather.arff
+TestSet = None
+PruneSet = None
+
+[Attributes]
+Target = 5
+Disable = 6
+Clustering = 5
+Descriptive = 1-4
+Key = None
+Weights = Normalize
+ClusteringWeights = 1.0
+
+[Model]
+MinimalWeight = 2.0
+ParamTuneNumberFolds = 10
+
+[Tree]
+Heuristic = Default
+MaxDepth = Infinity
+BinarySplit = Yes
+PruningMethod = None
+ConvertToRules = No
+
+[Rules]
+OrderedRules = Yes
+CoveringMethod = Standard
+CoveringWeight = 0.9
+ComputeCompactness = No
+CompactnessWeights = 
+  TargetWeight = 1.0
+  NonTargetWeight = 1.0
+  NumericWeight = 1.0
+  NominalWeight = 0.5
+RandomRules = No
+PrintRuleWiseErrors = Yes
+
+[Numeric]
+FTest = 1.0
+MultiScore = None
+
+[Nominal]
+GainRatio = No
+MEstimate = 1.0
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = Infinity
+
+[Output]
+AllFoldModels = Yes
+AllFoldErrors = No
+TrainErrors = Yes
+UnknownFrequency = No
+BranchFrequency = No
+WriteTestSetPredictions = No
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Time: 0.087 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 7 (Leaves: 4)
+     Pruned: Nodes = 7 (Leaves: 4)
+
+Training error
+--------------
+
+Number of examples: 13
+Classification Error
+   Default        :    Attribute: play
+
+     REAL\PRED | yes | no |
+     -------------------------
+           yes |   9 |  0 |  9
+            no |   4 |  0 |  4
+     -------------------------
+               |  13 |  0 | 13
+
+     Accuracy: 0.692308
+     Cramer's coefficient: 0
+
+   Original       :    Attribute: play
+
+     REAL\PRED | yes | no |
+     -------------------------
+           yes |   8 |  1 |  9
+            no |   2 |  2 |  4
+     -------------------------
+               |  10 |  3 | 13
+
+     Accuracy: 0.769231
+     Cramer's coefficient: 0.426006
+
+   Pruned         :    Attribute: play
+
+     REAL\PRED | yes | no |
+     -------------------------
+           yes |   8 |  1 |  9
+            no |   2 |  2 |  4
+     -------------------------
+               |  10 |  3 | 13
+
+     Accuracy: 0.769231
+     Cramer's coefficient: 0.426006
+
+
+Default Model
+*************
+
+[yes] : [9,4] : 13
+
+Pruned Model
+************
+
+outlook = overcast
++--yes: [yes] : [4,0] : 4 (1)
++--no:  outlook = sunny
+        +--yes: temperature > 72
+        |       +--yes: [no] : [1,2] : 3 (2)
+        |       +--no:  [yes] : [1,1] : 2 (3)
+        +--no:  [yes] : [3,1] : 4 (4)
+

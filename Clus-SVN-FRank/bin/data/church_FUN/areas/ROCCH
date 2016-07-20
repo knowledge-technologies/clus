@@ -1,0 +1,712 @@
+#! /usr/bin/perl
+##
+##  ROCCH -- Compute the ROC Convex Hull of sets of ROC points.
+##
+##  Copyright (C) 1998,1999,2000 Tom Fawcett (tfawcett@acm.org)
+##
+##  This program is free software; you may redistribute it and/or
+##  modify it under the terms of the GNU General Public License
+##  as published by the Free Software Foundation; either version 2
+##  of the License, or (at your option) any later version.
+##
+##  This program is distributed in the hope that it will be useful,
+##  but WITHOUT ANY WARRANTY; without even the implied warranty of
+##  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+##  GNU General Public License for more details.
+## 
+##  You should have received a copy of the GNU General Public License
+##  along with this program; if not, write to the Free Software
+##  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+##  Or see:   http://www.fsf.org/copyleft/gpl.html
+##
+##  AUTHOR:
+##       Tom Fawcett <tfawcett@acm.org>
+##       Hewlett-Packard Laboratories
+##       1501 Page Mill Rd.
+##       Palo Alto, CA  94304
+##       USA
+##
+##  DESCRIPTION:
+##
+##       This program computes the convex hull of a set of ROC points
+##       (technically, the upper left triangular convex hull, bounded
+##       by (0,0) and (1,1)).  The ROC Convex Hull is used to find dominant
+##       (and locally best) classifiers in ROC space.  For more information
+##       on the ROC convex hull and its uses, see the references below.
+##
+$::USAGE = "
+
+	  ROCCH [--collapse|compress] [--help|usage] [--version] [--key]
+                [--data-format={xy|xyc|xyn|auto}]
+                 file1 file2 ...
+
+       Each file specified on the command line should contain a set of ROC
+       points, typically associated with a single classifier.  The files
+       should contain lines like:
+
+              FP TP [CLASSIFIER]
+
+       FP and TP are the False Positive (X axis) and True Positive (Y axis)
+       values for the point.  
+
+       Fields can be separated by commas or whitespace.  Blank lines in the
+       file and lines beginning with '#, @ and &' are ignored.
+
+       --collapse   Collapses multiple points from a single classifier
+       --compress   into a single line when the locally best classifiers
+                    are printed.
+
+       --key        Replace classifier names with single letters in hull
+                    output, and include a correspondence key.  This can
+                    greatly reduce clutter when using long complex classifier
+                    names (eg, Mushroom.MC4-bagged.freq.run_3.avgd).
+
+       --data-format Specifies input point format, which should be one of:
+                        xy    Input is (X,Y) pair.  Classifier name is name
+                              of file. 
+                        xyc   Input is (X,Y,Confidence) triple.  Confidence is
+                              currently ignored, classifier name is filename.
+                        xyn   Input is (X,Y,Name).  Name is classifier name 
+                              and must be specified.
+                        auto  [DEFAULT]  If 2 fields seen, classifier name is 
+                              current filename.  If >2, classifier name is 
+                              remainder of line.
+
+                     This option is useful if the input data were prepared for 
+                     some other application.
+
+       --inhull FILE
+                   Load an existing convex hull from FILE before processing
+                   the new points.
+
+       --outhull FILE
+                   Save the resulting convex hull to FILE when done.
+
+       --update FILE
+                   Same as the options '--inhull FILE --outhull FILE', except
+                   FILE need not already exist.
+
+"; 
+##
+##  OUTPUT:
+##
+##       The program prints two tables.  The first table lists each point on
+##       the convex hull and the classifier that produced it, for 0<=FP<=1.
+##       This is the raw hull, mostly for informational purposes.
+##
+##       The second table is a listing of the locally best classifiers for
+##       0<=slope<=1.  The table lists the slope ranges for each hull
+##       segment in which a different classifier(s) is dominant, along with the
+##       names of the classifier(s) that are optimal in that range and the
+##       left boundary ROC point of the hull segment.
+##       For example:
+##       
+##       SLOPE RANGE             RT.BOUNDARY     CLASSIFIER(s)
+##       -------------------------------------------------------------
+##       [0.0000, 0.0376]        0.0495 0.9643   AllPos
+##       [0.0376, 2.6003]        0.0220 0.8929   NBayes, N:P ratio= 0.5
+##       [2.6003, 40.6215]       0.0000 0.0000   C4.5, N:P ratio= 4
+##       [40.621, Inf]           0.0000 0.0000   AllNeg
+##
+##       The SLOPE RANGE is the range of iso-performance for which
+##       the corresponding classifier is optimal; in other words, the
+##       range specifies the class/cost tradeoff range under which the
+##       classifier is better than any of the others.
+##       The RT.BOUNDARY is the right boundary point of the hull segment
+##       where local optimality changes from one classifier to the next.
+##
+##       As an example of how to use this table, assume we have a two-class
+##       problem in which negatives outnumber positives by 10:1.  Assume
+##       the cost of a false negative error is between 5 and 10 times the
+##       cost of a false positive error.  The corresponding iso-performance
+##       slope is in [.5, 1].  Based on the table above, the
+##       classifier "NBayes, N:P ratio= 0.5" would perform optimally for
+##       these conditions.
+##
+##
+##  REFERENCES: 
+##
+##       The first paper below is probably best for an introduction and
+##       general discussion of the ROC Convex Hull and its uses.
+##
+##       1) Provost, F. and Fawcett, T. "Analysis and visualization of
+##       classifier performance: Comparison under imprecise class and cost
+##       distributions".  In Proceedings of the Third International
+##       Conference on Knowledge Discovery and Data Mining (KDD-97),
+##       pp.43-48. AAAI Press.  Available from:
+##       http://www.hpl.hp.net/personal/Tom_Fawcett/papers/KDD-97.ps.gz
+##
+##       2) Provost, F. and Fawcett, T. "Robust Classification Systems for
+##       Imprecise Environments".   Presented at AAAI-98.
+##       Paper available from: 
+##       http://www.hpl.hp.net/personal/Tom_Fawcett/papers/aaai98.ps.gz
+##
+##       3) Provost, F., Fawcett, T., and Kohavi, R.  "The Case
+##       Against Accuracy Estimation for Comparing Induction Algorithms".
+##       Presented at ICML-98.  Available from:
+##       http://www.hpl.hp.net/personal/Tom_Fawcett/papers/ICML98-submitted.ps.gz
+##
+##
+##
+##  TIMINGS (Sparc-10, 64 meg, Solaris 5.1)
+##  Version 1.0, batch Wrap algorithm:
+##          Elapsed: 17:54.69  Usermode: 1059.01  Kernel: 1.25
+##  Version 1.1, incremental Graham with optimizations:
+##          Elapsed:  4:00.74  Usermode:  237.48  Kernel: 1.18
+##  It turns out that converting ROC points to integers and enforcing 
+##  'use integer' does not speed up the script, probably due to Perl.
+##
+##  BUG REPORTS / SUGGESTIONS / QUESTIONS:
+##
+##       Tom Fawcett <tfawcett@acm.org>
+##
+##
+##### REQUIREMENTS  ##########################################################
+require 5;			# Need Perl V5
+use English;
+use Getopt::Long;
+use strict;
+
+my($version) = "2.0";
+
+$OUTPUT_AUTOFLUSH = 1;
+
+use constant Infinity  => "Inf";
+sub infinite { $_[0] eq Infinity };
+
+##############################################################################
+##  Process command-line arguments
+##############################################################################
+# Global variables set by GetOptions
+my($COLLAPSE, $DOMINATOR, $RENAME, $CLASSKEYS, $DATAFORMAT, 
+   $INHULL, $OUTHULL, $UPDATE,
+   $DEBUG, $HELP, $VERSION);
+
+GetOptions("collapse!"     => \$COLLAPSE,
+	   "compress!"     => \$COLLAPSE,
+	   "key!"          => \$CLASSKEYS,
+	   "data-format=s" => \$DATAFORMAT,
+	   "inhull=s"      => \$INHULL,
+	   "outhull=s"     => \$OUTHULL,
+	   "update=s"      => \$UPDATE,
+	   "debug"         => \$DEBUG,
+	   "help"          => \$HELP,
+	   "usage"         => \$HELP,
+	   "version"       => \$VERSION
+	  )
+    or exit;
+
+if ($HELP)    { print "ROCCH $version\nUsage:$::USAGE\n"; exit }
+if ($VERSION) { print "ROCCH $version\n"; exit }
+
+my(%valid_dataformat);
+@valid_dataformat{qw(xy xyn xyc auto)} = 1;
+
+if (defined($DATAFORMAT)) {
+   die "data-format specified ($DATAFORMAT) isn't recognized\n"
+       unless exists($valid_dataformat{$DATAFORMAT});
+} else {
+   $DATAFORMAT = "auto"		# Set the default
+}
+
+if (defined($UPDATE)) {
+   $INHULL = $UPDATE;
+   $OUTHULL = $UPDATE;
+}
+
+
+#  List of tuples on the hull [x,y,c1,c2,...]
+#  Ordered by X values from (0,0) to (1,1)
+my(@hull);
+#  Fast hash of points we've seen.
+#  %on_hull is for points currently on the hull; %under_hull is for points
+#  that used to be on the hull but no longer are (so never can be again).
+my(%on_hull, %under_hull);
+my(%tuple);			# Hash of (X,Y) pairs to point tuples
+##############################################################################
+###  Initialize hull from file if necessary
+##############################################################################
+if (defined($INHULL)) {
+   
+   if (!open(HIN, $INHULL)) {
+      #  open failed
+      if (defined($UPDATE)) {
+	 print "$INHULL does not exist\n";
+      } else {
+	 die "$INHULL: $!\n";
+      }
+   } else {
+      #  open succeeded
+      print "Initializing hull from $INHULL\n";
+      my($n) = 0;
+      while (<HIN>) {
+	 $n++;
+	 chomp;
+	 my($ptx, $pty, @classifiers) = split(/\t/);
+	 my($class);
+	 for $class (@classifiers) {
+	    add_classifier_tuple($ptx, $pty, $class);
+	 }
+	 #  We add only the points to the hull now, since classifier
+	 #  names may become 
+	 $ptx += 0;
+	 $pty += 0;
+	 push(@hull, [$ptx, $pty]);
+	 $on_hull{"$ptx,$pty"} = 1;
+      }
+      close(HIN) or die "close($INHULL): $!";
+      print "$n hull points read from $INHULL\n";
+   }
+}
+
+if (!defined(@hull)) {
+   #  Initialize with boundary points
+   add_classifier_tuple(0, 0, "AllNeg");
+   add_classifier_tuple(1, 1, "AllPos");
+   @hull = ([0,0], [1,1]);
+   $on_hull{"0,0"} = 1;
+   $on_hull{"1,1"} = 1;
+}
+
+my(%classifiers_mentioned);
+##############################################################################
+###  Read points from files
+##############################################################################
+
+my($n) = 0;
+my($on_hull_hits) = 0;
+my($under_hull_hits) = 0;
+
+
+my($file);
+for $file (@ARGV) {
+   open(FILE, "<$file") or die "$file: $OS_ERROR";
+  
+   while (<FILE>) {
+      next if /^[\#&@]/;        	# Skip comments and xmgr parameters
+      next if /^\s*$/;		        # Skip blank/empty lines
+      chomp;
+
+      my($x, $y, $name) = /^\s*(\S+)[,\s]+(\S+)(.*)$/;
+    
+      #  Some simple error checking
+      if (!(defined($x) and defined($y))) {
+	 die "Cannot parse line $INPUT_LINE_NUMBER of $file:\n$_\n";
+      } elsif ($x<0 or $x>1 or $y<0 or $y>1) {
+	 die "Invalid ROC point at $file line $INPUT_LINE_NUMBER\n$_\n";
+      }
+    
+      $n++;
+      if ($DEBUG and $n % 100 == 0) {
+	 print join("\t", ($n, 
+			   scalar(@hull),
+			   scalar(keys %on_hull),
+			   scalar(keys %under_hull), 
+			   $on_hull_hits,
+			   $under_hull_hits
+			  )),
+			       "\n";
+	 $on_hull_hits = 0;
+	 $under_hull_hits = 0;
+      }
+
+      #  Trim whitespace
+      $name =~ s/^\s+//;
+      $name =~ s/\s+$//;
+
+      if ($DATAFORMAT eq 'xy' or $DATAFORMAT eq 'xyc') {
+	 #  Currently ignore confidence values
+	 $name = $file
+
+      } elsif ($DATAFORMAT eq 'xyn') {
+	 if ($name eq "") {
+	    warn "data-format='xyn' but name is empty"
+	 }
+
+      } elsif ($DATAFORMAT eq 'auto') {
+	 $name = $file if $name eq ""; # Name defaults to the filename
+      }
+    
+      my($point) = ($x+0) . "," . ($y+0);
+
+      #####  Figure out what to do with this point
+      if ($on_hull{$point}) {
+	 $on_hull_hits++;
+#        print "Point $point is on hull\n" if $DEBUG;
+	 #  This classifier is already known to be on the hull, just add 
+	 #  the name to the list.
+	 add_classifier_tuple($x, $y, $name);
+
+      } elsif (defined($under_hull{$point})) {
+	 $under_hull_hits++;
+	 #  This classifier corresponds to a point that was on the hull
+	 #  but has been taken off.  No need to save it at all.
+
+      } else {
+	 #  We don't know whether this point should be on the hull or not.
+	 add_classifier_tuple($x, $y, $name);
+	 update_hull($x, $y);
+      }
+   }
+   close(FILE) or die "close($file): $OS_ERROR";
+}
+
+
+##  If classifier keys are being used, define the correspondance hash
+my(%classkey, %keyclass, $next_classkey);
+if ($CLASSKEYS) {
+   $next_classkey = "A";
+   my($str,$pt);
+   while (($str,$pt) = each %tuple) {
+      my($classifier);
+      for $classifier (tuple_classifiers($pt)) {
+	 if (!defined($classkey{$classifier})) {
+	    $classkey{$classifier} = $next_classkey;
+	    $keyclass{$next_classkey} = $classifier;
+	    $next_classkey++
+	 }
+      }
+   }
+}
+
+print scalar(localtime), "  Done building correspondence hash\n"
+    if $DEBUG;
+
+
+##############################################################################
+###  Update the hull with a single point.
+###  This is the main function of the file.
+##############################################################################
+sub update_hull {
+   my($pnewx, $pnewy) = @_;
+   my($pnew) = [$pnewx, $pnewy];
+   
+#  if ($DEBUG) {
+#    print "\nProcessing point @$pnew\n";
+#    &printhull;
+#   }
+   my($i, $j);
+
+   for ($i=0 ; $i<$#hull ; $i++) {
+#     print "seg $i->", $i+1, "\n" if $DEBUG;
+      my($p1) = $hull[$i];
+      my($p2) = $hull[$i+1];
+	 
+      #  In our X scan from 0 to 1, we know this new point can't be on the
+      #  hull as soon as we exceed X.
+      if ($pnewx < $p1->[0]) {
+	 my($point) = ($pnewx+0) . "," . ($pnewy+0);
+	 $under_hull{$point} = 1;
+	 return;
+      }
+
+      my($orientation) = orientation($p1, $p2, $pnew);
+
+      if ($orientation eq 'right') {
+	 #  This point is to the right of the hull segment ==> ignore
+#        print "[@$pnew] is RIGHT of [@$p1]->[@$p2]\n" if $DEBUG;
+      
+      } elsif ($orientation eq 'on' and
+	       between($hull[$i], $pnew, $hull[$i+1])) {
+#        print "[@$pnew] is BETWEEN [@$p1]-[@$p2] -- inserting\n" if $DEBUG;
+	 #  Splice it into the segment between points i and i+1
+	 add_to_hull($pnew, $i+1);
+	 return;
+
+      } elsif ($orientation eq 'left') {
+#        if ($DEBUG) {		
+#	   print "[@$pnew] is LEFT of [@$p1]->[@$p2]\n";
+#	   print "Adding point [@$pnew] to hull\n";
+#        }
+    
+	 #  Connects i'th hull point to pnew.
+	 add_to_hull($pnew, $i+1);
+	 #  pnew now becomes the i'th point.  Return if 
+	 #  pnew is the next-to-last point.
+	 $i = $i + 1;
+
+	 #  Now determine whether any hull points after pnew are under
+	 #  the new hull.
+	 while ($i < $#hull-1 and 
+		orientation($pnew, $hull[$i+2], $hull[$i+1]) eq 'right') {
+	    my($delx, $dely) = @{$hull[$i+1]};
+	    my($canonical) = ($delx+0) . "," . ($dely+0);
+#	    print "Removing [$delx,$dely] from the hull\n" if $DEBUG;
+	    splice(@hull, $i+1, 1);
+	    if (!defined($on_hull{$canonical})) {
+	       for (@hull) { print join("\t", @$_), "\n" }
+	       print "hull point $canonical not know to %on_hull\n";
+	       exit;
+	    }
+	    delete($on_hull{$canonical});
+	    $under_hull{$canonical} = 1;
+	 }
+	 return;
+      }	# else
+   } # hull segment loop
+}  #  sub update_hull			
+
+
+#  add_to_hull -- Add $point into $hull just before $index
+#  IE, $point becomes new $index'th point in $hull.
+sub add_to_hull {
+   my($point, $index) = @_;
+   splice(@hull, $index, 0, $point);
+   my($canonical) = ($point->[0]+0) . "," . ($point->[1]+0);
+   $on_hull{$canonical} = 1;
+}
+
+##############################################################################
+##  Print out the convex hull in increasing order of X (FP) values.
+##  Collapsing doesn't make much sense for this table (except for colinear
+##  points), so I haven't bothered doing it.
+##############################################################################
+$FORMAT_LINE_BREAK_CHARACTERS = ",";
+
+format HULLPOINTS_TOP =
+All classifier points on the hull:
+    POINT           CLASSIFIER(s)
+----------------------------------------------------------------------
+.
+format HULLPOINTS     =
+@.#### @.####       ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$::x,  $::y,        $::classifiers
+~~                       ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                    $::classifiers
+.
+    
+$FORMAT_TOP_NAME     = "HULLPOINTS_TOP";
+$FORMAT_NAME         = "HULLPOINTS";
+
+
+#####  Merge classifiers with points.
+#####  Each point [x,y] on the hull becomes
+#####  [x,y,c1,c2,c3,...] where each ci is a classifier that
+#####  produced the point.
+{
+   my(@hull2, $point);
+   for $point (@hull) {
+      # Canonicalize the X,Y point into a string
+      my($index) = join(',', map($_+0, @$point));
+      my($tuple) = $tuple{$index};
+      if (!defined($tuple)) {
+	 die "No classifiers for \"$index\"!\n";
+      }
+      push(@hull2, [@$tuple]);
+   }
+   @hull = @hull2;
+}
+
+undef %classifiers_mentioned;
+
+my($tuple);
+for $tuple (@hull) {
+   local($::x, $::y, @::classifiers) = @$tuple;
+   @::classifiers = map($classkey{$_}, @::classifiers) if $CLASSKEYS;
+   local($::classifiers) = join(",", @::classifiers);
+   write;
+   @classifiers_mentioned{@::classifiers} = 1;
+}
+
+#  Print a small key if classkeys were used
+if ($CLASSKEYS) {
+   print "\nKEY:\n";
+   my($key);
+   for $key (sort keys %classifiers_mentioned) {
+      print "  $key: $keyclass{$key}\n";
+   }
+}
+   
+##############################################################################
+
+
+format BC_TOP =
+Locally best classifiers:
+SLOPE RANGE        RT.BOUNDARY    CLASSIFIER(s)
+----------------------------------------------------------------------
+.
+
+format BC =
+[@#.###, @<<<<<]   @.### @.###    ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+$::last_slope, $::slope, $::segment_right_boundary->[0], $::segment_right_boundary->[1], $::last_classifiers
+~~                                ^<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+                                   $::last_classifiers
+.
+
+$FORMAT_LINES_LEFT = 0;
+$FORMAT_TOP_NAME   = "BC_TOP";
+$FORMAT_NAME	   = "BC";
+
+# These variables are ugly because FORMATs require local scoping which 
+# the 'use strict' pragma doesn't tolerate.
+local($::last_slope, $::slope, $::point, $::last_classifiers, $::last_point);
+
+# We start at point (1,1) and work counter-clockwise down the hull to (0,0).
+# Iso-performance line slope starts at 0.0 and works up to infinity.
+# 
+$::slope = 0;
+
+undef %classifiers_mentioned;	# Clear this cache
+my(@last_classifiers);
+
+local($::segment_right_boundary);
+
+for $::point (reverse @hull) {
+
+    my(@classifiers) = tuple_classifiers($::point);
+    @classifiers = map($classkey{$_}, @classifiers) if $CLASSKEYS;
+    my($classifiers) = join(",", @classifiers);
+
+    if (defined($::last_point)) {
+       $::slope = slope($::point, $::last_point);
+    } else {
+       $::segment_right_boundary = $::point;
+    }
+
+    if (defined($::last_slope)) {
+
+       if ($COLLAPSE and ($classifiers eq $::last_classifiers
+			  or $::last_slope eq $::slope)) {
+
+	  ##  Elide this line if no change in classifiers or null slope range.
+
+       } else {
+	 if ($::slope ne Infinity) {
+	   $::slope = sprintf("%5.3f", $::slope);
+	 }
+	  write;
+	  @classifiers_mentioned{@last_classifiers} = 1;
+	  $::last_slope = $::slope;
+	  $::segment_right_boundary = $::point;
+       }
+    } else {
+       $::last_slope = $::slope;
+    }
+    $::last_point = $::point;
+    $::last_classifiers = $classifiers;
+    @last_classifiers = @classifiers;
+}
+
+#  Done processing the hull.
+#  Finish the listing if we haven't reached infinity.
+if ($::last_slope ne Infinity) {
+   $::slope = Infinity;
+   write;
+   @classifiers_mentioned{@last_classifiers} = 1;
+}
+
+#  Print a small key if classkeys were used
+if ($CLASSKEYS) {
+   print "\nKEY:\n";
+   my($key);
+   for $key (sort keys %classifiers_mentioned) {
+      print "  $key: $keyclass{$key}\n";
+   }
+}
+
+if (defined($OUTHULL)) {
+   open(OUTHULL, ">$OUTHULL") or die "open($OUTHULL): $!";
+   print "Saving hull to $OUTHULL\n";
+   my($point);
+   for $point (@hull) {
+      print OUTHULL join("\t", @$point), "\n";
+   }
+}    
+
+
+print scalar(localtime), "  Finished\n" if $DEBUG;
+
+exit;  
+
+
+
+#  Return the slope between two points (or tuples)
+sub slope {
+   my($p1, $p2) = @_;
+   my($p1x, $p1y) = tuple_point($p1);
+   my($p2x, $p2y) = tuple_point($p2);
+   
+   my($slope) = ($p1x == $p2x) ?  Infinity
+       : ($p2y-$p1y)/($p2x-$p1x);
+   $slope;
+   
+}
+
+#  Standard Euclidean distance between two points
+sub distance {
+   my($p1x, $p1y) = @{$_[0]};
+   my($p2x, $p2y) = @{$_[1]};
+   sqrt(($p1x - $p2x) ** 2 + ($p1y - $p2y) ** 2)
+}
+
+
+
+#  Each point is represented by a tuple [X,Y,C1,C2,C3,...] where each Ci is a
+#  classifier name.  The hash array %tuple gives us a quick way to go from an
+#  X,Y pair to its tuple.
+sub add_classifier_tuple {
+  my($x, $y, $name) = @_;
+  my($index) = ($x+0) . "," . ($y+0); # Canonicalize the X,Y values.
+
+  if (defined($tuple{$index})) {
+    push(@{$tuple{$index}}, $name) unless grep($_ eq $name, @{$tuple{$index}});
+  } else {
+    $tuple{$index} = [$x, $y, $name]
+  }
+}
+
+
+sub tuple_classifiers {
+  my($pt) = @_;
+  my($x, $y, @classifiers) = @$pt;
+  @classifiers
+}
+
+
+sub tuple_point {
+  my($pt) = @_;
+  my($x, $y) = @$pt;
+  ($x,$y)
+}
+
+sub printhull {
+  print "\nHull is: ";
+  for (@hull) { print "[", $_->[0], ",", $_->[1], "] "; }
+  print "\non_hull: ";
+  for (keys %on_hull) { print "[$_] "; }
+  print "\n";
+}
+
+#  ORIENTATION(p0, p1, p2) -- Returns the orientation of p2 with respect to 
+#  the line (p0,p1).  Uses the standard determinant equation, and returns
+#  right if det<0, left if det>0 and on if det==0.
+sub orientation {
+  my($p0, $p1, $p2) = @_;
+  my($x0, $y0) = @$p0;
+  my($x1, $y1) = @$p1;
+  my($x2, $y2) = @$p2;
+  
+  my($res) = ($x1 - $x0) * ($y2 - $y0) - ($x2 - $x0) * ($y1 - $y0);
+  my($ret) = (qw(right on left))[(($res <=> 0)+1)];
+  $ret
+}
+
+
+#  BETWEEN(p0, p1, p2) -- Determine whether p1 is on the line segment joining 
+#  p0 to p2.  When this is called, we already know that p0, p1 and p2 are
+#  co-linear, so just compare the co-ordinate ranges.
+sub between {
+  my($p0, $p1, $p2) = @_;
+  my($x0, $y0) = @$p0;
+  my($x1, $y1) = @$p1;
+  my($x2, $y2) = @$p2;
+
+  (($x2 > $x0) ? ($x0 <= $x1 and $x1 <= $x2) : 
+                 ($x2 <= $x1 and $x1 <= $x0))
+      and 
+  (($y2 > $y0) ? ($y0 <= $y1 and $y1 <= $y2) : 
+                 ($y2 <= $y1 and $y1 <= $y0));
+}
+
+
+##### End of ROCCH

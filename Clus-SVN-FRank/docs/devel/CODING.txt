@@ -1,0 +1,90 @@
+
+*******************
+* Tab size        *
+*******************
+
+Set the default tab size to 4 spaces.
+
+**********************
+* Instance variables *
+**********************
+
+Instance variable names should start with "m_". This should be followed by the name in which the content words are written with an upper case character. Also the first character of the name should be upper case. Variable names do not include underscores (except for the one in "m_"). For example: m_HelloWorld.
+
+****************
+* Method Names *
+****************
+
+Method names follow the Java convention: all content words start with an upper case character, except for the first one, which should be lower cased. Method names do not include underscores. For example: helloWorld(), getValue(), setValue(int value), isEnabled().
+
+***************
+* Class Names *
+***************
+
+Method names follow the Java convention: all content words start with an upper case character. For example: HelloWorld.
+
+************************
+* Loops & conditionals *
+************************
+
+Format for-loops and if-then-else expressions as follows:
+
+for (int i = 0; i < 10; i++) {
+   ...
+}
+
+if (a <= 3) {
+   ...
+} else if (a <= 4) {
+   ...
+} else {
+   ...
+}
+
+Note the space between the ")" and the "{".
+
+*******************
+* Auto Formatting *
+*******************
+
+Please do not use Eclipse's "Source | Format" feature. I find, e.g., this style of coding hard to read:
+
+    System.err
+            .println("Some very very very very very very long message.");
+    System.exit(0);
+
+and would prefer just:
+
+    System.err.println("Some very very very very very very long message.");
+    System.exit(0);
+
+That the lines are long is not such a problem. If you do want to wrap a line over several lines, please format it manually. Thanks!
+
+********************
+* Copyright notice *
+********************
+
+All source code files must include this copyright notice:
+
+/*************************************************************************
+ * Clus - Software for Predictive Clustering                             *
+ * Copyright (C) 2007                                                    *
+ *    Katholieke Universiteit Leuven, Leuven, Belgium                    *
+ *    Jozef Stefan Institute, Ljubljana, Slovenia                        *
+ *                                                                       *
+ * This program is free software: you can redistribute it and/or modify  *
+ * it under the terms of the GNU General Public License as published by  *
+ * the Free Software Foundation, either version 3 of the License, or     *
+ * (at your option) any later version.                                   *
+ *                                                                       *
+ * This program is distributed in the hope that it will be useful,       *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
+ * GNU General Public License for more details.                          *
+ *                                                                       *
+ * You should have received a copy of the GNU General Public License     *
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
+ *                                                                       *
+ * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>.         *
+ *************************************************************************/
+

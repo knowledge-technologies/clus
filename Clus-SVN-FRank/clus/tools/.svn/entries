@@ -1,0 +1,83 @@
+10
+
+dir
+794
+https://clus.svn.sourceforge.net/svnroot/clus/trunk/clus/tools
+https://clus.svn.sourceforge.net/svnroot/clus
+
+
+
+2010-06-28T06:57:58.000000Z
+692
+aho
+has-props
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+1ed6275f-fa47-4a32-9272-b133f8fb113e
+
+ClusShowModelInfo.java
+file
+
+
+
+
+2013-02-07T13:56:24.000000Z
+6c0e423cc35ceda031d3d9e3c1c49811
+2008-07-22T21:05:30.000000Z
+340
+jan
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+3585
+
+backup
+dir
+
+debug
+dir
+
+hier
+dir
+
+optimization
+dir
+
+resourceinfo
+dir
+
+script
+dir
+
+textproc
+dir
+

@@ -1,0 +1,6 @@
+#!/bin/sh
+export WEKA_DIR=$HOME/weka-3-4
+export CLUS_DIR=$HOME/Clus
+export HMC_AVG_SINGLE_DIR=$CLUS_DIR/addon/hmc/HMCConvertDAGData
+echo $HMC_AVG_SINGLE_DIR
+java -Xmx1500m -Xms1500m -cp "$HMC_AVG_SINGLE_DIR/bin:$CLUS_DIR/bin:$WEKA_DIR/weka.jar:$CLUS_DIR/commons-math-1.0.jar" -Djava.library.path=$HOME/Clus/. HMCConvertDAGData $*

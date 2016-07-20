@@ -1,0 +1,43 @@
+10
+
+dir
+794
+https://clus.svn.sourceforge.net/svnroot/clus/trunk/addon/hmc
+https://clus.svn.sourceforge.net/svnroot/clus
+
+
+
+2011-02-25T17:27:53.019448Z
+717
+leanders
+has-props
+
+svn:special svn:externals svn:needs-lock
+
+
+
+
+
+
+
+
+
+
+
+1ed6275f-fa47-4a32-9272-b133f8fb113e
+
+ClusAmandaRules
+dir
+
+HMCAverageSingleClass
+dir
+
+HMCConvertDAGData
+dir
+
+HMCConvertToSC
+dir
+
+HMCNodeWiseModels
+dir
+

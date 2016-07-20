@@ -1,0 +1,13 @@
+K 10
+svn:ignore
+V 61
+*.out*
+*.xval*
+*.tree
+hierarchy.*
+*.test*
+*.id*
+.svn
+*.class
+
+END

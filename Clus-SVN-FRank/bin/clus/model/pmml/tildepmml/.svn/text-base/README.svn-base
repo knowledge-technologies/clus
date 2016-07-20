@@ -1,0 +1,81 @@
+********
+java -cp "/home/darek/Clus" demo.tildepmml.Tilde2PMML bongard.out
+in /home/darek/Clus/demo/tildepmml
+********
+javac demo/tildepmml/Tilde2PMML.java
+in /export/home0/darek/Clus
+********
+ne pmmlcode.pmml
+in /home/darek/Clus/demo/tildepmml
+********
+
+
+demo.tildepmml.Tilde2PMML
+
+clus.modelio.pmml.PMMLWriter
+
+main.ClusNode extends jeans.tree.MyNode
+
+jeans.tree.MyNode
+-----------------
+
+        // om kinderen op te vragen                                                         
+        public final int getNbChildren();                                                   
+        public final Node getChild(int idx);                                                
+                                                                                            
+        // om kinderen toe te voegen                                                        
+        public final void addChild(Node node);-                                             
+        public final void setChild(Node node, int idx);                                     
+        public final void removeChild(Node node);                                           
+                                                                                            
+        // om te kijken of een knoop een blad is                                            
+        // resp. of een knoop de root is                                                    
+        public final boolean atBottomLevel();                                               
+        public final boolean atTopLevel();                                                  
+                                                                                            
+        // om de ouder knoop resp. diepte te krijgen                                        
+        public final Node getParent();                                                      
+        public final int getDepth();  
+	
+	
+main.ClusNode
+-------------
+
+        // de test in de knoop, een subclasse van test.NodeTest.                            
+        public NodeTest m_Test;                                                             
+                                                                                            
+        // de klasse distributie van de voorbeelden in de knoop                             
+        // deze wordt getekend op de TreePanel visialisatie.                                
+        // voor klassificatie is dit:                                                       
+        //      statistic.ClassificationStat                                                
+        // voor regressie is dit:                                                           
+        //      statistic.RegressionStat                                                    
+        public ClusStatistic m_TotStat;                                                     
+                                                                                            
+        // voor instellen/opvragen test in de knoop                                         
+        public final NodeTest getTest()                                                     
+        public final void setTest(NodeTest test)                                            
+                                                                                            
+        // voor instellen/opvragen klasse distributie                                       
+        public final ClusStatistic getTotalStat()                                           
+        public final void setTotalStat(ClusStatistic stat)                                  
+    
+
+1e orde test als een string terugkrijgen:
+-----------------------------------------
+FakeTest test = (FakeTest)node.getTest();
+test.getString();
+
+statistic.ClassificationStat
+----------------------------
+
+getTotalWeight()
+
+getNbClasses(0)
+
+// # voorbeelden met klasse
+getCount(0, int cls)
+
+// naam van de klasse
+getTarget().getNbNomValues(cls)
+

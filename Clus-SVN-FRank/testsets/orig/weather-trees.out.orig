@@ -1,0 +1,142 @@
+Clus run "weather"
+******************
+
+Date: 4/14/10 8:04 PM
+File: weather-trees.out
+Attributes: 4 (input: 2, output: 2)
+Missing values: No
+Memory usage: 11876 kB (initial), 12008 kB (data loaded)
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 0
+ResourceInfoLoaded = Yes
+
+[Data]
+File = ../data/weather/weather.arff
+TestSet = None
+PruneSet = None
+XVal = 10
+RemoveMissingTarget = No
+NormalizeData = None
+
+[Attributes]
+Target = 3-4
+Clustering = 3-4
+Descriptive = 1-2
+Key = None
+Disable = None
+Weights = Normalize
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = No
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WriteErrorFile = No
+WritePredictions = {None}
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+OutputDatabaseQueries = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+NominalSubsetTests = Yes
+
+[Tree]
+Heuristic = VarianceReduction
+PruningMethod = M5
+M5PruningMult = 2.0
+FTest = 1.0
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = {}
+MSENominal = No
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 0.008 sec (CPU)
+Pruning Time: 0.004 sec (CPU)
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 7 (Leaves: 4)
+     Pruned: Nodes = 3 (Leaves: 2)
+
+Training error
+--------------
+
+Number of examples: 8
+Mean absolute error (MAE)
+   Default        : [7.125,14.75]: 10.9375
+   Original       : [2.125,2.75]: 2.4375
+   Pruned         : [4.125,7.125]: 5.625
+Mean squared error (MSE)
+   Default        : [76.8594,275.4375]: 176.1484
+   Original       : [6.5625,7.75]: 7.1562
+   Pruned         : [19.4375,71.25]: 45.3438
+Root mean squared error (RMSE)
+   Default        : [8.7669,16.5963]: 13.2721
+   Original       : [2.5617,2.7839]: 2.6751
+   Pruned         : [4.4088,8.441]: 6.7338
+Weighted root mean squared error (RMSE) (Weights [0.013,0.004])
+   Default        : [1,1]: 1
+   Original       : [0.2922,0.1677]: 0.2382
+   Pruned         : [0.5029,0.5086]: 0.5058
+Pearson correlation coefficient
+   Default        : [?,?], Avg r^2: ?
+   Original       : [0.9564,0.9858], Avg r^2: 0.9432
+   Pruned         : [0.8644,0.861], Avg r^2: 0.7442
+
+Default Model
+*************
+
+[18.875,77.25]: 8
+
+Original Model
+**************
+
+outlook = sunny
++--yes: [32,52.5]: 2
++--no:  outlook = rainy
+        +--yes: windy = yes
+        |       +--yes: [9,92.5]: 2
+        |       +--no:  [19,91.5]: 2
+        +--no:  [15.5,72.5]: 2
+
+Pruned Model
+************
+
+outlook = sunny
++--yes: [32,52.5]: 2
++--no:  [14.5,85.5]: 6
+

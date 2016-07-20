@@ -1,0 +1,11 @@
+This directory contains an example on how to use Clus for random forest based feature induction.
+
+See "Celine Vens and Fabrizio Costa, Random forest based feature induction, In Proceedings of IEEE International Conference on Data Mining, 2011" for details about the method.
+ 
+The example can be run by executing the perl script rfbfi.pl as follows:
+perl rfbfi.pl ionosphere
+where ionosphere is a directory that contains a file ionosphere.arff.
+
+The perl script will first call the run_forest.pl script, which calls Clus to construct a random forest, and using the setting "PrintPaths = Yes", it will yield a file tree_X.path for each tree (see forest directory). In these files, each line denotes an example. 
+For instance, a line "29  0000 1_2_3_4_5  OOB" means that this line concerns (training) example 29, which was out of bag for the current tree. The strings "0000" and "1_2_3_4_5" indicate the path that example 29 took in the current tree. The first notation denotes each branch in the binary tree with 0 for left and 1 for right. Thus, the example chose the left most branches, and arrived in the left most leaf, which is at depth 4. The second notation denotes the internal nodes that are encountered, where 1 denotes the root, and the nodes are numbered in a depht first, left-to-right way.
+Afterwards, the script get_features_from_forest.pl will be called, which reads in all the path files and constructs a new arff file with binary features, as explained in the paper.
