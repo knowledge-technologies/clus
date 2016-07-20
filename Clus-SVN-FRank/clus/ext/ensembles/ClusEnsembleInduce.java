@@ -104,6 +104,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			m_FeatureRanking = new ClusEnsembleFeatureRanking();
 			m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes());
 			if (sett.getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES){ 
+				// moj komentar
 				if (sett.getRankingMethod() != Settings.RANKING_GENIE3 && sett.getRankingMethod() !=  Settings.RANKING_SYMBOLIC){ // Matej : tle bom spremenu pogoj in dodal else if ... sett.getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES
 					System.err.println("Feature ranking with Extra trees is enabled only with GENIE3 ranking OR SYMBOLIC. Setting to GENIE3.");
 					sett.setFeatureRankingMethod(Settings.RANKING_GENIE3);
