@@ -350,6 +350,7 @@ public class ClusEnsembleFeatureRanking {
 	}
 	
 	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel) throws ClusException{
+		System.out.println("   Matej: calculateRFimportance");
 		ArrayList<String> attests = new ArrayList<String>();
 		fillWithAttributesInTree((ClusNode)model, attests);
 		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();

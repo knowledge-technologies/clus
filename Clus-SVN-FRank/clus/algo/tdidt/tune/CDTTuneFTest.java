@@ -167,9 +167,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
 		int best_value = 0;
 		boolean low = createTuneError(getStatManager()).getFirstError().shouldBeLow();
 		double best_error = low ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
-		System.out.println("Matej: pred for mFTests == null: " + (m_FTests == null));
 		for (int i = 0; i < m_FTests.length; i++) {
-			System.out.println("Matej: gaga");
 			getSettings().setFTest(m_FTests[i]);
 			System.out.println("Try for F-test value = "+m_FTests[i]);
 			double err = doParamXVal(trset, pruneset);

@@ -136,7 +136,7 @@ public class ClusForest implements ClusModel, Serializable{
 	}
 
 	public ClusStatistic predictWeighted(DataTuple tuple) {
-
+		System.out.println("Matej: ClusForest.java: ClusOOBErrorEstimate.isOOBCalculation() = " + ClusOOBErrorEstimate.isOOBCalculation());
 		if (ClusOOBErrorEstimate.isOOBCalculation())
 			return predictWeightedOOB(tuple);
 

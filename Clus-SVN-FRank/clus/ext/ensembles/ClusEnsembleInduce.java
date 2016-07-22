@@ -398,6 +398,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	}
 
 	public void induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel) throws ClusException, IOException {
+		System.out.println("Matej: inducam 1 bag ....");
 		if (getSettings().isEnsembleRandomDepth()) {
 			// Set random tree max depth
 			getSettings().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(
@@ -426,8 +427,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 		
 		if (m_FeatRank){//franking genie3
-			if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST)
+			if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
+				System.out.println("Matej: induceOneBag: RForest ranking ...");
 				m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
+			}
 			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3)
 				m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
 			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC)
