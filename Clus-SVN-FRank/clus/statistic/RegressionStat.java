@@ -227,6 +227,27 @@ public class RegressionStat extends RegressionStatBase {
 		}
 		return result / m_NbAttrs;
 	}
+	
+	public double getSVarSRandomized(ClusAttributeWeights scale, int[]attrs) {
+		//TODO: Martin will need this 
+		double result = 0.0;
+		for (int i = 0; i < attrs.length; i++) {
+			double n_tot = m_SumWeight;
+			double k_tot = m_SumWeights[attrs[i]];
+			double sv_tot = m_SumValues[attrs[i]];
+			double ss_tot = m_SumSqValues[attrs[i]];
+			if (k_tot == n_tot) {
+				result += (ss_tot - sv_tot*sv_tot/n_tot)*scale.getWeight(attrs[i]);
+			} else {
+				if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
+					result += m_Training.getSVarS(i)*scale.getWeight(attrs[i]);
+				} else {
+					result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot/k_tot*sv_tot/k_tot)*scale.getWeight(attrs[i]);
+				}
+			}
+		}
+		return result / m_NbAttrs;
+	}
 
 	public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
 		double result = 0.0;
