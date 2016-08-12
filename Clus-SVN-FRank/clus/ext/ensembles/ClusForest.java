@@ -23,12 +23,14 @@
 package clus.ext.ensembles;
 
 
+import jeans.math.MathUtil;
 import jeans.util.*;
-
+import weka.core.Utils;
 import clus.main.*;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.processor.ClusEnsemblePredictionWriter;
+import clus.Clus;
 import clus.algo.rules.ClusRuleSet;
 import clus.algo.rules.ClusRulesFromTree;
 import clus.algo.tdidt.ClusNode;
@@ -52,20 +54,23 @@ public class ClusForest implements ClusModel, Serializable{
 
 	private static final long serialVersionUID = 1L;
 
-	/** List of decision trees */
-	ArrayList m_Forest;
+	ArrayList<ClusModel> m_Forest; // List of decision trees
+	ClusEnsembleTargetSubspaceInfo m_TargetSubspaceInfo; // Info about target subspacing method
+	
 	ClusStatistic m_Stat;
 	boolean m_PrintModels;
 	String m_AttributeList;
 	String m_AppName;
+
 	
 	public ClusForest(){
-		m_Forest = new ArrayList();
+		m_Forest = new ArrayList<ClusModel>();
 //		m_PrintModels = false;
 	}
 
 	public ClusForest(ClusStatManager statmgr){
-		m_Forest = new ArrayList();
+		m_Forest = new ArrayList<ClusModel>();
+		
 		if (statmgr.getMode() == ClusStatManager.MODE_CLASSIFY){
 			m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
 		}else if (statmgr.getMode() == ClusStatManager.MODE_REGRESSION){
@@ -89,6 +94,12 @@ public class ClusForest implements ClusModel, Serializable{
 			for (int ii=0;ii<cat.length-1;ii++) m_AttributeList = m_AttributeList.concat(cat[ii].getName()+", ");
 			m_AttributeList = m_AttributeList.concat(cat[cat.length-1].getName());
 		}
+		
+	
+	}
+	
+	public void addTargetSubspaceInfo(ClusEnsembleTargetSubspaceInfo tinfo) {
+		m_TargetSubspaceInfo = tinfo;
 	}
 
 	public void addModelToForest(ClusModel model){
@@ -98,7 +109,7 @@ public class ClusForest implements ClusModel, Serializable{
 	public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
 		ClusModel model;
 		for (int i = 0; i < m_Forest.size(); i++){
-			model = (ClusModel)m_Forest.get(i);
+			model = m_Forest.get(i);
 			model.applyModelProcessors(tuple, mproc);
 		}
 	}
@@ -106,7 +117,7 @@ public class ClusForest implements ClusModel, Serializable{
 	public void attachModel(HashMap table) throws ClusException {
 		ClusModel model;
 		for (int i = 0; i < m_Forest.size(); i++){
-			model = (ClusModel)m_Forest.get(i);
+			model = m_Forest.get(i);
 			model.attachModel(table);
 		}
 	}
@@ -116,6 +127,8 @@ public class ClusForest implements ClusModel, Serializable{
 		return 0;
 	}
 
+ 
+	
 	public String getModelInfo() {
 		int sumOfLeaves = 0;
 		for (int i = 0; i < getNbModels(); i++)
@@ -126,8 +139,24 @@ public class ClusForest implements ClusModel, Serializable{
 			sumOfNodes += ((ClusNode)getModel(i)).getNbNodes();
 
 		String result = "FOREST with " +getNbModels()+" models (Total nodes: " + sumOfNodes + " and leaves: "+ sumOfLeaves +")\n";
-		for (int i = 0; i<getNbModels(); i++)
-			result +="\t Model "+(i+1)+": "+getModel(i).getModelInfo()+"\n";
+
+					
+		if (Settings.isPrintEnsembleModelInfo())
+		{
+			for (int i = 0; i<getNbModels(); i++) {
+				result +="\n\t Model "+(i+1)+": "+getModel(i).getModelInfo();
+				
+				if (m_TargetSubspaceInfo != null) {
+					result += "\tTargets: " + m_TargetSubspaceInfo.getInfo(i);					
+				}
+			}
+			
+			if (m_TargetSubspaceInfo != null) {
+				result += "\n\t " + m_TargetSubspaceInfo.getCoverageInfo();
+				result += "\n\t " + m_TargetSubspaceInfo.getCoverageNormalizedInfo(); 
+			}
+		}
+		
 		return result;
 	}
 
@@ -136,11 +165,22 @@ public class ClusForest implements ClusModel, Serializable{
 	}
 
 	public ClusStatistic predictWeighted(DataTuple tuple) {
-		System.out.println("Matej: ClusForest.java: ClusOOBErrorEstimate.isOOBCalculation() = " + ClusOOBErrorEstimate.isOOBCalculation());
-		if (ClusOOBErrorEstimate.isOOBCalculation())
-			return predictWeightedOOB(tuple);
-
-		if (! ClusEnsembleInduce.m_OptMode) return predictWeightedStandard(tuple);
+		if (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod != Settings.ENSEMBLE_TARGET_SUBSPACING_NONE)
+		{
+			switch (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod)
+			{
+				case Settings.ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_SUBSET: // only use predictions for subspaces
+					return predictWeightedStandardTargetSubspace(tuple);
+					
+				case Settings.ENSEMBLE_TARGET_SUBSPACING_SMARTERWAY:
+					throw new RuntimeException("NOT YET IMPLEMENTED!");
+				 
+				default: //case Settings.ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_ALL: // just use all predictions
+					return predictWeightedStandard(tuple);
+			}
+		}
+		if (ClusOOBErrorEstimate.isOOBCalculation()) return predictWeightedOOB(tuple);		
+		if (!ClusEnsembleInduce.m_OptMode) return predictWeightedStandard(tuple);
 		else return predictWeightedOpt(tuple);
 
 /*		ClusModel model;
@@ -155,14 +195,22 @@ public class ClusForest implements ClusModel, Serializable{
 	}
 
 	public ClusStatistic predictWeightedStandard(DataTuple tuple) {
-		ClusModel model;
-		ArrayList votes = new ArrayList();
+		ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
 		for (int i = 0; i < m_Forest.size(); i++){
-			model = (ClusModel)m_Forest.get(i);
-			votes.add(model.predictWeighted(tuple));
+			votes.add(m_Forest.get(i).predictWeighted(tuple));
 //			if (tuple.getWeight() != 1.0) System.out.println("Tuple "+tuple.getIndex()+" = "+tuple.getWeight());
 		}
 		m_Stat.vote(votes);
+		ClusEnsemblePredictionWriter.setVotes(votes);
+		return m_Stat;
+	}
+	
+	public ClusStatistic predictWeightedStandardTargetSubspace(DataTuple tuple) {
+		ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
+		for (int i = 0; i < m_Forest.size(); i++){
+			votes.add(m_Forest.get(i).predictWeighted(tuple));
+		}
+		m_Stat.vote(votes, m_TargetSubspaceInfo);
 		ClusEnsemblePredictionWriter.setVotes(votes);
 		return m_Stat;
 	}

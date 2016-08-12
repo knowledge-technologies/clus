@@ -23,23 +23,28 @@
 package clus.heuristic;
 
 import clus.statistic.*;
+import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.*;
 
 public abstract class ClusHeuristic {
 
 	public final static double DELTA = 1e-6;
-
 	// Access to the training data
 	protected RowData m_TrainData;
 
 	// Value of the heuristic on the training data
 	protected double m_TrainDataHeurValue;
 
+	protected ClusAttributeWeights m_ClusteringWeights;
+	
 	protected ClusStopCriterion m_StopCrit;
 
 	public void setData(RowData data) {
 	}
 
+	public ClusAttributeWeights getClusteringAttributeWeights() { return m_ClusteringWeights; }
+	public void setClusteringWeightsEnabledAttributes(boolean[] w) { m_ClusteringWeights.setEnabled(w); }
+	
 	public void setInitialData(ClusStatistic stat, RowData data) {
 	}
 

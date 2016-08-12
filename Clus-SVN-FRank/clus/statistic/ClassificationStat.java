@@ -40,6 +40,7 @@ import clus.data.cols.*;
 import clus.data.rows.*;
 import clus.data.type.*;
 import clus.data.attweights.*;
+import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.ext.hierarchical.WHTDStatistic;
 
 /**
@@ -284,28 +285,13 @@ public class ClassificationStat extends ClusStatistic {
 		return m_class;
 	}
 
-	public double entropy() {
-		double sum = 0.0;
-		for (int i = 0; i < m_NbTarget; i++) {
-			if(getAttribute(i).getSchema().getSettings().checkEntropyType("StandardEntropy")){
-			
-				sum += entropy(i);
-			
-			}else{
-				
-				sum += modifiedEntropy(i);
-				
-			}
-		}
-		return sum;
-	}
 
+
+	// ENTROPY	
 	public double entropy(int attr) {
 		double total = m_SumWeights[attr];
 		
-		
-		
-		if (total < 1e-6) {
+		if (total < MathUtil.C1E_6) {
 			return 0.0;
 		} else {
 			double acc = 0.0;
@@ -319,8 +305,6 @@ public class ClassificationStat extends ClusStatistic {
 			return -acc/MathUtil.M_LN2;
 		}
 	}
-	
-	
 	// The idea here is ....
 	public double modifiedEntropy(int attr) {
 		
@@ -328,7 +312,7 @@ public class ClassificationStat extends ClusStatistic {
 		
 		//System.out.print("Class has "+total+" examples\n");
 		
-		if (total < 1e-6) {
+		if (total < MathUtil.C1E_6) {
 			return 0.0;
 		} else {
 			double acc = 0.0;
@@ -344,10 +328,25 @@ public class ClassificationStat extends ClusStatistic {
 		}
 	}
 	
-
-	public double entropyDifference(ClassificationStat other) {
+	public double entropyDifference(ClassificationStat other, ClusAttributeWeights scale) {
+		if (Settings.isEnsembleTargetSubspacingEnabled()) return entropyDifferenceTargetSubspace(other, scale);
+		
 		double sum = 0.0;		
-		for (int i = 0; i < m_NbTarget; i++) {			
+		for (int i = 0; i < m_NbTarget; i++) {	
+			
+			if(other.getAttribute(i).getSchema().getSettings().checkEntropyType("StandardEntropy")){
+				sum += entropyDifference(i, other);
+			}else{
+				sum += modifiedEntropyDifference(i, other);				
+			}
+		}
+		return sum;
+	}	
+	public double entropyDifferenceTargetSubspace(ClassificationStat other, ClusAttributeWeights scale) {
+		double sum = 0.0;		
+		for (int i = 0; i < m_NbTarget; i++) {
+			if (!scale.getEnabled(m_Attrs[i].getIndex())) continue;
+			
 			if(other.getAttribute(i).getSchema().getSettings().checkEntropyType("StandardEntropy")){
 				sum += entropyDifference(i, other);
 			}else{
@@ -357,8 +356,35 @@ public class ClassificationStat extends ClusStatistic {
 		return sum;
 	}
 
-	public double entropyDifference(int attr, ClassificationStat other) {
+	public double entropy(ClusAttributeWeights scale) {
+		if (Settings.isEnsembleTargetSubspacingEnabled()) return entropyTargetSubspace(scale);
 		
+		double sum = 0.0;
+		for (int i = 0; i < m_NbTarget; i++) {
+			if(getAttribute(i).getSchema().getSettings().checkEntropyType("StandardEntropy")){
+				sum += entropy(i);
+			} else{
+				sum += modifiedEntropy(i);
+			}
+		}
+		return sum;
+	}
+	public double entropyTargetSubspace(ClusAttributeWeights scale) {
+		double sum = 0.0;
+
+		for (int i = 0; i < m_NbTarget; i++) {
+			if (!scale.getEnabled(m_Attrs[i].getIndex())) continue;
+
+			if(getAttribute(i).getSchema().getSettings().checkEntropyType("StandardEntropy")){
+				sum += entropy(i);
+			}else{
+				sum += modifiedEntropy(i);
+			}
+		}
+		return sum;
+	}	
+	
+	double entropyDifference(int attr, ClassificationStat other) {
 		double acc = 0.0;
 		double[] clcts = m_ClassCounts[attr];
 		double[] otcts = other.m_ClassCounts[attr];
@@ -369,10 +395,7 @@ public class ClassificationStat extends ClusStatistic {
 		}
 		return -acc/MathUtil.M_LN2;
 	}
-	
-	
-	public double modifiedEntropyDifference(int attr, ClassificationStat other) {
-			
+	double modifiedEntropyDifference(int attr, ClassificationStat other) {
 		double acc = 0.0;
 		double[] clcts = m_ClassCounts[attr];
 		double[] otcts = other.m_ClassCounts[attr];
@@ -384,22 +407,7 @@ public class ClassificationStat extends ClusStatistic {
 		return -acc/MathUtil.M_LN2;
 	}
 	
-	
-	
-	public double getSumWeight(int attr) {
-		return m_SumWeights[attr];
-	}
-	
-	public double getProportion(int attr, int cls) {
-		double total = m_SumWeights[attr];
-		if (total <= MathUtil.C1E_9) {
-			// no examples -> assume training set distribution
-			return m_Training.getProportion(attr, cls);
-		} else {
-			return m_ClassCounts[attr][cls] / total;
-		}
-	}
-
+	// GINI	
 	public double gini(int attr) {
 		double total = m_SumWeights[attr];
 		if (total <= MathUtil.C1E_9) {
@@ -417,7 +425,6 @@ public class ClassificationStat extends ClusStatistic {
 			return 1.0 - sum;
 		}
 	}
-
 	public double giniDifference(int attr, ClassificationStat other) {
 		double wDiff = m_SumWeights[attr] - other.m_SumWeights[attr];
 		if (wDiff <= MathUtil.C1E_9) {
@@ -432,6 +439,134 @@ public class ClassificationStat extends ClusStatistic {
 				sum += (diff/wDiff)*(diff/wDiff);
 			}
 			return 1.0 - sum;
+		}
+	}
+
+	// ERROR
+	public double getError(ClusAttributeWeights scale) {
+		if (Settings.isEnsembleTargetSubspacingEnabled()) return getErrorTargetSubspace(scale);
+		
+		double result = 0.0;
+		for (int i = 0; i < m_NbTarget; i++) {
+			int maj = getMajorityClass(i);
+			result += m_SumWeights[i] - m_ClassCounts[i][maj];
+		}
+		return result / m_NbTarget;
+	}
+	public double getErrorTargetSubspace(ClusAttributeWeights scale) {
+		double result = 0.0;
+		int cnt = 0;
+		for (int i = 0; i < m_NbTarget; i++) {
+			if (!scale.getEnabled(m_Attrs[i].getIndex())) continue;
+			
+			cnt++;
+			int maj = getMajorityClass(i);
+			result += m_SumWeights[i] - m_ClassCounts[i][maj];
+		}
+		return result / cnt;
+	}
+	public double getErrorRel() {
+		//System.out.println("ClassificationStat getErrorRel");
+		// System.out.println("ClassificationStat nb example in the leaf "+m_SumWeight);
+		return getError() / getTotalWeight();
+	}
+	public double getErrorDiff(ClusAttributeWeights scale, ClusStatistic other) {
+		if (Settings.isEnsembleTargetSubspacingEnabled()) return getErrorDiffTargetSubspace(scale, other);
+		
+		double result = 0.0;
+		ClassificationStat or = (ClassificationStat)other;		
+		for (int i = 0; i < m_NbTarget; i++) {
+			int maj = getMajorityClassDiff(i, or);
+			double diff_maj = m_ClassCounts[i][maj] - or.m_ClassCounts[i][maj];
+			double diff_total = m_SumWeights[i] - or.m_SumWeights[i];
+			result += diff_total - diff_maj;
+		}
+		return result / m_NbTarget;
+	}
+	public double getErrorDiffTargetSubspace(ClusAttributeWeights scale, ClusStatistic other) {
+		double result = 0.0;
+		ClassificationStat or = (ClassificationStat)other;
+		int cnt = 0;
+		for (int i = 0; i < m_NbTarget; i++) {
+			if (!scale.getEnabled(m_Attrs[i].getIndex())) continue;
+			
+			cnt++;
+			int maj = getMajorityClassDiff(i, or);
+			double diff_maj = m_ClassCounts[i][maj] - or.m_ClassCounts[i][maj];
+			double diff_total = m_SumWeights[i] - or.m_SumWeights[i];
+			result += diff_total - diff_maj;
+		}
+		return result / cnt;
+	}
+	
+	// VARIANCE REDUCTION
+	public double getSVarS(ClusAttributeWeights scale) {
+		if (Settings.isEnsembleTargetSubspacingEnabled()) return getSVarSTargetSubspace(scale);
+		
+		//System.err.println(": here");
+		double result = 0.0;
+		double sum = m_SumWeight;
+		for (int i = 0; i < m_NbTarget; i++) {
+			// System.out.println(gini(i) + " " + scale.getWeight(m_Attrs[i]) + " " + sum);
+			result += gini(i) * scale.getWeight(m_Attrs[i]) * sum;
+		}
+		return result / m_NbTarget;
+	}
+	public double getSVarSTargetSubspace(ClusAttributeWeights scale) {
+		double result = 0.0;
+		double sum = m_SumWeight;
+		int cnt = 0;
+		
+		for (int i = 0; i < m_NbTarget; i++) {
+			if (!scale.getEnabled(m_Attrs[i].getIndex())) continue;
+
+			cnt++;
+			result += gini(i) * scale.getWeight(m_Attrs[i]) * sum;
+		}
+		return result / cnt;
+	}
+
+	public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
+		if (Settings.isEnsembleTargetSubspacingEnabled()) return getSVarSDiffTargetSubspace(scale, other);
+		
+		double result = 0.0;
+		double sum = m_SumWeight - other.m_SumWeight;
+		ClassificationStat cother = (ClassificationStat)other;
+		for (int i = 0; i < m_NbTarget; i++) {
+			result += giniDifference(i, cother) * scale.getWeight(m_Attrs[i]) * sum;
+		}
+		return result / m_NbTarget;
+	}
+	public double getSVarSDiffTargetSubspace(ClusAttributeWeights scale, ClusStatistic other) {
+		double result = 0.0;
+		double sum = m_SumWeight - other.m_SumWeight;
+		int cnt = 0;
+		ClassificationStat cother = (ClassificationStat)other;
+		for (int i = 0; i < m_NbTarget; i++) {
+			if (!scale.getEnabled(m_Attrs[i].getIndex())) continue;
+			
+			cnt++;			
+			result += giniDifference(i, cother) * scale.getWeight(m_Attrs[i]) * sum;
+		}
+		return result / cnt;
+	}
+	
+	
+	
+	
+	
+	
+	public double getSumWeight(int attr) {
+		return m_SumWeights[attr];
+	}
+	
+	public double getProportion(int attr, int cls) {
+		double total = m_SumWeights[attr];
+		if (total <= MathUtil.C1E_9) {
+			// no examples -> assume training set distribution
+			return m_Training.getProportion(attr, cls);
+		} else {
+			return m_ClassCounts[attr][cls] / total;
 		}
 	}
 
@@ -661,63 +796,18 @@ public class ClassificationStat extends ClusStatistic {
 		return buf.toString();
 	}
 
-	public double getError(ClusAttributeWeights scale) {
-		double result = 0.0;
-		for (int i = 0; i < m_NbTarget; i++) {
-			int maj = getMajorityClass(i);
-			result += m_SumWeights[i] - m_ClassCounts[i][maj];
-		}
-		return result / m_NbTarget;
-	}
 
-	public double getErrorRel() {
-		//System.out.println("ClassificationStat getErrorRel");
-		// System.out.println("ClassificationStat nb example in the leaf "+m_SumWeight);
-		return getError() / getTotalWeight();
-	}
 
-	public double getErrorDiff(ClusAttributeWeights scale, ClusStatistic other) {
-		double result = 0.0;
-		ClassificationStat or = (ClassificationStat)other;		
-		for (int i = 0; i < m_NbTarget; i++) {
-			int maj = getMajorityClassDiff(i, or);
-			double diff_maj = m_ClassCounts[i][maj] - or.m_ClassCounts[i][maj];
-			double diff_total = m_SumWeights[i] - or.m_SumWeights[i];
-			result += diff_total - diff_maj;
-		}
-		return result / m_NbTarget;
-	}
-
-	public int getNbPseudoTargets() {
-		int nbTarget = 0;
-		for (int i = 0; i < m_NbTarget; i++) {
-			nbTarget += m_Attrs[i].getNbValues();
-		}
-		return nbTarget;
-	}
-
-	public double getSVarS(ClusAttributeWeights scale) {
-		//System.err.println(": here");
-		double result = 0.0;
-		double sum = m_SumWeight;
-		for (int i = 0; i < m_NbTarget; i++) {
-			// System.out.println(gini(i) + " " + scale.getWeight(m_Attrs[i]) + " " + sum);
-			result += gini(i) * scale.getWeight(m_Attrs[i]) * sum;
-		}
-		return result / m_NbTarget;
-	}
-
-	public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-		double result = 0.0;
-		double sum = m_SumWeight - other.m_SumWeight;
-		ClassificationStat cother = (ClassificationStat)other;
-		for (int i = 0; i < m_NbTarget; i++) {
-			result += giniDifference(i, cother) * scale.getWeight(m_Attrs[i]) * sum;
-		}
-		return result / m_NbTarget;
-	}
+//	public int getNbPseudoTargets() {
+//		int nbTarget = 0;
+//		for (int i = 0; i < m_NbTarget; i++) {
+//			nbTarget += m_Attrs[i].getNbValues();
+//		}
+//		return nbTarget;
+//	}
 
 	
+
 	public void initNormalizationWeights(ClusAttributeWeights weights, boolean[] shouldNormalize) {
 		for (int i = 0; i < m_NbTarget; i++) {
 			int idx = m_Attrs[i].getIndex();
@@ -774,15 +864,23 @@ public class ClassificationStat extends ClusStatistic {
 		}
 	}
 
-	public void vote(ArrayList votes) {
-		switch (Settings.m_ClassificationVoteType.getValue()){
+	public void vote(ArrayList<ClusStatistic> votes) {
+		switch (Settings.m_ClassificationVoteType.getValue()) {
 			case 0: voteMajority(votes);break;
 			case 1: voteProbDistr(votes);break;
-			default: voteMajority(votes);
+			default: voteProbDistr(votes);
 		}
 	}
+	
+	public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+		switch (Settings.m_ClassificationVoteType.getValue()) {
+			case 0: voteMajority(votes, targetSubspaceInfo); break;
+			case 1: voteProbDistr(votes, targetSubspaceInfo); break;
+			default: voteProbDistr(votes, targetSubspaceInfo);
+		}		
+	}
 
-	public void voteMajority(ArrayList votes) {
+	public void voteMajority(ArrayList<ClusStatistic> votes) {
 		reset();		 
 		int nb_votes = votes.size();
 		m_SumWeight = nb_votes;
@@ -795,14 +893,44 @@ public class ClassificationStat extends ClusStatistic {
 		}
 		calcMean();
 	}
-
-	public void voteProbDistr(ArrayList votes) {
+	public void voteMajority(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+		reset();		 
+		int nb_votes = votes.size();
+		m_SumWeight = nb_votes;
+		Arrays.fill(m_SumWeights, nb_votes);
+		for (int j = 0; j < nb_votes; j++) {
+			ClassificationStat vote = (ClassificationStat)votes.get(j);
+			int[] enabled = targetSubspaceInfo.getOnlyTargets(targetSubspaceInfo.getModelSubspace(j));
+			
+			for (int i = 0; i < m_NbTarget; i++){
+				if (enabled[i] == 1) {
+					m_ClassCounts[i][vote.getNominalPred()[i]]++;
+				}
+			}
+		}
+		calcMean();
+	}
+	
+	public void voteProbDistr(ArrayList<ClusStatistic> votes) {
 		reset();
 		int nb_votes = votes.size();
 		for (int j = 0; j < nb_votes; j++){
 			ClassificationStat vote = (ClassificationStat) votes.get(j);
 			for (int i = 0; i < m_NbTarget; i++){
 				addVote(vote);
+			}
+		}
+		calcMean();
+	}
+	public void voteProbDistr(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+		reset();
+		int nb_votes = votes.size();
+		for (int j = 0; j < nb_votes; j++){
+			ClassificationStat vote = (ClassificationStat) votes.get(j);
+			int[] enabled = targetSubspaceInfo.getOnlyTargets(targetSubspaceInfo.getModelSubspace(j));
+			
+			for (int i = 0; i < m_NbTarget; i++){
+				addVote(vote, enabled);
 			}
 		}
 		calcMean();
@@ -815,6 +943,17 @@ public class ClassificationStat extends ClusStatistic {
 			m_SumWeights[i] += or.m_SumWeights[i];
 			double[] my = m_ClassCounts[i];
 			for (int j = 0; j < my.length; j++) my[j] += or.getProportion(i, j);
+		}
+	}
+	public void addVote(ClusStatistic vote, int[] enabled) {
+		ClassificationStat or = (ClassificationStat)vote;
+		m_SumWeight += or.m_SumWeight;
+		for (int i = 0; i < m_NbTarget; i++) {			
+			if (enabled[i] == 1) {
+				m_SumWeights[i] += or.m_SumWeights[i];
+				double[] my = m_ClassCounts[i];
+				for (int j = 0; j < my.length; j++) my[j] += or.getProportion(i, j);
+			}
 		}
 	}
 

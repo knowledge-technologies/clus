@@ -30,16 +30,16 @@ import clus.data.attweights.*;
 public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
 
 	protected String m_BasicDist;
-	protected ClusAttributeWeights m_TargetWeights;
+	
 
 	public VarianceReductionHeuristicCompatibility(String basicdist, ClusStatistic negstat, ClusAttributeWeights targetweights) {
 		m_BasicDist = basicdist;
-		m_TargetWeights = targetweights;
+		m_ClusteringWeights = targetweights;
 	}
 
 	public VarianceReductionHeuristicCompatibility(ClusStatistic negstat, ClusAttributeWeights targetweights) {
 		m_BasicDist = negstat.getDistanceName();
-		m_TargetWeights = targetweights;
+		m_ClusteringWeights = targetweights;
 	}
 	public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
 		// Acceptable?
@@ -47,9 +47,9 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
 			return Double.NEGATIVE_INFINITY;
 		}
 		// Compute |S|Var[S]
-		double ss_tot = tstat.getSVarS(m_TargetWeights);
-		double ss_pos = pstat.getSVarS(m_TargetWeights);
-		double ss_neg = tstat.getSVarSDiff(m_TargetWeights, pstat);
+		double ss_tot = tstat.getSVarS(m_ClusteringWeights);
+		double ss_pos = pstat.getSVarS(m_ClusteringWeights);
+		double ss_neg = tstat.getSVarSDiff(m_ClusteringWeights, pstat);
 		double value = FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos+ss_neg);
 		if (Settings.VERBOSE >= 10) {
 			System.out.println("TOT: "+tstat.getDebugString());
@@ -62,6 +62,6 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
 	}
 
 	public String getName() {
-		return "Variance Reduction with Distance '"+m_BasicDist+"', ("+m_TargetWeights.getName()+") (FTest = "+FTest.getSettingSig()+")";
+		return "Variance Reduction with Distance '"+m_BasicDist+"', ("+m_ClusteringWeights.getName()+") (FTest = "+FTest.getSettingSig()+")";
 	}
 }

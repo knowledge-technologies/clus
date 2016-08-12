@@ -35,6 +35,7 @@ import clus.data.attweights.*;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.*;
+import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.util.ClusFormat;
@@ -754,8 +755,11 @@ public class CombStat extends ClusStatistic {
 		m_RegStat.printDistribution(wrt);
 	}
 
-	public void vote(ArrayList votes) {
+	public void vote(ArrayList<ClusStatistic> votes) {
 		System.err.println(getClass().getName() + "vote (): Not implemented");
 	}
 
+	public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+		System.err.println(getClass().getName() + "vote (): Not implemented");
+	}
 }

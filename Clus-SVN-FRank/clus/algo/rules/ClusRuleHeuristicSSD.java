@@ -34,7 +34,6 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
 	protected RowData m_Data;
 	protected String m_BasicDist;
 	protected ClusStatistic m_NegStat;
-	protected ClusAttributeWeights m_TargetWeights;
 	protected ClusStatManager m_StatManager;
 
 	// Copied from SSDHeuristic.java
@@ -43,7 +42,7 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
 		m_StatManager = statManager;
 		m_BasicDist = basicdist;
 		m_NegStat = negstat;
-		m_TargetWeights = targetweights;
+		m_ClusteringWeights = targetweights;
 	}
 
 	// Copied from SSDHeuristic.java
@@ -64,7 +63,7 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
 	  	double def_value = getTrainDataHeurValue();
 	  		//System.out.print("Inside calcHeuristic()");
 	  		//System.out.println(" - default SS: "+def_value);
-		double value = pstat.getSVarS(m_TargetWeights, m_Data);
+		double value = pstat.getSVarS(m_ClusteringWeights, m_Data);
 			//System.out.print("raw SS: "+value);
 		// Normalization with the purpose of getting most of the single variances within the
 		// [0,1] interval. This weight is in stdev units,
@@ -84,6 +83,6 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
 	}
 
 	public String getName() {
-		return "SS Reduction for Rules ("+m_BasicDist+", "+m_TargetWeights.getName()+")";
+		return "SS Reduction for Rules ("+m_BasicDist+", "+m_ClusteringWeights.getName()+")";
 	}
 }

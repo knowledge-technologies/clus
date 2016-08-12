@@ -38,7 +38,8 @@ public class ClusAttributeWeights implements Serializable {
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
 	public double[] m_Weights;
-
+	public boolean[] m_Enabled;
+	
 	public ClusAttributeWeights(int nbAttr) {
 		m_Weights = new double[nbAttr];
 	}
@@ -106,5 +107,13 @@ public class ClusAttributeWeights implements Serializable {
 			buf.append("]");
 			return buf.toString();
 		}
+	}
+
+	public void setEnabled(boolean[] enabled) {
+		m_Enabled = Arrays.copyOf(enabled, enabled.length);			
+	}
+	
+	public boolean getEnabled(int idx) {
+		return m_Enabled[idx];
 	}
 }

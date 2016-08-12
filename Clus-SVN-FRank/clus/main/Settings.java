@@ -1999,7 +1999,13 @@ public class Settings implements Serializable {
 	public final static int RANKING_RFOREST = 1;
 	public final static int RANKING_GENIE3 = 2;
 	public final static int RANKING_SYMBOLIC = 3;
-		
+
+	public final static String[] ENSEMBLE_TARGET_SUBSPACING_TYPE = { "None", "RandomPredictWithAll", "RandomPredictWithSubset", "SMARTERWAY" };
+	public final static int ENSEMBLE_TARGET_SUBSPACING_NONE = 0;
+	public final static int ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_ALL = 1;
+	public final static int ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_SUBSET = 2;
+	public final static int ENSEMBLE_TARGET_SUBSPACING_SMARTERWAY = 3;
+
 	INIFileSection m_SectionEnsembles;
 	protected INIFileNominalOrIntOrVector m_NbBags;
 	/** Used ensemble method */
@@ -2009,9 +2015,16 @@ public class Settings implements Serializable {
 	/** Size of the feature set used during tree induction. Used for random forests, random 
 	 * subspaces and bagging of subspaces. If left to default 0, floor(log_2 #DescAttr) + 1 is used.*/
 	protected INIFileString m_RandomAttrSelected;
+	/** Size of the target feature space (similar to m_RandomAttrSelected) */
+	protected INIFileString m_RandomTargetAttrSelected;
+	
+	/** Used for target subspacing */
+	public static INIFileNominal m_EnsembleTargetSubspacingMethod;
+	
 	protected int m_SubsetSize;
 	public static INIFileBool m_PrintAllModels;
 	public static INIFileBool m_PrintAllModelFiles;
+	public static INIFileBool m_PrintAllModelInfo;
 	public static INIFileBool m_PrintPaths;
 	public static boolean m_EnsembleMode = false;
 	/** Time & memory optimization */
@@ -2063,6 +2076,18 @@ public class Settings implements Serializable {
 		m_EnsembleMethod.setSingleValue(value);
 	}
 
+	public static int getEnsembleTargetSubspacingMethod()	{
+		return m_EnsembleTargetSubspacingMethod.getValue();
+	}
+	
+	public void setEnsembleTargetSubspacingMethod(int value) {
+		m_EnsembleTargetSubspacingMethod.setSingleValue(value);
+	}
+	
+	public static boolean isEnsembleTargetSubspacingEnabled() {
+		return Settings.getEnsembleTargetSubspacingMethod() != Settings.ENSEMBLE_TARGET_SUBSPACING_NONE;
+	}
+	
 	public int getRankingMethod() {
 		return m_FeatureRanking.getValue();
 	}
@@ -2104,13 +2129,30 @@ public class Settings implements Serializable {
 		return m_RandomAttrSelected.getValue();
 	}
 	
+	public String getNbRandomTargetAttrString() {
+		return m_RandomTargetAttrSelected.getValue();
+	}
 	public INIFileNominalOrIntOrVector getBagSelection() {
 		return m_BagSelection;
 	}
 
-	public void updateNbRandomAttrSelected(ClusSchema schema){
+	public int calculateNbRandomAttrSelected(ClusSchema schema, int type) {
+		String value, s;
 		int fsize = -1;
-		String value = getNbRandomAttrString();
+		int ubound;
+		
+		if (type == 1) { // for descriptive subspacing
+			value = getNbRandomAttrString();
+			ubound = schema.getNbDescriptiveAttributes();
+			s = "descriptive";
+		}
+		else { // for target subspacing		
+			value = getNbRandomTargetAttrString();
+			ubound = schema.getNbTargetAttributes();
+			s = "target";
+		}
+		
+		
 		if (value.contains("-")){
 			System.err.println("The number of subspaces can't be negative.");
 			System.err.println("\t Setting this value to default (log2).");
@@ -2118,16 +2160,16 @@ public class Settings implements Serializable {
 		}
 		
 		if (value.equalsIgnoreCase("SQRT")){
-			fsize = (int) Math.ceil(Math.sqrt(schema.getNbDescriptiveAttributes()));//upper bound of sqrt
+			fsize = (int) Math.ceil(Math.sqrt(ubound));//upper bound of sqrt
 		} else if (value.equalsIgnoreCase("LOG") || value.equalsIgnoreCase("0")){// the 0 is to keep the previous setting
-			fsize = (int) Math.ceil(Math.log(schema.getNbDescriptiveAttributes())/Math.log(2));//upper bound of log2
+			fsize = (int) Math.ceil(Math.log(ubound)/Math.log(2));//upper bound of log2
 		} else {
 			try {
 				int val = Integer.parseInt(value);
-				if (val > schema.getNbDescriptiveAttributes()){
-					System.err.println("The size of the subset can't be larger than the number of descriptive attributes.");
+				if (val > ubound){
+					System.err.println("The size of the subset can't be larger than the number of " + s + " attributes.");
 					System.err.println("\t Setting this value to the number of attributes, i.e., to bagging.");
-					val = schema.getNbDescriptiveAttributes();
+					val = ubound;
 				}
 				fsize = val;
 			}catch (NumberFormatException e) {//not an integer
@@ -2138,7 +2180,7 @@ public class Settings implements Serializable {
 					System.err.println("\t Setting this value to 1, i.e., to bagging.");
 					val = 1.0;
 				}
-				fsize = (int) Math.ceil(val*schema.getNbDescriptiveAttributes()); //upper bound on the fraction number;
+				fsize = (int) Math.ceil(val*ubound); //upper bound on the fraction number;
 				}catch (Exception e2) {
 					System.err.println("Error while setting the feature subset size!");
 					System.err.println("The set of possible values include:");
@@ -2150,10 +2192,18 @@ public class Settings implements Serializable {
 				}
 			}
 		}
+
+		
+		return fsize;
+	}
+	public void updateNbRandomAttrSelected(ClusSchema schema){
+		
+		int fsize = calculateNbRandomAttrSelected(schema, 1);
 		
 //		if (getNbRandomAttrSelected() == 0)
 //			fsize = (int) (Math.log(schema.getNbDescriptiveAttributes())/Math.log(2) + 1);
 //		else fsize = getNbRandomAttrSelected();
+		
 		setNbRandomAttrSelected(fsize);
 	}
 
@@ -2176,6 +2226,10 @@ public class Settings implements Serializable {
 	
 	public boolean isPrintEnsemblePaths( ){
 		return m_PrintPaths.getValue();
+	}
+	
+	public static boolean isPrintEnsembleModelInfo( ){		
+		return m_PrintAllModelInfo.getValue();		
 	}
 
 	public static boolean shouldOptimizeEnsemble( ){
@@ -2349,6 +2403,35 @@ public class Settings implements Serializable {
 	public static boolean XVAL_OVERLAP = true;
 	public static boolean IS_XVAL = false;
 
+/***********************************************************************
+ * Section: Option tree
+ ***********************************************************************/
+
+	protected INIFileSection m_SectionOptionTree;
+	protected INIFileDouble m_optionFactor;
+	protected INIFileDouble m_optionDecayFactor;
+	protected INIFileDouble m_optionEpsilon;
+
+	public boolean isSectionOptionEnabled() {
+		return m_SectionILevelC.isEnabled();
+	}
+
+	public double getOptionFactor() {
+		return m_optionFactor.getValue();
+	}
+
+	public double getOptionDecayFactor() {
+		return m_optionDecayFactor.getValue();
+	}
+	
+	public double getOptionEpsilon() {
+		return m_optionEpsilon.getValue();
+	}
+	
+	public void setSectionOptionEnabled(boolean enable) {
+		m_SectionOptionTree.setEnabled(enable);
+	}
+		
 /***********************************************************************
  * Create the settings structure                                       *
  ***********************************************************************/
@@ -2588,11 +2671,14 @@ public class Settings implements Serializable {
 
 		m_SectionEnsembles = new INIFileSection("Ensemble");
 		m_SectionEnsembles.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
-		m_SectionEnsembles.addNode(m_EnsembleMethod =new INIFileNominal("EnsembleMethod", ENSEMBLE_TYPE, 0));
-		m_SectionEnsembles.addNode(m_ClassificationVoteType =new INIFileNominal("VotingType", VOTING_TYPE, 0));
+		m_SectionEnsembles.addNode(m_EnsembleMethod =new INIFileNominal("EnsembleMethod", ENSEMBLE_TYPE, ENSEMBLE_BAGGING));
+		m_SectionEnsembles.addNode(m_ClassificationVoteType =new INIFileNominal("VotingType", VOTING_TYPE, VOTING_TYPE_PROBAB_DISTR));
 		m_SectionEnsembles.addNode(m_RandomAttrSelected = new INIFileString("SelectRandomSubspaces", "0"));
+		m_SectionEnsembles.addNode(m_RandomTargetAttrSelected = new INIFileString("SelectRandomTargetSubspaces","SQRT"));
+		m_SectionEnsembles.addNode(m_EnsembleTargetSubspacingMethod = new INIFileNominal("TargetSubspacing", ENSEMBLE_TARGET_SUBSPACING_TYPE, ENSEMBLE_TARGET_SUBSPACING_NONE));
 		m_SectionEnsembles.addNode(m_PrintAllModels = new INIFileBool("PrintAllModels", false));
 		m_SectionEnsembles.addNode(m_PrintAllModelFiles = new INIFileBool("PrintAllModelFiles", false));
+		m_SectionEnsembles.addNode(m_PrintAllModelInfo = new INIFileBool("PrintAllModelInfo", false));
 		m_SectionEnsembles.addNode(m_PrintPaths = new INIFileBool("PrintPaths", false));
 		m_SectionEnsembles.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
 		m_SectionEnsembles.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
@@ -2637,6 +2723,13 @@ public class Settings implements Serializable {
 		m_SectionKNNT.addNode(kNNT_normalized = new INIFileBool("Normalizing", true));
 		m_SectionKNNT.addNode(kNNT_attrWeighted = new INIFileBool("AttributeWeighted", false));
 		m_SectionKNNT.setEnabled(false);
+		
+		
+		m_SectionOptionTree = new INIFileSection("OptionTree");		
+		m_SectionOptionTree.addNode(m_optionFactor = new INIFileDouble("OptionFactor", 0.9));		
+		m_SectionOptionTree.addNode(m_optionDecayFactor = new INIFileDouble("DecayFactor", 0.9));		
+		m_SectionOptionTree.addNode(m_optionEpsilon = new INIFileDouble("Epsilon", 0.1));		
+		m_SectionOptionTree.setEnabled(false);
 		
 		INIFileSection exper = new INIFileSection("Experimental");
 		exper.addNode(m_SetsData = new INIFileInt("NumberBags", 25));
@@ -2776,5 +2869,7 @@ public class Settings implements Serializable {
 		String path = getFileAbsolute(fname);
 		return new PrintWriter(new OutputStreamWriter(new FileOutputStream(path)));
 	}
+
+
 
 }

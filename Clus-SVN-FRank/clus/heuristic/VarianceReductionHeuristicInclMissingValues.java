@@ -29,12 +29,11 @@ import clus.data.type.*;
 
 public class VarianceReductionHeuristicInclMissingValues extends ClusHeuristic {
 
-	private ClusAttributeWeights m_TargetWeights;
 	private ClusAttrType[] m_Attrs;
 	protected ClusStatistic m_Pos, m_Neg, m_Tot;
 
 	public VarianceReductionHeuristicInclMissingValues(ClusAttributeWeights prod, ClusAttrType[] attrs, ClusStatistic stat) {
-		m_TargetWeights = prod;
+		m_ClusteringWeights = prod;
 		m_Attrs = attrs;
 		m_Pos = stat.cloneStat();
 		m_Neg = stat.cloneStat();
@@ -58,13 +57,13 @@ public class VarianceReductionHeuristicInclMissingValues extends ClusHeuristic {
 		m_Neg.subtractFromThis(pstat);
 		m_Pos.addScaled(pos_freq, missing);
 		m_Neg.addScaled(1.0-pos_freq, missing);
-		double s_ss_pos = m_Pos.getSVarS(m_TargetWeights);
-		double s_ss_neg = m_Neg.getSVarS(m_TargetWeights);
-		double s_ss_tot = m_Tot.getSVarS(m_TargetWeights);
+		double s_ss_pos = m_Pos.getSVarS(m_ClusteringWeights);
+		double s_ss_neg = m_Neg.getSVarS(m_ClusteringWeights);
+		double s_ss_tot = m_Tot.getSVarS(m_ClusteringWeights);
 		return FTest.calcVarianceReductionHeuristic(n_tot, s_ss_tot, s_ss_pos+s_ss_neg);
 	}
 
 	public String getName() {
-		return "Variance Reduction Including Missing Values (ftest: "+Settings.FTEST_VALUE+", "+m_TargetWeights.getName(m_Attrs)+")";
+		return "Variance Reduction Including Missing Values (ftest: "+Settings.FTEST_VALUE+", "+m_ClusteringWeights.getName(m_Attrs)+")";
 	}
 }

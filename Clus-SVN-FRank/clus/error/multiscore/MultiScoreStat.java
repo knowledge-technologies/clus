@@ -30,6 +30,7 @@ import clus.statistic.*;
 import clus.util.*;
 import clus.data.cols.*;
 import clus.data.rows.*;
+import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 
 public class MultiScoreStat extends ClusStatistic {
 
@@ -127,6 +128,10 @@ public class MultiScoreStat extends ClusStatistic {
 		System.err.println(getClass().getName() + "vote (): Not implemented");
 	}
 
+	public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+		System.err.println(getClass().getName() + "vote (): Not implemented");
+	}
+	
 	public void updateWeighted(SparseDataTuple tuple, int idx) {
 	}
 }

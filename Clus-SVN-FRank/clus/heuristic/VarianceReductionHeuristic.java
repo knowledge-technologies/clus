@@ -32,18 +32,17 @@ public class VarianceReductionHeuristic extends ClusHeuristic {
 	protected RowData m_Data;
 	protected String m_BasicDist;
 	protected ClusStatistic m_NegStat;
-	protected ClusAttributeWeights m_TargetWeights;
 
 	public VarianceReductionHeuristic(String basicdist, ClusStatistic negstat, ClusAttributeWeights targetweights) {
 		m_BasicDist = basicdist;
 		m_NegStat = negstat;
-		m_TargetWeights = targetweights;
+		m_ClusteringWeights = targetweights;
 	}
 
 	public VarianceReductionHeuristic(ClusStatistic negstat, ClusAttributeWeights targetweights) {
 		m_BasicDist = negstat.getDistanceName();
 		m_NegStat = negstat;
-		m_TargetWeights = targetweights;
+		m_ClusteringWeights = targetweights;
 	}
 
 	public void setData(RowData data) {
@@ -56,11 +55,11 @@ public class VarianceReductionHeuristic extends ClusHeuristic {
 			return Double.NEGATIVE_INFINITY;
 		}
 		// Calculate |S|Var[S]
-		double ss_tot = tstat.getSVarS(m_TargetWeights, m_Data);
-		double ss_pos = pstat.getSVarS(m_TargetWeights, m_Data);
+		double ss_tot = tstat.getSVarS(m_ClusteringWeights, m_Data);
+		double ss_pos = pstat.getSVarS(m_ClusteringWeights, m_Data);
 		m_NegStat.copy(tstat);
 		m_NegStat.subtractFromThis(pstat);
-		double ss_neg = m_NegStat.getSVarS(m_TargetWeights, m_Data);
+		double ss_neg = m_NegStat.getSVarS(m_ClusteringWeights, m_Data);
 		double value = FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos+ss_neg);
 		if (Settings.VERBOSE >= 10) {
 			System.out.println("TOT: "+tstat.getDebugString());
@@ -72,6 +71,6 @@ public class VarianceReductionHeuristic extends ClusHeuristic {
 	}
 
 	public String getName() {
-		return "Variance Reduction with Distance '"+m_BasicDist+"', ("+m_TargetWeights.getName()+") (FTest = "+FTest.getSettingSig()+")";
+		return "Variance Reduction with Distance '"+m_BasicDist+"', ("+m_ClusteringWeights.getName()+") (FTest = "+FTest.getSettingSig()+")";
 	}
 }

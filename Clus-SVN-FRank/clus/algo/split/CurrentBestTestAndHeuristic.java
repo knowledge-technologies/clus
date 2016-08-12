@@ -233,7 +233,7 @@ public class CurrentBestTestAndHeuristic {
 	}
 
 /***************************************************************************
- * Nummeric splits
+ * Numeric splits
  ***************************************************************************/
 
 	// Where is this used?

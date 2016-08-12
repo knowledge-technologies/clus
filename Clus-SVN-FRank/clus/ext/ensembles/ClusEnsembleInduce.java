@@ -23,13 +23,14 @@
 package clus.ext.ensembles;
 
 import java.io.IOException;
+import java.lang.reflect.Field;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.io.*;
 
-import weka.gui.SysErrLog;
 
 import jeans.resource.ResourceInfo;
-
 import clus.Clus;
 import clus.algo.*;
 import clus.algo.tdidt.*;
@@ -37,11 +38,15 @@ import clus.main.*;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
+import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
 import clus.data.rows.TupleIterator;
 import clus.data.type.*;
 import clus.error.ClusErrorList;
+import clus.heuristic.ClusHeuristic;
+import clus.heuristic.VarianceReductionHeuristic;
 import clus.selection.*;
+import clus.statistic.ClusStatistic;
 import clus.tools.optimization.GDProbl;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
@@ -62,7 +67,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	//Output ensemble at different values
 	int[] m_OutEnsembleAt;//sorted values (ascending)!
 	static int m_NbMaxBags;
-
+	
+	// members for target subspacing 
+	static int m_EnsembleTargetSubspaceMethod;
+	ClusEnsembleTargetSubspaceInfo m_TargetSubspaceInfo;
+	
 	//Out-Of-Bag Error Estimate
 	ClusOOBErrorEstimate m_OOBEstimation;
 	
@@ -90,6 +99,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		m_Mode = ClusStatManager.getMode();
 		//optimize if not XVAL and HMC
 		m_OptMode = (Settings.shouldOptimizeEnsemble() && ((m_Mode == ClusStatManager.MODE_HIERARCHICAL)||(m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode == ClusStatManager.MODE_CLASSIFY)));
+		m_EnsembleTargetSubspaceMethod = Settings.getEnsembleTargetSubspacingMethod();
+		
 //		m_OptMode = (Settings.shouldOptimizeEnsemble() && !Settings.IS_XVAL && ((m_Mode == ClusStatManager.MODE_HIERARCHICAL)||(m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode == ClusStatManager.MODE_CLASSIFY)));
 		m_OutEnsembleAt = sett.getNbBaggingSets().getIntVectorSorted();
 		m_NbMaxBags = m_OutEnsembleAt[m_OutEnsembleAt.length-1];
@@ -115,13 +126,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 	/** Train a decision tree ensemble with an algorithm given in settings  */
 	public void induceAll(ClusRun cr) throws ClusException, IOException {
-		System.out.println("Matej: v ensemble induce ...\n\n");
 		System.out.println("Memory And Time Optimization = " + m_OptMode);
 		System.out.println("Out-Of-Bag Estimate of the error = " + Settings.shouldEstimateOOB());
 		System.out.println("\tPerform Feature Ranking = " + m_FeatRank);
+		
+		prepareEnsembleTargetSubspaces();
+		
 		switch (cr.getStatManager().getSettings().getEnsembleMethod()){
 		case Settings.ENSEMBLE_BAGGING: {	//Bagging
-			System.out.println("Matej: gremo bagat");
 			System.out.println("Ensemble Method: Bagging");
 			induceBagging(cr);
 			break;
@@ -158,7 +170,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 		}
 		if (m_FeatRank) {
-			System.out.println("Matej: Delam ranking, hura!");
 			boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
 			if (sorted)m_FeatureRanking.sortFeatureRanks();
 			m_FeatureRanking.convertRanksByName();
@@ -167,14 +178,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			if (getSettings().isOutputJSONModel())
 				m_FeatureRanking.writeJSON(cr);
 
-		} else{ // Matej Pobrisi else
-			System.out.println("Matej: feature ranking izklopljen\n\n");			
 		}
 		if (m_OptMode){
 			ClusEnsembleInduceOptimization.roundPredictions();
 		}
+		
 		postProcessForest(cr);
 
+		
+		
 //		This section is for calculation of the similarity in the ensemble
 //		ClusBeamSimilarityOutput bsimout = new ClusBeamSimilarityOutput(cr.getStatManager().getSettings());
 //		bsimout.appendToFile(m_OForest.getModels(), cr);
@@ -261,6 +273,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		TupleIterator train_iterator = null; // = train set iterator
 		TupleIterator test_iterator = null; // = test set iterator
 
+		m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+		
 		if (m_OptMode){
 			train_iterator = cr.getTrainIter();
 			if (m_BagClus.hasTestSet()){
@@ -292,8 +306,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			}
 			ind.initialize();
 			crSingle.getStatManager().initClusteringWeights();
+			
+			initializeBagTargetSubspacing(crSingle, i); 
+			
 			ClusModel model = ind.induceSingleUnpruned(crSingle);
 			summ_time += ResourceInfo.getTime() - one_bag_time;
+			
 			if (m_OptMode){
 				//for i == 1 [i.e. the first run] it will initialize the predictions
 				if (i == 1) m_Optimization.initModelPredictionForTuples(model, train_iterator, test_iterator);
@@ -331,6 +349,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		TupleIterator test_iterator = null; // = test set iterator
 		OOBSelection oob_total = null; // = total OOB selection
 		OOBSelection oob_sel = null; // = current OOB selection
+		
+		m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+		
 		if (m_OptMode){
 			train_iterator = cr.getTrainIter();
 			if (cr.getTestIter() != null){
@@ -396,9 +417,125 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 
 	}
+	
+	
+	/**
+	 * Method for preparing target subspaces for the Ensemble.TargetSubspacing option
+	 * Target subspaces are created according to settings
+	 * @param ClusSchema schema
+	 * @return ClusEnsembleTargetSubspaceInfo object with created subspaces
+	 */
+	static ClusEnsembleTargetSubspaceInfo prepareEnsembleTargetSubspacesWithFixedSize(ClusSchema schema, int sizeOfSubspace)
+	{
+//		// check for dragons
+//		if (m_NbMaxBags < 2) {
+//			throw new RuntimeException("Ensemble size is too small! Minimum ensemble size is 2.");
+//		}
+		
+		int cnt = m_NbMaxBags;
+		int[] enabled;
+		ArrayList<int[]> subspaces = new ArrayList<int[]>();
+		
+
+		// find indices of target and clustering attributes
+		int[] targetIDs = new int[schema.getNbTargetAttributes()];
+		int[] clusteringIDs = new int[schema.getNbAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING)];
+
+		ClusAttrType[] targets = schema.getTargetAttributes();
+		ClusAttrType[] clustering = schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
+		
+		for (int t = 0; t < targetIDs.length; t++) targetIDs[t] = targets[t].getIndex();
+		for (int t = 0; t < clusteringIDs.length; t++) clusteringIDs[t] = clustering[t].getIndex();
+
+		// create subspaces
+		while (cnt > 1) {	
+			enabled = new int[schema.getNbAttributes()];
+		 
+			// enable all attributes
+			Arrays.fill(enabled, 1);
+			
+			// disable all targets
+			for (int i = 0; i < targets.length; i++) enabled[targets[i].getIndex()] = 0;
+			
+			// randomly select targets
+			ClusAttrType[] selected = selectRandomSubspaces(targets, sizeOfSubspace, ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING); // inject ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING randomizer
+			
+			// enable selected targets
+			for (int i=0; i < selected.length; i++) enabled[selected[i].getIndex()] = 1;
+			
+			
+			// safety check: check if at least one target attr is enabled
+    		int sum = 0; 
+    		for (int a = 0; a < targetIDs.length; a++) sum += enabled[targetIDs[a]];
+    		if (sum > 0) {    			
+    			// check if at least one clustering attr is enabled
+    			sum = 0;
+        		for (int a = 0; a < clusteringIDs.length; a++) sum += enabled[clusteringIDs[a]];
+        		if (sum > 0) {
+        			subspaces.add(enabled); // subspace meets the criteria, add it to the list
+        			cnt--;
+        		}    			
+    		}
+		}
+
+		// create one MT model for all targets
+		enabled = new int[schema.getNbAttributes()];
+		
+		// enable all attributes
+		Arrays.fill(enabled, 1);
+	 
+		subspaces.add(enabled);
+		
+		return new ClusEnsembleTargetSubspaceInfo(schema, subspaces);
+	}
+	
+	void prepareEnsembleTargetSubspaces()
+	{	
+		if (Settings.isEnsembleTargetSubspacingEnabled())
+		{
+			if (getSettings().getEnsembleMethod() != Settings.ENSEMBLE_BAGGING &&
+				getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RFOREST)
+				throw new RuntimeException("Target subspacing is not implemented for the selected ensemble method!");
+
+			if (Settings.VERBOSE > 1) System.out.println("Target subspacing: creating target subspaces.");
+			
+			m_TargetSubspaceInfo = prepareEnsembleTargetSubspacesWithFixedSize(getSchema(), getSettings().calculateNbRandomAttrSelected(getSchema(), 2));
+		}
+	}
+	
+	void initializeBagTargetSubspacing(ClusRun crSingle, int bagNo) throws ClusException
+	{
+		
+		if (Settings.isEnsembleTargetSubspacingEnabled()) {
+			
+			ClusStatManager m = crSingle.getStatManager();
+			
+			// get heuristic in use
+			ClusHeuristic h = m.getHeuristic();
+
+			// check if the attribute weights are set
+		    if(h.getClusteringAttributeWeights() == null)  throw new RuntimeException("Heuristic does not support target subspacing!");
+
+			// get subspace of targets that we have previously prepared
+			boolean[] enabled = m_TargetSubspaceInfo.getModelSubspaceBoolean(bagNo - 1);
+
+			// push to already initialized heuristic
+	    	h.setClusteringWeightsEnabledAttributes(enabled);
+
+			// display info of the targets, that are being used
+			if (getSettings().getVerbose() >= 1) {
+				int[] trgts = m_TargetSubspaceInfo.getOnlyTargets(m_TargetSubspaceInfo.getModelSubspace(bagNo - 1));
+				
+				if (trgts.length > 15) {
+					System.err.println("Enabled targets: " + ClusEnsembleTargetSubspaceInfo.getEnabledCount(trgts) + " of " + trgts.length);
+				} else {
+					System.err.println("Enabled targets: " + Arrays.toString(trgts));
+				}
+			}
+		}
+	}
 
 	public void induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel) throws ClusException, IOException {
-		System.out.println("Matej: inducam 1 bag ....");
 		if (getSettings().isEnsembleRandomDepth()) {
 			// Set random tree max depth
 			getSettings().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(
@@ -410,15 +547,21 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
 		ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(),msel,cr.getSummary(),i);
 		DepthFirstInduce ind;
+		
+		// ordinary bagging run
 		if (getSchema().isSparse()) {
 			ind = new DepthFirstInduceSparse(this);
 		}
 		else {
 			ind = new DepthFirstInduce(this);
 		}
+	
 		ind.initialize();
-		crSingle.getStatManager().initClusteringWeights();
-		ClusModel model = ind.induceSingleUnpruned(crSingle);
+		
+		initializeBagTargetSubspacing(crSingle, i);
+		 
+
+ 		ClusModel model = ind.induceSingleUnpruned(crSingle);
 		m_SummTime += ResourceInfo.getTime() - one_bag_time;
 
 //		OOB estimate for the parallel implementation is done in makeForestFromBags method
@@ -428,7 +571,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		
 		if (m_FeatRank){//franking genie3
 			if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
-				System.out.println("Matej: induceOneBag: RForest ranking ...");
 				m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
 			}
 			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3)
@@ -544,8 +686,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			throw new ClusException("Error: not all of the _bagX.model files were found");
 		}
 	}
-
-
 	
 	public void induceBaggingSubspaces(ClusRun cr) throws ClusException, IOException {
 		int nbrows = cr.getTrainingSet().getNbRows();
@@ -587,8 +727,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 				ind = new DepthFirstInduce(this);
 			}
 			ind.initialize();
+			
 			crSingle.getStatManager().initClusteringWeights();
 			ind.initializeHeuristic();
+			
 			ClusModel model = ind.induceSingleUnpruned(crSingle);
 			summ_time += ResourceInfo.getTime() - one_bag_time;
 
@@ -683,12 +825,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 //				if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST)
 //					m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
 				if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3) {
-					System.out.println("Matej: EXTRAAAAAAAAAAAAAA");
 					m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
 				}
 				
 				else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
-					System.out.println("Matej: SYM BO LIC?");
 					m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, cr, m_BagClus.getSettings().getSymbolicWeight(), 0);
 				}
 			}
@@ -787,14 +927,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	 * @param attrs -- For which attributes
 	 * @param select -- How many
 	 */
-	public static ClusAttrType[] selectRandomSubspaces(ClusAttrType[] attrs, int select){
+	public static ClusAttrType[] selectRandomSubspaces(ClusAttrType[] attrs, int select, int randomizerVersion){
 		int origsize = attrs.length;
 		int[] samples = new int [origsize];
 		int rnd;
 		boolean randomize = true;
 		int i = 0;
 		while (randomize) {
-			rnd = ClusRandom.nextInt(ClusRandom.RANDOM_SELECTION, origsize);
+			rnd = ClusRandom.nextInt(randomizerVersion, origsize);
 			if (samples[rnd] == 0) {
 				samples[rnd]++;
 				i++;
@@ -810,9 +950,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 				res++;
 			}
 		}
-//		System.out.println(java.util.Arrays.toString(samples));
 		return result;
-//		setRandomSubspaces(result);
 	}
 
 	public static ClusAttrType[] getRandomSubspaces(){
@@ -820,7 +958,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	}
 
 	public static void setRandomSubspaces(ClusAttrType[] attrs, int select){
-		m_RandomSubspaces = ClusEnsembleInduce.selectRandomSubspaces(attrs, select);
+		m_RandomSubspaces = ClusEnsembleInduce.selectRandomSubspaces(attrs, select, ClusRandom.RANDOM_SELECTION);
 	}
 
 	/** Memory optimization

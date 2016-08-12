@@ -9,12 +9,11 @@ import clus.statistic.ClusStatistic;
 
 public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
 
-	protected ClusAttributeWeights m_TargetWeights;
 	protected ClusStatManager m_StatManager;
 
 	public ClusRuleHeuristicHierarchical(ClusStatManager stat_mgr, ClusAttributeWeights prod) {
 		m_StatManager = stat_mgr;
-		m_TargetWeights = prod;
+		m_ClusteringWeights = prod;
 	}
 
 	/**
@@ -38,7 +37,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
 		//double totalValue = tstat.getSS(m_TargetWeights);
 		double totalValue = getTrainDataHeurValue(); // optimization of the previous two lines
 
-		double ruleValue = c_pstat.getSVarS(m_TargetWeights);
+		double ruleValue = c_pstat.getSVarS(m_ClusteringWeights);
 		double value = totalValue - ruleValue;
 
 

@@ -31,7 +31,7 @@ public class ClusRandom {
 	public static int m_Preset;
 	public static boolean m_IsPreset;
 
-	public final static int NB_RANDOM = 8;
+	public final static int NB_RANDOM = 9;
 	public final static int RANDOM_TEST_DIR = 0;
 	public final static int RANDOM_SELECTION = 1;
 	public final static int RANDOM_PARAM_TUNE = 2;
@@ -44,6 +44,9 @@ public class ClusRandom {
 	public final static int RANDOM_SAMPLE = 6;
 	/** Used for random split-point selection for Extra-Trees Ensembles */
 	public final static int RANDOM_EXTRATREE = 7;
+	/** Used for ensemble target subspacing */
+	public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING = 8;
+	
 	public static Random[] m_Random;
 
 	public static Random getRandom(int idx) {
@@ -57,7 +60,7 @@ public class ClusRandom {
 	public static int nextInt(int which, int max) {
 		return m_Random[which].nextInt(max);
 	}
-
+	
 	public static void initialize(Settings sett) {
 		m_Random = new Random[NB_RANDOM];
 		if (sett.hasRandomSeed()) {

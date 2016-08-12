@@ -28,6 +28,7 @@ import jeans.list.*;
 
 import clus.data.cols.*;
 import clus.data.rows.*;
+import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.main.Settings;
 
 public class BitVectorStat extends ClusStatistic {
@@ -131,7 +132,11 @@ public class BitVectorStat extends ClusStatistic {
 		return "";
 	}
 
-	public void vote(ArrayList votes) {
+	public void vote(ArrayList<ClusStatistic> votes) {
+		System.err.println(getClass().getName() + "BitVectorStat: vote not implemented");
+	}
+	
+	public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
 		System.err.println(getClass().getName() + "BitVectorStat: vote not implemented");
 	}
 }

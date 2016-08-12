@@ -60,7 +60,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 	public void initialize() throws ClusException, IOException {
 		super.initialize();
 	}
-
+	
 	public FindBestTest getFindBestTest() {
 		return m_FindBestTest;
 	}
@@ -397,4 +397,6 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
 		return induceSingleUnpruned((RowData)cr.getTrainingSet());
 	}
+
+
 }

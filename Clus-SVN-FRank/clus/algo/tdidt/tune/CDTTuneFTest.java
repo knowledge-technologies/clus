@@ -196,7 +196,6 @@ public class CDTTuneFTest extends ClusDecisionTree {
 	}
 
 	public void induceAll(ClusRun cr) throws ClusException, IOException {
-		System.out.println("Matej: inducamAll ...");
 		try {
 			// Find optimal F-test value
 			RowData valid = (RowData)cr.getPruneSet();

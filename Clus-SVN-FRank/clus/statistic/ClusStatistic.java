@@ -29,6 +29,7 @@ import clus.data.rows.*;
 import clus.data.type.*;
 import clus.data.attweights.*;
 import clus.ext.beamsearch.ClusBeam;
+import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.ext.timeseries.TimeSeries;
 
 import java.io.*;
@@ -331,7 +332,8 @@ public abstract class ClusStatistic implements Serializable {
 	public void union(ClusStatistic other) {
 	}
 
-	public abstract void vote(ArrayList votes);
+	public abstract void vote(ArrayList<ClusStatistic> votes);
+	public abstract void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo);
 
 	public ClusStatistic normalizedCopy() {
 		return null;

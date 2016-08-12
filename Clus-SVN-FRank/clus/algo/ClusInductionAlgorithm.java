@@ -96,7 +96,6 @@ public abstract class ClusInductionAlgorithm {
 	}
 
 	public void induceAll(ClusRun cr) throws ClusException, IOException {
-		System.out.println("Matej: Inducam single unpruned in addam model info");
 		ClusModel model = induceSingleUnpruned(cr);
 		ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL);
 		model_info.setModel(model);

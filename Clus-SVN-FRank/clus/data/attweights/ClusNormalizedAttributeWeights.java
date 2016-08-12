@@ -84,6 +84,7 @@ public class ClusNormalizedAttributeWeights extends ClusAttributeWeights {
 				buf.append(ClusFormat.THREE_AFTER_DOT.format(getNormalizationWeight(type[i])));
 			}
 			buf.append("]");
+			
 			return buf.toString();
 		}
 	}

@@ -88,11 +88,9 @@ public abstract class ClusInductionAlgorithmType {
 	 * @throws IOException
 	 */
 	public void induceAll(ClusRun cr) throws ClusException, IOException {
-		System.out.println("Matej: grem inducat all");
 		long start_time = ResourceInfo.getTime();
 		
 		getInduce().induceAll(cr); // Train the algorithms of this type.
-		System.out.println("Matej: sem inducal all");
 		long done_time = ResourceInfo.getTime();
 		cr.setInductionTime(done_time-start_time);
 		pruneAll(cr);

@@ -34,16 +34,15 @@ import clus.data.type.ClusAttrType;
 
 public class ClusRuleHeuristicError extends ClusHeuristic {
 
-	private ClusAttributeWeights m_TargetWeights;
 	private ClusStatManager m_StatManager = null;
 
 	public ClusRuleHeuristicError(ClusAttributeWeights prod) {
-		m_TargetWeights = prod;
+		m_ClusteringWeights = prod;
 	}
 
 	public ClusRuleHeuristicError(ClusStatManager stat_mgr, ClusAttributeWeights prod) {
 		m_StatManager = stat_mgr;
-		m_TargetWeights = prod;
+		m_ClusteringWeights = prod;
 	}
 
 	public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
@@ -53,7 +52,7 @@ public class ClusRuleHeuristicError extends ClusHeuristic {
 		if (n_pos-Settings.MINIMAL_WEIGHT < 1e-6) {
 			return Double.NEGATIVE_INFINITY;
 		}
-		double pos_error = c_pstat.getError(m_TargetWeights);
+		double pos_error = c_pstat.getError(m_ClusteringWeights);
 		// Prefer rules that cover more examples
 		double global_sum_w = m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING).getTotalWeight();
 		double heur_par = getSettings().getHeurCoveragePar();

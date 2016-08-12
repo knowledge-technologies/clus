@@ -330,11 +330,11 @@ public class Clus implements CMDLineArgsProvider {
 			throws ClusException, IOException {
 		if (Settings.VERBOSE > 0) {
 			System.out.println("Run: " + cr.getIndexString());
-			System.out.println("Verbose: "  + Settings.VERBOSE + " opis clss-ja:");
+			System.out.println("Verbose: "  + Settings.VERBOSE);
 			clss.printInfo();
 			System.out.println();
 		}
-		System.out.println("Matej: clss.induceAll(cr) . . . ");
+		//System.out.println("Matej: clss.induceAll(cr) . . . ");
 		clss.induceAll(cr);
 		if (Settings.VERBOSE > 0) {
 			System.out.println();
@@ -511,24 +511,24 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final ClusRun partitionData() throws IOException, ClusException {
-		System.out.println("Matej: partition data ...");
+		//System.out.println("Matej: partition data ...");
 		boolean testfile = false;
 		boolean writetest = false;
 		ClusSelection sel = null;
 		if (!m_Sett.isNullTestFile()) {
-			System.out.println("   Matej: !m_Sett.isNullTestFile");
+			//System.out.println("   Matej: !m_Sett.isNullTestFile");
 			testfile = true;
 			writetest = true;
 		} else {
-			System.out.println("   Matej: m_Sett.isNullTestFile");
+			//System.out.println("   Matej: m_Sett.isNullTestFile");
 			double test = m_Sett.getTestProportion();
 			if (test != 0.0) {
-				System.out.println("      Matej test != 0.0, izbral bom " + test + " delez");
+				//System.out.println("      Matej test != 0.0, izbral bom " + test + " delez");
 				int nbtot = m_Data.getNbRows();
 				sel = new RandomSelection(nbtot, test);
 				writetest = true;
 			}
-			System.out.println("      Matej: test = 0.0");
+			//System.out.println("      Matej: test = 0.0");
 		}
 		return partitionData(m_Data, sel, testfile, writetest, m_Summary, 1);
 	}
@@ -1682,20 +1682,20 @@ public class Clus implements CMDLineArgsProvider {
 					clss = new ClusDecisionTree(clus);
 					clss = new ClusSITDecisionTree(clss);
 				} else if (cargs.hasOption("forest")) {
-					System.out.println("Matej: delamo forest ...");
+					//System.out.println("Matej: delamo forest ...");
 					sett.setEnsembleMode(true);
 					clss = new ClusEnsembleClassifier(clus);
 					Boolean aliNull = clss == null;
-					System.out.println("Ali je clss null: " + aliNull);
+					//System.out.println("Ali je clss null: " + aliNull);
 					if (sett.getFTestArray().isVector()) {	// Matej: ne razumem ...
-						System.out.println("Matej: isVectocr");
+						//System.out.println("Matej: isVectocr");
 						clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
 					} else {
-						System.out.println("Matej: is not vector");
+						//System.out.println("Matej: is not vector");
 						
 					}
 				} else {
-					System.out.println("Matej: navaden clss");
+					//System.out.println("Matej: navaden clss");
 					clss = new ClusDecisionTree(clus);
 					if (sett.getFTestArray().isVector())
 						clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
@@ -1754,7 +1754,7 @@ public class Clus implements CMDLineArgsProvider {
 					clus.initialize(cargs, clss);
 					clus.singleRun(clss);
 				} else {
-					System.out.println("Matej: inicializacija ...");// Matej: ranking se bo tu sprozu po vsej verjetnosti:)
+					//System.out.println("Matej: inicializacija ...");// Matej: ranking se bo tu sprozu po vsej verjetnosti:)
 					clus.initialize(cargs, clss);
 					clus.singleRun(clss);
 				}

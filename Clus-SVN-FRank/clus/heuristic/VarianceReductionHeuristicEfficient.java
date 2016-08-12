@@ -29,7 +29,6 @@ import clus.data.type.*;
 
 public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
 
-	private ClusAttributeWeights m_ClusteringWeights;
 	private ClusAttrType[] m_Attrs;
 
 	public VarianceReductionHeuristicEfficient(ClusAttributeWeights prod, ClusAttrType[] attrs) {

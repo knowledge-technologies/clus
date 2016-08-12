@@ -22,6 +22,7 @@
 
 package clus.heuristic;
 
+import clus.data.attweights.ClusAttributeWeights;
 import clus.statistic.*;
 
 import jeans.math.*;
@@ -29,9 +30,10 @@ import jeans.math.*;
 public class GainHeuristic extends ClusHeuristic {
 
 	protected boolean m_GainRatio;
-
-	public GainHeuristic(boolean gainratio) {
+	
+	public GainHeuristic(boolean gainratio, ClusAttributeWeights prod) {
 		m_GainRatio = gainratio;
+		m_ClusteringWeights = prod;
 	}
 
 	public final boolean isGainRatio() {
@@ -61,10 +63,10 @@ public class GainHeuristic extends ClusHeuristic {
 		
 		// Initialize entropy's
 		//System.out.print("\nTotal\n");
-		double tot_ent = tstat.entropy();
+		double tot_ent = tstat.entropy(m_ClusteringWeights);
 		//System.out.print("\nPositive\n");
-		double pos_ent = pstat.entropy();
-		double neg_ent = tstat.entropyDifference(pstat);
+		double pos_ent = pstat.entropy(m_ClusteringWeights);
+		double neg_ent = tstat.entropyDifference(pstat, m_ClusteringWeights);
 		
 		double value=0;
 		if(!tstat.getAttribute(0).getSchema().getSettings().considerUnlableInstancesInIGCalc()){
@@ -99,7 +101,7 @@ public class GainHeuristic extends ClusHeuristic {
 		// Total Entropy
 		ClassificationStat tstat = (ClassificationStat)c_tstat;
 		double n_tot = tstat.getTotalWeight();
-		double value = tstat.entropy();
+		double value = tstat.entropy(m_ClusteringWeights);
 		
 		
 		
@@ -107,7 +109,7 @@ public class GainHeuristic extends ClusHeuristic {
 		for (int i = 0; i < nbsplit; i++) {
 			ClassificationStat pstat = (ClassificationStat)c_pstat[i];
 			double n_set = pstat.getTotalWeight();
-			value -= n_set/n_tot*pstat.entropy();
+			value -= n_set/n_tot*pstat.entropy(m_ClusteringWeights);
 		}
 		if (value < MathUtil.C1E_6) {
 			return Double.NEGATIVE_INFINITY;

@@ -40,6 +40,7 @@ import clus.data.rows.*;
 import clus.data.type.*;
 import clus.data.attweights.*;
 import clus.error.ClusNumericError;
+import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 
 public abstract class RegressionStatBase extends ClusStatistic {
 
@@ -309,7 +310,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
 		}
 	}
 
-	public void vote(ArrayList votes) {
+	public void vote(ArrayList<ClusStatistic> votes) {
 		reset();
 		m_Means = new double[m_NbAttrs];
 		int nb_votes = votes.size();
@@ -317,6 +318,23 @@ public abstract class RegressionStatBase extends ClusStatistic {
 			RegressionStatBase vote = (RegressionStatBase) votes.get(j);
 			for (int i = 0; i < m_NbAttrs; i++){
 				m_Means[i] += vote.m_Means[i] / nb_votes;
+			}
+		}
+	}
+	
+	public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+		reset();
+		m_Means = new double[m_NbAttrs];
+		double[] coverage = targetSubspaceInfo.getCoverage();
+		
+		for (int j = 0; j < votes.size(); j++){
+			RegressionStatBase vote = (RegressionStatBase) votes.get(j);
+			int[] enabled = targetSubspaceInfo.getOnlyTargets(targetSubspaceInfo.getModelSubspace(j));
+			
+			for (int i = 0; i < m_NbAttrs; i++){
+				if (enabled[i] == 1) {
+					m_Means[i] += vote.m_Means[i] / coverage[i];
+				}
 			}
 		}
 	}

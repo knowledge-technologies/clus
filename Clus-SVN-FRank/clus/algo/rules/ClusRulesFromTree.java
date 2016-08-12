@@ -137,7 +137,9 @@ public class ClusRulesFromTree {
 		ruleSet.numberRules();
 		return ruleSet;
 	}
+	
 
+	
 	/**
 	 * Construct rules from terminal nodes of the given tree. Does not do any processing
 	 * like dispersion or weight optimization. Especially used

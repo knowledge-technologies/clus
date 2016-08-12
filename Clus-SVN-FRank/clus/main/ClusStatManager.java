@@ -130,7 +130,7 @@ public class ClusStatManager implements Serializable {
 
 	public int getCompatibility() {
 		return getSettings().getCompatibility();
-	}
+	} 
 
 	public final ClusSchema getSchema() {
 		return m_Schema;
@@ -175,7 +175,9 @@ public class ClusStatManager implements Serializable {
 		return false;
 	}
 
-	public void initWeights(ClusNormalizedAttributeWeights result, NumericAttrType[] num, NominalAttrType[] nom, INIFileNominalOrDoubleOrVector winfo) throws ClusException {
+	public void initWeights(ClusNormalizedAttributeWeights result, 
+			NumericAttrType[] num, NominalAttrType[] nom, 
+			INIFileNominalOrDoubleOrVector winfo) throws ClusException {
 		result.setAllWeights(0.0);
 		int nbattr = result.getNbAttributes();
 		if (winfo.hasArrayIndexNames()) {
@@ -294,7 +296,7 @@ public class ClusStatManager implements Serializable {
 		if (hasBitEqualToOne(shouldNormalize)) {
 			data.calcTotalStat(stat);
 			CombStat cmb = (CombStat) stat;
-			data.calcTotalStat(stat);
+			//data.calcTotalStat(stat); // why is this here? this duplicates weights etc for no apparent reason
 			RegressionStat rstat = cmb.getRegressionStat();
 			rstat.initNormalizationWeights(m_NormalizationWeights, shouldNormalize);
 			// Normalization is currently required for trees but not for rules
@@ -496,7 +498,7 @@ public class ClusStatManager implements Serializable {
 	public ClusHeuristic createHeuristic(int type) {
 		switch (type) {
 		case Settings.HEURISTIC_GAIN:
-			return new GainHeuristic(false);
+			return new GainHeuristic(false, getClusteringWeights());
 		default:
 			return null;
 		}
@@ -645,16 +647,16 @@ public class ClusStatManager implements Serializable {
 			} else if (getSettings().getHeuristic() == Settings.HEURISTIC_GENETIC_DISTANCE) {
 				m_Heuristic = new GeneticDistanceHeuristicMatrix();
 			} else if (getSettings().getHeuristic() == Settings.HEURISTIC_VARIANCE_REDUCTION) {
-				m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_CLUSTERING));
+				m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), nom);
 			} else if (getSettings().getHeuristic() == Settings.HEURISTIC_GAIN_RATIO) {
-				m_Heuristic = new GainHeuristic(true);
+				m_Heuristic = new GainHeuristic(true, getClusteringWeights());
 			} else {
 				if ((getSettings().getHeuristic() != Settings.HEURISTIC_DEFAULT &&
 				    getSettings().getHeuristic() != Settings.HEURISTIC_GAIN) &&
 				    getSettings().getHeuristic() != Settings.HEURISTIC_GENETIC_DISTANCE) {
 						throw new ClusException("Given heuristic not supported for classification trees!");
 				}
-				m_Heuristic = new GainHeuristic(false);
+				m_Heuristic = new GainHeuristic(false, getClusteringWeights());
 				getSettings().setHeuristic(Settings.HEURISTIC_GAIN);
 			}
 		}
