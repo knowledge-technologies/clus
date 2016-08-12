@@ -538,6 +538,7 @@ public class Settings implements Serializable {
 	/** Write test/train predictions to files */
 	protected INIFileNominal m_WritePredictions;
 	protected INIFileBool m_WriteErrorFile;
+	protected INIFileBool m_WriteModelFile;
 	protected INIFileBool m_ModelIDFiles;
 	protected INIFileBool m_OutputPythonModel;
 	protected INIFileBool m_OutputJSONModel;
@@ -620,6 +621,9 @@ public class Settings implements Serializable {
 		return m_WriteCurves.getValue();
 	}	
 
+	public boolean isWriteModelFile() {
+		return m_WriteModelFile.getValue();
+	}
 	public boolean getShowModel(int i) {
 		return m_ShowModels.contains(i);
 	}
@@ -2412,6 +2416,7 @@ public class Settings implements Serializable {
 		output.addNode(m_ShowInfo = new INIFileNominal("ShowInfo", SHOW_INFO, SHOW_INFO_VALUES));
 		output.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
 		output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false));
+		output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", true));
 		output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
 		// If this option name is to be changed, it must also be changed in testsets/iris-classify.s
 		//output.addNode(m_ModelIDFiles = new INIFileBool("WriteModelIDFiles", false));
