@@ -1146,14 +1146,16 @@ public class Clus implements CMDLineArgsProvider {
 
 	public final void saveModels(ClusRun models, ClusModelCollectionIO io)
 			throws IOException {
-		if (getInduce().isModelWriter()) {
-			getInduce().writeModel(io);
-		}
-		int pos = 0;
-		for (int i = models.getNbModels() - 1; i >= 0; i--) {
-			ClusModelInfo info = models.getModelInfo(i);
-			if (info != null && info.shouldSave()) {
-				io.insertModel(pos++, info);
+		if (getSettings().isWriteModelFile()){
+			if (getInduce().isModelWriter()) {
+				getInduce().writeModel(io);
+			}
+			int pos = 0;
+			for (int i = models.getNbModels() - 1; i >= 0; i--) {
+				ClusModelInfo info = models.getModelInfo(i);
+				if (info != null && info.shouldSave()) {
+					io.insertModel(pos++, info);
+				}
 			}
 		}
 	}
