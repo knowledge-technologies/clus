@@ -310,7 +310,7 @@ public class ClusErrorList implements Serializable {
 				}
 			}
 		}
-		for (int i = 0; i < nb; i++) {
+		for (int i = 0; i < nb; i++) { // Matej: tuki neki cudn: oz. v vseh treh napakah (cont. table, nominal MSe in Hamming se pojavjo prave cifre, po konc zanke pa je vse spet resetirano na 0)
 			ClusError err1 = getError(i);
 			boolean has_models = false;
 			for (int j = 0; j < nb_models; j++) {
@@ -324,7 +324,7 @@ public class ClusErrorList implements Serializable {
 				for (int j = 0; j < nb_models; j++) {
 					ClusModelInfo inf = models.getModelInfo(j);
 					if (inf != null) {
-						ClusError err2 = inf.getError(type).getErrorOrNull(i);
+						ClusError err2 = inf.getError(type).getErrorOrNull(i); // Matej: tuki spet cifre v inf
 						if (err2 != null) {
 							if (err2.isMultiLine()) {
 								out.print("   "+inf.getName()+": ");

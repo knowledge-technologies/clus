@@ -721,6 +721,7 @@ public class ClusStatManager implements Serializable {
 		if (nom.length != 0) {
 			parent.addError(new ContingencyTable(parent, nom));
 			parent.addError(new MSNominalError(parent, nom,	m_NormalizationWeights));
+			parent.addError(new HammingLoss(parent, nom)); // TODO: Matej Hamming Loss
 		}
 		if (num.length != 0) {
 			parent.addError(new AbsoluteError(parent, num));

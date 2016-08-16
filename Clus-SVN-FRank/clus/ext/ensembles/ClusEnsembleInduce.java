@@ -351,7 +351,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		OOBSelection oob_sel = null; // = current OOB selection
 		
 		m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
-		
+		System.out.println("Matej: m_OptMode = " + m_OptMode);
 		if (m_OptMode){
 			train_iterator = cr.getTrainIter();
 			if (cr.getTestIter() != null){

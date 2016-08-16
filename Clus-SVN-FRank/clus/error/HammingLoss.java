@@ -7,61 +7,64 @@ import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
+import clus.util.ClusFormat;
 
 /**
- * Hamming loss: popravu natanko tiste metode / polja, kjer pise POPRAVU
+ * Hamming loss: vse popravljeno (razen NEDOTAKNJENO)
  * @author matejp
  *
  */
 public class HammingLoss extends ClusNominalError{
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-	//POPRAVU
 	protected int m_NbWrong;// sum of |prediction(sample_i) SYMMETRIC DIFFERENCE target(sample_i)|, where prediction (target) of a sample_i is the predicted (true) label set. 
 	protected int m_NbKnown;// number of the examples seen 
 	
-	//POPRAVU
 	public HammingLoss(ClusErrorList par, NominalAttrType[] nom) {
 		super(par, nom);
 		m_NbWrong = 0;
 		m_NbKnown = 0;
 	}
-	//POPRAVU
+
 	public boolean shouldBeLow() {
 		return true;
 	}
-	//POPRAVU
+
 	public void reset() {
 		m_NbWrong = 0;
 		m_NbKnown = 0;
 	}
-	//POPRAVU
+
 	public void add(ClusError other) {
 		HammingLoss ham = (HammingLoss)other;
 		m_NbWrong += ham.m_NbWrong;
 		m_NbKnown += ham.m_NbKnown;
 	}
-	//NAMESKO PUSTU
+	//NEDOTAKNJENO
 	public void showSummaryError(PrintWriter out, boolean detail) {
 		showModelError(out, detail ? 1 : 0);
 	}
-	//POPRAVU
+	// A MA TO SPLOH SMISU?
 	public double getHammingLoss(int i) {
 		return getModelErrorComponent(i);
 	}
-	//POPRAVU
+
 	public double getModelError() {
 		return ((double) m_NbWrong)/ m_Dim / m_NbKnown;
 	}
-	//POPRAVU
+	
+	public void showModelError(PrintWriter out, int detail){
+		out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
+	}
+
 	public String getName() {
 		return "HammingLoss";
 	}
-	//Accuracy --> HammingLoss: Dragi?:)
+
 	public ClusError getErrorClone(ClusErrorList par) {
 		return new HammingLoss(par, m_Attrs);
 	}
-	//POPRAVU
+
 	public void addExample(DataTuple tuple, ClusStatistic pred) {
 		int[] predicted = pred.getNominalPred();
 		for (int i = 0; i < m_Dim; i++) {
@@ -74,7 +77,7 @@ public class HammingLoss extends ClusNominalError{
 		}
 		m_NbKnown++;
 	}
-	//POPRAVU
+
 	public void addExample(DataTuple tuple, DataTuple pred) {
 		for (int i = 0; i < m_Dim; i++) {
 			NominalAttrType attr = getAttr(i);
@@ -86,7 +89,7 @@ public class HammingLoss extends ClusNominalError{
 		}
 		m_NbKnown++;
 	}
-	//NAMENSKO PUSTU
+	//NEDOTAKNJENO
 	public void addInvalid(DataTuple tuple) {
 	}
 

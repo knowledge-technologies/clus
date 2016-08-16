@@ -93,8 +93,8 @@ public class Clus implements CMDLineArgsProvider {
 			0, 0, 1, 1, 0, 
 			0, 0, 1, 0, 0, 0, 0 };
 
-	protected Settings m_Sett = new Settings(); // Matej: prazni settingi
-	protected ClusSummary m_Summary = new ClusSummary(); // Matej: prazen summary
+	protected Settings m_Sett = new Settings();
+	protected ClusSummary m_Summary = new ClusSummary();
 	protected ClusSchema m_Schema;
 	protected MultiScore m_Score;
 	protected ClusInductionAlgorithmType m_Classifier;
@@ -182,7 +182,7 @@ public class Clus implements CMDLineArgsProvider {
 		initializeAttributeWeights(m_Data);
 		m_Induce.initializeHeuristic();
 		loadConstraintFile();
-		initializeSummary(clss);
+		initializeSummary(clss); // Matej naredi napake (initi ...)
 		if(m_Sett.getVerbose() > 0) System.out.println();
 		// Sample data
 		if (cargs.hasOption("sample")) {
@@ -659,6 +659,7 @@ public class Clus implements CMDLineArgsProvider {
 		TimeSeriesAttrType[] ts = schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		if (nom.length != 0) {
 			error.addError(new Accuracy(error, nom));
+			System.out.println("Matej Dodal accuracy ...");
 		} else if (num.length != 0) {
 			error.addError(new PearsonCorrelation(error, num));
 		} else if (ts.length != 0) {
@@ -1227,10 +1228,10 @@ public class Clus implements CMDLineArgsProvider {
 		induce(cr, clss);
 		if (summ == null) {
 			// E.g., rule-wise error measures
-			addModelErrorMeasures(cr);
+			addModelErrorMeasures(cr); // Matej : morda tu? Ne.
 		}
 		// Calc error
-		calcError(cr, null, null);
+		calcError(cr, null, null); // Matej: tu ne
 		if (summ != null) {
 			for (int i = 0; i < cr.getNbModels(); i++) {
 				ClusModelInfo info = cr.getModelInfo(i);
@@ -1241,7 +1242,7 @@ public class Clus implements CMDLineArgsProvider {
 		}
 		calcExtraTrainingSetErrors(cr);
 		output.writeHeader();
-		output.writeOutput(cr, true, m_Sett.isOutTrainError());
+		output.writeOutput(cr, true, m_Sett.isOutTrainError()); // Matej: Tu se pise ...
 		output.close();
 		clss.saveInformation(m_Sett.getAppName());
 		return cr;
@@ -1694,7 +1695,6 @@ public class Clus implements CMDLineArgsProvider {
 						clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
 					} else {
 						//System.out.println("Matej: is not vector");
-						
 					}
 				} else {
 					//System.out.println("Matej: navaden clss");
@@ -1758,7 +1758,7 @@ public class Clus implements CMDLineArgsProvider {
 				} else {
 					//System.out.println("Matej: inicializacija ...");// Matej: ranking se bo tu sprozu po vsej verjetnosti:)
 					clus.initialize(cargs, clss);
-					clus.singleRun(clss);
+					clus.singleRun(clss); // Matej Tu se zgodi vse skup ...
 				}
 			}
 			if (Debug.debug == 1)
