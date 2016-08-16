@@ -721,7 +721,20 @@ public class ClusStatManager implements Serializable {
 		if (nom.length != 0) {
 			parent.addError(new ContingencyTable(parent, nom));
 			parent.addError(new MSNominalError(parent, nom,	m_NormalizationWeights));
-			parent.addError(new HammingLoss(parent, nom)); // TODO: Matej Hamming Loss
+			// TODO: Matej Hamming Loss: lepse?
+			Boolean is_multilabel = num.length == 0 && ts.length == 0;
+			for(int attr=0; attr < nom.length; attr++){
+				if(!is_multilabel){
+					break;
+				}
+				if(nom[attr].m_NbValues != 2){
+					is_multilabel = false;
+				}
+			}
+			if(is_multilabel){
+				parent.addError(new HammingLoss(parent, nom)); 
+			}
+			
 		}
 		if (num.length != 0) {
 			parent.addError(new AbsoluteError(parent, num));
