@@ -1228,10 +1228,10 @@ public class Clus implements CMDLineArgsProvider {
 		induce(cr, clss);
 		if (summ == null) {
 			// E.g., rule-wise error measures
-			addModelErrorMeasures(cr); // Matej : morda tu? Ne.
+			addModelErrorMeasures(cr);
 		}
 		// Calc error
-		calcError(cr, null, null); // Matej: tu ne
+		calcError(cr, null, null);
 		if (summ != null) {
 			for (int i = 0; i < cr.getNbModels(); i++) {
 				ClusModelInfo info = cr.getModelInfo(i);

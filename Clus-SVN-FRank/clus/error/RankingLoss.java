@@ -1,17 +1,22 @@
 package clus.error;
 
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
+import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 /**
  * @author matejp
  *
+ * Ranking loss is used in multi-label classification scenario.
  */
 public class RankingLoss extends ClusNominalError{
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
@@ -67,30 +72,45 @@ public class RankingLoss extends ClusNominalError{
 	}
 
 	public void addExample(DataTuple tuple, ClusStatistic pred) {
-		int[] predicted = pred.getNominalPred();
-		int setD = 0, setY = 0;
-		for (int i = 0; i < m_Dim; i++) {
-			NominalAttrType attr = getAttr(i);
-			if (!attr.isMissing(tuple)) {
-				if (attr.getNominal(tuple) != predicted[i]) {
-					m_NbWrong++;
+		int[] predicted = pred.getNominalPred(); // Codomain is {"1", "0"} - see clus.data.type.NominalAtterType constructor
+		double[] scores = ((ClassificationStat) pred).calcScores();
+		int wrongPairs = 0;
+		ArrayList<Integer> relevantIndices = new ArrayList<Integer>();
+		ArrayList<Integer> irrelevantIndices = new ArrayList<Integer>();
+		NominalAttrType attr;
+		for(int i = 0; i< m_Dim; i++){
+			attr = getAttr(i);
+			if(!attr.isMissing(tuple)){
+				if(attr.getNominal(tuple) == 0){
+					relevantIndices.add(i);
+				} else{
+					irrelevantIndices.add(i);
 				}
 			}
+		}
+		
+		if(!relevantIndices.isEmpty() && !irrelevantIndices.isEmpty()){
+			for(int relevantInd : relevantIndices){
+				for(int irrelevantInd : irrelevantIndices){
+					if(scores[irrelevantInd] > scores[relevantInd]){
+						wrongPairs++;
+					}
+				}
+			}
+			m_NonnormalisedLoss += ((double) wrongPairs) / (relevantIndices.size() * irrelevantIndices.size());
 		}
 		m_NbKnown++;
 	}
 
-	public void addExample(DataTuple tuple, DataTuple pred) {
-		for (int i = 0; i < m_Dim; i++) {
-			NominalAttrType attr = getAttr(i);
-			if (!attr.isMissing(tuple)) {
-				if (attr.getNominal(tuple) != attr.getNominal(pred)) {
-					m_NbWrong++;
-				}
-			}
+	public void addExample(DataTuple tuple, DataTuple pred){
+		try {
+			throw new Exception("Yet to implement RankingLoss.addExample(DataTuple tuple, DataTuple pred)");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
-		m_NbKnown++;
 	}
+	
 	//NEDOTAKNJENO
 	public void addInvalid(DataTuple tuple) {
 	}

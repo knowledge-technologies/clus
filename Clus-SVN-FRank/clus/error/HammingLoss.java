@@ -6,13 +6,14 @@ import java.util.Arrays;
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
+import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 /**
  * Hamming loss: vse popravljeno (razen NEDOTAKNJENO)
  * @author matejp
- *
+ * 
  */
 public class HammingLoss extends ClusNominalError{
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;

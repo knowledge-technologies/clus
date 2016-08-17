@@ -589,6 +589,18 @@ public class ClassificationStat extends ClusStatistic {
 			m_MajorityClasses[i] = getMajorityClass(i);
 		}
 	}
+	/**
+	 * Used in RankingLoss.addExaple methods.
+	 * @return The list of scores (for all labels LabelI) numberOfSampelsWithLabelI / numberOfKnownSamples, where numberOfKnownSamples is
+	 * the number of samples that have known value (0 or 1) for label I.
+	 */
+	public double[] calcScores(){
+		double[] scores = new double[m_NbTarget];
+		for(int attr = 0; attr < m_NbTarget; attr++){
+			scores[attr] = m_ClassCounts[attr][0] / m_SumWeights[attr]; // Value "1" is always the first: see NominalAttrType constructor.
+		}
+		return scores;
+	}
 
 	/**
 	 * Currently only used to compute the default dispersion within rule heuristics.
