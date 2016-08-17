@@ -50,10 +50,10 @@ public class RankingLoss extends ClusNominalError{
 	public void showSummaryError(PrintWriter out, boolean detail) {
 		showModelError(out, detail ? 1 : 0);
 	}
-	// A MA TO SPLOH SMISU?
-	public double getRankingLoss(int i) {
-		return getModelErrorComponent(i);
-	}
+//	// A MA TO SPLOH SMISU?
+//	public double getRankingLoss(int i) {
+//		return getModelErrorComponent(i);
+//	}
 
 	public double getModelError() {
 		return m_NonnormalisedLoss/ m_NbKnown;

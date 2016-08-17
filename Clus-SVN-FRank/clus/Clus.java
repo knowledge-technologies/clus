@@ -182,7 +182,7 @@ public class Clus implements CMDLineArgsProvider {
 		initializeAttributeWeights(m_Data);
 		m_Induce.initializeHeuristic();
 		loadConstraintFile();
-		initializeSummary(clss); // Matej naredi napake (initi ...)
+		initializeSummary(clss);
 		if(m_Sett.getVerbose() > 0) System.out.println();
 		// Sample data
 		if (cargs.hasOption("sample")) {
@@ -334,7 +334,6 @@ public class Clus implements CMDLineArgsProvider {
 			clss.printInfo();
 			System.out.println();
 		}
-		//System.out.println("Matej: clss.induceAll(cr) . . . ");
 		clss.induceAll(cr);
 		if (Settings.VERBOSE > 0) {
 			System.out.println();
@@ -511,24 +510,19 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final ClusRun partitionData() throws IOException, ClusException {
-		//System.out.println("Matej: partition data ...");
 		boolean testfile = false;
 		boolean writetest = false;
 		ClusSelection sel = null;
 		if (!m_Sett.isNullTestFile()) {
-			//System.out.println("   Matej: !m_Sett.isNullTestFile");
 			testfile = true;
 			writetest = true;
 		} else {
-			//System.out.println("   Matej: m_Sett.isNullTestFile");
 			double test = m_Sett.getTestProportion();
 			if (test != 0.0) {
-				//System.out.println("      Matej test != 0.0, izbral bom " + test + " delez");
 				int nbtot = m_Data.getNbRows();
 				sel = new RandomSelection(nbtot, test);
 				writetest = true;
 			}
-			//System.out.println("      Matej: test = 0.0");
 		}
 		return partitionData(m_Data, sel, testfile, writetest, m_Summary, 1);
 	}
@@ -659,7 +653,6 @@ public class Clus implements CMDLineArgsProvider {
 		TimeSeriesAttrType[] ts = schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		if (nom.length != 0) {
 			error.addError(new Accuracy(error, nom));
-			System.out.println("Matej Dodal accuracy ...");
 		} else if (num.length != 0) {
 			error.addError(new PearsonCorrelation(error, num));
 		} else if (ts.length != 0) {
@@ -1242,7 +1235,7 @@ public class Clus implements CMDLineArgsProvider {
 		}
 		calcExtraTrainingSetErrors(cr);
 		output.writeHeader();
-		output.writeOutput(cr, true, m_Sett.isOutTrainError()); // Matej: Tu se pise ...
+		output.writeOutput(cr, true, m_Sett.isOutTrainError());
 		output.close();
 		clss.saveInformation(m_Sett.getAppName());
 		return cr;
@@ -1616,7 +1609,7 @@ public class Clus implements CMDLineArgsProvider {
 			Clus clus = new Clus();
 			Settings sett = clus.getSettings();
 			CMDLineArgs cargs = new CMDLineArgs(clus);
-			cargs.process(args);	// Matej: prebere argumente, najprej oblike -atr, potem druge in shrani v $ok, a je vse ok
+			cargs.process(args);
 			if (cargs.hasOption("copying")) {
 				ClusOutput.printGPL();
 				System.exit(0);
@@ -1642,7 +1635,7 @@ public class Clus implements CMDLineArgsProvider {
 				 * is not given, a single decision tree is used. TODO What do
 				 * the other parameter values mean? (e.g. tuneftest, exhaustive)
 				 * TODO There should be a command line help for these. For
-				 * example with -help.                                                    Matej: to do indeed
+				 * example with -help.
 				 */
 				if (cargs.hasOption("knn")) {
 					clus.getSettings().setSectionKNNEnabled(true);
@@ -1685,19 +1678,13 @@ public class Clus implements CMDLineArgsProvider {
 					clss = new ClusDecisionTree(clus);
 					clss = new ClusSITDecisionTree(clss);
 				} else if (cargs.hasOption("forest")) {
-					//System.out.println("Matej: delamo forest ...");
 					sett.setEnsembleMode(true);
 					clss = new ClusEnsembleClassifier(clus);
 					Boolean aliNull = clss == null;
-					//System.out.println("Ali je clss null: " + aliNull);
-					if (sett.getFTestArray().isVector()) {	// Matej: ne razumem ...
-						//System.out.println("Matej: isVectocr");
+					if (sett.getFTestArray().isVector()) {
 						clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
-					} else {
-						//System.out.println("Matej: is not vector");
 					}
 				} else {
-					//System.out.println("Matej: navaden clss");
 					clss = new ClusDecisionTree(clus);
 					if (sett.getFTestArray().isVector())
 						clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
@@ -1756,9 +1743,8 @@ public class Clus implements CMDLineArgsProvider {
 					clus.initialize(cargs, clss);
 					clus.singleRun(clss);
 				} else {
-					//System.out.println("Matej: inicializacija ...");// Matej: ranking se bo tu sprozu po vsej verjetnosti:)
 					clus.initialize(cargs, clss);
-					clus.singleRun(clss); // Matej Tu se zgodi vse skup ...
+					clus.singleRun(clss);
 				}
 			}
 			if (Debug.debug == 1)

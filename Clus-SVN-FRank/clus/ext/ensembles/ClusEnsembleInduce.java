@@ -75,7 +75,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	//Out-Of-Bag Error Estimate
 	ClusOOBErrorEstimate m_OOBEstimation;
 	
-	//Feature Ranking via Random Forests  Matej: OR ...
+	//Feature Ranking via Random Forests  OR via Genie3 etc.
 	boolean m_FeatRank;
 	ClusEnsembleFeatureRanking m_FeatureRanking;
 	
@@ -351,7 +351,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		OOBSelection oob_sel = null; // = current OOB selection
 		
 		m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
-		System.out.println("Matej: m_OptMode = " + m_OptMode);
 		if (m_OptMode){
 			train_iterator = cr.getTrainIter();
 			if (cr.getTestIter() != null){

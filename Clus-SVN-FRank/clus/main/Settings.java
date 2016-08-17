@@ -2037,7 +2037,7 @@ public class Settings implements Serializable {
 	public static INIFileBool m_EnsembleOOBestimate;
 //	protected INIFileBool m_FeatureRanking;
 	protected INIFileNominal m_FeatureRanking;
-	protected INIFileDouble m_SymbolicWeight; // Matej
+	protected INIFileDouble m_SymbolicWeight;
 	protected INIFileBool m_SortFeaturesByRelevance;
 	protected INIFileBool m_WriteEnsemblePredictions;
 	protected INIFileNominalOrIntOrVector m_BagSelection;
@@ -2100,7 +2100,7 @@ public class Settings implements Serializable {
 		return m_FeatureRanking.getStringSingle();
 	}
 	
-	public double getSymbolicWeight() {// Matej
+	public double getSymbolicWeight() {
 		return m_SymbolicWeight.getValue();
 	}
 	
@@ -2688,7 +2688,7 @@ public class Settings implements Serializable {
 		m_SectionEnsembles.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
 		m_SectionEnsembles.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
 		m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileNominal("FeatureRanking", RANKING_TYPE, 0));
-		m_SectionEnsembles.addNode(m_SymbolicWeight = new INIFileDouble("SymbolicWeight", 1.0)); // Matej		
+		m_SectionEnsembles.addNode(m_SymbolicWeight = new INIFileDouble("SymbolicWeight", 1.0));	
 		m_SectionEnsembles.addNode(m_SortFeaturesByRelevance = new INIFileBool("SortRankingByRelevance", true));
 		m_SectionEnsembles.addNode(m_WriteEnsemblePredictions = new INIFileBool("WriteEnsemblePredictions", false));
 		m_SectionEnsembles.addNode(m_EnsembleRandomDepth = new INIFileBool("EnsembleRandomDepth", false));

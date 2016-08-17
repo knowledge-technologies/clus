@@ -11,9 +11,9 @@ import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 /**
- * Hamming loss: vse popravljeno (razen NEDOTAKNJENO)
  * @author matejp
  * 
+ * Hamming is used in multi-label classification scenario.
  */
 public class HammingLoss extends ClusNominalError{
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;

@@ -721,9 +721,9 @@ public class ClusStatManager implements Serializable {
 		if (nom.length != 0) {
 			parent.addError(new ContingencyTable(parent, nom));
 			parent.addError(new MSNominalError(parent, nom,	m_NormalizationWeights));
-			// TODO: Matej Dodajanje Hamming/Ranking Loss: lepse?
+			// TODO: Dodajanje Hamming/Ranking Loss: lepse?
 			Boolean is_multilabel = num.length == 0 && ts.length == 0 && nom.length > 1;
-			String[] twoLabels = new String[]{"1","0"}; // Clus saves the values of @attribute nominal {1,0}/{0,1} to {"1", "0"}.
+			String[] twoLabels = new String[]{"1","0"}; // Clus saves the values of @attribute atrName {1,0}/{0,1} to {"1", "0"}.
 			if(is_multilabel){
 				for(int attr=0; attr < nom.length; attr++){
 					if(!Arrays.equals(nom[attr].m_Values,twoLabels)){
