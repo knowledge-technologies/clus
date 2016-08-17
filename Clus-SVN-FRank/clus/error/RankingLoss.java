@@ -10,19 +10,20 @@ import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 /**
- * Hamming loss: vse popravljeno (razen NEDOTAKNJENO)
  * @author matejp
  *
  */
-public class HammingLoss extends ClusNominalError{
+public class RankingLoss extends ClusNominalError{
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-	protected int m_NbWrong;// sum of |prediction(sample_i) SYMMETRIC DIFFERENCE target(sample_i)|, where prediction (target) of a sample_i is the predicted (true) label set. 
+	protected double m_NonnormalisedLoss;// sum over samples sample_i of the terms t_i = |D_i| / (|Y_i| |L \ Y_i|), where L is the set of labels, Y_i is the predicted set of labels,
+										 // and D_i is the set of pairs (l1, l2), such that l1 is falsely positive and l2 is falsely negative.
+										 // If Y_i is either empty set or it equals L, then t_i = 0
 	protected int m_NbKnown;// number of the examples seen 
 	
-	public HammingLoss(ClusErrorList par, NominalAttrType[] nom) {
+	public RankingLoss(ClusErrorList par, NominalAttrType[] nom) {
 		super(par, nom);
-		m_NbWrong = 0;
+		m_NonnormalisedLoss = 0.0;
 		m_NbKnown = 0;
 	}
 
@@ -31,26 +32,26 @@ public class HammingLoss extends ClusNominalError{
 	}
 
 	public void reset() {
-		m_NbWrong = 0;
+		m_NonnormalisedLoss = 0.0;
 		m_NbKnown = 0;
 	}
 
 	public void add(ClusError other) {
-		HammingLoss ham = (HammingLoss)other;
-		m_NbWrong += ham.m_NbWrong;
-		m_NbKnown += ham.m_NbKnown;
+		RankingLoss rl = (RankingLoss)other;
+		m_NonnormalisedLoss += rl.m_NonnormalisedLoss;
+		m_NbKnown += rl.m_NbKnown;
 	}
 	//NEDOTAKNJENO
 	public void showSummaryError(PrintWriter out, boolean detail) {
 		showModelError(out, detail ? 1 : 0);
 	}
-//	// A MA TO SPLOH SMISU?
-//	public double getHammingLoss(int i) {
-//		return getModelErrorComponent(i);
-//	}
+	// A MA TO SPLOH SMISU?
+	public double getRankingLoss(int i) {
+		return getModelErrorComponent(i);
+	}
 
 	public double getModelError() {
-		return ((double) m_NbWrong)/ m_Dim / m_NbKnown;
+		return m_NonnormalisedLoss/ m_NbKnown;
 	}
 	
 	public void showModelError(PrintWriter out, int detail){
@@ -58,15 +59,16 @@ public class HammingLoss extends ClusNominalError{
 	}
 
 	public String getName() {
-		return "HammingLoss";
+		return "RankingLoss";
 	}
 
 	public ClusError getErrorClone(ClusErrorList par) {
-		return new HammingLoss(par, m_Attrs);
+		return new RankingLoss(par, m_Attrs);
 	}
 
 	public void addExample(DataTuple tuple, ClusStatistic pred) {
 		int[] predicted = pred.getNominalPred();
+		int setD = 0, setY = 0;
 		for (int i = 0; i < m_Dim; i++) {
 			NominalAttrType attr = getAttr(i);
 			if (!attr.isMissing(tuple)) {
