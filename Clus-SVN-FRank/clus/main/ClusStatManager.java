@@ -735,6 +735,7 @@ public class ClusStatManager implements Serializable {
 			if(is_multilabel){
 				parent.addError(new HammingLoss(parent, nom));
 				parent.addError(new RankingLoss(parent, nom));
+				parent.addError(new OneError(parent, nom));
 			}
 			
 		}
