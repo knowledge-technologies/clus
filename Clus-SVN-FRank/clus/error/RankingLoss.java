@@ -70,7 +70,7 @@ public class RankingLoss extends ClusNominalError{
 	public ClusError getErrorClone(ClusErrorList par) {
 		return new RankingLoss(par, m_Attrs);
 	}
-
+	// TODO: Optimise this to O(n log n) ...
 	public void addExample(DataTuple tuple, ClusStatistic pred) {
 		int[] predicted = pred.getNominalPred(); // Codomain is {"1", "0"} - see clus.data.type.NominalAtterType constructor
 		double[] scores = ((ClassificationStat) pred).calcScores();

@@ -736,6 +736,7 @@ public class ClusStatManager implements Serializable {
 				parent.addError(new HammingLoss(parent, nom));
 				parent.addError(new RankingLoss(parent, nom));
 				parent.addError(new OneError(parent, nom));
+				parent.addError(new Coverage(parent, nom));
 			}
 			
 		}
