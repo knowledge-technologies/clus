@@ -21,8 +21,8 @@ import clus.util.ClusFormat;
 public class Coverage extends ClusNominalError{
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-	protected int m_RankSum;			// sum over samples sample_i of the terms t_i = |D_i| / (|Y_i| |L \ Y_i|), where L is the set of labels, Y_i is the predicted set of labels,
-										// and D_i is the set of pairs (l1, l2), such that l1 is falsely positive and l2 is falsely negative.
+	protected int m_RankSum;			// sum over samples sample_i of the terms rank(label_i), where label_i is that element from the set of relevant labels for sample_i,
+										// which has the lowest score. The rank is the number of labels with higher or equal score than label_i.
 	
 	protected int m_NbKnown;			// number of the examples seen
 	protected int m_NbRelevantLabels; 	// sum over samples sample_i of the terms |{j | label_j is relevant for sample_i}|
