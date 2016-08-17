@@ -1603,6 +1603,14 @@ public class Settings implements Serializable {
 
 
 /***********************************************************************
+ * Section: Multi-label classification                                 *
+ ***********************************************************************/
+	
+	INIFileSection m_SectionMultiLabel;
+	protected INIFileNominalOrDoubleOrVector m_MultiLabelThreshold;
+	
+	
+/***********************************************************************
  * Section: Hierarchical multi-label classification                    *
  ***********************************************************************/
 
@@ -2604,6 +2612,9 @@ public class Settings implements Serializable {
 		m_SectionRules.addNode(m_OptGDNbOfTParameterTry = new INIFileInt("OptGDNbOfTParameterTry",1));
 		m_SectionRules.addNode(m_OptGDEarlyTTryStop = new INIFileBool("OptGDEarlyTTryStop",true));
 		m_SectionRules.setEnabled(false);
+		
+		m_SectionMultiLabel = new INIFileSection("MultiLabel");
+		m_SectionMultiLabel.addNode(m_MultiLabelThreshold = new INIFileNominalOrDoubleOrVector("MLCThreshold", NONELIST)); // Matej: popravi
 
 		m_SectionHierarchical = new INIFileSection("Hierarchical");
 		m_SectionHierarchical.addNode(m_HierType = new INIFileNominal("Type", HIERTYPES, 0));
@@ -2750,6 +2761,7 @@ public class Settings implements Serializable {
 		m_Ini.addNode(model);
 		m_Ini.addNode(m_SectionTree);
 		m_Ini.addNode(m_SectionRules);
+		m_Ini.addNode(m_SectionMultiLabel);
 		m_Ini.addNode(m_SectionHierarchical);
 		m_Ini.addNode(m_SectionILevelC);
 		m_Ini.addNode(m_SectionBeam);

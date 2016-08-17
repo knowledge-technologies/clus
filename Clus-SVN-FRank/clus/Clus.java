@@ -1680,7 +1680,6 @@ public class Clus implements CMDLineArgsProvider {
 				} else if (cargs.hasOption("forest")) {
 					sett.setEnsembleMode(true);
 					clss = new ClusEnsembleClassifier(clus);
-					Boolean aliNull = clss == null;
 					if (sett.getFTestArray().isVector()) {
 						clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
 					}
