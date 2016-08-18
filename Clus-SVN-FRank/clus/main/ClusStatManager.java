@@ -335,6 +335,23 @@ public class ClusStatManager implements Serializable {
 			m_Mode = MODE_REGRESSION;
 			nb_types++;
 		}
+		// check if this is multi-label classification: TODO: se da lepse?
+		NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+		NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+		TimeSeriesAttrType[] ts = m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
+		boolean is_multilabel = num.length == 0 && ts.length == 0 && nom.length > 1;
+		if (is_multilabel) {			 
+			String[] twoLabels = new String[]{"1","0"}; // Clus saves the values of @attribute atrName {1,0}/{0,1} to {"1", "0"}.
+			for(int attr = 0; attr < nom.length; attr++){
+				if(!Arrays.equals(nom[attr].m_Values, twoLabels)){
+					is_multilabel = false;
+					break;
+				}
+			}
+		}
+		getSettings().setSectionMultiLabelEnabled(is_multilabel);
+		
+		
 		if (m_Schema.hasAttributeType(ClusAttrType.ATTR_USE_TARGET, ClassesAttrType.THIS_TYPE)) {
 			m_Mode = MODE_HIERARCHICAL;
 			getSettings().setSectionHierarchicalEnabled(true);
@@ -718,40 +735,26 @@ public class ClusStatManager implements Serializable {
 		NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		TimeSeriesAttrType[] ts = m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
-		if (nom.length != 0) {
-			parent.addError(new ContingencyTable(parent, nom));
-			parent.addError(new MSNominalError(parent, nom,	m_NormalizationWeights));
-			// TODO: Dodajanje Hamming/Ranking Loss: lepse?
-			boolean is_multilabel = num.length == 0 && ts.length == 0 && nom.length > 1;
-			String[] twoLabels = new String[]{"1","0"}; // Clus saves the values of @attribute atrName {1,0}/{0,1} to {"1", "0"}.
-			if(is_multilabel){
-				for(int attr=0; attr < nom.length; attr++){
-					if(!Arrays.equals(nom[attr].m_Values,twoLabels)){
-						is_multilabel = false;
-						break;
-					}
-				}
-			}
-			if(is_multilabel){
-				parent.addError(new HammingLoss(parent, nom));
-				parent.addError(new RankingLoss(parent, nom));
-				parent.addError(new OneError(parent, nom));
-				parent.addError(new Coverage(parent, nom));
-				parent.addError(new AveragePrecision(parent, nom));
-				parent.addError(new MLAccuracy(parent, nom));
-				parent.addError(new MLPrecision(parent, nom));
-				parent.addError(new MLRecall(parent, nom));
-				parent.addError(new MLFOneMeasure(parent, nom));
-				parent.addError(new SubsetAccuracy(parent, nom));
-				parent.addError(new MacroPrecision(parent, nom));
-				parent.addError(new MacroRecall(parent, nom));
-				parent.addError(new MacroFOne(parent, nom));
-				parent.addError(new MicroPrecision(parent, nom));
-				parent.addError(new MicroRecall(parent, nom));
-				parent.addError(new MicroFOne(parent, nom));
-			}
-			
-		}
+
+		if(getSettings().m_SectionMultiLabel.isEnabled()){
+			parent.addError(new HammingLoss(parent, nom));
+			parent.addError(new RankingLoss(parent, nom));
+			parent.addError(new OneError(parent, nom));
+			parent.addError(new Coverage(parent, nom));
+			parent.addError(new AveragePrecision(parent, nom));
+			parent.addError(new MLAccuracy(parent, nom));
+			parent.addError(new MLPrecision(parent, nom));
+			parent.addError(new MLRecall(parent, nom));
+			parent.addError(new MLFOneMeasure(parent, nom));
+			parent.addError(new SubsetAccuracy(parent, nom));
+			parent.addError(new MacroPrecision(parent, nom));
+			parent.addError(new MacroRecall(parent, nom));
+			parent.addError(new MacroFOne(parent, nom));
+			parent.addError(new MicroPrecision(parent, nom));
+			parent.addError(new MicroRecall(parent, nom));
+			parent.addError(new MicroFOne(parent, nom));
+		}			
+		
 		if (num.length != 0) {
 			parent.addError(new AbsoluteError(parent, num));
 			parent.addError(new MSError(parent, num));

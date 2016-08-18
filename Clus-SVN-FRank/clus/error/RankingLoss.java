@@ -123,7 +123,7 @@ public class RankingLoss extends ClusNominalError{
 
 	public void addExample(DataTuple tuple, DataTuple pred){
 		try {
-			throw new Exception("Yet to implement RankingLoss.addExample(DataTuple tuple, DataTuple pred)");
+			throw new Exception("RankingLoss.addExample(DataTuple tuple, DataTuple pred) not implemented yet.");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

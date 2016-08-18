@@ -103,7 +103,7 @@ public class Coverage extends ClusNominalError{
 
 	public void addExample(DataTuple tuple, ClusStatistic pred) {
 		double[] scores = ((ClassificationStat) pred).calcScores();
-		double minScore = Double.MAX_VALUE;
+		double minScore = Double.POSITIVE_INFINITY;
 		int minScoreLabel = -1;
 		int relevantLabels = 0;
 		NominalAttrType attr;

@@ -1609,6 +1609,9 @@ public class Settings implements Serializable {
 	INIFileSection m_SectionMultiLabel;
 	protected INIFileNominalOrDoubleOrVector m_MultiLabelThreshold;
 	
+	public void setSectionMultiLabelEnabled(boolean enable) {
+		m_SectionMultiLabel.setEnabled(enable);
+	}
 	
 /***********************************************************************
  * Section: Hierarchical multi-label classification                    *
