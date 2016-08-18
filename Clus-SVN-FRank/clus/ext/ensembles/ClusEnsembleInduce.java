@@ -488,6 +488,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		return new ClusEnsembleTargetSubspaceInfo(schema, subspaces);
 	}
 	
+	/**
+	 * Preparation for target subspacing scenario.
+	 */
 	void prepareEnsembleTargetSubspaces()
 	{	
 		if (Settings.isEnsembleTargetSubspacingEnabled())

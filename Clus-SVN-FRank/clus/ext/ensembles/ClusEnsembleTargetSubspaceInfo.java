@@ -1,3 +1,4 @@
+
 package clus.ext.ensembles;
 
 import java.io.Serializable;
@@ -8,6 +9,10 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import weka.core.Utils;
 
+/**
+ * @author martinb
+ *
+ */
 public class ClusEnsembleTargetSubspaceInfo implements Serializable {
 
 	private static final long serialVersionUID = -8192393874827673204L;
