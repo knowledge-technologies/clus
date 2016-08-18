@@ -29,6 +29,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
+import clus.util.ClusFormat;
 
 /**
  * @author matejp
@@ -86,6 +87,14 @@ public class MacroFOne extends ClusNominalError {
 			avg += getModelErrorComponent(i);
 		}
 		return avg / m_Dim;
+	}
+	
+	public void showModelError(PrintWriter out, int detail){
+		String[] componentErrors = new String[m_Dim];
+		for(int i = 0; i < m_Dim; i++){
+			componentErrors[i] = ClusFormat.FOUR_AFTER_DOT.format(getModelErrorComponent(i));
+		}
+		out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()) + " (" + Arrays.toString(componentErrors) +")");
 	}
 
 	public String getName() {

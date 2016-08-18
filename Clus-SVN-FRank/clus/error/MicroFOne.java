@@ -29,6 +29,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
+import clus.util.ClusFormat;
 
 /**
  * @author matejp
@@ -90,6 +91,10 @@ public class MicroFOne extends ClusNominalError {
 		double precision = ((double) truePositives) / (truePositives + falsePositives);
 		double recall = ((double) truePositives) / (truePositives + falseNegatives);
 		return 2.0 * precision * recall / (precision + recall);
+	}
+	
+	public void showModelError(PrintWriter out, int detail){
+		out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
 	}
 
 	public String getName() {

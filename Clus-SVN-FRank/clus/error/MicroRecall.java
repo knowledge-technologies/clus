@@ -29,6 +29,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
+import clus.util.ClusFormat;
 
 /**
  * @author matejp
@@ -82,6 +83,10 @@ public class MicroRecall extends ClusNominalError {
 			falseNegatives += m_NbFalseNegatives[i];
 		}
 		return ((double) truePositives) / (truePositives + falseNegatives);
+	}
+	
+	public void showModelError(PrintWriter out, int detail){
+		out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
 	}
 
 	public String getName() {
