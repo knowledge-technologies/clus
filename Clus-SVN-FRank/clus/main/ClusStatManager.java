@@ -747,6 +747,7 @@ public class ClusStatManager implements Serializable {
 				parent.addError(new MacroRecall(parent, nom));
 				parent.addError(new MacroFOne(parent, nom));
 				parent.addError(new MicroPrecision(parent, nom));
+				parent.addError(new MicroRecall(parent, nom));
 			}
 			
 		}
