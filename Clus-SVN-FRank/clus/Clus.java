@@ -1140,7 +1140,6 @@ public class Clus implements CMDLineArgsProvider {
 
 	public final void saveModels(ClusRun models, ClusModelCollectionIO io)
 			throws IOException {
-		if (getSettings().isWriteModelFile()){
 			if (getInduce().isModelWriter()) {
 				getInduce().writeModel(io);
 			}
@@ -1151,7 +1150,6 @@ public class Clus implements CMDLineArgsProvider {
 					io.insertModel(pos++, info);
 				}
 			}
-		}
 	}
 
 	public ClusRun train(RowData train) throws ClusException, IOException {
@@ -1437,7 +1435,7 @@ public class Clus implements CMDLineArgsProvider {
 		ClusRandom.initialize(m_Sett);
 		ClusRun run = singleRunMain(clss, m_Summary);
 		//this should not be on for KNN
-		if (!getSettings().isKNN()){
+		if (!getSettings().isKNN() && getSettings().isWriteModelFile()) {
 			saveModels(run, io);
 			io.save(getSettings().getFileAbsolute(m_Sett.getAppName() + ".model"));
 		}
