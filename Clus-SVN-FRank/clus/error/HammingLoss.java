@@ -1,12 +1,10 @@
 package clus.error;
 
 import java.io.PrintWriter;
-import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
-import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
@@ -68,27 +66,37 @@ public class HammingLoss extends ClusNominalError{
 
 	public void addExample(DataTuple tuple, ClusStatistic pred) {
 		int[] predicted = pred.getNominalPred();
+		NominalAttrType attr;
+		boolean atLeastOneKnown = false;
 		for (int i = 0; i < m_Dim; i++) {
-			NominalAttrType attr = getAttr(i);
+			attr = getAttr(i);
 			if (!attr.isMissing(tuple)) {
+				atLeastOneKnown = true;
 				if (attr.getNominal(tuple) != predicted[i]) {
 					m_NbWrong++;
 				}
 			}
 		}
-		m_NbKnown++;
+		if(atLeastOneKnown){
+			m_NbKnown++;
+		}
 	}
 
 	public void addExample(DataTuple tuple, DataTuple pred) {
+		boolean atLeastOneKnown = false;
+		NominalAttrType attr;
 		for (int i = 0; i < m_Dim; i++) {
-			NominalAttrType attr = getAttr(i);
+			attr = getAttr(i);
 			if (!attr.isMissing(tuple)) {
+				atLeastOneKnown = true;
 				if (attr.getNominal(tuple) != attr.getNominal(pred)) {
 					m_NbWrong++;
 				}
 			}
 		}
-		m_NbKnown++;
+		if(atLeastOneKnown){
+			m_NbKnown++;
+		}
 	}
 	//NEDOTAKNJENO
 	public void addInvalid(DataTuple tuple) {

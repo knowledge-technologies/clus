@@ -722,7 +722,7 @@ public class ClusStatManager implements Serializable {
 			parent.addError(new ContingencyTable(parent, nom));
 			parent.addError(new MSNominalError(parent, nom,	m_NormalizationWeights));
 			// TODO: Dodajanje Hamming/Ranking Loss: lepse?
-			Boolean is_multilabel = num.length == 0 && ts.length == 0 && nom.length > 1;
+			boolean is_multilabel = num.length == 0 && ts.length == 0 && nom.length > 1;
 			String[] twoLabels = new String[]{"1","0"}; // Clus saves the values of @attribute atrName {1,0}/{0,1} to {"1", "0"}.
 			if(is_multilabel){
 				for(int attr=0; attr < nom.length; attr++){
@@ -737,6 +737,8 @@ public class ClusStatManager implements Serializable {
 				parent.addError(new RankingLoss(parent, nom));
 				parent.addError(new OneError(parent, nom));
 				parent.addError(new Coverage(parent, nom));
+				parent.addError(new AveragePrecision(parent, nom));
+				parent.addError(new MLAccuracy(parent, nom));
 			}
 			
 		}

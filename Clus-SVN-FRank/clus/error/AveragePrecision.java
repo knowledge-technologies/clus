@@ -2,7 +2,6 @@ package clus.error;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 
@@ -43,9 +42,9 @@ public class AveragePrecision extends ClusNominalError{
 	}
 
 	public void add(ClusError other) {
-		AveragePrecision rl = (AveragePrecision)other;
-		m_NonnormalisedPrec += rl.m_NonnormalisedPrec;
-		m_NbKnown += rl.m_NbKnown;
+		AveragePrecision ap = (AveragePrecision)other;
+		m_NonnormalisedPrec += ap.m_NonnormalisedPrec;
+		m_NbKnown += ap.m_NbKnown;
 	}
 	//NEDOTAKNJENO
 	public void showSummaryError(PrintWriter out, boolean detail) {
@@ -75,7 +74,7 @@ public class AveragePrecision extends ClusNominalError{
 	public void addExample(DataTuple tuple, ClusStatistic pred) {
 		final double[] scores = ((ClassificationStat) pred).calcScores();
 		ArrayList<Integer> indicesOfKnownValues = new ArrayList<Integer>();
-		Boolean[] isRelevant = new Boolean[m_Dim];
+		boolean[] isRelevant = new boolean[m_Dim];
 		NominalAttrType attr;
 		// find (indices of) known values and relevant labels
 		for(int i = 0; i< m_Dim; i++){
