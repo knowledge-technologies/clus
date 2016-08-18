@@ -100,19 +100,19 @@ public class MLPrecision extends ClusNominalError{
 			attr = getAttr(i);
 			if (!attr.isMissing(tuple)) {
 				atLeastOneKnown = true;
-				if(attr.getNominal(tuple) == 0){
-					nbRelevant++;
-					if(attr.getNominal(pred) == 0){
+				if(attr.getNominal(pred) == 0){
+					nbRelevantPredicted++;
+					if(attr.getNominal(tuple) == 0){
 						intersection++;
 					}
 				}
-				if(attr.getNominal(pred) == 0){
-					nbRelevantPredicted++;
+				if(attr.getNominal(tuple) == 0){
+					nbRelevant++;
 				}
 			}
 		}
 		if(atLeastOneKnown){
-			m_PrecisionSum += nbRelevant != 0 ? ((double) intersection) / nbRelevant : (nbRelevantPredicted == 0 ? 1.0 : 0.0); // take care of degenerated cases
+			m_PrecisionSum += nbRelevantPredicted != 0 ? ((double) intersection) / nbRelevantPredicted : (nbRelevant == 0 ? 1.0 : 0.0); // take care of degenerated cases
 			m_NbKnown++;			
 		}	
 	}
