@@ -34,16 +34,16 @@ import clus.statistic.ClusStatistic;
  * @author matejp
  * 
  */
-public class MacroPrecision extends ClusNominalError {
+public class MacroRecall extends ClusNominalError {
 
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-	protected int[] m_NbTruePositives, m_NbFalsePositives;
+	protected int[] m_NbTruePositives, m_NbFalseNegatives;
 
-	public MacroPrecision(ClusErrorList par, NominalAttrType[] nom) {
+	public MacroRecall(ClusErrorList par, NominalAttrType[] nom) {
 		super(par, nom);
 		m_NbTruePositives = new int[m_Dim];
-		m_NbFalsePositives = new int[m_Dim];
+		m_NbFalseNegatives = new int[m_Dim];
 	}
 
 	public boolean shouldBeLow() {
@@ -52,14 +52,14 @@ public class MacroPrecision extends ClusNominalError {
 
 	public void reset() {
 		Arrays.fill(m_NbTruePositives, 0);
-		Arrays.fill(m_NbFalsePositives, 0);
+		Arrays.fill(m_NbFalseNegatives, 0);
 	}
 
 	public void add(ClusError other) {
-		MacroPrecision mp = (MacroPrecision)other;
+		MacroRecall mr = (MacroRecall)other;
 		for (int i = 0; i < m_Dim; i++) {
-			m_NbTruePositives[i] += mp.m_NbTruePositives[i];
-			m_NbFalsePositives[i] += mp.m_NbFalsePositives[i];
+			m_NbTruePositives[i] += mr.m_NbTruePositives[i];
+			m_NbFalseNegatives[i] += mr.m_NbFalseNegatives[i];
 		}
 	}
 
@@ -67,12 +67,12 @@ public class MacroPrecision extends ClusNominalError {
 		showModelError(out, detail ? 1 : 0);
 	}
 
-	public double getMacroPrecision(int i) {
+	public double getMacroRecall(int i) {
 		return getModelErrorComponent(i);
 	}
 
 	public double getModelErrorComponent(int i) {
-		return ((double)m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
+		return ((double)m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalseNegatives[i]);
 	}
 
 	public double getModelError() {
@@ -84,11 +84,11 @@ public class MacroPrecision extends ClusNominalError {
 	}
 
 	public String getName() {
-		return "MacroPrecision";
+		return "MacroRecall";
 	}
 
 	public ClusError getErrorClone(ClusErrorList par) {
-		return new MacroPrecision(par, m_Attrs);
+		return new MacroRecall(par, m_Attrs);
 	}
 
 	public void addExample(DataTuple tuple, ClusStatistic pred) {
@@ -97,11 +97,11 @@ public class MacroPrecision extends ClusNominalError {
 		for (int i = 0; i < m_Dim; i++) {
 			attr = getAttr(i);
 			if (!attr.isMissing(tuple)) {
-				if(predicted[i] == 0){ // predicted positive
-					if(attr.getNominal(tuple) == 0){
+				if(attr.getNominal(tuple) == 0){ // label relevant
+					if(predicted[i] == 0){
 						m_NbTruePositives[i]++;
 					} else{
-						m_NbFalsePositives[i]++;
+						m_NbFalseNegatives[i]++;
 					}
 				}
 			}
@@ -113,11 +113,11 @@ public class MacroPrecision extends ClusNominalError {
 		for (int i = 0; i < m_Dim; i++) {
 			attr = getAttr(i);
 			if (!attr.isMissing(tuple)) {
-				if(attr.getNominal(pred) == 0){ // predicted positive
-					if(attr.getNominal(tuple) == 0){
+				if(attr.getNominal(tuple) == 0){ // label relevant
+					if(attr.getNominal(pred) == 0){
 						m_NbTruePositives[i]++;
 					} else{
-						m_NbFalsePositives[i]++;
+						m_NbFalseNegatives[i]++;
 					}
 				}
 			}
