@@ -739,6 +739,8 @@ public class ClusStatManager implements Serializable {
 				parent.addError(new Coverage(parent, nom));
 				parent.addError(new AveragePrecision(parent, nom));
 				parent.addError(new MLAccuracy(parent, nom));
+				parent.addError(new MLPrecision(parent, nom));
+				parent.addError(new MLRecall(parent, nom));
 			}
 			
 		}
