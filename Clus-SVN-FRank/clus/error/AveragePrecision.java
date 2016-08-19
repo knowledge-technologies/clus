@@ -27,6 +27,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
+import org.omg.CORBA.portable.IndirectionException;
+
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
@@ -121,7 +123,7 @@ public class AveragePrecision extends ClusNominalError{
 			for(int i = 0; i < indicesOfKnownValues.size(); i++){
 				if(isRelevant[indicesOfKnownValues.get(i)]){
 					nbOfRelevant++;
-					u += nbOfRelevant / (i + 1);					
+					u += ((double) nbOfRelevant) / (i + 1);
 				}
 			}
 			m_NonnormalisedPrec += u / nbOfRelevant;  
@@ -132,7 +134,7 @@ public class AveragePrecision extends ClusNominalError{
 
 	public void addExample(DataTuple tuple, DataTuple pred){
 		try {
-			throw new Exception("Yet to implement AveragePrecision.addExample(DataTuple tuple, DataTuple pred)");
+			throw new Exception("AveragePrecision.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
