@@ -18,7 +18,7 @@ public class ClusBeamSimClassStat extends ClassificationStat{
 	private ClusBeam m_Beam;
 	
 	public ClusBeamSimClassStat(NominalAttrType[] nomAtts, ClusBeam beam) {
-		super(nomAtts);
+		super(nomAtts); // does not work for multi label !!!
 		m_Beam = beam;
 		m_SumPredictions = replicateEmpty(m_ClassCounts);
 		m_SumSqPredictions = replicateEmpty(m_ClassCounts);

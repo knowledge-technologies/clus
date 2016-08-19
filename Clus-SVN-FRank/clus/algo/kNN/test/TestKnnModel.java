@@ -172,8 +172,13 @@ public class TestKnnModel implements ClusModel, Serializable{
 		// save prediction template
 		// @todo : should all this be repalced with:
 		// statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
-		if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY )
-			m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+		if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
+			if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
+				m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelTrheshold());
+			} else{
+				m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+			}
+		}
 		else if( cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION )
 			m_StatTemplate = new RegressionStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
 		else if( cr.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES ){

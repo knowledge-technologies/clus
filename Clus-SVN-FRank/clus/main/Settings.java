@@ -1613,6 +1613,13 @@ public class Settings implements Serializable {
 		m_SectionMultiLabel.setEnabled(enable);
 	}
 	
+	public INIFileSection getSectionMultiLabel(){
+		return m_SectionMultiLabel;
+	}
+	public INIFileNominalOrDoubleOrVector getMultiLabelTrheshold(){
+		return m_MultiLabelThreshold;
+	}
+	
 /***********************************************************************
  * Section: Hierarchical multi-label classification                    *
  ***********************************************************************/

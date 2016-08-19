@@ -57,7 +57,12 @@ public class CombStat extends ClusStatistic {
 	public CombStat(ClusStatManager statManager, NumericAttrType[] num, NominalAttrType[] nom) {
 		m_StatManager = statManager;
 		m_RegStat = new RegressionStat(num);
-		m_ClassStat = new ClassificationStat(nom);
+		if(statManager.getSettings().getSectionMultiLabel().isEnabled()){
+			m_ClassStat = new ClassificationStat(nom, statManager.getSettings().getMultiLabelTrheshold());
+		} else{
+			m_ClassStat = new ClassificationStat(nom);
+		}
+		
 	}
 	
 	public CombStat(ClusStatManager statManager, RegressionStat reg, ClassificationStat cls) {

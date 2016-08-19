@@ -178,8 +178,13 @@ public class KnnModel implements ClusModel, Serializable{
 		// @todo : should all this be repalced with:
 		// statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
 
-		if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY )
-			statTemplate = new ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+		if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
+			if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
+				statTemplate = new ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelTrheshold()); 
+			} else{
+				statTemplate = new ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+			}
+		}			
 		else if( cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION )
 			statTemplate = new RegressionStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
 		else if( cr.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES ){

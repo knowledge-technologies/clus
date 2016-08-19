@@ -72,7 +72,11 @@ public class ClusForest implements ClusModel, Serializable{
 		m_Forest = new ArrayList<ClusModel>();
 		
 		if (statmgr.getMode() == ClusStatManager.MODE_CLASSIFY){
-			m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+			if(statmgr.getSettings().getSectionMultiLabel().isEnabled()){
+				m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), statmgr.getSettings().getMultiLabelTrheshold());
+			} else {
+				m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+			}
 		}else if (statmgr.getMode() == ClusStatManager.MODE_REGRESSION){
 			m_Stat = new RegressionStat(statmgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
 		}else if (statmgr.getMode() == ClusStatManager.MODE_HIERARCHICAL){

@@ -405,7 +405,12 @@ public class ClusStatManager implements Serializable {
 					//return new ClassificationStat(nom);
 				//}
 			}
-			return new ClassificationStat(nom);
+			if(m_Settings.getSectionMultiLabel().isEnabled()){
+				return new ClassificationStat(nom, m_Settings.getMultiLabelTrheshold());
+			} else{
+				return new ClassificationStat(nom);
+			}
+			
 		} else if (nom.length == 0) {
 			return new RegressionStat(num);
 		} else {

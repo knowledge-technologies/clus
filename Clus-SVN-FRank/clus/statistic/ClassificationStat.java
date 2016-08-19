@@ -22,6 +22,7 @@
 
 package clus.statistic;
 
+import jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import jeans.math.*;
 import jeans.util.StringUtils;
 
@@ -59,6 +60,8 @@ public class ClassificationStat extends ClusStatistic {
 	public double[][] m_ClassCounts;
 	public double[] m_SumWeights;
 	public int[] m_MajorityClasses;
+	// Thresholds used in making predictions
+	public double[] m_Thresholds;
 
 	/**
 	 * Constructor for this class.
@@ -72,9 +75,52 @@ public class ClassificationStat extends ClusStatistic {
 		}
 		m_Attrs = nomAtts;
 	}
+	/**
+	 * Constructor for this class in the case of multi-label setting.
+	 * @param nomAtts
+	 * @param multiLabelThreshold
+	 */
+	public ClassificationStat(NominalAttrType[] nomAtts, INIFileNominalOrDoubleOrVector multiLabelThreshold){
+		// copied
+		m_NbTarget = nomAtts.length;
+		m_SumWeights = new double[m_NbTarget];
+		m_ClassCounts = new double[m_NbTarget][];
+		for (int i = 0; i < m_NbTarget; i++) {
+			m_ClassCounts[i] = new double[nomAtts[i].getNbValues()];
+		}
+		m_Attrs = nomAtts;
+		// new
+		double[] thresholds = multiLabelThreshold.getDoubleVector();
+		if(thresholds != null){
+			setThresholds(thresholds);
+		} else{
+			setThresholds(multiLabelThreshold.getDouble());
+		}
+	}
 	
 	public void setTrainingStat(ClusStatistic train) {
 		m_Training = (ClassificationStat)train;
+	}
+	
+	/**
+	 * 
+	 * @param thresholds Every target has its own threshold for predictions.
+	 */
+	public void setThresholds(double[] thresholds){
+		m_Thresholds = new double[m_NbTarget];
+		for(int i = 0; i < m_NbTarget; i++){
+			m_Thresholds[i] = thresholds[i];
+		}
+	}
+	/**
+	 * 
+	 * @param threshold All targets have the same threshold.
+	 */
+	public void setThresholds(double threshold){
+		m_Thresholds = new double[m_NbTarget];
+		for(int i = 0; i < m_NbTarget; i++){
+			m_Thresholds[i] = threshold;
+		}
 	}
 
 	public int getNbNominalAttributes() {
@@ -88,6 +134,9 @@ public class ClassificationStat extends ClusStatistic {
 	public ClusStatistic cloneStat() {
 		ClassificationStat res = new ClassificationStat(m_Attrs);
 		res.m_Training = m_Training;
+		if(m_Thresholds != null){
+			res.m_Thresholds = Arrays.copyOf(m_Thresholds, m_Thresholds.length);
+		}
 		return res;
 	}
 
