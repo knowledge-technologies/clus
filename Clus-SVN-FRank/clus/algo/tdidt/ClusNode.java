@@ -292,7 +292,6 @@ public class ClusNode extends MyNode implements ClusModel {
 
 	public final void computePrediction() {
 		if (getClusteringStat() != null){
-			
 			getClusteringStat().calcMean();
 		}
 		if (getTargetStat() != null){

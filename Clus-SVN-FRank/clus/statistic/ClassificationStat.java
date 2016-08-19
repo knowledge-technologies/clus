@@ -60,7 +60,7 @@ public class ClassificationStat extends ClusStatistic {
 	public double[][] m_ClassCounts;
 	public double[] m_SumWeights;
 	public int[] m_MajorityClasses;
-	// Thresholds used in making predictions
+	// Thresholds used in making predictions in multi-label classification
 	public double[] m_Thresholds;
 
 	/**
@@ -311,8 +311,14 @@ public class ClassificationStat extends ClusStatistic {
 		if (m_max <= MathUtil.C1E_9 && m_Training != null) {
 			// no examples covered -> m_max = null -> use whole training set majority class
 			return m_Training.getMajorityClass(attr);
+		} else{
+			if(m_Thresholds != null){ // IFF multi label
+				return clcts[0] / m_SumWeights[attr] >= m_Thresholds[attr] ? 0 : 1; // label is relevant (class index 0) IFF we exceed the threshold.
+			} else{
+				return m_class;
+			}
 		}
-		return m_class;
+		
 	}
 
 	public int getMajorityClassDiff(int attr, ClassificationStat other) {
