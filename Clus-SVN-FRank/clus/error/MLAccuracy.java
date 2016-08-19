@@ -105,7 +105,7 @@ public class MLAccuracy extends ClusNominalError{
 			}
 		}
 		if(atLeastOneKnown){
-			m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of degenerated case
+			m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of the degenerated case
 			m_NbKnown++;			
 		}		
 	}
@@ -127,7 +127,7 @@ public class MLAccuracy extends ClusNominalError{
 			}
 		}
 		if(atLeastOneKnown){
-			m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of degenerated case
+			m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of the degenerated case
 			m_NbKnown++;			
 		}	
 	}

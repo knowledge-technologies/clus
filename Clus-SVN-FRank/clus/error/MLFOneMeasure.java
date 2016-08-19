@@ -109,7 +109,7 @@ public class MLFOneMeasure extends ClusNominalError{
 			}
 		}
 		if(atLeastOneKnown){
-			m_F1Sum += nbRelevant + nbRelevantPredicted > 0 ? 2 * intersection / (nbRelevant + nbRelevantPredicted) : 1.0; // take care of the degenerate case
+			m_F1Sum += nbRelevant + nbRelevantPredicted > 0 ? 2.0 * intersection / (nbRelevant + nbRelevantPredicted) : 1.0; // take care of the degenerate case
 			m_NbKnown++;
 		}		
 	}
