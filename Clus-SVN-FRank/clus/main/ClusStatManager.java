@@ -736,6 +736,10 @@ public class ClusStatManager implements Serializable {
 		NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		TimeSeriesAttrType[] ts = m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
 
+		if(nom.length != 0){
+			parent.addError(new ContingencyTable(parent, nom));
+			parent.addError(new MSNominalError(parent, nom, m_NormalizationWeights));
+		}
 		if(getSettings().m_SectionMultiLabel.isEnabled()){
 			parent.addError(new HammingLoss(parent, nom));
 			parent.addError(new RankingLoss(parent, nom));
