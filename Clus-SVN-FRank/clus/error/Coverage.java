@@ -136,7 +136,7 @@ public class Coverage extends ClusNominalError{
 
 	public void addExample(DataTuple tuple, DataTuple pred){
 		try {
-			throw new Exception("Yet to implement Coverage.addExample(DataTuple tuple, DataTuple pred)");
+			throw new Exception("Coverage.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
