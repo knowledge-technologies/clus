@@ -24,6 +24,9 @@ package clus.error;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
@@ -89,34 +92,38 @@ public class RankingLoss extends ClusNominalError{
 	public ClusError getErrorClone(ClusErrorList par) {
 		return new RankingLoss(par, m_Attrs);
 	}
-	// TODO: Optimise this to O(n log n) ...
+
 	public void addExample(DataTuple tuple, ClusStatistic pred) {
-		int[] predicted = pred.getNominalPred(); // Codomain is {"1", "0"} - see clus.data.type.NominalAtterType constructor
-		double[] scores = ((ClassificationStat) pred).calcScores();
+		final double[] scores = ((ClassificationStat) pred).calcScores();
 		int wrongPairs = 0;
-		ArrayList<Integer> relevantIndices = new ArrayList<Integer>();
-		ArrayList<Integer> irrelevantIndices = new ArrayList<Integer>();
+		int nbIrrelevant = 0, nbRelevant = 0;
+		ArrayList<Integer> indicesOfKnownValues = new ArrayList<Integer>();
 		NominalAttrType attr;
 		for(int i = 0; i< m_Dim; i++){
 			attr = getAttr(i);
 			if(!attr.isMissing(tuple)){
-				if(attr.getNominal(tuple) == 0){
-					relevantIndices.add(i);
-				} else{
-					irrelevantIndices.add(i);
-				}
+				indicesOfKnownValues.add(i);
 			}
 		}
 		
-		if(!relevantIndices.isEmpty() && !irrelevantIndices.isEmpty()){
-			for(int relevantInd : relevantIndices){
-				for(int irrelevantInd : irrelevantIndices){
-					if(scores[irrelevantInd] > scores[relevantInd]){
-						wrongPairs++;
-					}
-				}
+		Collections.sort(indicesOfKnownValues, new Comparator<Integer>(){
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				return -Double.compare(scores[o1], scores[o2]);
 			}
-			m_NonnormalisedLoss += ((double) wrongPairs) / (relevantIndices.size() * irrelevantIndices.size());
+		});
+		
+		for(int i = 0; i < indicesOfKnownValues.size(); i++){ // possible improvement: break, when you reach the relevant label with the lowest score
+			attr = getAttr(indicesOfKnownValues.get(i));
+			if(attr.getNominal(tuple) == 0){
+				wrongPairs += nbIrrelevant;
+				nbRelevant++;
+			} else{
+				nbIrrelevant++;
+			}
+		}
+		if(nbRelevant > 0 && nbIrrelevant > 0){
+			m_NonnormalisedLoss += ((double) wrongPairs) / (nbRelevant * nbIrrelevant);
 		}
 		m_NbKnown++;
 	}
