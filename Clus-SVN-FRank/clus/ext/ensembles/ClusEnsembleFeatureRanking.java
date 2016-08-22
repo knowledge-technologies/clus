@@ -21,10 +21,26 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.error.Accuracy;
+import clus.error.AveragePrecision;
 import clus.error.ClusErrorList;
+import clus.error.Coverage;
+import clus.error.HammingLoss;
+import clus.error.MLAccuracy;
+import clus.error.MLFOneMeasure;
+import clus.error.MLPrecision;
+import clus.error.MLRecall;
 import clus.error.MSError;
+import clus.error.MacroFOne;
+import clus.error.MacroPrecision;
+import clus.error.MacroRecall;
+import clus.error.MicroPrecision;
+import clus.error.MicroRecall;
+import clus.error.MisclassificationError;
+import clus.error.OneError;
 import clus.error.RMSError;
+import clus.error.RankingLoss;
 import clus.error.RelativeError;
+import clus.error.SubsetAccuracy;
 import clus.ext.hierarchical.HierErrorMeasures;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
@@ -303,7 +319,60 @@ public class ClusEnsembleFeatureRanking {
 		NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
-			error.addError(new Accuracy(error, nom));
+			if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
+				switch(cr.getStatManager().getSettings().getMultiLabelRankingMeasure()){
+				case Settings.MULTILABEL_MEASURES_HAMMINGLOSS:
+					error.addError(new HammingLoss(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MLACCURACY:
+					error.addError(new MLAccuracy(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MLPRECISION:
+					error.addError(new MLPrecision(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MLRECALL:
+					error.addError(new MLRecall(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MLFONE:
+					error.addError(new MLFOneMeasure(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_SUBSETACCURACY:
+					error.addError(new SubsetAccuracy(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MACROPRECISION :
+					error.addError(new MacroPrecision(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MACRORECALL:
+					error.addError(new MacroRecall(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MACROFONE:
+					error.addError(new MacroFOne(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MICROPRECISION:
+					error.addError(new MicroPrecision(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MICRORECALL:
+					error.addError(new MicroRecall(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_MICROFONE:
+					error.addError(new MisclassificationError(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_ONEERROR:
+					error.addError(new OneError(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_COVERAGE:
+					error.addError(new Coverage(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_RANKINGLOSS:
+					error.addError(new RankingLoss(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_AVERAGEPRECISION:
+					error.addError(new AveragePrecision(error, nom));
+					break;
+				}
+			} else{
+				error.addError(new Accuracy(error, nom));
+			}
 		} else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION) {
 //			error.addError(new MSError(error, num));
 //			error.addError(new RelativeError(error, num));
