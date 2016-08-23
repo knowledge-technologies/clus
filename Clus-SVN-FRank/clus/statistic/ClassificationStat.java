@@ -759,7 +759,7 @@ public class ClassificationStat extends ClusStatistic {
 			buf.append("]");
 		}
 		else {
-//			buf.append("?");
+			buf.append("?");
 		}
 		if (info.SHOW_DISTRIBUTION) {
 			for (int j = 0; j < m_NbTarget; j++) {
