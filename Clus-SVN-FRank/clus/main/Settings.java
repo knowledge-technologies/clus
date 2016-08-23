@@ -1608,8 +1608,13 @@ public class Settings implements Serializable {
 	
 	INIFileSection m_SectionMultiLabel;
 	protected INIFileNominalOrDoubleOrVector m_MultiLabelThreshold;
+	protected INIFileNominal m_MultiLabelOptimizeThreshold;
 	protected INIFileNominal m_MultiLabelRankingMeasure;
 	
+	public final static String[] MULTILABEL_THRESHOLD_OPTIMIZATION = {"yes", "no"};
+	public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_YES = 0;
+	public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_NO = 1;
+		
 	public final static String[] MULTIlABEL_MEASURES = {"HammingLoss", "MLAccuracy", "MLPrecision", "MLRecall", "MLFOne", "SubsetAccuracy", 		// Example based measures
 														"MacroPrecision", "MacroRecall", "MacroFOne", "MicroPrecision", "MicroRecall", "MicroFOne", // Label based measures
 														"OneError", "Coverage", "RankingLoss", "AveragePrecision"};									// Ranking based measures
@@ -1643,6 +1648,9 @@ public class Settings implements Serializable {
 	}
 	public int getMultiLabelRankingMeasure() {
 		return m_MultiLabelRankingMeasure.getValue();
+	}
+	public int getMultiLabelThresholdOptimization(){
+		return m_MultiLabelOptimizeThreshold.getValue();
 	}
 	
 /***********************************************************************
@@ -2650,6 +2658,7 @@ public class Settings implements Serializable {
 		
 		m_SectionMultiLabel = new INIFileSection("MultiLabel");
 		m_SectionMultiLabel.addNode(m_MultiLabelThreshold = new INIFileNominalOrDoubleOrVector("MLCThreshold", NONELIST));
+		m_SectionMultiLabel.addNode(m_MultiLabelOptimizeThreshold = new INIFileNominal("OptimizeThresholds", MULTILABEL_THRESHOLD_OPTIMIZATION, MULTILABEL_THRESHOLD_OPTIMIZATION_YES));
 		m_SectionMultiLabel.addNode(m_MultiLabelRankingMeasure = new INIFileNominal("MultiLabelRankingMeasure", MULTIlABEL_MEASURES, MULTILABEL_MEASURES_HAMMINGLOSS));
 		
 		m_SectionHierarchical = new INIFileSection("Hierarchical");

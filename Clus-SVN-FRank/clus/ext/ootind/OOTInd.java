@@ -137,7 +137,7 @@ if (Debug.debug == 1) {
 			BaggingSelection msel = (BaggingSelection)sels.elementAt(i);
 			ClusRun cr = m_Clus.partitionData(msel, i+1);
 			ClusNode tree = root.getTree(i);
-			tree.postProc(score);
+			tree.postProc(score, null);
 //			m_Clus.storeAndPruneModel(cr, tree);
 //			m_Clus.calcError(cr, summary);
 			if (sett.isOutputFoldModels()) output.writeOutput(cr, false);
@@ -187,7 +187,7 @@ if (Debug.debug == 1) {
 		output.writeHeader();
 		ClusNode tree = root.getTree(0);
 		ClusRun cr = m_Clus.partitionData();
-		tree.postProc(score);
+		tree.postProc(score, null);
 //		m_Clus.storeAndPruneModel(cr, tree);
 //		m_Clus.calcError(cr, null);
 		output.writeOutput(cr, true);
@@ -200,7 +200,7 @@ if (Debug.debug == 1) {
 			XValSelection msel = new XValSelection(sel, i);
 			cr = m_Clus.partitionData(msel, i+1);
 			tree = root.getTree(i+1);
-			tree.postProc(score);
+			tree.postProc(score, null);
 //			m_Clus.storeAndPruneModel(cr, tree);
 //			m_Clus.calcError(cr, summary);
 			if (sett.isOutputFoldModels()) output.writeOutput(cr, false);

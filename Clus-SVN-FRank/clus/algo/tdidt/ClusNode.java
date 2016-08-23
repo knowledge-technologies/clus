@@ -304,8 +304,23 @@ public class ClusNode extends MyNode implements ClusModel {
 		setNbChildren(arity);
 		return arity;
 	}
-
-	public final ClusNode postProc(MultiScore score) {
+	// MultiScore is not used!
+	public final ClusNode postProc(MultiScore score, ClusStatManager mgr) {
+		if(mgr == null){
+			throw new RuntimeException("ClusStatManager = null.");
+		} else{
+			if(mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES){
+				double lower = 0.0, upper = 1.0;
+				double middle;
+				ClassificationStat clusteringStat = (ClassificationStat) getClusteringStat();
+				ClassificationStat targetStat = (ClassificationStat) getTargetStat();
+				while(upper - lower > 0.005){
+					middle = lower + (upper - lower) / 2;
+					clusteringStat.setThresholds(middle);
+					targetStat.setThresholds(middle);
+				}
+			}
+		}
 		updateTree();
 		safePrune();
 		return this;

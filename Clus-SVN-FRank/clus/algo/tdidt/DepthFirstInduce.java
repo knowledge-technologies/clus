@@ -388,7 +388,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 			// Refinement finished
 			if (Settings.EXACT_TIME == false) break;
 		}
-		m_Root.postProc(null);
+		m_Root.postProc(null, m_StatManager);
 
 		cleanSplit();
 		return m_Root;

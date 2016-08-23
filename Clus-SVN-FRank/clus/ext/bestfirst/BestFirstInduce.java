@@ -451,7 +451,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 			// Refinement finished
 			if (Settings.EXACT_TIME == false) break;
 		}
-		m_Root.postProc(null);
+		m_Root.postProc(null, null);
 
 		cleanSplit();
 		return m_Root;
