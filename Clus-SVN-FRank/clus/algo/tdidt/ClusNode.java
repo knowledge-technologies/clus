@@ -309,22 +309,88 @@ public class ClusNode extends MyNode implements ClusModel {
 		if(mgr == null){
 			throw new RuntimeException("ClusStatManager = null.");
 		} else{
-			if(mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES){
-				double lower = 0.0, upper = 1.0;
-				double middle;
-				ClassificationStat clusteringStat = (ClassificationStat) getClusteringStat();
+			if(mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES){ // multi-label
+				double lower = 0.0, upper = 0.96;
+				double middle = lower + (upper - lower) / 2;
 				ClassificationStat targetStat = (ClassificationStat) getTargetStat();
-				while(upper - lower > 0.005){
-					middle = lower + (upper - lower) / 2;
-					clusteringStat.setThresholds(middle);
-					targetStat.setThresholds(middle);
+				int nbRelevantLabels = 0;
+				for(int target = 0; target < targetStat.m_ClassCounts.length; target++){
+					nbRelevantLabels += targetStat.m_ClassCounts[target][0];
 				}
+				int nbPredictedRelevantNow = -1, nbPredictedRelevantBefore = -2;
+				while(upper - lower > 0.005){// && nbPredictedRelevantBefore != nbPredictedRelevantNow){
+					middle = lower + (upper - lower) / 2;
+					updateThresholds(middle);
+					updateTree();
+					nbPredictedRelevantBefore = nbPredictedRelevantNow;
+					nbPredictedRelevantNow = countPredictedRelevant();
+					if(nbPredictedRelevantNow == nbRelevantLabels){
+						break;
+					} else if(nbPredictedRelevantNow < nbRelevantLabels){ // threshold too high
+						upper = middle;
+					} else{												  //           too low
+						lower = middle;
+					}
+				}
+				if(nbPredictedRelevantNow == nbRelevantLabels){
+					// nothing to do here, since the thresholds are already set
+					// to optimal value and the tree is updated accordingly					
+				} else{
+					updateThresholds(lower);
+					updateTree();
+					int lowerCount =  countPredictedRelevant(); // > nbRelevantLabels
+					updateThresholds(upper);
+					updateTree();
+					int upperCount = countPredictedRelevant(); // < nbRelevantLabels
+					double opti = lowerCount - nbRelevantLabels < nbRelevantLabels - upperCount ? lower : upper;
+					
+					updateThresholds(opti);
+					updateTree();
+					System.out.println("OPti: " + opti);
+				}
+			} else{
+				updateTree();
 			}
 		}
-		updateTree();
 		safePrune();
 		return this;
 	}
+		
+	public void updateThresholds(double threshold){
+		ClassificationStat targetStat = (ClassificationStat) getTargetStat();
+		targetStat.setThresholds(threshold);
+		if(m_Test != null){ // is not leaf
+			int nbChildren = getNbChildren();
+			ClusNode info;
+			for(int i = 0; i < nbChildren; i++){
+				info = (ClusNode) getChild(i);
+				info.updateThresholds(threshold);
+			}
+		}		
+	}
+	
+	public int countPredictedRelevant(){
+		int nbPredictedRelevant = 0;
+		if(m_Test == null){ // is leaf 
+			System.out.println("    list");
+			ClassificationStat targetStat = (ClassificationStat) getTargetStat();
+			for(int target = 0; target < targetStat.m_ClassCounts.length; target++){
+				if(targetStat.m_ClassCounts[target][0] / targetStat.m_SumWeights[target] > targetStat.m_Thresholds[target]){
+					nbPredictedRelevant += (int) targetStat.m_NbExamples; // TODO: ne deluje za weighted sum of examples!
+				}
+			}
+		} else{
+			System.out.println("   stejem v m_Test: " + m_Test.toString());
+			int nbChildren = getNbChildren();
+			ClusNode info;
+			for(int i = 0; i < nbChildren; i++){
+				info = (ClusNode) getChild(i);
+				nbPredictedRelevant += info.countPredictedRelevant();
+			}
+		}
+		return nbPredictedRelevant;
+	}
+	
 
 	public final void cleanup() {
 		if (m_ClusteringStat != null) m_ClusteringStat.setSDataSize(0);
