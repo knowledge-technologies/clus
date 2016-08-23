@@ -114,13 +114,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		if (m_FeatRank)	{
 			m_FeatureRanking = new ClusEnsembleFeatureRanking();
 			m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes());
-			if (sett.getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES){ 
-				// moj komentar //Dragi comment - take 2
-				if (sett.getRankingMethod() != Settings.RANKING_GENIE3 && sett.getRankingMethod() !=  Settings.RANKING_SYMBOLIC){
-					System.err.println("Feature ranking with Extra trees is enabled only with GENIE3 or SYMBOLIC ranking. Setting to GENIE3.");
-					sett.setFeatureRankingMethod(Settings.RANKING_GENIE3);
-				}
-			}
+//			if (sett.getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES){ 
+//				// moj komentar //Dragi comment - take 2
+//				if (sett.getRankingMethod() != Settings.RANKING_GENIE3 && sett.getRankingMethod() !=  Settings.RANKING_SYMBOLIC){
+//					System.err.println("Feature ranking with Extra trees is enabled only with GENIE3 or SYMBOLIC ranking. Setting to GENIE3.");
+//					sett.setFeatureRankingMethod(Settings.RANKING_GENIE3);
+//				}
+//			}
 		}
 	}
 

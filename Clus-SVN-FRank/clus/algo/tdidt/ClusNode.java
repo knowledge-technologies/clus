@@ -371,7 +371,6 @@ public class ClusNode extends MyNode implements ClusModel {
 	public int countPredictedRelevant(){
 		int nbPredictedRelevant = 0;
 		if(m_Test == null){ // is leaf 
-			System.out.println("    list");
 			ClassificationStat targetStat = (ClassificationStat) getTargetStat();
 			for(int target = 0; target < targetStat.m_ClassCounts.length; target++){
 				if(targetStat.m_ClassCounts[target][0] / targetStat.m_SumWeights[target] > targetStat.m_Thresholds[target]){
@@ -379,7 +378,6 @@ public class ClusNode extends MyNode implements ClusModel {
 				}
 			}
 		} else{
-			System.out.println("   stejem v m_Test: " + m_Test.toString());
 			int nbChildren = getNbChildren();
 			ClusNode info;
 			for(int i = 0; i < nbChildren; i++){
