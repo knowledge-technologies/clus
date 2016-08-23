@@ -310,7 +310,7 @@ public class ClusNode extends MyNode implements ClusModel {
 			throw new RuntimeException("ClusStatManager = null.");
 		} else{
 			if(mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES){ // multi-label
-				double lower = 0.0, upper = 0.96;
+				double lower = 0.0, upper = 1.0;
 				double middle = lower + (upper - lower) / 2;
 				ClassificationStat targetStat = (ClassificationStat) getTargetStat();
 				int nbRelevantLabels = 0;
@@ -346,7 +346,6 @@ public class ClusNode extends MyNode implements ClusModel {
 					
 					updateThresholds(opti);
 					updateTree();
-					System.out.println("OPti: " + opti);
 				}
 			} else{
 				updateTree();

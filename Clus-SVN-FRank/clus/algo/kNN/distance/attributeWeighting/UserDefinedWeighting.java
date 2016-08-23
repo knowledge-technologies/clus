@@ -38,7 +38,7 @@ public class UserDefinedWeighting extends AttributeWeighting{
 	}
 
 	public double getWeight(ClusAttrType attr) {
-		return m_Weights[attr.getIndex()-1];
+		return m_Weights[attr.getIndex()]; //? indeksu sprozi ekscepcion
 	}
 
 }
