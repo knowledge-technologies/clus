@@ -342,12 +342,12 @@ public class SubsetSplit extends NominalSplit {
 				bheur = node.calcHeuristic(m_MStat, node.m_TestStat[0]);
 			}
 		}
-		System.out.println("attr: " + type + "  best heur: " + bheur);
+//		System.out.println("attr: " + type + "  best heur: " + bheur);
 //		System.out.println("test: " + node.m_BestTest.toString());
 		boolean valid_test = (node.m_TotStat.m_NbExamples != 0) && (m_PStat.m_SumWeight !=0) && (node.m_TotStat.m_NbExamples != m_PStat.m_SumWeight) && (pos_freq != 0) && (pos_freq != 1.0);
-		System.out.println("pos_freq = " + pos_freq);
-		System.out.println("sumWeight(pos) = " + m_PStat.m_SumWeight);
-		System.out.println("sumWeight(tot) = " + node.m_TotStat.m_NbExamples);	
+//		System.out.println("pos_freq = " + pos_freq);
+//		System.out.println("sumWeight(pos) = " + m_PStat.m_SumWeight);
+//		System.out.println("sumWeight(tot) = " + node.m_TotStat.m_NbExamples);	
 		showTest(type, isin, -1, bheur, m_MStat, m_CStat);
 		if (found_test && valid_test) {
 			node.m_UnknownFreq = unk_freq;
@@ -359,7 +359,7 @@ public class SubsetSplit extends NominalSplit {
 			node.m_BestHeur = Double.NEGATIVE_INFINITY;//this should ensure that this test is not considered at all
 		}
 		node.checkAcceptable(m_MStat, m_PStat);
-		System.out.println("attr: " + type + "  best heur: " + bheur);
+//		System.out.println("attr: " + type + "  best heur: " + bheur);
   }
   
   // makes a random subsetsplit for a given attribute, where the subset includes one value and excludes another value

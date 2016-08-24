@@ -207,8 +207,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 //				if (at instanceof NominalAttrType) m_FindBestTest.findNominalExtraTree((NominalAttrType)at, data, ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
 //				else m_FindBestTest.findNumeric((NumericAttrType)at, data);//,ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
-				node.printTree();
-				data.toString();
+//				node.printTree();
+//				data.toString();
 
 //				if (at instanceof NominalAttrType) m_FindBestTest.findNominal((NominalAttrType)at, data);
 //				else m_FindBestTest.findNumeric((NumericAttrType)at, data);//,ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
