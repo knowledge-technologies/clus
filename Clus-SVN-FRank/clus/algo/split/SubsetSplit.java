@@ -55,17 +55,17 @@ public class SubsetSplit extends NominalSplit {
 
 	public void showTest(NominalAttrType type, boolean[] isin, int add, double mheur, ClusStatistic tot, ClusStatistic pos) {
 		int count = 0;
-		System.out.print(type.getName()+ " in {");
+//		System.out.print(type.getName()+ " in {");
 		for (int i = 0; i < type.getNbValues(); i++) {
 			if (isin[i] || i == add) {
-				if (count != 0) System.out.print(",");
-				System.out.print(type.getValue(i));
+//				if (count != 0) System.out.print(",");
+//				System.out.print(type.getValue(i));
 				count++;
 			}
 		}
 		tot.calcMean(); pos.calcMean();
 		// System.out.println("}: "+mheur+" "+tot+" "+pos);
-		System.out.println("}: "+mheur);
+//		System.out.println("}: "+mheur);
 	}
 
 	public void findSplit(CurrentBestTestAndHeuristic node, NominalAttrType type) {
@@ -292,9 +292,13 @@ public class SubsetSplit extends NominalSplit {
 			isin[0] = true;
 			ClusStatistic CStat = node.m_TestStat[0];
 			bheur = node.calcHeuristic(m_MStat, CStat);
-//			showTest(type, isin, -1, bheur, m_MStat, m_CStat);
+			showTest(type, isin, -1, bheur, m_MStat, m_CStat);
 			pos_freq = CStat.m_SumWeight / m_MStat.m_SumWeight;
-			found_test = true;
+			boolean acc_test = node.m_IsAcceptable && (node.m_TotStat.m_NbExamples >= 4) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) >= 2) && (pos_freq != 0.0) && (pos_freq != 1.0);
+			if (acc_test){//select only meaningful splits
+				found_test = true;
+			}
+//			found_test = true;
 		}
 		else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (Settings.m_PhylogenySequence.getValue() == Settings.PHYLOGENY_SEQUENCE_DNA)) {
 			System.err.println("Extra-Tree split selection not implemented for Phylogentic trees.");
@@ -303,12 +307,14 @@ public class SubsetSplit extends NominalSplit {
 		}
 		else {
 			int count = 0; //allow for nine opportunities to select a valid random test... otherwise assign worst split score
-			while(!found_test && count <= 9){
+			boolean select = true;
+			while(!found_test && count <= 9 && select){
 				count++;
 				//random selection of a subset of classes
-				int sum = 0;
-				boolean select = true;
-				while (select) {
+
+
+//				while (select) {
+					int sum = 0;
 					for (int i = 0; i < isin.length; i++) {
 						isin[i] = rnd.nextBoolean();
 						if (isin[i]) sum++;	
@@ -317,7 +323,13 @@ public class SubsetSplit extends NominalSplit {
 						card = sum;
 						select = false;
 					}
-				}	
+//				}
+				if (count == 10) {
+					System.out.println("Cardinality = " + card);
+					System.out.println("nb values = " + nbvalues);
+					if (card >= nbvalues || card == 0)
+						System.out.println("fuck up,llllllllllllllllllllllllllllllllllllllll");
+				}
 				m_PStat.reset();
 				for (int j = 0; j < nbvalues; j++) {
 					if (isin[j]) {//if selected
@@ -326,7 +338,7 @@ public class SubsetSplit extends NominalSplit {
 				}
 				pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;
 				node.checkAcceptable(m_MStat, m_PStat);
-				boolean acc_test = node.m_IsAcceptable && (node.m_TotStat.m_NbExamples != 0) && (m_PStat.m_SumWeight !=0) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) > 0) && (pos_freq != 0) && (pos_freq != 1.0);
+				boolean acc_test = node.m_IsAcceptable && (node.m_TotStat.m_NbExamples >= 4) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) >= 2) && (pos_freq != 0.0) && (pos_freq != 1.0);
 //				node.getStat(i)
 				
 //				acc_test = acc_test && node.getHeuristic().stopCriterion(node.getTotStat(), m_PStat, m_MStat);
@@ -342,9 +354,15 @@ public class SubsetSplit extends NominalSplit {
 				bheur = node.calcHeuristic(m_MStat, node.m_TestStat[0]);
 			}
 		}
+		
+		boolean valid_test = node.m_IsAcceptable && (node.m_TotStat.m_NbExamples >= 2) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) > 2) && (pos_freq != 0.0) && (pos_freq != 1.0);
+
 //		System.out.println("attr: " + type + "  best heur: " + bheur);
 //		System.out.println("test: " + node.m_BestTest.toString());
-		boolean valid_test = (node.m_TotStat.m_NbExamples != 0) && (m_PStat.m_SumWeight !=0) && (node.m_TotStat.m_NbExamples != m_PStat.m_SumWeight) && (pos_freq != 0) && (pos_freq != 1.0);
+		
+//		boolean valid_test = (node.m_TotStat.m_NbExamples != 0) && (m_PStat.m_SumWeight !=0) && (node.m_TotStat.m_NbExamples != m_PStat.m_SumWeight) && (pos_freq != 0) && (pos_freq != 1.0);
+		
+//		System.out.println(m_PStat.getDebugString());
 //		System.out.println("pos_freq = " + pos_freq);
 //		System.out.println("sumWeight(pos) = " + m_PStat.m_SumWeight);
 //		System.out.println("sumWeight(tot) = " + node.m_TotStat.m_NbExamples);	
