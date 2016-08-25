@@ -559,9 +559,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 	
 		ind.initialize();
+		crSingle.getStatManager().initClusteringWeights();
 		
 		initializeBagTargetSubspacing(crSingle, i);
-		 
 
  		ClusModel model = ind.induceSingleUnpruned(crSingle);
 		m_SummTime += ResourceInfo.getTime() - one_bag_time;
@@ -575,10 +575,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
 				m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
 			}
-			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3)
+			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3){
 				m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
-			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC)
+			}
+			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC){
 				m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, cr, m_BagClus.getSettings().getSymbolicWeight(), 0);
+			}
 		}
 
 		if (m_OptMode){
