@@ -299,22 +299,12 @@ public class SubsetSplit extends NominalSplit {
 			pos_freq = CStat.m_SumWeight / m_MStat.m_SumWeight;
 			
 			boolean acc_test = node.m_IsAcceptable &&
-					(m_MStat.m_SumWeight >= 4.0) && (CStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - CStat.m_SumWeight) >= 2.0) &&
-					(pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
+							   (m_MStat.m_SumWeight >= 4.0) && (CStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - CStat.m_SumWeight) >= 2.0) &&
+							   (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
 			if (acc_test){//select only meaningful splits
 				found_test = true;
 			}
 			
-			if (acc_test && type.getName().contains("FL_DAILY_CHEW_GUM") && node.m_BestHeur != Double.NEGATIVE_INFINITY && (m_MStat.m_SumWeight >= 7)&& (m_MStat.m_SumWeight <= 8)){
-				System.out.println("attr: " + type + "  best heur: " + bheur);
-				System.out.println(node.m_BestTest.toString());
-				System.out.println("m_MStat.m_SumWeight - CStat.m_SumWeight =" + (m_MStat.m_SumWeight - CStat.m_SumWeight));
-				System.out.println("pos_freq = " + pos_freq);
-				System.out.println("sumWeight(pos) = " + CStat.m_SumWeight);
-				System.out.println("sumWeight(tot) = " + node.m_TotStat.m_SumWeight);
-				System.out.println("NbExamples(tot) = " + node.m_TotStat.m_NbExamples);	
-				System.out.println("NON Missing Nb Ex = " + m_MStat.m_SumWeight);
-			}
 			
 		}
 		else if ((ClusStatManager.getMode() == ClusStatManager.MODE_PHYLO) && (Settings.m_PhylogenySequence.getValue() == Settings.PHYLOGENY_SEQUENCE_DNA)) {
@@ -329,9 +319,6 @@ public class SubsetSplit extends NominalSplit {
 			while(!found_test && count < nbTries && select){
 				count++;
 				//random selection of a subset of classes
-
-
-//				while (select) {
 				int sum = 0;
 				for (int i = 0; i < isin.length; i++) {
 					isin[i] = rnd.nextBoolean();
@@ -341,8 +328,6 @@ public class SubsetSplit extends NominalSplit {
 					card = sum;
 					select = false;
 				}
-//				}
-
 				m_PStat.reset();
 				for (int j = 0; j < nbvalues; j++) {
 					if (isin[j]) {//if selected
@@ -350,13 +335,12 @@ public class SubsetSplit extends NominalSplit {
 					}
 				}
 				pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;
-//				pos_fraction = m_PStat.m_SumWeight / (node.m_TotCorrStat.m_SumWeight);
 
 				node.checkAcceptable(m_MStat, m_PStat);
 				boolean acc_test = node.m_IsAcceptable &&
-						(m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) &&
-						(pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
-//				node.getStat(i)
+								   (m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) &&
+								   (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
+//				node.getStat(i);
 				
 //				acc_test = acc_test && node.getHeuristic().stopCriterion(node.getTotStat(), m_PStat, m_MStat);
 				
@@ -370,8 +354,8 @@ public class SubsetSplit extends NominalSplit {
 			
 			if (count == nbTries || card == nbvalues || card == 0) {
 				System.out.println("Due to the randomness in split search, a usefull split was not found in " + count + " tries:");
-				System.out.println("Cardinality = " + card);
-				System.out.println("nb values = " + nbvalues);
+				System.out.println("   Cardinality = " + card);
+				System.out.println("   nb values = " + nbvalues);
 			}
 			if (found_test){
 				bheur = node.calcHeuristic(m_MStat, node.m_TestStat[0]);
@@ -381,12 +365,7 @@ public class SubsetSplit extends NominalSplit {
 		boolean valid_test = node.m_IsAcceptable &&
 				(m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) &&
 				(pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
-
-//		System.out.println("attr: " + type + "  best heur: " + bheur);
-//		System.out.println("test: " + node.m_BestTest.toString());
-		
-//		boolean valid_test = (node.m_TotStat.m_NbExamples != 0) && (m_PStat.m_SumWeight !=0) && (node.m_TotStat.m_NbExamples != m_PStat.m_SumWeight) && (pos_freq != 0) && (pos_freq != 1.0);
-		
+	
 		showTest(type, isin, -1, bheur, m_MStat, m_CStat);
 		if (found_test && valid_test) {
 			node.m_UnknownFreq = unk_freq;
@@ -398,27 +377,6 @@ public class SubsetSplit extends NominalSplit {
 			node.m_BestHeur = Double.NEGATIVE_INFINITY;//this should ensure that this test is not considered at all
 		}
 		node.checkAcceptable(m_MStat, m_PStat);
-//		if (type.getName().contains("SALTWATER_FISH") && node.m_BestHeur != Double.NEGATIVE_INFINITY){
-//			System.out.println("attr: " + type + "  best heur: " + bheur);
-//			System.out.println(node.m_BestTest.toString());
-//			System.out.println(m_PStat.getDebugString());
-//			System.out.println("pos_freq = " + pos_freq);
-//			System.out.println("sumWeight(pos) = " + m_PStat.m_SumWeight);
-//			System.out.println("sumWeight(tot) = " + node.m_TotStat.m_SumWeight);
-//			System.out.println("NbExamples(tot) = " + node.m_TotStat.m_NbExamples);	
-//		}
-		
-		if (valid_test && type.getName().contains("FL_DAILY_CHEW_GUM") && node.m_BestHeur != Double.NEGATIVE_INFINITY && (m_MStat.m_SumWeight >= 4)&& (m_MStat.m_SumWeight <= 6)){
-			System.out.println("zblj");
-			System.out.println("attr: " + type + "  best heur: " + bheur);
-			System.out.println(node.m_BestTest.toString());
-			System.out.println("m_MStat.m_SumWeight - m_PStat.m_SumWeight =" + (m_MStat.m_SumWeight - m_PStat.m_SumWeight));
-			System.out.println("pos_freq = " + pos_freq);
-			System.out.println("sumWeight(pos) = " + m_PStat.m_SumWeight);
-			System.out.println("sumWeight(tot) = " + node.m_TotStat.m_SumWeight);
-			System.out.println("NbExamples(tot) = " + node.m_TotStat.m_NbExamples);	
-			System.out.println("NON Missing Nb Ex = " + m_MStat.m_SumWeight);
-		}
 		
   }
   
