@@ -306,30 +306,26 @@ public class SubsetSplit extends NominalSplit {
 			System.exit(-1);
 		}
 		else {
-			int count = 0; //allow for nine opportunities to select a valid random test... otherwise assign worst split score
+			int count = 0; //allow for nbTries opportunities to select a valid random test... otherwise assign worst split score
+			int nbTries = 10;
 			boolean select = true;
-			while(!found_test && count <= 9 && select){
+			while(!found_test && count < nbTries && select){
 				count++;
 				//random selection of a subset of classes
 
 
 //				while (select) {
-					int sum = 0;
-					for (int i = 0; i < isin.length; i++) {
-						isin[i] = rnd.nextBoolean();
-						if (isin[i]) sum++;	
-					}
-					if (!((sum == 0) || (sum == nbvalues))) {
-						card = sum;
-						select = false;
-					}
-//				}
-				if (count == 10) {
-					System.out.println("Cardinality = " + card);
-					System.out.println("nb values = " + nbvalues);
-					if (card >= nbvalues || card == 0)
-						System.out.println("fuck up,llllllllllllllllllllllllllllllllllllllll");
+				int sum = 0;
+				for (int i = 0; i < isin.length; i++) {
+					isin[i] = rnd.nextBoolean();
+					if (isin[i]) sum++;	
 				}
+				if (!((sum == 0) || (sum == nbvalues))) {
+					card = sum;
+					select = false;
+				}
+//				}
+
 				m_PStat.reset();
 				for (int j = 0; j < nbvalues; j++) {
 					if (isin[j]) {//if selected
@@ -350,12 +346,17 @@ public class SubsetSplit extends NominalSplit {
 					found_test = true;
 				}
 			}
+			if (count == nbTries || card == nbvalues || card == 0) {
+				System.out.println("Due to the randomness in split search, a usefull split was not found in " + count + " tries:");
+				System.out.println("Cardinality = " + card);
+				System.out.println("nb values = " + nbvalues);
+			}
 			if (found_test){
 				bheur = node.calcHeuristic(m_MStat, node.m_TestStat[0]);
 			}
 		}
 		
-		boolean valid_test = node.m_IsAcceptable && (node.m_TotStat.m_NbExamples >= 2) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) > 2) && (pos_freq != 0.0) && (pos_freq != 1.0);
+		boolean valid_test = node.m_IsAcceptable && (node.m_TotStat.m_NbExamples >= 2) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) >= 2) && (pos_freq != 0.0) && (pos_freq != 1.0);
 
 //		System.out.println("attr: " + type + "  best heur: " + bheur);
 //		System.out.println("test: " + node.m_BestTest.toString());

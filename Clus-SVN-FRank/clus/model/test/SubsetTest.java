@@ -24,6 +24,9 @@ package clus.model.test;
 
 import clus.main.*;
 import clus.util.*;
+
+import java.util.Arrays;
+
 import clus.algo.tdidt.ClusNode;
 import clus.data.type.*;
 import clus.data.rows.*;
@@ -222,7 +225,12 @@ public class SubsetTest extends NodeTest {
 	private int[] initValues(int nb, boolean[] isin) {
 		int i = 0;
 		int[] values = new int[nb];
+		try{
 		for (int j = 0; j < isin.length; j++) if (isin[j]) values[i++] = j;
+		} catch(Exception e){
+			System.out.println("nb: " + nb);
+			System.out.println("isin: " + Arrays.toString(isin));
+		}
 		return values;
 	}
 }
