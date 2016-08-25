@@ -27,6 +27,7 @@ import clus.algo.rules.ClusRuleHeuristicDispersion;
 import clus.data.type.*;
 import clus.model.test.*;
 import clus.statistic.*;
+import jeans.math.MathUtil;
 import clus.heuristic.*;
 
 import java.util.*;
@@ -269,6 +270,7 @@ public class SubsetSplit extends NominalSplit {
   
   public void findExtraTreeSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rnd) {
 //		System.out.println("find split for attr: " + type);
+		double minAllowedFrequency = MathUtil.C1E_9;
 		double unk_freq = 0.0;
 		int nbvalues = type.getNbValues();
 		boolean isin[] = new boolean[nbvalues];
@@ -294,7 +296,9 @@ public class SubsetSplit extends NominalSplit {
 			bheur = node.calcHeuristic(m_MStat, CStat);
 			showTest(type, isin, -1, bheur, m_MStat, m_CStat);
 			pos_freq = CStat.m_SumWeight / m_MStat.m_SumWeight;
-			boolean acc_test = node.m_IsAcceptable && (node.m_TotStat.m_NbExamples >= 4) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) >= 2) && (pos_freq != 0.0) && (pos_freq != 1.0);
+			boolean acc_test = node.m_IsAcceptable &&
+								(node.m_TotStat.m_NbExamples >= 4) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) >= 2) && 
+								(pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
 			if (acc_test){//select only meaningful splits
 				found_test = true;
 			}
@@ -334,7 +338,9 @@ public class SubsetSplit extends NominalSplit {
 				}
 				pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;
 				node.checkAcceptable(m_MStat, m_PStat);
-				boolean acc_test = node.m_IsAcceptable && (node.m_TotStat.m_NbExamples >= 4) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) >= 2) && (pos_freq != 0.0) && (pos_freq != 1.0);
+				boolean acc_test = node.m_IsAcceptable &&
+									(node.m_TotStat.m_NbExamples >= 4) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) >= 2) &&
+									(pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
 //				node.getStat(i)
 				
 //				acc_test = acc_test && node.getHeuristic().stopCriterion(node.getTotStat(), m_PStat, m_MStat);
@@ -356,7 +362,9 @@ public class SubsetSplit extends NominalSplit {
 			}
 		}
 		
-		boolean valid_test = node.m_IsAcceptable && (node.m_TotStat.m_NbExamples >= 2) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) >= 2) && (pos_freq != 0.0) && (pos_freq != 1.0);
+		boolean valid_test = node.m_IsAcceptable &&
+							(node.m_TotStat.m_NbExamples >= 2) && (m_PStat.m_SumWeight >= 2) && ((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) >= 2) &&
+							(pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
 
 //		System.out.println("attr: " + type + "  best heur: " + bheur);
 //		System.out.println("test: " + node.m_BestTest.toString());
