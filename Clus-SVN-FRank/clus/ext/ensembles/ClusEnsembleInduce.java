@@ -573,12 +573,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	}
 
 	public void induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel) throws ClusException, IOException {
-		try {
-			throw new Exception("26. 8. Matej je verjetno neki pokvaru. Extra Trees delajo, drugo pa ne. Vrni verzijo na 36a972b84 ali kako prej.");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		if (getSettings().isEnsembleRandomDepth()) {
 			// Set random tree max depth
 			getSettings().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(

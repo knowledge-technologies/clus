@@ -374,7 +374,7 @@ public class ClusNode extends MyNode implements ClusModel {
 			ClassificationStat targetStat = (ClassificationStat) getTargetStat();
 			for(int target = 0; target < targetStat.m_ClassCounts.length; target++){
 				if(targetStat.m_ClassCounts[target][0] / targetStat.m_SumWeights[target] > targetStat.m_Thresholds[target]){
-					nbPredictedRelevant += (int) targetStat.m_NbExamples; // TODO: ne deluje za weighted sum of examples!
+					nbPredictedRelevant += (int) targetStat.m_SumWeights[target]; // TODO: ne deluje za weighted sum of examples!
 				}
 			}
 		} else{
@@ -827,7 +827,7 @@ public class ClusNode extends MyNode implements ClusModel {
 	}
 
 	public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
-		printTree(wrt, info, "", examples);
+		printTree(wrt, info, "", examples, true);
 	}
 
 
@@ -897,10 +897,17 @@ public class ClusNode extends MyNode implements ClusModel {
 	}
 
 	public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix) {
-		printTree( writer,  info,  prefix, null);
+		printTree( writer,  info,  prefix, null, true);
 	}
 
-	public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix, RowData examples) {
+	public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix, RowData examples, boolean is_root) {
+		if(is_root && m_TargetStat instanceof ClassificationStat && ((ClassificationStat) m_TargetStat).m_Thresholds != null){
+			writer.print("MultiLabelThreshold: [");
+			double[] thresholds =  ((ClassificationStat) m_TargetStat).m_Thresholds;
+			for(int i = 0; i < thresholds.length; i++){
+				writer.print(ClusFormat.FOUR_AFTER_DOT.format(thresholds[i]) + (i == thresholds.length - 1 ? "]\n\n" : ", "));
+			}
+		}
 		int arity = getNbChildren();
 		if (arity > 0) {
 			int delta = hasUnknownBranch() ? 1 : 0;
@@ -924,14 +931,14 @@ public class ClusNode extends MyNode implements ClusModel {
 				
 				writeDistributionForInternalNode(writer, info);
 				writer.print(prefix + "+--yes: ");
-				((ClusNode)getChild(YES)).printTree(writer, info, prefix+"|       ",examples0);
+				((ClusNode)getChild(YES)).printTree(writer, info, prefix+"|       ",examples0, false);
 				writer.print(prefix + "+--no:  ");
 				if (hasUnknownBranch()) {
-					((ClusNode)getChild(NO)).printTree(writer, info, prefix+"|       ",examples1);
+					((ClusNode)getChild(NO)).printTree(writer, info, prefix+"|       ",examples1, false);
 					writer.print(prefix + "+--unk: ");
-					((ClusNode)getChild(UNK)).printTree(writer, info, prefix+"        ",examples0);
+					((ClusNode)getChild(UNK)).printTree(writer, info, prefix+"        ",examples0, false);
 				} else {
-					((ClusNode)getChild(NO)).printTree(writer, info, prefix+"        ",examples1);
+					((ClusNode)getChild(NO)).printTree(writer, info, prefix+"        ",examples1, false);
 				}
 			} else {
 				writer.println(m_Test.getTestString());
@@ -945,9 +952,9 @@ public class ClusNode extends MyNode implements ClusModel {
 					writer.print(prefix + "+--" + branchlabel + ": ");
 					String suffix = StringUtils.makeString(' ', branchlabel.length()+4);
 					if (i != arity-1) {
-						child.printTree(writer, info, prefix+"|"+suffix,examplesi);
+						child.printTree(writer, info, prefix+"|"+suffix,examplesi, false);
 					} else {
-						child.printTree(writer, info, prefix+" "+suffix,examplesi);
+						child.printTree(writer, info, prefix+" "+suffix,examplesi, false);
 					}
 				}
 			}

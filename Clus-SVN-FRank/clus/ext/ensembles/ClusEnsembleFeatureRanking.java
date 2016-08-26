@@ -82,7 +82,9 @@ public class ClusEnsembleFeatureRanking {
 					info[0] = 1; //type
 					info[1] = num; //order in numeric attributes
 				}
-				info[2] = 0; //current rank
+				for(int j = 0; j < nbRankings; j++){
+					info[2 + j] = 0; //current rank
+				}
 //					System.out.print(type.getName()+": "+info[1]+"\t");
 				m_AllAttributes.put(type.getName(),info);
 			}
@@ -183,7 +185,11 @@ public class ClusEnsembleFeatureRanking {
 			double value = ((double[])m_AllAttributes.get(attribute))[2]/ClusEnsembleInduce.getMaxNbBags();
 			wrtr.write(attribute +"\t"+value+"\n");
 			} else{
-				wrtr.write(attribute + "\t" + Arrays.toString(Arrays.copyOfRange((double[])m_AllAttributes.get(attribute), 2, nbRankings + 2)) + "\n");
+				double[] values = Arrays.copyOfRange((double[])m_AllAttributes.get(attribute), 2, nbRankings + 2);
+				for(int j = 0; j < values.length; j++){
+					values[j] /= ClusEnsembleInduce.getMaxNbBags();
+				}
+				wrtr.write(attribute + "\t" + Arrays.toString(values) + "\n");
 			}
 			wrtr.flush();
 		}

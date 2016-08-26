@@ -217,7 +217,7 @@ public class ClusOutput {
 					//System.out.println(te_err);
 					if (te_err != null) pex = (RowData)cr.getTestSet();
 					root.printModelAndExamples(m_Writer, info, pex);
-				} else {
+				} else { 
 					root.printModel(m_Writer, info);
 				}
 				m_Writer.println();
