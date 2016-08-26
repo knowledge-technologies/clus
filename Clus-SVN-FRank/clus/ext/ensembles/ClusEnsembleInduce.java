@@ -78,6 +78,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	//Feature Ranking via Random Forests  OR via Genie3 etc.
 	boolean m_FeatRank;
 	ClusEnsembleFeatureRanking m_FeatureRanking;
+	int m_NbFeatureRankings;
 	
     /** Random tree depths for different iterations, used for tree to rules optimization procedures.
      * This is static because we want different tree depths for different folds. */
@@ -113,7 +114,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		if (Settings.shouldEstimateOOB())m_OOBEstimation = new ClusOOBErrorEstimate(m_Mode);
 		if (m_FeatRank)	{
 			m_FeatureRanking = new ClusEnsembleFeatureRanking();
-			int nbRankings = getNbFeatureRankings(schema);
+			setNbFeatureRankings(schema);
+			int nbRankings = getNbFeatureRankings();
 			m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes(), nbRankings);
 //			if (sett.getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES){ 
 //				// moj komentar //Dragi comment - take 2
@@ -125,7 +127,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 	}
 	
-	public int getNbFeatureRankings(ClusSchema schema){
+	public void setNbFeatureRankings(ClusSchema schema){
 		int nb = 0;
 		switch(schema.getSettings().getRankingMethod()){
 		case Settings.RANKING_RFOREST:
@@ -145,8 +147,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			} else{
 				nb = 1;				// single weight
 			}
-		}		
-		return nb;
+		}
+		m_NbFeatureRankings = nb;
+	}
+	public int getNbFeatureRankings(){
+		return m_NbFeatureRankings;
 	}
 
 	/** Train a decision tree ensemble with an algorithm given in settings  */
@@ -196,7 +201,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 		if (m_FeatRank) {
 			boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
-			if (sorted)m_FeatureRanking.sortFeatureRanks();
+			if (sorted){
+				m_FeatureRanking.sortFeatureRanks();
+			}
 			m_FeatureRanking.convertRanksByName();
 			if (sorted) m_FeatureRanking.writeRanking(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()),
 													  cr.getStatManager().getSettings().getRankingMethod());
@@ -566,6 +573,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	}
 
 	public void induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel) throws ClusException, IOException {
+		try {
+			throw new Exception("26. 8. Matej je verjetno neki pokvaru. Extra Trees delajo, drugo pa ne. Vrni verzijo na 36a972b84 ali kako prej.");
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		if (getSettings().isEnsembleRandomDepth()) {
 			// Set random tree max depth
 			getSettings().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(

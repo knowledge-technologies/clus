@@ -1611,7 +1611,7 @@ public class Settings implements Serializable {
 	protected INIFileNominal m_MultiLabelOptimizeThreshold;
 	protected INIFileNominal m_MultiLabelRankingMeasure;
 	
-	public final static String[] MULTILABEL_THRESHOLD_OPTIMIZATION = {"yes", "no"};
+	public final static String[] MULTILABEL_THRESHOLD_OPTIMIZATION = {"Yes", "No"};
 	public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_YES = 0;
 	public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_NO = 1;
 		

@@ -471,7 +471,8 @@ public class ClusNode extends MyNode implements ClusModel {
 			ClusNode info = (ClusNode)getChild(i);
 			info.safePrune();
 		}
-		if (allSameLeaves()) makeLeaf();
+		if (allSameLeaves()){
+			makeLeaf();}
 	}
 
 	public final boolean allInvalidLeaves() {

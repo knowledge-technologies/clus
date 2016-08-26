@@ -118,6 +118,7 @@ public class ClusEnsembleFeatureRanking {
 
 	public void writeRanking(String fname, int rankingMethod) throws IOException{
 		TreeMap ranking = (TreeMap)m_FeatureRanks.clone();
+		
 		File franking = new File(fname+".fimp");
 		FileWriter wrtr = new FileWriter(franking);
 		String rankingMethodStr = "";
@@ -175,10 +176,15 @@ public class ClusEnsembleFeatureRanking {
 		}
 		wrtr.write("Ranking via Random Forests: " + rankingMethodStr + "\n");
 		wrtr.write("--------------------------\n");
+		int nbRankings = ((double[])m_AllAttributes.get(descriptive[0].getName())).length - 2;
 		for (int i = 0; i < descriptive.length; i++){
 			String attribute = descriptive[i].getName();
+			if(nbRankings == 1){
 			double value = ((double[])m_AllAttributes.get(attribute))[2]/ClusEnsembleInduce.getMaxNbBags();
 			wrtr.write(attribute +"\t"+value+"\n");
+			} else{
+				wrtr.write(attribute + "\t" + Arrays.toString(Arrays.copyOfRange((double[])m_AllAttributes.get(attribute), 2, nbRankings + 2)) + "\n");
+			}
 			wrtr.flush();
 		}
 		
@@ -473,7 +479,7 @@ public class ClusEnsembleFeatureRanking {
 				error.addExample(tuple, pred);
 			}
 			/* return the average errors */
-			errors = new double[2][error.getNbErrors()];
+			errors = new double[error.getNbErrors()][2];
 			for(int i = 0; i < errors.length; i++){
 				errors[i][0] = error.getError(i).getModelError();
 				errors[i][1] = error.getError(i).shouldBeLow() ? -1.0 : 1.0;
