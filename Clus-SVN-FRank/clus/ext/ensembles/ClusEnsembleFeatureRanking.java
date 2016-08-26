@@ -115,11 +115,24 @@ public class ClusEnsembleFeatureRanking {
 		}
 	}
 
-	public void writeRanking(String fname) throws IOException{
+	public void writeRanking(String fname, int rankingMethod) throws IOException{
 		TreeMap ranking = (TreeMap)m_FeatureRanks.clone();
 		File franking = new File(fname+".fimp");
 		FileWriter wrtr = new FileWriter(franking);
-		wrtr.write("Ranking via Random Forests\n");
+		String rankingMethodStr = "";
+		switch(rankingMethod){
+		case Settings.RANKING_RFOREST:
+			rankingMethodStr = "RForest";
+			break;
+		case Settings.RANKING_GENIE3:
+			rankingMethodStr = "Genie3";
+			break;
+		case Settings.RANKING_SYMBOLIC:
+			rankingMethodStr = "Symbolic";
+			break;
+		}
+		
+		wrtr.write("Ranking via Random Forests: " + rankingMethodStr + "\n");
 		wrtr.write("--------------------------\n");
 		while (!ranking.isEmpty()){
 //			wrtr.write(sorted.get(sorted.lastKey()) + "\t" + sorted.lastKey()+"\n");
@@ -144,10 +157,22 @@ public class ClusEnsembleFeatureRanking {
 	}
 
 
-	public void writeRankingByAttributeName(String fname, ClusAttrType[] descriptive) throws IOException{
+	public void writeRankingByAttributeName(String fname, ClusAttrType[] descriptive, int rankingMethod) throws IOException{
 		File franking = new File(fname+".fimp");
 		FileWriter wrtr = new FileWriter(franking);
-		wrtr.write("Ranking via Random Forests\n");
+		String rankingMethodStr = "";
+		switch(rankingMethod){
+		case Settings.RANKING_RFOREST:
+			rankingMethodStr = "RForest";
+			break;
+		case Settings.RANKING_GENIE3:
+			rankingMethodStr = "Genie3";
+			break;
+		case Settings.RANKING_SYMBOLIC:
+			rankingMethodStr = "Symbolic";
+			break;
+		}
+		wrtr.write("Ranking via Random Forests: " + rankingMethodStr + "\n");
 		wrtr.write("--------------------------\n");
 		for (int i = 0; i < descriptive.length; i++){
 			String attribute = descriptive[i].getName();

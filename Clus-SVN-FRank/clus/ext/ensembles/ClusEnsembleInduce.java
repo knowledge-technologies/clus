@@ -173,8 +173,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
 			if (sorted)m_FeatureRanking.sortFeatureRanks();
 			m_FeatureRanking.convertRanksByName();
-			if (sorted)	m_FeatureRanking.writeRanking(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()));
-			else m_FeatureRanking.writeRankingByAttributeName(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()),cr.getStatManager().getSchema().getDescriptiveAttributes());
+			if (sorted) m_FeatureRanking.writeRanking(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()),
+													  cr.getStatManager().getSettings().getRankingMethod());
+			else m_FeatureRanking.writeRankingByAttributeName(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()),
+															  cr.getStatManager().getSchema().getDescriptiveAttributes(),
+															  cr.getStatManager().getSettings().getRankingMethod());
 			if (getSettings().isOutputJSONModel())
 				m_FeatureRanking.writeJSON(cr);
 
