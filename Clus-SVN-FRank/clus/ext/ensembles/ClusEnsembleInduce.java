@@ -113,7 +113,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		if (Settings.shouldEstimateOOB())m_OOBEstimation = new ClusOOBErrorEstimate(m_Mode);
 		if (m_FeatRank)	{
 			m_FeatureRanking = new ClusEnsembleFeatureRanking();
-			m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes());
+			int nbRankings = getNbFeatureRankings(schema);
+			m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes(), nbRankings);
 //			if (sett.getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES){ 
 //				// moj komentar //Dragi comment - take 2
 //				if (sett.getRankingMethod() != Settings.RANKING_GENIE3 && sett.getRankingMethod() !=  Settings.RANKING_SYMBOLIC){
@@ -122,6 +123,30 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 //				}
 //			}
 		}
+	}
+	
+	public int getNbFeatureRankings(ClusSchema schema){
+		int nb = 0;
+		switch(schema.getSettings().getRankingMethod()){
+		case Settings.RANKING_RFOREST:
+			if(schema.getSettings().getSectionMultiLabel().isEnabled()){
+				nb = Settings.NB_MULTILABEL_MEASURES;
+			} else{
+				nb = 1; // TO DO: HIERARCHICAL?
+			}
+			break;
+		case Settings.RANKING_GENIE3:
+			nb = 1; // FUTURE WARNING:)
+			break;
+		case Settings.RANKING_SYMBOLIC:
+			double[] weights = schema.getSettings().getSymbolicWeights();
+			if(weights != null){
+				nb = weights.length;// vector of weights
+			} else{
+				nb = 1;				// single weight
+			}
+		}		
+		return nb;
 	}
 
 	/** Train a decision tree ensemble with an algorithm given in settings  */
@@ -582,7 +607,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 				m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
 			}
 			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC){
-				m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, cr, m_BagClus.getSettings().getSymbolicWeight(), 0);
+				double[] weights = m_BagClus.getSettings().getSymbolicWeights();
+				if(weights == null){
+					weights = new double[]{m_BagClus.getSettings().getSymbolicWeight()};
+				}
+				m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, cr, weights, 0);
 			}
 		}
 
@@ -836,7 +865,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 				}
 				
 				else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
-					m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, cr, m_BagClus.getSettings().getSymbolicWeight(), 0);
+					double[] weights = m_BagClus.getSettings().getSymbolicWeights();
+					if(weights == null){
+						weights = new double[]{m_BagClus.getSettings().getSymbolicWeight()};
+					}
+					m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, cr, weights, 0);
 				}
 			}
 			

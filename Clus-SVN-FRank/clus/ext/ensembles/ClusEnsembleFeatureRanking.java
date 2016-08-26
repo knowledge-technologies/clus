@@ -63,14 +63,15 @@ public class ClusEnsembleFeatureRanking {
 		m_FeatureRanks = new TreeMap();
 	}
 	
-	public void initializeAttributes(ClusAttrType[] descriptive){
+	public void initializeAttributes(ClusAttrType[] descriptive, int nbRankings){
 		int num = -1;
 		int nom = -1;
 //		System.out.println("NB = "+descriptive.length);
 		for (int i = 0; i < descriptive.length; i++) {
 			ClusAttrType type = descriptive[i];
 			if (!type.isDisabled()) {
-				double[] info = new double[3];
+//				double[] info = new double[3];
+				double[] info = new double[2 + nbRankings];
 				if (type.getTypeIndex() == 0){
 					nom ++;
 					info[0] = 0; //type
@@ -346,6 +347,24 @@ public class ClusEnsembleFeatureRanking {
 		if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
 			if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
 				switch(cr.getStatManager().getSettings().getMultiLabelRankingMeasure()){
+				case Settings.MULTILABEL_MEASURES_ALL:
+					error.addError(new HammingLoss(error, nom));
+					error.addError(new MLAccuracy(error, nom));
+					error.addError(new MLPrecision(error, nom));
+					error.addError(new MLRecall(error, nom));
+					error.addError(new MLFOneMeasure(error, nom));
+					error.addError(new SubsetAccuracy(error, nom));
+					error.addError(new MacroPrecision(error, nom));
+					error.addError(new MacroRecall(error, nom));
+					error.addError(new MacroFOne(error, nom));
+					error.addError(new MicroPrecision(error, nom));
+					error.addError(new MicroRecall(error, nom));
+					error.addError(new MisclassificationError(error, nom));
+					error.addError(new OneError(error, nom));
+					error.addError(new Coverage(error, nom));
+					error.addError(new RankingLoss(error, nom));
+					error.addError(new AveragePrecision(error, nom));
+					break;
 				case Settings.MULTILABEL_MEASURES_HAMMINGLOSS:
 					error.addError(new HammingLoss(error, nom));
 					break;
@@ -490,20 +509,23 @@ public class ClusEnsembleFeatureRanking {
 	
 	/**
 	 * Recursively computes the symbolic importance of attributes, importance(attribute) = importance(attribute, {@code node}), where <p>
-	 * importance(attribute, {@code node}) = (0.0 : 1.0 ? {@code node} has attribute as a test) + sum_subnodes {@code weight} * importance(attribute, subnode).
+	 * importance({@code attribute}, {@code node}) = (0.0 : 1.0 ? {@code node} has {@code attribute} as a test) + sum_subnodes {@code weight} * importance({@code attribute}, subnode),<p>
+	 * for all weights in {@code weights}.
 	 * @param node
 	 * @param cr
-	 * @param weight The value of {@code Settings.m_SymbolicWeight}
+	 * @param weights
 	 * @param depth Depth of {@code node}, root's depth is 0
 	 */
-	public void calculateSYMBOLICimportance(ClusNode node, ClusRun cr, double weight, int depth){
+	public void calculateSYMBOLICimportance(ClusNode node, ClusRun cr, double[] weights, int depth){
 		if (!node.atBottomLevel()){
 			String attribute = node.getTest().getType().getName();
 			double [] info = getAttributeInfo(attribute);
-			info[2] += Math.pow(weight, depth);//variable importance
+			for(int ranking = 0; ranking < weights.length; ranking++){
+				info[2 + ranking] += Math.pow(weights[ranking], depth);//variable importance
+			}
 			putAttributeInfo(attribute, info);
 			for (int i = 0; i < node.getNbChildren(); i++)
-				calculateSYMBOLICimportance((ClusNode)node.getChild(i), cr, weight, depth + 1);
+				calculateSYMBOLICimportance((ClusNode)node.getChild(i), cr, weights, depth + 1);
 		}//if it is a leaf - do nothing
 	}
 
