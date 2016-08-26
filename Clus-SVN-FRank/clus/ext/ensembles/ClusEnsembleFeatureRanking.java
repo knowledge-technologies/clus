@@ -347,24 +347,6 @@ public class ClusEnsembleFeatureRanking {
 		if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
 			if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
 				switch(cr.getStatManager().getSettings().getMultiLabelRankingMeasure()){
-				case Settings.MULTILABEL_MEASURES_ALL:
-					error.addError(new HammingLoss(error, nom));
-					error.addError(new MLAccuracy(error, nom));
-					error.addError(new MLPrecision(error, nom));
-					error.addError(new MLRecall(error, nom));
-					error.addError(new MLFOneMeasure(error, nom));
-					error.addError(new SubsetAccuracy(error, nom));
-					error.addError(new MacroPrecision(error, nom));
-					error.addError(new MacroRecall(error, nom));
-					error.addError(new MacroFOne(error, nom));
-					error.addError(new MicroPrecision(error, nom));
-					error.addError(new MicroRecall(error, nom));
-					error.addError(new MisclassificationError(error, nom));
-					error.addError(new OneError(error, nom));
-					error.addError(new Coverage(error, nom));
-					error.addError(new RankingLoss(error, nom));
-					error.addError(new AveragePrecision(error, nom));
-					break;
 				case Settings.MULTILABEL_MEASURES_HAMMINGLOSS:
 					error.addError(new HammingLoss(error, nom));
 					break;
@@ -444,6 +426,55 @@ public class ClusEnsembleFeatureRanking {
 		return err;
 	}
 
+	public double[] calcAverageErrors(RowData data, ClusModel model, ClusRun cr) throws ClusException{
+		double[] errors;
+		boolean is_mlc_all_measures = ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY &&
+										cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled() &&
+										cr.getStatManager().getSettings().getMultiLabelRankingMeasure() == Settings.MULTILABEL_MEASURES_ALL;
+		if(!is_mlc_all_measures){
+			errors = new double[]{calcAverageError(data, model, cr)};
+		} else{
+			ClusSchema schema = data.getSchema();
+			/* create error measure */
+			ClusErrorList error = new ClusErrorList();
+			NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+			NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+			
+			error.addError(new HammingLoss(error, nom));
+			error.addError(new MLAccuracy(error, nom));
+			error.addError(new MLPrecision(error, nom));
+			error.addError(new MLRecall(error, nom));
+			error.addError(new MLFOneMeasure(error, nom));
+			error.addError(new SubsetAccuracy(error, nom));
+			error.addError(new MacroPrecision(error, nom));
+			error.addError(new MacroRecall(error, nom));
+			error.addError(new MacroFOne(error, nom));
+			error.addError(new MicroPrecision(error, nom));
+			error.addError(new MicroRecall(error, nom));
+			error.addError(new MisclassificationError(error, nom));
+			error.addError(new OneError(error, nom));
+			error.addError(new Coverage(error, nom));
+			error.addError(new RankingLoss(error, nom));
+			error.addError(new AveragePrecision(error, nom));
+			
+			/* attach model to given schema */
+			schema.attachModel(model);
+			/* iterate over tuples and compute error */
+			for (int i = 0; i < data.getNbRows(); i++) {
+				DataTuple tuple = data.getTuple(i);
+				ClusStatistic pred = model.predictWeighted(tuple);
+				error.addExample(tuple, pred);
+			}
+			/* return the average errors */
+			errors = new double[error.getNbErrors()];
+			for(int i = 0; i < errors.length; i++){
+				errors[i] = error.getError(i).getModelError();
+			}			
+		}
+		return errors;
+		
+	}
+	
 	//	returns sorted feature ranking
 	public TreeMap getFeatureRanks(){
 		return m_FeatureRanks;
@@ -466,7 +497,8 @@ public class ClusEnsembleFeatureRanking {
 		ArrayList<String> attests = new ArrayList<String>();
 		fillWithAttributesInTree((ClusNode)model, attests);
 		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
-		double oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
+		
+//		double oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
 		for (int z = 0; z < attests.size(); z++){//for the attributes that appear in the tree
 			String current_attribute = (String)attests.get(z);
 			double [] info = getAttributeInfo(current_attribute);
@@ -474,10 +506,17 @@ public class ClusEnsembleFeatureRanking {
 			double position = info[1];
 			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel), (int)type, (int)position);
 			if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION){//increase in error rate (oob_err -> MSError)
+				double oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
 				info[2] += (calcAverageError((RowData)permuted, model, cr) - oob_err)/oob_err;
-			}else if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY){//decrease in accuracy (oob_err -> Accuracy)
-				info[2] += (oob_err - calcAverageError((RowData)permuted, model, cr))/oob_err;
+			}else if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY){//decrease in accuracy (oob_err -> Accuracy OR something else (e.g., in the case of MLC))
+				double[] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel), model, cr);
+				double[] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
+				for(int i = 0; i < oob_errs.length; i++){
+					info[2 + i] += (oob_errs[i] - permuted_oob_errs[i])/oob_errs[i];
+				}
+				
 			}else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL){//decrease in accuracy (oob_err -> AU(avgPRC))
+				double oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
 				info[2] += (oob_err - calcAverageError((RowData)permuted, model, cr))/oob_err;
 			}
 			putAttributeInfo(current_attribute, info);
