@@ -338,7 +338,7 @@ public class ClusEnsembleFeatureRanking {
 		}
 	}
 
-	public double calcAverageError(RowData data, ClusModel model, ClusRun cr) throws ClusException{
+	public double[] calcAverageError(RowData data, ClusModel model, ClusRun cr) throws ClusException{
 		ClusSchema schema = data.getSchema();
 		/* create error measure */
 		ClusErrorList error = new ClusErrorList();
@@ -423,16 +423,23 @@ public class ClusEnsembleFeatureRanking {
 		}
 		/* return the average error */
 		double err = error.getFirstError().getModelError();
-		return err;
+		return new double[]{err, error.getFirstError().shouldBeLow() ? -1.0 : 1.0};
 	}
-
-	public double[] calcAverageErrors(RowData data, ClusModel model, ClusRun cr) throws ClusException{
-		double[] errors;
+	/**
+	 * 
+	 * @param data
+	 * @param model
+	 * @param cr
+	 * @return [[err1, sign1], [err2, sign2], ...], where signI = errorI.shouldBeLow() ? -1.0 : 1.0
+	 * @throws ClusException
+	 */
+	public double[][] calcAverageErrors(RowData data, ClusModel model, ClusRun cr) throws ClusException{
+		double[][] errors;
 		boolean is_mlc_all_measures = ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY &&
 										cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled() &&
 										cr.getStatManager().getSettings().getMultiLabelRankingMeasure() == Settings.MULTILABEL_MEASURES_ALL;
 		if(!is_mlc_all_measures){
-			errors = new double[]{calcAverageError(data, model, cr)};
+			errors = new double[][]{calcAverageError(data, model, cr)};
 		} else{
 			ClusSchema schema = data.getSchema();
 			/* create error measure */
@@ -466,9 +473,11 @@ public class ClusEnsembleFeatureRanking {
 				error.addExample(tuple, pred);
 			}
 			/* return the average errors */
-			errors = new double[error.getNbErrors()];
+			errors = new double[2][error.getNbErrors()];
 			for(int i = 0; i < errors.length; i++){
-				errors[i] = error.getError(i).getModelError();
+				errors[i][0] = error.getError(i).getModelError();
+				errors[i][1] = error.getError(i).shouldBeLow() ? -1.0 : 1.0;
+				
 			}			
 		}
 		return errors;
@@ -506,18 +515,19 @@ public class ClusEnsembleFeatureRanking {
 			double position = info[1];
 			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel), (int)type, (int)position);
 			if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION){//increase in error rate (oob_err -> MSError)
-				double oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
-				info[2] += (calcAverageError((RowData)permuted, model, cr) - oob_err)/oob_err;
+				double[] oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
+				double[] permuted_oob_err = calcAverageError((RowData)permuted, model, cr);
+				info[2] += oob_err[1] * (oob_err[0] - permuted_oob_err[0])/oob_err[0];
 			}else if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY){//decrease in accuracy (oob_err -> Accuracy OR something else (e.g., in the case of MLC))
-				double[] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel), model, cr);
-				double[] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
+				double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel), model, cr);
+				double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
 				for(int i = 0; i < oob_errs.length; i++){
-					info[2 + i] += (oob_errs[i] - permuted_oob_errs[i])/oob_errs[i];
+					info[2 + i] += oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0];
 				}
-				
 			}else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL){//decrease in accuracy (oob_err -> AU(avgPRC))
-				double oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
-				info[2] += (oob_err - calcAverageError((RowData)permuted, model, cr))/oob_err;
+				double[] oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
+				double[] permuted_oob_err = calcAverageError((RowData)permuted, model, cr);
+				info[2] += oob_err[1] * (oob_err[0] - permuted_oob_err[0])/oob_err[0];
 			}
 			putAttributeInfo(current_attribute, info);
 		}
