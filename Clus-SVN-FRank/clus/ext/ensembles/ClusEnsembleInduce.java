@@ -673,7 +673,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		crSingle.deleteData();
 		crSingle.setModels(new ArrayList());
 	}
-		
 	
 	
 	public void makeForestFromBags(ClusRun cr, TupleIterator train_iterator, TupleIterator test_iterator) throws ClusException, IOException {
@@ -1023,4 +1022,5 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	public ClusEnsembleFeatureRanking getEnsembleFeatureRanking(){
 		return m_FeatureRanking;
 	}
+
 }

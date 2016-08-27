@@ -49,6 +49,7 @@ import clus.model.ClusModel;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import jeans.util.StringUtils;
 
 public class ClusEnsembleFeatureRanking {
 
@@ -56,6 +57,8 @@ public class ClusEnsembleFeatureRanking {
 //	boolean m_FeatRank;
 	TreeMap m_FeatureRanks;//sorted by the rank
 	HashMap m_FeatureRankByName;
+	
+	String m_RankingDescription;
 	
 	public ClusEnsembleFeatureRanking(){
 		m_AllAttributes = new HashMap();
@@ -123,21 +126,10 @@ public class ClusEnsembleFeatureRanking {
 		
 		File franking = new File(fname+".fimp");
 		FileWriter wrtr = new FileWriter(franking);
-		String rankingMethodStr = "";
-		switch(rankingMethod){
-		case Settings.RANKING_RFOREST:
-			rankingMethodStr = "RForest";
-			break;
-		case Settings.RANKING_GENIE3:
-			rankingMethodStr = "Genie3";
-			break;
-		case Settings.RANKING_SYMBOLIC:
-			rankingMethodStr = "Symbolic";
-			break;
-		}
 		
-		wrtr.write("Ranking via Random Forests: " + rankingMethodStr + "\n");
-		wrtr.write("--------------------------\n");
+		String description ="Ranking via Random Forests: " + m_RankingDescription; 
+		wrtr.write(description + "\n");
+		wrtr.write(StringUtils.makeString('-', description.length()) + "\n");
 		while (!ranking.isEmpty()){
 //			wrtr.write(sorted.get(sorted.lastKey()) + "\t" + sorted.lastKey()+"\n");
 			wrtr.write(writeRow((ArrayList)ranking.get(ranking.lastKey()),(Double)ranking.lastKey()));
@@ -164,20 +156,10 @@ public class ClusEnsembleFeatureRanking {
 	public void writeRankingByAttributeName(String fname, ClusAttrType[] descriptive, int rankingMethod) throws IOException{
 		File franking = new File(fname+".fimp");
 		FileWriter wrtr = new FileWriter(franking);
-		String rankingMethodStr = "";
-		switch(rankingMethod){
-		case Settings.RANKING_RFOREST:
-			rankingMethodStr = "RForest";
-			break;
-		case Settings.RANKING_GENIE3:
-			rankingMethodStr = "Genie3";
-			break;
-		case Settings.RANKING_SYMBOLIC:
-			rankingMethodStr = "Symbolic";
-			break;
-		}
-		wrtr.write("Ranking via Random Forests: " + rankingMethodStr + "\n");
-		wrtr.write("--------------------------\n");
+
+		String description ="Ranking via Random Forests: " + m_RankingDescription; 
+		wrtr.write(description + "\n");
+		wrtr.write(StringUtils.makeString('-', description.length()) + "\n");
 		int nbRankings = ((double[])m_AllAttributes.get(descriptive[0].getName())).length - 2;
 		for (int i = 0; i < descriptive.length; i++){
 			String attribute = descriptive[i].getName();
@@ -433,6 +415,9 @@ public class ClusEnsembleFeatureRanking {
 			ClusStatistic pred = model.predictWeighted(tuple);
 			error.addExample(tuple, pred);
 		}
+		if (m_RankingDescription == null){
+			setRForestDescription(error);
+		}
 		/* return the average error */
 		double err = error.getFirstError().getModelError();
 		return new double[]{err, error.getFirstError().shouldBeLow() ? -1.0 : 1.0};
@@ -483,6 +468,9 @@ public class ClusEnsembleFeatureRanking {
 				DataTuple tuple = data.getTuple(i);
 				ClusStatistic pred = model.predictWeighted(tuple);
 				error.addExample(tuple, pred);
+			}
+			if(m_RankingDescription == null){
+				setRForestDescription(error);
 			}
 			/* return the average errors */
 			errors = new double[error.getNbErrors()][2];
@@ -535,6 +523,9 @@ public class ClusEnsembleFeatureRanking {
 	
 	
 	public void calculateGENIE3importance(ClusNode node, ClusRun cr){
+		if(m_RankingDescription == null){
+			setGenie3Description();
+		}
 		if (!node.atBottomLevel()){
 			String attribute = node.getTest().getType().getName();
 			double [] info = getAttributeInfo(attribute);
@@ -566,6 +557,9 @@ public class ClusEnsembleFeatureRanking {
 	 * @param depth Depth of {@code node}, root's depth is 0
 	 */
 	public void calculateSYMBOLICimportance(ClusNode node, ClusRun cr, double[] weights, int depth){
+		if(m_RankingDescription == null){
+			setSymbolicDescription(weights);
+		}
 		if (!node.atBottomLevel()){
 			String attribute = node.getTest().getType().getName();
 			double [] info = getAttributeInfo(attribute);
@@ -576,6 +570,23 @@ public class ClusEnsembleFeatureRanking {
 			for (int i = 0; i < node.getNbChildren(); i++)
 				calculateSYMBOLICimportance((ClusNode)node.getChild(i), cr, weights, depth + 1);
 		}//if it is a leaf - do nothing
+	}
+	
+	
+	public void setRForestDescription(ClusErrorList error){
+		m_RankingDescription = "RForest for error measure(s) ";
+		for(int i = 0; i < error.getNbErrors(); i++){
+			m_RankingDescription += error.getError(i).getName() + (i == error.getNbErrors() - 1 ? "" : ", ");
+		}
+		
+	}
+	
+	public void setGenie3Description(){
+		m_RankingDescription = "Genie3";
+	}
+	
+	public void setSymbolicDescription(double[] weights){
+		m_RankingDescription = "Symbolic with weights " + Arrays.toString(weights);		
 	}
 
 }
