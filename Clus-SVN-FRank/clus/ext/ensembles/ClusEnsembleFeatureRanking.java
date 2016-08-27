@@ -349,7 +349,7 @@ public class ClusEnsembleFeatureRanking {
 			fillWithAttributesInTree((ClusNode)node.getChild(i), attributes);
 		}
 	}
-
+	
 	public double[] calcAverageError(RowData data, ClusModel model, ClusRun cr) throws ClusException{
 		ClusSchema schema = data.getSchema();
 		/* create error measure */
@@ -518,28 +518,16 @@ public class ClusEnsembleFeatureRanking {
 		ArrayList<String> attests = new ArrayList<String>();
 		fillWithAttributesInTree((ClusNode)model, attests);
 		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
-		
-//		double oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
+		double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel), model, cr);
 		for (int z = 0; z < attests.size(); z++){//for the attributes that appear in the tree
 			String current_attribute = (String)attests.get(z);
 			double [] info = getAttributeInfo(current_attribute);
 			double type = info[0];
 			double position = info[1];
 			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel), (int)type, (int)position);
-			if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION){//increase in error rate (oob_err -> MSError)
-				double[] oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
-				double[] permuted_oob_err = calcAverageError((RowData)permuted, model, cr);
-				info[2] += oob_err[1] * (oob_err[0] - permuted_oob_err[0])/oob_err[0];
-			}else if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY){//decrease in accuracy (oob_err -> Accuracy OR something else (e.g., in the case of MLC))
-				double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel), model, cr);
-				double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
-				for(int i = 0; i < oob_errs.length; i++){
-					info[2 + i] += oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0];
-				}
-			}else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL){//decrease in accuracy (oob_err -> AU(avgPRC))
-				double[] oob_err = calcAverageError((RowData)tdata.selectFrom(oob_sel), model, cr);
-				double[] permuted_oob_err = calcAverageError((RowData)permuted, model, cr);
-				info[2] += oob_err[1] * (oob_err[0] - permuted_oob_err[0])/oob_err[0];
+			double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
+			for(int i = 0; i < oob_errs.length; i++){
+				info[2 + i] += oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0];
 			}
 			putAttributeInfo(current_attribute, info);
 		}

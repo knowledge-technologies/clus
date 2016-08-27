@@ -1621,7 +1621,6 @@ public class Settings implements Serializable {
 														"all"};																						// All previous errors
 	public final static int NB_MULTILABEL_MEASURES = MULTIlABEL_MEASURES.length - 1; // - all
 	
-	public final static int MULTILABEL_MEASURES_ALL = -1;
 	public final static int MULTILABEL_MEASURES_HAMMINGLOSS = 0;
 	public final static int MULTILABEL_MEASURES_MLACCURACY = 1;
 	public final static int MULTILABEL_MEASURES_MLPRECISION = 2;
@@ -1638,6 +1637,7 @@ public class Settings implements Serializable {
 	public final static int MULTILABEL_MEASURES_COVERAGE = 13;
 	public final static int MULTILABEL_MEASURES_RANKINGLOSS = 14;
 	public final static int MULTILABEL_MEASURES_AVERAGEPRECISION = 15;
+	public final static int MULTILABEL_MEASURES_ALL = 16;
 	
 	public void setSectionMultiLabelEnabled(boolean enable) {
 		m_SectionMultiLabel.setEnabled(enable);

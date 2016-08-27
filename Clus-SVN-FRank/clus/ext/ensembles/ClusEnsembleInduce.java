@@ -131,7 +131,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		int nb = 0;
 		switch(schema.getSettings().getRankingMethod()){
 		case Settings.RANKING_RFOREST:
-			if(schema.getSettings().getSectionMultiLabel().isEnabled()){
+			if(schema.getSettings().getSectionMultiLabel().isEnabled() && schema.getSettings().getMultiLabelRankingMeasure() == Settings.MULTILABEL_MEASURES_ALL){
 				nb = Settings.NB_MULTILABEL_MEASURES;
 			} else{
 				nb = 1; // TO DO: HIERARCHICAL?
@@ -201,6 +201,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 		if (m_FeatRank) {
 			boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
+			if(sorted && getNbFeatureRankings() > 1){
+				System.err.println("More than one feature ranking will be output. "
+						+ "The attributes will appear as in ARFF\nand will not be sorted "
+						+ "by relevance, although SortRankingByRelevance = Yes.");
+				sorted = false;
+			}
 			if (sorted){
 				m_FeatureRanking.sortFeatureRanks();
 			}
