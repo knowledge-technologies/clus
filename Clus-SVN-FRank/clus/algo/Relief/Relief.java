@@ -29,8 +29,7 @@ public class Relief extends ClusInductionAlgorithmType{
 	@Override
 	public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs)
 			throws ClusException, IOException {
-		// TODO Auto-generated method stub
-		return null;
+		return new ReliefInduce(schema, sett);
 	}
 
 	@Override

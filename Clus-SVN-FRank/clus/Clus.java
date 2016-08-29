@@ -1169,7 +1169,7 @@ public class Clus implements CMDLineArgsProvider {
 		ClusModelCollectionIO io = new ClusModelCollectionIO();
 		m_Summary.setTotalRuns(1);
 		ClusRun run = singleRunMain(clss, null);
-		if  (!getSettings().isKNN() && getSettings().isWriteModelFile()){
+		if  (!getSettings().isKNN() && getSettings().isWriteModelFile() && !getSettings().isRelief()){
 			saveModels(run, io);
 		}
 		// io.save(getSettings().getFileAbsolute(m_Sett.getAppName() +

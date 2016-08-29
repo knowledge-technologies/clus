@@ -2040,6 +2040,9 @@ public class Settings implements Serializable {
 	public void setSectionReliefEnabled(boolean value) {
 		m_SectionRelief.setEnabled(value);
 	}
+	public boolean isRelief(){
+		return m_SectionRelief.isEnabled();
+	}
 	
 
 /***********************************************************************
