@@ -56,7 +56,7 @@ public class ClusEnsembleFeatureRanking {
 	HashMap m_AllAttributes;//key is the AttributeName, and the value is array with the order in the file and the rank
 //	boolean m_FeatRank;
 	TreeMap m_FeatureRanks;//sorted by the rank
-	HashMap m_FeatureRankByName;
+	HashMap m_FeatureRankByName;  // Part of fimp's header
 	
 	String m_RankingDescription;
 	

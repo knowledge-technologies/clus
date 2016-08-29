@@ -2028,6 +2028,19 @@ public class Settings implements Serializable {
 		return m_PhylogenyDistancesVsParentStop.getValue();
 	}
 	
+/***********************************************************************
+ * Section: Relief  					                               *
+ ***********************************************************************/
+	
+	INIFileSection m_SectionRelief;
+	
+	public static INIFileInt m_NbNeighbours;
+	public static INIFileInt m_NbIterations;
+	
+	public void setSectionReliefEnabled(boolean value) {
+		m_SectionRelief.setEnabled(value);
+	}
+	
 
 /***********************************************************************
  * Section: Ensemble methods                                           *
@@ -2736,6 +2749,10 @@ public class Settings implements Serializable {
 		m_SectionPhylogeny.addNode(m_PhylogenyEntropyVsParentStop = new INIFileDouble("EntropyVsParentStopCriterion", 0));
 		m_SectionPhylogeny.addNode(m_PhylogenyDistancesVsParentStop = new INIFileDouble("SumPWDistancesVsParentStopCriterion", 0));
 		m_SectionPhylogeny.setEnabled(false);
+		
+		m_SectionRelief = new INIFileSection("Relief");
+		m_SectionRelief.addNode(m_NbNeighbours = new INIFileInt("neighbours", 10));
+		m_SectionRelief.addNode(m_NbIterations = new INIFileInt("iterations", -1));
 
 		m_SectionEnsembles = new INIFileSection("Ensemble");
 		m_SectionEnsembles.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
@@ -2821,6 +2838,7 @@ public class Settings implements Serializable {
 		m_Ini.addNode(m_SectionExhaustive);
 		m_Ini.addNode(m_SectionTimeSeries);
 		m_Ini.addNode(m_SectionPhylogeny);
+		m_Ini.addNode(m_SectionRelief);
 		m_Ini.addNode(m_SectionEnsembles);
 		m_Ini.addNode(m_SectionKNN);
 		m_Ini.addNode(m_SectionKNNT);

@@ -27,6 +27,7 @@ import clus.tools.debug.Debug;
 import clus.gui.*;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
+import clus.algo.Relief.Relief;
 import clus.algo.tdidt.*;
 import clus.algo.tdidt.processor.NodeExampleCollector;
 import clus.algo.tdidt.processor.NodeIDWriter;
@@ -1626,7 +1627,7 @@ public class Clus implements CMDLineArgsProvider {
 				/**
 				 * There are two groups of command line parameters of type
 				 * -<parameter>. From both of them at most one can be used. The
-				 * first group is the learning method. Options are knn, knnTree,
+				 * first group is the learning method. Options are Relief, knn, knnTree,
 				 * rules, weka (for Weka workbench), tuneftest, tunesize, beam
 				 * (beam search induction tree), exhaustive, sit (inductive
 				 * transfer learning), forest (ensemble trees). If the parameter
@@ -1635,7 +1636,11 @@ public class Clus implements CMDLineArgsProvider {
 				 * TODO There should be a command line help for these. For
 				 * example with -help.
 				 */
-				if (cargs.hasOption("knn")) {
+				if(cargs.hasOption("relief")){
+					clus.getSettings().setSectionReliefEnabled(true);
+					clss = new Relief(clus);					
+				}
+				else if (cargs.hasOption("knn")) {
 					clus.getSettings().setSectionKNNEnabled(true);
 //					clus.getSettings().setSectionTreeEnabled(false);
 					clss = new KnnClassifier(clus);
