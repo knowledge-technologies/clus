@@ -20,11 +20,11 @@ public class Relief extends ClusInductionAlgorithmType{
 		// TODO Auto-generated constructor stub
 	}
 	
-	public void updateWeights(){
-		m_Weights = new double[2];
-		m_Weights[0] = 2.1;
-		m_Weights[1] = 2.21;
-	}
+//	public void updateWeights(){
+//		m_Weights = new double[2];
+//		m_Weights[0] = 2.1;
+//		m_Weights[1] = 2.21;
+//	}
 
 	@Override
 	public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs)

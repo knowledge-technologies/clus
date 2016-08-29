@@ -25,16 +25,18 @@ public class ReliefInduce extends ClusInductionAlgorithm{
 
 	@Override
 	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
-		return induceSingleUnpruned((RowData)cr.getTrainingSet());
+		ReliefModel reliefModel = new ReliefModel(cr.getStatManager().getSettings().getReliefNbNeighboursValue(),
+												  cr.getStatManager().getSettings().getReliefNbIterationsValue(),
+												  (RowData)cr.getTrainingSet());
+		
+		reliefModel.computeWeights();
+		
+		return reliefModel;
 	}
 	
 	public ClusNode induceSingleUnpruned(RowData data) throws ClusException, IOException {
 		m_Root = null;
 
-		ReliefModel reliefModel = new ReliefModel();
-		
-		
-		
 		
 //		while (true) {
 //

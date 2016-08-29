@@ -80,14 +80,15 @@ public class Clus implements CMDLineArgsProvider {
 	public final static String VERSION = "2.11";
 
 	// exhaustive was added the 1/08/2006
-	public final static String[] OPTION_ARGS = { "exhaustive", "xval", "oxval",
+	// relief was added 29/08/2016
+	public final static String[] OPTION_ARGS = {"relief", "exhaustive", "xval", "oxval",
 			"target", "disable", "silent", "lwise", "c45", "info", "sample",
 			"debug", "tuneftest", "load", "soxval", "bag", "obag", "show",
 			"knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka",
 			"corrmatrix", "tunesize", "out2model", "test", "normalize",
 			"tseries", "writetargets", "fold", "forest", "copying", "sit", "tc" };
 
-	public final static int[] OPTION_ARITIES = { 0, 0, 0, 
+	public final static int[] OPTION_ARITIES = {0, 0, 0, 0, 
 			1, 1, 0, 0, 0, 0, 1,
 			0, 0, 1, 0, 0, 0, 0, 
 			0, 0, 0, 0, 0, 0, 0, 1, 
@@ -1223,7 +1224,10 @@ public class Clus implements CMDLineArgsProvider {
 			addModelErrorMeasures(cr);
 		}
 		// Calc error
-		calcError(cr, null, null);
+		if(!getSettings().isRelief()){
+			calcError(cr, null, null);
+		}
+
 		if (summ != null) {
 			for (int i = 0; i < cr.getNbModels(); i++) {
 				ClusModelInfo info = cr.getModelInfo(i);

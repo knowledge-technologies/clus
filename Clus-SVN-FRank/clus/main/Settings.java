@@ -2034,14 +2034,20 @@ public class Settings implements Serializable {
 	
 	INIFileSection m_SectionRelief;
 	
-	public static INIFileInt m_NbNeighbours;
-	public static INIFileInt m_NbIterations;
+	public static INIFileInt m_ReliefNbNeighbours;
+	public static INIFileInt m_ReliefNbIterations;
 	
 	public void setSectionReliefEnabled(boolean value) {
 		m_SectionRelief.setEnabled(value);
 	}
 	public boolean isRelief(){
 		return m_SectionRelief.isEnabled();
+	}
+	public int getReliefNbNeighboursValue(){
+		return m_ReliefNbNeighbours.getValue();
+	}
+	public int getReliefNbIterationsValue(){
+		return m_ReliefNbIterations.getValue();
 	}
 	
 
@@ -2754,8 +2760,9 @@ public class Settings implements Serializable {
 		m_SectionPhylogeny.setEnabled(false);
 		
 		m_SectionRelief = new INIFileSection("Relief");
-		m_SectionRelief.addNode(m_NbNeighbours = new INIFileInt("neighbours", 10));
-		m_SectionRelief.addNode(m_NbIterations = new INIFileInt("iterations", -1));
+		m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileInt("neighbours", 10));
+		m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileInt("iterations", -1));
+		m_SectionRelief.setEnabled(false);
 
 		m_SectionEnsembles = new INIFileSection("Ensemble");
 		m_SectionEnsembles.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));

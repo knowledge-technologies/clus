@@ -3,6 +3,7 @@ package clus.algo.Relief;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import clus.data.rows.DataTuple;
@@ -15,11 +16,21 @@ import clus.util.ClusException;
 import jeans.util.MyArray;
 
 public class ReliefModel implements ClusModel{
+	private int m_NbNeighbours;
+	private int m_NbIterations;
+	private RowData m_Data;
+	
+	private double[] m_Weights;
+	
+	public ReliefModel(int neighbours, int iterations, RowData data){
+		this.m_NbIterations = neighbours;
+		this.m_NbIterations = iterations;
+		this.m_Data = data;
+	}
 
 	@Override
 	public ClusStatistic predictWeighted(DataTuple tuple) {
-		// TODO Auto-generated method stub
-		return null;
+		throw new RuntimeException("Relief is not predictive model."); 
 	}
 
 	@Override
@@ -36,8 +47,7 @@ public class ReliefModel implements ClusModel{
 
 	@Override
 	public String getModelInfo() {
-		// TODO Auto-generated method stub
-		return null;
+		return "This is Relief. The computed weights are " + Arrays.toString(m_Weights);
 	}
 
 	@Override
@@ -94,4 +104,12 @@ public class ReliefModel implements ClusModel{
 		return 0;
 	}
 
+	public void computeWeights(){
+		int descriptive = m_Data.m_Schema.getNbDescriptiveAttributes();
+		m_Weights = new double[descriptive];
+		for(int i = 0; i < descriptive; i++){
+			m_Weights[i] = i;
+		}
+		
+	}
 }
