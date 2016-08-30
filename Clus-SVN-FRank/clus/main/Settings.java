@@ -548,13 +548,24 @@ public class Settings implements Serializable {
 	public boolean isOutTrainError() {
 		return m_OutTrainErr.getValue();
 	}
+	public void setOutTrainError(boolean value){
+		m_OutTrainErr.setValue(value);
+	}
 	
 	public boolean isOutValidError() {
 		return m_OutValidErr.getValue();
 	}
 	
+	public void setOutValidError(boolean value){
+		m_OutValidErr.setValue(value);
+	}
+	
 	public boolean isOutTestError() {
 		return m_OutTestErr.getValue();
+	}
+	
+	public void setOutTestError(boolean value){
+		m_OutTestErr.setValue(value);
 	}
 
 	public boolean isCalError() {

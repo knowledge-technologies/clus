@@ -1224,9 +1224,7 @@ public class Clus implements CMDLineArgsProvider {
 			addModelErrorMeasures(cr);
 		}
 		// Calc error
-		if(!getSettings().isRelief()){
-			calcError(cr, null, null);
-		}
+		calcError(cr, null, null);
 
 		if (summ != null) {
 			for (int i = 0; i < cr.getNbModels(); i++) {
@@ -1642,6 +1640,9 @@ public class Clus implements CMDLineArgsProvider {
 				 */
 				if(cargs.hasOption("relief")){
 					clus.getSettings().setSectionReliefEnabled(true);
+					clus.getSettings().setOutValidError(false);
+					clus.getSettings().setOutTrainError(false);
+					clus.getSettings().setOutTestError(false);
 					clss = new Relief(clus);					
 				}
 				else if (cargs.hasOption("knn")) {

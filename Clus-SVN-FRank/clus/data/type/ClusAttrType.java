@@ -297,7 +297,6 @@ public abstract class ClusAttrType implements Serializable, Comparable {
 		
 		return elm;
 	}
-	
-	
+		
 }
 

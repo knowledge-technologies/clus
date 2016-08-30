@@ -327,7 +327,7 @@ public class ClusEnsembleFeatureRanking {
 	public static void fillWithAttributesInTree(ClusNode node, ArrayList attributes){
 		for (int i = 0; i < node.getNbChildren(); i++){
 			String att = node.getTest().getType().getName();
-			if (!attributes.contains(att))attributes.add(att);
+			if (!attributes.contains(att))attributes.add(att); // tole je pa O(n^2)
 			fillWithAttributesInTree((ClusNode)node.getChild(i), attributes);
 		}
 	}

@@ -23,14 +23,15 @@ public class ReliefModel implements ClusModel{
 	private double[] m_Weights;
 	
 	public ReliefModel(int neighbours, int iterations, RowData data){
-		this.m_NbIterations = neighbours;
-		this.m_NbIterations = iterations;
 		this.m_Data = data;
+		this.m_NbNeighbours = neighbours;
+		this.m_NbIterations = iterations;
+		
 	}
 
 	@Override
 	public ClusStatistic predictWeighted(DataTuple tuple) {
-		throw new RuntimeException("Relief is not predictive model."); 
+		throw new RuntimeException("Relief is not a predictive model."); 
 	}
 
 	@Override
@@ -47,7 +48,7 @@ public class ReliefModel implements ClusModel{
 
 	@Override
 	public String getModelInfo() {
-		return "This is Relief. The computed weights are " + Arrays.toString(m_Weights);
+		return String.format("Relief with the weights computed in %d iterations with %d neighbours.", m_NbIterations, m_NbNeighbours);
 	}
 
 	@Override
@@ -111,5 +112,17 @@ public class ReliefModel implements ClusModel{
 			m_Weights[i] = i;
 		}
 		
+	}
+	
+	public RowData getData(){
+		return m_Data;
+	}
+	
+	public int getNbNeighbours(){
+		return m_NbNeighbours;
+	}
+	
+	public int getNbIterations(){
+		return m_NbIterations;
 	}
 }

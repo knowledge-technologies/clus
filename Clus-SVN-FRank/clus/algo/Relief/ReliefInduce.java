@@ -6,6 +6,7 @@ import clus.algo.ClusInductionAlgorithm;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
+import clus.ext.ensembles.ClusEnsembleFeatureRanking;
 import clus.main.ClusRun;
 import clus.main.Settings;
 import clus.model.ClusModel;
@@ -13,6 +14,7 @@ import clus.util.ClusException;
 
 public class ReliefInduce extends ClusInductionAlgorithm{
 	protected ClusNode m_Root;
+	protected ClusReliefFeatureRanking m_FeatureRanking;
 
 	public ReliefInduce(ClusInductionAlgorithm other) {
 		super(other);
@@ -29,7 +31,10 @@ public class ReliefInduce extends ClusInductionAlgorithm{
 												  cr.getStatManager().getSettings().getReliefNbIterationsValue(),
 												  (RowData)cr.getTrainingSet());
 		
-		reliefModel.computeWeights();
+		m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getNbNeighbours(), reliefModel.getNbIterations());
+		m_FeatureRanking.initializeAttributes(cr.getStatManager().getSchema().getDescriptiveAttributes(), 1);
+		m_FeatureRanking.calculateReliefImportance(reliefModel.getData());
+		m_FeatureRanking.convertRanksByName();
 		
 		return reliefModel;
 	}
