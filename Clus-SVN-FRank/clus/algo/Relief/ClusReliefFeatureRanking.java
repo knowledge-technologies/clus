@@ -1,8 +1,10 @@
 package clus.algo.Relief;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Random;
 
+import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
@@ -10,8 +12,12 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.ext.ensembles.ClusEnsembleFeatureRanking;
+import clus.main.ClusRun;
 import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbNeighbours;
@@ -22,16 +28,17 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private TimeSeriesAttrType[][] m_DescrTargetTSAttr = new TimeSeriesAttrType[2][];
 	// min and max for each numeric attribute
 	private double[][] m_numMins, m_numMaxs;
+	private int m_NbExamples;
 
 	
-	public ClusReliefFeatureRanking(int neighbours, int iterations){
+	public ClusReliefFeatureRanking(int neighbours, int iterations){ // TODO: pazi: neigbours > samples ...
 		super();
 		this.m_NbNeighbours = neighbours;
 		this.m_NbIterations = iterations;
 	}
 	
 	public void calculateReliefImportance(RowData data) {
-		int nbExamples = data.getNbRows();
+		m_NbExamples = data.getNbRows();
 		// initialize descriptive and target attributes if necessary
 		int attrType;
 		for(int space = 0; space < 2; space++){
@@ -54,33 +61,87 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		for(int space = 0; space < m_numMins.length; space++){
 			for(int attr = 0; attr < m_DescrTargetNumAttr[space].length; attr++){
 				numAttr = m_DescrTargetNumAttr[space][attr];
-				for(int example = 0; example < nbExamples; example++){
+				for(int example = 0; example < m_NbExamples; example++){
 					value = numAttr.getNumeric(data.getTuple(example));
 					if(value < m_numMins[space][attr]) m_numMins[space][attr] = value;
 					if(value > m_numMaxs[space][attr]) m_numMaxs[space][attr] = value;
 				}
 			}			
 		}
+		System.out.println(Arrays.deepToString(m_numMins));
+		System.out.println(Arrays.deepToString(m_numMaxs));
 		
-		
+		// attribute relevance
 		Random rnd = new Random(123); // TODO: determinisicno, ce nbExamples == nbRows ...
 		DataTuple tuple;
+		int[] nearestNeighbours; 
 		for(int iteration = 0; iteration < m_NbIterations; iteration++){
-			tuple = data.getTuple((int) (rnd.nextDouble() * nbExamples));
-			System.out.println(tuple.toString());
+			tuple = data.getTuple((int) (rnd.nextDouble() * m_NbExamples));
+			System.out.println("Tuple: " + tuple.toString());
+			nearestNeighbours = findNearestNeighbours(tuple, data);
+			System.out.println("nearest neighb: " + Arrays.toString(nearestNeighbours));
 			
 		}
 		
 	}
 	
-    public double[] calcDistance(DataTuple t1, DataTuple t2) {
-        double[] dist = new double[2]; // {distance in descriptive space, distance in target space}
-        for(int space = 0; space < 2; space++){
-        	// zaenkrat samo te tri
-	        dist[space] += calculateNominalDist(t1, t2, space);
-	        dist[space] += calculateNumericDist(t1, t2, space);
-	        dist[space] += calculateTimeSeriesDist(t1, t2, space); 
-        }
+	public int[] findNearestNeighbours(DataTuple tuple, RowData data){
+		int[] neighbours = new int[m_NbNeighbours]; 		// current candidates
+		double[] distances = new double[m_NbExamples];	// distances[i] = distance(tuple, data.getTuple(i))	TODO: mal prostora porabmo, ce je pdoatk. mnozica stevilcna ...
+		
+		boolean debug = true;
+
+		for(int i = 0; i < m_NbExamples;i++){
+			distances[i] = calcDistance(tuple, data.getTuple(i), 0);
+		}
+		if(debug){
+			System.out.println("  scores: " + Arrays.toString(distances));
+		}
+	    for (int i = 0; i < m_NbNeighbours; i++){
+	        neighbours[i] = i;
+	    }		
+	    // sorting candidates so distances[candidates[0]] is the largest: TODO: spremeni, ce je NbNeighbours velka stvar ...
+	    for (int i = 0; i < m_NbNeighbours; i++) {
+	        for (int j = i+1; j < m_NbNeighbours; j++) {
+	            if (distances[neighbours[i]] < distances[neighbours[j]]) {
+	                int temp = neighbours[i];
+	                neighbours[i] = neighbours[j];
+	                neighbours[j] = temp;
+	            }
+	        }
+	    }
+	    // remaining part of dataset
+	    for (int i = m_NbNeighbours; i < m_NbNeighbours; i++) {
+	        if (distances[i] > distances[neighbours[0]]) {
+	            continue;
+	        }
+	        // moving all larger candidates to the left, to keep the array sorted
+	        int j; // here the branch prediction should kick-in
+	        for (j = 1; j < m_NbNeighbours && distances[i] < distances[neighbours[j]]; j++) {
+	            neighbours[j - 1] = neighbours[j];
+	        }
+	        // inserting the new item
+	        neighbours[j - 1] = i;
+	    }
+		if(debug){
+			System.out.println("   " + Arrays.toString(neighbours));
+			System.out.println();
+		}
+		return neighbours;
+	}
+	/**
+	 * Distance between tuples in the subspace space
+	 * @param t1
+	 * @param t2
+	 * @param space if 0, subspace is descriptive space, else target space
+	 * @return
+	 */
+    public double calcDistance(DataTuple t1, DataTuple t2, int space) {
+        double dist = 0.0;
+    	// zaenkrat samo te tri
+        dist += calculateNominalDist(t1, t2, space);
+        dist += calculateNumericDist(t1, t2, space);
+        dist += calculateTimeSeriesDist(t1, t2, space); 
         return dist;
     }
 	
@@ -152,36 +213,22 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     	return 0.0;
     }
     
-//	public double calcDistanceOnAttr(DataTuple t1, DataTuple t2, ClusAttrType attr){
-//		if( attr instanceof NumericAttrType ){
-//			/*
-//			 * If one of values is missing, return value 1-(others value) to
-//			 * ensure maximum difference.
-//			 * If both are missing, return 1.
-//			 * If both are present, return absolute value.
-//			 */
-//			if( attr.isMissing(t2) )
-//				if( attr.isMissing(t1) ) // both missing
-//					return m_AttrWeighting.getWeight(attr);
-//				else // t2 missing
-//					return Math.max(attr.getNumeric(t1), 1-attr.getNumeric(t1))*m_AttrWeighting.getWeight(attr);
-//			else
-//				if( attr.isMissing(t1) ) // t1 missing
-//					return Math.max(attr.getNumeric(t2), 1-attr.getNumeric(t2))*m_AttrWeighting.getWeight(attr);
-//				else // both present
-//					return Math.abs(attr.getNumeric(t2)- attr.getNumeric(t1))*m_AttrWeighting.getWeight(attr);
-//		}else
-//			if( attr instanceof NominalAttrType ){
-//				/*
-//				 * If both values are present end share same value, return 0.
-//				 * Otherwise return 1 (weighted).
-//				 */
-//				return attr.getNominal(t2) == attr.getNominal(t1) &&
-//						!attr.isMissing(t2) &&
-//						!attr.isMissing(t1)
-//						? 0 : m_AttrWeighting.getWeight(attr);
-//			}else{
-//				throw new IllegalArgumentException(this.getClass().getName() + ":calcDistanceOnAttr() - Distance not supported!");
-//			}
-//	}
+	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel) throws ClusException{
+		ArrayList<String> attests = new ArrayList<String>();
+		fillWithAttributesInTree((ClusNode)model, attests);
+		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
+		double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel), model, cr);
+		for (int z = 0; z < attests.size(); z++){//for the attributes that appear in the tree
+			String current_attribute = (String)attests.get(z);
+			double [] info = getAttributeInfo(current_attribute);
+			double type = info[0];
+			double position = info[1];
+			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel), (int)type, (int)position);
+			double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
+			for(int i = 0; i < oob_errs.length; i++){
+				info[2 + i] += oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0];
+			}
+			putAttributeInfo(current_attribute, info);
+		}
+	}
 }
