@@ -13,10 +13,8 @@ import clus.data.type.NumericAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.ext.ensembles.ClusEnsembleFeatureRanking;
 import clus.main.ClusRun;
-import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.selection.OOBSelection;
-import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 
 public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
@@ -29,6 +27,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	// min and max for each numeric attribute
 	private double[][] m_numMins, m_numMaxs;
 	private int m_NbExamples;
+	// distances in the case of missing values
+	double m_oneMissing = 0.5;
+	double m_bbothMissing = 1.0;
 
 	
 	public ClusReliefFeatureRanking(int neighbours, int iterations){ // TODO: pazi: neigbours > samples ...
@@ -72,34 +73,69 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		System.out.println(Arrays.deepToString(m_numMaxs));
 		
 		// attribute relevance
-		Random rnd = new Random(123); // TODO: determinisicno, ce nbExamples == nbRows ...
+		Random rnd = new Random(123); // TODO: deterministicno, ce nbExamples == nbRows ...
 		DataTuple tuple;
-		int[] nearestNeighbours; 
+		int tupleInd;
+		NearestNeighbour[] nearestNeighbours; 
 		for(int iteration = 0; iteration < m_NbIterations; iteration++){
-			tuple = data.getTuple((int) (rnd.nextDouble() * m_NbExamples));
+			tupleInd = (int) (rnd.nextDouble() * m_NbExamples);
+			tuple = data.getTuple(tupleInd);
 			System.out.println("Tuple: " + tuple.toString());
-			nearestNeighbours = findNearestNeighbours(tuple, data);
-			System.out.println("nearest neighb: " + Arrays.toString(nearestNeighbours));
+			nearestNeighbours = findNearestNeighbours(tupleInd, data);
+			// update importances
+			for(int attr = 0; attr < m_DescrTargetNomAttr[0].length; attr++){ // nominal
+				double [] info = getAttributeInfo(m_DescrTargetNomAttr[0][attr].getName());
+				double distAttr = 0.0;
+				double sumDistAttr = 0.0;
+				double sumDistTarget = 0.0;
+				double sumDistAttrTarget = 0.0;
+				for(int neighbour = 0; neighbour < m_NbNeighbours; neighbour++){
+					distAttr = calculateNominalDist1D(tuple, data.getTuple(nearestNeighbours[neighbour].m_indexInDataSet), m_DescrTargetNomAttr[0][attr]);
+					sumDistAttr += distAttr;
+					sumDistTarget += nearestNeighbours[neighbour].m_targetDistance;
+					sumDistAttrTarget += distAttr * nearestNeighbours[neighbour].m_targetDistance;					
+				}
+				info[2] += sumDistAttrTarget / sumDistAttr - (sumDistAttr - sumDistAttrTarget) / (m_NbNeighbours - sumDistTarget);
+				putAttributeInfo(m_DescrTargetNomAttr[0][attr].getName(), info);
+			}
+			for(int attr = 0; attr < m_DescrTargetNomAttr[0].length; attr++){ // numeric
+				double [] info = getAttributeInfo(m_DescrTargetNomAttr[0][attr].getName());
+				double distAttr = 0.0;
+				double sumDistAttr = 0.0;
+				double sumDistTarget = 0.0;
+				double sumDistAttrTarget = 0.0;
+				for(int neighbour = 0; neighbour < m_NbNeighbours; neighbour++){
+					distAttr = calculateNumericDist1D(tuple, data.getTuple(nearestNeighbours[neighbour].m_indexInDataSet), m_DescrTargetNumAttr[0][attr], m_numMaxs[0][attr] - m_numMins[0][attr]);
+					sumDistAttr += distAttr;
+					sumDistTarget += nearestNeighbours[neighbour].m_targetDistance;
+					sumDistAttrTarget += distAttr * nearestNeighbours[neighbour].m_targetDistance;					
+				}
+				info[2] += sumDistAttrTarget / sumDistAttr - (sumDistAttr - sumDistAttrTarget) / (m_NbNeighbours - sumDistTarget);
+				putAttributeInfo(m_DescrTargetNumAttr[0][attr].getName(), info);
+			}
 			
 		}
 		
 	}
 	
-	public int[] findNearestNeighbours(DataTuple tuple, RowData data){
+
+	public NearestNeighbour[] findNearestNeighbours(int tupleInd, RowData data){
+		DataTuple tuple = data.getTuple(tupleInd);
 		int[] neighbours = new int[m_NbNeighbours]; 		// current candidates
 		double[] distances = new double[m_NbExamples];	// distances[i] = distance(tuple, data.getTuple(i))	TODO: mal prostora porabmo, ce je pdoatk. mnozica stevilcna ...
 		
 		boolean debug = true;
 
 		for(int i = 0; i < m_NbExamples;i++){
-			distances[i] = calcDistance(tuple, data.getTuple(i), 0);
+			distances[i] = calcDistance(tuple, data.getTuple(i), 0); // descriptive space
 		}
 		if(debug){
 			System.out.println("  scores: " + Arrays.toString(distances));
 		}
 	    for (int i = 0; i < m_NbNeighbours; i++){
-	        neighbours[i] = i;
-	    }		
+	        if(i != tupleInd) neighbours[i] = i;
+	    }
+	    if(tupleInd < m_NbNeighbours) neighbours[tupleInd] = m_NbNeighbours;
 	    // sorting candidates so distances[candidates[0]] is the largest: TODO: spremeni, ce je NbNeighbours velka stvar ...
 	    for (int i = 0; i < m_NbNeighbours; i++) {
 	        for (int j = i+1; j < m_NbNeighbours; j++) {
@@ -107,28 +143,33 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	                int temp = neighbours[i];
 	                neighbours[i] = neighbours[j];
 	                neighbours[j] = temp;
-	            }
+	            }	
 	        }
 	    }
-	    // remaining part of dataset
-	    for (int i = m_NbNeighbours; i < m_NbNeighbours; i++) {
-	        if (distances[i] > distances[neighbours[0]]) {
-	            continue;
-	        }
-	        // moving all larger candidates to the left, to keep the array sorted
-	        int j; // here the branch prediction should kick-in
-	        for (j = 1; j < m_NbNeighbours && distances[i] < distances[neighbours[j]]; j++) {
-	            neighbours[j - 1] = neighbours[j];
-	        }
-	        // inserting the new item
-	        neighbours[j - 1] = i;
+	    if(debug) System.out.println("    after first nbNeigh: " + Arrays.toString(neighbours));
+	    for (int i = m_NbNeighbours + (tupleInd < m_NbNeighbours ? 1 : 0); i < m_NbExamples; i++) {
+	    	if(i != tupleInd){
+		        if (distances[i] > distances[neighbours[0]]) {
+		            continue;
+		        }
+		        int j; // here the branch prediction should kick-in
+		        for (j = 1; j < m_NbNeighbours && distances[i] < distances[neighbours[j]]; j++) {
+		            neighbours[j - 1] = neighbours[j];
+		        }
+		        neighbours[j - 1] = i;
+	    	}
 	    }
 		if(debug){
-			System.out.println("   " + Arrays.toString(neighbours));
+			System.out.println("   nearest: " + Arrays.toString(neighbours));
 			System.out.println();
 		}
-		return neighbours;
+		NearestNeighbour[] nearestNeighbours =new NearestNeighbour[m_NbNeighbours];
+		for(int i = 0; i < m_NbNeighbours; i++){
+			nearestNeighbours[i] = new NearestNeighbour(neighbours[i], distances[neighbours[i]], calcDistance(tuple, data.getTuple(neighbours[i]), 1));
+		}
+		return nearestNeighbours;
 	}
+	
 	/**
 	 * Distance between tuples in the subspace space
 	 * @param t1
@@ -155,28 +196,32 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
      * @return
      */
     public double calculateNominalDist(DataTuple t1, DataTuple t2, int spaceType){
-    	int v1, v2;
     	double dist = 0.0;
-    	double oneMissing = 0.5;
 		for(NominalAttrType attr : m_DescrTargetNomAttr[spaceType]){
-			v1 = attr.getNominal(t1);
-			v2 = attr.getNominal(t2);
-			if(v1 >= attr.m_NbValues){
-				if(v2 >= attr.m_NbValues){	// both missing
-					dist += 1.0;
-				} else{ 		   			// the first missing
-					dist += oneMissing;
-				}
-			} else{
-				if(v2 >= attr.m_NbValues){	// the second missing
-					dist += oneMissing;			   
-				} else{						// none of them missing
-					dist += v1 == v2 ? 0.0 : 1.0;
-				}
-			}
+			dist += calculateNominalDist1D(t1, t2, attr);
 		}
 		return dist;
     }
+    public double calculateNominalDist1D(DataTuple t1, DataTuple t2, NominalAttrType attr){
+		int v1 = attr.getNominal(t1);
+		int v2 = attr.getNominal(t2);
+		if(v1 >= attr.m_NbValues){
+			if(v2 >= attr.m_NbValues){	// both missing
+				return m_bbothMissing;
+			} else{ 		   			// the first missing
+				return m_oneMissing;
+			}
+		} else{
+			if(v2 >= attr.m_NbValues){	// the second missing
+				return m_oneMissing;			   
+			} else{						// none of them missing
+				return v1 == v2 ? 0.0 : 1.0;
+			}
+		}
+    }
+    
+    
+    
     /**
      * Calculates the distance in the numeric subspace of the space.
      * @param t1
@@ -185,30 +230,33 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
      * @return
      */
     public double calculateNumericDist(DataTuple t1, DataTuple t2, int spaceType){
-    	double v1, v2;
     	double dist = 0.0;
-    	double oneMissing = 0.5;
-    	NumericAttrType numAttr;
     	for(int attr = 0; attr < m_DescrTargetNumAttr[spaceType].length; attr++){
-    		numAttr = m_DescrTargetNumAttr[spaceType][attr];
-    		v1 = numAttr.getNumeric(t1);
-    		v2 = numAttr.getNumeric(t2);
-    		if(t1.hasNumMissing(numAttr.getArrayIndex())){
-    			if(t2.hasNumMissing(numAttr.getArrayIndex())){
-    				dist += 1.0;
-    			} else{
-    				dist +=  oneMissing;
-    			}
-    		} else{
-    			if(t2.hasNumMissing(numAttr.getArrayIndex())){
-    				dist += oneMissing;
-    			} else{
-    				dist += Math.abs(v1 - v2) / (m_numMaxs[spaceType][attr] - m_numMins[spaceType][attr]);
-    			}
-    		}
+    		dist += calculateNumericDist1D(t1, t2, m_DescrTargetNumAttr[spaceType][attr], m_numMaxs[spaceType][attr] - m_numMins[spaceType][attr]);
     	}
     	return dist;
     }
+    public double calculateNumericDist1D(DataTuple t1, DataTuple t2, NumericAttrType numAttr, double normalizationFactor){
+		double v1 = numAttr.getNumeric(t1);
+		double v2 = numAttr.getNumeric(t2);
+		if(t1.hasNumMissing(numAttr.getArrayIndex())){
+			if(t2.hasNumMissing(numAttr.getArrayIndex())){
+				return m_bbothMissing;
+			} else{
+				return m_oneMissing;
+			}
+		} else{
+			if(t2.hasNumMissing(numAttr.getArrayIndex())){
+				return m_oneMissing;
+			} else{
+				return Math.abs(v1 - v2) / normalizationFactor;
+			}
+		}
+    	
+    }
+    
+    
+    
     public double calculateTimeSeriesDist(DataTuple t1, DataTuple t2, int spaceType){
     	return 0.0;
     }
