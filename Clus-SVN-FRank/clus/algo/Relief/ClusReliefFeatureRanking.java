@@ -1,5 +1,6 @@
 package clus.algo.Relief;
 
+import java.util.Arrays;
 import java.util.Random;
 
 import clus.data.rows.DataTuple;
@@ -15,11 +16,13 @@ import clus.statistic.ClusStatistic;
 public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbNeighbours;
 	private int m_NbIterations;
-	private NominalAttrType[] m_DescrNomAttr, m_TargetNomAttr;
-	private NumericAttrType[] m_DescrNumAttr, m_TargetNumAttr;
-	private TimeSeriesAttrType[] m_DescrTSAttr, m_TargetTSAttr;
+	// {descriptive attributes, target attributes} for each type of attributes
+	private NominalAttrType[][] m_DescrTargetNomAttr = new NominalAttrType[2][];
+	private NumericAttrType[][] m_DescrTargetNumAttr = new NumericAttrType[2][];
+	private TimeSeriesAttrType[][] m_DescrTargetTSAttr = new TimeSeriesAttrType[2][];
+	// min and max for each numeric attribute
+	private double[][] m_numMins, m_numMaxs;
 
-	
 	
 	public ClusReliefFeatureRanking(int neighbours, int iterations){
 		super();
@@ -28,15 +31,38 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	}
 	
 	public void calculateReliefImportance(RowData data) {
-		if(m_DescrNomAttr == null) m_DescrNomAttr = data.m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
-		if(m_DescrNumAttr == null) m_DescrNumAttr = data.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
-		if(m_DescrTSAttr == null) m_DescrTSAttr = data.m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
-		
-		if(m_TargetNomAttr == null) m_TargetNomAttr = data.m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
-		if(m_TargetNumAttr == null) m_TargetNumAttr = data.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-		if(m_TargetTSAttr == null) m_TargetTSAttr = data.m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
-		
 		int nbExamples = data.getNbRows();
+		// initialize descriptive and target attributes if necessary
+		int attrType;
+		for(int space = 0; space < 2; space++){
+			if(space == 0) attrType = ClusAttrType.ATTR_USE_DESCRIPTIVE;
+			else attrType = ClusAttrType.ATTR_USE_TARGET;
+			
+			if(m_DescrTargetNomAttr[space] == null) m_DescrTargetNomAttr[space] = data.m_Schema.getNominalAttrUse(attrType);
+			if(m_DescrTargetNumAttr[space] == null) m_DescrTargetNumAttr[space] = data.m_Schema.getNumericAttrUse(attrType);
+			if(m_DescrTargetTSAttr[space] == null) m_DescrTargetTSAttr[space] = data.m_Schema.getTimeSeriesAttrUse(attrType);
+		}
+		// compute min and max of numeric attributes
+		m_numMins = new double[][]{new double[m_DescrTargetNumAttr[0].length], new double[m_DescrTargetNumAttr[1].length]};
+		m_numMaxs = new double[][]{new double[m_DescrTargetNumAttr[0].length], new double[m_DescrTargetNumAttr[1].length]};
+		for(int space = 0; space < m_numMins.length; space++){
+			Arrays.fill(m_numMins[space], Double.POSITIVE_INFINITY);
+			Arrays.fill(m_numMaxs[space], Double.NEGATIVE_INFINITY);
+		}
+		double value;
+		NumericAttrType numAttr;
+		for(int space = 0; space < m_numMins.length; space++){
+			for(int attr = 0; attr < m_DescrTargetNumAttr[space].length; attr++){
+				numAttr = m_DescrTargetNumAttr[space][attr];
+				for(int example = 0; example < nbExamples; example++){
+					value = numAttr.getNumeric(data.getTuple(example));
+					if(value < m_numMins[space][attr]) m_numMins[space][attr] = value;
+					if(value > m_numMaxs[space][attr]) m_numMaxs[space][attr] = value;
+				}
+			}			
+		}
+		
+		
 		Random rnd = new Random(123); // TODO: determinisicno, ce nbExamples == nbRows ...
 		DataTuple tuple;
 		for(int iteration = 0; iteration < m_NbIterations; iteration++){
@@ -58,12 +84,69 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
         return dist;
     }
 	
+    // TODO: make handling of missing values reliefish for all dist.
     
+    /**
+     * Calculates the distance in the nominal subspace of the space.
+     * @param t1
+     * @param t2
+     * @param spaceType if 0, we are in the descriptive space, if 1, we are in the target space
+     * @return
+     */
     public double calculateNominalDist(DataTuple t1, DataTuple t2, int spaceType){
-    	return 0.0;
+    	int v1, v2;
+    	double dist = 0.0;
+    	double oneMissing = 0.5;
+		for(NominalAttrType attr : m_DescrTargetNomAttr[spaceType]){
+			v1 = attr.getNominal(t1);
+			v2 = attr.getNominal(t2);
+			if(v1 >= attr.m_NbValues){
+				if(v2 >= attr.m_NbValues){	// both missing
+					dist += 1.0;
+				} else{ 		   			// the first missing
+					dist += oneMissing;
+				}
+			} else{
+				if(v2 >= attr.m_NbValues){	// the second missing
+					dist += oneMissing;			   
+				} else{						// none of them missing
+					dist += v1 == v2 ? 0.0 : 1.0;
+				}
+			}
+		}
+		return dist;
     }
+    /**
+     * Calculates the distance in the numeric subspace of the space.
+     * @param t1
+     * @param t2
+     * @param spaceType: see calculateNominalDistance
+     * @return
+     */
     public double calculateNumericDist(DataTuple t1, DataTuple t2, int spaceType){
-    	return 0.0;
+    	double v1, v2;
+    	double dist = 0.0;
+    	double oneMissing = 0.5;
+    	NumericAttrType numAttr;
+    	for(int attr = 0; attr < m_DescrTargetNumAttr[spaceType].length; attr++){
+    		numAttr = m_DescrTargetNumAttr[spaceType][attr];
+    		v1 = numAttr.getNumeric(t1);
+    		v2 = numAttr.getNumeric(t2);
+    		if(t1.hasNumMissing(numAttr.getArrayIndex())){
+    			if(t2.hasNumMissing(numAttr.getArrayIndex())){
+    				dist += 1.0;
+    			} else{
+    				dist +=  oneMissing;
+    			}
+    		} else{
+    			if(t2.hasNumMissing(numAttr.getArrayIndex())){
+    				dist += oneMissing;
+    			} else{
+    				dist += Math.abs(v1 - v2) / (m_numMaxs[spaceType][attr] - m_numMins[spaceType][attr]);
+    			}
+    		}
+    	}
+    	return dist;
     }
     public double calculateTimeSeriesDist(DataTuple t1, DataTuple t2, int spaceType){
     	return 0.0;
