@@ -36,6 +36,19 @@ public class ReliefInduce extends ClusInductionAlgorithm{
 		m_FeatureRanking.calculateReliefImportance(reliefModel.getData());
 		m_FeatureRanking.convertRanksByName();
 		
+
+		boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
+		if (sorted){
+			m_FeatureRanking.sortFeatureRanks();
+		}
+		m_FeatureRanking.convertRanksByName();
+		sorted = false;
+		if (sorted) m_FeatureRanking.writeRanking(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()),
+												  cr.getStatManager().getSettings().getRankingMethod());
+		else m_FeatureRanking.writeRankingByAttributeName(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()),
+														  cr.getStatManager().getSchema().getDescriptiveAttributes(),
+														  cr.getStatManager().getSettings().getRankingMethod());
+		
 		return reliefModel;
 	}
 	

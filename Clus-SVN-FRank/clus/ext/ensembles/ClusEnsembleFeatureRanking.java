@@ -53,9 +53,9 @@ import jeans.util.StringUtils;
 
 public class ClusEnsembleFeatureRanking {
 
-	HashMap m_AllAttributes;//key is the AttributeName, and the value is array with the order in the file and the rank
+	protected HashMap m_AllAttributes;//key is the AttributeName, and the value is array with the order in the file and the rank
 //	boolean m_FeatRank;
-	TreeMap m_FeatureRanks;//sorted by the rank
+	protected TreeMap m_FeatureRanks;//sorted by the rank
 	HashMap m_FeatureRankByName;  // Part of fimp's header
 	
 	String m_RankingDescription;
@@ -127,9 +127,8 @@ public class ClusEnsembleFeatureRanking {
 		File franking = new File(fname+".fimp");
 		FileWriter wrtr = new FileWriter(franking);
 		
-		String description ="Ranking via Random Forests: " + m_RankingDescription; 
-		wrtr.write(description + "\n");
-		wrtr.write(StringUtils.makeString('-', description.length()) + "\n");
+		wrtr.write(m_RankingDescription + "\n");
+		wrtr.write(StringUtils.makeString('-', m_RankingDescription.length()) + "\n");
 		while (!ranking.isEmpty()){
 //			wrtr.write(sorted.get(sorted.lastKey()) + "\t" + sorted.lastKey()+"\n");
 			wrtr.write(writeRow((ArrayList)ranking.get(ranking.lastKey()),(Double)ranking.lastKey()));
@@ -137,7 +136,7 @@ public class ClusEnsembleFeatureRanking {
 		}
 		wrtr.flush();
 		wrtr.close();
-		System.out.println("Feature importances written to: " + franking.getName());
+		System.out.println(String.format("Feature importances written to: %s.fimp", fname));
 	}
 
 	
@@ -157,15 +156,14 @@ public class ClusEnsembleFeatureRanking {
 		File franking = new File(fname+".fimp");
 		FileWriter wrtr = new FileWriter(franking);
 
-		String description ="Ranking via Random Forests: " + m_RankingDescription; 
-		wrtr.write(description + "\n");
-		wrtr.write(StringUtils.makeString('-', description.length()) + "\n");
+		wrtr.write(m_RankingDescription + "\n");
+		wrtr.write(StringUtils.makeString('-', m_RankingDescription.length()) + "\n");
 		int nbRankings = ((double[])m_AllAttributes.get(descriptive[0].getName())).length - 2;
 		for (int i = 0; i < descriptive.length; i++){
 			String attribute = descriptive[i].getName();
 			if(nbRankings == 1){
-			double value = ((double[])m_AllAttributes.get(attribute))[2]/ClusEnsembleInduce.getMaxNbBags();
-			wrtr.write(attribute +"\t"+value+"\n");
+				double value = ((double[])m_AllAttributes.get(attribute))[2]/Math.max(1.0, ClusEnsembleInduce.getMaxNbBags());
+				wrtr.write(attribute +"\t"+value+"\n");
 			} else{
 				double[] values = Arrays.copyOfRange((double[])m_AllAttributes.get(attribute), 2, nbRankings + 2);
 				for(int j = 0; j < values.length; j++){
@@ -186,7 +184,7 @@ public class ClusEnsembleFeatureRanking {
 		
 		wrtr.flush();
 		wrtr.close();
-		System.out.println("Feature importances written to: " + franking.getName());
+		System.out.println(String.format("Feature importances written to: %s.fimp", fname));
 	}
 	
 	public void writeJSON(ClusRun cr) throws IOException{
@@ -574,7 +572,7 @@ public class ClusEnsembleFeatureRanking {
 	
 	
 	public void setRForestDescription(ClusErrorList error){
-		m_RankingDescription = "RForest for error measure(s) ";
+		m_RankingDescription = "Ranking via Random Forests: RForest for error measure(s) ";
 		for(int i = 0; i < error.getNbErrors(); i++){
 			m_RankingDescription += error.getError(i).getName() + (i == error.getNbErrors() - 1 ? "" : ", ");
 		}
@@ -582,11 +580,14 @@ public class ClusEnsembleFeatureRanking {
 	}
 	
 	public void setGenie3Description(){
-		m_RankingDescription = "Genie3";
+		m_RankingDescription = "Ranking via Random Forests: Genie3";
 	}
 	
 	public void setSymbolicDescription(double[] weights){
-		m_RankingDescription = "Symbolic with weights " + Arrays.toString(weights);		
+		m_RankingDescription = "Ranking via Random Forests: Symbolic with weights " + Arrays.toString(weights);		
+	}
+	public void setReliefDescription(int neighbours, int iterations){
+		m_RankingDescription = String.format("Ranking via Relief: %d neighbours and %d iterations", neighbours, iterations);
 	}
 
 }

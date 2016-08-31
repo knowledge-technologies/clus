@@ -22,11 +22,24 @@ public class ReliefModel implements ClusModel{
 	
 	private double[] m_Weights;
 	
-	public ReliefModel(int neighbours, int iterations, RowData data){
+	public ReliefModel(int neighbours, int iterations, RowData data) throws ClusException{
 		this.m_Data = data;
-		this.m_NbNeighbours = neighbours;
-		this.m_NbIterations = iterations;
-		
+		if(neighbours == -1 || neighbours > data.getNbRows()){
+			this.m_NbNeighbours = data.getNbRows();
+		} else if(neighbours > 0){
+			this.m_NbNeighbours = neighbours;
+		} else{
+			throw new ClusException(String.format("The number neighbours should be 0 < neighbours <= number of examples (= %s) or -1.\n"
+					+ "But: neighbours = %d", data.getNbRows(), neighbours));
+		}
+		if(iterations == -1 || iterations > data.getNbRows()){
+			this.m_NbIterations = data.getNbRows();
+		} else if(iterations > 0){
+			this.m_NbIterations = iterations;
+		} else{
+			throw new ClusException(String.format("The number iterations should be 0 < iterations <= number of examples (= %s) or -1.\n"
+					+ "But: iterations = %d", data.getNbRows(), iterations));
+		}		
 	}
 
 	@Override

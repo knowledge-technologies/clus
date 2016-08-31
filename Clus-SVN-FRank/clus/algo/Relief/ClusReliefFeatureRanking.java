@@ -2,9 +2,9 @@ package clus.algo.Relief;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Random;
 
-import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
@@ -12,10 +12,7 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.ext.ensembles.ClusEnsembleFeatureRanking;
-import clus.main.ClusRun;
-import clus.model.ClusModel;
-import clus.selection.OOBSelection;
-import clus.util.ClusException;
+import clus.ext.ensembles.ClusEnsembleInduce;
 
 public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbNeighbours;
@@ -24,22 +21,30 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private NominalAttrType[][] m_DescrTargetNomAttr = new NominalAttrType[2][];
 	private NumericAttrType[][] m_DescrTargetNumAttr = new NumericAttrType[2][];
 	private TimeSeriesAttrType[][] m_DescrTargetTSAttr = new TimeSeriesAttrType[2][];
+	
+	private int[] m_NbDescrTargetAttrs = new int[]{10,5};
+	
 	// min and max for each numeric attribute
 	private double[][] m_numMins, m_numMaxs;
 	private int m_NbExamples;
 	// distances in the case of missing values
 	double m_oneMissing = 0.5;
-	double m_bbothMissing = 1.0;
+	double m_bothMissing = 1.0;
+	// next instance generator (if m_NbIterations < m_NbExamples)
+	boolean m_isDeterministic;
+	Random m_rnd = new Random(1234);
 
 	
-	public ClusReliefFeatureRanking(int neighbours, int iterations){ // TODO: pazi: neigbours > samples ...
+	public ClusReliefFeatureRanking(int neighbours, int iterations){
 		super();
 		this.m_NbNeighbours = neighbours;
 		this.m_NbIterations = iterations;
 	}
 	
 	public void calculateReliefImportance(RowData data) {
+		setReliefDescription(m_NbNeighbours, m_NbIterations);
 		m_NbExamples = data.getNbRows();
+		m_isDeterministic = m_NbExamples > m_NbIterations;
 		// initialize descriptive and target attributes if necessary
 		int attrType;
 		for(int space = 0; space < 2; space++){
@@ -71,20 +76,22 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		}
 		System.out.println(Arrays.deepToString(m_numMins));
 		System.out.println(Arrays.deepToString(m_numMaxs));
+		System.out.println("nomi: " + Arrays.deepToString(m_DescrTargetNomAttr));
+		System.out.println("numi: " + Arrays.deepToString(m_DescrTargetNumAttr));
 		
 		// attribute relevance
-		Random rnd = new Random(123); // TODO: deterministicno, ce nbExamples == nbRows ...
 		DataTuple tuple;
 		int tupleInd;
 		NearestNeighbour[] nearestNeighbours; 
 		for(int iteration = 0; iteration < m_NbIterations; iteration++){
-			tupleInd = (int) (rnd.nextDouble() * m_NbExamples);
+			tupleInd = nextInstance(iteration);
 			tuple = data.getTuple(tupleInd);
 			System.out.println("Tuple: " + tuple.toString());
 			nearestNeighbours = findNearestNeighbours(tupleInd, data);
 			// update importances
 			for(int attr = 0; attr < m_DescrTargetNomAttr[0].length; attr++){ // nominal
 				double [] info = getAttributeInfo(m_DescrTargetNomAttr[0][attr].getName());
+				System.out.println("Importance of " +m_DescrTargetNomAttr[0][attr].getName() + "is currently " + info[2]);
 				double distAttr = 0.0;
 				double sumDistAttr = 0.0;
 				double sumDistTarget = 0.0;
@@ -95,11 +102,13 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 					sumDistTarget += nearestNeighbours[neighbour].m_targetDistance;
 					sumDistAttrTarget += distAttr * nearestNeighbours[neighbour].m_targetDistance;					
 				}
-				info[2] += sumDistAttrTarget / sumDistAttr - (sumDistAttr - sumDistAttrTarget) / (m_NbNeighbours - sumDistTarget);
+				info[2] += (sumDistAttrTarget / sumDistAttr - (sumDistAttr - sumDistAttrTarget) / (m_NbNeighbours - sumDistTarget)) / m_NbIterations;
 				putAttributeInfo(m_DescrTargetNomAttr[0][attr].getName(), info);
+				System.out.println("Importance of " +m_DescrTargetNomAttr[0][attr].getName() + "updated to " + info[2]);
 			}
-			for(int attr = 0; attr < m_DescrTargetNomAttr[0].length; attr++){ // numeric
-				double [] info = getAttributeInfo(m_DescrTargetNomAttr[0][attr].getName());
+			for(int attr = 0; attr < m_DescrTargetNumAttr[0].length; attr++){ // numeric
+				double [] info = getAttributeInfo(m_DescrTargetNumAttr[0][attr].getName());
+				System.out.println("Importance of " +m_DescrTargetNumAttr[0][attr].getName() + "is currently " + info[2]);
 				double distAttr = 0.0;
 				double sumDistAttr = 0.0;
 				double sumDistTarget = 0.0;
@@ -110,8 +119,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 					sumDistTarget += nearestNeighbours[neighbour].m_targetDistance;
 					sumDistAttrTarget += distAttr * nearestNeighbours[neighbour].m_targetDistance;					
 				}
-				info[2] += sumDistAttrTarget / sumDistAttr - (sumDistAttr - sumDistAttrTarget) / (m_NbNeighbours - sumDistTarget);
+				info[2] += (sumDistAttrTarget / sumDistAttr - (sumDistAttr - sumDistAttrTarget) / (m_NbNeighbours - sumDistTarget)) / m_NbIterations;
 				putAttributeInfo(m_DescrTargetNumAttr[0][attr].getName(), info);
+				System.out.println("Importance of " +m_DescrTargetNumAttr[0][attr].getName() + "updated to " + info[2]);
 			}
 			
 		}
@@ -183,7 +193,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
         dist += calculateNominalDist(t1, t2, space);
         dist += calculateNumericDist(t1, t2, space);
         dist += calculateTimeSeriesDist(t1, t2, space); 
-        return dist;
+        return dist / m_NbDescrTargetAttrs[space];
     }
 	
     // TODO: make handling of missing values reliefish for all dist.
@@ -207,7 +217,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		int v2 = attr.getNominal(t2);
 		if(v1 >= attr.m_NbValues){
 			if(v2 >= attr.m_NbValues){	// both missing
-				return m_bbothMissing;
+				return m_bothMissing;
 			} else{ 		   			// the first missing
 				return m_oneMissing;
 			}
@@ -241,7 +251,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		double v2 = numAttr.getNumeric(t2);
 		if(t1.hasNumMissing(numAttr.getArrayIndex())){
 			if(t2.hasNumMissing(numAttr.getArrayIndex())){
-				return m_bbothMissing;
+				return m_bothMissing;
 			} else{
 				return m_oneMissing;
 			}
@@ -261,22 +271,29 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     	return 0.0;
     }
     
-	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel) throws ClusException{
-		ArrayList<String> attests = new ArrayList<String>();
-		fillWithAttributesInTree((ClusNode)model, attests);
-		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
-		double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel), model, cr);
-		for (int z = 0; z < attests.size(); z++){//for the attributes that appear in the tree
-			String current_attribute = (String)attests.get(z);
-			double [] info = getAttributeInfo(current_attribute);
-			double type = info[0];
-			double position = info[1];
-			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel), (int)type, (int)position);
-			double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
-			for(int i = 0; i < oob_errs.length; i++){
-				info[2 + i] += oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0];
-			}
-			putAttributeInfo(current_attribute, info);
+	public void sortFeatureRanks(){
+		Iterator iter = m_AllAttributes.keySet().iterator();
+		while (iter.hasNext()){
+			String attr = (String)iter.next();
+//			double score = ((double[])m_AllAttributes.get(attr))[2]/ClusEnsembleInduce.getMaxNbBags();
+			double score = ((double[])m_AllAttributes.get(attr))[2];
+			ArrayList attrs = new ArrayList();
+			if (m_FeatureRanks.containsKey(score))
+				attrs = (ArrayList)m_FeatureRanks.get(score);
+			attrs.add(attr);
+			m_FeatureRanks.put(score, attrs);
+		}
+	}
+	/**
+	 * Returns the index of the chosen example in the iteration {@code iteration}.
+	 * @param iteration
+	 * @return
+	 */
+	private int nextInstance(int iteration){
+		if(m_isDeterministic){
+			return iteration;
+		} else{
+			return(int) (m_rnd.nextDouble() * m_NbExamples);
 		}
 	}
 }
