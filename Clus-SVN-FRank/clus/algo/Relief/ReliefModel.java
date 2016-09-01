@@ -24,8 +24,8 @@ public class ReliefModel implements ClusModel{
 	
 	public ReliefModel(int neighbours, int iterations, RowData data) throws ClusException{
 		this.m_Data = data;
-		if(neighbours == -1 || neighbours > data.getNbRows()){
-			this.m_NbNeighbours = data.getNbRows();
+		if(neighbours == -1 || neighbours >= data.getNbRows()){
+			this.m_NbNeighbours = data.getNbRows() - 1;
 		} else if(neighbours > 0){
 			this.m_NbNeighbours = neighbours;
 		} else{
