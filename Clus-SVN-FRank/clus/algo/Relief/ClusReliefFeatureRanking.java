@@ -11,6 +11,7 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
+import clus.data.type.StringAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.error.ClusNominalError;
 import clus.ext.ensembles.ClusEnsembleFeatureRanking;
@@ -272,17 +273,17 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		}
     }
     
-    public double calculateNumericDist1D(DataTuple t1, DataTuple t2, NumericAttrType numAttr, double normalizationFactor){
-		double v1 = numAttr.getNumeric(t1);
-		double v2 = numAttr.getNumeric(t2);
-		if(t1.hasNumMissing(numAttr.getArrayIndex())){
-			if(t2.hasNumMissing(numAttr.getArrayIndex())){
+    public double calculateNumericDist1D(DataTuple t1, DataTuple t2, NumericAttrType attr, double normalizationFactor){
+		double v1 = attr.getNumeric(t1);
+		double v2 = attr.getNumeric(t2);
+		if(t1.hasNumMissing(attr.getArrayIndex())){
+			if(t2.hasNumMissing(attr.getArrayIndex())){
 				return m_bothMissing;
 			} else{
 				return m_oneMissing;
 			}
 		} else{
-			if(t2.hasNumMissing(numAttr.getArrayIndex())){
+			if(t2.hasNumMissing(attr.getArrayIndex())){
 				return m_oneMissing;
 			} else{
 				return Math.abs(v1 - v2) / normalizationFactor;
@@ -291,9 +292,21 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     	
     }
     
-    public double calculateTimeSeriesDist1D(DataTuple t1, DataTuple t2, int spaceType){
+    public double calculateTimeSeriesDist1D(DataTuple t1, DataTuple t2, TimeSeriesAttrType attr){
     	return 0.0;
     }
+    
+    /**
+     * Computes Levenshtein's distance between the string values of the component {@code attr}.
+     * @param t1
+     * @param t2
+     * @param attr
+     * @return
+     */
+    public double calculateStringDist1D(DataTuple t1, DataTuple t2, StringAttrType attr){
+    	return new Levenshtein(t1, t2, attr).getDist();    	
+    }
+
     
 	public void sortFeatureRanks(){
 		Iterator iter = m_AllAttributes.keySet().iterator();
@@ -308,6 +321,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			m_FeatureRanks.put(score, attrs);
 		}
 	}
+	
 	/**
 	 * Returns the index of the chosen example in the iteration {@code iteration}.
 	 * @param iteration
@@ -317,7 +331,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		if(m_isDeterministic){
 			return iteration;
 		} else{
-			return(int) (m_rnd.nextDouble() * m_NbExamples);
+			return (int) (m_rnd.nextDouble() * m_NbExamples);
 		}
 	}
 }
