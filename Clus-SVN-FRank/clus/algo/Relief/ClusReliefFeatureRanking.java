@@ -1,5 +1,6 @@
 package clus.algo.Relief;
 
+import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -13,9 +14,15 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.data.type.StringAttrType;
 import clus.data.type.TimeSeriesAttrType;
-import clus.error.ClusNominalError;
 import clus.ext.ensembles.ClusEnsembleFeatureRanking;
-import clus.ext.ensembles.ClusEnsembleInduce;
+import clus.ext.timeseries.DTWTimeSeriesDist;
+import clus.ext.timeseries.QDMTimeSeriesDist;
+import clus.ext.timeseries.TSCTimeSeriesDist;
+import clus.ext.timeseries.TimeSeries;
+import clus.ext.timeseries.TimeSeriesDist;
+import clus.ext.timeseries.TimeSeriesStat;
+import clus.main.Settings;
+import clus.util.ClusException;
 
 public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbNeighbours;
@@ -39,6 +46,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	boolean m_isStandardClassification;						// standard classification or general case
 	int m_NbTargetValues;									// number of target values: if m_isStandardClassification: self explanatory, else: = 1
 	double[] m_targetProbabilities;
+	
+	int m_TimeSeriesDistance;
+	
 	boolean debug = false;
 	
 
@@ -50,6 +60,8 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	}
 	
 	public void calculateReliefImportance(RowData data) {
+		m_TimeSeriesDistance = data.m_Schema.getSettings().m_TimeSeriesDistance.getValue();
+		
 		setReliefDescription(m_NbNeighbours, m_NbIterations);
 		m_NbExamples = data.getNbRows();
 		m_isDeterministic = m_NbExamples == m_NbIterations;
@@ -291,9 +303,33 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		}
     	
     }
-    
-    public double calculateTimeSeriesDist1D(DataTuple t1, DataTuple t2, TimeSeriesAttrType attr){
-    	return 0.0;
+    /**
+     * Computes distance between the time series values of the component {@code attr}.
+     * @param t1
+     * @param t2
+     * @param attr
+     * @return
+     * @throws ClusException 
+     */
+    public double calculateTimeSeriesDist1D(DataTuple t1, DataTuple t2, TimeSeriesAttrType attr) throws ClusException{
+    	TimeSeries ts1 = attr.getTimeSeries(t1);
+    	TimeSeries ts2 = attr.getTimeSeries(t2);
+    	
+		switch (m_TimeSeriesDistance) {
+		case Settings.TIME_SERIES_DISTANCE_MEASURE_DTW:
+			return new DTWTimeSeriesDist(attr).calcDistance(t1, t2);
+		case Settings.TIME_SERIES_DISTANCE_MEASURE_QDM:
+			if (ts1.length() == ts2.length()) {
+				return new QDMTimeSeriesDist(attr).calcDistance(t1, t2);
+			} else {
+				throw new ClusException("QDM Distance is not implemented for time series with different length");
+			}
+		case Settings.TIME_SERIES_DISTANCE_MEASURE_TSC:
+			return new TSCTimeSeriesDist(attr).calcDistance(t1, t2);
+		default:
+			throw new ClusException("ClusReliefFeatureRanking.m_TimeSeriesDistance was not set to any known value.");
+		}    	
+    	
     }
     
     /**
@@ -306,7 +342,6 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     public double calculateStringDist1D(DataTuple t1, DataTuple t2, StringAttrType attr){
     	return new Levenshtein(t1, t2, attr).getDist();    	
     }
-
     
 	public void sortFeatureRanks(){
 		Iterator iter = m_AllAttributes.keySet().iterator();

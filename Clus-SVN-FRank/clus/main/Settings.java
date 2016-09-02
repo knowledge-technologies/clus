@@ -2061,7 +2061,21 @@ public class Settings implements Serializable {
 		return m_ReliefNbIterations.getValue();
 	}
 	
+/***********************************************************************
+ * Section: Distances 					                               *
+ ***********************************************************************/	
+//	Time Series covered already ...
+	INIFileSection m_SectionDistances;
+//	public final static String[] TIMESERIES_DISTANCE_TYPE = {"pearson", "warping", "qualitative"};
+//	
+//	public final static int TIMESERIES_DISTANCE_PEARSON = 0;
+//	public final static int TIMESERIES_DISTANCE_WARPING = 1;
+//	public final static int TIMESERIES_DISTANCE_QUALITATIVE = 2;
+//
+//	
+//	
 
+	
 /***********************************************************************
  * Section: Ensemble methods                                           *
  ***********************************************************************/
@@ -2774,6 +2788,9 @@ public class Settings implements Serializable {
 		m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileInt("neighbours", 10));
 		m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileInt("iterations", -1));
 		m_SectionRelief.setEnabled(false);
+		
+		m_SectionDistances = new INIFileSection("Distances");
+		m_SectionDistances.setEnabled(false);
 
 		m_SectionEnsembles = new INIFileSection("Ensemble");
 		m_SectionEnsembles.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
@@ -2860,6 +2877,7 @@ public class Settings implements Serializable {
 		m_Ini.addNode(m_SectionTimeSeries);
 		m_Ini.addNode(m_SectionPhylogeny);
 		m_Ini.addNode(m_SectionRelief);
+		m_Ini.addNode(m_SectionDistances);
 		m_Ini.addNode(m_SectionEnsembles);
 		m_Ini.addNode(m_SectionKNN);
 		m_Ini.addNode(m_SectionKNNT);
