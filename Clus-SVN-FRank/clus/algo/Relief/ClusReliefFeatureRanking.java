@@ -120,6 +120,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			// update importances
 			for(int targetValue = 0; targetValue < m_NbTargetValues; targetValue++){
 				for(int neighbour = 0; neighbour < m_NbNeighbours; neighbour++){
+					if(!m_isStandardClassification){
+						sumDistTarget += nearestNeighbours[targetValue][neighbour].m_targetDistance;
+					}
 					for(int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++){
 						attr = m_DescriptiveTargetAttr[0][attrInd];
 						double distAttr = 0.0;
@@ -131,10 +134,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 							distAttr = 0.0;
 						}						
 						if(m_isStandardClassification){
-							int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[1][0]).getNominal(tuple); // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+							int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[1][0]).getNominal(tuple);
 							sumDistAttr[attrInd] += targetValue == tupleTarget ? -distAttr: m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr;							
-						} else{
-							sumDistTarget += nearestNeighbours[targetValue][neighbour].m_targetDistance;
+						} else{							
 							sumDistAttr[attrInd] += distAttr;
 							sumDistAttrTarget[attrInd] += distAttr * nearestNeighbours[targetValue][neighbour].m_targetDistance;
 						}	
@@ -148,9 +150,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			if(m_isStandardClassification){
 				info[2] += sumDistAttr[attrInd] / (m_NbNeighbours * m_NbIterations);
 			} else{
-				info[2] += sumDistAttr[attrInd] / (m_NbNeighbours * m_NbIterations);
+				info[2] += sumDistAttrTarget[attrInd] / sumDistTarget - (sumDistAttr[attrInd] - sumDistAttrTarget[attrInd]) / (m_NbNeighbours * m_NbIterations - sumDistTarget);
 			}
-			System.out.println("Importance of " + attr.getName() + " updated to " + info[2]);
+//			System.out.println("Importance of " + attr.getName() + " updated to " + info[2]);
 			putAttributeInfo(attr.getName(), info);
 		}		
 	}
@@ -199,7 +201,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
         			// nothing to do here
         		}        		
         		if(sortingNeeded){
-    		        if (distances[i] > distances[neighbours[targetValue][0]]) {
+    		        if (distances[i] >= distances[neighbours[targetValue][0]]) {
     		            continue;
     		        }
     		        int j; // here the branch prediction should kick-in
@@ -216,7 +218,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			System.out.println("   nearest: " + Arrays.deepToString(neighbours));
 			System.out.println();
 		}
-		System.out.println(tupleInd + ";" + Arrays.deepToString(neighbours));
+//		System.out.println(tupleInd + ";" + Arrays.deepToString(neighbours));
 		NearestNeighbour[][] nearestNeighbours = new NearestNeighbour[m_NbTargetValues][m_NbNeighbours];
 		for(int value = 0; value < m_NbTargetValues; value++){
 			for(int i = 0; i < m_NbNeighbours; i++){
