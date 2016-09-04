@@ -13,6 +13,8 @@ public class LevenshteinTest {
 	@Test
 	public void testComputeDist() {
 		Object[][] listOfExamples = new Object[][]{
+			  new Object[] {"asd", "1asd", 1},
+			  new Object[] {"grk", "garac", 3},
 		      // When the values are the same, the distance is zero.
 		      new Object[] { "", "", 0 },
 		      new Object[] { "1", "1", 0 },
@@ -111,11 +113,9 @@ public class LevenshteinTest {
 		      new Object[] { "?e?uli?ka", "e?uli?ka", 1 },
 		    };		
 		for(int i = 0; i < listOfExamples.length; i++){
-//			System.out.println(i);
 			String a = (String) listOfExamples[i][0], b = (String) listOfExamples[i][1]; 
 			Levenshtein lev = new Levenshtein(a, b);
 			double razd = Math.max(a.length(), Math.max(1, b.length()));
-//			System.out.println(lev.getDist());
 			assertEquals("test: " + i + ": " + Arrays.toString(listOfExamples[i]), Double.parseDouble(listOfExamples[i][2].toString()) / razd, lev.getDist(), 0.0001);
 		}
 	}
