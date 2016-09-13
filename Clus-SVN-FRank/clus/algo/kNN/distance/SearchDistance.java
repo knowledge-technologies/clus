@@ -37,7 +37,7 @@ import clus.statistic.ClusDistance;
 public class SearchDistance extends ClusDistance{
 	private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 	private ClusDistance m_Distance;
-	private AttributeWeighting m_AttrWeighting;
+	public AttributeWeighting m_AttrWeighting; // TODO: move the attribute weights to the, e.g. Euclidean distance. Now, the weighted Euclidean dist. is sum_i [(a_i - b_i) * w_i]^2 ...
 
 	public SearchDistance(){
 		m_AttrWeighting = new NoWeighting();

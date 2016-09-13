@@ -55,7 +55,7 @@ public class EuclideanDistance extends ClusDistance{
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
         for( ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
-            dist += Math.pow(m_Search.calcDistanceOnAttr(t1, t2, attr),2);
+            dist += Math.pow(m_Search.calcDistanceOnAttr(t1, t2, attr), 2);
         return Math.sqrt(dist);
     }
 
