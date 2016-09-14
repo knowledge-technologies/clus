@@ -31,7 +31,7 @@ public class ClusRandom {
 	public static int m_Preset;
 	public static boolean m_IsPreset;
 
-	public final static int NB_RANDOM = 9;
+	public final static int NB_RANDOM = 11;
 	public final static int RANDOM_TEST_DIR = 0;
 	public final static int RANDOM_SELECTION = 1;
 	public final static int RANDOM_PARAM_TUNE = 2;
@@ -44,9 +44,13 @@ public class ClusRandom {
 	public final static int RANDOM_SAMPLE = 6;
 	/** Used for random split-point selection for Extra-Trees Ensembles */
 	public final static int RANDOM_EXTRATREE = 7;
-	/** Used for ensemble target subspacing */
+	/** Used for ensemble target subspacing*/
 	public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING = 8;
-	
+	/** Used for ensemble target subspacing - poisson sampling of the mean */
+	public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING_POISSON_MEAN = 9;
+	/** Used for ensemble target subspacing - poisson sampling iterations */
+	public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING_POISSON_SAMPLING = 10;
+
 	public static Random[] m_Random;
 
 	public static Random getRandom(int idx) {
