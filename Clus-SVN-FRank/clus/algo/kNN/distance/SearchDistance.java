@@ -66,7 +66,7 @@ public class SearchDistance extends ClusDistance{
 			if(max_values[i] != min_values[i]){ // at least two different values
 				m_NormalizationWeights[i] = 1.0 / (max_values[i] - min_values[i]);
 			} else{
-				m_NormalizationWeights[i] = 0.0;
+				m_NormalizationWeights[i] = 3.14159; // does not matter, which value, if there is only one different value
 			}
 		}
 	}
@@ -93,12 +93,15 @@ public class SearchDistance extends ClusDistance{
 
 	/**
 	 * Calculates distance between tuples based only on a a given attribute. 
-	 * In case of numeric values this is |t1-t2|. When on of the values is missing
-	 * max(t,1-t) is taken. When both are missing 1 is returned.
+	 * In case of numeric values this is |t1-t2| * normalization weight of the attr.<br>
+	 * 
+	 * When on of the values is missing max(t,1-t) is taken, where<br><br> 
+	 * 
+	 * t = (attr.getNumeric(tuple) - min value of attr) * normalization weight of attr.<br><br>
+	 * 
+	 * When both are missing 1 is returned. 
 	 * For nominal values: if both are non missing and same 0 is returned, 1 otherwise.
 	 * This function just helps to define different distances.
-	 * 
-	 * What about those rare occasions ... when range of numeric attributes != [0, 1]!!!!!
 	 * 
 	 * @param t1
 	 * @param t2
@@ -107,24 +110,21 @@ public class SearchDistance extends ClusDistance{
 	 */
 	public double calcDistanceOnAttr(DataTuple t1, DataTuple t2, ClusAttrType attr){
 		if( attr instanceof NumericAttrType ){
-			/*
-			 * If one of values is missing, return value 1-(others value) to
-			 * ensure maximum difference.
-			 * If both are missing, return 1.
-			 * If both are present, return absolute value.
-			 */
 			if( attr.isMissing(t2) )
-				if( attr.isMissing(t1) ) // both missing
-					return m_AttrWeighting.getWeight(attr);
-				else // t2 missing
-					return Math.max(attr.getNumeric(t1), 1-attr.getNumeric(t1))*m_AttrWeighting.getWeight(attr);
+				if( attr.isMissing(t1) ){ // both missing
+					return m_AttrWeighting.getWeight(attr); // * 1.0
+				}else{ // t2 missing
+					double t = (attr.getNumeric(t1) - m_MinValues[attr.getIndex()]) * m_NormalizationWeights[attr.getIndex()];
+					return Math.max(t, 1 - t) * m_AttrWeighting.getWeight(attr);
+				}
 			else
-				if( attr.isMissing(t1) ) // t1 missing
-					return Math.max(attr.getNumeric(t2), 1-attr.getNumeric(t2))*m_AttrWeighting.getWeight(attr);
-				else // both present
-					return Math.abs(attr.getNumeric(t2)- attr.getNumeric(t1))*m_AttrWeighting.getWeight(attr);
-		}else
-			if( attr instanceof NominalAttrType ){
+				if( attr.isMissing(t1) ){ // t1 missing
+					double t = (attr.getNumeric(t2) - m_MinValues[attr.getIndex()]) * m_NormalizationWeights[attr.getIndex()];
+					return Math.max(t, 1 - t) * m_AttrWeighting.getWeight(attr);
+				} else{// both present
+					return Math.abs(attr.getNumeric(t2)- attr.getNumeric(t1)) * m_NormalizationWeights[attr.getIndex()] * m_AttrWeighting.getWeight(attr);
+				}
+		}else if( attr instanceof NominalAttrType ){
 				/*
 				 * If both values are present end share same value, return 0.
 				 * Otherwise return 1 (weighted).
@@ -133,9 +133,9 @@ public class SearchDistance extends ClusDistance{
 						!attr.isMissing(t2) &&
 						!attr.isMissing(t1)
 						? 0 : m_AttrWeighting.getWeight(attr);
-			}else{
-				throw new IllegalArgumentException(this.getClass().getName() + ":calcDistanceOnAttr() - Distance not supported!");
-			}
+		} else{
+			throw new IllegalArgumentException(this.getClass().getName() + ":calcDistanceOnAttr() - Distance not supported!");
+		}
 	}
 
 
