@@ -2271,7 +2271,10 @@ public class Settings implements Serializable {
 			fsize = (int) Math.ceil(Math.sqrt(ubound));//upper bound of sqrt
 		} else if (value.equalsIgnoreCase("LOG") || value.equalsIgnoreCase("0")){// the 0 is to keep the previous setting
 			fsize = (int) Math.ceil(Math.log(ubound)/Math.log(2));//upper bound of log2
-		} else {
+		} else if (value.equalsIgnoreCase("RandomPoisson")) { // sample independently at random
+			fsize = -1; // dummy value
+		}
+		else {
 			try {
 				int val = Integer.parseInt(value);
 				if (val > ubound){
@@ -2292,8 +2295,9 @@ public class Settings implements Serializable {
 				}catch (Exception e2) {
 					System.err.println("Error while setting the feature subset size!");
 					System.err.println("The set of possible values include:");
-					System.err.println("\t 0 or log for taking the log2,");
-					System.err.println("\t sqrt for taking the sqrt,");
+					System.err.println("\t 0 or LOG for taking the log2,");
+					System.err.println("\t SQRT for taking the sqrt,");
+					System.err.println("\t RandomPoisson for taking a random subset of targets (works only in ensemble mode for target subspacing).");
 					System.err.println("\t integer for taking the absolute number of attributes,");
 					System.err.println("\t double (0,1) for taking the fraction values.");
 					System.exit(-1);
