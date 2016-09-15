@@ -30,6 +30,7 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.main.Settings;
 import clus.statistic.ClusDistance;
+import weka.classifiers.rules.ZeroR;
 
 /**
  * @author Mitja Pugelj
@@ -38,6 +39,8 @@ public class SearchDistance extends ClusDistance{
 	private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 	private ClusDistance m_Distance;
 	public AttributeWeighting m_AttrWeighting; // TODO: move the attribute weights to the, e.g. Euclidean distance. Now, the weighted Euclidean dist. is sum_i [(a_i - b_i) * w_i]^2 ...
+	public double[] m_MinValues; // minimal values of numeric attributes
+	public double[] m_NormalizationWeights; // for attribute i: weight = 1 / (max value - min value)
 
 	public SearchDistance(){
 		m_AttrWeighting = new NoWeighting();
@@ -49,6 +52,23 @@ public class SearchDistance extends ClusDistance{
 
 	public void setWeighting(AttributeWeighting weighting){
 		m_AttrWeighting = weighting;
+	}
+	/**
+	 * Minimal and maximal values of numeric attributes are converted to normalization weights.
+	 * @param min_values
+	 * @param max_values
+	 */
+	public void setNormalizationWeights(double[] min_values, double[] max_values){
+		m_MinValues = new double[min_values.length];
+		m_NormalizationWeights = new double[min_values.length];
+		for(int i = 0; i < m_NormalizationWeights.length; i++){
+			m_MinValues[i] = min_values[i];
+			if(max_values[i] != min_values[i]){ // at least two different values
+				m_NormalizationWeights[i] = 1.0 / (max_values[i] - min_values[i]);
+			} else{
+				m_NormalizationWeights[i] = 0.0;
+			}
+		}
 	}
 
 	/**
@@ -77,6 +97,9 @@ public class SearchDistance extends ClusDistance{
 	 * max(t,1-t) is taken. When both are missing 1 is returned.
 	 * For nominal values: if both are non missing and same 0 is returned, 1 otherwise.
 	 * This function just helps to define different distances.
+	 * 
+	 * What about those rare occasions ... when range of numeric attributes != [0, 1]!!!!!
+	 * 
 	 * @param t1
 	 * @param t2
 	 * @param attr

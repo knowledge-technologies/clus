@@ -41,8 +41,11 @@ import clus.algo.kNN.methods.vpTree.VPTree;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NumericAttrType;
 import clus.ext.hierarchical.WHTDStatistic;
 import clus.ext.timeseries.TimeSeriesStat;
+import clus.main.ClusModelInfoList;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
@@ -57,8 +60,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+
+import javax.swing.text.Position;
+
 import jeans.util.MyArray;
 
 /**
@@ -149,9 +156,45 @@ public class KnnModel implements ClusModel, Serializable{
 		}else{
 			distance = new EuclideanDistance(searchDistance);
 		}
-
+		
+		// initialize min values of numeric attributes: needed for normalization in the distance computation
+		int[] data_types = new int[]{ClusModelInfoList.TRAINSET, ClusModelInfoList.TESTSET, ClusModelInfoList.VALIDATIONSET};
+		double[] mins = null;
+		double[] maxs = null;
+		int nb_attrs = -1;
+		for(int type = 0; type < data_types.length; type++){
+			RowData data = cr.getDataSet(type);
+			ClusSchema schema = cr.getStatManager().getSchema();
+			if(data != null){
+				if(mins == null){
+					nb_attrs = schema.getNbAttributes();
+					mins = new double[nb_attrs];
+					Arrays.fill(mins, Double.POSITIVE_INFINITY);
+					maxs = new double[nb_attrs];
+					Arrays.fill(maxs, Double.NEGATIVE_INFINITY);	
+				}
+				// compute max and min for every numeric attribute
+				for(int tuple_ind = 0; tuple_ind < data.getNbRows(); tuple_ind++){
+					for (int i = 0; i < nb_attrs; i++) {
+						ClusAttrType attr_type = schema.getAttrType(i);
+						if (!attr_type.isDisabled() && attr_type instanceof NumericAttrType) {
+							double t = attr_type.getNumeric(data.getTuple(tuple_ind));
+							if (t < mins[i]){
+								mins[i] = t;
+							}
+							if (t > maxs[i]){
+								maxs[i] = t;
+							}
+						}
+					}
+					
+				}
+			}
+		}		
+		
 		searchDistance.setDistance(distance);
 		searchDistance.setWeighting(attrWe);
+		searchDistance.setNormalizationWeights(mins, maxs);
 
 		// Select search method according to settings file.
 		String alg = Settings.kNN_method.getStringValue();
