@@ -38,21 +38,19 @@ import weka.classifiers.rules.ZeroR;
 public class SearchDistance extends ClusDistance{
 	private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 	private ClusDistance m_Distance;
-	public AttributeWeighting m_AttrWeighting; // TODO: move the attribute weights to the, e.g. Euclidean distance. Now, the weighted Euclidean dist. is sum_i [(a_i - b_i) * w_i]^2 ...
 	public double[] m_MinValues; // minimal values of numeric attributes
 	public double[] m_NormalizationWeights; // for attribute i: weight = 1 / (max value - min value)
 
 	public SearchDistance(){
-		m_AttrWeighting = new NoWeighting();
+		m_MinValues = null;
+		m_NormalizationWeights = null;
 	}
 
 	public void setDistance(ClusDistance dist){
 		m_Distance = dist;
 	}
 
-	public void setWeighting(AttributeWeighting weighting){
-		m_AttrWeighting = weighting;
-	}
+
 	/**
 	 * Minimal and maximal values of numeric attributes are converted to normalization weights.
 	 * @param min_values
@@ -71,13 +69,7 @@ public class SearchDistance extends ClusDistance{
 		}
 	}
 
-	/**
-	 * Returns weighting used for distance calculation.
-	 * @return
-	 */
-	public AttributeWeighting getWeighting(){
-		return m_AttrWeighting;
-	}
+
 
 	/**
 	 * A wrapper method that returns distance between two tuples based on
@@ -112,17 +104,17 @@ public class SearchDistance extends ClusDistance{
 		if( attr instanceof NumericAttrType ){
 			if( attr.isMissing(t2) )
 				if( attr.isMissing(t1) ){ // both missing
-					return m_AttrWeighting.getWeight(attr); // * 1.0
+					return 1.0; //m_AttrWeighting.getWeight(attr); // * 1.0
 				}else{ // t2 missing
 					double t = (attr.getNumeric(t1) - m_MinValues[attr.getIndex()]) * m_NormalizationWeights[attr.getIndex()];
-					return Math.max(t, 1 - t) * m_AttrWeighting.getWeight(attr);
+					return Math.max(t, 1 - t); // * m_AttrWeighting.getWeight(attr);
 				}
 			else
 				if( attr.isMissing(t1) ){ // t1 missing
 					double t = (attr.getNumeric(t2) - m_MinValues[attr.getIndex()]) * m_NormalizationWeights[attr.getIndex()];
-					return Math.max(t, 1 - t) * m_AttrWeighting.getWeight(attr);
+					return Math.max(t, 1 - t); // * m_AttrWeighting.getWeight(attr);
 				} else{// both present
-					return Math.abs(attr.getNumeric(t2)- attr.getNumeric(t1)) * m_NormalizationWeights[attr.getIndex()] * m_AttrWeighting.getWeight(attr);
+					return Math.abs(attr.getNumeric(t2)- attr.getNumeric(t1)) * m_NormalizationWeights[attr.getIndex()];// * m_AttrWeighting.getWeight(attr);
 				}
 		}else if( attr instanceof NominalAttrType ){
 				/*
@@ -132,7 +124,7 @@ public class SearchDistance extends ClusDistance{
 				return attr.getNominal(t2) == attr.getNominal(t1) &&
 						!attr.isMissing(t2) &&
 						!attr.isMissing(t1)
-						? 0 : m_AttrWeighting.getWeight(attr);
+						? 0 : 1.0; //m_AttrWeighting.getWeight(attr);
 		} else{
 			throw new IllegalArgumentException(this.getClass().getName() + ":calcDistanceOnAttr() - Distance not supported!");
 		}
@@ -148,13 +140,14 @@ public class SearchDistance extends ClusDistance{
 	 * @return
 	 */
 	public double getValue(DataTuple t1, ClusAttrType attr) {
-		if( attr instanceof NumericAttrType )
-			return attr.getNumeric(t1)*m_AttrWeighting.getWeight(attr);
-		else if( attr instanceof NominalAttrType )
-			return attr.getNominal(t1)*m_AttrWeighting.getWeight(attr);
-		else{
-			throw new IllegalArgumentException("Attribute type " + attr + " is not supported.");
-		}
+		throw new RuntimeException("We do not trust SearchDistance.getValue method yet.");
+//		if( attr instanceof NumericAttrType )
+//			return attr.getNumeric(t1) * m_Distance.m_AttrWeighting.getWeight(attr);
+//		else if( attr instanceof NominalAttrType )
+//			return attr.getNominal(t1) *  m_Distance.m_AttrWeighting.getWeight(attr);
+//		else{
+//			throw new IllegalArgumentException("Attribute type " + attr + " is not supported.");
+//		}
 	}
 
 	public ClusDistance getBasicDistance() {

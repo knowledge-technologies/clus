@@ -193,7 +193,7 @@ public class KnnModel implements ClusModel, Serializable{
 		}		
 		
 		searchDistance.setDistance(distance);
-		searchDistance.setWeighting(attrWe);
+		distance.setWeighting(attrWe);
 		searchDistance.setNormalizationWeights(mins, maxs);
 
 		// Select search method according to settings file.

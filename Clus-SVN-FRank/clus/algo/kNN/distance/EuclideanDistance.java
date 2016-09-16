@@ -22,6 +22,8 @@
 
 package clus.algo.kNN.distance;
 
+import clus.algo.kNN.distance.attributeWeighting.AttributeWeighting;
+import clus.algo.kNN.distance.attributeWeighting.NoWeighting;
 import clus.data.rows.DataTuple; 
 import clus.data.type.ClusAttrType;
 import clus.main.Settings;
@@ -44,6 +46,7 @@ public class EuclideanDistance extends ClusDistance{
 
     public EuclideanDistance(SearchDistance search){
     	m_Search = search;
+    	m_AttrWeighting = new NoWeighting();
     }
 
     /**
@@ -55,12 +58,19 @@ public class EuclideanDistance extends ClusDistance{
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
         for( ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
-            dist += Math.pow(m_Search.calcDistanceOnAttr(t1, t2, attr), 2);
+            dist += Math.pow(m_Search.calcDistanceOnAttr(t1, t2, attr), 2) * m_AttrWeighting.getWeight(attr);
         return Math.sqrt(dist);
     }
 
     public String getName() {
         return "Euclidean distance";
     }
+    
+	/**
+	 * Returns weighting used for distance calculation.
+	 * @return
+	 */
+
+	
 
 }

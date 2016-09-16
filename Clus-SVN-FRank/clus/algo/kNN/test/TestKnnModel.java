@@ -141,7 +141,8 @@ public class TestKnnModel implements ClusModel, Serializable{
 			distance = new EuclideanDistance(searchDistance);
 		}
 		searchDistance.setDistance(distance);
-		searchDistance.setWeighting(attrWe);
+//		searchDistance.setWeighting(attrWe);
+		
 		// Method testing code:
 		m_Algorithms = new HashMap<String,SearchAlgorithm>();
 		m_Algorithms.put("bf",new BrutForce(cr,searchDistance));

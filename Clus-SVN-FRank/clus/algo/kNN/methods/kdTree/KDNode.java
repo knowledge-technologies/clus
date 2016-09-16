@@ -50,14 +50,15 @@ public class KDNode{
 	 * @param tree Reference to tree containing this node.
 	 */
 	public KDNode(KDTree tree, int level){
-		m_LeftSubTree = null;
-		m_RightSubTree = null;
-		m_Tree = tree;
-		m_Level = level;
-		try{
-			ClusAttrType[] tmp = m_Tree.getRun().getDataSet(ClusRun.TRAINSET).m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
-			m_Attr = tmp[m_Level % tmp.length];
-		}catch( Exception e){ e.printStackTrace(); }
+		throw new RuntimeException("KD-trees should not be used. We have at least one bug: in calcMedian,  the average is computed");
+//		m_LeftSubTree = null;
+//		m_RightSubTree = null;
+//		m_Tree = tree;
+//		m_Level = level;
+//		try{
+//			ClusAttrType[] tmp = m_Tree.getRun().getDataSet(ClusRun.TRAINSET).m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+//			m_Attr = tmp[m_Level % tmp.length];
+//		}catch( Exception e){ e.printStackTrace(); }
 	}
 
 	/**
