@@ -179,10 +179,10 @@ public class KnnModel implements ClusModel, Serializable{
 						ClusAttrType attr_type = schema.getAttrType(i);
 						if (!attr_type.isDisabled() && attr_type instanceof NumericAttrType) {
 							double t = attr_type.getNumeric(data.getTuple(tuple_ind));
-							if (t < mins[i]){
+							if (t < mins[i] && t != Double.POSITIVE_INFINITY){
 								mins[i] = t;
 							}
-							if (t > maxs[i]){
+							if (t > maxs[i] && t != Double.POSITIVE_INFINITY){
 								maxs[i] = t;
 							}
 						}
@@ -219,31 +219,31 @@ public class KnnModel implements ClusModel, Serializable{
 
 		// save prediction template
 		// @todo : should all this be repalced with:
-		// statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
+		statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
 
-		if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
-			if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
-				statTemplate = new ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelTrheshold()); 
-			} else{
-				statTemplate = new ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
-			}
-		}			
-		else if( cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION )
-			statTemplate = new RegressionStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
-		else if( cr.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES ){
-			// TimeSeriesAttrType attr = this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET)[0];
-			// statTemplate = new TimeSeriesStat(attxr, new DTWTimeSeriesDist(attr), 0 );
-			System.out.println("-------------");
-			statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
-			System.out.println(statTemplate.getDistanceName());
-			System.out.println("----------------");
-		}else if( cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL ){
-			statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
-			System.out.println("----------------------");
-			System.out.println(statTemplate.getDistanceName());
-			System.out.println(statTemplate.getClass());
-			System.out.println("----------------------");
-		}
+//		if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
+//			if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
+//				statTemplate = new ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelTrheshold()); 
+//			} else{
+//				statTemplate = new ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+//			}
+//		}			
+//		else if( cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION )
+//			statTemplate = new RegressionStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+//		else if( cr.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES ){
+//			// TimeSeriesAttrType attr = this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET)[0];
+//			// statTemplate = new TimeSeriesStat(attxr, new DTWTimeSeriesDist(attr), 0 );
+//			System.out.println("-------------");
+//			statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
+//			System.out.println(statTemplate.getDistanceName());
+//			System.out.println("----------------");
+//		}else if( cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL ){
+//			statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
+//			System.out.println("----------------------");
+//			System.out.println(statTemplate.getDistanceName());
+//			System.out.println(statTemplate.getClass());
+//			System.out.println("----------------------");
+//		}
 	}
 
 	public ClusStatistic predictWeighted(DataTuple tuple) {
@@ -251,9 +251,13 @@ public class KnnModel implements ClusModel, Serializable{
 		LinkedList<DataTuple> nearest = this.search.returnNNs(tuple,this.k);
 		// 	Initialize distance weighting according to setting file
 		DistanceWeighting weighting; 
-		if ( this.weightingOption == WEIGHTING_INVERSE ) weighting = new WeightOver(nearest, this.search, tuple);
-		else if ( this.weightingOption == WEIGHTING_MINUS ) weighting = new WeightMinus(nearest, this.search, tuple);
-		else weighting = new WeightConstant(nearest, this.search, tuple);
+		if ( this.weightingOption == WEIGHTING_INVERSE ){
+			weighting = new WeightOver(nearest, this.search, tuple);
+		} else if ( this.weightingOption == WEIGHTING_MINUS ){
+			weighting = new WeightMinus(nearest, this.search, tuple);
+		} else {
+			weighting = new WeightConstant(nearest, this.search, tuple);
+		}
 		// Vote
 		ClusStatistic stat = statTemplate.cloneStat();
 		if( stat instanceof TimeSeriesStat ){

@@ -141,6 +141,9 @@ public class TestKnnModel implements ClusModel, Serializable{
 			distance = new EuclideanDistance(searchDistance);
 		}
 		searchDistance.setDistance(distance);
+		double a = 2.0, b = 3.14;
+		a++;
+		if(a - 1.0 < b) throw new RuntimeException("We do not know, if this is working ... (due to discovered bugs and changes in distance computation)");
 //		searchDistance.setWeighting(attrWe);
 		
 		// Method testing code:

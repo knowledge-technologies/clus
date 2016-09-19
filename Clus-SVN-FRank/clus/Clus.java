@@ -779,9 +779,15 @@ public class Clus implements CMDLineArgsProvider {
 			if (cr.getModelInfo(i) != null && !m_Sett.shouldShowModel(i)) {
 				// If don't show model, then don't compute error
 				ClusModelInfo inf = cr.getModelInfo(i); 
-				if (inf.getTrainingError() != null) inf.getTrainingError().clear();
-				if (inf.getTestError() != null) inf.getTestError().clear();
-				if (inf.getValidationError() != null) inf.getValidationError().clear();
+				if (inf.getTrainingError() != null){
+					inf.getTrainingError().clear();
+				}
+				if (inf.getTestError() != null){
+					inf.getTestError().clear();
+				}
+				if (inf.getValidationError() != null){
+					inf.getValidationError().clear();
+				}
 			}
 		}		
 		if (m_Sett.isOutTrainError()) {
