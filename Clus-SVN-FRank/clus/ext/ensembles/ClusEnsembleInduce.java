@@ -983,6 +983,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 						weights = new double[]{m_BagClus.getSettings().getSymbolicWeight()};
 					}
 					m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, cr, weights, 0);
+				} else{
+					System.err.println("The following feature ranking methods are implemented for Extra trees:");
+					System.err.println("Genie3");
+					System.err.println("Symbolic");
+					System.err.println("But you have chosen ranking method " + Settings.RANKING_TYPE[m_BagClus.getSettings().getRankingMethod()]);
+					System.err.println("No ranking will be computed.");
+					m_FeatRank = false;
+					
 				}
 			}
 			
