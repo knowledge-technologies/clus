@@ -96,8 +96,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 				m_numMaxs.put(attrName, Double.NEGATIVE_INFINITY);
 				for(int example = 0; example < m_NbExamples; example++){
 					value = numAttr.getNumeric(data.getTuple(example));
-					if(value < m_numMins.get(attrName)) m_numMins.put(attrName, value);
-					if(value > m_numMaxs.get(attrName)) m_numMaxs.put(attrName, value);
+					if(value < m_numMins.get(attrName)){ // equivalent to ... && value != Double.POSITIVE_INFINITY
+						m_numMins.put(attrName, value);
+					}
+					if(value > m_numMaxs.get(attrName) && value != Double.POSITIVE_INFINITY) m_numMaxs.put(attrName, value);
 				}
 			}			
 		}
@@ -122,21 +124,29 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			nearestNeighbours = findNearestNeighbours(tupleInd, data);
 			// CALCULATE IMPORTANCES
 			for(int targetValue = 0; targetValue < m_NbTargetValues; targetValue++){
-				for(int neighbour = 0; neighbour < m_NbNeighbours; neighbour++){
+				double tempSumDistTarget = 0.0;
+				double[] tempSumDistAttr = new double[m_NbDescriptiveAttrs];
+				double[] tempSumDistAttrTarget = new double[m_NbDescriptiveAttrs];
+				for(int neighbour = 0; neighbour < nearestNeighbours[targetValue].length; neighbour++){
 					if(!m_isStandardClassification){
-						sumDistTarget += nearestNeighbours[targetValue][neighbour].m_targetDistance;
+						tempSumDistTarget += nearestNeighbours[targetValue][neighbour].m_targetDistance;
 					}
 					for(int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++){
 						attr = m_DescriptiveTargetAttr[0][attrInd];
 						double distAttr = calcDistance1D(tuple, data.getTuple(nearestNeighbours[targetValue][neighbour].m_indexInDataSet), attr);						
 						if(m_isStandardClassification){
 							int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[1][0]).getNominal(tuple);
-							sumDistAttr[attrInd] += targetValue == tupleTarget ? -distAttr: m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr;							
+							tempSumDistAttr[attrInd] += targetValue == tupleTarget ? -distAttr: m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr;							
 						} else{							
-							sumDistAttr[attrInd] += distAttr;
-							sumDistAttrTarget[attrInd] += distAttr * nearestNeighbours[targetValue][neighbour].m_targetDistance;
+							tempSumDistAttr[attrInd] += distAttr;
+							tempSumDistAttrTarget[attrInd] += distAttr * nearestNeighbours[targetValue][neighbour].m_targetDistance;
 						}	
 					}
+				}
+				sumDistTarget += tempSumDistTarget / nearestNeighbours[targetValue].length;
+				for(int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++){
+					sumDistAttr[attrInd] += tempSumDistAttr[attrInd] / nearestNeighbours[targetValue].length;
+					sumDistAttrTarget[attrInd] += tempSumDistAttrTarget[attrInd] /  nearestNeighbours[targetValue].length;
 				}
 			}
 		}
@@ -145,9 +155,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			attr = m_DescriptiveTargetAttr[0][attrInd];
 			double [] info = getAttributeInfo(attr.getName());
 			if(m_isStandardClassification){
-				info[2] += sumDistAttr[attrInd] / (m_NbNeighbours * m_NbIterations);
+				info[2] += sumDistAttr[attrInd] / m_NbIterations;
 			} else{
-				info[2] += sumDistAttrTarget[attrInd] / sumDistTarget - (sumDistAttr[attrInd] - sumDistAttrTarget[attrInd]) / (m_NbNeighbours * m_NbIterations - sumDistTarget);
+				info[2] += sumDistAttrTarget[attrInd] / sumDistTarget - (sumDistAttr[attrInd] - sumDistAttrTarget[attrInd]) / (m_NbIterations - sumDistTarget);
 			}
 			putAttributeInfo(attr.getName(), info);
 		}		
@@ -220,9 +230,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			System.out.println("   nearest: " + Arrays.deepToString(neighbours));
 			System.out.println();
 		}
-		NearestNeighbour[][] nearestNeighbours = new NearestNeighbour[m_NbTargetValues][m_NbNeighbours];
+		NearestNeighbour[][] nearestNeighbours = new NearestNeighbour[m_NbTargetValues][];
 		for(int value = 0; value < m_NbTargetValues; value++){
-			for(int i = 0; i < m_NbNeighbours; i++){
+			nearestNeighbours[value] = new NearestNeighbour[whereToPlaceNeigh[value]];
+			for(int i = 0; i < whereToPlaceNeigh[value]; i++){
 				nearestNeighbours[value][i] = new NearestNeighbour(neighbours[value][i], distances[neighbours[value][i]], calcDistance(tuple, data.getTuple(neighbours[value][i]), 1));
 			}
 		}
