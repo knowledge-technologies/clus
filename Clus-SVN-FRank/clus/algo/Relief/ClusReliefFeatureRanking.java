@@ -83,7 +83,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 					m_targetProbabilities[value] /= m_NbExamples - m_targetProbabilities[m_NbTargetValues];
 				}
 			}
+			System.out.println(Arrays.toString(m_targetProbabilities));
 		}
+		
 		
 		// compute min and max of numeric attributes	
 		m_numMins = new HashMap<String, Double>();
@@ -121,12 +123,14 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		int tupleInd;
 		NearestNeighbour[][] nearestNeighbours;
 		ClusAttrType attr;
+		double successfulItearions = 0.0;
 		for(int iteration = 0; iteration < m_NbIterations; iteration++){
 			// CHOOSE TUPLE AND COMPUTE NEAREST NEIGHBOURS
 			tupleInd = nextInstance(iteration);
 			tuple = data.getTuple(tupleInd);
 			if(debug)System.out.println("Tuple: " + tuple.toString());
 			if(!(m_isStandardClassification && m_DescriptiveTargetAttr[1][0].isMissing(tuple))){
+				successfulItearions++;
 				nearestNeighbours = findNearestNeighbours(tupleInd, data);
 				// CALCULATE IMPORTANCES
 				for(int targetValue = 0; targetValue < m_NbTargetValues; targetValue++){
@@ -162,9 +166,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			attr = m_DescriptiveTargetAttr[0][attrInd];
 			double [] info = getAttributeInfo(attr.getName());
 			if(m_isStandardClassification){
-				info[2] += sumDistAttr[attrInd] / m_NbIterations;
+				info[2] += sumDistAttr[attrInd] / successfulItearions;
 			} else{
-				info[2] += sumDistAttrTarget[attrInd] / sumDistTarget - (sumDistAttr[attrInd] - sumDistAttrTarget[attrInd]) / (m_NbIterations - sumDistTarget);
+				info[2] += sumDistAttrTarget[attrInd] / sumDistTarget - (sumDistAttr[attrInd] - sumDistAttrTarget[attrInd]) / (successfulItearions - sumDistTarget);
 			}
 			putAttributeInfo(attr.getName(), info);
 		}		
