@@ -26,22 +26,21 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbIterations;
 
 	
-	private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][]; 
+	private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][];	// {array of descriptive attributes, array of target attributes}
 	
-	private int m_NbDescriptiveAttrs, m_NbTargetAttrs;
+	private int m_NbDescriptiveAttrs, m_NbTargetAttrs;		// number of descriptive and target attributes, respectively
 	
 	
 	private HashMap<String, Double> m_numMins, m_numMaxs;	// min and max for each numeric attribute
-	private int m_NbExamples;	
-	double m_oneMissing = 0.5;								// distances in the case of missing values
-	double m_bothMissing = 1.0;	
-	boolean m_isDeterministic;								// next instance generator (if m_NbIterations < m_NbExamples)
-	Random m_rnd = new Random(1234);
+	private int m_NbExamples;								// number of examples in the data		
+	double m_bothMissing = 1.0;								// distances in the case of missing values
+	boolean m_isDeterministic;								// tells whether the next instance generator is deterministic (if and only if m_NbIterations == m_NbExamples)
+	Random m_rnd = new Random(1234);						// random generator that is used iff not m_isDeterministic
 	boolean m_isStandardClassification;						// standard classification or general case
 	int m_NbTargetValues;									// number of target values: if m_isStandardClassification: self explanatory, else: = 1
-	double[] m_targetProbabilities;
+	double[] m_targetProbabilities;							// relative frequencies of the target values
 	
-	int m_TimeSeriesDistance;
+	int m_TimeSeriesDistance; 								// type of the time series distance
 	
 	boolean debug = false;
 	
@@ -77,8 +76,12 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			for(int example = 0; example < m_NbExamples; example++){
 				m_targetProbabilities[attr.getNominal(data.getTuple(example))] += 1.0;
 			}
-			for(int value = 0; value < m_NbTargetValues; value++){
-				m_targetProbabilities[value] /= m_NbExamples;
+			if(m_NbExamples > m_targetProbabilities[m_NbTargetValues]){ // otherwise: m_TargetProbabilities = {0, 0, ... , 0, m_NbExamples}
+				// normalize probabilities: examples with unknown targets are ignored
+				// The formula for standard classification case still holds (sum over other classes of P(other class) / (1 - P(class)) equals 1)
+				for(int value = 0; value < m_NbTargetValues; value++){
+					m_targetProbabilities[value] /= m_NbExamples - m_targetProbabilities[m_NbTargetValues];
+				}
 			}
 		}
 		
@@ -99,7 +102,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 					if(value < m_numMins.get(attrName)){ // equivalent to ... && value != Double.POSITIVE_INFINITY
 						m_numMins.put(attrName, value);
 					}
-					if(value > m_numMaxs.get(attrName) && value != Double.POSITIVE_INFINITY) m_numMaxs.put(attrName, value);
+					if(value > m_numMaxs.get(attrName) && value != Double.POSITIVE_INFINITY){
+						m_numMaxs.put(attrName, value);
+					}
 				}
 			}			
 		}
@@ -121,32 +126,34 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			tupleInd = nextInstance(iteration);
 			tuple = data.getTuple(tupleInd);
 			if(debug)System.out.println("Tuple: " + tuple.toString());
-			nearestNeighbours = findNearestNeighbours(tupleInd, data);
-			// CALCULATE IMPORTANCES
-			for(int targetValue = 0; targetValue < m_NbTargetValues; targetValue++){
-				double tempSumDistTarget = 0.0;
-				double[] tempSumDistAttr = new double[m_NbDescriptiveAttrs];
-				double[] tempSumDistAttrTarget = new double[m_NbDescriptiveAttrs];
-				for(int neighbour = 0; neighbour < nearestNeighbours[targetValue].length; neighbour++){
-					if(!m_isStandardClassification){
-						tempSumDistTarget += nearestNeighbours[targetValue][neighbour].m_targetDistance;
+			if(!(m_isStandardClassification && m_DescriptiveTargetAttr[1][0].isMissing(tuple))){
+				nearestNeighbours = findNearestNeighbours(tupleInd, data);
+				// CALCULATE IMPORTANCES
+				for(int targetValue = 0; targetValue < m_NbTargetValues; targetValue++){
+					double tempSumDistTarget = 0.0;
+					double[] tempSumDistAttr = new double[m_NbDescriptiveAttrs];
+					double[] tempSumDistAttrTarget = new double[m_NbDescriptiveAttrs];
+					for(int neighbour = 0; neighbour < nearestNeighbours[targetValue].length; neighbour++){
+						if(!m_isStandardClassification){
+							tempSumDistTarget += nearestNeighbours[targetValue][neighbour].m_targetDistance;
+						}
+						for(int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++){
+							attr = m_DescriptiveTargetAttr[0][attrInd];
+							double distAttr = calcDistance1D(tuple, data.getTuple(nearestNeighbours[targetValue][neighbour].m_indexInDataSet), attr);						
+							if(m_isStandardClassification){
+								int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[1][0]).getNominal(tuple);
+								tempSumDistAttr[attrInd] += targetValue == tupleTarget ? -distAttr: m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr;							
+							} else{							
+								tempSumDistAttr[attrInd] += distAttr;
+								tempSumDistAttrTarget[attrInd] += distAttr * nearestNeighbours[targetValue][neighbour].m_targetDistance;
+							}	
+						}
 					}
+					sumDistTarget += tempSumDistTarget / nearestNeighbours[targetValue].length;
 					for(int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++){
-						attr = m_DescriptiveTargetAttr[0][attrInd];
-						double distAttr = calcDistance1D(tuple, data.getTuple(nearestNeighbours[targetValue][neighbour].m_indexInDataSet), attr);						
-						if(m_isStandardClassification){
-							int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[1][0]).getNominal(tuple);
-							tempSumDistAttr[attrInd] += targetValue == tupleTarget ? -distAttr: m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr;							
-						} else{							
-							tempSumDistAttr[attrInd] += distAttr;
-							tempSumDistAttrTarget[attrInd] += distAttr * nearestNeighbours[targetValue][neighbour].m_targetDistance;
-						}	
+						sumDistAttr[attrInd] += tempSumDistAttr[attrInd] / nearestNeighbours[targetValue].length;
+						sumDistAttrTarget[attrInd] += tempSumDistAttrTarget[attrInd] /  nearestNeighbours[targetValue].length;
 					}
-				}
-				sumDistTarget += tempSumDistTarget / nearestNeighbours[targetValue].length;
-				for(int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++){
-					sumDistAttr[attrInd] += tempSumDistAttr[attrInd] / nearestNeighbours[targetValue].length;
-					sumDistAttrTarget[attrInd] += tempSumDistAttrTarget[attrInd] /  nearestNeighbours[targetValue].length;
 				}
 			}
 		}
@@ -178,7 +185,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		int targetValue;
 
 		for(int i = 0; i < m_NbExamples;i++){
-			distances[i] = calcDistance(tuple, data.getTuple(i), 0); // descriptive space
+			distances[i] = calcDistance(tuple, data.getTuple(i), 0); // in descriptive space
 		}
 		if(debug){
 			System.out.println("  scores: " + Arrays.toString(distances));
@@ -270,20 +277,25 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		if(attr instanceof NominalAttrType){
 			return calculateNominalDist1D(t1, t2, (NominalAttrType) attr);
 		} else if(attr instanceof NumericAttrType){
-			return calculateNumericDist1D(t1, t2, (NumericAttrType) attr, m_numMaxs.get(attr.getName()) - m_numMins.get(attr.getName()));
+			double normFactor = m_numMaxs.get(attr.getName()) - m_numMins.get(attr.getName());
+			if(normFactor == 0.0){ // if and only if the attribute has only one value ... Distance will be zero and does not depend on normFactor
+				normFactor = 1.0;
+			}
+			return calculateNumericDist1D(t1, t2, (NumericAttrType) attr, normFactor);
 		} else if(attr instanceof TimeSeriesAttrType) {
 			return calculateTimeSeriesDist1D(t1, t2, (TimeSeriesAttrType) attr);
 		} else if(attr instanceof StringAttrType){
 			return calculateStringDist1D(t1, t2, (StringAttrType) attr);
 		} else{
-			return 0.0;
+			throw new ClusException("Unknown attribute type for attribute " + attr.getName());
 		}
     	
     }
 	
     // TODO: make handling of missing values reliefish for all dist.
     /**
-     * Calculates distance between the nominal values of the component {@code attr}.
+     * Calculates distance between the nominal values of the component {@code attr}. In the case of missing values, we follow Weka's solution
+     * and not the paper Theoretical and Empirical Analysis of ReliefF and RReliefF, by Robnik Sikonja and Kononenko (time complexity ...).
      * @param t1
      * @param t2
      * @param attr
@@ -292,23 +304,16 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     public double calculateNominalDist1D(DataTuple t1, DataTuple t2, NominalAttrType attr){
 		int v1 = attr.getNominal(t1);
 		int v2 = attr.getNominal(t2);
-		if(v1 >= attr.m_NbValues){
-			if(v2 >= attr.m_NbValues){	// both missing
-				return m_bothMissing;
-			} else{ 		   			// the first missing
-				return m_oneMissing;
-			}
+		if(v1 >= attr.m_NbValues || v2 >= attr.m_NbValues){ // at least one missing
+			return 1.0 - 1.0 / attr.m_NbValues;
 		} else{
-			if(v2 >= attr.m_NbValues){	// the second missing
-				return m_oneMissing;			   
-			} else{						// none of them missing
-				return v1 == v2 ? 0.0 : 1.0;
-			}
+			return v1 == v2 ? 0.0 : 1.0;
 		}
     }
     
     /**
-     * Calculates distance between the numeric values of the component {@code attr}.
+     * Calculates distance between the numeric values of the component {@code attr}. In the case of missing values, we follow Weka's solution
+     * and not the paper Theoretical and Empirical Analysis of ReliefF and RReliefF, by Robnik Sikonja and Kononenko (time complexity ...).
      * @param t1
      * @param t2
      * @param attr
@@ -318,19 +323,23 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     public double calculateNumericDist1D(DataTuple t1, DataTuple t2, NumericAttrType attr, double normalizationFactor){
 		double v1 = attr.getNumeric(t1);
 		double v2 = attr.getNumeric(t2);
+		double t;
 		if(t1.hasNumMissing(attr.getArrayIndex())){
 			if(t2.hasNumMissing(attr.getArrayIndex())){
-				return m_bothMissing;
+				t = m_bothMissing;
 			} else{
-				return m_oneMissing;
+				t = (v2 - m_numMins.get(attr.getName())) / normalizationFactor;
+				t = Math.max(t, 1.0 - t);
 			}
 		} else{
 			if(t2.hasNumMissing(attr.getArrayIndex())){
-				return m_oneMissing;
+				t = (v1 - m_numMins.get(attr.getName())) / normalizationFactor;
+				t = Math.max(t, 1.0 - t);
 			} else{
-				return Math.abs(v1 - v2) / normalizationFactor;
+				t =  Math.abs(v1 - v2) / normalizationFactor;
 			}
 		}
+		return t;
     	
     }
     

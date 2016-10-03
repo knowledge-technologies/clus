@@ -85,7 +85,7 @@ public class DataTuple implements Serializable {
 	public double euclDistance(DataTuple other)
 	{
 		double result = 0;
-		for(int i =0;i<m_Doubles.length;i++)
+		for(int i =0; i < m_Doubles.length; i++)
 		{
 			double t = this.getDoubleVal(i) -other.getDoubleVal(i);
 			t = t*t;
