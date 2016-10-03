@@ -29,9 +29,11 @@ public class ReliefInduce extends ClusInductionAlgorithm{
 	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
 		ReliefModel reliefModel = new ReliefModel(cr.getStatManager().getSettings().getReliefNbNeighboursValue(),
 												  cr.getStatManager().getSettings().getReliefNbIterationsValue(),
+												  cr.getStatManager().getSettings().getReliefWeightNeighbours(),
+												  cr.getStatManager().getSettings().getReliefWeightingSigma(),
 												  (RowData)cr.getTrainingSet());
 		
-		m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getNbNeighbours(), reliefModel.getNbIterations());
+		m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getNbNeighbours(), reliefModel.getNbIterations(), reliefModel.getWeightNeighbours(), reliefModel.getSigma());
 		m_FeatureRanking.initializeAttributes(cr.getStatManager().getSchema().getDescriptiveAttributes(), 1);
 		m_FeatureRanking.calculateReliefImportance(reliefModel.getData());
 		m_FeatureRanking.convertRanksByName();

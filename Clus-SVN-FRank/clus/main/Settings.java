@@ -2047,6 +2047,8 @@ public class Settings implements Serializable {
 	
 	public static INIFileInt m_ReliefNbNeighbours;
 	public static INIFileInt m_ReliefNbIterations;
+	public static INIFileBool m_ReliefShouldHaveNeighbourWeighting;
+	public static INIFileDouble m_ReliefWeightingSigma;
 	
 	public void setSectionReliefEnabled(boolean value) {
 		m_SectionRelief.setEnabled(value);
@@ -2059,6 +2061,12 @@ public class Settings implements Serializable {
 	}
 	public int getReliefNbIterationsValue(){
 		return m_ReliefNbIterations.getValue();
+	}
+	public boolean getReliefWeightNeighbours(){
+		return m_ReliefShouldHaveNeighbourWeighting.getValue();
+	}
+	public double getReliefWeightingSigma(){
+		return m_ReliefWeightingSigma.getValue();
 	}
 	
 /***********************************************************************
@@ -2791,6 +2799,8 @@ public class Settings implements Serializable {
 		m_SectionRelief = new INIFileSection("Relief");
 		m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileInt("neighbours", 10));
 		m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileInt("iterations", -1));
+		m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("weightNeighbours", false));
+		m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 2.0)); // following Weka, the authors do not give any suggestions
 		m_SectionRelief.setEnabled(false);
 		
 		m_SectionDistances = new INIFileSection("Distances");

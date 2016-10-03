@@ -18,12 +18,16 @@ import jeans.util.MyArray;
 public class ReliefModel implements ClusModel{
 	private int m_NbNeighbours;
 	private int m_NbIterations;
+	private boolean m_WeightNeighbours;
+	private double m_Sigma;
 	private RowData m_Data;
 	
 	private double[] m_Weights;
 	
-	public ReliefModel(int neighbours, int iterations, RowData data) throws ClusException{
+	public ReliefModel(int neighbours, int iterations, boolean weightNeighbours, double sigma, RowData data) throws ClusException{
 		this.m_Data = data;
+		this.m_WeightNeighbours = weightNeighbours;
+		this.m_Sigma = sigma;
 		if(neighbours == -1 || neighbours >= data.getNbRows()){ 
 			this.m_NbNeighbours = data.getNbRows() - 1;
 			System.out.println("Setting the number of neighbours to number of samples - 1.");
@@ -41,7 +45,7 @@ public class ReliefModel implements ClusModel{
 		} else{
 			throw new ClusException(String.format("The number iterations should be 0 < iterations <= number of examples (= %s) or -1.\n"
 					+ "But: iterations = %d", data.getNbRows(), iterations));
-		}		
+		}
 	}
 
 	@Override
@@ -139,5 +143,13 @@ public class ReliefModel implements ClusModel{
 	
 	public int getNbIterations(){
 		return m_NbIterations;
+	}
+	
+	public boolean getWeightNeighbours(){
+		return m_WeightNeighbours;
+	}
+	
+	public double getSigma(){
+		return m_Sigma;
 	}
 }

@@ -24,6 +24,8 @@ import clus.util.ClusException;
 public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbNeighbours;
 	private int m_NbIterations;
+	private boolean m_WeightNeighbours;
+	private double m_Sigma;
 
 	
 	private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][];	// {array of descriptive attributes, array of target attributes}
@@ -46,10 +48,12 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	
 
 	
-	public ClusReliefFeatureRanking(int neighbours, int iterations){
+	public ClusReliefFeatureRanking(int neighbours, int iterations, boolean weightNeighbours, double sigma){
 		super();
 		this.m_NbNeighbours = neighbours;
 		this.m_NbIterations = iterations;
+		this.m_WeightNeighbours = weightNeighbours;
+		this.m_Sigma = sigma;
 	}
 	
 	public void calculateReliefImportance(RowData data) throws ClusException {
