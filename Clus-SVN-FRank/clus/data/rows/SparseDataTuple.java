@@ -43,7 +43,11 @@ public class SparseDataTuple extends DataTuple {
 	}	
 	
 	public void setDoubleValueSparse(Double val, Integer index) {
-		m_Map.put(index, val);
+		if(val != 0.0){
+			m_Map.put(index, val);
+		} else if(m_Map.containsKey(index)){
+			m_Map.remove(index);
+		}
 	}
 
 	public double getDoubleValueSparse(int index) {

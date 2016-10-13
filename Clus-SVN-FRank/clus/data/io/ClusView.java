@@ -108,7 +108,7 @@ public class ClusView {
 				for (int j = 1; j < m_Attr.size(); j++) {
 					ClusSerializable attr = (ClusSerializable)m_Attr.get(j);
 					if (!attr.read(reader, tuple)) {
-						throw new IOException("Error reading attirbute "+m_Attr+" at row "+(reader.getRow()+1));
+						throw new IOException("Error reading attirbute with index " + j + " (" + m_Attr.get(j) + "), at row "+(reader.getRow()+1));
 					}
 				}
 			}

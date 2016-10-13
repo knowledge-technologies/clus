@@ -15,6 +15,7 @@ import com.google.gson.JsonPrimitive;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.data.rows.SparseDataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
@@ -306,17 +307,32 @@ public class ClusEnsembleFeatureRanking {
 			int rnd = i + rndm.nextInt(result.getNbRows()- i);
 			DataTuple first = result.getTuple(i);
 			DataTuple second = result.getTuple(rnd);
-			if (type == 0){//nominal
-				int swap = first.getIntVal(position);
-				first.setIntVal(second.getIntVal(position), position);
-				second.setIntVal(swap, position);
-			}else if (type == 1){//numeric
-				double swap = first.getDoubleVal(position);
-				first.setDoubleVal(second.getDoubleVal(position), position);
-				second.setDoubleVal(swap, position);
-			}else {
-				System.err.println("Error while making the random permutations for feature ranking!");
-				System.exit(-1);
+			boolean successfullySwapped = false;
+			if(first instanceof SparseDataTuple){
+				if(type == 1){
+					double swap = ((SparseDataTuple) first).getDoubleValueSparse(position);
+					((SparseDataTuple) first).setDoubleValueSparse(((SparseDataTuple) second).getDoubleValueSparse(position), position);
+					((SparseDataTuple) second).setDoubleValueSparse(swap, position);
+					successfullySwapped = true;
+				} else{
+					System.err.println("WARNING: type is not 1 (numeric). We will try to swap the values like in non-sparse case, but some things might go wrong, e.g.,\n"
+							+ "java.lang.NullPointerException might occur.");
+				}
+				
+			}
+			if(!successfullySwapped){
+				if (type == 0){//nominal
+					int swap = first.getIntVal(position);
+					first.setIntVal(second.getIntVal(position), position);
+					second.setIntVal(swap, position);
+				}else if (type == 1){//numeric
+					double swap = first.getDoubleVal(position);
+					first.setDoubleVal(second.getDoubleVal(position), position);
+					second.setDoubleVal(swap, position);
+				}else {
+					System.err.println("Error while making the random permutations for feature ranking!");
+					System.exit(-1);
+				}
 			}
 		}
 		return result;
