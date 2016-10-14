@@ -90,10 +90,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		sett.updateNbRandomAttrSelected(schema);//moved here because of HSC bug
 	}
 
+	// used by FIRE
 	public ClusEnsembleInduce(ClusInductionAlgorithm other, Clus clus) throws ClusException, IOException {
 		super(other);
 		initialize(getSchema(), getSettings(), clus);
+		getSettings().updateNbRandomAttrSelected(getSchema());//moved here because of HSC bug
 	}
+
 
 	public void initialize(ClusSchema schema, Settings sett, Clus clus) throws ClusException, IOException {
 		m_BagClus = clus;
@@ -468,7 +471,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	 * @param sizeOfSubspace size of subspace
 	 * @return ClusEnsembleTargetSubspaceInfo object with created subspaces
 	 */
-	static ClusEnsembleTargetSubspaceInfo prepareEnsembleTargetSubspacesWithFixedSize(ClusSchema schema, int sizeOfSubspace)
+	static ClusEnsembleTargetSubspaceInfo prepareEnsembleTargetSubspaces(ClusSchema schema, int sizeOfSubspace)
 	{
 //		// check for dragons
 //		if (m_NbMaxBags < 2) {
@@ -479,7 +482,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		int[] enabled;
 		ArrayList<int[]> subspaces = new ArrayList<int[]>();
 		
-
+		boolean isRandom = sizeOfSubspace <= 0;
+		int subspaceCount = sizeOfSubspace;
+		
 		// find indices of target and clustering attributes
 		int[] targetIDs = new int[schema.getNbTargetAttributes()];
 		int[] clusteringIDs = new int[schema.getNbAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING)];
@@ -500,94 +505,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			// disable all targets
 			for (int i = 0; i < targets.length; i++) enabled[targets[i].getIndex()] = 0;
 			
-			// randomly select targets
-			ClusAttrType[] selected = selectRandomSubspaces(targets, sizeOfSubspace, ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING); // inject ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING randomizer
+			// if number of randomly selected targets should also be randomized
+			if (isRandom) 
+				subspaceCount = ClusRandom.nextInt(ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING_SUBSPACE_SIZE_SELECTION, 1, targets.length); // use a separate randomizer for randomized target subspace size selection
+			
+			// randomly select targets			
+			ClusAttrType[] selected = selectRandomSubspaces(targets, subspaceCount, ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING); // inject ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING randomizer
 			
 			// enable selected targets
 			for (int i=0; i < selected.length; i++) enabled[selected[i].getIndex()] = 1;
-			
-			
-			// safety check: check if at least one target attr is enabled
-    		int sum = 0; 
-    		for (int a = 0; a < targetIDs.length; a++) sum += enabled[targetIDs[a]];
-    		if (sum > 0) {    			
-    			// check if at least one clustering attr is enabled
-    			sum = 0;
-        		for (int a = 0; a < clusteringIDs.length; a++) sum += enabled[clusteringIDs[a]];
-        		if (sum > 0) {
-        			subspaces.add(enabled); // subspace meets the criteria, add it to the list
-        			cnt--;
-        		}    			
-    		}
-		}
-
-		// create one MT model for all targets
-		enabled = new int[schema.getNbAttributes()];
-		Arrays.fill(enabled, 1); // enable all attributes
-		subspaces.add(enabled);
-		
-		return new ClusEnsembleTargetSubspaceInfo(schema, subspaces);
-	}
-	
-	/**
-	 * Method for preparing target subspaces for the Ensemble.TargetSubspacing option
-	 * Target subspaces are created according to settings
-	 * @param ClusSchema schema
-	 * @return ClusEnsembleTargetSubspaceInfo object with created subspaces
-	 */
-	static ClusEnsembleTargetSubspaceInfo prepareEnsembleTargetSubspacesWithPoisson(ClusSchema schema)
-	{
-//		// check for dragons
-//		if (m_NbMaxBags < 2) {
-//			throw new RuntimeException("Ensemble size is too small! Minimum ensemble size is 2.");
-//		}
-
-		int sizeOfSubspace;
-		
-		int cnt = m_NbMaxBags;
-		int[] enabled;
-		ArrayList<int[]> subspaces = new ArrayList<int[]>();
-		
-
-		// find indices of target and clustering attributes
-		int[] targetIDs = new int[schema.getNbTargetAttributes()];
-		int[] clusteringIDs = new int[schema.getNbAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING)];
-
-		ClusAttrType[] targets = schema.getTargetAttributes();
-		ClusAttrType[] clustering = schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
-		
-		for (int t = 0; t < targetIDs.length; t++) targetIDs[t] = targets[t].getIndex();
-		for (int t = 0; t < clusteringIDs.length; t++) clusteringIDs[t] = clustering[t].getIndex();
-
-		// create subspaces
-		while (cnt > 1) {	
-			enabled = new int[schema.getNbAttributes()];
-		 
-			// enable all attributes
-			Arrays.fill(enabled, 1);
-			
-			// disable all targets
-			for (int i = 0; i < targets.length; i++) enabled[targets[i].getIndex()] = 0;
-			
-			// sample number of targets from Poisson distribution.
-			// first get random number from random generator between 1 and targets.length
-			// second sample from poisson around the mean from previous point
-			// if sampled number is smaller than 0 (we upper bound it to targets.length), we repeat the process until we get a positive number in the [1,targets.length] interval
-			sizeOfSubspace = -1;
-			while (sizeOfSubspace <= 0)
-			{
-				sizeOfSubspace = Math.min(
-						getPoisson(
-								ClusRandom.nextInt(ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING_POISSON_MEAN, targets.length), 
-								ClusRandom.getRandom(ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING_POISSON_SAMPLING)
-								), 
-						targets.length);
-			}
-			ClusAttrType[] selected = selectRandomSubspaces(targets, sizeOfSubspace, ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING); // inject ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING randomizer
-			
-			// enable selected targets
-			for (int i=0; i < selected.length; i++) enabled[selected[i].getIndex()] = 1;
-			
 			
 			// safety check: check if at least one target attr is enabled
     		int sum = 0; 
@@ -632,20 +558,16 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		if (Settings.isEnsembleTargetSubspacingEnabled())
 		{
 			if (getSettings().getEnsembleMethod() != Settings.ENSEMBLE_BAGGING &&
-				getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RFOREST)
+				getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RFOREST &&
+				getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RSUBSPACES)
+				
 				throw new RuntimeException("Target subspacing is not implemented for the selected ensemble method!");
 
 			if (Settings.VERBOSE > 1) System.out.println("Target subspacing: creating target subspaces.");
 			
 			int subspaceSize = getSettings().calculateNbRandomAttrSelected(getSchema(), 2);
-			if (subspaceSize > 0) {
-				// fixed subspace size
-				m_TargetSubspaceInfo = prepareEnsembleTargetSubspacesWithFixedSize(getSchema(), subspaceSize);
-			}
-			else {
-				// poisson sampling of subset sizes
-				m_TargetSubspaceInfo = prepareEnsembleTargetSubspacesWithPoisson(getSchema());
-			}
+
+			m_TargetSubspaceInfo = prepareEnsembleTargetSubspaces(getSchema(), subspaceSize);
 		}
 	}
 	
@@ -1090,7 +1012,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	 * @param attrs -- For which attributes
 	 * @param select -- How many
 	 */
-	public static ClusAttrType[] selectRandomSubspaces(ClusAttrType[] attrs, int select, int randomizerVersion){
+	public static ClusAttrType[] selectRandomSubspaces(ClusAttrType[] attrs, int select, int randomizerVersion) {
 		int origsize = attrs.length;
 		int[] samples = new int [origsize];
 		int rnd;
@@ -1102,12 +1024,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 				samples[rnd]++;
 				i++;
 			}
-			if ( i == select)
-				randomize = false;
+
+			randomize = i != select;
 		}
 		ClusAttrType[] result = new ClusAttrType[select];
 		int res = 0;
-		for (int k = 0; k < origsize; k++){
+		for (int k = 0; k < origsize; k++) {
 			if (samples[k] !=0){
 				result[res] = attrs[k];
 				res++;
