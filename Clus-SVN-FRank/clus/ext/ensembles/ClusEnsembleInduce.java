@@ -426,7 +426,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 					oob_sel = new OOBSelection(msel);
 					if (i == 1){ //initialization
 						oob_total = new OOBSelection(msel);
-					}else oob_total.addToThis(oob_sel);
+					}else{
+						oob_total.addToThis(oob_sel);
+					}
 				}
 				induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel);
 			}

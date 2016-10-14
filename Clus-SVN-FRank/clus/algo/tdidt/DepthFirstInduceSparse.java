@@ -63,7 +63,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 		for (int i = 0; i < attrs.length; i++) {
 			ClusAttrType at = attrs[i];
 			if (at.isSparse()) {
-				if (((SparseNumericAttrType)at).getExampleWeight() >= getSettings().getMinimalWeight()) {
+				if (((SparseNumericAttrType)at).getExampleWeight() >= getSettings().getMinimalWeight2()) {
 					attrList.add(at);
 					
 					Object[] exampleArray = ((SparseNumericAttrType)at).getExamples().toArray();
@@ -75,6 +75,9 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 					}
 					((SparseNumericAttrType)at).setExamples(exampleList);
 					examplelistList.add(exampleList);
+				}
+				else{
+					throw new RuntimeException("A?");
 				}
 			}
 			else {
@@ -144,7 +147,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 					if (at.isSparse()) {
 						ArrayList newExampleList = ((SparseNumericAttrType)at).pruneExampleList(subsets[j]);
 						double exampleWeight = getExampleWeight(newExampleList);
-						if (exampleWeight >= getSettings().getMinimalWeight()) {
+						if (exampleWeight >= getSettings().getMinimalWeight2()) {
 							attrList.add(at);
 							examplelistList.add(newExampleList);
 						}

@@ -366,7 +366,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 	public ClusNode induceSingleUnpruned(RowData data) throws ClusException, IOException {
 		m_Root = null;
-		// Begin of induction process
+		// Beginning of induction process
 		int nbr = 0;
 		while (true) {
 			nbr++;

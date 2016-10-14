@@ -188,7 +188,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 		int nbrows = getNbRows();
 		for (int i = 0; i < nbrows ; i++) {
 			temp = getTuple(i);
-			ClusSchema schema = temp.getSchema();
+			ClusSchema schema = temp.getSchema(); // TU JE NEKAJ CUDNEGA: na chloru dobimo 9 vrednosti ?! (descriptive = 24, disabled = 4, target = 5)
 			for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
 				ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)[j];
 				double tmpvalue = type.getNumeric(temp);

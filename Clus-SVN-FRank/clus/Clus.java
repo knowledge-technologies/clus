@@ -534,9 +534,7 @@ public class Clus implements CMDLineArgsProvider {
 		return partitionData(m_Data, sel, false, false, m_Summary, idx);
 	}
 
-	public final ClusRun partitionData(ClusData data, ClusSelection sel,
-			boolean testfile, boolean writetest, ClusSummary summary, int idx)
-			throws IOException, ClusException {
+	public final ClusRun partitionData(ClusData data, ClusSelection sel, boolean testfile, boolean writetest, ClusSummary summary, int idx)	throws IOException, ClusException {
 		// cloning the data is done in partitionDataBasic()
 		String test_fname = m_Sett.getAppName();
 		ClusRun cr = partitionDataBasic(data, sel, summary, idx);
@@ -591,14 +589,11 @@ public class Clus implements CMDLineArgsProvider {
 		return partitionDataBasic(train, null, null, summary, 1);
 	}
 
-	public final ClusRun partitionDataBasic(ClusData data, ClusSelection sel,
-			ClusSummary summary, int idx) throws IOException, ClusException {
+	public final ClusRun partitionDataBasic(ClusData data, ClusSelection sel, ClusSummary summary, int idx) throws IOException, ClusException {
 		return partitionDataBasic(data, sel, null, summary, idx);
 	}
 
-	public final ClusRun partitionDataBasic(ClusData data, ClusSelection sel,
-			ClusData prunefile, ClusSummary summary, int idx)
-			throws IOException, ClusException {
+	public final ClusRun partitionDataBasic(ClusData data, ClusSelection sel, ClusData prunefile, ClusSummary summary, int idx)	throws IOException, ClusException {
 		ClusRun cr = new ClusRun(data.cloneData(), summary);
 		if (sel != null) {
 			if (sel.changesDistribution()) {
