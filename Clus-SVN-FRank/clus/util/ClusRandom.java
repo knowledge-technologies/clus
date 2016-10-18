@@ -31,7 +31,7 @@ public class ClusRandom {
 	public static int m_Preset;
 	public static boolean m_IsPreset;
 
-	public final static int NB_RANDOM = 11;
+	public final static int NB_RANDOM = 10;
 	public final static int RANDOM_TEST_DIR = 0;
 	public final static int RANDOM_SELECTION = 1;
 	public final static int RANDOM_PARAM_TUNE = 2;
@@ -47,9 +47,8 @@ public class ClusRandom {
 	/** Used for ensemble target subspacing*/
 	public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING = 8;
 	/** Used for ensemble target subspacing - poisson sampling of the mean */
-	public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING_POISSON_MEAN = 9;
-	/** Used for ensemble target subspacing - poisson sampling iterations */
-	public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING_POISSON_SAMPLING = 10;
+	public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING_SUBSPACE_SIZE_SELECTION = 9;
+
 
 	public static Random[] m_Random;
 
@@ -63,6 +62,10 @@ public class ClusRandom {
 
 	public static int nextInt(int which, int max) {
 		return m_Random[which].nextInt(max);
+	}
+	
+	public static int nextInt(int which, int min, int max) {
+		return min + m_Random[which].nextInt(max - min + 1);
 	}
 	
 	public static void initialize(Settings sett) {

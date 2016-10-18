@@ -17,8 +17,10 @@ public class ClusEnsembleTargetSubspaceInfo implements Serializable {
 
 	private static final long serialVersionUID = -8192393874827673204L;
 	ArrayList<int[]> m_AllSubspaces;
-	double[] m_Coverage;
+	double[] m_Coverage; // how many times a target was used (per-target)
+	double m_AverageTargetsUsed; // average number of targets used in the ensemble
 	ClusSchema m_Schema;
+	
 	public ClusEnsembleTargetSubspaceInfo(ClusSchema schema, ArrayList<int[]> info)
 	{
 		m_AllSubspaces = info;
@@ -64,6 +66,14 @@ public class ClusEnsembleTargetSubspaceInfo implements Serializable {
 				}
 			}
 		}
+		
+		m_AverageTargetsUsed = 0.0;
+		for (int i = 0; i < m_Coverage.length; i++)
+		{
+			m_AverageTargetsUsed += m_Coverage[i];
+		}			
+		
+		m_AverageTargetsUsed = Utils.roundDouble(m_AverageTargetsUsed / m_AllSubspaces.size(), 3);
 	}
 	
 	public double[] getCoverage() {
@@ -76,6 +86,10 @@ public class ClusEnsembleTargetSubspaceInfo implements Serializable {
 		for (int t = 0; t < m_Coverage.length; t++) d[t] = Utils.roundDouble(m_Coverage[t] / m_AllSubspaces.size(), 3);
 		
 		return d;
+	}
+	
+	public double getAverageNumberOfTargetsUsed() {
+		return m_AverageTargetsUsed;
 	}
 	
 	public String getInfo(int i) {
@@ -102,16 +116,19 @@ public class ClusEnsembleTargetSubspaceInfo implements Serializable {
 		return sb;
 	}
 	
-	
-	
 	public String getCoverageNormalizedInfo() {
 		return String.format("Target coverage normalized: %s", Arrays.toString(getCoverageNormalized()).replace(",", " "));
 	}
-	
-	
+		
 	public String getCoverageInfo() {
 		return String.format("Target coverage: %s", Arrays.toString(m_Coverage).replace(",", " "));
 	}
+	
+	public String getAverageNumberOfTargetsUsedInfo() {
+		return String.format("Average number of targets used: %s | Average percentage of targets used: %s", String.valueOf(m_AverageTargetsUsed),
+				String.valueOf(Utils.roundDouble(m_AverageTargetsUsed/m_Schema.getNbTargetAttributes()*100,3)+"%"));
+	}
+	
 
 	public static int getEnabledCount(int[] enabled) {
 		int cnt = 0;

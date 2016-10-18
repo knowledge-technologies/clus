@@ -142,9 +142,18 @@ public class ClusForest implements ClusModel, Serializable{
 		for (int i = 0; i < getNbModels(); i++)
 			sumOfNodes += ((ClusNode)getModel(i)).getNbNodes();
 
-		String result = "FOREST with " +getNbModels()+" models (Total nodes: " + sumOfNodes + " and leaves: "+ sumOfLeaves +")\n";
-
-					
+		String targetSubspaces = "";
+		if (m_TargetSubspaceInfo != null) {
+			String indent = "\n\t\t\t\t";
+			
+			targetSubspaces =
+						  indent + m_TargetSubspaceInfo.getAverageNumberOfTargetsUsedInfo() 
+						+ indent + m_TargetSubspaceInfo.getCoverageInfo()
+						+ indent + m_TargetSubspaceInfo.getCoverageNormalizedInfo();
+		}
+		
+		String result = "FOREST with " +getNbModels()+" models (Total nodes: " + sumOfNodes + " and leaves: "+ sumOfLeaves +")"+ targetSubspaces + "\n";
+		
 		if (Settings.isPrintEnsembleModelInfo())
 		{
 			for (int i = 0; i<getNbModels(); i++) {
@@ -154,12 +163,8 @@ public class ClusForest implements ClusModel, Serializable{
 					result += "\tTargets: " + m_TargetSubspaceInfo.getInfo(i);					
 				}
 			}
-			
-			if (m_TargetSubspaceInfo != null) {
-				result += "\n\t " + m_TargetSubspaceInfo.getCoverageInfo();
-				result += "\n\t " + m_TargetSubspaceInfo.getCoverageNormalizedInfo(); 
-			}
 		}
+		
 		
 		return result;
 	}
