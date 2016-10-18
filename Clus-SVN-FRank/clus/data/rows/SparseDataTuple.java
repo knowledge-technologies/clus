@@ -33,7 +33,7 @@ public class SparseDataTuple extends DataTuple {
 
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-	protected HashMap m_Map = new HashMap();
+	protected HashMap<Integer, Double> m_Map = new HashMap<Integer, Double>();
 
 	public SparseDataTuple(ClusSchema schema) {
 		super(schema);
@@ -43,7 +43,7 @@ public class SparseDataTuple extends DataTuple {
 	}	
 	
 	public void setDoubleValueSparse(Double val, Integer index) {
-		if(val != 0.0){
+		if(Math.abs(val) > 0.00000001){
 			m_Map.put(index, val);
 		} else if(m_Map.containsKey(index)){
 			m_Map.remove(index);
@@ -77,6 +77,10 @@ public class SparseDataTuple extends DataTuple {
 		SparseDataTuple res = new SparseDataTuple();
 		cloneTuple(res);
 		res.m_Map = m_Map;
+		for(Integer i : m_Map.keySet()){
+			res.m_Map.put(i, this.m_Map.get(i));
+			
+		}
 		return res;
 	}
 	
@@ -98,7 +102,11 @@ public class SparseDataTuple extends DataTuple {
 		res.m_Index = m_Index;
 		res.m_Folds = m_Folds;
 		res.m_Schema = m_Schema;
-		res.m_Map = m_Map;
+		//res.m_Map = m_Map; This line remains as an example of how not to copy hash maps.
+		for(Integer i : m_Map.keySet()){
+			res.m_Map.put(i, this.m_Map.get(i));
+			
+		}
 		return res;
 	}
 	

@@ -17,7 +17,7 @@ public class SparseNumericAttrType extends NumericAttrType {
 
 	protected Integer m_IntIndex;
 	protected ArrayList<SparseDataTuple> m_Examples;
-	protected double m_ExampleWeight;
+	protected double m_ExampleWeight; // total weight of examples which have non zero value for this attribute
 
 	public SparseNumericAttrType(String name) {
 		super(name);

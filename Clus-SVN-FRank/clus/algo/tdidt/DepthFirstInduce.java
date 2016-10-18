@@ -32,8 +32,6 @@ import clus.model.*;
 import clus.model.test.*;
 import clus.statistic.*;
 import clus.ext.ensembles.*;
-import clus.heuristic.*;
-
 import java.io.*;
 import java.util.*;
 

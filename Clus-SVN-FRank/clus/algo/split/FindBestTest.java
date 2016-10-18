@@ -22,15 +22,19 @@
 
 package clus.algo.split;
 
+import java.util.ArrayList;
 import java.util.Random;
 
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.main.*;
-import clus.statistic.*;
-import clus.util.*;
-
-import java.util.ArrayList;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.rows.RowDataSortHelper;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 public class FindBestTest {
 
@@ -186,7 +190,7 @@ public class FindBestTest {
 			m_BestTest.m_PosStat.updateWeighted(tuple, i);
 		}
 	}
-	
+		
 	public void findNumericExtraTree(NumericAttrType at, RowData orig_data, Random rn) {
 		// TODO: if this method gets completed, sampling of the RowDatas must be included as well
 		RowData data = createSample(orig_data);

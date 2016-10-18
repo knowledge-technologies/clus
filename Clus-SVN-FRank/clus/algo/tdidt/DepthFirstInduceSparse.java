@@ -1,6 +1,11 @@
 package clus.algo.tdidt;
 
+import java.io.BufferedWriter;
+import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
 
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.split.CurrentBestTestAndHeuristic;
@@ -16,6 +21,7 @@ import clus.main.Settings;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DepthFirstInduceSparse extends DepthFirstInduce {
 
@@ -56,38 +62,39 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 			induceRandomForest(node,data);
 		}
 		else {
-		ClusAttrType[] attrs = getDescriptiveAttributes();
-		initializeExamples(attrs, data);
-		ArrayList<ClusAttrType> attrList = new ArrayList<ClusAttrType>();
-		ArrayList<ArrayList> examplelistList = new ArrayList<ArrayList>();
-		for (int i = 0; i < attrs.length; i++) {
-			ClusAttrType at = attrs[i];
-			if (at.isSparse()) {
-				if (((SparseNumericAttrType)at).getExampleWeight() >= getSettings().getMinimalWeight2()) {
-					attrList.add(at);
-					
-					Object[] exampleArray = ((SparseNumericAttrType)at).getExamples().toArray();
-					RowData exampleData = new RowData(exampleArray,exampleArray.length);
-					exampleData.sortSparse((SparseNumericAttrType)at, m_FindBestTest.getSortHelper());				
-					ArrayList<SparseDataTuple> exampleList = new ArrayList<SparseDataTuple>();
-					for (int j=0; j<exampleData.getNbRows(); j++) {
-						exampleList.add((SparseDataTuple)exampleData.getTuple(j));
+			ClusAttrType[] attrs = getDescriptiveAttributes();
+			initializeExamples(attrs, data);
+			ArrayList<ClusAttrType> attrList = new ArrayList<ClusAttrType>();
+			ArrayList<ArrayList> examplelistList = new ArrayList<ArrayList>();
+			for (int i = 0; i < attrs.length; i++) {
+				ClusAttrType at = attrs[i];
+				if (at.isSparse()) {
+					if (((SparseNumericAttrType)at).getExampleWeight() >= getSettings().getMinimalWeight2()) {
+						attrList.add(at);
+						
+						Object[] exampleArray = ((SparseNumericAttrType)at).getExamples().toArray(); // tuples with non zero value for this attribute
+						RowData exampleData = new RowData(exampleArray,exampleArray.length);					
+						exampleData.sortSparse((SparseNumericAttrType)at, m_FindBestTest.getSortHelper());
+						ArrayList<SparseDataTuple> exampleList = new ArrayList<SparseDataTuple>(); // tuples, sorted in descending order by at.value
+						for (int j=0; j<exampleData.getNbRows(); j++) {
+							exampleList.add((SparseDataTuple)exampleData.getTuple(j));
+						}
+						((SparseNumericAttrType)at).setExamples(exampleList);
+						examplelistList.add(exampleList);
 					}
-					((SparseNumericAttrType)at).setExamples(exampleList);
-					examplelistList.add(exampleList);
+					else{
+						int matej = 234214;
+						System.err.println("< getMinWeig2 za attr " + at.getName() + ": " + ((SparseNumericAttrType)at).getExampleWeight());
+					}
 				}
-				else{
-					throw new RuntimeException("A?");
+				else {
+					attrList.add(at);
+					examplelistList.add(null);
 				}
 			}
-			else {
-				attrList.add(at);
-				examplelistList.add(null);
-			}
-		}
-		Object[] attrArray = attrList.toArray();	
-		Object[] examplelistArray = examplelistList.toArray();	
-		induce(node, data, attrArray, examplelistArray);
+			Object[] attrArray = attrList.toArray();	
+			Object[] examplelistArray = examplelistList.toArray();
+			induce(node, data, attrArray, examplelistArray);
 		}
 	}	
 	
