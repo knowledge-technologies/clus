@@ -1,12 +1,6 @@
 package clus.algo.tdidt;
 
-import java.io.BufferedWriter;
-import java.io.FileNotFoundException;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
-
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.algo.split.NominalSplit;
@@ -21,7 +15,6 @@ import clus.main.Settings;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
 import java.util.ArrayList;
-import java.util.Arrays;
 
 public class DepthFirstInduceSparse extends DepthFirstInduce {
 
@@ -69,7 +62,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 			for (int i = 0; i < attrs.length; i++) {
 				ClusAttrType at = attrs[i];
 				if (at.isSparse()) {
-					if (((SparseNumericAttrType)at).getExampleWeight() >= getSettings().getMinimalWeight2()) {
+					if (((SparseNumericAttrType)at).getExampleWeight() >= getSettings().getMinimalWeight()) {
 						attrList.add(at);
 						
 						Object[] exampleArray = ((SparseNumericAttrType)at).getExamples().toArray(); // tuples with non zero value for this attribute
@@ -81,10 +74,6 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 						}
 						((SparseNumericAttrType)at).setExamples(exampleList);
 						examplelistList.add(exampleList);
-					}
-					else{
-						int matej = 234214;
-						System.err.println("< getMinWeig2 za attr " + at.getName() + ": " + ((SparseNumericAttrType)at).getExampleWeight());
 					}
 				}
 				else {
@@ -154,7 +143,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 					if (at.isSparse()) {
 						ArrayList newExampleList = ((SparseNumericAttrType)at).pruneExampleList(subsets[j]);
 						double exampleWeight = getExampleWeight(newExampleList);
-						if (exampleWeight >= getSettings().getMinimalWeight2()) {
+						if (exampleWeight >= getSettings().getMinimalWeight()) {
 							attrList.add(at);
 							examplelistList.add(newExampleList);
 						}

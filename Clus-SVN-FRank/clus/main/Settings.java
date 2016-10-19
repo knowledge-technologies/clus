@@ -413,7 +413,6 @@ public class Settings implements Serializable {
  ***********************************************************************/
 
 	protected INIFileDouble m_MinW;
-	protected INIFileDouble m_MinW2;
 	protected INIFileDouble m_MinKnownW;
 	protected INIFileInt m_MinNbEx;
 	protected INIFileString m_TuneFolds;
@@ -422,10 +421,6 @@ public class Settings implements Serializable {
 
 	public double getMinimalWeight() {
 		return m_MinW.getValue();
-	}
-	
-	public double getMinimalWeight2() {
-		return m_MinW2.getValue();
 	}
 	
 	public double getMinimalKnownWeight() {
@@ -2635,7 +2630,6 @@ public class Settings implements Serializable {
 
 		INIFileSection model = new INIFileSection("Model");
 		model.addNode(m_MinW = new INIFileDouble("MinimalWeight", 2.0));
-		model.addNode(m_MinW2 = new INIFileDouble("MinimalWeight2", -1.0));
 		model.addNode(m_MinNbEx = new INIFileInt("MinimalNumberExamples", 0));
 		model.addNode(m_MinKnownW = new INIFileDouble("MinimalKnownWeight", 0));
 		model.addNode(m_TuneFolds = new INIFileString("ParamTuneNumberFolds", "10"));
