@@ -26,6 +26,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbIterations;
 	private boolean m_WeightNeighbours;
 	private double m_Sigma;
+	private double[] m_NeighbourWeights;			// value on the i-th place is exp(- m_Sigma * i) / sum over 0 <= j <= i of the terms m_NeighbourWeights[j]
 
 	
 	private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][];	// {array of descriptive attributes, array of target attributes}
@@ -54,6 +55,20 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		this.m_NbIterations = iterations;
 		this.m_WeightNeighbours = weightNeighbours;
 		this.m_Sigma = sigma;
+		m_NeighbourWeights = new double[m_NbNeighbours];
+		if(m_WeightNeighbours){
+			for(int neigh = 0; neigh < m_NbNeighbours; neigh++){
+				m_NeighbourWeights[neigh] = Math.exp(- m_Sigma * neigh);
+			}
+		} else{
+			Arrays.fill(m_NeighbourWeights, 1.0);
+		}
+		double sum_weights = (Math.exp(- m_Sigma * m_NbNeighbours) - 1.0) / (Math.exp(- m_Sigma) - 1.0);
+		for(int neigh = 0; neigh < m_NbNeighbours; neigh++){
+			m_NeighbourWeights[neigh] /= sum_weights;
+		}
+		System.out.println("sigma: " + m_Sigma);
+		System.out.println(Arrays.toString(m_NeighbourWeights));
 	}
 	
 	public void calculateReliefImportance(RowData data) throws ClusException {
@@ -119,7 +134,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		
 		System.out.println("attrs: " + Arrays.deepToString(m_DescriptiveTargetAttr));
 
-		// attribute relevance
+		// attribute relevance estimation
 		double[] sumDistAttr = new double[m_NbDescriptiveAttrs];
 		double sumDistTarget = 0.0;
 		double[] sumDistAttrTarget = new double[m_NbDescriptiveAttrs];
@@ -143,24 +158,24 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 					double[] tempSumDistAttrTarget = new double[m_NbDescriptiveAttrs];
 					for(int neighbour = 0; neighbour < nearestNeighbours[targetValue].length; neighbour++){
 						if(!m_isStandardClassification){
-							tempSumDistTarget += nearestNeighbours[targetValue][neighbour].m_targetDistance;
+							tempSumDistTarget += nearestNeighbours[targetValue][neighbour].m_targetDistance * m_NeighbourWeights[neighbour];
 						}
 						for(int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++){
 							attr = m_DescriptiveTargetAttr[0][attrInd];
 							double distAttr = calcDistance1D(tuple, data.getTuple(nearestNeighbours[targetValue][neighbour].m_indexInDataSet), attr);						
 							if(m_isStandardClassification){
 								int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[1][0]).getNominal(tuple);
-								tempSumDistAttr[attrInd] += targetValue == tupleTarget ? -distAttr: m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr;							
+								tempSumDistAttr[attrInd] += (targetValue == tupleTarget ? -distAttr: m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr) * m_NeighbourWeights[neighbour];							
 							} else{							
-								tempSumDistAttr[attrInd] += distAttr;
-								tempSumDistAttrTarget[attrInd] += distAttr * nearestNeighbours[targetValue][neighbour].m_targetDistance;
+								tempSumDistAttr[attrInd] += distAttr * m_NeighbourWeights[neighbour];
+								tempSumDistAttrTarget[attrInd] += distAttr * nearestNeighbours[targetValue][neighbour].m_targetDistance * m_NeighbourWeights[neighbour];
 							}	
 						}
 					}
 					sumDistTarget += tempSumDistTarget / nearestNeighbours[targetValue].length;
 					for(int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++){
-						sumDistAttr[attrInd] += tempSumDistAttr[attrInd] / nearestNeighbours[targetValue].length;
-						sumDistAttrTarget[attrInd] += tempSumDistAttrTarget[attrInd] /  nearestNeighbours[targetValue].length;
+						sumDistAttr[attrInd] += tempSumDistAttr[attrInd]; // / nearestNeighbours[targetValue].length;
+						sumDistAttrTarget[attrInd] += tempSumDistAttrTarget[attrInd]; // /  nearestNeighbours[targetValue].length;
 					}
 				}
 			}
