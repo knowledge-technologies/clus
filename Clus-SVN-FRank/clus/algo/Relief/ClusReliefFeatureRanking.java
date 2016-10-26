@@ -26,7 +26,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbIterations;
 	private boolean m_WeightNeighbours;
 	private double m_Sigma;
-	private double[] m_NeighbourWeights;			// value on the i-th place is exp(- m_Sigma * i) / sum over 0 <= j <= i of the terms m_NeighbourWeights[j]
+	private double[] m_NeighbourWeights;			// value on the i-th place is exp(- m_Sigma * i)
 
 	
 	private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][];	// {array of descriptive attributes, array of target attributes}
@@ -54,16 +54,24 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		this.m_NbNeighbours = neighbours;
 		this.m_NbIterations = iterations;
 		this.m_WeightNeighbours = weightNeighbours;
-		this.m_Sigma = sigma;
+		this.m_Sigma = m_WeightNeighbours ? sigma : 0.0;
 		m_NeighbourWeights = new double[m_NbNeighbours];
 		if(m_WeightNeighbours){
 			for(int neigh = 0; neigh < m_NbNeighbours; neigh++){
-				m_NeighbourWeights[neigh] = Math.exp(- m_Sigma * neigh);
+				m_NeighbourWeights[neigh] = Math.exp(-(m_Sigma * neigh) * (m_Sigma * neigh));
 			}
 		} else{
 			Arrays.fill(m_NeighbourWeights, 1.0);
 		}
-		double sum_weights = (Math.exp(- m_Sigma * m_NbNeighbours) - 1.0) / (Math.exp(- m_Sigma) - 1.0);
+		double sum_weights = 0.0;
+		if(m_WeightNeighbours){
+			for(int neigh = 0; neigh < m_NbNeighbours; neigh++){
+				sum_weights += m_NeighbourWeights[neigh];
+			}
+		} else{
+			sum_weights = (double) m_NbNeighbours;
+		}
+		System.out.println(Arrays.toString(m_NeighbourWeights));
 		for(int neigh = 0; neigh < m_NbNeighbours; neigh++){
 			m_NeighbourWeights[neigh] /= sum_weights;
 		}
@@ -172,10 +180,13 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 							}	
 						}
 					}
-					sumDistTarget += tempSumDistTarget / nearestNeighbours[targetValue].length;
+					sumDistTarget += tempSumDistTarget; // / nearestNeighbours[targetValue].length;
 					for(int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++){
 						sumDistAttr[attrInd] += tempSumDistAttr[attrInd]; // / nearestNeighbours[targetValue].length;
 						sumDistAttrTarget[attrInd] += tempSumDistAttrTarget[attrInd]; // /  nearestNeighbours[targetValue].length;
+					}
+					if(nearestNeighbours[targetValue].length != 2){
+						System.out.println("To je to");
 					}
 				}
 			}

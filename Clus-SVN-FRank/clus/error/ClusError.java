@@ -145,8 +145,7 @@ public abstract class ClusError implements Serializable {
 	}
 
 	public double getModelErrorComponent(int i) {
-		throw new RuntimeException("Upsala"); 
-		//return 0.0;
+		return 0.0;
 	}
 
 	public abstract ClusError getErrorClone(ClusErrorList par);
