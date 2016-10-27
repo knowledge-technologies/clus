@@ -2106,12 +2106,13 @@ public class Settings implements Serializable {
 	public final static int VOTING_TYPE_MAJORITY = 0;
 	public final static int VOTING_TYPE_PROBAB_DISTR = 1;
 
-	public final static String[] RANKING_TYPE = {"None", "RForest", "GENIE3", "SYMBOLIC"};
+	public final static String[] RANKING_TYPE = {"None", "RForest", "GENIE3", "SYMBOLIC", "GENSYMB"};
 
 	public final static int RANKING_NONE = 0;
 	public final static int RANKING_RFOREST = 1;
 	public final static int RANKING_GENIE3 = 2;
 	public final static int RANKING_SYMBOLIC = 3;
+	public final static int GEN_SYMB = 4;
 
 	public final static String[] ENSEMBLE_TARGET_SUBSPACING_TYPE = { "None", "RandomPredictWithAll", "RandomPredictWithSubset", "SMARTERWAY" };
 	public final static int ENSEMBLE_TARGET_SUBSPACING_NONE = 0;

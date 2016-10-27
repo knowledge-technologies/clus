@@ -150,6 +150,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			} else{
 				nb = 1;				// single weight
 			}
+		case Settings.GEN_SYMB:
+				nb = 2;
 		}
 		m_NbFeatureRankings = nb;
 	}
@@ -650,6 +652,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 					weights = new double[]{m_BagClus.getSettings().getSymbolicWeight()};
 				}
 				m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, cr, weights, 0);
+			}
+			else if(m_BagClus.getSettings().getRankingMethod() == Settings.GEN_SYMB){
+				m_FeatureRanking.calculateGENSYMBimportace((ClusNode) model, cr);
 			}
 		}
 
