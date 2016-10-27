@@ -109,8 +109,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		m_OutEnsembleAt = sett.getNbBaggingSets().getIntVectorSorted();
 		m_NbMaxBags = m_OutEnsembleAt[m_OutEnsembleAt.length-1];
 		m_FeatRank = sett.shouldPerformRanking() && !Settings.IS_XVAL;
-		if (m_FeatRank && !Settings.shouldEstimateOOB()){
-			System.err.println("For Feature Ranking OOB estimate of error should also be performed.");
+		if (m_FeatRank && !Settings.shouldEstimateOOB() && sett.getRankingMethod() == Settings.RANKING_RFOREST){
+			System.err.println("For Feature Ranking RForest, OOB estimate of error should also be performed.");
 			System.err.println("OOB Error Estimate is set to true.");
 			Settings.m_EnsembleOOBestimate.setValue(true);
 		}
