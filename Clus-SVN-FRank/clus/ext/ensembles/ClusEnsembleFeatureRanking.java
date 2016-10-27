@@ -586,22 +586,6 @@ public class ClusEnsembleFeatureRanking {
 		}//if it is a leaf - do nothing
 	}
 	
-	public void calculateGENSYMBimportace(ClusNode node, ClusRun cr){
-		if(m_RankingDescription == null){
-			setDescription("Genie3 and Symb100");
-		}
-		if (!node.atBottomLevel()){
-			String attribute = node.getTest().getType().getName();
-			double [] info = getAttributeInfo(attribute);
-			info[2] += 1;//variable symb importance
-			info[3] += calculateGENI3value(node, cr);//variable genie importance
-			putAttributeInfo(attribute, info);
-			for (int i = 0; i < node.getNbChildren(); i++)
-				calculateGENSYMBimportace((ClusNode)node.getChild(i), cr);
-		}//if it is a leaf - do nothing
-	}
-	
-	
 	public void setRForestDescription(ClusErrorList error){
 		m_RankingDescription = "Ranking via Random Forests: RForest for error measure(s) ";
 		for(int i = 0; i < error.getNbErrors(); i++){
@@ -620,8 +604,4 @@ public class ClusEnsembleFeatureRanking {
 	public void setReliefDescription(int neighbours, int iterations){
 		m_RankingDescription = String.format("Ranking via Relief: %d neighbours and %d iterations", neighbours, iterations);
 	}
-	public void setDescription(String str){
-		m_RankingDescription = str;
-	}
-
 }
