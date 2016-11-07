@@ -23,13 +23,9 @@
 package clus.ext.ensembles;
 
 import java.io.IOException;
-import java.lang.reflect.Field;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.io.*;
-
-
 import jeans.resource.ResourceInfo;
 import clus.Clus;
 import clus.algo.*;
@@ -38,15 +34,12 @@ import clus.main.*;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
-import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
 import clus.data.rows.TupleIterator;
 import clus.data.type.*;
 import clus.error.ClusErrorList;
 import clus.heuristic.ClusHeuristic;
-import clus.heuristic.VarianceReductionHeuristic;
 import clus.selection.*;
-import clus.statistic.ClusStatistic;
 import clus.tools.optimization.GDProbl;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
