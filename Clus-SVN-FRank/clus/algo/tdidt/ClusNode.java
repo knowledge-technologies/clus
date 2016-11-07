@@ -309,7 +309,7 @@ public class ClusNode extends MyNode implements ClusModel {
 		if(mgr == null){
 			throw new RuntimeException("ClusStatManager = null.");
 		} else{
-			if(mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES){ // multi-label
+			if(mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES){ // multi-label threshold optimisation
 				double lower = 0.0, upper = 1.0;
 				double middle = lower + (upper - lower) / 2;
 				ClassificationStat targetStat = (ClassificationStat) getTargetStat();
@@ -317,12 +317,11 @@ public class ClusNode extends MyNode implements ClusModel {
 				for(int target = 0; target < targetStat.m_ClassCounts.length; target++){
 					nbRelevantLabels += targetStat.m_ClassCounts[target][0];
 				}
-				int nbPredictedRelevantNow = -1, nbPredictedRelevantBefore = -2;
+				int nbPredictedRelevantNow = -1;
 				while(upper - lower > 0.005){// && nbPredictedRelevantBefore != nbPredictedRelevantNow){
 					middle = lower + (upper - lower) / 2;
 					updateThresholds(middle);
 					updateTree();
-					nbPredictedRelevantBefore = nbPredictedRelevantNow;
 					nbPredictedRelevantNow = countPredictedRelevant();
 					if(nbPredictedRelevantNow == nbRelevantLabels){
 						break;
@@ -373,7 +372,7 @@ public class ClusNode extends MyNode implements ClusModel {
 		if(m_Test == null){ // is leaf 
 			ClassificationStat targetStat = (ClassificationStat) getTargetStat();
 			for(int target = 0; target < targetStat.m_ClassCounts.length; target++){
-				if(targetStat.m_ClassCounts[target][0] / targetStat.m_SumWeights[target] > targetStat.m_Thresholds[target]){
+				if(targetStat.m_ClassCounts[target][0] / targetStat.m_SumWeights[target] >= targetStat.m_Thresholds[target]){
 					nbPredictedRelevant += (int) targetStat.m_SumWeights[target]; // TODO: ne deluje za weighted sum of examples!
 				}
 			}
