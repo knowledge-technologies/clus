@@ -44,7 +44,7 @@ import clus.tools.optimization.GDProbl;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
 
-
+// test
 public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	Clus m_BagClus;
 	static ClusAttrType[] m_RandomSubspaces;
