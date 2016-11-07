@@ -572,8 +572,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	}
 	
 	void initializeBagTargetSubspacing(ClusRun crSingle, int bagNo) throws ClusException
-	{
-		
+	{	
 		if (Settings.isEnsembleTargetSubspacingEnabled()) {
 			
 			ClusStatManager m = crSingle.getStatManager();
