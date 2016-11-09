@@ -22,7 +22,9 @@
 
 package clus.algo.kNN;
 
-import clus.Clus;  
+import java.io.IOException;
+
+import clus.Clus;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.tdidt.ClusNode;
@@ -33,7 +35,6 @@ import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
-import java.io.IOException;
 import jeans.util.cmdline.CMDLineArgs;
 
 /**
@@ -66,7 +67,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType{
         }
 
         public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
-            String[] ks = Settings.kNN_k.getValue().split(",");
+            String[] ks = Settings.kNN_k.getValue().split(",");            
             String[] distWeight = Settings.kNN_distanceWeight.getValue().split(",");
             int[] weights = new int[distWeight.length];
             int i = 0;

@@ -688,6 +688,9 @@ public class Clus implements CMDLineArgsProvider {
 		if (wr_ens_tr_preds || wr_ens_te_preds)cr.initEnsemblePredictionsWriter(type);
 //		if (wr_ens_xval_preds && (cr.getIndex() == 1)) cr.initEnsemblePredictionsWriter(ClusModelInfo.XVAL_PREDS);//initialize only for the first fold
 		
+//		boolean isKnn = false && cr.getStatManager().getSettings().isKNN();
+//		LinkedList<DataTuple> nearest = new LinkedList<DataTuple>(); // used just for kNN
+		
 		ModelProcessorCollection allcoll = cr.getAllModelsMI().getAddModelProcessors(type);
 		DataTuple tuple = iter.readTuple();
 		while (tuple != null) {
@@ -697,6 +700,16 @@ public class Clus implements CMDLineArgsProvider {
 				if (mi != null && mi.getModel() != null) {
 					ClusModel model = mi.getModel();
 					ClusStatistic pred = model.predictWeighted(tuple);
+//					if(isKnn){
+//						model = (ClusModel) mi.getModel();
+//						if(nearest.size() == 0){
+//							nearest = ((KnnModel) model).search.returnNNs(tuple, ((KnnModel) model).getMaxNbNeighbours());
+//						} else if(nearest.size() < ((KnnModel) model).getNbNeighbours()){
+//							throw new RuntimeException(String.format("Numbers of neighbours (%s) for the model is greater than the length of LinkedList<DataTuple> nearest (%s)!", ((KnnModel) model).getNbNeighbours(), nearest.size()));							
+//						}
+//						pred = ((KnnModel) model).predictWeighted(tuple, nearest);
+//					}
+					
 					ClusErrorList err = mi.getError(type);
 					if (err != null)
 						err.addExample(tuple, pred);
