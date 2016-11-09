@@ -79,7 +79,7 @@ public class KnnModel implements ClusModel, Serializable{
 	public static final int WEIGHTING_INVERSE = 2; // d^{-1}
 	public static final int WEIGHTING_MINUS = 3; // 1-d
 
-	public SearchAlgorithm search; 
+	private SearchAlgorithm search; 
 	private int weightingOption;
 	private ClusRun cr;
 	protected ClusStatistic statTemplate;
@@ -315,14 +315,6 @@ public class KnnModel implements ClusModel, Serializable{
 
 	public String getModelInfo() {
 		return "kNN model weighted with " + this.weightingOption + " and " + m_K + " neighbors.";
-	}
-	
-	public int getNbNeighbours(){
-		return m_K;
-	}
-	
-	public int getMaxNbNeighbours(){
-		return m_MaxK;
 	}
 
 	public void printModel(PrintWriter wrt) {
