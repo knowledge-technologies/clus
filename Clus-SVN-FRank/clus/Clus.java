@@ -697,6 +697,7 @@ public class Clus implements CMDLineArgsProvider {
 				if (mi != null && mi.getModel() != null) {
 					ClusModel model = mi.getModel();
 					ClusStatistic pred = model.predictWeighted(tuple);
+					
 					ClusErrorList err = mi.getError(type);
 					if (err != null)
 						err.addExample(tuple, pred);

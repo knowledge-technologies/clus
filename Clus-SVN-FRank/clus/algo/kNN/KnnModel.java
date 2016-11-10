@@ -79,25 +79,33 @@ public class KnnModel implements ClusModel, Serializable{
 	public static final int WEIGHTING_INVERSE = 2; // d^{-1}
 	public static final int WEIGHTING_MINUS = 3; // 1-d
 
-	private SearchAlgorithm search;
+	private SearchAlgorithm search; 
 	private int weightingOption;
 	private ClusRun cr;
 	protected ClusStatistic statTemplate;
-	private int k = 1;
+	private int m_K = 1;									// the number of nearest neighbours, see also https://www.youtube.com/watch?v=KqOsrniBooQ
+	private int m_MaxK = 1;									// maximal number of neighbours among the master itself and his 'workeks': for efficient use of predictWeighted in Clus.calcError()
+	private DataTuple m_CurrentTuple;						// used for efficient use of predictWeighted in Clus.calcError()
+	private LinkedList<DataTuple> m_CurrentNeighbours;		// m_MaxK nearest neighbours of m_CurrentTuple
+	private KnnModel m_Master = null;
 
 	// Slave mode - this model is used only for voting, searching is done by master
 	public KnnModel(ClusRun cr, int k, int weighting, KnnModel master){
 		this.cr = cr;
-		this.k = k;
+		this.m_K = k;
+		this.m_MaxK = Math.max(this.m_K, master.m_MaxK);
+		master.m_MaxK = this.m_MaxK;
 		this.weightingOption = weighting;
 		this.search = master.search;
 		this.statTemplate = master.statTemplate;
+		this.m_Master = master;
 	}
 
 	// Default constructor.
 	public KnnModel(ClusRun cr, int k, int weighting) throws ClusException, IOException{
 		this.cr = cr;
-		this.k = k;
+		this.m_K = k;
+		this.m_MaxK = Math.max(this.m_K, this.m_MaxK);
 		this.weightingOption = weighting;
 		// settings file name; use name for .weight file
 		String fName = this.cr.getStatManager().getSettings().getAppName();
@@ -210,7 +218,7 @@ public class KnnModel implements ClusModel, Serializable{
 		System.out.println("------------------------------------------------");
 		System.out.println(this.search.getClass());
 		System.out.println(searchDistance.getBasicDistance().getClass());
-		System.out.println(this.k);
+		System.out.println(this.m_K);
 		System.out.println(Settings.kNN_distanceWeight.getStringValue());
 		System.out.println("------------------------------------------------");
 
@@ -245,10 +253,25 @@ public class KnnModel implements ClusModel, Serializable{
 //			System.out.println("----------------------");
 //		}
 	}
-
+	
 	public ClusStatistic predictWeighted(DataTuple tuple) {
-		// Search for nearest k neighbors
-		LinkedList<DataTuple> nearest = this.search.returnNNs(tuple,this.k);
+		LinkedList<DataTuple> nearest = new LinkedList<DataTuple>(); // the first m_K neigbhours of the m_MaxK neighbours: OK, because the neighbours are sorted from the nearest to the farthest
+		
+		if (this.m_Master == null) {												 // this is the master
+			this.m_CurrentNeighbours = this.search.returnNNs(tuple, this.m_MaxK);
+			this.m_CurrentTuple = tuple;
+			for(int neighbour = 0; neighbour < this.m_K; neighbour++){
+				nearest.add(this.m_CurrentNeighbours.get(neighbour));
+			}
+		} else{																		// this is a slave
+			if(this.m_Master.m_CurrentTuple != tuple){
+				throw new RuntimeException("The neighbours were computed for tuple\n" + this.m_Master.m_CurrentTuple.toString() + "\nbut now, we are dealing with tuple\n" + tuple.toString());
+			}
+			for(int neighbour = 0; neighbour < this.m_K; neighbour++){
+				nearest.add(this.m_Master.m_CurrentNeighbours.get(neighbour));
+			}
+		}
+
 		// 	Initialize distance weighting according to setting file
 		DistanceWeighting weighting; 
 		if ( this.weightingOption == WEIGHTING_INVERSE ){
@@ -291,7 +314,7 @@ public class KnnModel implements ClusModel, Serializable{
 	}
 
 	public String getModelInfo() {
-		return "kNN model weighted with " + this.weightingOption + " and " + k + " neighbors.";
+		return "kNN model weighted with " + this.weightingOption + " and " + m_K + " neighbors.";
 	}
 
 	public void printModel(PrintWriter wrt) {
