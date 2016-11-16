@@ -1172,20 +1172,19 @@ public class Clus implements CMDLineArgsProvider {
 		ClusModelCollectionIO io = new ClusModelCollectionIO();
 		m_Summary.setTotalRuns(1);
 		ClusRun run = singleRunMain(clss, null);
-		if  (!getSettings().isKNN() && getSettings().isWriteModelFile() && !getSettings().isRelief()){
-			saveModels(run, io);
+		if(getSettings().isWriteModelFile()){
+			if  (!getSettings().isKNN() && !getSettings().isRelief()){
+				saveModels(run, io);
+			}
+			// io.save(getSettings().getFileAbsolute(m_Sett.getAppName() +
+			// ".model"));
+			if (ClusEnsembleInduce.isOptimized() && (m_Sett.getNbBaggingSets().getVectorLength() > 1) && (m_Sett.getBagSelection().getIntVectorSorted()[0] < 1)){
+				io.save(getSettings().getFileAbsolute(m_Sett.getAppName() + "_"	+ ClusEnsembleInduce.getMaxNbBags() + "_.model"));
+			}
+			else{
+				io.save(getSettings().getFileAbsolute(m_Sett.getAppName() + ".model"));
+			}
 		}
-		// io.save(getSettings().getFileAbsolute(m_Sett.getAppName() +
-		// ".model"));
-		if (ClusEnsembleInduce.isOptimized()
-				&& (m_Sett.getNbBaggingSets().getVectorLength() > 1) && (m_Sett.getBagSelection().getIntVectorSorted()[0] < 1))
-			io.save(getSettings().getFileAbsolute(
-					m_Sett.getAppName() + "_"
-							+ ClusEnsembleInduce.getMaxNbBags() + "_.model"));
-		else
-			io.save(getSettings().getFileAbsolute(
-					m_Sett.getAppName() + ".model"));
-
 	}
 
 	/*

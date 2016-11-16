@@ -1260,7 +1260,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 				//7:			  t = "a>=x"
 				//8:              h = Heuristic(S,Dtot ,Dcov ,Ctot ,Cviol )
 				//9:              if h > h∗ then
-				//10:			h∗ = h; r∗ = “refine rule using t”
+				//10:			h∗ = h; r∗ = “refine rule using t�
 				//11:             aprev = i[a]
 	  			double heuristic = computeHeuristic(Dtot,Dcov,Ctot,Cviol,s,ML,CL,hash);
 	  			if (heuristic > m_BestHeur) {
@@ -1337,7 +1337,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 				//7:			  t = "a>=x"
 				//8:              h = Heuristic(S,Dtot ,Dcov ,Ctot ,Cviol )
 				//9:              if h > h∗ then
-				//10:			h∗ = h; r∗ = “refine rule using t”
+				//10:			h∗ = h; r∗ = “refine rule using t�
 				//11:             aprev = i[a]
 	  			double heuristic = computeHeuristic(Dtot,Dcov,Ctot,Cviol,s,ML,CL,hash);
 	  			if (heuristic > m_BestHeur) {

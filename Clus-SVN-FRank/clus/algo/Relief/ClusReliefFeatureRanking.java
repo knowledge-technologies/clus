@@ -20,13 +20,17 @@ import clus.ext.timeseries.TSCTimeSeriesDist;
 import clus.ext.timeseries.TimeSeries;
 import clus.main.Settings;
 import clus.util.ClusException;
-
+/**
+ * 
+ * @author matejp
+ *
+ */
 public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
-	private int m_NbNeighbours;
-	private int m_NbIterations;
-	private boolean m_WeightNeighbours;
-	private double m_Sigma;
-	private double[] m_NeighbourWeights;			// value on the i-th place is exp(- m_Sigma * i)
+	private int m_NbNeighbours;						// number of neighours considered in the importances calculation
+	private int m_NbIterations;						// number of iterations considered in the importances calculation
+	private boolean m_WeightNeighbours;				// is contribution of the neighbours is weighted?
+	private double m_Sigma;							// >= 0, see m_NeighbourWeights, m_Sigma == 0 <=> m_WeightNeighbours == false
+	private double[] m_NeighbourWeights;			// value on the i-th place is exp((- m_Sigma * i)**2)
 
 	
 	private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][];	// {array of descriptive attributes, array of target attributes}
@@ -45,7 +49,13 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	
 	int m_TimeSeriesDistance; 								// type of the time series distance
 	
-	
+	/**
+	 * Contructor for the {@code ClusReliefFeatureRanking}, with the standard parameters of (R)Relief(F).
+	 * @param neighbours The number of neighbours that is used in the feature importance calculation. Constraints: <p>{@code 0 < neighbours <= number of instances in the dataset}
+	 * @param iterations The number of iterations in the feature importance calculation. Constraints: <p> {@code 0 < iterations <= number of instances in the dataset}
+	 * @param weightNeighbours If {@code weightNeighbours}, then the contribution of the {@code i}-th nearest neighbour in the feature importance calculation are weighted with factor {@code exp((- sigma * i) ** 2)}.
+	 * @param sigma The rate of quadratic exponential decay. Note that Weka's sigma is the inverse of our {@code sigma}.
+	 */
 	public ClusReliefFeatureRanking(int neighbours, int iterations, boolean weightNeighbours, double sigma){
 		super();
 		this.m_NbNeighbours = neighbours;
@@ -61,7 +71,11 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			Arrays.fill(m_NeighbourWeights, 1.0);
 		}
 	}
-	
+	/**
+	 * Calculates the feature importances for a given dataset.
+	 * @param data The dataset, whose features are importances calculated for.
+	 * @throws ClusException
+	 */
 	public void calculateReliefImportance(RowData data) throws ClusException {
 		m_TimeSeriesDistance = data.m_Schema.getSettings().m_TimeSeriesDistance.getValue();		
 		setReliefDescription(m_NbNeighbours, m_NbIterations);
@@ -183,9 +197,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	
 	/**
 	 * Computes the nearest neighbours of example with index {@code tupleInd} in the dataset {@code data}.
-	 * @param tupleInd
-	 * @param data
-	 * @return
+	 * @param tupleInd Row index of the example in the dataset {@code data}, whose nearest neighbours are computed.
+	 * @param data The dataset
+	 * @return An array of {@code m_NbTargetValues} arrays of {@code NearestNeighbour}s. Each of the arrays belongs to one target value and
+	 * is sorted decreasingly with respect to the distance(neighbour, considered tuple).
 	 * @throws ClusException
 	 */
 	public NearestNeighbour[][] findNearestNeighbours(int tupleInd, RowData data) throws ClusException{
@@ -265,10 +280,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	
 	/**
 	 * Distance between tuples in the subspace {@code space}.
-	 * @param t1
-	 * @param t2
-	 * @param space if 0, subspace is descriptive space, else target space
-	 * @return
+	 * @param t1 The first tuple
+	 * @param t2 The second tuple
+	 * @param space 0 or 1; if 0, subspace is descriptive space and target space otherwise.
+	 * @return Distance between {@code t1} and {@code t2} in the given subspace.
 	 * @throws ClusException 
 	 */
     public double calcDistance(DataTuple t1, DataTuple t2, int space) throws ClusException {
@@ -283,10 +298,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     }
     /**
      * Calculates the distance between to tuples in a given component {@code attr}. 
-     * @param t1
-     * @param t2
-     * @param attr
-     * @return
+     * @param t1 The first tuple
+	 * @param t2 The second tuple
+     * @param attr The attribute/dimension in which the distance between {@code t1} and {@code t2} is computed. 
+     * @return distance({@code attr.value(t1), attr.value(t2)})
      * @throws ClusException 
      */
     public double calcDistance1D(DataTuple t1, DataTuple t2, ClusAttrType attr) throws ClusException{
@@ -312,10 +327,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     /**
      * Calculates distance between the nominal values of the component {@code attr}. In the case of missing values, we follow Weka's solution
      * and not the paper Theoretical and Empirical Analysis of ReliefF and RReliefF, by Robnik Sikonja and Kononenko (time complexity ...).
-     * @param t1
-     * @param t2
-     * @param attr
-     * @return
+     * @param t1 The first tuple
+	 * @param t2 The second tuple
+     * @param attr The nominal attribute/dimension in which the distance between {@code t1} and {@code t2} is computed. 
+     * @return distance({@code attr.value(t1), attr.value(t2)})
      */
     public double calculateNominalDist1D(DataTuple t1, DataTuple t2, NominalAttrType attr){
 		int v1 = attr.getNominal(t1);
@@ -330,11 +345,14 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     /**
      * Calculates distance between the numeric values of the component {@code attr}. In the case of missing values, we follow Weka's solution
      * and not the paper Theoretical and Empirical Analysis of ReliefF and RReliefF, by Robnik Sikonja and Kononenko (time complexity ...).
-     * @param t1
-     * @param t2
-     * @param attr
-     * @param normalizationFactor
-     * @return
+     * @param t1 The first tuple
+	 * @param t2 The second tuple
+     * @param attr The numeric attribute/dimension in which the distance between {@code t1} and {@code t2} is computed. 
+     * @param normalizationFactor Typically,<p> {@code normalizationFactor = 1 / (m_numMaxs[attr.name()] - m_numMins[attr.name()])}.
+     * @return If {@code v1} and {@code v2} are the numeric values of the attribute {@code attr} for the instances {@code t1} and {@code t2},
+     * the value<p>
+     * {@code |v1 - v2| / normalizationFactor}
+     * <p> is returned.  
      */
     public double calculateNumericDist1D(DataTuple t1, DataTuple t2, NumericAttrType attr, double normalizationFactor){
 		double v1 = attr.getNumeric(t1);
@@ -361,10 +379,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     
     /**
      * Computes distance between the time series values of the component {@code attr}.
-     * @param t1
-     * @param t2
-     * @param attr
-     * @return
+     * @param t1 The first tuple
+	 * @param t2 The second tuple
+     * @param attr The time series attribute/dimension in which the distance between {@code t1} and {@code t2} is computed. 
+     * @return distance({@code attr.value(t1), attr.value(t2)})
      * @throws ClusException 
      */
     public double calculateTimeSeriesDist1D(DataTuple t1, DataTuple t2, TimeSeriesAttrType attr) throws ClusException{
@@ -390,10 +408,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     
     /**
      * Computes Levenshtein's distance between the string values of the component {@code attr}.
-     * @param t1
-     * @param t2
-     * @param attr
-     * @return
+     * @param t1 The first tuple
+	 * @param t2 The second tuple
+     * @param attr The string attribute/dimension in which the distance between {@code t1} and {@code t2} is computed. 
+     * @return Levenshtein distance between {@code attr.value(t1)} and {@code attr.value(t2)}.
      */
     public double calculateStringDist1D(DataTuple t1, DataTuple t2, StringAttrType attr){
     	return new Levenshtein(t1, t2, attr).getDist();    	
@@ -414,9 +432,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	}
 	
 	/**
-	 * Returns the index of the chosen example in the iteration {@code iteration}.
-	 * @param iteration
-	 * @return
+	 * Computes the index of the chosen example in the iteration {@code iteration}.
+	 * @param iteration Index of the iteration.
+	 * @return The index of the chosen example in the given iteration.
 	 */
 	private int nextInstance(int iteration){
 		if(m_isDeterministic){
