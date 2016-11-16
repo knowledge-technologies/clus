@@ -388,6 +388,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		OOBSelection oob_sel = null; // = current OOB selection
 		
 		m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+		
 		if (m_OptMode){
 			train_iterator = cr.getTrainIter();
 			if (cr.getTestIter() != null){
@@ -552,7 +553,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		{
 			if (getSettings().getEnsembleMethod() != Settings.ENSEMBLE_BAGGING &&
 				getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RFOREST &&
-				getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RSUBSPACES)
+				getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RSUBSPACES &&
+				getSettings().getEnsembleMethod() != Settings.ENSEMBLE_EXTRA_TREES)
 				
 				throw new RuntimeException("Target subspacing is not implemented for the selected ensemble method!");
 
@@ -842,6 +844,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		TupleIterator train_iterator = null; // = train set iterator
 		TupleIterator test_iterator = null; // = test set iterator
 
+		m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+		
 		if (m_OptMode){
 			train_iterator = cr.getTrainIter();
 			if (m_BagClus.hasTestSet()){
@@ -873,6 +877,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			}
 			ind.initialize();
 			crSingle.getStatManager().initClusteringWeights();
+			
+			initializeBagTargetSubspacing(crSingle, i);
+			
 			ClusModel model = ind.induceSingleUnpruned(crSingle);
 			summ_time += ResourceInfo.getTime() - one_bag_time;
 			if (m_OptMode){

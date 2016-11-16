@@ -1156,7 +1156,7 @@ public class Clus implements CMDLineArgsProvider {
 			}
 	}
 
-	public ClusRun train(RowData train) throws ClusException, IOException {
+	public ClusRun train(RowData train) throws ClusException, IOException  {
 		m_Induce = getClassifier().createInduce(train.getSchema(), m_Sett, m_CmdLine);
 		ClusRun cr = partitionDataBasic(train);
 		m_Induce.initialize();
