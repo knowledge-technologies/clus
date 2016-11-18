@@ -529,7 +529,7 @@ public class ClusEnsembleFeatureRanking {
 			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel), (int)type, (int)position);
 			double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
 			for(int i = 0; i < oob_errs.length; i++){
-				info[2 + i] += oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0];
+				info[2 + i] += (oob_errs[i][0] != 0.0 || permuted_oob_errs[i][0] != 0.0) ? oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0] : 0.0;
 			}
 			putAttributeInfo(current_attribute, info);
 		}
