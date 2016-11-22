@@ -73,8 +73,14 @@ public class HierErrorMeasures extends ClusError {
 	}
 
 	public boolean isComputeForModel(String name) {
-		if (name.equals("Original")) return true;
-		if (name.equals("Pruned")) return true;
+		if (name.equals("Original")){
+			return true;
+		} else if (name.equals("Pruned")){
+			return true;
+		} else if (name.startsWith("Original ") && name.contains("-nn model with ") || name.equals("Default 1-nn model with no weighting")){
+			// this is kNN hackish solution
+			return true;
+		}
 		return false;
 	}
 

@@ -79,8 +79,16 @@ public class HierClassWiseAccuracy extends ClusError {
 	}
 
 	public boolean isComputeForModel(String name) {
-		if (name.equals("Default")) return false;
-		if (name.equals("Original")) return false;
+		if (name.equals("Default")){
+			return false;
+		}
+		else if (name.equals("Original")){
+			return false;
+		}
+		else if (name.startsWith("Original") && name.contains("-nn model with ") || name.equals("Default 1-nn model with no weighting")){
+			// this is kNN hackish solution: obviously, this else-if is not necessary and is here to be seen
+			return true;
+		}
 		return true;
 	}
 

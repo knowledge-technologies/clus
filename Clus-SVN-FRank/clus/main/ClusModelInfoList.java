@@ -126,6 +126,17 @@ public abstract class ClusModelInfoList implements Serializable {
 		initModelInfo(inf);
 		return inf;
 	}
+	/**
+	 * Analogue of {@code intiModelInfo(int i)}. Used in kNN case
+	 * @param i
+	 * @param name Name of the kNN model.
+	 * @return
+	 */
+	public ClusModelInfo initModelInfo(int i, String name) {
+		ClusModelInfo inf = new ClusModelInfo(name);
+		initModelInfo(inf);
+		return inf;
+	}
 
 	public void initModelInfo(ClusModelInfo inf) {
 		inf.setSelectedErrorsClone(getTrainError(), getTestError(), getValidationError());
@@ -148,6 +159,21 @@ public abstract class ClusModelInfoList implements Serializable {
 		ClusModelInfo inf = (ClusModelInfo)m_Models.get(i);
 		if (inf == null) {
 			inf = initModelInfo(i);
+			m_Models.set(i, inf);
+		}
+		return inf;
+	}
+	/**
+	 * Analogue of the {@code addModelInfo(int i)} which is used in kNN case.
+	 * @param i
+	 * @param model_name The name of the model
+	 * @return
+	 */
+	public ClusModelInfo addModelInfo(int i, String model_name) {
+		while (i >= m_Models.size()) m_Models.add(null);
+		ClusModelInfo inf = (ClusModelInfo)m_Models.get(i);
+		if (inf == null) {
+			inf = initModelInfo(i, model_name);
 			m_Models.set(i, inf);
 		}
 		return inf;

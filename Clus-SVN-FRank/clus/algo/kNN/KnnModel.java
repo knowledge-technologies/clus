@@ -184,7 +184,7 @@ public class KnnModel implements ClusModel, Serializable{
 				// compute max and min for every numeric attribute
 				for(int tuple_ind = 0; tuple_ind < data.getNbRows(); tuple_ind++){
 					for (int i = 0; i < nb_attrs; i++) {
-						ClusAttrType attr_type = schema.getAttrType(i);
+ 						ClusAttrType attr_type = schema.getAttrType(i);
 						if (!attr_type.isDisabled() && attr_type instanceof NumericAttrType) {
 							double t = attr_type.getNumeric(data.getTuple(tuple_ind));
 							if (t < mins[i] && t != Double.POSITIVE_INFINITY){

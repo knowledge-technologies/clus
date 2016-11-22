@@ -81,10 +81,11 @@ public class KnnClassifier extends ClusInductionAlgorithmType{
                 i++;
             }
            // base model
+            String model_name = "Default 1-nn model with no weighting"; // DO NOT CHANGE THE NAME!!!
             KnnModel model = new KnnModel(cr,1,1);
-            ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL);
+            ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL, model_name);
             model_info.setModel(model);
-            model_info.setName("Default 1-nn model with no weighting");
+            model_info.setName(model_name);
 
             ClusModel defModel = induceDefaultModel(cr);
             ClusModelInfo defModelInfo = cr.addModelInfo(ClusModel.DEFAULT);
@@ -92,6 +93,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType{
             defModelInfo.setName("Default");
 
             int modelCnt = 2;
+            
             for( String kt : ks ){
                 i = -1;
                 for( int w : weights ){
@@ -99,9 +101,10 @@ public class KnnClassifier extends ClusInductionAlgorithmType{
                     int k = Integer.parseInt(kt);
                     if( k == 1 && w == 1 ) continue; // same as default model
                     KnnModel tmpmodel = new KnnModel(cr,k,w,model);
-                    ClusModelInfo tmpmodel_info = cr.addModelInfo(modelCnt++);
+                    model_name = "Original " + k + "-nn model with " + weights[i] + " weighting";// DO NOT CHANGE THE NAME!!!
+                    ClusModelInfo tmpmodel_info = cr.addModelInfo(modelCnt++, model_name);
                     tmpmodel_info.setModel(tmpmodel);
-                    tmpmodel_info.setName("Original " + k + "-nn model with " + weights[i] + " weighting");
+                    tmpmodel_info.setName(model_name); 
                 }
             }
 
