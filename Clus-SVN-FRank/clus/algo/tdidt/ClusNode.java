@@ -318,7 +318,7 @@ public class ClusNode extends MyNode implements ClusModel {
 					nbRelevantLabels += targetStat.m_ClassCounts[target][0];
 				}
 				int nbPredictedRelevantNow = -1;
-				while(upper - lower > 0.005){// && nbPredictedRelevantBefore != nbPredictedRelevantNow){
+				while(upper - lower > 0.0005){// && nbPredictedRelevantBefore != nbPredictedRelevantNow){
 					middle = lower + (upper - lower) / 2;
 					updateThresholds(middle);
 					updateTree();
@@ -885,6 +885,20 @@ public class ClusNode extends MyNode implements ClusModel {
 		printTree(wrt, StatisticPrintInfo.getInstance(), "");
 		wrt.flush();
 	}
+	
+	/**
+	 * 
+	 * @param writer
+	 * @param treeIndex
+	 */
+	public void printMultiLabelThresholds(PrintWriter writer, int treeIndex){
+		writer.print(String.format("Tree %s: [",treeIndex + 1));
+		double[] thresholds =  ((ClassificationStat) m_TargetStat).m_Thresholds;
+		for(int i = 0; i < thresholds.length; i++){
+			writer.print(ClusFormat.FOUR_AFTER_DOT.format(thresholds[i]) + (i == thresholds.length - 1 ? "]\n" : ", "));
+		}
+		
+	}
 
 	public final void writeDistributionForInternalNode(PrintWriter writer, StatisticPrintInfo info) {
 		if (info.INTERNAL_DISTR) {
@@ -900,13 +914,6 @@ public class ClusNode extends MyNode implements ClusModel {
 	}
 
 	public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix, RowData examples, boolean is_root) {
-		if(is_root && m_TargetStat instanceof ClassificationStat && ((ClassificationStat) m_TargetStat).m_Thresholds != null){
-			writer.print("MultiLabelThreshold: [");
-			double[] thresholds =  ((ClassificationStat) m_TargetStat).m_Thresholds;
-			for(int i = 0; i < thresholds.length; i++){
-				writer.print(ClusFormat.FOUR_AFTER_DOT.format(thresholds[i]) + (i == thresholds.length - 1 ? "]\n\n" : ", "));
-			}
-		}
 		int arity = getNbChildren();
 		if (arity > 0) {
 			int delta = hasUnknownBranch() ? 1 : 0;

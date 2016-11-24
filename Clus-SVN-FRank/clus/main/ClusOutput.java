@@ -31,13 +31,16 @@ import jeans.util.*;
 
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
+import clus.statistic.ClassificationStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.*;
 import clus.data.type.*;
 import clus.error.*;
+import clus.ext.ensembles.ClusForest;
 import clus.ext.ensembles.ClusOOBErrorEstimate;
 import clus.data.rows.*;
 import clus.Clus;
+import clus.algo.tdidt.ClusNode;
 
 /**
  * Class for outputting the training and testing results to .out file.
@@ -167,6 +170,32 @@ public class ClusOutput {
 				}
 			}
 		}
+		
+		
+		// print multilable thresholds
+		if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
+			String mlThresholdsTitle = "MultiLabelThresholds:";
+			m_Writer.println(mlThresholdsTitle);
+			m_Writer.println(StringUtils.makeString('-', mlThresholdsTitle.length()));
+			for (int i = 0; i < cr.getNbModels(); i++) {
+				ClusModel root = (ClusModel) models.get(i);
+				String modelName = cr.getModelInfo(i).getName();
+				if(root instanceof ClusNode){
+					m_Writer.println(modelName);
+					((ClusNode) root).printMultiLabelThresholds(m_Writer, -1);
+					m_Writer.println();
+				} else if(root instanceof ClusForest){
+					m_Writer.println(modelName);
+					ClusForest forest = (ClusForest) root;
+					int forestSize = forest.getModelSize();
+					for(int tree = 0; tree < forestSize; tree++){
+						((ClusNode) forest.getModel(tree)).printMultiLabelThresholds(m_Writer, tree);
+					}
+					m_Writer.println();
+				}
+			}			
+		}
+		
 		// Compute basename - not needed
 		String bName = FileUtil.getName(m_Fname);
 		m_Writer.println();
