@@ -68,8 +68,11 @@ public class ROCAndPRCurve implements Serializable {
 	}
 
 	public void enumerateThresholds() {
-		if (m_Thresholds == null) enumerateThresholdsAll();
-		else enumerateThresholdsSelected(m_Thresholds);
+		if (m_Thresholds == null){
+			enumerateThresholdsAll();
+		} else{
+			enumerateThresholdsSelected(m_Thresholds);
+		}
 	}
 
 	public void enumerateThresholdsAll() {

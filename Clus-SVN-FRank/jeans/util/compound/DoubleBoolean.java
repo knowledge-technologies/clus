@@ -25,7 +25,11 @@ package jeans.util.compound;
 import java.io.Serializable;
 
 import clus.main.Settings;
-
+/**
+ * 
+ * Parent class of the {@ code DoubleBooleanCount} that stores statistics that are used when building ROC- and PR-curves.
+ *
+ */
 public class DoubleBoolean implements Comparable, Serializable {
 
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
@@ -33,6 +37,12 @@ public class DoubleBoolean implements Comparable, Serializable {
 	protected double m_Double;
 	protected boolean m_Boolean;
 
+	/**
+	 * See {@code DoubleBooleanCount.DoubleBooleanCount(double val, boolean bol)}.
+	 * 
+	 * @param val
+	 * @param bol
+	 */
 	public DoubleBoolean(double val, boolean bol) {
 		m_Double = val;
 		m_Boolean = bol;
@@ -50,12 +60,19 @@ public class DoubleBoolean implements Comparable, Serializable {
 		DoubleBoolean ot = (DoubleBoolean)o;
 		return ot.m_Boolean == m_Boolean && ot.m_Double == m_Double;
 	}
-
+	/**
+	 * Hash function that is used for adding objects of the type {@code DoubleBooleanCount} to the {@code clus.error.BinaryPredictionList.m_ValueSet}.
+	 */
 	public int hashCode() {
 		long v = Double.doubleToLongBits(m_Double);
 		return (int)(v^(v>>>32)) ^ (m_Boolean ? 1 : 0);
 	}
 
+	/**
+	 * Comparing function that is used for sorting the objects of the type {@code DoubleBooleanCount}. The objects of the given list are sorted increasingly by the field {@code m_Double},
+	 * which comes in handy when constructing as many points for ROC- and PR-curves as possible.
+	 *
+	 */
 	public int compareTo(Object o) {
 		DoubleBoolean ot = (DoubleBoolean)o;
 		if (m_Double == ot.m_Double) return 0;
