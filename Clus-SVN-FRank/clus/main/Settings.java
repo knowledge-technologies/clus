@@ -1686,10 +1686,11 @@ public class Settings implements Serializable {
     public final static int HIERWEIGHT_EXP_MAX_PARENT_WEIGHT = 3;
     public final static int HIERWEIGHT_NO_WEIGHT = 4;
 
-    public final static String[] HIERDIST = { "WeightedEuclidean", "Jaccard" };
+    public final static String[] HIERDIST = { "WeightedEuclidean", "Jaccard", "NoDistance"};
 
     public final static int HIERDIST_WEIGHTED_EUCLIDEAN = 0;
     public final static int HIERDIST_JACCARD = 1;
+    public final static int HIERDIST_NO_DIST = 2; // for poolAUPRC case
 
     public final static String[] HIERMEASURES = { "AverageAUROC", "AverageAUPRC", "WeightedAverageAUPRC", "PooledAUPRC" };
 

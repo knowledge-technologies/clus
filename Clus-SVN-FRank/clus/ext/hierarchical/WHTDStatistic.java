@@ -41,6 +41,7 @@ import clus.statistic.*;
 import clus.util.*;
 
 import jeans.util.array.*;
+import jeans.util.compound.DoubleBooleanCount;
 
 public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
@@ -54,7 +55,34 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 	protected double m_SigLevel;
 	protected double m_Threshold = -1.0;
 	protected int m_Compatibility;
-
+	// Hackishe Porzion des Codes fuer die pooled AUPRC: all other parts of the code that serve this purpose will be simply denoted by poolAUPRC case
+	protected int m_Distance = -1;
+	protected double[] m_P;
+	
+	/**
+	 * Constructor for poolAUPRC case
+	 * @param hier
+	 * @param comp
+	 * @param distance
+	 */
+	public WHTDStatistic(ClassHierarchy hier, int comp, int distance) {
+		this(hier, false, comp, distance);
+	}
+	/**
+	 * Constructor for poolAUPRC case
+	 * @param hier
+	 * @param onlymean
+	 * @param comp
+	 * @param distance
+	 */
+	public WHTDStatistic(ClassHierarchy hier, boolean onlymean, int comp, int distance) {
+		super(hier.getDummyAttrs(), onlymean);
+		m_Compatibility = comp;
+		m_Hier = hier;
+		m_Distance = distance;
+		m_P = new double[m_Hier.getTotal()];
+	}
+	
 	public WHTDStatistic(ClassHierarchy hier, int comp) {
 		this(hier, false, comp);
 	}
@@ -94,11 +122,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 	}
 
 	public ClusStatistic cloneStat() {
-		return new WHTDStatistic(m_Hier, false, m_Compatibility);
+		if(m_Distance == Settings.HIERDIST_NO_DIST){//poolAUPRC case
+			return new WHTDStatistic(m_Hier, false, m_Compatibility, m_Distance);
+		} else{
+			return new WHTDStatistic(m_Hier, false, m_Compatibility);
+		}
 	}
 
 	public ClusStatistic cloneSimple() {
-		WHTDStatistic res = new WHTDStatistic(m_Hier, true, m_Compatibility);
+		WHTDStatistic res = (m_Distance == Settings.HIERDIST_NO_DIST) ? new WHTDStatistic(m_Hier, true, m_Compatibility, m_Distance) : new WHTDStatistic(m_Hier, true, m_Compatibility);//poolAUPRC case : normal case
 		res.m_Threshold = m_Threshold;
 		res.m_Training = m_Training;
 		if (m_Validation != null) {
@@ -135,6 +167,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 			int idx = val.getIndex();
 			// if (Settings.VERBOSE > 10) System.out.println("idx = "+idx+" weight = "+weight);
 			m_SumValues[idx] += weight;
+			if(m_Distance == Settings.HIERDIST_NO_DIST){//poolAUPRC case
+				m_P[idx] += weight;
+			}
 		}
 	}
 
@@ -456,5 +491,133 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 	public String getDistanceName() {
 		return "Hierarchical Weighted Euclidean Distance";
+	}
+	
+	public double getSVarS(int i) { //poolAUPRC case
+		throw new RuntimeException("getSVarS(int i)");
+	}
+
+	public double getSVarS(ClusAttributeWeights scale) {
+		if(m_Distance == Settings.HIERDIST_NO_DIST){ // poolAUPRC case
+			ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
+			for(int i = 0; i < m_NbAttrs; i++){
+				classInd.add(i, i);
+			}
+			final double[] positives = Arrays.copyOf(m_P, m_P.length); 
+			classInd.sort(new Comparator<Integer>() {
+				@Override
+				public int compare(Integer o1, Integer o2) {  // sort decreasingly
+					if(positives[o1] < positives[o2]){
+						return 1;
+					} else if(positives[o1] > positives[o2]){
+						return -1;
+					} else{
+						return 0;
+					}
+				}
+			});
+			// compute pooled PR-curve
+			double conditionPositives = 0.0;
+			for(int i = 0; i < positives.length; i++){
+				conditionPositives += positives[i];
+			}
+			double prev = Double.NaN;
+			double TP = 0.0, FP = 0.0;
+			boolean first = true;
+			ArrayList<double[]> PRcurve = new ArrayList<double[]>();
+			for (int i = 0; i < positives.length; i++) {
+				double threshold = positives[classInd.get(i)]; // the real threshold is positives[classInd.get(i)] / m_SumWeight ??????????????
+				if (threshold != prev && !first) {
+					PRcurve.add(new double[]{TP/ conditionPositives, TP / (TP + FP)});
+				}
+				TP += threshold;
+				FP += m_SumWeight - threshold;
+
+				prev = threshold;
+				first = false;
+			}
+			PRcurve.add(new double[]{TP/ conditionPositives, TP / (TP + FP)});	// maybe, this was added twice, but area will stay the same
+			return computeArea(PRcurve);			
+		} else{
+			return super.getSVarS(scale);
+		}
+	}
+
+	public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
+		if(m_Distance == Settings.HIERDIST_NO_DIST){ // poolAUPRC case
+			ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
+			for(int i = 0; i < m_NbAttrs; i++){
+				classInd.add(i, i);
+			}
+			final double[] positives = new double[m_NbAttrs];
+			for(int i = 0; i < m_NbAttrs; i++){
+				positives[i] = m_P[i] - ((WHTDStatistic) other).m_P[i]; 
+			}
+			classInd.sort(new Comparator<Integer>() {
+				@Override
+				public int compare(Integer o1, Integer o2) {  // sort decreasingly
+					if(positives[o1] < positives[o2]){
+						return 1;
+					} else if(positives[o1] > positives[o2]){
+						return -1;
+					} else{
+						return 0;
+					}
+				}
+			});
+			// compute pooled PR-curve
+			double conditionPositives = 0.0;
+			for(int i = 0; i < positives.length; i++){
+				conditionPositives += positives[i];
+			}
+			double prev = Double.NaN;
+			double TP = 0.0, FP = 0.0;
+			boolean first = true;
+			ArrayList<double[]> PRcurve = new ArrayList<double[]>();
+			for (int i = 0; i < positives.length; i++) {
+				double threshold = positives[classInd.get(i)]; // the real threshold is positives[classInd.get(i)] / m_SumWeight ??????????????
+				if (threshold != prev && !first) {
+					PRcurve.add(new double[]{TP/ conditionPositives, TP / (TP + FP)});
+				}
+				TP += threshold;
+				FP += m_SumWeight - threshold;
+
+				prev = threshold;
+				first = false;
+			}
+			PRcurve.add(new double[]{TP/ conditionPositives, TP / (TP + FP)});	// maybe, this was added twice, but area will stay the same
+			return computeArea(PRcurve);			
+		} else{
+			return super.getSVarSDiff(scale, other);
+		}
+	}
+	/**
+	 * Computes the area under the (pooled) curve. This is a copy of {@code clus.error.ROCAndPRCurve.computeArea(ArrayList)}. Used in poolAUPRC case
+	 * @param curve
+	 * @return The area under the curve
+	 */
+	public static double computeArea(ArrayList<double[]> curve) {
+		double area = 0.0;
+		if (curve.size() > 0) {
+			double[] prev = curve.get(0);
+			for (int i = 1; i < curve.size(); i++) {
+				double[] pt = curve.get(i);
+				area += 0.5*(pt[1]+prev[1])*(pt[0]-prev[0]);
+				prev = pt;
+			}
+		}
+		return area;
+	}
+	
+	public void copy(ClusStatistic other) {
+		if(m_Distance == Settings.HIERDIST_NO_DIST){ // poolAUPRC case
+			WHTDStatistic or = (WHTDStatistic) other;
+			m_SumWeight = or.m_SumWeight;
+			m_NbExamples = or.m_NbExamples;
+			System.arraycopy(or.m_SumValues, 0, m_SumValues, 0, m_NbAttrs);
+			System.arraycopy(or.m_P, 0, m_P, 0, m_NbAttrs); // additional line compared to else case
+		} else {
+			super.copy(other);
+		}
 	}
 }

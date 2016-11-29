@@ -216,8 +216,12 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 				//				System.out.println(m_FindBestTest.toString());
 //				System.out.println(m_FindBestTest.m_BestTest.toString());
 //				System.out.println("HERE");
-			}else if (at instanceof NominalAttrType) m_FindBestTest.findNominal((NominalAttrType)at, data);
-			else m_FindBestTest.findNumeric((NumericAttrType)at, data);
+			}else if (at instanceof NominalAttrType){
+				m_FindBestTest.findNominal((NominalAttrType)at, data);
+			}
+			else{
+				m_FindBestTest.findNumeric((NumericAttrType)at, data);
+			}
 		}
 		
 /*		long stop_time = System.currentTimeMillis();

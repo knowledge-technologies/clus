@@ -92,7 +92,9 @@ public abstract class RegressionStatBase extends ClusStatistic {
 	public abstract void calcMean(double[] means);
 
 	public void calcMean() {
-		if (m_Means == null) m_Means = new double[m_NbAttrs];
+		if (m_Means == null){
+			m_Means = new double[m_NbAttrs];
+		}
 		calcMean(m_Means);
 	}
 

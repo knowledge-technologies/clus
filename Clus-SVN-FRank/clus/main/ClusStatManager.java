@@ -454,22 +454,27 @@ public class ClusStatManager implements Serializable {
 			}
 		}
 		switch (m_Mode) {
-		case MODE_HIERARCHICAL:
-			if (getSettings().getHierDistance() == Settings.HIERDIST_WEIGHTED_EUCLIDEAN) {
-				if(getSettings().getHierSingleLabel()){
-					setClusteringStatistic(new HierSingleLabelStat(m_Hier, getCompatibility()));
-					setTargetStatistic(new HierSingleLabelStat(m_Hier, getCompatibility()));
-				}else{
-					setClusteringStatistic(new WHTDStatistic(m_Hier, getCompatibility()));
-					setTargetStatistic(new WHTDStatistic(m_Hier, getCompatibility()));
+		case MODE_HIERARCHICAL:	
+			if(getSettings().getHierDistance() == Settings.HIERDIST_NO_DIST){
+				setClusteringStatistic(new WHTDStatistic(m_Hier, getCompatibility(), getSettings().getHierDistance()));
+				setTargetStatistic(new WHTDStatistic(m_Hier, getCompatibility(), getSettings().getHierDistance()));
+			} else{
+				if (getSettings().getHierDistance() == Settings.HIERDIST_WEIGHTED_EUCLIDEAN) {
+					if(getSettings().getHierSingleLabel()){
+						setClusteringStatistic(new HierSingleLabelStat(m_Hier, getCompatibility()));
+						setTargetStatistic(new HierSingleLabelStat(m_Hier, getCompatibility()));
+					}else{
+						setClusteringStatistic(new WHTDStatistic(m_Hier, getCompatibility()));
+						setTargetStatistic(new WHTDStatistic(m_Hier, getCompatibility()));
+					}
+				} else {
+					ClusDistance dist = null;
+					if (getSettings().getHierDistance() == Settings.HIERDIST_JACCARD) {
+						dist = new HierJaccardDistance(m_Hier.getType());
+					}
+					setClusteringStatistic(new HierSumPairwiseDistancesStat(m_Hier, dist, getCompatibility()));
+					setTargetStatistic(new HierSumPairwiseDistancesStat(m_Hier, dist, getCompatibility()));
 				}
-			} else {
-				ClusDistance dist = null;
-				if (getSettings().getHierDistance() == Settings.HIERDIST_JACCARD) {
-					dist = new HierJaccardDistance(m_Hier.getType());
-				}
-				setClusteringStatistic(new HierSumPairwiseDistancesStat(m_Hier, dist, getCompatibility()));
-				setTargetStatistic(new HierSumPairwiseDistancesStat(m_Hier, dist, getCompatibility()));
 			}
 			break;
 		case MODE_SSPD:

@@ -74,7 +74,13 @@ public class ROCAndPRCurve implements Serializable {
 			enumerateThresholdsSelected(m_Thresholds);
 		}
 	}
-
+	
+	/**
+	 * Computes points for PR- and ROC- curves that would be obtained if the threshold would go continuously from Infinity to 0.
+	 * Basically, this is done by sorting triples {@code (prob, ground truth, count)} (meaning that
+	 * {@code count} instances from the binary class {@code ground truth} were predicted positive with probability {@code prob}) decreasingly with respect
+	 * to {@code prob} (see, how {@code m_Values} are defined), and updating the current counts of true and false positives.
+	 */
 	public void enumerateThresholdsAll() {
 		// Should extend PR curve to recall zero?
 		m_ExtendPR = true;

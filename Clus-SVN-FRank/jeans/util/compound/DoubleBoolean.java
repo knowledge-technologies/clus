@@ -69,7 +69,7 @@ public class DoubleBoolean implements Comparable, Serializable {
 	}
 
 	/**
-	 * Comparing function that is used for sorting the objects of the type {@code DoubleBooleanCount}. The objects of the given list are sorted increasingly by the field {@code m_Double},
+	 * Comparing function that is used for sorting the objects of the type {@code DoubleBooleanCount}. The objects of the given list are sorted decreasingly by the field {@code m_Double},
 	 * which comes in handy when constructing as many points for ROC- and PR-curves as possible.
 	 *
 	 */
