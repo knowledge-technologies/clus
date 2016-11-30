@@ -72,7 +72,8 @@ public class MicroFOne extends ClusNominalError {
 	}
 
 	public double getMicroFOne(int i) {
-		return getModelErrorComponent(i);
+		throw new RuntimeException("Tole ni implementiranu.");
+//		return getModelErrorComponent(i);
 	}
 	// Nima smisla ...
 //	public double getModelErrorComponent(int i) {

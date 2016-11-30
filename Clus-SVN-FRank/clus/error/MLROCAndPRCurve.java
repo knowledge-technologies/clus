@@ -32,6 +32,7 @@ import clus.ext.hierarchical.ClassesTuple;
 import clus.ext.hierarchical.HierErrorMeasures;
 import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.Settings;
+import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
@@ -52,10 +53,11 @@ public class MLROCAndPRCurve extends ClusNominalError{
 	protected transient ArrayList<double[]> m_ROC;
 	protected transient ArrayList<double[]> m_PR;
 	protected transient BinaryPredictionList m_Values;
+	//protected transient double[] m_PrecisionAtRecall;
 	
 	protected BinaryPredictionList[] m_ClassWisePredictions;
 	protected ROCAndPRCurve[] m_ROCAndPRCurves;
-	protected int m_OptimizeMeasure;
+	protected int m_ErrorMeasure;
 	
 	protected double m_AverageAUROC, m_AverageAUPRC, m_WAvgAUPRC, m_PooledAUPRC;	
 	protected int m_TP, m_TN;
@@ -64,6 +66,14 @@ public class MLROCAndPRCurve extends ClusNominalError{
 		super(par, nom);
 		m_TP = 0;
 		m_TN = 0;
+		
+		m_ClassWisePredictions = new BinaryPredictionList[m_Dim];
+		m_ROCAndPRCurves = new ROCAndPRCurve[m_Dim];
+		for(int i = 0; i < m_Dim; i++){
+			BinaryPredictionList predlist = new BinaryPredictionList();
+			m_ClassWisePredictions[i] = predlist;
+			m_ROCAndPRCurves[i] = new ROCAndPRCurve(predlist);
+		}
 	}
 
 	public boolean shouldBeLow() {
@@ -71,41 +81,63 @@ public class MLROCAndPRCurve extends ClusNominalError{
 	}
 
 	public void reset() {
+		m_AreaROC = -1.0;
+		m_AreaPR = -1.0;
+		
+		m_PrevTP = 0;
+		m_PrevFP = 0;
+		
 		m_ROC.clear();
 		m_PR.clear();
 		m_Values.clear();
 		
+		m_ClassWisePredictions = new BinaryPredictionList[m_Dim];
+		m_ROCAndPRCurves = new ROCAndPRCurve[m_Dim];
+		for(int i = 0; i < m_Dim; i++){
+			BinaryPredictionList predlist = new BinaryPredictionList();
+			m_ClassWisePredictions[i] = predlist;
+			m_ROCAndPRCurves[i] = new ROCAndPRCurve(predlist);
+		}
+		
 		m_TP = 0;
 		m_TN = 0;
-		// TO DO: se kej popucat?
+		
+		m_AverageAUROC = -1.0;
+		m_AverageAUPRC = -1.0;
+		m_WAvgAUPRC = -1.0;
+		m_PooledAUPRC = -1.0;
 		
 	}
 
-	public void add(ClusError other) {
-		MLROCAndPRCurve mlca = (MLROCAndPRCurve)other;
-		m_TP += mlca.m_TP;
-		m_TN += mlca.m_TN;
-		
-		BinaryPredictionList[] olist = ((MLROCAndPRCurve)other).m_ClassWisePredictions;
-		for (int i = 0; i < m_Dim; i++) {
-			m_ClassWisePredictions[i].add(olist[i]);
-		}
-		// TO DO: Preveri na konc,a  je to to
-		
-		
-	}
+	// NE RABIM?
+//	public void add(ClusError other) {
+//		MLROCAndPRCurve mlCurves = (MLROCAndPRCurve)other;
+//		m_TP += mlCurves.m_TP;
+//		m_TN += mlCurves.m_TN;
+//		
+//		BinaryPredictionList[] olist = ((MLROCAndPRCurve)other).m_ClassWisePredictions;
+//		for (int i = 0; i < m_Dim; i++) {
+//			m_ClassWisePredictions[i].add(olist[i]);
+//		}
+//		// TO DO: Preveri na konc,a  je to to
+//	}
+	
 	//NEDOTAKNJENO
 	public void showSummaryError(PrintWriter out, boolean detail) {
 		showModelError(out, detail ? 1 : 0);
 	}
-//	// A MA TO SPLOH SMISU?
-//	public double getMLAccuracy(int i) {
-//		return getModelErrorComponent(i);
-//	}
+	// NEDOTAKNJENO SE
+	public double getMLROCAndPRCurve(int i) {
+		return getModelErrorComponent(i);
+	}
+	
+	public double getModelErrorComponent(int i) {
+		throw new RuntimeException("Tole pa se ni implementiran.");
+	}
 
 	public double getModelError() {
 		computeAll();
-		switch (m_OptimizeMeasure) {
+		switch (m_ErrorMeasure) {
 			case Settings.HIERMEASURE_AUROC:
 				return m_AverageAUROC;
 			case Settings.HIERMEASURE_AUPRC:
@@ -115,7 +147,7 @@ public class MLROCAndPRCurve extends ClusNominalError{
 			case Settings.HIERMEASURE_POOLED_AUPRC:
 				return m_PooledAUPRC;
 		}
-		throw new RuntimeException("Unknown type of measure: m_OptimizeMeasure = " + m_OptimizeMeasure);
+		throw new RuntimeException("Unknown type of measure: m_ErrorMeasure = " + m_ErrorMeasure);
 	}
 	
 	public void computeAll() {
@@ -128,9 +160,9 @@ public class MLROCAndPRCurve extends ClusNominalError{
 			m_ROCAndPRCurves[i].computeCurves();
 //			outputPRCurve(i, m_ROCAndPRCurves[i]);
 //			outputROCCurve(i, m_ROCAndPRCurves[i]);
-//			m_ROCAndPRCurves[i].clear(); - ZAKAJ CLEAR?
+			m_ROCAndPRCurves[i].clear(); // - ZAKAJ CLEAR?
 			pooled.add(m_ClassWisePredictions[i]);
-//			m_ClassWisePredictions[i].clearData(); - ZAKAJ CLEAR?
+			m_ClassWisePredictions[i].clearData(); //- ZAKAJ CLEAR?
 //			}
 		}
 		pooled.sort();
@@ -220,9 +252,17 @@ public class MLROCAndPRCurve extends ClusNominalError{
 //			m_ClassWisePredictions[i].addExample(actual[i], predarr[i]);
 //		}
 				
-		int[] predicted = pred.getNominalPred(); // predicted[i] == 0 IFF label_i is predicted to be relevant for the example
+		double[][] probabilities = ((ClassificationStat) pred).getProbabilityPrediction(); // probabilities[i][0] = P(label_i is relevant for the example)
 		NominalAttrType attr;
 		boolean atLeastOneKnown = false;
+		for(int i = 0; i < m_Dim; i++){
+			attr = getAttr(i);
+			if(!attr.isMissing(tuple)){
+				atLeastOneKnown = true;
+				boolean groundTruth = attr.getNominal(tuple) == 0; // label relevant for tuple IFF attr.getNominal(tuple) == 0
+				m_ClassWisePredictions[i].addExample(groundTruth, probabilities[i][0]);				
+			}
+		}
 //		for (int i = 0; i < m_Dim; i++) {
 //			attr = getAttr(i);
 //			if (!attr.isMissing(tuple)) {
@@ -245,25 +285,7 @@ public class MLROCAndPRCurve extends ClusNominalError{
 	}
 
 	public void addExample(DataTuple tuple, DataTuple pred) {
-		NominalAttrType attr;
-		int intersection = 0, union = 0;
-		boolean atLeastOneKnown = false;
-		for (int i = 0; i < m_Dim; i++) {
-			attr = getAttr(i);
-			if (!attr.isMissing(tuple)) {
-				atLeastOneKnown = true;
-				if(attr.getNominal(tuple) == 0 && attr.getNominal(pred) == 0){ // both relevant
-					union++;
-					intersection++;
-				} else if(!(attr.getNominal(tuple) == 1 && attr.getNominal(pred) == 1)){ // precisely one relevant
-					union++;
-				}
-			}
-		}
-//		if(atLeastOneKnown){
-//			m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of the degenerated case
-//			m_NbKnown++;			
-//		}	
+		throw new RuntimeException("Not implemented!");
 	}
 	//NEDOTAKNJENO
 	public void addInvalid(DataTuple tuple) {

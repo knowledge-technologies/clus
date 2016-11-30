@@ -297,7 +297,18 @@ public class ClassificationStat extends ClusStatistic {
 			}
 		}
 	}
-
+	/**
+	 * Returns the majority class for a given attribute. If m_Thresholds are not defined, we return the majority class (equivalent to threshold = 0.5), otherwise,
+	 * it is currently guaranteed that this is MLC-case, and the label is considered relevant if P(label) >= threshold. Usually, this can be computed as <p>
+	 * 
+	 * {@code m_ClassCounts[attr][0] / m_SumWeights[attr]}<p>
+	 * but in voting procedure (see, e.g.,g {@code addVote(ClusStatistic vote)}, the counts are normalized whereas the sums of weights are not, hence, the label is considered relevant IFF <p>
+	 * 
+	 * {@code clcts[0] / (clcts[0] + clcts[1]) >= m_Thresholds[attr]}
+	 * 
+	 * @param attr
+	 * @return
+	 */
 	public int getMajorityClass(int attr) {
 		int m_class = -1;
 		double m_max = Double.NEGATIVE_INFINITY;
@@ -313,7 +324,7 @@ public class ClassificationStat extends ClusStatistic {
 			return m_Training.getMajorityClass(attr);
 		} else{
 			if(m_Thresholds != null){ // IFF multi label
-				return clcts[0] / m_SumWeights[attr] >= m_Thresholds[attr] ? 0 : 1; // label is relevant (class index 0) IFF we exceed the threshold.
+				return clcts[0] / (clcts[0] + clcts[1]) >= m_Thresholds[attr] ? 0 : 1; // label is relevant (class index 0) IFF we exceed the threshold. Careful: m_SumWeights[attr] != clcts[0] + clcts[1] in the case
 			} else{
 				return m_class;
 			}
@@ -339,6 +350,32 @@ public class ClassificationStat extends ClusStatistic {
 		}		
 		return m_class;
 	}
+	
+//	/**
+//	 * Computes relative frequency of a given label. Used in MLC only.
+//	 * @param attr index of the attribute
+//	 * @return Relative frequency of the label indexed by {@code attr} if there is at least one example with known value for this label.
+//	 * Otherwise, Double.Nan is returned.
+//	 */
+//	public double computeRelativeFrequencyOfLabel(int attr){
+//		double sum = m_ClassCounts[attr][0] + m_ClassCounts[attr][1];
+//		if(sum > 0){
+//			return m_ClassCounts[attr][0] / sum;
+//		} else{
+//			return Double.NaN;
+//		}		
+//	}
+//	/**
+//	 * Will be removed.
+//	 * @return
+//	 */
+//	public double[] getRelativeFrequenciesLabels(){
+//		double[] freqs = new double[m_NbTarget];
+//		for(int i = 0; i < freqs.length; i++){
+//			freqs[i] = computeRelativeFrequencyOfLabel(i);
+//		}
+//		return freqs;
+//	}
 
 
 
@@ -983,9 +1020,9 @@ public class ClassificationStat extends ClusStatistic {
 		int nb_votes = votes.size();
 		for (int j = 0; j < nb_votes; j++){
 			ClassificationStat vote = (ClassificationStat) votes.get(j);
-			for (int i = 0; i < m_NbTarget; i++){
+//			for (int i = 0; i < m_NbTarget; i++){
 				addVote(vote);
-			}
+//			}
 		}
 		calcMean();
 	}
@@ -996,14 +1033,14 @@ public class ClassificationStat extends ClusStatistic {
 			ClassificationStat vote = (ClassificationStat) votes.get(j);
 			int[] enabled = targetSubspaceInfo.getOnlyTargets(targetSubspaceInfo.getModelSubspace(j));
 			
-			for (int i = 0; i < m_NbTarget; i++){
+//			for (int i = 0; i < m_NbTarget; i++){
 				addVote(vote, enabled);
-			}
+//			}
 		}
 		calcMean();
 	}
 
-	public void addVote(ClusStatistic vote) {
+	public void addVote(ClusStatistic vote) { // Matej ????????
 		ClassificationStat or = (ClassificationStat)vote;
 		m_SumWeight += or.m_SumWeight;
 		for (int i = 0; i < m_NbTarget; i++) {			

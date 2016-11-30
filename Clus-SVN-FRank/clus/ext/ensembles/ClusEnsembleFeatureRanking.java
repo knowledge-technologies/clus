@@ -29,6 +29,7 @@ import clus.error.HammingLoss;
 import clus.error.MLAccuracy;
 import clus.error.MLFOneMeasure;
 import clus.error.MLPrecision;
+import clus.error.MLROCAndPRCurve;
 import clus.error.MLRecall;
 import clus.error.MSError;
 import clus.error.MacroFOne;
@@ -402,6 +403,18 @@ public class ClusEnsembleFeatureRanking {
 					break;
 				case Settings.MULTILABEL_MEASURES_AVERAGEPRECISION:
 					error.addError(new AveragePrecision(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_AUROC:
+					error.addError(new MLROCAndPRCurve(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_AUPRC:
+					error.addError(new MLROCAndPRCurve(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_WEIGHTED_AUPRC:
+					error.addError(new MLROCAndPRCurve(error, nom));
+					break;
+				case Settings.MULTILABEL_MEASURES_POOLED_AUPRC:
+					error.addError(new MLROCAndPRCurve(error, nom));
 					break;
 				}
 			} else{

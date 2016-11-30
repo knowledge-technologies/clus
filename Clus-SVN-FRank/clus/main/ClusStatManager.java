@@ -455,7 +455,7 @@ public class ClusStatManager implements Serializable {
 		}
 		switch (m_Mode) {
 		case MODE_HIERARCHICAL:	
-			if(getSettings().getHierDistance() == Settings.HIERDIST_NO_DIST){
+			if(getSettings().getHierDistance() == Settings.HIERDIST_NO_DIST){ // poolAUPRC induction
 				setClusteringStatistic(new WHTDStatistic(m_Hier, getCompatibility(), getSettings().getHierDistance()));
 				setTargetStatistic(new WHTDStatistic(m_Hier, getCompatibility(), getSettings().getHierDistance()));
 			} else{
@@ -767,6 +767,7 @@ public class ClusStatManager implements Serializable {
 			parent.addError(new MicroPrecision(parent, nom));
 			parent.addError(new MicroRecall(parent, nom));
 			parent.addError(new MicroFOne(parent, nom));
+			parent.addError(new MLROCAndPRCurve(parent, nom));
 		}			
 		
 		if (num.length != 0) {

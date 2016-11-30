@@ -1626,11 +1626,12 @@ public class Settings implements Serializable {
 	public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_YES = 0;
 	public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_NO = 1;
 		
-	public final static String[] MULTIlABEL_MEASURES = {"HammingLoss", "MLAccuracy", "MLPrecision", "MLRecall", "MLFOne", "SubsetAccuracy", 		// Example based measures
+	public final static String[] MULTILABEL_MEASURES = {"HammingLoss", "MLAccuracy", "MLPrecision", "MLRecall", "MLFOne", "SubsetAccuracy", 		// Example based measures
 														"MacroPrecision", "MacroRecall", "MacroFOne", "MicroPrecision", "MicroRecall", "MicroFOne", // Label based measures
 														"OneError", "Coverage", "RankingLoss", "AveragePrecision",									// Ranking based measures
-														"all"};																						// All previous errors
-	public final static int NB_MULTILABEL_MEASURES = MULTIlABEL_MEASURES.length - 1; // - all
+														"AverageAUROC", "AverageAUPRC", "WeightedAverageAUPRC", "PooledAUPRC",						// ROC- and PR-curves based measures 
+														"all"};																						// all previous errors
+	public final static int NB_MULTILABEL_MEASURES = MULTILABEL_MEASURES.length - 1; // - all
 	
 	public final static int MULTILABEL_MEASURES_HAMMINGLOSS = 0;
 	public final static int MULTILABEL_MEASURES_MLACCURACY = 1;
@@ -1638,17 +1639,25 @@ public class Settings implements Serializable {
 	public final static int MULTILABEL_MEASURES_MLRECALL = 3;
 	public final static int MULTILABEL_MEASURES_MLFONE = 4;
 	public final static int MULTILABEL_MEASURES_SUBSETACCURACY = 5;
+	
 	public final static int MULTILABEL_MEASURES_MACROPRECISION = 6;
 	public final static int MULTILABEL_MEASURES_MACRORECALL = 7;
 	public final static int MULTILABEL_MEASURES_MACROFONE = 8;
 	public final static int MULTILABEL_MEASURES_MICROPRECISION = 9;
 	public final static int MULTILABEL_MEASURES_MICRORECALL = 10;
 	public final static int MULTILABEL_MEASURES_MICROFONE = 11;
+	
 	public final static int MULTILABEL_MEASURES_ONEERROR = 12;
 	public final static int MULTILABEL_MEASURES_COVERAGE = 13;
 	public final static int MULTILABEL_MEASURES_RANKINGLOSS = 14;
 	public final static int MULTILABEL_MEASURES_AVERAGEPRECISION = 15;
-	public final static int MULTILABEL_MEASURES_ALL = 16;
+	
+	public final static int MULTILABEL_MEASURES_AUROC = 16;
+    public final static int MULTILABEL_MEASURES_AUPRC  = 17;
+    public final static int MULTILABEL_MEASURES_WEIGHTED_AUPRC = 18;
+    public final static int MULTILABEL_MEASURES_POOLED_AUPRC = 19;
+    
+    public final static int MULTILABEL_MEASURES_ALL = MULTILABEL_MEASURES.length - 1;
 	
 	public void setSectionMultiLabelEnabled(boolean enable) {
 		m_SectionMultiLabel.setEnabled(enable);
@@ -2726,7 +2735,7 @@ public class Settings implements Serializable {
 		m_SectionMultiLabel.addNode(m_MultiLabelThreshold = new INIFileNominalOrDoubleOrVector("MLCThreshold", NONELIST));
 		m_MultiLabelThreshold.setDouble(0.5);
 		m_SectionMultiLabel.addNode(m_MultiLabelOptimizeThreshold = new INIFileNominal("OptimizeThresholds", MULTILABEL_THRESHOLD_OPTIMIZATION, MULTILABEL_THRESHOLD_OPTIMIZATION_YES));
-		m_SectionMultiLabel.addNode(m_MultiLabelRankingMeasure = new INIFileNominal("MultiLabelRankingMeasure", MULTIlABEL_MEASURES, MULTILABEL_MEASURES_HAMMINGLOSS));
+		m_SectionMultiLabel.addNode(m_MultiLabelRankingMeasure = new INIFileNominal("MultiLabelRankingMeasure", MULTILABEL_MEASURES, MULTILABEL_MEASURES_HAMMINGLOSS));
 		
 		m_SectionHierarchical = new INIFileSection("Hierarchical");
 		m_SectionHierarchical.addNode(m_HierType = new INIFileNominal("Type", HIERTYPES, 0));
