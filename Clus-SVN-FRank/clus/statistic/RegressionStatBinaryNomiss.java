@@ -22,25 +22,13 @@
 
 package clus.statistic;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.text.*;
-import java.util.ArrayList;
+import java.text.NumberFormat;
 import java.util.Arrays;
 
-import jeans.util.StringUtils;
-
-import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.*;
-
-import clus.main.ClusStatManager;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.type.NumericAttrType;
 import clus.main.Settings;
-import clus.util.*;
-import clus.data.cols.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.data.attweights.*;
-import clus.error.ClusNumericError;
+import clus.util.ClusFormat;
 
 public class RegressionStatBinaryNomiss extends RegressionStatBase {
 

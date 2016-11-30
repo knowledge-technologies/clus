@@ -1,6 +1,8 @@
 package clus.algo.tdidt;
 
 import java.io.IOException;
+import java.util.ArrayList;
+
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.algo.split.NominalSplit;
@@ -14,7 +16,6 @@ import clus.data.type.SparseNumericAttrType;
 import clus.main.Settings;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
-import java.util.ArrayList;
 
 public class DepthFirstInduceSparse extends DepthFirstInduce {
 
@@ -114,7 +115,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 		if (best.hasBestTest()) {
 			node.testToNode(best);
 			// Output best test
-			if (Settings.VERBOSE > 0) System.out.println("Test: "+node.getTestString()+" -> "+best.getHeuristicValue());
+			if (Settings.VERBOSE > 1) System.out.println("Test: "+node.getTestString()+" -> "+best.getHeuristicValue());
 			// Create children
 			int arity = node.updateArity();
 			NodeTest test = node.getTest();

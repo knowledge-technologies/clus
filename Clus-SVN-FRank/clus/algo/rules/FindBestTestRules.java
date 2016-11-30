@@ -22,22 +22,15 @@
 
 package clus.algo.rules;
 
-//import gnu.java.awt.java2d.ScanlineCoverage.Iterator;
-//import gnu.javax.crypto.mode.CTR;
-
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.Random;
 
-import clus.algo.split.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.ext.ilevelc.ILevelCHeurStat;
-import clus.ext.ilevelc.ILevelCStatistic;
-import clus.ext.ilevelc.ILevelConstraint;
-import clus.main.*;
-import clus.model.test.NumericTest;
-import clus.util.ClusException;
+import clus.algo.split.FindBestTest;
+import clus.algo.split.NominalSplit;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusStatManager;
 
 public class FindBestTestRules extends FindBestTest {
 

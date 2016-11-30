@@ -1,6 +1,5 @@
 package sit.mtLearner;
 
-import sit.TargetSet;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.main.Settings;
@@ -9,6 +8,7 @@ import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
+import sit.TargetSet;
 
 public abstract class MTLearnerImpl implements MTLearner {
 

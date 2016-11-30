@@ -1,16 +1,23 @@
 package sit.searchAlgorithm;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
-import org.jgap.*;
-import org.jgap.impl.*;
+import org.jgap.Chromosome;
+import org.jgap.Configuration;
+import org.jgap.FitnessFunction;
+import org.jgap.Gene;
+import org.jgap.GeneticOperator;
+import org.jgap.Genotype;
+import org.jgap.IChromosome;
+import org.jgap.InvalidConfigurationException;
+import org.jgap.impl.BooleanGene;
+import org.jgap.impl.DefaultConfiguration;
+import org.jgap.impl.MutationOperator;
 
-import sit.TargetSet;
-import sit.mtLearner.MTLearner;
 import clus.data.type.ClusAttrType;
+import sit.TargetSet;
 
 public class GeneticSearch extends SearchAlgorithmImpl{
 

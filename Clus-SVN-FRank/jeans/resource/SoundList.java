@@ -22,12 +22,12 @@
 
 package jeans.resource;
 
-import java.applet.AudioClip;
 import java.applet.Applet;
-import java.net.URL;
+import java.applet.AudioClip;
+import java.io.File;
 import java.net.MalformedURLException;
-import java.util.*;
-import java.io.*;
+import java.net.URL;
+import java.util.Hashtable;
 
 /**
  * Loads and holds a bunch of audio files whose locations are specified

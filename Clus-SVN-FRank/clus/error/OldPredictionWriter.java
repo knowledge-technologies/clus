@@ -22,15 +22,19 @@
 
 package clus.error;
 
-import jeans.util.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.StringTokenizer;
 
-import java.io.*;
-import java.util.*;
-
-import clus.data.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.statistic.*;
+import clus.data.ClusData;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.statistic.ClusStatistic;
+import jeans.util.MyArray;
 
 public class OldPredictionWriter {
 

@@ -22,17 +22,18 @@
 
 package clus.algo.tdidt;
 
-import jeans.tree.*;
-import jeans.util.*;
-import jeans.util.compound.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import java.util.*;
-import java.io.*;
-
-// import weka.classifiers.trees.j48.NoSplit;
-// import weka.core.Utils;
-
-import clus.util.*;
+import clus.algo.split.CurrentBestTestAndHeuristic;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.error.multiscore.MultiScore;
+import clus.error.multiscore.MultiScoreStat;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.Global;
@@ -40,13 +41,21 @@ import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.processor.ClusModelProcessor;
-import clus.model.test.*;
-import clus.statistic.*;
-import clus.algo.split.CurrentBestTestAndHeuristic;
-import clus.data.rows.*;
-import clus.data.attweights.*;
-import clus.error.multiscore.*;
+import clus.model.test.NodeTest;
 import clus.selection.OOBSelection;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
+import clus.statistic.StatisticPrintInfo;
+
+// import weka.classifiers.trees.j48.NoSplit;
+// import weka.core.Utils;
+import clus.util.ClusException;
+import clus.util.ClusFormat;
+import clus.util.ClusUtil;
+import jeans.tree.MyNode;
+import jeans.util.MyArray;
+import jeans.util.StringUtils;
+import jeans.util.compound.IntObject;
 
 public class ClusNode extends MyNode implements ClusModel {
 

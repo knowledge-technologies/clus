@@ -22,8 +22,10 @@
 
 package clus.tools.textproc;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.util.Hashtable;
 
 import clus.main.Settings;
 

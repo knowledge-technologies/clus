@@ -1,21 +1,9 @@
 package sit.searchAlgorithm;
 
-import java.util.ArrayList;
-import java.util.Collection;
-
+import clus.data.type.ClusAttrType;
+import clus.main.Settings;
 import sit.TargetSet;
 import sit.mtLearner.MTLearner;
-
-import clus.data.rows.DataTuple;
-import clus.data.rows.RowData;
-import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
-import clus.data.type.NumericAttrType;
-import clus.error.ClusErrorList;
-import clus.error.PearsonCorrelation;
-import clus.error.RMSError;
-import clus.error.SpearmanRankCorrelation;
-import clus.main.Settings;
 
 public class AllTargets implements SearchAlgorithm {
 

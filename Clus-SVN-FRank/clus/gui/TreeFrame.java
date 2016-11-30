@@ -22,27 +22,64 @@
 
 package clus.gui;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
+import java.awt.BorderLayout;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
+import java.io.File;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.TreeMap;
 
-import clus.ext.hierarchical.*;
+import javax.swing.DefaultListModel;
+import javax.swing.JCheckBoxMenuItem;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JList;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JSlider;
+import javax.swing.JSplitPane;
+import javax.swing.JTextArea;
+import javax.swing.JTextField;
+import javax.swing.JTree;
+import javax.swing.ListSelectionModel;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
+import javax.swing.event.ListSelectionEvent;
+import javax.swing.event.ListSelectionListener;
+import javax.swing.event.TreeSelectionEvent;
+import javax.swing.event.TreeSelectionListener;
+import javax.swing.tree.DefaultMutableTreeNode;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
+import javax.swing.tree.TreeSelectionModel;
 
-import java.io.*;
-import jeans.util.*;
-import jeans.graph.*;
-
-import clus.main.*;
-import clus.util.*;
-import clus.model.ClusModelInfo;
-import clus.model.modelio.*;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.tdidt.ClusNode;
-import clus.data.attweights.*;
-import clus.data.type.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.type.ClusSchema;
+import clus.ext.hierarchical.ClassHierarchy;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.ClusModelInfo;
+import clus.model.modelio.ClusModelCollectionIO;
+import clus.util.ClusException;
+import clus.util.ClusFormat;
+import jeans.graph.PercentLayout;
+import jeans.graph.WindowClosingListener;
+import jeans.util.FileUtil;
 
 public class TreeFrame extends JFrame {
 

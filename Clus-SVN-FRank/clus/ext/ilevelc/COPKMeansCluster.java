@@ -22,12 +22,14 @@
 
 package clus.ext.ilevelc;
 
-import java.util.*;
-import java.io.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.main.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
 
 public class COPKMeansCluster implements Serializable {
 

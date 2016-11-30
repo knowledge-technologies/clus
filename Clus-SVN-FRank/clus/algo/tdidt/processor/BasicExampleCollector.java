@@ -22,15 +22,14 @@
 
 package clus.algo.tdidt.processor;
 
-import jeans.util.*;
+import java.io.IOException;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.type.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusSchema;
 import clus.model.ClusModel;
 import clus.model.processor.ClusModelProcessor;
-
-import java.io.*;
+import jeans.util.MyArray;
 
 public class BasicExampleCollector extends ClusModelProcessor {
 

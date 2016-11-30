@@ -22,15 +22,17 @@
 
 package clus.error.multiscore;
 
-import java.text.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import clus.main.Settings;
-import clus.statistic.*;
-import clus.util.*;
-import clus.data.cols.*;
-import clus.data.rows.*;
+import clus.data.cols.ColTarget;
+import clus.data.rows.DataTuple;
+import clus.data.rows.SparseDataTuple;
 import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
+import clus.statistic.StatisticPrintInfo;
+import clus.util.ClusFormat;
 
 public class MultiScoreStat extends ClusStatistic {
 

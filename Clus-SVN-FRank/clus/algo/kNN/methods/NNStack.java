@@ -23,8 +23,9 @@
 package clus.algo.kNN.methods;
 
 
-import clus.data.rows.DataTuple; 
 import java.util.LinkedList;
+
+import clus.data.rows.DataTuple;
 
 /**
  * @author Mitja Pugelj

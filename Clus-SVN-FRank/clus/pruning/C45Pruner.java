@@ -22,14 +22,15 @@
 
 package clus.pruning;
 
-import org.apache.commons.math.*;
-import org.apache.commons.math.distribution.*;
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.DistributionFactory;
 
-import clus.algo.tdidt.*;
-import clus.data.rows.*;
-import clus.model.test.*;
-import clus.util.*;
-import clus.statistic.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.rows.RowData;
+import clus.model.test.NodeTest;
+import clus.statistic.ClassificationStat;
+import clus.util.ClusException;
+import clus.util.ClusUtil;
 
 // import clus.weka.*;
 

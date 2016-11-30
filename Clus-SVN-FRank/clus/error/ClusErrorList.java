@@ -22,19 +22,24 @@
 
 package clus.error;
 
-import jeans.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.text.NumberFormat;
+import java.util.ArrayList;
 
-import java.text.*;
-import java.util.*;
-import java.io.*;
-
-import clus.main.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.rows.TupleIterator;
+import clus.main.ClusModelInfoList;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.data.rows.*;
-import clus.data.attweights.*;
-import clus.util.*;
-import clus.statistic.*;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import clus.util.ClusFormat;
+import jeans.util.StringUtils;
 
 // FIXME : replace nbexamples by sumweight (not?) !
 

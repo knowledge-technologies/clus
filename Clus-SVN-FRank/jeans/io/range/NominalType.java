@@ -22,8 +22,8 @@
 
 package jeans.io.range;
 
-import java.util.*;
-import java.io.*;
+import java.io.Serializable;
+import java.util.Hashtable;
 
 public class NominalType implements Serializable {
 

@@ -21,7 +21,7 @@
  *************************************************************************/
 
 package clus.model.pmml.tildepmml;
-import java.util.*;
+import java.util.Vector;
 
 public class DataDictionary{
 

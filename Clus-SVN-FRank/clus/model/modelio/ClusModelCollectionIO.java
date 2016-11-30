@@ -25,12 +25,16 @@
  */
 package clus.model.modelio;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-import jeans.io.*;
-
-import clus.model.*;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import jeans.io.ObjectLoadStream;
+import jeans.io.ObjectSaveStream;
 
 public class ClusModelCollectionIO implements Serializable {
 

@@ -21,7 +21,7 @@
  *************************************************************************/
 
 package clus.model.pmml.tildepmml;
-import java.io.*;
+import java.io.PrintWriter;
 
 public class SimplePredicate{
 

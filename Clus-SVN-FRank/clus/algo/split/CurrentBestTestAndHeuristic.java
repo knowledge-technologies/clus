@@ -22,17 +22,20 @@
 
 package clus.algo.split;
 
-import clus.main.*;
-import clus.model.test.*;
-import clus.util.*;
-import clus.statistic.*;
-import clus.heuristic.*;
-import clus.algo.tdidt.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.data.attweights.*;
+import java.util.ArrayList;
 
-import java.util.*;
+import clus.algo.tdidt.ClusDecisionTree;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.test.InverseNumericTest;
+import clus.model.test.NodeTest;
+import clus.model.test.NumericTest;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 public class CurrentBestTestAndHeuristic {
 

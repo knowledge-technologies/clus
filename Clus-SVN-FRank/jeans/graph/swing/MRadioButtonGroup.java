@@ -22,8 +22,10 @@
 
 package jeans.graph.swing;
 
-import java.util.*;
-import javax.swing.*;
+import java.util.Enumeration;
+
+import javax.swing.AbstractButton;
+import javax.swing.ButtonGroup;
 
 public class MRadioButtonGroup {
 

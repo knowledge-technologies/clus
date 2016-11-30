@@ -22,7 +22,7 @@
 
 package jeans.util;
 
-import java.io.*;
+import java.io.Reader;
 
 public class MCharCtStreamTokenizer extends MStreamTokenizer {
 

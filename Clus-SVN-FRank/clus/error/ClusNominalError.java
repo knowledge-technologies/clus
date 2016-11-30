@@ -22,8 +22,9 @@
 
 package clus.error;
 
-import clus.data.type.*;
-import clus.statistic.*;
+import clus.data.type.NominalAttrType;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
 
 public abstract class ClusNominalError extends ClusError {
 

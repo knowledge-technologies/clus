@@ -22,8 +22,11 @@
 
 package jeans.io;
 
-import java.io.*;
-import java.util.zip.*;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
+import java.io.OutputStream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /**
  * A class implementing an interface to the saving of objects to a file

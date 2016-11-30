@@ -22,13 +22,16 @@
 
 package clus.error.multiscore;
 
-import clus.error.*;
-import clus.main.*;
-import clus.statistic.ClusStatistic;
-import clus.data.rows.DataTuple;
-import clus.data.type.*;
+import java.io.PrintWriter;
 
-import java.io.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.NumericAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
+import clus.error.ClusNumericError;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
 
 public class MultiScoreWrapper extends ClusNumericError {
 

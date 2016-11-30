@@ -26,25 +26,32 @@
 
 package clus.ext.exhaustivesearch;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 
-import jeans.util.*;
-import jeans.math.*;
-
-import clus.model.test.*;
 import clus.Clus;
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.algo.split.FindBestTest;
 import clus.algo.tdidt.ClusNode;
 import clus.algo.tdidt.ConstraintDFInduce;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.ext.beamsearch.ClusBeam;
+import clus.ext.beamsearch.ClusBeamModel;
 import clus.ext.constraint.ClusConstraintFile;
-import clus.ext.beamsearch.*;
-import clus.main.*;
-import clus.data.rows.*;
-import clus.data.type.*;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import jeans.math.MDouble;
+import jeans.util.MyArray;
+import jeans.util.StringUtils;
 
 public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
 

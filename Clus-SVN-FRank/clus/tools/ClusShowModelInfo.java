@@ -25,11 +25,14 @@
  */
 package clus.tools;
 
-import clus.model.*;
-import clus.model.modelio.*;
-import clus.error.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 
-import java.io.*;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.model.modelio.ClusModelCollectionIO;
 
 public class ClusShowModelInfo {
 

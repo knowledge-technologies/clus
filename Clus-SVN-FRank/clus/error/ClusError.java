@@ -22,15 +22,18 @@
 
 package clus.error;
 
-import java.io.*;
-import java.text.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.text.NumberFormat;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.attweights.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
 import clus.main.Settings;
 import clus.model.ClusModel;
-import clus.statistic.*;
+import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 
 public abstract class ClusError implements Serializable {

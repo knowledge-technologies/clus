@@ -22,8 +22,8 @@
 
 package jeans.io.filesys;
 
-import java.text.*;
-import java.util.*;
+import java.text.DateFormat;
+import java.util.Date;
 
 public class MFileEntry {
 

@@ -22,7 +22,7 @@
 
 package jeans.graph.awt;
 
-import java.awt.*;
+import java.awt.MenuItem;
 
 import jeans.graph.componentmediator.ComponentWrapper;
 

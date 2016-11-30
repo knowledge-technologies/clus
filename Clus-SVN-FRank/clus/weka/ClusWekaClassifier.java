@@ -27,19 +27,20 @@ package clus.weka;
 
 import java.io.IOException;
 
-import jeans.util.cmdline.*;
-
-import clus.*;
-import clus.algo.*;
-import clus.main.*;
+import clus.Clus;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.ClusInductionAlgorithmType;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
 import clus.model.ClusModel;
-import clus.util.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.statistic.*;
-
-import weka.classifiers.*;
-import weka.core.*;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import jeans.util.cmdline.CMDLineArgs;
+import weka.classifiers.Classifier;
+import weka.core.Instances;
 
 public class ClusWekaClassifier extends ClusInductionAlgorithmType {
 

@@ -22,14 +22,12 @@
 
 package clus.ext.sspd;
 
-import jeans.math.matrix.*;
+import java.io.IOException;
 
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.IntegerAttrType;
-
-import java.io.*;
 
 /*
 
@@ -62,11 +60,10 @@ PS ik weet niet of ik je dit nu algezegd had, maar patent-plannen zijn
 opgeborgen.  Ga maar voor snelle publicatie van hierarchical multi-class
 trees!
 */
-
-import clus.main.*;
+import clus.main.Settings;
 import clus.statistic.ClusDistance;
-import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import jeans.math.matrix.MSymMatrix;
 
 public class SSPDMatrix extends ClusDistance {
 

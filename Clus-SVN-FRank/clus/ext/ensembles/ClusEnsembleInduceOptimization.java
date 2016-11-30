@@ -1,6 +1,6 @@
 package clus.ext.ensembles;
 
-import java.io.IOException;  
+import java.io.IOException;
 import java.util.ArrayList;
 
 import clus.data.rows.DataTuple;

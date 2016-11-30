@@ -26,8 +26,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.main.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.model.modelio.ClusTreeReader;
 import clus.statistic.ClusStatistic;

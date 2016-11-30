@@ -22,17 +22,20 @@
 
 package clus.algo;
 
-import clus.main.*;
+import java.io.IOException;
+
 import clus.data.ClusData;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.statistic.ClusStatistic;
-import clus.util.*;
+import clus.data.rows.DataPreprocs;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.model.modelio.*;
-
-import java.io.*;
+import clus.model.modelio.ClusModelCollectionIO;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 /**
  * Subclasses should implement:

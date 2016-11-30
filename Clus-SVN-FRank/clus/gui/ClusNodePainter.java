@@ -22,18 +22,31 @@
 
 package clus.gui;
 
-import jeans.graph.swing.drawable.*;
-import jeans.graph.tree.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseEvent;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import javax.swing.JMenu;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JPopupMenu;
 
-import clus.util.*;
-import clus.model.test.*;
-import clus.statistic.*;
-import clus.algo.tdidt.*;
-import clus.gui.statvis.*;
+import clus.algo.tdidt.ClusNode;
+import clus.gui.statvis.ClassStatVis;
+import clus.model.test.NodeTest;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import jeans.graph.swing.drawable.Drawable;
+import jeans.graph.swing.drawable.DrawableCanvas;
+import jeans.graph.swing.drawable.DrawableExpandButton;
+import jeans.graph.swing.drawable.DrawableLines;
+import jeans.graph.tree.MyDrawableNode;
+import jeans.graph.tree.MyNodePainter;
 
 public class ClusNodePainter extends MyNodePainter implements ActionListener {
 

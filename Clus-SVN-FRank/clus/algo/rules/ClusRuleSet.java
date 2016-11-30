@@ -25,26 +25,39 @@
  */
 package clus.algo.rules;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import jeans.util.*;
 //import clus.algo.kNN.KNNStatistics;
 //import clus.algo.kNN.NumericStatistic;
-import clus.data.rows.*;
-import clus.data.type.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
 import clus.error.ClusErrorList;
 import clus.ext.hierarchical.WHTDStatistic;
-import clus.main.*;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.processor.ClusModelProcessor;
-import clus.statistic.*;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
+import clus.statistic.RegressionStat;
+import clus.statistic.StatisticPrintInfo;
 import clus.tools.optimization.OptProbl;
 //import clus.tools.optimization.de.DeAlg;
 //import clus.tools.optimization.de.DeProbl; // Optimization information (data, predictions)
-import clus.util.*;
+import clus.util.ClusException;
+import clus.util.ClusFormat;
+import jeans.util.MyArray;
 
 /**
  * Class representing a set of predictive clustering rules.

@@ -3,15 +3,13 @@ package clus.ext.ensembles;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jeans.util.array.MDoubleArrayComparator;
-
-import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
+import jeans.util.array.MDoubleArrayComparator;
 
 public class ClusBoostingForest extends ClusForest {
 

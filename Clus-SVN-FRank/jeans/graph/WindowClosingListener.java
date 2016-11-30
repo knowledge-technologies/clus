@@ -22,8 +22,11 @@
 
 package jeans.graph;
 
-import java.awt.event.*;
-import java.awt.*;
+import java.awt.Window;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class WindowClosingListener extends WindowAdapter implements ActionListener {
 

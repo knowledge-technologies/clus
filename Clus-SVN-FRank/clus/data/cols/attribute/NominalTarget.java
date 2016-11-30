@@ -22,11 +22,11 @@
 
 package clus.data.cols.attribute;
 
-import java.io.*;
+import java.io.IOException;
 
-import clus.data.cols.*;
-import clus.data.io.*;
-import clus.data.type.*;
+import clus.data.cols.ColTarget;
+import clus.data.io.ClusReader;
+import clus.data.type.NominalAttrType;
 
 public class NominalTarget extends NominalAttrBase {
 

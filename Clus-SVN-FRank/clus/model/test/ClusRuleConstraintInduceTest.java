@@ -5,7 +5,6 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NumericAttrType;
 import clus.main.Settings;
-import clus.util.ClusRandom;
 
 public class ClusRuleConstraintInduceTest extends NodeTest {
 

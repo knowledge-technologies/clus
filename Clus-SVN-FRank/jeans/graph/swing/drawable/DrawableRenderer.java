@@ -22,7 +22,9 @@
 
 package jeans.graph.swing.drawable;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
 
 public interface DrawableRenderer {
 

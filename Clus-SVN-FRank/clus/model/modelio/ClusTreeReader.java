@@ -25,14 +25,22 @@
  */
 package clus.model.modelio;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-import jeans.util.*;
-
-import clus.algo.tdidt.*;
-import clus.data.type.*;
-import clus.model.test.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.model.test.NominalTest;
+import clus.model.test.NumericTest;
+import clus.model.test.SubsetTest;
+import jeans.util.MStringTokenizer;
 
 public class ClusTreeReader {
 

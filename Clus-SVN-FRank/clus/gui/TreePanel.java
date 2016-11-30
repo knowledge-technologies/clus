@@ -22,23 +22,31 @@
 
 package clus.gui;
 
-import jeans.graph.swing.drawable.*;
-import jeans.graph.tree.*;
-import jeans.tree.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.util.HashMap;
 
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
+import javax.swing.JPanel;
 
-import clus.main.*;
-import clus.model.test.*;
-import clus.statistic.*;
-import clus.pruning.*;
-import clus.util.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.attweights.*;
-
-import clus.gui.statvis.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.gui.statvis.ClassStatVis;
+import clus.gui.statvis.ClusStatVisualizer;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.test.NodeTest;
+import clus.pruning.SizeConstraintPruning;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import jeans.graph.swing.drawable.Drawable;
+import jeans.graph.swing.drawable.DrawableCanvas;
+import jeans.graph.swing.drawable.DrawableScrollableCanvas;
+import jeans.graph.tree.MyDrawableNode;
+import jeans.graph.tree.MyNodePainter;
+import jeans.graph.tree.NodePainterSettings;
+import jeans.graph.tree.TreeRenderer;
+import jeans.tree.Node;
 
 public class TreePanel extends JPanel {
 

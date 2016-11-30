@@ -21,8 +21,8 @@
  *************************************************************************/
 
 package clus.model.pmml.tildepmml;
-import java.util.*;
-import java.io.*;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 public class DataFieldCategorical extends DataField {
 

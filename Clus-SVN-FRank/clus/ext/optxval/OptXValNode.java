@@ -22,15 +22,14 @@
 
 package clus.ext.optxval;
 
-import java.io.*;
-import java.util.*;
-
-import jeans.tree.*;
-import jeans.util.array.*;
+import java.io.PrintWriter;
+import java.util.Arrays;
 
 import clus.algo.tdidt.ClusNode;
-import clus.main.*;
-import clus.util.*;
+import clus.main.Settings;
+import clus.util.ClusFormat;
+import jeans.tree.MyNode;
+import jeans.util.array.MyIntArray;
 
 public class OptXValNode extends MyNode {
 

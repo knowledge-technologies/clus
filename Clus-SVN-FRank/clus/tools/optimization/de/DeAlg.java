@@ -25,14 +25,17 @@
  */
 package clus.tools.optimization.de;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
 
 import clus.algo.rules.ClusRuleSet;
-import clus.main.*;
-import clus.tools.optimization.OptProbl;
+import clus.main.ClusStatManager;
 import clus.tools.optimization.OptAlg;
+import clus.tools.optimization.OptProbl;
 import clus.util.ClusFormat;
 
 /**

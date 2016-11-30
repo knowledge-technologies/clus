@@ -22,7 +22,7 @@
 
 package jeans.resource;
 
-import java.awt.*;
+import java.awt.Image;
 
 public interface ImageLoader {
 

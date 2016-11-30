@@ -22,7 +22,8 @@
 
 package jeans.graph.swing.drawable;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
 public class DrawableRectangle extends Drawable {
 

@@ -2,8 +2,8 @@ package sit.mtLearner;
 
 import java.util.ArrayList;
 
-import sit.TargetSet;
 import clus.data.rows.RowData;
+import sit.TargetSet;
 
 /**
  * This class stores a cache of TargetSets, testdata and the predictions for that testdata

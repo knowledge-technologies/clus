@@ -22,7 +22,7 @@
 
 package jeans.graph.plot;
 
-import java.util.*;
+import java.util.Vector;
 
 public class MBarPlotModelGroup {
 

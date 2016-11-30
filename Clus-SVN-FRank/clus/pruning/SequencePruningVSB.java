@@ -22,14 +22,14 @@
 
 package clus.pruning;
 
-import java.util.*;
+import java.util.ArrayList;
 
+import clus.algo.tdidt.ClusNode;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.RowData;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
 import jeans.io.MyFile;
-
-import clus.algo.tdidt.*;
-import clus.data.attweights.*;
-import clus.data.rows.*;
-import clus.error.*;
 
 public class SequencePruningVSB extends PruneTree {
 

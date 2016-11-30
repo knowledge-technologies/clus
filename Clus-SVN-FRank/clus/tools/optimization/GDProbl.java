@@ -27,10 +27,13 @@ package clus.tools.optimization;
 
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.BitSet;
+import java.util.LinkedList;
+import java.util.ListIterator;
 
-import clus.main.*;
-import clus.tools.optimization.OptProbl.OptParam;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
 import clus.util.ClusFormat;
 
 // Created 28.11.2008 from previous DeProbl class

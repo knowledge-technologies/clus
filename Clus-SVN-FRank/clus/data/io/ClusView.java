@@ -22,13 +22,14 @@
 
 package clus.data.io;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
-import clus.io.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.io.ClusSerializable;
 import clus.util.ClusException;
-import clus.data.rows.*;
-import clus.data.type.*;
 
 public class ClusView {
 

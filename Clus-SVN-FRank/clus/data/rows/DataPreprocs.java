@@ -23,7 +23,7 @@
 package clus.data.rows;
 
 import clus.util.ClusException;
-import jeans.util.*;
+import jeans.util.MyArray;
 
 public class DataPreprocs {
 

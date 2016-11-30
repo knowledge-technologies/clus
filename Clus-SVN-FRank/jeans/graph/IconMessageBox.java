@@ -22,9 +22,19 @@
 
 package jeans.graph;
 
-import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.Button;
+import java.awt.Dialog;
+import java.awt.Dimension;
+import java.awt.Frame;
+import java.awt.Image;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.SystemColor;
+import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.StringTokenizer;
+import java.util.Vector;
 
 public class IconMessageBox extends Dialog {
 

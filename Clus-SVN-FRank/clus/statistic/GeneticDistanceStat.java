@@ -1,12 +1,8 @@
 package clus.statistic;
 
 import java.text.NumberFormat;
-import java.util.ArrayList;
 
-import clus.data.attweights.ClusAttributeWeights;
-import clus.data.cols.ColTarget;
 import clus.data.rows.DataTuple;
-import clus.data.rows.RowData;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.util.ClusFormat;

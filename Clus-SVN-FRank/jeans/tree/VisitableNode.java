@@ -22,8 +22,9 @@
 
 package jeans.tree;
 
-import jeans.util.Visitable;
 import java.util.Vector;
+
+import jeans.util.Visitable;
 
 public class VisitableNode extends Visitable implements Node {
 

@@ -1,10 +1,7 @@
 package sit.mtLearner;
 
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.*;
+import java.util.Iterator;
 
-import sit.TargetSet;
 import clus.Clus;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.tdidt.ClusDecisionTree;
@@ -16,6 +13,7 @@ import clus.main.ClusRun;
 import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelPredictor;
+import sit.TargetSet;
 
 public class ClusLearner extends MTLearnerImpl {
 

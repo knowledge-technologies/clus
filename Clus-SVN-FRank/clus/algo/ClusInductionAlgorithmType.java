@@ -24,15 +24,15 @@ package clus.algo;
 
 import java.io.IOException;
 
-import jeans.resource.ResourceInfo;
-import jeans.util.cmdline.*;
-import clus.*;
+import clus.Clus;
+import clus.data.type.ClusSchema;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.model.ClusModel;
-import clus.util.*;
-import clus.data.type.*;
+import clus.util.ClusException;
+import jeans.resource.ResourceInfo;
+import jeans.util.cmdline.CMDLineArgs;
 
 /**
  * For each type of algorithm there should be a ClusClassifier object.

@@ -26,12 +26,13 @@ package clus.ext.beamsearch;
 import java.util.ArrayList;
 
 //import clus.data.attweights.ClusAttributeWeights;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
 //import clus.data.type.ClusAttrType;
 //import clus.data.type.NumericAttrType;
-import clus.main.*;
+import clus.main.ClusRun;
 import clus.model.ClusModel;
-import clus.statistic.*;
+import clus.statistic.ClusStatistic;
 
 
 public class ClusBeamModelDistance{

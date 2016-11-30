@@ -25,8 +25,9 @@ package clus.ext.hierarchical;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import clus.data.rows.*;
-import clus.util.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.TuplePreproc;
+import clus.util.ClusException;
 
 public class ClassHierarchyPreproc implements TuplePreproc {
 

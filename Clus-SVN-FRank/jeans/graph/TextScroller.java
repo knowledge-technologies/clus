@@ -22,16 +22,25 @@
 
 package jeans.graph;
 
-import java.awt.*;
-import java.util.*;
-import java.io.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.Rectangle;
+import java.awt.Toolkit;
+import java.io.IOException;
+import java.io.Reader;
+import java.util.Vector;
 
-import jeans.util.MStreamTokenizer;
-import jeans.resource.MediaCache;
 import jeans.graph.drawable.Drawable;
-import jeans.graph.drawable.DrawableProvider;
-import jeans.graph.drawable.DrawableLine;
 import jeans.graph.drawable.DrawableImage;
+import jeans.graph.drawable.DrawableLine;
+import jeans.graph.drawable.DrawableProvider;
+import jeans.resource.MediaCache;
+import jeans.util.MStreamTokenizer;
 
 public class TextScroller extends BufferCanvas implements DrawableProvider {
 

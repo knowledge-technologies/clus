@@ -22,12 +22,13 @@
 
 package clus.algo.rules;
 
-import clus.main.*;
-import clus.statistic.*;
-import clus.data.rows.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
-import clus.heuristic.*;
-import clus.data.attweights.*;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
 
 public class ClusRuleHeuristicSSD extends ClusHeuristic {
 

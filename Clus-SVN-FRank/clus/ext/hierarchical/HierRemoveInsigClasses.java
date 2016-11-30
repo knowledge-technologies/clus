@@ -25,11 +25,12 @@
  */
 package clus.ext.hierarchical;
 
-import clus.pruning.*;
-import clus.util.*;
-import clus.algo.tdidt.*;
-import clus.data.*;
-import clus.data.rows.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.ClusData;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.pruning.PruneTree;
+import clus.util.ClusException;
 
 public class HierRemoveInsigClasses extends PruneTree {
 

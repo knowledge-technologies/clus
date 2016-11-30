@@ -26,9 +26,11 @@
 
 package jeans.graph.image;
 
-import java.io.*;
-import java.awt.*;
-import java.awt.image.*;
+import java.awt.AWTException;
+import java.awt.Image;
+import java.awt.image.PixelGrabber;
+import java.io.IOException;
+import java.io.OutputStream;
 
 
 /**

@@ -6,16 +6,8 @@ import org.jgap.Chromosome;
 import org.jgap.FitnessFunction;
 import org.jgap.IChromosome;
 
-import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
-import clus.data.type.NumericAttrType;
-import clus.error.ClusErrorList;
-import clus.error.PearsonCorrelation;
-import clus.error.SpearmanRankCorrelation;
-import clus.util.ClusRandom;
-
 import sit.Evaluator;
 import sit.TargetSet;
 import sit.mtLearner.MTLearner;

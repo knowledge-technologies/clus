@@ -22,12 +22,12 @@
 
 package clus.pruning;
 
-import clus.algo.tdidt.*;
+import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusAttributeWeights;
-import clus.data.rows.*;
+import clus.data.rows.RowData;
 import clus.error.ClusErrorList;
 import clus.model.ClusModelInfo;
-import clus.util.*;
+import clus.util.ClusException;
 
 public class PruneTree {
 

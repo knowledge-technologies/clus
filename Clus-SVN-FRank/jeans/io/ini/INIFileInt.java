@@ -22,9 +22,9 @@
 
 package jeans.io.ini;
 
-import jeans.io.range.ValueCheck;
+import java.util.HashMap;
 
-import java.util.*;
+import jeans.io.range.ValueCheck;
 
 public class INIFileInt extends INIFileEntry {
 

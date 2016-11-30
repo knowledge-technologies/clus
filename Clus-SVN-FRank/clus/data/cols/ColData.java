@@ -22,20 +22,22 @@
 
 package clus.data.cols;
 
-import java.util.*;
+import java.util.Vector;
 
-import clus.io.*;
-import clus.main.*;
 import clus.algo.tdidt.ClusNode;
 import clus.data.ClusData;
-import clus.data.type.*;
-import clus.util.*;
-import clus.data.rows.*;
-import clus.error.*;
-import clus.selection.*;
-import clus.statistic.*;
-import clus.data.cols.attribute.*;
+import clus.data.cols.attribute.ClusAttribute;
 import clus.data.io.ClusView;
+import clus.data.rows.DataPreprocs;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.error.ClusErrorList;
+import clus.io.DummySerializable;
+import clus.main.ClusRun;
+import clus.main.ClusSummary;
+import clus.selection.ClusSelection;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 public class ColData extends ClusData {
 

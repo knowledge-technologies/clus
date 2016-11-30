@@ -22,9 +22,8 @@
 
 package jeans.util;
 
-import java.util.*;
-
 import java.io.Serializable;
+import java.util.Arrays;
 
 public class MyArray implements Serializable {
 

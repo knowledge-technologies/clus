@@ -26,32 +26,47 @@
 
 package clus.ext.exhaustivesearch;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 
-import jeans.util.cmdline.CMDLineArgs;
-import jeans.util.*;
-import jeans.math.*;
-import jeans.io.*;
-
-import clus.model.ClusModel;
-import clus.model.ClusModelInfo;
-import clus.model.test.*;
-import clus.model.modelio.*;
 import clus.Clus;
-import clus.algo.*;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.algo.split.FindBestTest;
-import clus.algo.tdidt.*;
+import clus.algo.tdidt.ClusNode;
+import clus.algo.tdidt.ConstraintDFInduce;
 import clus.algo.tdidt.processor.BasicExampleCollector;
-import clus.ext.constraint.*;
-import clus.ext.beamsearch.*;
-import clus.main.*;
-import clus.heuristic.*;
-import clus.data.rows.*;
-import clus.data.type.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.ext.beamsearch.ClusBeam;
+import clus.ext.beamsearch.ClusBeamHeuristic;
+import clus.ext.beamsearch.ClusBeamModel;
+import clus.ext.beamsearch.ClusBeamTreeElem;
+import clus.ext.constraint.ClusConstraintFile;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.model.modelio.ClusModelCollectionIO;
+import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import jeans.io.MyFile;
+import jeans.math.SingleStat;
+import jeans.util.MyArray;
+import jeans.util.StringUtils;
+import jeans.util.cmdline.CMDLineArgs;
 
 public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
 

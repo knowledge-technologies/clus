@@ -24,31 +24,37 @@
  */
 package clus.algo.rules;
 
-import java.io.*;
-import java.util.*;
-import java.text.DecimalFormat;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Random;
 
-import clus.Clus;
-import clus.algo.*;
-import clus.algo.split.*;
-import clus.algo.tdidt.*;
-import clus.main.*;
-import clus.model.*;
-import clus.model.test.*;
-import clus.heuristic.*;
-import clus.selection.*;
-import clus.statistic.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.ext.beamsearch.*;
-import clus.ext.ensembles.ClusEnsembleInduce;
-import clus.ext.ensembles.ClusForest;
-import clus.util.*;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.split.CurrentBestTestAndHeuristic;
+import clus.algo.tdidt.ClusNode;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.ext.beamsearch.ClusBeam;
+import clus.ext.beamsearch.ClusBeamModel;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.model.test.NodeTest;
+import clus.selection.BaggingSelection;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
 import clus.tools.optimization.CallExternGD;
 import clus.tools.optimization.GDAlg;
 import clus.tools.optimization.OptAlg;
 import clus.tools.optimization.OptProbl;
-import clus.tools.optimization.de.*;
+import clus.tools.optimization.de.DeAlg;
+import clus.util.ClusException;
 
 public class ClusRuleInduce extends ClusInductionAlgorithm {
 

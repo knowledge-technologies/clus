@@ -25,18 +25,22 @@
  */
 package clus.ext.beamsearch;
 
-import clus.*;
+import java.io.IOException;
+import java.util.ArrayList;
+
+import clus.Clus;
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.algo.split.FindBestTest;
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.main.*;
-import clus.model.test.*;
-import clus.util.*;
-
-import java.io.*;
-import java.util.ArrayList;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.test.NodeTest;
+import clus.util.ClusException;
 
 /*
 

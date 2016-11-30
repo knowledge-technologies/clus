@@ -25,7 +25,7 @@
  */
 package clus.error;
 
-import clus.data.type.*;
+import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;

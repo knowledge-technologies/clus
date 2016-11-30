@@ -25,28 +25,39 @@
  */
 package clus.algo.tdidt.tune;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Random;
 
-import jeans.io.MyFile;
-import jeans.math.*;
-
-import clus.main.*;
-import clus.model.ClusModel;
-import clus.model.ClusModelInfo;
-import clus.selection.*;
-import clus.statistic.*;
-import clus.util.*;
-import clus.pruning.*;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.tdidt.ClusDecisionTree;
 import clus.algo.tdidt.ClusNode;
 import clus.data.ClusData;
-import clus.data.rows.*;
-import clus.data.attweights.*;
-import clus.data.type.*;
-import clus.error.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.rows.MemoryTupleIterator;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
 import clus.ext.hierarchical.HierRemoveInsigClasses;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.ClusSummary;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.pruning.PruneTree;
+import clus.pruning.SizeConstraintPruning;
+import clus.pruning.TreeErrorComputer;
+import clus.selection.XValDataSelection;
+import clus.selection.XValMainSelection;
+import clus.selection.XValRandomSelection;
+import clus.selection.XValSelection;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import jeans.io.MyFile;
+import jeans.math.SingleStatList;
 
 /*
 import org.apache.commons.math.distribution.*;

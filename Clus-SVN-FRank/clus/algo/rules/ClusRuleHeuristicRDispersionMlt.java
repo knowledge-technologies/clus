@@ -25,10 +25,11 @@
  */
 package clus.algo.rules;
 
+import clus.data.attweights.ClusAttributeWeights;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
-import clus.statistic.*;
-import clus.data.attweights.*;
+import clus.statistic.ClusStatistic;
+import clus.statistic.CombStat;
 
 public class ClusRuleHeuristicRDispersionMlt extends ClusRuleHeuristicDispersion {
 

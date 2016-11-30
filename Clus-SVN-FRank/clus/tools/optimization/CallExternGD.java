@@ -1,19 +1,8 @@
 package clus.tools.optimization;
 
-// This file is a Java Native Interface calling gdopt code in C++
-// Timo Aho 14.6.2010
-// See http://java.sun.com/developer/onlineTraining/Programming/JDCBook/jni.html
-
-import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
 
 import clus.algo.rules.ClusRuleSet;
-import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.main.ClusStatManager;
 import clus.main.Settings;

@@ -3,8 +3,8 @@ package sit.searchAlgorithm;
 import java.util.ArrayList;
 import java.util.Iterator;
 
-import sit.TargetSet;
 import clus.data.type.ClusAttrType;
+import sit.TargetSet;
 
 public class TC extends SearchAlgorithmImpl{
 

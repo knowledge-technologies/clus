@@ -22,9 +22,9 @@
 
 package jeans.util.array;
 
-import jeans.util.MStreamTokenizer;
+import java.io.IOException;
 
-import java.io.*;
+import jeans.util.MStreamTokenizer;
 
 public class MDoubleArray {
 

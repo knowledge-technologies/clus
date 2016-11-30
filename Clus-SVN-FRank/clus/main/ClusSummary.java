@@ -22,7 +22,7 @@
 
 package clus.main;
 
-import clus.error.*;
+import clus.error.ClusErrorList;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
 

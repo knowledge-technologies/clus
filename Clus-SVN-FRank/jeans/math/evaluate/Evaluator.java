@@ -24,7 +24,7 @@ package jeans.math.evaluate;
 
 import java.util.Hashtable;
 
-import jeans.math.*;
+import jeans.math.MNumber;
 
 public class Evaluator {
 

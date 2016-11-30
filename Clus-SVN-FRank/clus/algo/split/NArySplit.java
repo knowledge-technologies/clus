@@ -24,12 +24,12 @@ package clus.algo.split;
 
 import java.util.Random;
 
-import clus.main.*;
-import clus.data.type.*;
-import clus.model.test.*;
-import clus.statistic.*;
+import clus.data.type.NominalAttrType;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusStatManager;
+import clus.model.test.NominalTest;
+import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import clus.heuristic.*;
 
 public class NArySplit extends NominalSplit {
 

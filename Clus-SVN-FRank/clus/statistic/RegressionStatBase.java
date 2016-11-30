@@ -24,23 +24,24 @@ package clus.statistic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import jeans.util.StringUtils;
-
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.*;
+import org.apache.commons.math.distribution.DistributionFactory;
+import org.apache.commons.math.distribution.TDistribution;
 
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NumericAttrType;
+import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
-import clus.util.*;
-import clus.data.cols.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.data.attweights.*;
-import clus.error.ClusNumericError;
-import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
+import clus.util.ClusFormat;
+import jeans.util.StringUtils;
 
 public abstract class RegressionStatBase extends ClusStatistic {
 

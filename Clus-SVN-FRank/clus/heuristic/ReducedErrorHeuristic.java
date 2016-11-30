@@ -27,8 +27,7 @@ package clus.heuristic;
 
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
-
-import jeans.math.*;
+import jeans.math.MathUtil;
 
 public class ReducedErrorHeuristic extends ClusHeuristic {
 

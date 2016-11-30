@@ -2,9 +2,9 @@ package sit.searchAlgorithm;
 
 import java.util.Iterator;
 
+import clus.data.type.ClusAttrType;
 import sit.TargetSet;
 import sit.mtLearner.MTLearner;
-import clus.data.type.ClusAttrType;
 
 public class GreedySIT extends SearchAlgorithmImpl{
 

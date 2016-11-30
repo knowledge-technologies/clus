@@ -27,11 +27,13 @@ package clus.error;
 
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import clus.data.attweights.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.main.*;
-import clus.statistic.*;
+
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.type.NumericAttrType;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
+import clus.statistic.RegressionStat;
 
 // import jeans.util.array.*;
 

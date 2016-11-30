@@ -22,19 +22,23 @@
 
 package clus.model.processor;
 
-import jeans.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashSet;
 
-import java.io.*;
-import java.util.*;
-
-import clus.main.*;
+import clus.data.io.ARFFFile;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.StringAttrType;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.util.*;
-import clus.data.io.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.statistic.*;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import jeans.util.MyArray;
+import jeans.util.StringUtils;
 
 public class PredictionWriter extends ClusModelProcessor {
 

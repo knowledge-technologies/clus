@@ -25,6 +25,19 @@
  */
 package clus.weka;
 
+import clus.algo.tdidt.ClusNode;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.RowData;
+import clus.main.Settings;
+import clus.model.test.NodeTest;
+import clus.model.test.NumericTest;
+import weka.classifiers.Classifier;
+import weka.classifiers.Evaluation;
+import weka.classifiers.functions.LinearRegression;
+import weka.classifiers.trees.m5.PreConstructedLinearModel;
+import weka.classifiers.trees.m5.SplitEvaluate;
+import weka.classifiers.trees.m5.YongSplitInfo;
+
 /*
  * This class is here only to test if the M5 pruning of Clus is
  * compatible with that of M5 and because the original RuleNode
@@ -49,19 +62,12 @@ package clus.weka;
  *    along with this program; if not, write to the Free Software
  *    Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
-
-import weka.core.*;
-import weka.classifiers.*;
-import weka.classifiers.trees.m5.*;
-import weka.classifiers.functions.LinearRegression;
-import weka.filters.unsupervised.attribute.Remove;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.Utils;
 import weka.filters.Filter;
-
-import clus.main.*;
-import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.attweights.*;
-import clus.model.test.*;
+import weka.filters.unsupervised.attribute.Remove;
 
 public class TestM5PruningRuleNode extends Classifier {
 

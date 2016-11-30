@@ -23,18 +23,13 @@
 package clus.error;
 
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
-import clus.ext.hierarchical.ClassesTuple;
-import clus.ext.hierarchical.HierErrorMeasures;
-import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
-import clus.util.ClusFormat;
 
 /**
  * @author matejp

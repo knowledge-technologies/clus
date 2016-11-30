@@ -7,7 +7,9 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
 import clus.data.type.NumericAttrType;
 import clus.main.Settings;
-import clus.statistic.*;
+import clus.statistic.ClusStatistic;
+import clus.statistic.RegressionStat;
+import clus.statistic.StatisticPrintInfo;
 
 public class ClusBeamSimRegrStat extends RegressionStat{
 

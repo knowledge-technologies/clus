@@ -23,10 +23,11 @@
 package jeans.graph.swing;
 
 import java.io.File;
-import java.util.*;
-import javax.swing.filechooser.*;
+import java.util.ArrayList;
 
-import jeans.util.*;
+import javax.swing.filechooser.FileFilter;
+
+import jeans.util.FileUtil;
 
 public class MExtensionFilter extends FileFilter {
 

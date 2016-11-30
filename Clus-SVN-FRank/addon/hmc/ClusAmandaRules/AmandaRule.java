@@ -22,15 +22,16 @@
 
 package addon.hmc.ClusAmandaRules;
 
+import clus.algo.rules.ClusRule;
+
 /*
  * Created on Jan 2, 2006
  */
-
-import clus.algo.tdidt.*;
-import clus.algo.rules.*;
-import clus.data.rows.*;
-import clus.main.*;
-import clus.model.test.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.rows.DataTuple;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.test.NodeTest;
 
 public class AmandaRule extends ClusRule {
 

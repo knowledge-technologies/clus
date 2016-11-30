@@ -22,7 +22,9 @@
 
 package clus.model.modelio.pmml;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 public class PMMLWriter {
 

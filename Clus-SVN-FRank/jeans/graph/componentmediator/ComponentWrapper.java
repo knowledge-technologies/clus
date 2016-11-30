@@ -22,8 +22,9 @@
 
 package jeans.graph.componentmediator;
 
-import java.util.*;
-import java.awt.*;
+import java.awt.Component;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class ComponentWrapper {
 

@@ -22,14 +22,14 @@
 
 package clus.data.cols.attribute;
 
-import java.io.*;
-import jeans.util.*;
+import java.io.IOException;
 
-import clus.main.*;
-import clus.data.cols.*;
+import clus.data.cols.ColTarget;
 import clus.data.io.ClusReader;
-import clus.data.type.*;
-import clus.selection.*;
+import clus.data.type.NominalAttrType;
+import clus.main.ClusStatManager;
+import clus.selection.ClusSelection;
+import jeans.util.MyArray;
 
 public class NominalAttribute extends NominalAttrBase {
 

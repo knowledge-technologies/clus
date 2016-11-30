@@ -27,10 +27,17 @@ package clus.weka;
 
 import java.util.ArrayList;
 
-import weka.core.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.data.attweights.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import weka.core.Attribute;
+import weka.core.FastVector;
+import weka.core.Instance;
+import weka.core.Instances;
 
 public class ClusToWekaData {
 

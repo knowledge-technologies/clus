@@ -31,10 +31,24 @@
 
 package jeans.graph;
 
-import java.awt.image.*;
-import java.awt.event.*;
-import java.awt.*;
-import java.util.*;
+import java.awt.Canvas;
+import java.awt.Color;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.LayoutManager;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+import java.util.Enumeration;
+import java.util.Vector;
 
 import jeans.graph.image.GrayScaleFilter;
 

@@ -23,13 +23,14 @@
 package clus.model.test;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.HashMap;
 
-import clus.util.*;
-import clus.main.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.type.*;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.main.Settings;
+import clus.util.ClusException;
+import clus.util.ClusFormat;
 
 public abstract class NodeTest implements Serializable {
 

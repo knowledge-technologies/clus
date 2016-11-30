@@ -22,11 +22,11 @@
 
 package clus.ext.optxval;
 
-import java.util.*;
-import jeans.tree.*;
+import java.util.Arrays;
 
 import clus.main.Settings;
-import clus.model.test.*;
+import clus.model.test.NodeTest;
+import jeans.tree.MyNode;
 
 public class OptXValSplit extends MyNode {
 

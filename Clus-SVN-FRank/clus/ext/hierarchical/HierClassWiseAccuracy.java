@@ -29,11 +29,12 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.Arrays;
 
-import clus.util.*;
-import clus.data.rows.*;
-import clus.error.*;
-import clus.main.*;
-import clus.statistic.*;
+import clus.data.rows.DataTuple;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusFormat;
 
 public class HierClassWiseAccuracy extends ClusError {
 

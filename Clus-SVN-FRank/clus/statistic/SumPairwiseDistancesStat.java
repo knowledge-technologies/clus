@@ -1,6 +1,7 @@
 package clus.statistic;
 
 import java.util.Random;
+
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;

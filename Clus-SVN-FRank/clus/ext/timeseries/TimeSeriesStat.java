@@ -23,15 +23,20 @@
 package clus.ext.timeseries;
 
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
 
-import clus.data.attweights.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.ext.sspd.*;
-import clus.main.*;
-import clus.statistic.*;
-import clus.util.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.data.type.NumericAttrType;
+import clus.data.type.TimeSeriesAttrType;
+import clus.main.Settings;
+import clus.statistic.ClusDistance;
+import clus.statistic.ClusStatistic;
+import clus.statistic.StatisticPrintInfo;
+import clus.statistic.SumPairwiseDistancesStat;
+import clus.util.ClusFormat;
 
 public class TimeSeriesStat extends SumPairwiseDistancesStat {
 

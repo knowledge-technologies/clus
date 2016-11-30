@@ -22,11 +22,11 @@
 
 package clus.selection;
 
-import java.util.*;
+import java.util.Random;
 
-import jeans.util.array.*;
-
-import clus.util.*;
+import clus.util.ClusException;
+import clus.util.ClusRandom;
+import jeans.util.array.MyIntArray;
 
 // "almost linear" algorithm for randomisation
 // algorithm divide2 chooses random nr. of bucket

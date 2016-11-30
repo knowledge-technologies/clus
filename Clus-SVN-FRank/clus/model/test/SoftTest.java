@@ -22,9 +22,10 @@
 
 package clus.model.test;
 
-import clus.algo.tdidt.*;
-import clus.data.rows.*;
-import clus.data.cols.attribute.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.cols.attribute.ClusAttribute;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
 
 public abstract class SoftTest extends NodeTest {
 

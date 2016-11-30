@@ -22,7 +22,7 @@
 
 package jeans.io.ini;
 
-import jeans.math.*;
+import jeans.math.MDouble;
 import jeans.util.StringUtils;
 
 public class INIFileStringOrDouble extends INIFileEntry {

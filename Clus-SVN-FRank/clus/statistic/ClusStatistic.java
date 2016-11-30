@@ -22,18 +22,21 @@
 
 package clus.statistic;
 
-import clus.main.*;
-import clus.util.*;
-import clus.data.cols.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.data.attweights.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
+
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.cols.ColTarget;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
 import clus.ext.beamsearch.ClusBeam;
 import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.ext.timeseries.TimeSeries;
-
-import java.io.*;
-import java.util.ArrayList;
+import clus.main.Settings;
+import clus.util.ClusFormat;
 
 /**
  * Statistics about the data set. Target attributes, nominal or real attributes, weights etc.

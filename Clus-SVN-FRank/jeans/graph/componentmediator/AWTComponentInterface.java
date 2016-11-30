@@ -22,8 +22,13 @@
 
 package jeans.graph.componentmediator;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Button;
+import java.awt.Checkbox;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 
 public abstract class AWTComponentInterface implements ComponentInterface {
 

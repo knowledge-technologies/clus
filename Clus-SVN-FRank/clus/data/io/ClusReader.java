@@ -22,12 +22,15 @@
 
 package clus.data.io;
 
-import jeans.util.*;
-
-import clus.main.*;
-
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.Reader;
 import java.util.zip.ZipInputStream;
+
+import clus.main.Settings;
+import jeans.util.FileUtil;
+import jeans.util.MStreamTokenizer;
 
 public class ClusReader {
 

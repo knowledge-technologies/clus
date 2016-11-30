@@ -1,14 +1,12 @@
 package clus.heuristic;
 
-import java.io.IOException;
 import java.util.ArrayList;
 
+import org.apache.commons.math.special.Gamma;
+
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
-
-import org.apache.commons.math.special.Gamma;
 
 
 public class EncodingCost {

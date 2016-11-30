@@ -25,18 +25,21 @@
  */
 package clus.algo.rules;
 
-import java.io.*;
+import java.io.IOException;
 
-import jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import jeans.util.cmdline.CMDLineArgs;
-import clus.*;
-import clus.data.type.*;
-import clus.algo.*;
-import clus.algo.tdidt.*;
-import clus.main.*;
+import clus.Clus;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.ClusInductionAlgorithmType;
+import clus.algo.tdidt.ClusDecisionTree;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusRun;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
+import jeans.util.cmdline.CMDLineArgs;
 
 public class ClusRuleClassifier extends ClusInductionAlgorithmType {
 

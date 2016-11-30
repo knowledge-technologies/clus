@@ -22,17 +22,20 @@
 
 package clus.ext.optxval;
 
-import jeans.util.sort.*;
-import jeans.util.array.*;
+import java.util.Arrays;
 
-import java.util.*;
-
-import clus.model.test.*;
-import clus.main.*;
-import clus.util.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.type.*;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.NumericAttrType;
+import clus.main.Settings;
+import clus.model.test.NodeTest;
+import clus.model.test.NumericTest;
+import clus.model.test.SoftTest;
+import clus.util.ClusFormat;
+import jeans.util.array.MyIntArray;
+import jeans.util.sort.DoubleIndexSorter;
 
 public class SoftNumericTest extends SoftTest {
 

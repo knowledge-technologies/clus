@@ -22,13 +22,16 @@
 
 package jeans.io.filesys;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.Vector;
+
+import jeans.util.sort.MStringSorter;
+import jeans.util.sort.MVectorSorter;
 import jeans.util.thread.MCallback;
 import jeans.util.thread.MWorkerThread;
-import jeans.util.sort.MVectorSorter;
-import jeans.util.sort.MStringSorter;
-
-import java.util.*;
-import java.io.*;
 
 public abstract class MFileSystem {
 

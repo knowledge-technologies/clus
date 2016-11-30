@@ -60,7 +60,12 @@
 
 package jeans.graph;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
 
 public abstract class BufferCanvas extends Canvas {
 	Dimension minSize;

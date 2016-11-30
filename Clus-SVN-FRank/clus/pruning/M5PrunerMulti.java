@@ -25,10 +25,10 @@
  */
 package clus.pruning;
 
-import clus.statistic.*;
-import clus.algo.tdidt.*;
-import clus.data.rows.*;
-import clus.data.attweights.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.RowData;
+import clus.statistic.RegressionStat;
 
 // import clus.weka.*;
 

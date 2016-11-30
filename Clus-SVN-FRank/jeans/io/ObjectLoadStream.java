@@ -22,8 +22,10 @@
 
 package jeans.io;
 
-import java.io.*;
-import java.util.zip.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.util.zip.ZipInputStream;
 
 /**
  * A class implementing an interface to the loading of objects from a file

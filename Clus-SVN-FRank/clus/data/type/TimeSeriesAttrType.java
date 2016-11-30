@@ -27,10 +27,10 @@ import java.io.PrintWriter;
 
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
+import clus.ext.timeseries.TimeSeries;
 import clus.io.ClusSerializable;
 import clus.main.Settings;
 import clus.util.ClusException;
-import clus.ext.timeseries.*;
 
 public class TimeSeriesAttrType extends ClusAttrType {
 

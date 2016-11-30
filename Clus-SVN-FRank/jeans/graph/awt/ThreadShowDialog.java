@@ -22,7 +22,7 @@
 
 package jeans.graph.awt;
 
-import java.awt.*;
+import java.awt.Dialog;
 
 public class ThreadShowDialog extends Thread {
 

@@ -22,12 +22,20 @@
 
 package jeans.graph.tree;
 
-import jeans.graph.swing.drawable.*;
-import jeans.tree.*;
-import jeans.util.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.util.ArrayList;
 
-import java.util.*;
-import java.awt.*;
+import jeans.graph.swing.drawable.Drawable;
+import jeans.graph.swing.drawable.DrawableCanvas;
+import jeans.graph.swing.drawable.DrawableExpandButton;
+import jeans.graph.swing.drawable.DrawableRectangle;
+import jeans.graph.swing.drawable.DrawableRenderer;
+import jeans.tree.IntervalTreeNodeRB;
+import jeans.tree.IntervalTreeRB;
+import jeans.util.Executer;
 
 public class TreeRenderer implements DrawableRenderer {
 

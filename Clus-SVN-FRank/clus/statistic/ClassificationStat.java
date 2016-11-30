@@ -22,27 +22,30 @@
 
 package clus.statistic;
 
-import jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import jeans.math.*;
-import jeans.util.StringUtils;
-
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.*;
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.math.MathException;
-import org.apache.commons.math.distribution.*;
+import org.apache.commons.math.distribution.ChiSquaredDistribution;
+import org.apache.commons.math.distribution.DistributionFactory;
 
-import clus.main.*;
-import clus.util.*;
-import clus.data.cols.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.data.attweights.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
-import clus.ext.hierarchical.WHTDStatistic;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.util.ClusFormat;
+import jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import jeans.math.MathUtil;
+import jeans.util.StringUtils;
 
 /**
  * Classification statistics about the data. A child of ClusStatistic.
@@ -333,6 +336,9 @@ public class ClassificationStat extends ClusStatistic {
 	}
 
 	public int getMajorityClassDiff(int attr, ClassificationStat other) {
+		if (m_Thresholds != null){
+			throw new RuntimeException("Not implemented for MLC.");
+		}
 		int m_class = -1;
 		double m_max = Double.NEGATIVE_INFINITY;
 		double[] clcts1 = m_ClassCounts[attr];
@@ -1019,10 +1025,15 @@ public class ClassificationStat extends ClusStatistic {
 		reset();
 		int nb_votes = votes.size();
 		for (int j = 0; j < nb_votes; j++){
-			ClassificationStat vote = (ClassificationStat) votes.get(j);
-//			for (int i = 0; i < m_NbTarget; i++){
-				addVote(vote);
-//			}
+			ClassificationStat vote = (ClassificationStat) votes.get(j);			
+			m_SumWeight += vote.m_SumWeight;
+			for (int attr = 0; attr < m_NbTarget; attr++) {			
+				m_SumWeights[attr] += vote.m_SumWeights[attr]; // Warning: here, the sum(m_ClassCounts[attr]) != m_SumWeights[attr]
+				double[] my = m_ClassCounts[attr];
+				for (int i = 0; i < my.length; i++){
+					my[i] += vote.getProportion(attr, i);
+				}
+			}
 		}
 		calcMean();
 	}
@@ -1032,33 +1043,18 @@ public class ClassificationStat extends ClusStatistic {
 		for (int j = 0; j < nb_votes; j++){
 			ClassificationStat vote = (ClassificationStat) votes.get(j);
 			int[] enabled = targetSubspaceInfo.getOnlyTargets(targetSubspaceInfo.getModelSubspace(j));
-			
-//			for (int i = 0; i < m_NbTarget; i++){
-				addVote(vote, enabled);
-//			}
-		}
-		calcMean();
-	}
-
-	public void addVote(ClusStatistic vote) { // Matej ????????
-		ClassificationStat or = (ClassificationStat)vote;
-		m_SumWeight += or.m_SumWeight;
-		for (int i = 0; i < m_NbTarget; i++) {			
-			m_SumWeights[i] += or.m_SumWeights[i];
-			double[] my = m_ClassCounts[i];
-			for (int j = 0; j < my.length; j++) my[j] += or.getProportion(i, j);
-		}
-	}
-	public void addVote(ClusStatistic vote, int[] enabled) {
-		ClassificationStat or = (ClassificationStat)vote;
-		m_SumWeight += or.m_SumWeight;
-		for (int i = 0; i < m_NbTarget; i++) {			
-			if (enabled[i] == 1) {
-				m_SumWeights[i] += or.m_SumWeights[i];
-				double[] my = m_ClassCounts[i];
-				for (int j = 0; j < my.length; j++) my[j] += or.getProportion(i, j);
+			m_SumWeight += vote.m_SumWeight;
+			for (int attr = 0; attr < m_NbTarget; attr++) {			
+				if (enabled[attr] == 1) {
+					m_SumWeights[attr] += vote.m_SumWeights[attr];
+					double[] my = m_ClassCounts[attr];
+					for (int i = 0; i < my.length; i++){
+						my[i] += vote.getProportion(attr, i);
+					}
+				}
 			}
 		}
+		calcMean();
 	}
 
 	public ClassificationStat getClassificationStat() {

@@ -22,7 +22,7 @@
 
 package jeans.util;
 
-import java.util.*;
+import java.util.Vector;
 
 public class VectorUtils {
 

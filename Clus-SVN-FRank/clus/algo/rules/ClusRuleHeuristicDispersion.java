@@ -28,9 +28,9 @@
  */
 package clus.algo.rules;
 
-import java.util.*;
+import java.util.ArrayList;
 
-import clus.heuristic.*;
+import clus.heuristic.ClusHeuristic;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 

@@ -22,7 +22,10 @@
 
 package jeans.graph;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.GridLayout;
+import java.awt.Panel;
+
 import jeans.util.CallBackFunction;
 
 public class ColorSelector extends Panel implements CallBackFunction {

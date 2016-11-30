@@ -1,25 +1,31 @@
 package clus.algo.tdidt;
 
 import java.io.IOException;
-
 import java.util.Random;
 
-import jeans.resource.ResourceInfo;
-import jeans.util.IntervalCollection;
-
-import clus.main.*;
-import clus.model.ClusModel;
-import clus.model.ClusModelInfo;
-import clus.util.*;
-import clus.selection.*;
 import clus.algo.ClusInductionAlgorithmType;
-import clus.algo.tdidt.ClusDecisionTree;
 import clus.data.ClusData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.error.*;
+import clus.error.Accuracy;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusErrorOutput;
+import clus.error.PearsonCorrelation;
 import clus.ext.hierarchical.HierClassWiseAccuracy;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.ClusSummary;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.selection.XValMainSelection;
+import clus.selection.XValRandomSelection;
+import clus.selection.XValSelection;
+import clus.util.ClusException;
+import jeans.resource.ResourceInfo;
+import jeans.util.IntervalCollection;
 
 
 public class ClusSITDecisionTree extends ClusDecisionTree{

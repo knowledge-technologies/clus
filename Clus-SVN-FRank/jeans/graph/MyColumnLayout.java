@@ -39,7 +39,11 @@
 
 package jeans.graph;
 
-import java.awt.*;
+import java.awt.Component;
+import java.awt.Container;
+import java.awt.Dimension;
+import java.awt.Insets;
+import java.awt.LayoutManager;
 
 public class MyColumnLayout implements LayoutManager {
 

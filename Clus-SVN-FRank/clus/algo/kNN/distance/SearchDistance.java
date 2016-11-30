@@ -22,15 +22,12 @@
 
 package clus.algo.kNN.distance;
 
-import clus.algo.kNN.distance.attributeWeighting.AttributeWeighting;
-import clus.algo.kNN.distance.attributeWeighting.NoWeighting;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.main.Settings;
 import clus.statistic.ClusDistance;
-import weka.classifiers.rules.ZeroR;
 
 /**
  * @author Mitja Pugelj

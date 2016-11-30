@@ -22,7 +22,9 @@
 
 package jeans.graph.swing.drawable;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Graphics2D;
+import java.awt.Stroke;
 
 public class DrawableEllipse extends Drawable {
 

@@ -22,7 +22,10 @@
 
 package jeans.io;
 
-import java.io.*;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 
 public class PrintLineStream implements LineStream {
 

@@ -22,15 +22,14 @@
 
 package clus.model.processor;
 
-import java.io.*;
+import java.io.IOException;
 
-import jeans.tree.*;
-
-import clus.model.ClusModel;
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.statistic.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusSchema;
+import clus.model.ClusModel;
+import clus.statistic.ClusStatistic;
+import jeans.tree.CompleteTreeIterator;
 
 public class CalcStatisticProcessor extends ClusModelProcessor {
 

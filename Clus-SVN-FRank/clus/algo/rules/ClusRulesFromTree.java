@@ -25,19 +25,21 @@
  */
 package clus.algo.rules;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
-import clus.main.*;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
 import clus.model.ClusModel;
-import clus.model.test.*;
+import clus.model.test.NodeTest;
 import clus.tools.optimization.GDAlg;
 import clus.tools.optimization.OptAlg;
 import clus.tools.optimization.OptProbl;
 import clus.tools.optimization.de.DeAlg;
-import clus.util.*;
+import clus.util.ClusException;
 
 /** Rule set created from a tree. Use by decision tree command line parameter.
  *

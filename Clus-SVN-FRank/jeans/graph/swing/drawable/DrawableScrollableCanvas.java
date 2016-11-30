@@ -22,9 +22,17 @@
 
 package jeans.graph.swing.drawable;
 
-import java.awt.*;
-import java.awt.event.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics2D;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 
 public class DrawableScrollableCanvas extends JPanel {
 

@@ -22,27 +22,46 @@
 
 package addon.hmc.ClusAmandaRules;
 
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+
 /*
  * Created on Dec 22, 2005
  */
 
 import java.util.Date;
 
-import java.io.*;
-
-import clus.*;
-import jeans.util.cmdline.*;
-import jeans.util.*;
-import clus.algo.*;
-import clus.algo.rules.*;
-import clus.main.*;
-import clus.util.*;
-import clus.statistic.*;
-import clus.data.type.*;
-import clus.model.*;
-import clus.model.test.*;
-import clus.ext.hierarchical.*;
-import clus.data.rows.*;
+import clus.Clus;
+import clus.algo.ClusInductionAlgorithmType;
+import clus.algo.rules.ClusRule;
+import clus.algo.rules.ClusRuleClassifier;
+import clus.algo.rules.ClusRuleSet;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.ext.hierarchical.ClassHierarchy;
+import clus.ext.hierarchical.ClassesTuple;
+import clus.ext.hierarchical.WHTDStatistic;
+import clus.main.ClusOutput;
+import clus.main.ClusRun;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.model.test.InverseNumericTest;
+import clus.model.test.NodeTest;
+import clus.model.test.NumericTest;
+import clus.model.test.SubsetTest;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import jeans.util.MStreamTokenizer;
+import jeans.util.StringUtils;
+import jeans.util.cmdline.CMDLineArgs;
+import jeans.util.cmdline.CMDLineArgsProvider;
 
 public class ClusAmandaRules implements CMDLineArgsProvider {
 

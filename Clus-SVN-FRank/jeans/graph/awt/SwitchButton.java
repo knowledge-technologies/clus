@@ -22,8 +22,9 @@
 
 package jeans.graph.awt;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Button;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 public class SwitchButton extends Button implements ActionListener {
 

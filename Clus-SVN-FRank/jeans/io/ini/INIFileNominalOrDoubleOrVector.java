@@ -22,11 +22,12 @@
 
 package jeans.io.ini;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
 
-import jeans.util.MStreamTokenizer;
 import jeans.io.range.NominalType;
+import jeans.util.MStreamTokenizer;
 
 public class INIFileNominalOrDoubleOrVector extends INIFileEntry {
 

@@ -22,10 +22,15 @@
 
 package clus.ext.ilevelc;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
 import clus.util.ClusException;
 
 public class ILevelConstraint implements Serializable{

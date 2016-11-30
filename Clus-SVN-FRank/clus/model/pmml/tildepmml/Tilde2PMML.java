@@ -22,14 +22,17 @@
 
 package clus.model.pmml.tildepmml;
 
-import java.util.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintWriter;
+import java.util.Vector;
 
-import java.io.*;
-
-import clus.algo.tdidt.*;
-import clus.model.modelio.tilde.*;
-
-import jeans.util.*;
+import clus.algo.tdidt.ClusNode;
+import clus.model.modelio.tilde.TildeOutReader;
+import jeans.util.MStreamTokenizer;
 
 public class Tilde2PMML {
 

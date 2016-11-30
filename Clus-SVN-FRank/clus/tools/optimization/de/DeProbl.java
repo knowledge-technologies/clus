@@ -25,11 +25,11 @@
  */
 package clus.tools.optimization.de;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
 import clus.algo.rules.ClusRuleSet;
-import clus.main.*;
-import clus.statistic.*;
+import clus.main.ClusStatManager;
 
 /**
  * Class representing a Differential evolution optimization problem.

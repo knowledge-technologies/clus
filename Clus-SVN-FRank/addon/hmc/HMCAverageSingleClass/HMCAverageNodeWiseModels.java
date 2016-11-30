@@ -25,15 +25,23 @@ package addon.hmc.HMCAverageSingleClass;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import clus.main.*;
-import clus.model.*;
-import clus.model.modelio.*;
-import clus.statistic.*;
-import clus.util.*;
-import clus.data.rows.*;
-import clus.error.ClusErrorList;
-import clus.ext.hierarchical.*;
 import clus.Clus;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.error.ClusErrorList;
+import clus.ext.hierarchical.ClassHierarchy;
+import clus.ext.hierarchical.ClassTerm;
+import clus.ext.hierarchical.ClassesTuple;
+import clus.ext.hierarchical.HierClassTresholdPruner;
+import clus.ext.hierarchical.HierClassWiseAccuracy;
+import clus.main.ClusModelInfoList;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.modelio.ClusModelCollectionIO;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 public class HMCAverageNodeWiseModels {
 

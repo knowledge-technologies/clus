@@ -22,25 +22,29 @@
 
 package clus.main;
 
-import java.io.*;
-import java.text.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
+import java.text.DateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
-import jeans.resource.ResourceInfo;
-import jeans.util.*;
-
-import clus.model.ClusModel;
-import clus.model.ClusModelInfo;
-import clus.statistic.ClassificationStat;
-import clus.statistic.StatisticPrintInfo;
-import clus.util.*;
-import clus.data.type.*;
-import clus.error.*;
-import clus.ext.ensembles.ClusForest;
-import clus.ext.ensembles.ClusOOBErrorEstimate;
-import clus.data.rows.*;
 import clus.Clus;
 import clus.algo.tdidt.ClusNode;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.error.ClusErrorList;
+import clus.ext.ensembles.ClusForest;
+import clus.ext.ensembles.ClusOOBErrorEstimate;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.statistic.StatisticPrintInfo;
+import clus.util.ClusException;
+import clus.util.ClusFormat;
+import jeans.resource.ResourceInfo;
+import jeans.util.FileUtil;
+import jeans.util.StringUtils;
 
 /**
  * Class for outputting the training and testing results to .out file.

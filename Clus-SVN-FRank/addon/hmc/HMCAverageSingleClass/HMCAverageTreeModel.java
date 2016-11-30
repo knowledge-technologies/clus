@@ -25,20 +25,20 @@ package addon.hmc.HMCAverageSingleClass;
 /*
  * Created on Jan 18, 2006
  */
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import java.io.*;
-import java.util.*;
-
-import jeans.util.MyArray;
-import jeans.util.array.*;
-
-import clus.ext.hierarchical.*;
-import clus.data.rows.*;
-import clus.main.*;
-import clus.model.*;
-import clus.statistic.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.ext.hierarchical.WHTDStatistic;
+import clus.main.ClusRun;
+import clus.model.ClusModel;
+import clus.statistic.ClusStatistic;
+import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import clus.algo.tdidt.*;
+import jeans.util.MyArray;
 
 public class HMCAverageTreeModel implements ClusModel {
 

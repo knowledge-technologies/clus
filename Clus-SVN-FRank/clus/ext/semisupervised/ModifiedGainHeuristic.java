@@ -1,10 +1,10 @@
 package clus.ext.semisupervised;
 
-import jeans.math.MathUtil;
-import clus.heuristic.*;
+import clus.heuristic.ClusHeuristicImpl;
 import clus.main.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
+import jeans.math.MathUtil;
 
 public class ModifiedGainHeuristic extends ClusHeuristicImpl {
 

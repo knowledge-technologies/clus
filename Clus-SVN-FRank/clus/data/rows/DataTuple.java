@@ -22,11 +22,12 @@
 
 package clus.data.rows;
 
-import java.io.*;
+import java.io.PrintWriter;
+import java.io.Serializable;
 
 import clus.data.type.ClusAttrType;
-import clus.main.*;
-import clus.data.type.*;
+import clus.data.type.ClusSchema;
+import clus.main.Settings;
 
 public class DataTuple implements Serializable {
 

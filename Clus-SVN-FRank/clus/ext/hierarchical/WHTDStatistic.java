@@ -25,23 +25,33 @@
  */
 package clus.ext.hierarchical;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
-import org.apache.commons.math.distribution.*;
-import org.apache.commons.math.*;
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.DistributionFactory;
+import org.apache.commons.math.distribution.HypergeometricDistribution;
 
 import clus.data.attweights.ClusAttributeWeights;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.ext.timeseries.TimeSeries;
-import clus.main.*;
-import clus.statistic.*;
-import clus.util.*;
-
-import jeans.util.array.*;
-import jeans.util.compound.DoubleBooleanCount;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
+import clus.statistic.RegressionStatBinaryNomiss;
+import clus.statistic.StatisticPrintInfo;
+import clus.util.ClusException;
+import clus.util.ClusFormat;
+import jeans.util.array.MIntArray;
 
 public class WHTDStatistic extends RegressionStatBinaryNomiss {
 

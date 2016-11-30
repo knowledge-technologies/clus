@@ -22,12 +22,13 @@
 
 package clus.data.type;
 
-import java.io.*;
+import java.io.IOException;
 
-import clus.io.*;
-import clus.util.*;
 import clus.data.io.ClusReader;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.io.ClusSerializable;
+import clus.util.ClusException;
 
 public class IndexAttrType extends ClusAttrType {
 

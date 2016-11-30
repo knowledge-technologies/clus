@@ -14,7 +14,6 @@ import clus.error.MisclassificationError;
 import clus.error.PearsonCorrelation;
 import clus.error.RMSError;
 import clus.error.RelativeError;
-import clus.error.SpearmanRankCorrelation;
 
 
 /**

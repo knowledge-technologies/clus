@@ -22,15 +22,18 @@
 
 package clus.model;
 
-import jeans.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
 import clus.main.ClusRun;
-import clus.statistic.*;
-import clus.data.rows.*;
-import clus.util.*;
-
-import java.io.*;
-import java.util.*;
+import clus.statistic.ClusStatistic;
+import clus.statistic.StatisticPrintInfo;
+import clus.util.ClusException;
+import jeans.util.MyArray;
 
 public interface ClusModel {
 

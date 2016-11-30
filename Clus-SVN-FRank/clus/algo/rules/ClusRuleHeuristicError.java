@@ -25,12 +25,12 @@
  */
 package clus.algo.rules;
 
-import clus.heuristic.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.type.ClusAttrType;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
-import clus.main.ClusStatManager;
-import clus.data.attweights.*;
-import clus.data.type.ClusAttrType;
 
 public class ClusRuleHeuristicError extends ClusHeuristic {
 

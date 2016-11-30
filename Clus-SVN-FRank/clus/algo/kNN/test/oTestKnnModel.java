@@ -23,10 +23,17 @@
 package clus.algo.kNN.test;
 
 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.LinkedList;
+
 import clus.algo.kNN.distance.EuclideanDistance;
+import clus.algo.kNN.distance.SearchDistance;
 import clus.algo.kNN.methods.SearchAlgorithm;
 import clus.algo.kNN.methods.bfMethod.BrutForce;
-import clus.algo.kNN.distance.SearchDistance;
 import clus.algo.kNN.methods.kdTree.KDTree;
 import clus.algo.kNN.methods.vpTree.VPTree;
 import clus.data.rows.DataTuple;
@@ -41,12 +48,6 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
 import jeans.util.MyArray;
 
 /**

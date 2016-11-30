@@ -22,18 +22,29 @@
 
 package clus.ext.hierarchical;
 
-import jeans.tree.*;
-import jeans.util.array.StringTable;
-import jeans.math.*;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.Iterator;
 
-import java.io.*;
-import java.util.*;
-
-import clus.main.*;
-import clus.util.*;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.*;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NumericAttrType;
+import clus.main.Settings;
+import clus.util.ClusException;
+import jeans.math.SingleStat;
+import jeans.tree.CompleteTreeIterator;
+import jeans.util.array.StringTable;
 
 public class ClassHierarchy implements Serializable {
 

@@ -22,8 +22,9 @@
 
 package jeans.io.ini;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Vector;
 
 public class INIFileSectionGroup extends INIFileNode {
 

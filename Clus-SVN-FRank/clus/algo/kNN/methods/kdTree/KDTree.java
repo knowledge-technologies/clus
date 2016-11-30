@@ -22,19 +22,20 @@
 
 package clus.algo.kNN.methods.kdTree;
 
-import clus.algo.kNN.methods.NNStack; 
-import clus.algo.kNN.methods.SearchAlgorithm;
+import java.io.IOException;
+//import java.util.Collection;
+import java.util.LinkedList;
+
 //import clus.algo.kNN.*;
 //import clus.algo.kNN.distance.EuclideanDistance;
 import clus.algo.kNN.distance.SearchDistance;
+import clus.algo.kNN.methods.NNStack;
+import clus.algo.kNN.methods.SearchAlgorithm;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 //import clus.data.type.ClusAttrType;
 import clus.main.ClusRun;
 import clus.util.ClusException;
-import java.io.IOException;
-//import java.util.Collection;
-import java.util.LinkedList;
 
 /**
  * @author Mitja Pugelj

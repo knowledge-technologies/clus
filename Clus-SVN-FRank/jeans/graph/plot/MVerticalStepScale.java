@@ -22,9 +22,16 @@
 
 package jeans.graph.plot;
 
-import java.awt.*;
-import java.awt.image.*;
-import jeans.graph.image.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.image.FilteredImageSource;
+import java.awt.image.ImageFilter;
+import java.awt.image.ImageProducer;
+
+import jeans.graph.image.TransformFilter;
 
 public class MVerticalStepScale extends MGraphScale {
 

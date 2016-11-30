@@ -22,11 +22,11 @@
 
 package clus.algo.split;
 
-import clus.main.*;
-import clus.data.type.*;
-import clus.statistic.*;
+import java.util.Random;
 
-import java.util.*;
+import clus.data.type.NominalAttrType;
+import clus.main.ClusStatManager;
+import clus.statistic.ClusStatistic;
 
 public abstract class NominalSplit {
 

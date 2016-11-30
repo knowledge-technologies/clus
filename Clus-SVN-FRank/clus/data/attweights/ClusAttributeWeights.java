@@ -26,12 +26,12 @@
  */
 package clus.data.attweights;
 
-import java.util.*;
-import java.io.*;
+import java.io.Serializable;
+import java.util.Arrays;
 
-import clus.data.type.*;
+import clus.data.type.ClusAttrType;
 import clus.main.Settings;
-import clus.util.*;
+import clus.util.ClusFormat;
 
 public class ClusAttributeWeights implements Serializable {
 

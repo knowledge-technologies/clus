@@ -5,15 +5,22 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.util.*;
-import jeans.util.*;
+import java.util.Arrays;
 
-import clus.*;
-import clus.main.*;
+import clus.Clus;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.ext.hierarchical.ClassHierarchy;
+import clus.ext.hierarchical.ClassTerm;
+import clus.ext.hierarchical.ClassesTuple;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
 import clus.util.ClusException;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.ext.hierarchical.*;
+import jeans.util.FileUtil;
+import jeans.util.StringUtils;
 
 public class HMCConvertToSC {
 

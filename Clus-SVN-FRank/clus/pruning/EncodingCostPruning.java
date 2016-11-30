@@ -24,11 +24,11 @@ package clus.pruning;
 
 import java.util.ArrayList;
 
-import clus.algo.tdidt.*;
+import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
-import clus.util.*;
-import clus.heuristic.*;
+import clus.heuristic.EncodingCost;
 import clus.model.test.NodeTest;
+import clus.util.ClusException;
 
 
 public class EncodingCostPruning extends PruneTree {

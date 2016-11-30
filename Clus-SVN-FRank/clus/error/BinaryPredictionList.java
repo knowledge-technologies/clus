@@ -3,11 +3,10 @@ package clus.error;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.HashMap;
+import java.util.Iterator;
 
 import clus.main.Settings;
-
 import jeans.util.compound.DoubleBooleanCount;
 
 

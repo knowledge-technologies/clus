@@ -22,13 +22,13 @@
 
 package clus.model.modelio.tilde;
 
-import java.io.*;
-import jeans.util.*;
+import java.io.IOException;
 
 import clus.algo.tdidt.ClusNode;
-import clus.main.*;
-import clus.model.test.*;
-import clus.statistic.*;
+import clus.main.ClusStatManager;
+import clus.model.test.FakeTest;
+import clus.statistic.ClassificationStat;
+import jeans.util.MStreamTokenizer;
 
 public class TildeTreeReader {
 

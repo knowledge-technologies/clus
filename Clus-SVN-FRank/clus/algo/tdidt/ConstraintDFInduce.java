@@ -25,19 +25,24 @@
  */
 package clus.algo.tdidt;
 
-import java.io.*;
+import java.io.IOException;
 
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.split.CurrentBestTestAndHeuristic;
-import clus.data.rows.*;
-import clus.data.type.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
 import clus.error.multiscore.MultiScore;
-import clus.main.*;
-import clus.util.*;
-import clus.statistic.*;
-import clus.ext.constraint.*;
+import clus.ext.constraint.ClusConstraintFile;
+import clus.main.ClusRun;
+import clus.main.Settings;
 import clus.model.ClusModel;
-import clus.model.test.*;
+import clus.model.test.NodeTest;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 public class ConstraintDFInduce extends DepthFirstInduce {
 

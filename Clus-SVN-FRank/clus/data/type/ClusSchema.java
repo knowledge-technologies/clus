@@ -22,19 +22,27 @@
 
 package clus.data.type;
 
-import jeans.util.*;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.StringTokenizer;
 
-import java.io.*;
-import java.util.*;
-
-import clus.io.DummySerializable;
-import clus.main.*;
-import clus.model.ClusModel;
 import clus.data.ClusData;
 import clus.data.io.ClusView;
-import clus.data.rows.*;
-import clus.util.*;
-import clus.selection.*;
+import clus.data.rows.DataPreprocs;
+import clus.data.rows.DataTuple;
+import clus.data.rows.SparseDataTuple;
+import clus.io.DummySerializable;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.selection.XValDataSelection;
+import clus.selection.XValMainSelection;
+import clus.selection.XValRandomSelection;
+import clus.util.ClusException;
+import clus.util.ClusFormat;
+import jeans.util.IntervalCollection;
+import jeans.util.StringUtils;
 
 public class ClusSchema implements Serializable {
 

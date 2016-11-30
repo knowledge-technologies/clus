@@ -22,8 +22,8 @@
 
 package jeans.io.ini;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Vector;
 
 import jeans.util.MStreamTokenizer;
 

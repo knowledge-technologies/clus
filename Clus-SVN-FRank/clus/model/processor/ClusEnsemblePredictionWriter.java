@@ -1,12 +1,10 @@
 package clus.model.processor;
 
-import java.io.IOException; 
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import jeans.util.MyArray;
-import jeans.util.StringUtils;
 import clus.data.io.ARFFFile;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
@@ -16,6 +14,8 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStatBase;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import jeans.util.MyArray;
+import jeans.util.StringUtils;
 
 /**
  * Writing the predictions from the ensemble in a separate file, 

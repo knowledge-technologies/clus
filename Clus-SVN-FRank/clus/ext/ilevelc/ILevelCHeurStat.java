@@ -24,7 +24,7 @@ package clus.ext.ilevelc;
 
 import java.util.ArrayList;
 
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
 import clus.main.Settings;
 
 public class ILevelCHeurStat extends ILevelCStatistic {

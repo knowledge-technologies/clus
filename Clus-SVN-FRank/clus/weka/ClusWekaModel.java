@@ -25,18 +25,22 @@
  */
 package clus.weka;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import jeans.io.*;
-import jeans.util.*;
-import clus.data.rows.*;
-import clus.main.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.main.ClusRun;
 import clus.model.ClusModel;
-import clus.statistic.*;
-
-import weka.classifiers.*;
-import weka.core.*;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
+import clus.statistic.StatisticPrintInfo;
+import jeans.io.ObjectSaveStream;
+import jeans.util.MyArray;
+import weka.classifiers.Classifier;
+import weka.core.Instance;
 
 public class ClusWekaModel implements ClusModel {
 

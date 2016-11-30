@@ -22,13 +22,16 @@
 
 package clus.ext.hierarchical;
 
-import java.util.*;
-import java.io.*;
-
-import jeans.util.array.*;
+import java.io.BufferedReader;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.StringTokenizer;
 
 import clus.main.Settings;
-import clus.util.*;
+import clus.util.ClusException;
+import jeans.util.array.StringTable;
 
 public class ClassesTuple implements Serializable {
 

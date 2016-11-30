@@ -22,21 +22,29 @@
 
 package clus.ext.bestfirst;
 
-import clus.main.*;
-import clus.util.*;
-import clus.algo.*;
-import clus.algo.tdidt.*;
-import clus.algo.split.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.model.*;
-import clus.model.test.*;
-import clus.statistic.*;
-import clus.ext.ensembles.*;
-import clus.heuristic.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 
-import java.io.*;
-import java.util.*;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.split.CurrentBestTestAndHeuristic;
+import clus.algo.split.FindBestTest;
+import clus.algo.split.NominalSplit;
+import clus.algo.tdidt.ClusNode;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.ext.ensembles.ClusEnsembleInduce;
+import clus.main.ClusRun;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.test.NodeTest;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 public class BestFirstInduce extends ClusInductionAlgorithm {
 

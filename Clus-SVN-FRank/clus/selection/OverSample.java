@@ -22,7 +22,7 @@
 
 package clus.selection;
 
-import clus.util.*;
+import clus.util.ClusRandom;
 
 public class OverSample extends ClusSelection {
 

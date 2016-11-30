@@ -22,16 +22,26 @@
 
 package clus.ext.ilevelc;
 
-import java.io.*;
-import java.util.*;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-import jeans.util.*;
-import clus.data.io.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.main.*;
+import clus.data.io.ARFFFile;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.util.ClusException;
+import jeans.util.FileUtil;
 
 public class MPCKMeansWrapper {
 

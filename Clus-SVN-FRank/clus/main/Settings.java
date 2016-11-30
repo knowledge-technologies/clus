@@ -22,20 +22,37 @@
 
 package clus.main;
 
-import jeans.io.ini.*;
-import jeans.io.range.IntRangeCheck;
-import jeans.util.cmdline.*;
-import jeans.util.*;
-import jeans.resource.*;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.Date;
 
-import java.io.*;
-import java.util.*;
-
-import clus.statistic.*;
-import clus.heuristic.*;
+import clus.data.type.ClusSchema;
+import clus.data.type.IntegerAttrType;
+import clus.ext.hierarchical.ClassesValue;
+import clus.heuristic.FTest;
 import clus.model.ClusModel;
-import clus.data.type.*;
-import clus.ext.hierarchical.*;
+import clus.statistic.StatisticPrintInfo;
+import jeans.io.ini.INIFile;
+import jeans.io.ini.INIFileBool;
+import jeans.io.ini.INIFileDouble;
+import jeans.io.ini.INIFileInt;
+import jeans.io.ini.INIFileNominal;
+import jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import jeans.io.ini.INIFileNominalOrIntOrVector;
+import jeans.io.ini.INIFileSection;
+import jeans.io.ini.INIFileString;
+import jeans.io.ini.INIFileStringOrDouble;
+import jeans.io.ini.INIFileStringOrInt;
+import jeans.io.range.IntRangeCheck;
+import jeans.resource.ResourceInfo;
+import jeans.util.FileUtil;
+import jeans.util.StringUtils;
+import jeans.util.cmdline.CMDLineArgs;
 
 /**
  * All the settings. Includes the command line parameters as boolean class attributes.

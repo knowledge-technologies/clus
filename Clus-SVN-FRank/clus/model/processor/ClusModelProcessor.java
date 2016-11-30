@@ -22,14 +22,14 @@
 
 package clus.model.processor;
 
-import clus.data.rows.*;
-import clus.data.type.*;
+import java.io.IOException;
+
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusSchema;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.statistic.*;
-import clus.util.*;
-
-import java.io.*;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 public abstract class ClusModelProcessor {
 

@@ -22,14 +22,14 @@
 
 package clus.error;
 
-import java.io.*;
-import jeans.util.*;
+import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.*;
-import clus.main.*;
+import clus.data.type.NominalAttrType;
+import clus.main.Settings;
 import clus.statistic.ClusStatistic;
-import clus.util.*;
+import clus.util.ClusFormat;
+import jeans.util.StringUtils;
 
 public class ContingencyTable extends ClusNominalError {
 

@@ -22,15 +22,19 @@
 
 package clus.ext.timeseries;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
-import clus.error.*;
 import clus.algo.rules.ClusRule;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
 import clus.data.type.TimeSeriesAttrType;
-import clus.main.*;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;

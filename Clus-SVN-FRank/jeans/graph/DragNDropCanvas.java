@@ -22,7 +22,9 @@
 
 package jeans.graph;
 
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Image;
 
 
 public abstract class DragNDropCanvas extends BufferCanvas {

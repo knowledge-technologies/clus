@@ -22,17 +22,23 @@
 
 package clus.ext.ilevelc;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 
-import jeans.util.DisjointSetForest;
-
-import clus.statistic.*;
-import clus.util.ClusRandom;
-import clus.data.type.*;
 import clus.data.attweights.ClusNormalizedAttributeWeights;
-import clus.data.rows.*;
-import clus.main.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusStatManager;
 import clus.model.ClusModel;
+import clus.statistic.RegressionStat;
+import clus.util.ClusRandom;
+import jeans.util.DisjointSetForest;
 
 public class COPKMeans {
 

@@ -22,7 +22,7 @@
 
 package jeans.graph;
 
-import java.awt.*;
+import java.awt.Point;
 
 public interface MouseHandler {
 

@@ -22,7 +22,8 @@
 
 package clus.data.cols.attribute;
 
-import clus.data.type.*;
+import clus.data.type.ClusAttrType;
+import clus.data.type.NumericAttrType;
 
 public abstract class NumericAttrBase extends ClusAttribute {
 

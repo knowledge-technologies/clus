@@ -22,11 +22,10 @@
 
 package clus.ext.optxval;
 
-import jeans.tree.*;
-import jeans.util.*;
-
 import clus.algo.tdidt.ClusNode;
-import clus.main.*;
+import clus.main.Settings;
+import jeans.tree.MyNode;
+import jeans.util.MyArray;
 
 public class OptXValBinTree extends MyNode {
 

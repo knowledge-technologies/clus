@@ -25,16 +25,20 @@
  */
 package clus.statistic;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.io.*;
 
 import org.apache.commons.math.MathException;
 
-import clus.data.attweights.*;
+import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.*;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.main.ClusStatManager;
 import clus.main.Settings;

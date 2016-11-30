@@ -22,15 +22,19 @@
 
 package clus.data.type;
 
-import java.io.*; 
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.StringTokenizer;
 
-import clus.io.*;
-import clus.util.*;
-import clus.data.rows.*;
-import clus.data.cols.*;
-import clus.data.cols.attribute.*;
+import clus.data.cols.ColTarget;
+import clus.data.cols.attribute.ClusAttribute;
+import clus.data.cols.attribute.NominalTarget;
 import clus.data.io.ClusReader;
+import clus.data.rows.DataTuple;
+import clus.io.ClusSerializable;
+import clus.util.ClusException;
 
 /**
  * Attribute of nominal value.

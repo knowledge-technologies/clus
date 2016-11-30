@@ -22,7 +22,8 @@
 
 package clus.data.cols.attribute;
 
-import clus.data.type.*;
+import clus.data.type.ClusAttrType;
+import clus.data.type.NominalAttrType;
 
 public abstract class NominalAttrBase extends ClusAttribute {
 

@@ -22,7 +22,8 @@
 
 package jeans.tree;
 
-import jeans.util.*;
+import jeans.util.MyArray;
+import jeans.util.MyVisitorParent;
 
 public class MyVisitableNode extends MyNode {
 

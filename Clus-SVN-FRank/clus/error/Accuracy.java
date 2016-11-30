@@ -22,12 +22,11 @@
 
 package clus.error;
 
-import java.io.*;
+import java.io.PrintWriter;
 import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 

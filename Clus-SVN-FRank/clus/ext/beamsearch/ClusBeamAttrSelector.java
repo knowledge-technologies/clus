@@ -25,8 +25,8 @@
  */
 package clus.ext.beamsearch;
 
-import clus.data.rows.*;
-import clus.model.test.*;
+import clus.data.rows.RowData;
+import clus.model.test.NodeTest;
 
 public class ClusBeamAttrSelector {
 

@@ -22,8 +22,8 @@
 
 package jeans.graph;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.util.Vector;
 
 import jeans.util.MStringTokenizer;
 

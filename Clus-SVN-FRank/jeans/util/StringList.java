@@ -22,7 +22,8 @@
 
 package jeans.util;
 
-import java.util.*;
+import java.util.Enumeration;
+import java.util.Vector;
 
 public class StringList {
 

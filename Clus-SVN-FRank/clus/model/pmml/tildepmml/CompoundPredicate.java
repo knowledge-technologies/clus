@@ -22,10 +22,10 @@
 
 package clus.model.pmml.tildepmml;
 
-import java.util.*;
-import java.io.*;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 
-import jeans.util.*;
+import jeans.util.StringUtils;
 
 public class CompoundPredicate {
 

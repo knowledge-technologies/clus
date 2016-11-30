@@ -22,8 +22,8 @@
 
 package jeans.list;
 
-import java.util.*;
-import java.io.*;
+import java.io.Serializable;
+import java.util.Arrays;
 
 public class BitList implements Serializable {
 

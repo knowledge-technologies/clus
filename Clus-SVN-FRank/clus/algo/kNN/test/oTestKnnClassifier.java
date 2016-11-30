@@ -22,6 +22,8 @@
 
 package clus.algo.kNN.test;
 
+import java.io.IOException;
+
 import clus.Clus;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.kNN.KnnClassifier;
@@ -31,7 +33,6 @@ import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
-import java.io.IOException;
 import jeans.util.cmdline.CMDLineArgs;
 
 /**

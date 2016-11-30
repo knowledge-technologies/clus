@@ -28,7 +28,7 @@ package clus.data.attweights;
 
 import java.util.Arrays;
 
-import clus.data.type.*;
+import clus.data.type.ClusAttrType;
 import clus.main.Settings;
 import clus.util.ClusFormat;
 

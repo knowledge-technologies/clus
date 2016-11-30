@@ -22,15 +22,17 @@
 
 package clus.data.type;
 
-import java.io.*; 
+import java.io.IOException;
+import java.io.PrintWriter;
 
-import clus.io.*;
-import clus.main.Settings;
-import clus.util.*;
-import clus.data.rows.*;
-import clus.data.cols.*;
-import clus.data.cols.attribute.*;
+import clus.data.cols.ColTarget;
+import clus.data.cols.attribute.ClusAttribute;
+import clus.data.cols.attribute.NumericTarget;
 import clus.data.io.ClusReader;
+import clus.data.rows.DataTuple;
+import clus.io.ClusSerializable;
+import clus.main.Settings;
+import clus.util.ClusException;
 
 /**
  * Attribute of numeric (continuous) value.

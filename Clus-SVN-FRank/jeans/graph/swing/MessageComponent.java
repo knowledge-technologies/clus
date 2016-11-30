@@ -22,9 +22,14 @@
 
 package jeans.graph.swing;
 
-import java.awt.*;
-import java.util.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Insets;
+import java.util.Vector;
+
+import javax.swing.JComponent;
 
 import jeans.graph.awt.MessageWrapper;
 

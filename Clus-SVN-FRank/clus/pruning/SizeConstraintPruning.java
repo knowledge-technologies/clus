@@ -22,12 +22,13 @@
 
 package clus.pruning;
 
-import clus.model.test.*;
-import clus.algo.tdidt.*;
-import clus.data.attweights.*;
-import clus.data.rows.*;
-import clus.error.*;
-import clus.util.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.RowData;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.model.test.NodeTest;
+import clus.util.ClusException;
 
 public class SizeConstraintPruning extends PruneTree {
 

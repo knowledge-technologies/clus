@@ -22,9 +22,9 @@
 
 package clus.gui;
 
-import javax.swing.tree.*;
+import javax.swing.tree.DefaultMutableTreeNode;
 
-import clus.ext.hierarchical.*;
+import clus.ext.hierarchical.ClassTerm;
 import clus.main.Settings;
 
 public class JTHierTreeNode extends DefaultMutableTreeNode {

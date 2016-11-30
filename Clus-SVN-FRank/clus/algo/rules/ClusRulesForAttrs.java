@@ -28,12 +28,15 @@ package clus.algo.rules;
 
 import java.io.IOException;
 
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.model.test.*;
-import clus.main.*;
-import clus.util.*;
-import clus.ext.hierarchical.*;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.ext.hierarchical.WHTDStatistic;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.model.test.SubsetTest;
+import clus.util.ClusException;
 
 /**
  * Create one rule for each value of each nominal attribute

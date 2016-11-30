@@ -22,8 +22,11 @@
 
 package jeans.io.ini;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 import jeans.util.MStreamTokenizer;
 

@@ -22,18 +22,29 @@
 
 package clus.gui;
 
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.event.*;
-import javax.swing.tree.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.util.Enumeration;
+import java.util.Hashtable;
+
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTree;
+import javax.swing.ToolTipManager;
+import javax.swing.event.TreeExpansionEvent;
+import javax.swing.event.TreeExpansionListener;
+import javax.swing.tree.DefaultTreeCellRenderer;
+import javax.swing.tree.DefaultTreeModel;
+import javax.swing.tree.TreePath;
 
 import clus.algo.tdidt.ClusNode;
-import clus.ext.hierarchical.*;
-
-import java.util.*;
-
-import clus.main.*;
-import clus.statistic.*;
+import clus.ext.hierarchical.ClassHierarchy;
+import clus.ext.hierarchical.ClassTerm;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
 
 public class ShowHierarchy extends JPanel {
 

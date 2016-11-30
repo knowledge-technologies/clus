@@ -22,12 +22,19 @@
 
 package clus.weka;
 
-import clus.algo.tdidt.*;
-import clus.data.rows.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.rows.RowData;
 import clus.main.Settings;
-import clus.model.test.*;
-import weka.core.*;
-import weka.classifiers.trees.j48.*;
+import clus.model.test.NodeTest;
+import clus.model.test.NumericTest;
+import weka.classifiers.trees.j48.BinC45ModelSelection;
+import weka.classifiers.trees.j48.BinC45Split;
+import weka.classifiers.trees.j48.C45PruneableClassifierTree;
+import weka.classifiers.trees.j48.ClassifierTree;
+import weka.classifiers.trees.j48.Distribution;
+import weka.classifiers.trees.j48.ModelSelection;
+import weka.core.Instance;
+import weka.core.Instances;
 
 public class TestC45PruningRuleNode extends C45PruneableClassifierTree {
 

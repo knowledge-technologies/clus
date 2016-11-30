@@ -22,24 +22,29 @@
 
 package clus.ext.optxval;
 
-import clus.tools.debug.Debug;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Date;
 
-import java.io.*;
-import java.util.*;
-
-import jeans.util.array.*;
-import jeans.util.cmdline.*;
-import jeans.resource.*;
-
-import clus.*;
-import clus.main.*;
-import clus.util.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.algo.*;
+import clus.Clus;
+import clus.algo.ClusInductionAlgorithm;
 import clus.algo.tdidt.ClusNode;
-import clus.selection.*;
-import clus.error.multiscore.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.error.multiscore.MultiScore;
+import clus.main.ClusOutput;
+import clus.main.ClusRun;
+import clus.main.ClusStat;
+import clus.main.ClusSummary;
+import clus.main.Settings;
+import clus.selection.XValMainSelection;
+import clus.selection.XValSelection;
+import clus.tools.debug.Debug;
+import clus.util.ClusException;
+import jeans.resource.ResourceInfo;
+import jeans.util.array.MDoubleArray;
+import jeans.util.cmdline.CMDLineArgs;
 
 public class OptXVal {
 

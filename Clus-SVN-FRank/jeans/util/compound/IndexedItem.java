@@ -22,7 +22,7 @@
 
 package jeans.util.compound;
 
-import java.io.*;
+import java.io.Serializable;
 
 public class IndexedItem implements Serializable {
 

@@ -22,16 +22,16 @@
 
 package clus.ext.optxval;
 
-import jeans.util.list.*;
-
-import clus.ext.ootind.*;
-
-import clus.main.*;
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.model.test.*;
-import clus.statistic.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.ext.ootind.OOTInduce;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.test.NodeTest;
+import clus.statistic.ClusStatistic;
+import jeans.util.list.MyList;
 
 public class OptXValGroup extends MyList {
 

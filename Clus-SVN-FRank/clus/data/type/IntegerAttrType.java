@@ -22,13 +22,13 @@
 
 package clus.data.type;
 
-import java.io.*;
+import java.io.IOException;
 
-import clus.io.*;
-import clus.main.Settings;
-import clus.util.*;
 import clus.data.io.ClusReader;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.io.ClusSerializable;
+import clus.main.Settings;
+import clus.util.ClusException;
 
 public class IntegerAttrType extends ClusAttrType {
 

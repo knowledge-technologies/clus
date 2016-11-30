@@ -22,7 +22,8 @@
 
 package jeans.graph.awt;
 
-import java.awt.*;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 import jeans.graph.SyntaxHighlighter;
 

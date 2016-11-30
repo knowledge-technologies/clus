@@ -4,25 +4,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.jgap.Chromosome;
-
-import sit.mtLearner.AvgLearner;
-import sit.mtLearner.ClusLearner;
-import sit.mtLearner.KNNLearner;
-import sit.mtLearner.MTLearner;
-import sit.searchAlgorithm.AllTargets;
-import sit.searchAlgorithm.GeneticSearch;
-import sit.searchAlgorithm.GreedySIT;
-import sit.searchAlgorithm.NoStopSearch;
-import sit.searchAlgorithm.TC;
-import sit.searchAlgorithm.OneTarget;
-import sit.searchAlgorithm.SearchAlgorithm;
-
-import jeans.resource.ResourceInfo;
-import jeans.util.IntervalCollection;
-import jeans.util.cmdline.CMDLineArgs;
-import jeans.util.cmdline.CMDLineArgsProvider;
-import clus.algo.ClusInductionAlgorithmType;
 import clus.data.io.ARFFFile;
 import clus.data.io.ClusReader;
 import clus.data.io.ClusView;
@@ -31,14 +12,26 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
-import clus.error.ClusErrorList;
-import clus.error.PearsonCorrelation;
 import clus.main.ClusStat;
 import clus.main.Settings;
 import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
+import jeans.resource.ResourceInfo;
+import jeans.util.IntervalCollection;
+import jeans.util.cmdline.CMDLineArgs;
+import jeans.util.cmdline.CMDLineArgsProvider;
+import sit.mtLearner.ClusLearner;
+import sit.mtLearner.KNNLearner;
+import sit.mtLearner.MTLearner;
+import sit.searchAlgorithm.AllTargets;
+import sit.searchAlgorithm.GeneticSearch;
+import sit.searchAlgorithm.GreedySIT;
+import sit.searchAlgorithm.NoStopSearch;
+import sit.searchAlgorithm.OneTarget;
+import sit.searchAlgorithm.SearchAlgorithm;
+import sit.searchAlgorithm.TC;
 
 public class Sit implements CMDLineArgsProvider{
 

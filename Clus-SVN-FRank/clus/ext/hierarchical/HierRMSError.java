@@ -25,13 +25,15 @@
  */
 package clus.ext.hierarchical;
 
-import java.util.*;
+import java.util.Arrays;
 
-import clus.data.rows.*;
-import clus.data.attweights.*;
-import clus.error.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.MSError;
 import clus.main.Settings;
-import clus.statistic.*;
+import clus.statistic.ClusStatistic;
 
 public class HierRMSError extends MSError {
 

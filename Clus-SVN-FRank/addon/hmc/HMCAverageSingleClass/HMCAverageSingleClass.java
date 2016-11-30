@@ -22,33 +22,48 @@
 
 package addon.hmc.HMCAverageSingleClass;
 
+import java.io.IOException;
+import java.io.PrintWriter;
+
 /*
  * Created on Dec 22, 2005
  */
+import java.util.Arrays;
+import java.util.Date;
 
-import java.util.*;
-
-import java.io.*;
-
-import addon.hmc.HMCAverageSingleClass.HMCAverageTreeModel;
-
+import clus.Clus;
+import clus.algo.tdidt.ClusDecisionTree;
+import clus.data.io.ARFFFile;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NumericAttrType;
+import clus.data.type.StringAttrType;
+import clus.error.ClusErrorList;
+import clus.ext.hierarchical.ClassHierarchy;
+import clus.ext.hierarchical.ClassTerm;
+import clus.ext.hierarchical.ClassesTuple;
+import clus.ext.hierarchical.ClassesValue;
+import clus.ext.hierarchical.HierClassTresholdPruner;
+import clus.ext.hierarchical.HierClassWiseAccuracy;
+import clus.ext.hierarchical.WHTDStatistic;
+import clus.main.ClusModelInfoList;
+import clus.main.ClusOutput;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.model.modelio.ClusModelCollectionIO;
+import clus.statistic.ClusStatistic;
+import clus.statistic.RegressionStat;
+import clus.util.ClusException;
 import jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import jeans.util.array.*;
-import jeans.util.cmdline.*;
-import jeans.util.*;
-
-import clus.*;
-import clus.algo.tdidt.*;
-import clus.data.rows.*;
-import clus.data.io.*;
-import clus.main.*;
-import clus.util.*;
-import clus.statistic.*;
-import clus.data.type.*;
-import clus.model.*;
-import clus.model.modelio.*;
-import clus.ext.hierarchical.*;
-import clus.error.*;
+import jeans.util.FileUtil;
+import jeans.util.array.StringTable;
+import jeans.util.cmdline.CMDLineArgs;
+import jeans.util.cmdline.CMDLineArgsProvider;
 
 public class HMCAverageSingleClass implements CMDLineArgsProvider {
 

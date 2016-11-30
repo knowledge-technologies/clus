@@ -22,7 +22,7 @@
 
 package jeans.util;
 
-import java.io.*;
+import java.io.IOException;
 
 public class MStringTokenizer {
 

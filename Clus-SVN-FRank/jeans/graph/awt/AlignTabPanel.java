@@ -22,7 +22,8 @@
 
 package jeans.graph.awt;
 
-import java.awt.*;
+import java.awt.Panel;
+
 import jeans.graph.PercentLayout;
 
 public class AlignTabPanel extends Panel {

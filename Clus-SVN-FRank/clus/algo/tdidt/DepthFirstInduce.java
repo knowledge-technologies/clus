@@ -22,18 +22,29 @@
 
 package clus.algo.tdidt;
 
-import clus.main.*;
-import clus.util.*;
-import clus.algo.*;
-import clus.algo.split.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.model.*;
-import clus.model.test.*;
-import clus.statistic.*;
-import clus.ext.ensembles.*;
-import java.io.*;
-import java.util.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.split.CurrentBestTestAndHeuristic;
+import clus.algo.split.FindBestTest;
+import clus.algo.split.NominalSplit;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.ext.ensembles.ClusEnsembleInduce;
+import clus.main.ClusRun;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.test.NodeTest;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import clus.util.ClusRandom;
 
 public class DepthFirstInduce extends ClusInductionAlgorithm {
 
@@ -235,7 +246,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 			
 			node.testToNode(best);
 			// Output best test
-			if (Settings.VERBOSE > 0) System.out.println("Test: "+node.getTestString()+" -> "+best.getHeuristicValue());
+			if (Settings.VERBOSE > 1) System.out.println("Test: "+node.getTestString()+" -> "+best.getHeuristicValue());
 			
 			// Create children
 			int arity = node.updateArity();

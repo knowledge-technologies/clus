@@ -22,9 +22,9 @@
 
 package clus.util;
 
-import clus.main.*;
+import java.util.Random;
 
-import java.util.*;
+import clus.main.Settings;
 
 public class ClusRandom {
 

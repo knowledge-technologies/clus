@@ -22,14 +22,15 @@
 
 package clus.algo.kNN.methods.bfMethod;
 
-import clus.algo.kNN.methods.NNStack; 
-import clus.algo.kNN.methods.SearchAlgorithm;
+import java.io.IOException;
+import java.util.LinkedList;
+
 import clus.algo.kNN.distance.SearchDistance;
+import clus.algo.kNN.methods.NNStack;
+import clus.algo.kNN.methods.SearchAlgorithm;
 import clus.data.rows.DataTuple;
 import clus.main.ClusRun;
 import clus.util.ClusException;
-import java.io.IOException;
-import java.util.LinkedList;
 
 /**
  * @author Mitja Pugelj

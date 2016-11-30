@@ -24,33 +24,47 @@
  */
 package clus.algo.rules;
 
-import java.io.*;
-import java.util.*;
-import java.text.DecimalFormat;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Random;
 
-import clus.Clus;
-import clus.algo.*;
-import clus.algo.split.*;
-import clus.algo.tdidt.*;
-import clus.main.*;
-import clus.model.*;
-import clus.model.test.*;
-import clus.heuristic.*;
-import clus.selection.*;
-import clus.statistic.*;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.split.CurrentBestTestAndHeuristic;
+import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusNormalizedAttributeWeights;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.ext.beamsearch.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.MemoryTupleIterator;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.ext.beamsearch.ClusBeam;
+import clus.ext.beamsearch.ClusBeamModel;
 import clus.ext.ilevelc.DerivedConstraintsComputer;
-import clus.ext.ilevelc.ILevelCHeurStat;
 import clus.ext.ilevelc.ILevelCStatistic;
 import clus.ext.ilevelc.ILevelConstraint;
-import clus.util.*;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.model.test.ClusRuleConstraintInduceTest;
+import clus.model.test.NodeTest;
+import clus.statistic.ClusStatistic;
+import clus.statistic.RegressionStat;
 import clus.tools.optimization.GDAlg;
 import clus.tools.optimization.OptAlg;
 import clus.tools.optimization.OptProbl;
-import clus.tools.optimization.de.*;
+import clus.tools.optimization.de.DeAlg;
+import clus.util.ClusException;
+import clus.util.ClusRandom;
 
 public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 

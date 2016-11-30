@@ -22,8 +22,12 @@
 
 package jeans.graph.awt;
 
-import java.awt.*;
-import java.util.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.SystemColor;
+import java.util.Vector;
 
 import jeans.graph.BufferCanvas;
 

@@ -22,18 +22,18 @@
 
 package clus.error;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import clus.error.*;
 import clus.algo.rules.ClusRule;
 import clus.algo.rules.ClusRuleSet;
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
-import clus.main.*;
+import clus.main.Settings;
 import clus.model.ClusModel;
-import clus.model.test.*;
-import clus.statistic.*;
+import clus.model.test.NodeTest;
+import clus.statistic.ClusDistance;
 
 public class ICVPairwiseDistancesError extends ClusError {
 

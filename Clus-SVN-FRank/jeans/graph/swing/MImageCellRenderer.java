@@ -22,8 +22,16 @@
 
 package jeans.graph.swing;
 
-import javax.swing.*;
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Image;
+import java.awt.SystemColor;
+
+import javax.swing.JList;
+import javax.swing.ListCellRenderer;
 
 public class MImageCellRenderer extends Component implements ListCellRenderer {
 

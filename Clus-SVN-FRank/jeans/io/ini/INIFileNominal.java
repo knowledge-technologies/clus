@@ -22,11 +22,12 @@
 
 package jeans.io.ini;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Vector;
 
-import jeans.util.MStreamTokenizer;
 import jeans.io.range.NominalType;
+import jeans.util.MStreamTokenizer;
 
 /**
  * Corresponds to a nominal settings file field.

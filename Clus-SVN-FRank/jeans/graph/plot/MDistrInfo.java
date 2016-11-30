@@ -22,7 +22,7 @@
 
 package jeans.graph.plot;
 
-import java.awt.*;
+import java.awt.Color;
 
 public interface MDistrInfo {
 

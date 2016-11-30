@@ -22,10 +22,12 @@
 
 package clus.ext.ilevelc;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Iterator;
 
-import jeans.util.*;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import jeans.util.DisjointSetForest;
 
 public class DerivedConstraintsComputer {
 

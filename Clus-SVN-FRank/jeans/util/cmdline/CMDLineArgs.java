@@ -22,7 +22,7 @@
 
 package jeans.util.cmdline;
 
-import java.util.*;
+import java.util.Hashtable;
 
 public class CMDLineArgs {
 

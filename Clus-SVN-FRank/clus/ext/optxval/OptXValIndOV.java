@@ -21,21 +21,24 @@
  *************************************************************************/
 
 package clus.ext.optxval;
-import clus.tools.debug.Debug;
+import java.io.IOException;
 
-
-import jeans.util.list.*;
-import jeans.resource.*;
-
-import java.io.*;
-
-import clus.main.*;
-import clus.util.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.model.test.*;
-import clus.statistic.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusStat;
+import clus.main.Settings;
+import clus.model.test.NodeTest;
+import clus.model.test.SoftTest;
+import clus.statistic.ClusStatistic;
+import clus.tools.debug.Debug;
+import clus.util.ClusException;
+import jeans.resource.ResourceInfo;
+import jeans.util.list.MyListIter;
 
 public class OptXValIndOV extends OptXValInduce {
 

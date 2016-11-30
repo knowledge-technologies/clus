@@ -24,12 +24,11 @@ package clus.statistic;
 
 import java.util.ArrayList;
 
-import jeans.list.*;
-
-import clus.data.cols.*;
-import clus.data.rows.*;
+import clus.data.cols.ColTarget;
+import clus.data.rows.DataTuple;
 import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.main.Settings;
+import jeans.list.BitList;
 
 public class BitVectorStat extends ClusStatistic {
 

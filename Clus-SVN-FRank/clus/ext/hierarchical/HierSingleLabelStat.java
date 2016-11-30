@@ -25,7 +25,6 @@
  */
 package clus.ext.hierarchical;
 
-import java.io.*;
 import java.util.ArrayList;
 
 import clus.data.type.ClusAttrType;

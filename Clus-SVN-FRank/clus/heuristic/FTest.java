@@ -22,14 +22,15 @@
 
 package clus.heuristic;
 
-import clus.main.*;
-import clus.util.*;
-import jeans.math.*;
+import java.util.ArrayList;
 
-import java.util.*;
+import org.apache.commons.math.MathException;
+import org.apache.commons.math.distribution.DistributionFactory;
+import org.apache.commons.math.distribution.FDistribution;
 
-import org.apache.commons.math.*;
-import org.apache.commons.math.distribution.*;
+import clus.main.Settings;
+import clus.util.ClusFormat;
+import jeans.math.MathUtil;
 
 public class FTest {
 

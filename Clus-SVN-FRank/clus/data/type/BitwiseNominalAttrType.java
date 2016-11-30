@@ -1,6 +1,5 @@
 package clus.data.type;
 import clus.data.rows.DataTuple;
-import java.lang.Math;
 
 public class BitwiseNominalAttrType extends NominalAttrType {
 

@@ -22,15 +22,16 @@
 
 package clus.main;
 
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
 
-import clus.model.ClusModelInfo;
-import clus.selection.*;
-import clus.error.*;
 import clus.data.ClusData;
-import clus.data.rows.*;
-import clus.util.*;
+import clus.data.rows.RowData;
+import clus.data.rows.TupleIterator;
+import clus.error.ClusErrorList;
+import clus.model.ClusModelInfo;
+import clus.selection.ClusSelection;
+import clus.util.ClusException;
 
 public class ClusRun extends ClusModelInfoList {
 

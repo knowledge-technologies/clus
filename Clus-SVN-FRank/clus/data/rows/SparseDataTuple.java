@@ -22,12 +22,14 @@
 
 package clus.data.rows;
 
+import java.io.PrintWriter;
+import java.util.HashMap;
+import java.util.Iterator;
+
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
-import clus.main.Settings;
 import clus.data.type.SparseNumericAttrType;
-import java.io.PrintWriter;
-import java.util.*;
+import clus.main.Settings;
 
 public class SparseDataTuple extends DataTuple {
 

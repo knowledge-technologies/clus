@@ -22,10 +22,10 @@
 
 package clus.io;
 
-import java.io.*;
+import java.io.IOException;
 
 import clus.data.io.ClusReader;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
 
 public class DummySerializable extends ClusSerializable {
 

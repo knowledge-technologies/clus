@@ -22,9 +22,12 @@
 
 package jeans.graph.componentmediator;
 
-import java.util.*;
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Component;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.Vector;
 
 public class ComponentMediator {
 

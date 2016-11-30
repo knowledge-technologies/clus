@@ -2,7 +2,8 @@ package clus.ext.hierarchical;
 
 import clus.data.rows.DataTuple;
 import clus.main.Settings;
-import clus.statistic.*;
+import clus.statistic.ClusDistance;
+import clus.statistic.ClusStatistic;
 
 public class HierJaccardDistance extends ClusDistance {
 

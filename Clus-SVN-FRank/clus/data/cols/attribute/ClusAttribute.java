@@ -22,13 +22,12 @@
 
 package clus.data.cols.attribute;
 
-import jeans.util.*;
-
-import clus.io.*;
-import clus.main.*;
-import clus.data.type.*;
-import clus.data.cols.*;
-import clus.selection.*;
+import clus.data.cols.ColTarget;
+import clus.data.type.ClusAttrType;
+import clus.io.ClusSerializable;
+import clus.main.ClusStatManager;
+import clus.selection.ClusSelection;
+import jeans.util.MyArray;
 
 public abstract class ClusAttribute extends ClusSerializable {
 

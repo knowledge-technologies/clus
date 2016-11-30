@@ -22,13 +22,13 @@
 
 package clus.model.test;
 
-import jeans.util.sort.*;
-
-import clus.main.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.type.*;
-import clus.util.*;
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.data.type.NominalAttrType;
+import clus.main.Settings;
+import clus.util.ClusRandom;
+import jeans.util.sort.DoubleIndexSorter;
 
 public class NominalTest extends NodeTest {
 

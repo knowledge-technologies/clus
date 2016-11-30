@@ -22,12 +22,12 @@
 
 package clus.data.rows;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
-import clus.util.*;
-import clus.data.*;
-import clus.data.type.*;
+import clus.data.ClusData;
+import clus.data.type.ClusSchema;
+import clus.util.ClusException;
 
 public abstract class TupleIterator {
 

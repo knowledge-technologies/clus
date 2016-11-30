@@ -25,7 +25,10 @@
  */
 package clus.ext.beamsearch;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.TreeMap;
 
 public class ClusBeamTreeElemOld {
 

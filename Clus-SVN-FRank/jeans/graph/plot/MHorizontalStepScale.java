@@ -22,7 +22,10 @@
 
 package jeans.graph.plot;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Component;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 public class MHorizontalStepScale extends MGraphScale {
 

@@ -22,7 +22,9 @@
 
 package jeans.io.ini;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
 
 public abstract class INIFileNode implements Serializable {
 

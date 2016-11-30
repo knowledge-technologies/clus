@@ -2,8 +2,6 @@ package clus.error;
 
 import java.io.IOException;
 
-import jeans.util.IntervalCollection;
-
 import clus.data.type.ClusSchema;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
@@ -11,6 +9,7 @@ import clus.main.Settings;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import jeans.util.IntervalCollection;
 
 public class ClusErrorOutput extends ClusOutput {
 

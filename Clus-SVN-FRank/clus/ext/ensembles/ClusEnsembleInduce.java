@@ -22,27 +22,39 @@
 
 package clus.ext.ensembles;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.io.*;
-import jeans.resource.ResourceInfo;
+
 import clus.Clus;
-import clus.algo.*;
-import clus.algo.tdidt.*;
-import clus.main.*;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.tdidt.ClusDecisionTree;
+import clus.algo.tdidt.ClusNode;
+import clus.algo.tdidt.DepthFirstInduce;
+import clus.algo.tdidt.DepthFirstInduceSparse;
+import clus.data.rows.RowData;
+import clus.data.rows.TupleIterator;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.error.ClusErrorList;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusOutput;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.ClusSummary;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
-import clus.data.rows.RowData;
-import clus.data.rows.TupleIterator;
-import clus.data.type.*;
-import clus.error.ClusErrorList;
-import clus.heuristic.ClusHeuristic;
-import clus.selection.*;
+import clus.selection.BaggingSelection;
+import clus.selection.OOBSelection;
 import clus.tools.optimization.GDProbl;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
+import jeans.resource.ResourceInfo;
 
 
 public class ClusEnsembleInduce extends ClusInductionAlgorithm {

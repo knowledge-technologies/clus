@@ -27,10 +27,10 @@ package clus.algo.rules;
 
 import java.io.IOException;
 
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.error.ClusErrorList;
 import clus.model.ClusModel;
 import clus.model.processor.ClusModelProcessor;
-import clus.error.*;
 
 public class ClusCalcRuleErrorProc extends ClusModelProcessor {
 

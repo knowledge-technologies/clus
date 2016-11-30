@@ -1,14 +1,20 @@
 package clus.ext.ensembles;
 
-import java.io.*; 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.nio.file.Files;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Random;
+import java.util.TreeMap;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonNull;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonPrimitive;
 
@@ -20,7 +26,6 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.data.type.TimeSeriesAttrType;
 import clus.error.Accuracy;
 import clus.error.AveragePrecision;
 import clus.error.ClusErrorList;
@@ -31,7 +36,6 @@ import clus.error.MLFOneMeasure;
 import clus.error.MLPrecision;
 import clus.error.MLROCAndPRCurve;
 import clus.error.MLRecall;
-import clus.error.MSError;
 import clus.error.MacroFOne;
 import clus.error.MacroPrecision;
 import clus.error.MacroRecall;
@@ -41,7 +45,6 @@ import clus.error.MisclassificationError;
 import clus.error.OneError;
 import clus.error.RMSError;
 import clus.error.RankingLoss;
-import clus.error.RelativeError;
 import clus.error.SubsetAccuracy;
 import clus.ext.hierarchical.HierErrorMeasures;
 import clus.main.ClusRun;

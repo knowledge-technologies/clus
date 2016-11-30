@@ -1,9 +1,9 @@
 package sit.searchAlgorithm;
 
-import sit.TargetSet;
-import sit.mtLearner.MTLearner;
 import clus.data.type.ClusAttrType;
 import clus.main.Settings;
+import sit.TargetSet;
+import sit.mtLearner.MTLearner;
 
 public interface SearchAlgorithm {
 

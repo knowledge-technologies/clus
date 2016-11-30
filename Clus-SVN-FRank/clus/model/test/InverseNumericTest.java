@@ -28,10 +28,10 @@ package clus.model.test;
 import java.text.NumberFormat;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.main.*;
-import clus.util.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.main.Settings;
+import clus.util.ClusRandom;
 
 public class InverseNumericTest extends NumericTest {
 

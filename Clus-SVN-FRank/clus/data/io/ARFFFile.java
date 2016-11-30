@@ -22,17 +22,29 @@
 
 package clus.data.io;
 
-import jeans.util.*;
-import java.io.*;
-import java.util.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import clus.main.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.util.*;
-
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.BitwiseNominalAttrType;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.data.type.StringAttrType;
+import clus.data.type.TimeSeriesAttrType;
 // FIXME - use plugin system
-import clus.ext.hierarchical.*;
+import clus.ext.hierarchical.ClassesAttrType;
+import clus.ext.hierarchical.ClassesAttrTypeSingleLabel;
+import clus.main.Settings;
+import clus.util.ClusException;
+import jeans.util.MStreamTokenizer;
+import jeans.util.StringUtils;
 
 /// The ARFF files include the data and description of variable types.
 public class ARFFFile {

@@ -25,11 +25,11 @@
  */
 package clus.algo.rules;
 
-import java.io.*;
+import java.io.IOException;
 
 import clus.data.rows.RowData;
-import clus.main.*;
-import clus.util.*;
+import clus.main.ClusRun;
+import clus.util.ClusException;
 
 public class ClusRulesRandom {
 

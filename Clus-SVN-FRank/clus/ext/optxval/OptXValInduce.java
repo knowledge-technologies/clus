@@ -22,21 +22,31 @@
 
 package clus.ext.optxval;
 
-import java.io.*;
+import java.io.IOException;
 
-import clus.main.*;
-import clus.util.*;
-import clus.data.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.model.*;
-import clus.algo.*;
-import clus.algo.split.*;
-import clus.algo.tdidt.*;
-import clus.statistic.*;
-import clus.heuristic.*;
-import clus.error.multiscore.*;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.split.CurrentBestTestAndHeuristic;
+import clus.algo.split.NArySplit;
+import clus.algo.split.NominalSplit;
+import clus.algo.split.SubsetSplit;
+import clus.algo.tdidt.ClusNode;
+import clus.algo.tdidt.DepthFirstInduce;
+import clus.data.ClusData;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.error.multiscore.MultiScore;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusRun;
+import clus.main.ClusStat;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.statistic.ClusStatistic;
 import clus.tools.debug.Debug;
+import clus.util.ClusException;
 
 public abstract class OptXValInduce extends ClusInductionAlgorithm {
 

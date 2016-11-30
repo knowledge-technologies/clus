@@ -25,14 +25,14 @@
  */
 package clus.ext.beamsearch;
 
-import clus.algo.tdidt.ClusNode;
-import clus.data.rows.DataTuple;
-import clus.main.*;
-import clus.model.ClusModel;
-import clus.statistic.ClusStatistic;
-
 import java.io.Serializable;
 import java.util.ArrayList;
+
+import clus.algo.tdidt.ClusNode;
+import clus.data.rows.DataTuple;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.statistic.ClusStatistic;
 
 public class ClusBeamModel implements Comparable, Serializable {
 

@@ -22,7 +22,7 @@
 
 package jeans.util;
 
-import java.util.*;
+import java.util.Enumeration;
 
 /**
  * A class that returns an Enumeration that returns only a subset of a

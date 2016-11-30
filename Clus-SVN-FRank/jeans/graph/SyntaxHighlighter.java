@@ -22,7 +22,9 @@
 
 package jeans.graph;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 public abstract class SyntaxHighlighter {
 

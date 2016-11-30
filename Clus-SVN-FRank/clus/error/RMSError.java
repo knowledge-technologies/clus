@@ -22,10 +22,10 @@
 
 package clus.error;
 
-import java.io.*;
-import java.text.*;
+import java.io.PrintWriter;
+import java.text.NumberFormat;
 
-import clus.data.attweights.*;
+import clus.data.attweights.ClusAttributeWeights;
 import clus.data.type.NumericAttrType;
 import clus.main.Settings;
 

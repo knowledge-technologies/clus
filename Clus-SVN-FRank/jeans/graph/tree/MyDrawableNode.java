@@ -22,8 +22,9 @@
 
 package jeans.graph.tree;
 
-import jeans.tree.*;
-import jeans.util.*;
+import jeans.tree.MyVisitableNode;
+import jeans.tree.Node;
+import jeans.util.MyVisitorParent;
 
 public class MyDrawableNode extends MyVisitableNode {
 

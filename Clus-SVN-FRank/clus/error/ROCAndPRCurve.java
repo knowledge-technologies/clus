@@ -1,12 +1,10 @@
 package clus.error;
 
 import java.io.Serializable;
-import java.util.*;
+import java.util.ArrayList;
 
 import clus.main.Settings;
-
 import jeans.math.MathUtil;
-import jeans.util.compound.DoubleBoolean;
 import jeans.util.compound.DoubleBooleanCount;
 
 public class ROCAndPRCurve implements Serializable {

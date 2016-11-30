@@ -22,9 +22,9 @@
 
 package jeans.graph.tree;
 
-import jeans.util.*;
+import java.awt.Color;
 
-import java.awt.*;
+import jeans.util.MyVisitorParent;
 
 public class NodePainterSettings extends MyVisitorParent {
 

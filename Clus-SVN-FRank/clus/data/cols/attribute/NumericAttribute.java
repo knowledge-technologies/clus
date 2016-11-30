@@ -22,15 +22,18 @@
 
 package clus.data.cols.attribute;
 
-import java.io.*;
-import jeans.util.*;
-import jeans.util.sort.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
-import clus.main.*;
-import clus.data.cols.*;
-import clus.data.io.*;
-import clus.data.type.*;
-import clus.selection.*;
+import clus.data.cols.ColTarget;
+import clus.data.io.ClusReader;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusStatManager;
+import clus.selection.ClusSelection;
+import jeans.util.MyArray;
+import jeans.util.sort.DoubleIndexSorter;
 
 public class NumericAttribute extends NumericAttrBase {
 

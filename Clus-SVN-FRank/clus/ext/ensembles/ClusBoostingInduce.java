@@ -23,22 +23,25 @@
 package clus.ext.ensembles;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Random;
 
-import jeans.util.array.MDoubleArray;
-
-import clus.algo.*;
-import clus.algo.tdidt.*;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.tdidt.ClusDecisionTree;
+import clus.algo.tdidt.ClusNode;
+import clus.algo.tdidt.DepthFirstInduce;
+import clus.algo.tdidt.DepthFirstInduceSparse;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.*;
-import clus.main.*;
-import clus.model.*;
+import clus.data.type.ClusSchema;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;
-import clus.util.*;
+import clus.util.ClusException;
+import jeans.util.array.MDoubleArray;
 
 // Method based on:
 // "Improving Regressors using Boosting Techniques" by Harris Drucker

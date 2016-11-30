@@ -4,12 +4,13 @@ package sit.searchAlgorithm;
 
 
 import java.util.ArrayList;
-import sit.Evaluator;
-import sit.TargetSet;
-import sit.mtLearner.MTLearner;
+
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.main.Settings;
+import sit.Evaluator;
+import sit.TargetSet;
+import sit.mtLearner.MTLearner;
 
 /**
  * Abstract implementation of the SearchAlgo interface.

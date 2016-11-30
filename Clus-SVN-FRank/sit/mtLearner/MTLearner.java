@@ -1,8 +1,8 @@
 package sit.mtLearner;
-import sit.TargetSet;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.main.Settings;
+import sit.TargetSet;
 
 public interface MTLearner {
 

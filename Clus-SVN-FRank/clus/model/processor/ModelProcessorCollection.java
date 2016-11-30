@@ -22,16 +22,15 @@
 
 package clus.model.processor;
 
-import clus.main.*;
+import java.io.IOException;
+
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusSchema;
+import clus.main.Settings;
 import clus.model.ClusModel;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.statistic.*;
-import clus.util.*;
-
-import jeans.util.*;
-
-import java.io.*;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import jeans.util.MyArray;
 
 public class ModelProcessorCollection extends MyArray {
 

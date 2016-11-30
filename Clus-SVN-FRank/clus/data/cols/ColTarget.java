@@ -22,10 +22,10 @@
 
 package clus.data.cols;
 
-import clus.statistic.*;
-import clus.selection.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.type.*;
+import clus.data.type.ClusSchema;
+import clus.selection.ClusSelection;
+import clus.statistic.ClusStatistic;
 
 public class ColTarget {
 

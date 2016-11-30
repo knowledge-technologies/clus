@@ -22,10 +22,10 @@
 
 package jeans.io;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import jeans.util.StringUtils;
 import jeans.util.IntegerStack;
+import jeans.util.StringUtils;
 
 public class TabbedPrinter {
 

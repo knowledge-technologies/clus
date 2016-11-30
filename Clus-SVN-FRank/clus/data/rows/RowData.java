@@ -22,22 +22,29 @@
 
 package clus.data.rows;
 
-import jeans.resource.ResourceInfo;
-import jeans.util.sort.*;
-import jeans.util.compound.*;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Random;
 
-import java.util.*;
-import java.io.*;
-
-import clus.util.*;
 import clus.algo.tdidt.ClusNode;
 import clus.data.ClusData;
 import clus.data.io.ClusReader;
-import clus.data.type.*;
-import clus.model.test.*;
-import clus.error.*;
-import clus.selection.*;
-import clus.statistic.*;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NumericAttrType;
+import clus.error.ClusErrorList;
+import clus.model.test.ClusRuleConstraintInduceTest;
+import clus.model.test.NodeTest;
+import clus.model.test.SoftTest;
+import clus.selection.ClusSelection;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import clus.util.ClusRandom;
+import jeans.util.compound.DoubleObject;
+import jeans.util.sort.MSortable;
+import jeans.util.sort.MSorter;
 
 /**
  * Multiple rows (tuples) of data.

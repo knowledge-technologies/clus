@@ -22,13 +22,12 @@
 
 package clus.ext.hierarchical;
 
-import java.io.*;
-import java.util.*;
+import java.io.Serializable;
+import java.util.StringTokenizer;
 
-import jeans.util.array.*;
-
-import clus.util.*;
-import clus.main.*;
+import clus.main.Settings;
+import clus.util.ClusException;
+import jeans.util.array.StringTable;
 
 public class ClassesValue implements Serializable {
 

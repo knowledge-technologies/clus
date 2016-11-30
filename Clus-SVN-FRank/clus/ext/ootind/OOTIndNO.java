@@ -22,20 +22,21 @@
 
 package clus.ext.ootind;
 
-import clus.tools.debug.Debug;
-import clus.ext.optxval.*;
+import java.io.IOException;
 
-import jeans.util.list.*;
-import jeans.resource.*;
-
-import java.io.*;
-
-import clus.main.*;
-import clus.util.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.model.test.*;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.ext.optxval.OptXValGroup;
+import clus.ext.optxval.OptXValNode;
+import clus.ext.optxval.OptXValSplit;
+import clus.main.ClusStat;
+import clus.main.Settings;
+import clus.model.test.NodeTest;
+import clus.tools.debug.Debug;
+import clus.util.ClusException;
+import jeans.resource.ResourceInfo;
+import jeans.util.list.MyListIter;
 
 public class OOTIndNO extends OOTInduce {
 

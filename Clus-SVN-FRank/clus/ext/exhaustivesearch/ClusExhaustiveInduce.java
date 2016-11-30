@@ -22,21 +22,23 @@
 
 package clus.ext.exhaustivesearch;
 
-import clus.algo.*;
-import clus.main.*;
-import clus.util.*;
-import clus.data.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.model.*;
-import clus.model.modelio.*;
-import clus.ext.beamsearch.*;
-import java.io.*;
-
-import clus.algo.split.NominalSplit;
-import clus.algo.tdidt.*;
-
+import java.io.IOException;
 import java.util.ArrayList;
+
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.split.NominalSplit;
+import clus.algo.tdidt.ClusDecisionTree;
+import clus.algo.tdidt.ClusNode;
+import clus.data.ClusData;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.ext.beamsearch.ClusBeamModel;
+import clus.main.ClusRun;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.model.modelio.ClusModelCollectionIO;
+import clus.util.ClusException;
 
 public class ClusExhaustiveInduce extends ClusInductionAlgorithm {
 

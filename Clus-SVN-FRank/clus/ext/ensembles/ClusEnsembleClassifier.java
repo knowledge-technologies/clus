@@ -24,14 +24,15 @@ package clus.ext.ensembles;
 
 import java.io.IOException;
 
-import jeans.util.cmdline.CMDLineArgs;
-
-import clus.main.*;
-import clus.model.ClusModel;
 import clus.Clus;
-import clus.algo.*;
-import clus.data.type.*;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.ClusInductionAlgorithmType;
+import clus.data.type.ClusSchema;
+import clus.main.ClusRun;
+import clus.main.Settings;
+import clus.model.ClusModel;
 import clus.util.ClusException;
+import jeans.util.cmdline.CMDLineArgs;
 
 public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
 

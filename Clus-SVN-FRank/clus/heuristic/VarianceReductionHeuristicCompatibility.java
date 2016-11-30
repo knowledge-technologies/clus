@@ -22,10 +22,9 @@
 
 package clus.heuristic;
 
-import clus.main.*;
-import clus.statistic.*;
-import clus.data.rows.*;
-import clus.data.attweights.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
 
 public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
 

@@ -1,6 +1,7 @@
 package clus.data.type;
 
 import java.io.IOException;
+import java.util.ArrayList;
 
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
@@ -9,7 +10,6 @@ import clus.data.rows.SparseDataTuple;
 import clus.io.ClusSerializable;
 import clus.main.Settings;
 import clus.util.ClusException;
-import java.util.ArrayList;
 
 public class SparseNumericAttrType extends NumericAttrType {
 

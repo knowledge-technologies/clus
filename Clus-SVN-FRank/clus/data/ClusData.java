@@ -22,12 +22,12 @@
 
 package clus.data;
 
-import clus.util.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.error.*;
-import clus.selection.*;
-import clus.statistic.*;
+import clus.data.rows.DataPreprocs;
+import clus.error.ClusErrorList;
+import clus.selection.ClusSelection;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
 
 public abstract class ClusData {
 

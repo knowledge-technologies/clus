@@ -22,17 +22,26 @@
 
 package clus.ext.ilevelc;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.ArrayList;
 
-import clus.algo.tdidt.*;
-import clus.data.attweights.*;
-import clus.data.rows.*;
-import clus.data.type.*;
+import clus.algo.tdidt.ClusNode;
+import clus.algo.tdidt.DepthFirstInduce;
+import clus.data.attweights.ClusNormalizedAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.rows.RowDataSortHelper;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusRun;
+import clus.main.Settings;
 import clus.model.ClusModel;
-import clus.model.test.*;
-import clus.main.*;
-import clus.util.*;
+import clus.model.test.NodeTest;
+import clus.model.test.NumericTest;
+import clus.util.ClusException;
+import clus.util.ClusRandom;
 
 public class ILevelCInduce extends DepthFirstInduce {
 

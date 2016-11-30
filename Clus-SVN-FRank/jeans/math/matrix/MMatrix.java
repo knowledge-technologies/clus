@@ -22,10 +22,10 @@
 
 package jeans.math.matrix;
 
-import jeans.util.StringUtils;
-
-import java.text.NumberFormat;
 import java.io.PrintWriter;
+import java.text.NumberFormat;
+
+import jeans.util.StringUtils;
 
 public abstract class MMatrix {
 

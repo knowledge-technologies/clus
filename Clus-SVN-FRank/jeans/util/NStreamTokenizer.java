@@ -22,7 +22,8 @@
 
 package jeans.util;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.Reader;
 
 public class NStreamTokenizer {
 

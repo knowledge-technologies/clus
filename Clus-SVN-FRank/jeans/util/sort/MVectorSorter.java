@@ -22,7 +22,7 @@
 
 package jeans.util.sort;
 
-import java.util.*;
+import java.util.Vector;
 
 public class MVectorSorter {
 

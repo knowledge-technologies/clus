@@ -25,9 +25,9 @@
  */
 package clus.algo.rules;
 
-import clus.heuristic.*;
-import clus.main.*;
-import clus.statistic.*;
+import clus.heuristic.ClusHeuristic;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
 
 public class ClusRuleHeuristicMEstimate extends ClusHeuristic {
 

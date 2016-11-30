@@ -22,8 +22,11 @@
 
 package clus.util;
 
-import java.text.*;
-import java.io.*;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.text.NumberFormat;
 
 public class ClusFormat {
 

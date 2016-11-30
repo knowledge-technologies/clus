@@ -22,8 +22,8 @@
 
 package clus.pruning;
 
-import clus.algo.tdidt.*;
-import clus.data.attweights.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
@@ -35,7 +35,7 @@ import clus.error.ClusSumError;
 import clus.error.MSError;
 import clus.error.MSNominalError;
 import clus.error.MisclassificationError;
-import clus.util.*;
+import clus.util.ClusException;
 
 public class CartPruning extends PruneTree {
 

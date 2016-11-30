@@ -1,19 +1,17 @@
 package clus.heuristic;
 
-import clus.data.io.ClusReader;
-import clus.data.rows.RowData;
-import clus.data.rows.DataTuple;
-import clus.ext.sspd.SSPDMatrix;
-import clus.main.Settings;
-import clus.statistic.GeneticDistanceStat;
-import clus.statistic.ClusStatistic;
-import jeans.resource.ResourceInfo;
-import jeans.list.BitList;
-
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 
-import jeans.math.matrix.*;
+import clus.data.io.ClusReader;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
+import clus.statistic.GeneticDistanceStat;
+import jeans.list.BitList;
+import jeans.math.matrix.MSymMatrix;
 
 public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 

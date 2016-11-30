@@ -22,21 +22,24 @@
 
 package clus.ext.beamsearch;
 
-import clus.*;
-import clus.algo.*;
-import clus.algo.split.*;
-import clus.algo.tdidt.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.ext.ensembles.*;
-import clus.main.*;
-import clus.util.*;
-import clus.pruning.*;
-import clus.model.*;
-import clus.model.modelio.*;
-
-import java.io.*;
+import java.io.IOException;
 import java.util.ArrayList;
+
+import clus.Clus;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.split.NominalSplit;
+import clus.algo.tdidt.ClusDecisionTree;
+import clus.algo.tdidt.ClusNode;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.ext.ensembles.ClusForest;
+import clus.main.ClusRun;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.model.modelio.ClusModelCollectionIO;
+import clus.pruning.PruneTree;
+import clus.util.ClusException;
 
 public class ClusBeamInduce extends ClusInductionAlgorithm {
 

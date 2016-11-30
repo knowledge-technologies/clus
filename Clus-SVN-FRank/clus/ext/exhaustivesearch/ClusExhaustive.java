@@ -22,10 +22,15 @@
 
 package clus.ext.exhaustivesearch;
 
-import java.util.*;
-import java.io.*;
-import clus.algo.tdidt.*;
-import clus.ext.beamsearch.*;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.TreeMap;
+
+import clus.algo.tdidt.ClusNode;
+import clus.ext.beamsearch.ClusBeamModel;
+import clus.ext.beamsearch.ClusBeamTreeElem;
 
 public class ClusExhaustive {
 

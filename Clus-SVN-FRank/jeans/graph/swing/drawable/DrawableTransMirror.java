@@ -22,7 +22,7 @@
 
 package jeans.graph.swing.drawable;
 
-import java.awt.*;
+import java.awt.Dimension;
 
 public class DrawableTransMirror extends DrawableTransform {
 

@@ -1,11 +1,9 @@
 package clus.heuristic;
 
 import clus.data.rows.RowData;
-import clus.data.rows.DataTuple;
 import clus.main.Settings;
-import clus.statistic.GeneticDistanceStat;
 import clus.statistic.ClusStatistic;
-import java.util.*;
+import clus.statistic.GeneticDistanceStat;
 
 public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
 

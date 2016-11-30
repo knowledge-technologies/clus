@@ -25,10 +25,10 @@
  */
 package clus.ext.beamsearch;
 
-import clus.main.Settings;
-import clus.statistic.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.attweights.*;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
 
 public class ClusBeamHeuristicSS extends ClusBeamHeuristic {
 

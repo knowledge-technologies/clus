@@ -1,10 +1,9 @@
 package sit;
-import java.util.*;
-
-import jeans.util.IntervalCollection;
+import java.util.Iterator;
 
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
+import jeans.util.IntervalCollection;
 
 public class TargetSet extends java.util.TreeSet{
 

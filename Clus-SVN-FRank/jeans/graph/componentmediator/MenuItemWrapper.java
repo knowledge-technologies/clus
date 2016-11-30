@@ -22,7 +22,7 @@
 
 package jeans.graph.componentmediator;
 
-import java.awt.*;
+import java.awt.MenuItem;
 
 public class MenuItemWrapper extends ComponentWrapper {
 

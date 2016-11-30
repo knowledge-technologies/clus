@@ -24,20 +24,22 @@ package clus.algo.tdidt;
 
 import java.io.IOException;
 
-import clus.main.*;
+import clus.Clus;
+import clus.algo.ClusInductionAlgorithm;
+import clus.algo.ClusInductionAlgorithmType;
+import clus.algo.rules.ClusRuleSet;
+import clus.algo.rules.ClusRulesFromTree;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.ext.bestfirst.BestFirstInduce;
+import clus.ext.ilevelc.ILevelCInduce;
+import clus.main.ClusRun;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.pruning.*;
-import clus.util.*;
-import clus.algo.*;
-import clus.algo.rules.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.ext.ilevelc.*;
-import clus.ext.bestfirst.*;
-import clus.*;
-
-import jeans.util.cmdline.*;
+import clus.pruning.PruneTree;
+import clus.util.ClusException;
+import jeans.util.cmdline.CMDLineArgs;
 
 public class ClusDecisionTree extends ClusInductionAlgorithmType {
 

@@ -2,9 +2,8 @@ package sit.searchAlgorithm;
 
 import java.util.Iterator;
 
-import sit.TargetSet;
 import clus.data.type.ClusAttrType;
-import clus.main.Settings;
+import sit.TargetSet;
 
 public class NoStopSearch extends SearchAlgorithmImpl{
 

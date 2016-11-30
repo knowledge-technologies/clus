@@ -22,8 +22,11 @@
 
 package jeans.graph.swing.drawable;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.event.MouseEvent;
 
 public abstract class Drawable {
 

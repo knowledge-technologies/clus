@@ -22,10 +22,18 @@
 
 package clus.weka;
 
-import java.util.*;
-import java.io.*;
-import weka.core.*;
-import weka.classifiers.*;
+import java.io.BufferedReader;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Random;
+
+import weka.classifiers.CostMatrix;
+import weka.classifiers.Evaluation;
+import weka.core.Instance;
+import weka.core.Instances;
+import weka.core.Utils;
 
 public class SaveWekaPartition extends Evaluation {
 

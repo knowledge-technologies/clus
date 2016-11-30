@@ -22,14 +22,15 @@
 
 package clus.main;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.Serializable;
+import java.util.ArrayList;
 
-import clus.error.*;
+import clus.data.type.ClusSchema;
+import clus.error.ClusErrorList;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.util.*;
-import clus.data.type.*;
+import clus.util.ClusException;
 
 public abstract class ClusModelInfoList implements Serializable {
 

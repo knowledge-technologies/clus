@@ -23,19 +23,20 @@
 
 package clus.algo.kNN.distance.attributeWeighting;
 
-import clus.Clus; 
-import clus.data.type.ClusAttrType;
-import clus.main.ClusRun;
-import clus.main.Settings;
-import clus.util.ClusRandom;
-import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
-import clus.ext.ensembles.ClusEnsembleClassifier;
-import clus.ext.ensembles.ClusEnsembleInduce;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.HashMap;
+
+import clus.Clus;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.ext.ensembles.ClusEnsembleClassifier;
+import clus.ext.ensembles.ClusEnsembleInduce;
+import clus.main.ClusRun;
+import clus.main.Settings;
+import clus.util.ClusRandom;
 
 /**
  * @author Mitja Pugelj

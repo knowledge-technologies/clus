@@ -22,7 +22,7 @@
 
 package jeans.graph.drawable;
 
-import java.awt.*;
+import java.awt.Rectangle;
 
 public abstract class Drawable {
 

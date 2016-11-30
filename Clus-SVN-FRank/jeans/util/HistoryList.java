@@ -22,10 +22,8 @@
 
 package jeans.util;
 
-import java.io.*;
+import java.io.Serializable;
 import java.util.Vector;
-
-import jeans.util.Operation;
 
 
 /**

@@ -22,8 +22,13 @@
 
 package jeans.graph.plot;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Insets;
+
+import javax.swing.JComponent;
+import javax.swing.JScrollBar;
 
 public class MBarPlot extends JComponent {
 

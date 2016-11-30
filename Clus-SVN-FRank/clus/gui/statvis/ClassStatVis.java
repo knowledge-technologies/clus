@@ -22,12 +22,13 @@
 
 package clus.gui.statvis;
 
-import jeans.graph.swing.drawable.*;
-import jeans.graph.plot.*;
+import java.awt.Color;
 
-import java.awt.*;
-
-import clus.statistic.*;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
+import jeans.graph.plot.MDistrInfo;
+import jeans.graph.swing.drawable.Drawable;
+import jeans.graph.swing.drawable.DrawableDistrGraph;
 
 public class ClassStatVis implements ClusStatVisualizer, MDistrInfo {
 

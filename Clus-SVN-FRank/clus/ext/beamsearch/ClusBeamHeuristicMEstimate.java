@@ -25,10 +25,10 @@
  */
 package clus.ext.beamsearch;
 
-import jeans.math.MathUtil;
 import clus.algo.tdidt.ClusNode;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
+import jeans.math.MathUtil;
 
 public class ClusBeamHeuristicMEstimate extends ClusBeamHeuristic {
 

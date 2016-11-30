@@ -22,14 +22,17 @@
 
 package clus.model;
 
-import clus.error.*;
+import java.io.IOException;
+import java.io.Serializable;
+
+import clus.data.type.ClusSchema;
+import clus.error.ClusErrorList;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
-import clus.model.processor.*;
-import clus.data.type.*;
-import clus.util.*;
-
-import java.io.*;
+import clus.model.processor.ClusEnsemblePredictionWriter;
+import clus.model.processor.ClusModelProcessor;
+import clus.model.processor.ModelProcessorCollection;
+import clus.util.ClusException;
 
 public class ClusModelInfo implements Serializable {
 

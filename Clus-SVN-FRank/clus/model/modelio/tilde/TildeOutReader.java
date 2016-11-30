@@ -22,14 +22,19 @@
 
 package clus.model.modelio.tilde;
 
-import java.io.*;
-import java.util.*;
-import jeans.util.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.Vector;
 
-import clus.main.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.type.*;
-import clus.util.*;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.util.ClusException;
+import jeans.util.MStreamTokenizer;
+import jeans.util.MyArray;
 
 public class TildeOutReader {
 

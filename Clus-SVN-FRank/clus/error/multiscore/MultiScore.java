@@ -22,11 +22,11 @@
 
 package clus.error.multiscore;
 
-import java.util.*;
+import java.util.StringTokenizer;
 
-import clus.main.*;
-import clus.util.*;
-import clus.data.type.*;
+import clus.data.type.ClusSchema;
+import clus.main.Settings;
+import clus.util.ClusException;
 
 public class MultiScore {
 

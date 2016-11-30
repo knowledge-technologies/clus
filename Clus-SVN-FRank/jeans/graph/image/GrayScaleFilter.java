@@ -22,7 +22,7 @@
 
 package jeans.graph.image;
 
-import java.awt.image.*;
+import java.awt.image.RGBImageFilter;
 
 /**
  * @author 	Jan Struyf

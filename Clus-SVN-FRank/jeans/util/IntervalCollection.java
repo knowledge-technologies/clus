@@ -22,8 +22,8 @@
 
 package jeans.util;
 
-import java.util.*;
-import java.io.*;
+import java.io.Serializable;
+import java.util.ArrayList;
 
 public class IntervalCollection implements Serializable {
 

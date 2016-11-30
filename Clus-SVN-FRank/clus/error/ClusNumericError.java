@@ -22,7 +22,7 @@
 
 package clus.error;
 
-import clus.data.type.*;
+import clus.data.type.NumericAttrType;
 
 public abstract class ClusNumericError extends ClusError {
 

@@ -22,7 +22,10 @@
 
 package clus.util;
 
-import java.io.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
 public class DebugFile {
 

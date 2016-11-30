@@ -24,10 +24,11 @@ package clus.ext.ilevelc;
 
 import java.io.PrintWriter;
 
-import clus.algo.tdidt.*;
-import clus.data.rows.*;
-import clus.main.*;
-import clus.statistic.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.rows.DataTuple;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
+import clus.statistic.StatisticPrintInfo;
 
 public class COPKMeansModel extends ClusNode {
 

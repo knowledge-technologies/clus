@@ -22,20 +22,39 @@
 
 package addon.ILevelC.ilevelc;
 
-import java.io.*;
-import java.util.*;
-import java.awt.*;
-import javax.swing.*;
-import java.awt.event.*;
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.ArrayList;
 
+import javax.swing.JButton;
+import javax.swing.JComboBox;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
+
+import clus.data.io.ARFFFile;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.ext.ilevelc.DerivedConstraintsComputer;
+import clus.ext.ilevelc.ILevelConstraint;
 import clus.main.Settings;
 import clus.util.ClusException;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.data.io.*;
-import clus.ext.ilevelc.*;
-
-import jeans.util.*;
+import jeans.util.FileUtil;
 
 public class ILevelCGUI extends JFrame {
 

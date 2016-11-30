@@ -22,7 +22,9 @@
 
 package jeans.util.graph;
 
-import jeans.util.list.*;
+import jeans.util.list.MyIntList;
+import jeans.util.list.MyList;
+import jeans.util.list.MyListIter;
 
 public class DirectedGraph {
 

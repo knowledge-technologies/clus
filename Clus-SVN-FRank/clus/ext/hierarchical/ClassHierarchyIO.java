@@ -22,13 +22,15 @@
 
 package clus.ext.hierarchical;
 
-import jeans.util.array.*;
-import jeans.util.*;
-import jeans.tree.*;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
 
-import java.io.*;
-
-import clus.util.*;
+import clus.util.ClusException;
+import jeans.tree.CompleteTreeIterator;
+import jeans.util.MStreamTokenizer;
+import jeans.util.array.StringTable;
 
 public class ClassHierarchyIO {
 

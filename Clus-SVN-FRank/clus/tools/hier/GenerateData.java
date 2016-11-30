@@ -22,14 +22,16 @@
 
 package clus.tools.hier;
 
-import clus.ext.hierarchical.*;
+import java.util.Arrays;
 
-import java.util.*;
-
-import clus.util.*;
-import jeans.math.*;
-import jeans.util.*;
-import jeans.io.*;
+import clus.ext.hierarchical.ClassHierarchy;
+import clus.ext.hierarchical.ClassTerm;
+import clus.ext.hierarchical.HierIO;
+import clus.util.ClusFormat;
+import clus.util.ClusRandom;
+import jeans.io.MyFile;
+import jeans.math.SingleStat;
+import jeans.util.MyArray;
 
 public class GenerateData {
 

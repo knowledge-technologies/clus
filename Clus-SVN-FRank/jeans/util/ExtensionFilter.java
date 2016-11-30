@@ -22,7 +22,8 @@
 
 package jeans.util;
 
-import java.io.*;
+import java.io.File;
+import java.io.FilenameFilter;
 
 /**
   * A Filter Class to filter Files by Extension.

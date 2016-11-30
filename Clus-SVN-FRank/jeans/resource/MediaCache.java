@@ -22,10 +22,11 @@
 
 package jeans.resource;
 
-import java.util.*;
-import java.awt.*;
 import java.applet.AudioClip;
+import java.awt.Image;
 import java.net.MalformedURLException;
+import java.util.Enumeration;
+import java.util.Hashtable;
 
 public class MediaCache {
 

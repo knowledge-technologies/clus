@@ -24,8 +24,8 @@ package clus.data.rows;
 
 import java.io.IOException;
 
-import clus.data.*;
-import clus.data.type.*;
+import clus.data.ClusData;
+import clus.data.type.ClusSchema;
 import clus.util.ClusException;
 
 public class MemoryTupleIterator extends TupleIterator {

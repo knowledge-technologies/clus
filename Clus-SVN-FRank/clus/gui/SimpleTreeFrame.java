@@ -22,18 +22,21 @@
 
 package clus.gui;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.BorderLayout;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 
-import java.io.*;
-import jeans.util.*;
-import jeans.graph.*;
-import jeans.io.*;
+import javax.swing.JFrame;
+import javax.swing.JPanel;
 
-import clus.main.*;
 import clus.algo.tdidt.ClusNode;
-import clus.data.type.*;
-import clus.model.modelio.tilde.*;
+import clus.data.type.ClusSchema;
+import clus.main.Settings;
+import clus.model.modelio.tilde.TildeOutReader;
+import jeans.graph.WindowClosingListener;
+import jeans.io.ObjectLoadStream;
+import jeans.util.FileUtil;
 
 public class SimpleTreeFrame extends JFrame {
 

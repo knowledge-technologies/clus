@@ -22,9 +22,9 @@
 
 package clus.heuristic;
 
-import clus.statistic.*;
 import clus.data.attweights.ClusAttributeWeights;
-import clus.data.rows.*;
+import clus.data.rows.RowData;
+import clus.statistic.ClusStatistic;
 
 public abstract class ClusHeuristic {
 

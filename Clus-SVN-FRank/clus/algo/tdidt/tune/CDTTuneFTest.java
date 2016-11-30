@@ -22,16 +22,11 @@
 
 package clus.algo.tdidt.tune;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.io.PrintWriter;
+import java.util.Random;
 
-import jeans.util.cmdline.CMDLineArgs;
-
-import clus.main.*;
-import clus.model.ClusModel;
-import clus.model.ClusModelInfo;
-import clus.util.*;
-import clus.selection.*;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.tdidt.ClusDecisionTree;
@@ -45,9 +40,20 @@ import clus.error.Accuracy;
 import clus.error.ClusError;
 import clus.error.ClusErrorList;
 import clus.error.RMSError;
-import clus.ext.hierarchical.HierClassWiseAccuracy;
 import clus.ext.hierarchical.HierErrorMeasures;
-import clus.heuristic.*;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.ClusSummary;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.selection.ClusSelection;
+import clus.selection.XValMainSelection;
+import clus.selection.XValRandomSelection;
+import clus.selection.XValSelection;
+import clus.util.ClusException;
+import clus.util.ClusRandom;
+import jeans.util.cmdline.CMDLineArgs;
 
 //added 18-05-06
 //import clus.ext.hierarchical.*;

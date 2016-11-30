@@ -22,16 +22,17 @@
 
 package clus.ext.hierarchical;
 
-import java.io.*;
-import java.util.*;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 
-import jeans.math.*;
-import jeans.util.*;
-import jeans.util.compound.*;
-
-import jeans.tree.*;
-import clus.util.*;
-import clus.main.*;
+import clus.main.Settings;
+import clus.util.ClusFormat;
+import jeans.math.SingleStat;
+import jeans.tree.Node;
+import jeans.util.StringUtils;
+import jeans.util.compound.IndexedItem;
 
 public class ClassTerm extends IndexedItem implements Node, Comparable {
 

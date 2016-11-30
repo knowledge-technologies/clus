@@ -22,15 +22,15 @@
 
 package clus.statistic;
 
-import java.text.*;
+import java.text.NumberFormat;
 import java.util.Arrays;
 
-import jeans.math.MathUtil;
+import clus.data.attweights.ClusAttributeWeights;
+import clus.data.rows.DataTuple;
+import clus.data.type.NumericAttrType;
 import clus.main.Settings;
-import clus.util.*;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.data.attweights.*;
+import clus.util.ClusFormat;
+import jeans.math.MathUtil;
 
 public class RegressionStat extends RegressionStatBase {
 

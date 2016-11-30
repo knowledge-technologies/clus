@@ -30,14 +30,19 @@ import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.BitSet;
+import java.util.Random;
 
-import clus.main.*;
 import clus.algo.rules.ClusRuleSet;
 import clus.algo.rules.RuleNormalization;
 import clus.data.rows.DataTuple;
-import clus.data.type.*;
-import clus.statistic.*;
+import clus.data.type.ClusAttrType;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 // Created 28.11.2008 from previous DeProbl class

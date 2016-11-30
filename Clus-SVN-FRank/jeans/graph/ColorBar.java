@@ -22,8 +22,16 @@
 
 package jeans.graph;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Color;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.Scrollbar;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
+
 import jeans.util.CallBackFunction;
 
 /** This class encapsulates the controls which manage one color. Is compound of

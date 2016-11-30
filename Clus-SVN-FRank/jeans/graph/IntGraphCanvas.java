@@ -22,7 +22,10 @@
 
 package jeans.graph;
 
-import java.awt.*;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 public class IntGraphCanvas extends BufferCanvas {
 

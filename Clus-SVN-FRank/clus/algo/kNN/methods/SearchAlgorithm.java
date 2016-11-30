@@ -22,12 +22,13 @@
 
 package clus.algo.kNN.methods;
 
-import clus.algo.kNN.distance.SearchDistance;  
+import java.io.IOException;
+import java.util.LinkedList;
+
+import clus.algo.kNN.distance.SearchDistance;
 import clus.data.rows.DataTuple;
 import clus.main.ClusRun;
 import clus.util.ClusException;
-import java.io.IOException;
-import java.util.LinkedList;
 
 /**
  * @author Mitja Pugelj

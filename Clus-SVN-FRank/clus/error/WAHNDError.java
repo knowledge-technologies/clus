@@ -22,12 +22,12 @@
 
 package clus.error;
 
-import java.io.*;
+import java.io.PrintWriter;
 
-import clus.main.*;
 import clus.data.ClusData;
-import clus.data.rows.*;
-import clus.statistic.*;
+import clus.data.rows.DataTuple;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
 
 public class WAHNDError extends ClusError {
 

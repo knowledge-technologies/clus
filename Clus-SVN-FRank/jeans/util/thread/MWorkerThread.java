@@ -22,8 +22,8 @@
 
 package jeans.util.thread;
 
-import java.util.*;
-import java.awt.event.*;
+import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 public class MWorkerThread extends Thread {
 

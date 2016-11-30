@@ -22,7 +22,8 @@
 
 package jeans.graph;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Graphics;
 
 public interface Painter {
 

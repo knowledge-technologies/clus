@@ -22,12 +22,14 @@
 
 package clus.data.rows;
 
-import java.io.*;
+import java.io.IOException;
 
-import clus.main.*;
-import clus.data.io.*;
-import clus.data.type.*;
-import clus.util.*;
+import clus.data.io.ARFFFile;
+import clus.data.io.ClusReader;
+import clus.data.type.ClusSchema;
+import clus.data.type.ClusSchemaInitializer;
+import clus.main.Settings;
+import clus.util.ClusException;
 
 public class DiskTupleIterator extends FileTupleIterator {
 

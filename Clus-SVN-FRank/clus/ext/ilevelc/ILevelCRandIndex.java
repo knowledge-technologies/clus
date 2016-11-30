@@ -23,13 +23,14 @@
 package clus.ext.ilevelc;
 
 import java.io.PrintWriter;
-import java.util.*;
+import java.util.ArrayList;
 
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.error.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
 import clus.main.Settings;
-import clus.statistic.*;
+import clus.statistic.ClusStatistic;
 
 public class ILevelCRandIndex extends ClusError {
 

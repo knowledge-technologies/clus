@@ -23,9 +23,10 @@
 
 package clus.algo.kNN.distance.distanceWeighting;
 
+import java.util.LinkedList;
+
 import clus.algo.kNN.methods.SearchAlgorithm;
 import clus.data.rows.DataTuple;
-import java.util.LinkedList;
 
 /**
  *

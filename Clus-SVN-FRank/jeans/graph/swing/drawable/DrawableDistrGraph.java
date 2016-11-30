@@ -22,9 +22,10 @@
 
 package jeans.graph.swing.drawable;
 
-import jeans.graph.plot.MDistrInfo;
+import java.awt.Color;
+import java.awt.Graphics2D;
 
-import java.awt.*;
+import jeans.graph.plot.MDistrInfo;
 
 public class DrawableDistrGraph extends Drawable {
 

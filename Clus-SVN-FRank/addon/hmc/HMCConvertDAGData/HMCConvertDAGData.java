@@ -25,16 +25,19 @@ package addon.hmc.HMCConvertDAGData;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jeans.util.*;
-import clus.*;
-import clus.main.*;
-import clus.statistic.ClusStatistic;
-import clus.data.io.*;
-import clus.data.rows.*;
+import clus.Clus;
+import clus.data.io.ARFFFile;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesTuple;
 import clus.ext.hierarchical.WHTDStatistic;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.statistic.ClusStatistic;
+import jeans.util.FileUtil;
 
 public class HMCConvertDAGData {
 

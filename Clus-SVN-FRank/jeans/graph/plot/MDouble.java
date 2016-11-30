@@ -22,9 +22,10 @@
 
 package jeans.graph.plot;
 
-import jeans.util.*;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
-import java.awt.*;
+import jeans.util.StringUtils;
 
 public class MDouble {
 

@@ -25,10 +25,11 @@
  */
 package clus.tools.optimization.de;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Random;
 
+import clus.main.ClusStatManager;
 import clus.main.Settings;
-import clus.main.*;
 
 /**
  * Class representing the population.

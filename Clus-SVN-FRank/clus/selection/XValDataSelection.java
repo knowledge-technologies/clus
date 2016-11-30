@@ -22,10 +22,13 @@
 
 package clus.selection;
 
-import java.io.*;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.LineNumberReader;
 
-import clus.util.*;
-import clus.data.type.*;
+import clus.data.type.IndexAttrType;
+import clus.util.ClusException;
 
 public class XValDataSelection extends XValMainSelection {
 

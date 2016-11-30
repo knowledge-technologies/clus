@@ -5,7 +5,9 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.main.Settings;
-import clus.statistic.*;
+import clus.statistic.ClusDistance;
+import clus.statistic.ClusStatistic;
+import clus.statistic.SumPairwiseDistancesStat;
 
 public class HierSumPairwiseDistancesStat extends WHTDStatistic {
 

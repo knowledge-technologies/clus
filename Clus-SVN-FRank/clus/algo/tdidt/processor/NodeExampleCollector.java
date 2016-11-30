@@ -22,16 +22,18 @@
 
 package clus.algo.tdidt.processor;
 
-import jeans.util.*;
-import jeans.tree.*;
+import java.io.IOException;
+import java.io.PrintWriter;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.type.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.StringAttrType;
 import clus.main.Settings;
 import clus.model.ClusModel;
-
-import java.io.*;
+import jeans.tree.LeafTreeIterator;
+import jeans.util.MyArray;
 
 public class NodeExampleCollector extends BasicExampleCollector {
 

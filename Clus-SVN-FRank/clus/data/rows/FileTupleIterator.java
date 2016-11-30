@@ -22,11 +22,12 @@
 
 package clus.data.rows;
 
-import java.io.*;
+import java.io.IOException;
 
-import clus.util.*;
-import clus.data.io.*;
-import clus.data.type.*;
+import clus.data.io.ClusReader;
+import clus.data.io.ClusView;
+import clus.data.type.ClusSchema;
+import clus.util.ClusException;
 
 public class FileTupleIterator extends TupleIterator {
 

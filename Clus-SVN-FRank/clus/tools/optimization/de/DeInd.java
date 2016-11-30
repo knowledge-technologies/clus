@@ -26,7 +26,7 @@
 package clus.tools.optimization.de;
 
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
 
 import clus.util.ClusFormat;
 

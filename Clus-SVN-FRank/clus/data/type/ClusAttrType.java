@@ -22,16 +22,19 @@
 
 package clus.data.type;
 
-import java.io.*; 
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
 
 import com.google.gson.JsonObject;
 
-import clus.io.*;
-import clus.main.*;
-import clus.util.*;
-import clus.data.rows.*;
-import clus.data.cols.*;
-import clus.data.cols.attribute.*;
+import clus.data.cols.ColTarget;
+import clus.data.cols.attribute.ClusAttribute;
+import clus.data.rows.DataPreprocs;
+import clus.data.rows.DataTuple;
+import clus.io.ClusSerializable;
+import clus.main.Settings;
+import clus.util.ClusException;
 
 public abstract class ClusAttrType implements Serializable, Comparable {
 

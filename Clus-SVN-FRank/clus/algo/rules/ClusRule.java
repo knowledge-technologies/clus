@@ -25,23 +25,37 @@
  */
 package clus.algo.rules;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
 
-import jeans.util.*;
 import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusAttributeWeights;
-import clus.data.rows.*;
-import clus.main.*;
-import clus.statistic.*;
-import clus.model.ClusModel;
-import clus.model.test.*;
-import clus.util.*;
-import clus.data.type.*;
-import clus.error.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.error.ClusErrorList;
 //import clus.ext.ilevelc.ILevelCStatistic;
 import clus.ext.ilevelc.ILevelConstraint;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.test.NodeTest;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
+import clus.statistic.CombStat;
+import clus.statistic.RegressionStat;
+import clus.statistic.StatisticPrintInfo;
+import clus.util.ClusException;
+import clus.util.ClusFormat;
+import jeans.util.MyArray;
 
 public class ClusRule implements ClusModel, Serializable {
 

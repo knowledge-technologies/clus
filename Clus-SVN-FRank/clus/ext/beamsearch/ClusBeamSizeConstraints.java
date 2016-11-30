@@ -25,10 +25,11 @@
  */
 package clus.ext.beamsearch;
 
-import clus.algo.tdidt.*;
-import clus.statistic.*;
+import java.util.Arrays;
 
-import java.util.*;
+import clus.algo.tdidt.ClusNode;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
 
 public class ClusBeamSizeConstraints {
 

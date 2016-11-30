@@ -22,7 +22,10 @@
 
 package jeans.graph.drawable;
 
-import java.awt.*;
+import java.awt.Canvas;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
 
 public interface  DrawableProvider {
 

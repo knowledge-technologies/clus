@@ -23,28 +23,38 @@
 package clus.ext.ensembles;
 
 
-import jeans.math.MathUtil;
-import jeans.util.*;
-import weka.core.Utils;
-import clus.main.*;
-import clus.model.ClusModel;
-import clus.model.ClusModelInfo;
-import clus.model.processor.ClusEnsemblePredictionWriter;
-import clus.Clus;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import clus.algo.rules.ClusRuleSet;
 import clus.algo.rules.ClusRulesFromTree;
 import clus.algo.tdidt.ClusNode;
-import clus.data.rows.*;
-import clus.data.type.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
 import clus.ext.hierarchical.HierClassTresholdPruner;
-import clus.ext.hierarchical.WHTDStatistic;
 import clus.ext.hierarchical.HierSingleLabelStat;
-import clus.statistic.*;
-import clus.util.*;
-
-
-import java.io.*;
-import java.util.*;
+import clus.ext.hierarchical.WHTDStatistic;
+import clus.main.ClusRun;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
+import clus.model.processor.ClusEnsemblePredictionWriter;
+import clus.statistic.ClassificationStat;
+import clus.statistic.ClusStatistic;
+import clus.statistic.GeneticDistanceStat;
+import clus.statistic.RegressionStat;
+import clus.statistic.RegressionStatBase;
+import clus.statistic.StatisticPrintInfo;
+import clus.util.ClusException;
+import jeans.util.MyArray;
 
 /**
  * Ensemble of decision trees.

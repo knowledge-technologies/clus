@@ -25,12 +25,12 @@
  */
 package clus.ext.constraint;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.HashMap;
 
-import clus.algo.tdidt.*;
-import clus.data.type.*;
-import clus.model.modelio.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.type.ClusSchema;
+import clus.model.modelio.ClusTreeReader;
 
 public class ClusConstraintFile {
 

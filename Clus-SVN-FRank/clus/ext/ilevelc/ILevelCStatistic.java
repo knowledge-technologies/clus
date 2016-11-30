@@ -23,10 +23,13 @@
 package clus.ext.ilevelc;
 
 
-import clus.data.rows.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
 import clus.data.type.NumericAttrType;
 import clus.main.Settings;
-import clus.statistic.*;
+import clus.statistic.ClusStatistic;
+import clus.statistic.RegressionStat;
+import clus.statistic.StatisticPrintInfo;
 
 public class ILevelCStatistic extends RegressionStat {
 

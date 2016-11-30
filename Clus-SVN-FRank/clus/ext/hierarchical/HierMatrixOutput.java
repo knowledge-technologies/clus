@@ -22,12 +22,13 @@
 
 package clus.ext.hierarchical;
 
-import java.util.*;
-import java.io.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
 
-import clus.data.rows.*;
-
-import jeans.util.array.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import jeans.util.array.MDoubleArray;
 
 
 public class HierMatrixOutput {

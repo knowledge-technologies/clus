@@ -22,11 +22,10 @@
 
 package clus.model.test;
 
-import jeans.util.*;
-
-import clus.data.rows.*;
-import clus.data.type.*;
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
 import clus.main.Settings;
+import jeans.util.MyArray;
 
 public class FakeTest extends NodeTest {
 

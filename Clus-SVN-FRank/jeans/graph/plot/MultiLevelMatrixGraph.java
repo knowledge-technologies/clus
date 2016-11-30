@@ -59,8 +59,13 @@
 
 package jeans.graph.plot;
 
-import java.awt.*;
-import javax.swing.*;
+import java.awt.Color;
+import java.awt.Font;
+import java.awt.FontMetrics;
+import java.awt.Graphics;
+import java.awt.Insets;
+
+import javax.swing.JComponent;
 
 public class MultiLevelMatrixGraph extends JComponent {
 

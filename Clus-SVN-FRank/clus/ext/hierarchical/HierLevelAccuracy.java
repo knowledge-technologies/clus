@@ -27,12 +27,13 @@ package clus.ext.hierarchical;
 
 import java.io.PrintWriter;
 import java.text.NumberFormat;
-import java.util.*;
+import java.util.Arrays;
 
-import clus.data.rows.*;
-import clus.error.*;
+import clus.data.rows.DataTuple;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
 import clus.main.Settings;
-import clus.statistic.*;
+import clus.statistic.ClusStatistic;
 
 public class HierLevelAccuracy extends ClusError {
 

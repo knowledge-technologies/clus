@@ -23,17 +23,11 @@
 
 	package clus.ext.hierarchical;
 
-	import jeans.util.array.*;
-
-	import java.io.*;
-	import java.util.*;
-
-	import clus.io.*;
-	import clus.main.*;
-	import clus.util.*;
-	import clus.data.type.*;
-	import clus.data.io.ClusReader;
-import clus.data.rows.*;
+	import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.StringAttrType;
+import clus.main.Settings;
 
 	public class ClassesAttrTypeSingleLabel extends ClassesAttrType {
 

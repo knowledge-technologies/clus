@@ -22,10 +22,12 @@
 
 package clus.pruning;
 
-import clus.algo.tdidt.*;
-import clus.data.rows.*;
-import clus.error.*;
-import clus.statistic.*;
+import clus.algo.tdidt.ClusNode;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.statistic.ClusStatistic;
 
 public class BottomUpPruningVSB extends PruneTree {
 

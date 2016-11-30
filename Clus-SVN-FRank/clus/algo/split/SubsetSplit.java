@@ -22,15 +22,16 @@
 
 package clus.algo.split;
 
-import clus.main.*;
-import clus.algo.rules.ClusRuleHeuristicDispersion;
-import clus.data.type.*;
-import clus.model.test.*;
-import clus.statistic.*;
-import jeans.math.MathUtil;
-import clus.heuristic.*;
+import java.util.Random;
 
-import java.util.*;
+import clus.algo.rules.ClusRuleHeuristicDispersion;
+import clus.data.type.NominalAttrType;
+import clus.heuristic.ClusHeuristic;
+import clus.main.ClusStatManager;
+import clus.main.Settings;
+import clus.model.test.SubsetTest;
+import clus.statistic.ClusStatistic;
+import clus.statistic.CombStat;
 
 public class SubsetSplit extends NominalSplit {
 

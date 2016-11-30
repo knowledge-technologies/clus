@@ -22,8 +22,14 @@
 
 package jeans.graph.awt;
 
-import java.awt.*;
-import java.awt.event.*;
+import java.awt.Button;
+import java.awt.GridLayout;
+import java.awt.Label;
+import java.awt.Panel;
+import java.awt.TextField;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+
 import jeans.graph.PercentLayout;
 import jeans.util.PropertyInterface;
 

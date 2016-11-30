@@ -22,11 +22,10 @@
 
 package jeans.tree;
 
-import jeans.util.*;
-
+import java.io.PrintWriter;
 import java.io.Serializable;
 
-import java.io.*;
+import jeans.util.MyArray;
 
 public class MyNode implements Node, Serializable {
 

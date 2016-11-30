@@ -27,8 +27,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
-import org.omg.CORBA.portable.IndirectionException;
-
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;

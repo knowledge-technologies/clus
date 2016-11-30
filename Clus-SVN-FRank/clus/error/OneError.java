@@ -23,12 +23,8 @@
 package clus.error;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.statistic.ClassificationStat;

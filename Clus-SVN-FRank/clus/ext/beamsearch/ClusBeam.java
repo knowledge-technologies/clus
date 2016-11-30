@@ -25,11 +25,14 @@
  */
 package clus.ext.beamsearch;
 
-import clus.algo.tdidt.ClusNode;
-import clus.main.*;
+import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.TreeMap;
 
-import java.util.*;
-import java.io.*;
+import clus.algo.tdidt.ClusNode;
+import clus.main.Settings;
 
 public class ClusBeam {
 
