@@ -22,8 +22,8 @@ public class HierJaccardDistance extends ClusDistance {
 		System.out.println("Computing Jaccard Distance:");
 		System.out.println("Tuple 1: "+ cl1.toString());
 		System.out.println("Tuple 2: "+ cl2.toString());
-
-		return Math.random();
+		throw new RuntimeException("Math.random() is not supposed to be returned, is it?");
+//		return Math.random();
 	}
 
 	public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {

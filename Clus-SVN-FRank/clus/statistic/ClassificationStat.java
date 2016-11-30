@@ -305,12 +305,12 @@ public class ClassificationStat extends ClusStatistic {
 	 * it is currently guaranteed that this is MLC-case, and the label is considered relevant if P(label) >= threshold. Usually, this can be computed as <p>
 	 * 
 	 * {@code m_ClassCounts[attr][0] / m_SumWeights[attr]}<p>
-	 * but in voting procedure (see, e.g.,g {@code addVote(ClusStatistic vote)}, the counts are normalized whereas the sums of weights are not, hence, the label is considered relevant IFF <p>
+	 * but in voting procedure (see, e.g.,g {@code voteProbDistr(ArrayList<ClusStatistic> votes)}, the counts are normalized whereas the sums of weights are not, hence, the label is considered relevant IFF <p>
 	 * 
 	 * {@code clcts[0] / (clcts[0] + clcts[1]) >= m_Thresholds[attr]}
 	 * 
-	 * @param attr
-	 * @return
+	 * @param attr Index of the attribute, whose majority class is returned.
+	 * @return The index that corresponds to the value of majority class.
 	 */
 	public int getMajorityClass(int attr) {
 		int m_class = -1;
@@ -319,7 +319,6 @@ public class ClassificationStat extends ClusStatistic {
 		for (int i = 0; i < clcts.length; i++) {
 			if (clcts[i] > m_max) {
 				m_class = i;
-				m_max = clcts[i];
 			}
 		}
 		if (m_max <= MathUtil.C1E_9 && m_Training != null) {
@@ -327,7 +326,7 @@ public class ClassificationStat extends ClusStatistic {
 			return m_Training.getMajorityClass(attr);
 		} else{
 			if(m_Thresholds != null){ // IFF multi label
-				return clcts[0] / (clcts[0] + clcts[1]) >= m_Thresholds[attr] ? 0 : 1; // label is relevant (class index 0) IFF we exceed the threshold. Careful: m_SumWeights[attr] != clcts[0] + clcts[1] in the case
+				return clcts[0] / (clcts[0] + clcts[1]) >= m_Thresholds[attr] ? 0 : 1; // label is relevant (class index 0) IFF we exceed the threshold
 			} else{
 				return m_class;
 			}

@@ -44,9 +44,6 @@ public class MLROCAndPRCurve extends ClusNominalError{
 	protected double[] m_Thresholds;	
 	
 	protected transient boolean m_ExtendPR;
-	protected transient int m_PrevTP, m_PrevFP;
-	protected transient ArrayList<double[]> m_ROC;
-	protected transient ArrayList<double[]> m_PR;
 	protected transient BinaryPredictionList m_Values;
 	//protected transient double[] m_PrecisionAtRecall;
 	
@@ -55,12 +52,9 @@ public class MLROCAndPRCurve extends ClusNominalError{
 	protected int m_ErrorMeasure;
 	
 	protected double m_AverageAUROC, m_AverageAUPRC, m_WAvgAUPRC, m_PooledAUPRC;	
-	protected int m_TP, m_TN;
 	
 	public MLROCAndPRCurve(ClusErrorList par, NominalAttrType[] nom) {
 		super(par, nom);
-		m_TP = 0;
-		m_TN = 0;
 		
 		m_ClassWisePredictions = new BinaryPredictionList[m_Dim];
 		m_ROCAndPRCurves = new ROCAndPRCurve[m_Dim];
@@ -78,12 +72,7 @@ public class MLROCAndPRCurve extends ClusNominalError{
 	public void reset() {
 		m_AreaROC = -1.0;
 		m_AreaPR = -1.0;
-		
-		m_PrevTP = 0;
-		m_PrevFP = 0;
-		
-		m_ROC.clear();
-		m_PR.clear();
+
 		m_Values.clear();
 		
 		m_ClassWisePredictions = new BinaryPredictionList[m_Dim];
@@ -93,9 +82,6 @@ public class MLROCAndPRCurve extends ClusNominalError{
 			m_ClassWisePredictions[i] = predlist;
 			m_ROCAndPRCurves[i] = new ROCAndPRCurve(predlist);
 		}
-		
-		m_TP = 0;
-		m_TN = 0;
 		
 		m_AverageAUROC = -1.0;
 		m_AverageAUPRC = -1.0;
@@ -238,15 +224,7 @@ public class MLROCAndPRCurve extends ClusNominalError{
 		return new MLROCAndPRCurve(par, m_Attrs); // TO DO: preveriti
 	}
 
-	public void addExample(DataTuple tuple, ClusStatistic pred) {
-		
-//		ClassesTuple tp = (ClassesTuple)tuple.getObjVal(m_Hier.getType().getArrayIndex());
-//		double[] predarr = ((WHTDStatistic)pred).getNumericPred();
-//		boolean[] actual = tp.getVectorBooleanNodeAndAncestors(m_Hier);
-//		for (int i = 0; i < m_Dim; i++) {
-//			m_ClassWisePredictions[i].addExample(actual[i], predarr[i]);
-//		}
-				
+	public void addExample(DataTuple tuple, ClusStatistic pred) {			
 		double[][] probabilities = ((ClassificationStat) pred).getProbabilityPrediction(); // probabilities[i][0] = P(label_i is relevant for the example)
 		NominalAttrType attr;
 		boolean atLeastOneKnown = false;
@@ -257,26 +235,7 @@ public class MLROCAndPRCurve extends ClusNominalError{
 				boolean groundTruth = attr.getNominal(tuple) == 0; // label relevant for tuple IFF attr.getNominal(tuple) == 0
 				m_ClassWisePredictions[i].addExample(groundTruth, probabilities[i][0]);				
 			}
-		}
-//		for (int i = 0; i < m_Dim; i++) {
-//			attr = getAttr(i);
-//			if (!attr.isMissing(tuple)) {
-//				atLeastOneKnown = true;
-//				double numValue = 2.0;
-//				
-//				
-//				if(attr.getNominal(tuple) == 0 && predicted[i] == 0){ // both relevant
-//					union++;
-//					intersection++;
-//				} else if(!(attr.getNominal(tuple) == 1 && predicted[i] == 1)){ // precisely one relevant
-//					union++;
-//				}
-//			}
-//		}
-//		if(atLeastOneKnown){
-//			m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of the degenerated case
-//			m_NbKnown++;			
-//		}		
+		}	
 	}
 
 	public void addExample(DataTuple tuple, DataTuple pred) {
