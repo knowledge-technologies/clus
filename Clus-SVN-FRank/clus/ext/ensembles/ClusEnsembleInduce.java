@@ -121,6 +121,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 		if (Settings.shouldEstimateOOB())m_OOBEstimation = new ClusOOBErrorEstimate(m_Mode);
 		if (m_FeatRank)	{
+			if(m_BagClus.getSettings().getSectionMultiLabel().isEnabled()){
+				int[] rankingMeasures = m_BagClus.getSettings().getMultiLabelRankingMeasures();
+				if(rankingMeasures.length == 1 && rankingMeasures[0] == Settings.MULTILABEL_MEASURES_ALL){
+					m_BagClus.getSettings().setToAllMultiLabelRankingMeasures();
+				}
+			}
 			m_FeatureRanking = new ClusEnsembleFeatureRanking();
 			setNbFeatureRankings(schema);
 			int nbRankings = getNbFeatureRankings();
@@ -139,8 +145,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		int nb = 0;
 		switch(schema.getSettings().getRankingMethod()){
 		case Settings.RANKING_RFOREST:
-			if(schema.getSettings().getSectionMultiLabel().isEnabled() && schema.getSettings().getMultiLabelRankingMeasure() == Settings.MULTILABEL_MEASURES_ALL){
-				nb = Settings.NB_MULTILABEL_MEASURES;
+			if(schema.getSettings().getSectionMultiLabel().isEnabled()){ // popravi
+				nb = schema.getSettings().getMultiLabelRankingMeasures().length;
 			} else{
 				nb = 1; // TO DO: HIERARCHICAL?
 			}
@@ -643,7 +649,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			m_OOBEstimation.updateOOBTuples(oob_sel, (RowData)cr.getTrainingSet(), model);
 		}
 		
-		if (m_FeatRank){//franking genie3
+		if (m_FeatRank){//franking
 			if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
 				m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
 			}

@@ -36,6 +36,10 @@ import clus.error.MLFOneMeasure;
 import clus.error.MLPrecision;
 import clus.error.MLROCAndPRCurve;
 import clus.error.MLRecall;
+import clus.error.MLaverageAUPRC;
+import clus.error.MLaverageAUROC;
+import clus.error.MLpooledAUPRC;
+import clus.error.MLweightedAUPRC;
 import clus.error.MacroFOne;
 import clus.error.MacroPrecision;
 import clus.error.MacroRecall;
@@ -350,7 +354,15 @@ public class ClusEnsembleFeatureRanking {
 		}
 	}
 	
-	public double[] calcAverageError(RowData data, ClusModel model, ClusRun cr) throws ClusException{
+	/**
+	 * Calculates values of all error measures. 
+	 * @param data
+	 * @param model
+	 * @param cr
+	 * @return [[err1, sign1], [err2, sign2], ...], where signI = errorI.shouldBeLow() ? -1.0 : 1.0
+	 * @throws ClusException
+	 */
+	public double[][] calcAverageErrors(RowData data, ClusModel model, ClusRun cr) throws ClusException{
 		ClusSchema schema = data.getSchema();
 		/* create error measure */
 		ClusErrorList error = new ClusErrorList();
@@ -358,67 +370,70 @@ public class ClusEnsembleFeatureRanking {
 		NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
 			if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
-				switch(cr.getStatManager().getSettings().getMultiLabelRankingMeasure()){
-				case Settings.MULTILABEL_MEASURES_HAMMINGLOSS:
-					error.addError(new HammingLoss(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MLACCURACY:
-					error.addError(new MLAccuracy(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MLPRECISION:
-					error.addError(new MLPrecision(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MLRECALL:
-					error.addError(new MLRecall(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MLFONE:
-					error.addError(new MLFOneMeasure(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_SUBSETACCURACY:
-					error.addError(new SubsetAccuracy(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MACROPRECISION :
-					error.addError(new MacroPrecision(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MACRORECALL:
-					error.addError(new MacroRecall(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MACROFONE:
-					error.addError(new MacroFOne(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MICROPRECISION:
-					error.addError(new MicroPrecision(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MICRORECALL:
-					error.addError(new MicroRecall(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_MICROFONE:
-					error.addError(new MisclassificationError(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_ONEERROR:
-					error.addError(new OneError(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_COVERAGE:
-					error.addError(new Coverage(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_RANKINGLOSS:
-					error.addError(new RankingLoss(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_AVERAGEPRECISION:
-					error.addError(new AveragePrecision(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_AUROC:
-					error.addError(new MLROCAndPRCurve(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_AUPRC:
-					error.addError(new MLROCAndPRCurve(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_WEIGHTED_AUPRC:
-					error.addError(new MLROCAndPRCurve(error, nom));
-					break;
-				case Settings.MULTILABEL_MEASURES_POOLED_AUPRC:
-					error.addError(new MLROCAndPRCurve(error, nom));
-					break;
+				int[] measures = cr.getStatManager().getSettings().getMultiLabelRankingMeasures();
+				for(int measure: measures){
+					switch(measure){
+					case Settings.MULTILABEL_MEASURES_HAMMINGLOSS:
+						error.addError(new HammingLoss(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MLACCURACY:
+						error.addError(new MLAccuracy(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MLPRECISION:
+						error.addError(new MLPrecision(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MLRECALL:
+						error.addError(new MLRecall(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MLFONE:
+						error.addError(new MLFOneMeasure(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_SUBSETACCURACY:
+						error.addError(new SubsetAccuracy(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MACROPRECISION :
+						error.addError(new MacroPrecision(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MACRORECALL:
+						error.addError(new MacroRecall(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MACROFONE:
+						error.addError(new MacroFOne(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MICROPRECISION:
+						error.addError(new MicroPrecision(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MICRORECALL:
+						error.addError(new MicroRecall(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_MICROFONE:
+						error.addError(new MisclassificationError(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_ONEERROR:
+						error.addError(new OneError(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_COVERAGE:
+						error.addError(new Coverage(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_RANKINGLOSS:
+						error.addError(new RankingLoss(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_AVERAGEPRECISION:
+						error.addError(new AveragePrecision(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_AUROC:
+						error.addError(new MLaverageAUROC(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_AUPRC:
+						error.addError(new MLaverageAUPRC(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_WEIGHTED_AUPRC:
+						error.addError(new MLweightedAUPRC(error, nom));
+						break;
+					case Settings.MULTILABEL_MEASURES_POOLED_AUPRC:
+						error.addError(new MLpooledAUPRC(error, nom));
+						break;
+					}
 				}
 			} else{
 				error.addError(new Accuracy(error, nom));
@@ -445,73 +460,17 @@ public class ClusEnsembleFeatureRanking {
 			ClusStatistic pred = model.predictWeighted(tuple);
 			error.addExample(tuple, pred);
 		}
-		if (m_RankingDescription == null){
+		if(m_RankingDescription == null){
 			setRForestDescription(error);
 		}
-		/* return the average error */
-		double err = error.getFirstError().getModelError();
-		return new double[]{err, error.getFirstError().shouldBeLow() ? -1.0 : 1.0};
-	}
-	/**
-	 * 
-	 * @param data
-	 * @param model
-	 * @param cr
-	 * @return [[err1, sign1], [err2, sign2], ...], where signI = errorI.shouldBeLow() ? -1.0 : 1.0
-	 * @throws ClusException
-	 */
-	public double[][] calcAverageErrors(RowData data, ClusModel model, ClusRun cr) throws ClusException{
-		double[][] errors;
-		boolean is_mlc_all_measures = ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY &&
-										cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled() &&
-										cr.getStatManager().getSettings().getMultiLabelRankingMeasure() == Settings.MULTILABEL_MEASURES_ALL;
-		if(!is_mlc_all_measures){
-			errors = new double[][]{calcAverageError(data, model, cr)};
-		} else{
-			ClusSchema schema = data.getSchema();
-			/* create error measure */
-			ClusErrorList error = new ClusErrorList();
-			NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-			NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+		/* return the average errors */
+		double[][] errors = new double[error.getNbErrors()][2];
+		for(int i = 0; i < errors.length; i++){
+			errors[i][0] = error.getError(i).getModelError();
+			errors[i][1] = error.getError(i).shouldBeLow() ? -1.0 : 1.0;
 			
-			error.addError(new HammingLoss(error, nom));
-			error.addError(new MLAccuracy(error, nom));
-			error.addError(new MLPrecision(error, nom));
-			error.addError(new MLRecall(error, nom));
-			error.addError(new MLFOneMeasure(error, nom));
-			error.addError(new SubsetAccuracy(error, nom));
-			error.addError(new MacroPrecision(error, nom));
-			error.addError(new MacroRecall(error, nom));
-			error.addError(new MacroFOne(error, nom));
-			error.addError(new MicroPrecision(error, nom));
-			error.addError(new MicroRecall(error, nom));
-			error.addError(new MisclassificationError(error, nom));
-			error.addError(new OneError(error, nom));
-			error.addError(new Coverage(error, nom));
-			error.addError(new RankingLoss(error, nom));
-			error.addError(new AveragePrecision(error, nom));
-			
-			/* attach model to given schema */
-			schema.attachModel(model);
-			/* iterate over tuples and compute error */
-			for (int i = 0; i < data.getNbRows(); i++) {
-				DataTuple tuple = data.getTuple(i);
-				ClusStatistic pred = model.predictWeighted(tuple);
-				error.addExample(tuple, pred);
-			}
-			if(m_RankingDescription == null){
-				setRForestDescription(error);
-			}
-			/* return the average errors */
-			errors = new double[error.getNbErrors()][2];
-			for(int i = 0; i < errors.length; i++){
-				errors[i][0] = error.getError(i).getModelError();
-				errors[i][1] = error.getError(i).shouldBeLow() ? -1.0 : 1.0;
-				
-			}			
-		}
+		}			
 		return errors;
-		
 	}
 	
 	//	returns sorted feature ranking

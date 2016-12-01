@@ -145,6 +145,18 @@ public class INIFileNominalOrIntOrVector extends INIFileEntry {
 		Arrays.sort(result);
 		return result;
 	}
+	
+	public int[] getNominalVector() {
+		if (isVector()) {
+			int[] res = new int[m_ArrayNominal.length];
+			System.arraycopy(m_ArrayNominal, 0, res, 0, m_ArrayNominal.length);
+			return res;
+		} else {
+			int[] res = new int[1];
+			res[0] = m_SingleNominal;
+			return res;
+		}
+	}
 
 	public void build(MStreamTokenizer tokens) throws IOException {
 		m_Type.setReader(true);

@@ -62,6 +62,10 @@ import clus.error.MLFOneMeasure;
 import clus.error.MLPrecision;
 import clus.error.MLROCAndPRCurve;
 import clus.error.MLRecall;
+import clus.error.MLaverageAUPRC;
+import clus.error.MLaverageAUROC;
+import clus.error.MLpooledAUPRC;
+import clus.error.MLweightedAUPRC;
 import clus.error.MSError;
 import clus.error.MSNominalError;
 import clus.error.MacroFOne;
@@ -850,7 +854,10 @@ public class ClusStatManager implements Serializable {
 			parent.addError(new MicroPrecision(parent, nom));
 			parent.addError(new MicroRecall(parent, nom));
 			parent.addError(new MicroFOne(parent, nom));
-			parent.addError(new MLROCAndPRCurve(parent, nom));
+			parent.addError(new MLaverageAUROC(parent, nom));
+			parent.addError(new MLaverageAUPRC(parent, nom));
+			parent.addError(new MLweightedAUPRC(parent, nom));
+			parent.addError(new MLpooledAUPRC(parent, nom));
 		}			
 		
 		if (num.length != 0) {

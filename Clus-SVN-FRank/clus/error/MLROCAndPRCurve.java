@@ -36,7 +36,12 @@ import clus.statistic.ClusStatistic;
  * 
  * MLROCAndPRCurve is used in multi-label classification scenario, and it is an analog of clus.error.ROCAndPRCurve.
  */
-public class MLROCAndPRCurve extends ClusNominalError{
+public abstract class MLROCAndPRCurve extends ClusNominalError{
+	
+	protected static final int averageAUROC = 0;
+	protected static final int averageAUPRC = 1;
+	protected static final int weightedAUPRC = 2;
+	protected static final int pooledAUPRC = 3;
 	
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
@@ -49,9 +54,8 @@ public class MLROCAndPRCurve extends ClusNominalError{
 	
 	protected BinaryPredictionList[] m_ClassWisePredictions;
 	protected ROCAndPRCurve[] m_ROCAndPRCurves;
-	protected int m_ErrorMeasure;
 	
-	protected double m_AverageAUROC, m_AverageAUPRC, m_WAvgAUPRC, m_PooledAUPRC;	
+	protected double m_AverageAUROC = -1.0, m_AverageAUPRC = -1.0, m_WAvgAUPRC = -1.0, m_PooledAUPRC = -1.0;	
 	
 	public MLROCAndPRCurve(ClusErrorList par, NominalAttrType[] nom) {
 		super(par, nom);
@@ -117,18 +121,22 @@ public class MLROCAndPRCurve extends ClusNominalError{
 	}
 
 	public double getModelError() {
+		throw new RuntimeException("This must be implemented by a subclas.");
+	}
+	
+	public double getModelError(int typeOfCurve){
 		computeAll();
-		switch (m_ErrorMeasure) {
-			case Settings.HIERMEASURE_AUROC:
+		switch (typeOfCurve) {
+			case averageAUROC:
 				return m_AverageAUROC;
-			case Settings.HIERMEASURE_AUPRC:
+			case averageAUPRC:
 				return m_AverageAUPRC;
-			case Settings.HIERMEASURE_WEIGHTED_AUPRC:
+			case weightedAUPRC:
 				return m_WAvgAUPRC;
-			case Settings.HIERMEASURE_POOLED_AUPRC:
+			case pooledAUPRC:
 				return m_PooledAUPRC;
 		}
-		throw new RuntimeException("Unknown type of measure: m_ErrorMeasure = " + m_ErrorMeasure);
+		throw new RuntimeException("Unknown type of curve: typeOfCurve" + typeOfCurve);
 	}
 	
 	public void computeAll() {
@@ -191,13 +199,15 @@ public class MLROCAndPRCurve extends ClusNominalError{
 	}
 
 	public void showModelError(PrintWriter out, int detail){
+		throw new RuntimeException("This must be implemented by a subclas.");
+	}
 //		NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
-		computeAll();
-		out.println();
-		out.println("      Average AUROC:            " + m_AverageAUROC);
-		out.println("      Average AUPRC:            " + m_AverageAUPRC);
-		out.println("      Average AUPRC (weighted): " + m_WAvgAUPRC);
-		out.println("      Pooled AUPRC:             " + m_PooledAUPRC);
+//		computeAll();
+//		out.println();
+//		out.println("      Average AUROC:            " + m_AverageAUROC);
+//		out.println("      Average AUPRC:            " + m_AverageAUPRC);
+//		out.println("      Average AUPRC (weighted): " + m_WAvgAUPRC);
+//		out.println("      Pooled AUPRC:             " + m_PooledAUPRC);
 //		if (m_RecallValues != null) {
 //			int nbRecalls = m_RecallValues.length;
 //			for (int i = 0; i < nbRecalls; i++) {
@@ -214,15 +224,15 @@ public class MLROCAndPRCurve extends ClusNominalError{
 //			m_ROCCurves.close();
 //			m_ROCCurves = null;
 //		}
-	}
+//	}
 
 	public String getName() {
 		return "MLROCAndPRCurve";
 	}
 
-	public ClusError getErrorClone(ClusErrorList par) {
-		return new MLROCAndPRCurve(par, m_Attrs); // TO DO: preveriti
-	}
+//	public ClusError getErrorClone(ClusErrorList par) {
+//		return new MLROCAndPRCurve(par, m_Attrs); // TO DO: preveriti
+//	}
 
 	public void addExample(DataTuple tuple, ClusStatistic pred) {			
 		double[][] probabilities = ((ClassificationStat) pred).getProbabilityPrediction(); // probabilities[i][0] = P(label_i is relevant for the example)

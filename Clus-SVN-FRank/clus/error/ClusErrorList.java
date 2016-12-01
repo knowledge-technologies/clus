@@ -316,6 +316,9 @@ public class ClusErrorList implements Serializable {
 			}
 		}
 		for (int i = 0; i < nb; i++) {
+			if (i > 16){
+				int ssdasdasdas = 32312312; // Matej
+			}
 			ClusError err1 = getError(i);
 			boolean has_models = false;
 			for (int j = 0; j < nb_models; j++) {

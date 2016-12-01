@@ -319,6 +319,7 @@ public class ClassificationStat extends ClusStatistic {
 		for (int i = 0; i < clcts.length; i++) {
 			if (clcts[i] > m_max) {
 				m_class = i;
+				m_max = clcts[i];
 			}
 		}
 		if (m_max <= MathUtil.C1E_9 && m_Training != null) {

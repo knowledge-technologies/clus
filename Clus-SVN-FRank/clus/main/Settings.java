@@ -1637,7 +1637,7 @@ public class Settings implements Serializable {
 	INIFileSection m_SectionMultiLabel;
 	protected INIFileNominalOrDoubleOrVector m_MultiLabelThreshold;
 	protected INIFileNominal m_MultiLabelOptimizeThreshold;
-	protected INIFileNominal m_MultiLabelRankingMeasure;
+	protected INIFileNominalOrIntOrVector m_MultiLabelRankingMeasure;
 	
 	public final static String[] MULTILABEL_THRESHOLD_OPTIMIZATION = {"Yes", "No"};
 	public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_YES = 0;
@@ -1674,7 +1674,7 @@ public class Settings implements Serializable {
     public final static int MULTILABEL_MEASURES_WEIGHTED_AUPRC = 18;
     public final static int MULTILABEL_MEASURES_POOLED_AUPRC = 19;
     
-    public final static int MULTILABEL_MEASURES_ALL = MULTILABEL_MEASURES.length - 1;
+    public final static int MULTILABEL_MEASURES_ALL = MULTILABEL_MEASURES.length - 1; // -1 because all is not a real error measure
 	
 	public void setSectionMultiLabelEnabled(boolean enable) {
 		m_SectionMultiLabel.setEnabled(enable);
@@ -1686,8 +1686,14 @@ public class Settings implements Serializable {
 	public INIFileNominalOrDoubleOrVector getMultiLabelTrheshold(){
 		return m_MultiLabelThreshold;
 	}
-	public int getMultiLabelRankingMeasure() {
-		return m_MultiLabelRankingMeasure.getValue();
+	public int[] getMultiLabelRankingMeasures() {
+		return m_MultiLabelRankingMeasure.getNominalVector();
+	}
+	public void setToAllMultiLabelRankingMeasures(){
+		m_MultiLabelRankingMeasure.setVector(Settings.MULTILABEL_MEASURES_ALL);
+		for(int measure = 0; measure < Settings.MULTILABEL_MEASURES_ALL; measure++){
+			m_MultiLabelRankingMeasure.setNominal(measure, measure);
+		}
 	}
 	public int getMultiLabelThresholdOptimization(){
 		return m_MultiLabelOptimizeThreshold.getValue();
@@ -2752,7 +2758,8 @@ public class Settings implements Serializable {
 		m_SectionMultiLabel.addNode(m_MultiLabelThreshold = new INIFileNominalOrDoubleOrVector("MLCThreshold", NONELIST));
 		m_MultiLabelThreshold.setDouble(0.5);
 		m_SectionMultiLabel.addNode(m_MultiLabelOptimizeThreshold = new INIFileNominal("OptimizeThresholds", MULTILABEL_THRESHOLD_OPTIMIZATION, MULTILABEL_THRESHOLD_OPTIMIZATION_YES));
-		m_SectionMultiLabel.addNode(m_MultiLabelRankingMeasure = new INIFileNominal("MultiLabelRankingMeasure", MULTILABEL_MEASURES, MULTILABEL_MEASURES_HAMMINGLOSS));
+		m_SectionMultiLabel.addNode(m_MultiLabelRankingMeasure = new INIFileNominalOrIntOrVector("MultiLabelRankingMeasure", MULTILABEL_MEASURES));
+		m_MultiLabelRankingMeasure.setInt(MULTILABEL_MEASURES_HAMMINGLOSS);
 		
 		m_SectionHierarchical = new INIFileSection("Hierarchical");
 		m_SectionHierarchical.addNode(m_HierType = new INIFileNominal("Type", HIERTYPES, 0));
