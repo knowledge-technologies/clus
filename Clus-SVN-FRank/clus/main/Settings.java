@@ -1647,9 +1647,7 @@ public class Settings implements Serializable {
 														"MacroPrecision", "MacroRecall", "MacroFOne", "MicroPrecision", "MicroRecall", "MicroFOne", // Label based measures
 														"OneError", "Coverage", "RankingLoss", "AveragePrecision",									// Ranking based measures
 														"AverageAUROC", "AverageAUPRC", "WeightedAverageAUPRC", "PooledAUPRC",						// ROC- and PR-curves based measures 
-														"all"};																						// all previous errors
-	public final static int NB_MULTILABEL_MEASURES = MULTILABEL_MEASURES.length - 1; // - all
-	
+														"all"};																						// all previous errors: must be the last!
 	public final static int MULTILABEL_MEASURES_HAMMINGLOSS = 0;
 	public final static int MULTILABEL_MEASURES_MLACCURACY = 1;
 	public final static int MULTILABEL_MEASURES_MLPRECISION = 2;
@@ -1674,7 +1672,7 @@ public class Settings implements Serializable {
     public final static int MULTILABEL_MEASURES_WEIGHTED_AUPRC = 18;
     public final static int MULTILABEL_MEASURES_POOLED_AUPRC = 19;
     
-    public final static int MULTILABEL_MEASURES_ALL = MULTILABEL_MEASURES.length - 1; // -1 because all is not a real error measure
+    public final static int MULTILABEL_MEASURES_ALL = MULTILABEL_MEASURES.length - 1; // must be the last in MULTILABEL_MEASURES
 	
 	public void setSectionMultiLabelEnabled(boolean enable) {
 		m_SectionMultiLabel.setEnabled(enable);

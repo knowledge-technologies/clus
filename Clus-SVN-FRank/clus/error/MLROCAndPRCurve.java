@@ -198,9 +198,7 @@ public abstract class MLROCAndPRCurve extends ClusNominalError{
 //		}
 	}
 
-	public void showModelError(PrintWriter out, int detail){
-		throw new RuntimeException("This must be implemented by a subclas.");
-	}
+	public abstract void showModelError(PrintWriter out, int detail);
 //		NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
 //		computeAll();
 //		out.println();
