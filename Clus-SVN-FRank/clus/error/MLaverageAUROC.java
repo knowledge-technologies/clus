@@ -24,7 +24,7 @@ public class MLaverageAUROC extends MLROCAndPRCurve {
 	public void showModelError(PrintWriter out, int detail){
 		NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
 		computeAll();
-		out.println(getName() + " " + fr1.format(m_AverageAUROC));
+		out.println(fr1.format(m_AverageAUROC));
 	}
 	public ClusError getErrorClone(ClusErrorList par) {
 		return new MLaverageAUROC(par, m_Attrs);

@@ -22,7 +22,7 @@ public class MLaverageAUPRC extends MLROCAndPRCurve {
 	public void showModelError(PrintWriter out, int detail){
 		NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
 		computeAll();
-		out.println(getName() + " " + fr1.format(m_AverageAUPRC));
+		out.println(fr1.format(m_AverageAUPRC));
 	}
 
 	public ClusError getErrorClone(ClusErrorList par) {

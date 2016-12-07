@@ -294,18 +294,24 @@ public class SubsetSplit extends NominalSplit {
 			// Handle binary splits efficiently
 			card = 1;
 			isin[0] = true;
-			ClusStatistic CStat = node.m_TestStat[0];
-			bheur = node.calcHeuristic(m_MStat, CStat);
-			showTest(type, isin, -1, bheur, m_MStat, CStat);
-			pos_freq = CStat.m_SumWeight / m_MStat.m_SumWeight;
+			m_PStat.reset();
+			for (int j = 0; j < nbvalues; j++) { // for loop in not really necessary, we simply follow the style from the else case
+				if (isin[j]) {//if selected
+					m_PStat.add(node.m_TestStat[j]);
+				}
+			}			
+																	// <---	ClusStatistic CStat = node.m_TestStat[0];
+			bheur = node.calcHeuristic(m_MStat, m_PStat); 			// <--- bheur = node.calcHeuristic(m_MStat, CStat);
+			showTest(type, isin, -1, bheur, m_MStat, m_PStat); 		// <--- showTest(type, isin, -1, bheur, m_MStat, CStat);
+			pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;	// <--- CStat.m_SumWeight / m_MStat.m_SumWeight;
 			
+	
 			boolean acc_test = node.m_IsAcceptable &&
-							   (m_MStat.m_SumWeight >= 4.0) && (CStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - CStat.m_SumWeight) >= 2.0) &&
-							   (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
+					   (m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) &&
+					   (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);  //	<--- boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0) && (CStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - CStat.m_SumWeight) >= 2.0) &&  (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);			
 			if (acc_test){//select only meaningful splits
 				found_test = true;
-			}
-			
+			}			
 			
 		}
 		else if ((ClusStatManager.getMode() == ClusStatManager.MODE_PHYLO) && (Settings.m_PhylogenySequence.getValue() == Settings.PHYLOGENY_SEQUENCE_DNA)) {

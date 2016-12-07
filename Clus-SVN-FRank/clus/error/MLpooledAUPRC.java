@@ -24,7 +24,7 @@ public class MLpooledAUPRC extends MLROCAndPRCurve {
 	public void showModelError(PrintWriter out, int detail){
 		NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
 		computeAll();
-		out.println(getName() + " " + fr1.format(m_PooledAUPRC));
+		out.println(fr1.format(m_PooledAUPRC));
 	}
 
 	public ClusError getErrorClone(ClusErrorList par) {
