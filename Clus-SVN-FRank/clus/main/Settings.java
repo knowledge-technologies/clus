@@ -1790,7 +1790,58 @@ public class Settings implements Serializable {
 		return m_HierUseMEstimate.getValue();
 	}
 
+
 /***********************************************************************
+ * Section: Hierarchical multi-target regression                       *
+ ***********************************************************************/
+
+    public final static String[] HMTR_HIERTYPES = { "Tree", "DAG" };
+    public final static int HMTR_HIERTYPE_TREE = 0;
+    public final static int HMTR_HIERTYPE_DAG = 1;
+
+    public final static String[] HMTR_HIERDIST = { "WeightedEuclidean", "Jaccard" };
+    public final static int HMTR_HIERDIST_WEIGHTED_EUCLIDEAN = 0;
+    public final static int HMTR_HIERDIST_JACCARD = 1;
+
+    public final static String[] HMTR_AGGS = { "SUM", "AVG", "MEDIAN", "MIN", "MAX", "AND", "OR", "COUNT", "VAR", "STDEV" };
+    public final static int HMTR_AGG_SUM = 0;
+    public final static int HMTR_AGG_AVG = 1;
+    public final static int HMTR_AGG_MEDIAN = 2;
+    public final static int HMTR_AGG_MIN = 3;
+    public final static int HMTR_AGG_MAX = 4;
+    public final static int HMTR_AGG_AND = 5;
+    public final static int HMTR_AGG_OR = 6;
+    public final static int HMTR_AGG_COUNT = 7;
+    public final static int HMTR_AGG_VAR = 8;
+    public final static int HMTR_AGG_STDEV = 9;
+
+    INIFileSection m_SectionHMTR;
+    protected INIFileNominal m_HMTRType;
+    protected INIFileNominal m_HMTRDistance;
+    protected INIFileNominal m_HMTRAggregation;
+
+
+    public INIFileSection getSectionHMTREnabled() {
+        return m_SectionHMTR;
+    }
+
+    public void setSectionHMTREnabled(boolean enable) {
+        m_SectionHMTR.setEnabled(enable);
+    }
+
+    public INIFileNominal getHMTRType() {
+        return m_HMTRType;
+    }
+
+    public INIFileNominal getHMTRDistance() {
+        return m_HMTRDistance;
+    }
+
+    public INIFileNominal getHMTRAggregation() {
+        return m_HMTRAggregation;
+    }
+
+    /***********************************************************************
  * Section: Instance level constraints                                 *
  ***********************************************************************/
 
@@ -2740,8 +2791,13 @@ public class Settings implements Serializable {
 		m_SectionHierarchical.addNode(m_HierEvalClasses = new INIFileString("EvalClasses", NONE));
 		m_SectionHierarchical.addNode(m_HierUseMEstimate = new INIFileBool("MEstimate", false));
 		m_SectionHierarchical.setEnabled(false);
-		
-		
+
+        m_SectionHMTR = new INIFileSection("HMTR");
+        m_SectionHMTR.addNode(m_HMTRType = new INIFileNominal("Type", HMTR_HIERTYPES, 0));
+        m_SectionHMTR.addNode(m_HMTRDistance = new INIFileNominal("Distance", HMTR_HIERDIST, 0));
+        m_SectionHMTR.addNode(m_HMTRAggregation = new INIFileNominal("Aggregation", HMTR_AGGS, 0));
+        m_SectionHMTR.setEnabled(false);
+
 		m_SectionILevelC = new INIFileSection("ILevelC");
 		m_SectionILevelC.addNode(m_ILevelCAlpha = new INIFileDouble("Alpha", 0.5));
 		m_SectionILevelC.addNode(m_ILevelCFile = new INIFileString("File", NONE));
@@ -2875,6 +2931,7 @@ public class Settings implements Serializable {
 		m_Ini.addNode(m_SectionRules);
 		m_Ini.addNode(m_SectionMultiLabel);
 		m_Ini.addNode(m_SectionHierarchical);
+		m_Ini.addNode(m_SectionHMTR);
 		m_Ini.addNode(m_SectionILevelC);
 		m_Ini.addNode(m_SectionBeam);
 		m_Ini.addNode(m_SectionExhaustive);
