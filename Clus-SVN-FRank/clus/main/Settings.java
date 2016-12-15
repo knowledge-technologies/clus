@@ -1829,6 +1829,10 @@ public class Settings implements Serializable {
         m_SectionHMTR.setEnabled(enable);
     }
 
+    public boolean isSectionHMTREnabled() {
+		return m_SectionHMTR.isEnabled();
+	}
+
     public INIFileNominal getHMTRType() {
         return m_HMTRType;
     }

@@ -37,6 +37,7 @@ import clus.model.ClusModel;
 import clus.pruning.*;
 
 import clus.ext.hierarchical.*;
+import clus.ext.hierarchicalmtr.*;
 import clus.ext.semisupervised.ModifiedGainHeuristic;
 import clus.ext.semisupervised.SemiSupMinLabeledWeightStopCrit;
 import clus.ext.sspd.*;
@@ -82,6 +83,8 @@ public class ClusStatManager implements Serializable {
 	
 	public final static int MODE_BEAM_SEARCH = 8;
 
+	public final static int MODE_HIERARCHICAL_MTR = 9;
+
 	protected static int m_Mode = MODE_NONE;
 
 	protected transient ClusHeuristic m_Heuristic;
@@ -106,6 +109,8 @@ public class ClusStatManager implements Serializable {
 	protected ClusNormalizedAttributeWeights m_DispersionWeights;
 
 	protected ClassHierarchy m_Hier;
+
+	protected ClassHMTRHierarchy m_HMTRHier;
 
 	protected SSPDMatrix m_SSPDMtrx;
 
@@ -148,6 +153,10 @@ public class ClusStatManager implements Serializable {
 		// System.out.println("ClusStatManager.getHier/0 called");
 		return m_Hier;
 	}
+
+    public final ClassHMTRHierarchy getHMTRHier() {
+        return m_HMTRHier;
+    }
 
 	public void initStatisticAndStatManager() throws ClusException, IOException {
 		initWeights();
@@ -375,6 +384,10 @@ public class ClusStatManager implements Serializable {
 		if (m_Settings.isBeamSearchMode() && (m_Settings.getBeamSimilarity() != 0.0)){
 			m_Mode = MODE_BEAM_SEARCH;
 		}
+
+        if (m_Settings.isSectionHMTREnabled()){
+            m_Mode = MODE_HIERARCHICAL_MTR;
+        }
 		
 		if (nb_types == 0) {
 			System.err.println("No target value defined");
@@ -472,6 +485,9 @@ public class ClusStatManager implements Serializable {
 				setTargetStatistic(new HierSumPairwiseDistancesStat(m_Hier, dist, getCompatibility()));
 			}
 			break;
+        case MODE_HIERARCHICAL_MTR:
+            if (m_Settings.getVerbose()>0) System.out.println("HIERARCHICAL MTR");
+        break;
 		case MODE_SSPD:
 			ClusAttrType[] target = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
 			m_SSPDMtrx.setTarget(target);
