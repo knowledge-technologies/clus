@@ -56,6 +56,7 @@ import clus.error.multiscore.*;
 import clus.statistic.*;
 import clus.selection.*;
 import clus.ext.hierarchical.*;
+import clus.ext.hierarchicalmtr.*;
 import clus.ext.beamsearch.*;
 import clus.ext.ensembles.*;
 import clus.ext.exhaustivesearch.*;
@@ -105,6 +106,7 @@ public class Clus implements CMDLineArgsProvider {
 	protected Date m_StartDate = new Date();
 	protected boolean isxval = false;
 	protected CMDLineArgs m_CmdLine;
+	protected ClassHMTRHierarchy m_HmtrHierarchy = new ClassHMTRHierarchy("default");
 
 	public final void initialize(CMDLineArgs cargs,	ClusInductionAlgorithmType clss) throws IOException, ClusException {
 		m_CmdLine = cargs;
@@ -113,6 +115,11 @@ public class Clus implements CMDLineArgsProvider {
 		boolean test = m_Sett.getResourceInfoLoaded() == Settings.RESOURCE_INFO_LOAD_TEST;
 		ResourceInfo.loadLibrary(test);
 		// Load settings file
+        if(m_Sett.isSectionHMTREnabled()) {
+            System.out.println("Creating hierarchy for HMTR\n");
+            m_HmtrHierarchy.createHMTRHierarchy(m_Sett.getHMTRHierarchyString().getStringValue());
+            m_HmtrHierarchy.printHierarchy();
+        }
 		ARFFFile arff = null;
 		if(m_Sett.getVerbose() > 0) System.out.println("Loading '" + m_Sett.getAppName() + "'");
 		ClusRandom.initialize(m_Sett);

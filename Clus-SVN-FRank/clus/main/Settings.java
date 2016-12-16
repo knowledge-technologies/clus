@@ -1819,6 +1819,7 @@ public class Settings implements Serializable {
     protected INIFileNominal m_HMTRType;
     protected INIFileNominal m_HMTRDistance;
     protected INIFileNominal m_HMTRAggregation;
+    protected INIFileString m_HMTRHierarchyString;
 
 
     public INIFileSection getSectionHMTREnabled() {
@@ -1845,7 +1846,11 @@ public class Settings implements Serializable {
         return m_HMTRAggregation;
     }
 
-    /***********************************************************************
+	public INIFileString getHMTRHierarchyString() {
+		return m_HMTRHierarchyString;
+	}
+
+/***********************************************************************
  * Section: Instance level constraints                                 *
  ***********************************************************************/
 
@@ -2800,6 +2805,7 @@ public class Settings implements Serializable {
         m_SectionHMTR.addNode(m_HMTRType = new INIFileNominal("Type", HMTR_HIERTYPES, 0));
         m_SectionHMTR.addNode(m_HMTRDistance = new INIFileNominal("Distance", HMTR_HIERDIST, 0));
         m_SectionHMTR.addNode(m_HMTRAggregation = new INIFileNominal("Aggregation", HMTR_AGGS, 0));
+        m_SectionHMTR.addNode(m_HMTRHierarchyString = new INIFileString("Hierarchy"));
         m_SectionHMTR.setEnabled(false);
 
 		m_SectionILevelC = new INIFileSection("ILevelC");
