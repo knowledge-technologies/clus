@@ -66,9 +66,8 @@ public abstract class ClusError implements Serializable {
 		this(par, 0);
 	}
 
+	/** Should this error be minimized (e.g. RRSE) or maximized (e.g. accuracy)? True by default. */
 	public boolean shouldBeLow() {
-		// errors should normally be small to be good
-		// measures such as accuracy should overwrite this method to return false (in the subclass)
 		return true;
 	}
 
@@ -76,6 +75,10 @@ public abstract class ClusError implements Serializable {
 		return false;
 	}
 
+	/** 
+	 * @param name of the model
+	 * @return can this error be used for the model?
+	 */
 	public boolean isComputeForModel(String name) {
 		return true;
 	}
@@ -132,12 +135,16 @@ public abstract class ClusError implements Serializable {
  * Inspectors
  ***************************************************************************/
 
-	// getModelError() returns the error averaged over all targets
+	/**
+	 * @return the error averaged over all targets
+	 */
 	public double getModelError() {
 		return getModelErrorAdditive() / getNbExamples();
 	}
 
-	// getModelErrorAdditive() returns the error NOT divided by the number of examples
+	/**
+	 * @return the error NOT divided by the number of examples
+	 */
 	public double getModelErrorAdditive() {
 		System.out.println(getClass().getName()+"::getModelErrorAdditive() not implemented!");
 		return 0.0;
