@@ -67,6 +67,7 @@ import clus.error.MLaverageAUROC;
 import clus.error.MLpooledAUPRC;
 import clus.error.MLweightedAUPRC;
 import clus.error.MSError;
+import clus.error.MSEBiasVar;
 import clus.error.MSNominalError;
 import clus.error.MacroFOne;
 import clus.error.MacroPrecision;
@@ -863,6 +864,7 @@ public class ClusStatManager implements Serializable {
 		if (num.length != 0) {
 			parent.addError(new AbsoluteError(parent, num));
 			parent.addError(new MSError(parent, num));
+			parent.addError(new MSEBiasVar(parent, num));
 			parent.addError(new RMSError(parent, num));
 			if (getSettings().hasNonTrivialWeights()) {
 				parent.addError(new RMSError(parent, num, m_NormalizationWeights));

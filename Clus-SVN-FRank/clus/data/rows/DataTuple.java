@@ -36,20 +36,43 @@ public class DataTuple implements Serializable {
 	protected ClusSchema m_Schema;
 
 	// Attributes can have several base types
-	public int[] m_Ints; // nominal attributes
+	/**
+	 * Nominal attributes of the tuple.
+	 */
+	public int[] m_Ints; 
+	
+	/**
+	 * Numeric attributes of the tuple.
+	 */
 	public double[] m_Doubles;
+	
+	/**
+	 * Structured attributes of the tuple.
+	 */
 	public Object[] m_Objects;
 
-	// Each example can have a weight
+	/**
+	 *  Wight of the tuple.
+	 */
 	public double m_Weight;
+	
+	/**
+	 * Unknown
+	 */
 	public int m_Index;
 
-	// Hack for efficient xval, should be replaced later
+	/**
+	 *  Hack for efficient xval, should be replaced later.
+	 */
 	public int[] m_Folds;
 
 	protected DataTuple() {
 	}
 
+	/**
+	 * Creates a dummy DataTuple of a given schema.
+	 * @param schema of the returned tuple
+	 */
 	public DataTuple(ClusSchema schema) {
 		// Initialize arrays for three base types
 		int nb_int = schema.getNbInts();
@@ -73,12 +96,16 @@ public class DataTuple implements Serializable {
 		return m_Schema;
 	}
 
+	
 	public DataTuple cloneTuple() {
 		DataTuple res = new DataTuple();
 		cloneTuple(res);
 		return res;
 	}
 	
+	/**
+	 * @param res where the tuple should be cloned to
+	 */
 	public void cloneTuple(DataTuple res) {
 		res.m_Ints = m_Ints;
 		res.m_Doubles = m_Doubles;
@@ -89,6 +116,13 @@ public class DataTuple implements Serializable {
 		res.m_Schema = m_Schema;
 	}
 
+	/**
+	 * Calculates euclidean distance between numeric attributes of two tuples.
+	 * Does not check whether the tuples have the same schema or the same number
+	 * of numeric attributes.
+	 * @param other tuple
+	 * @return euclidean distance
+	 */
 	public double euclDistance(DataTuple other)
 	{
 		double result = 0;
@@ -122,25 +156,41 @@ public class DataTuple implements Serializable {
 		return res;
 	}
 
+	/**
+	 * @param weight
+	 * @return cloned tuple with the specified weight
+	 */
 	public final DataTuple changeWeight(double weight) {
 		DataTuple res = cloneTuple();
 		res.m_Weight = weight;
 		return res;
 	}
 
-	public final DataTuple multiplyWeight(double weight) {
+	/**
+	 * 
+	 * @param factor
+	 * @return cloned tuple with the original weight multiplied by the factor
+	 */
+	public final DataTuple multiplyWeight(double factor) {
 		DataTuple res = cloneTuple();
-		res.m_Weight = m_Weight * weight;
+		res.m_Weight = m_Weight * factor;
 		return res;
 	}
 
 	public final int getClassification() { // should not be used
-		return -1;
+	    throw new RuntimeException("Should not be used");
+		//return -1;
 	}
 
+	/**
+	 * Checks if the numeric attribute at a specified location is missing.
+	 * @param idx index of the numeric attribute to check
+	 * @return is the attribute missing?
+	 */
 	public final boolean hasNumMissing(int idx) {
 		return m_Doubles[idx] == Double.POSITIVE_INFINITY;
 	}
+
 
 	public final double getDoubleVal(int idx) {
 		return m_Doubles[idx];
