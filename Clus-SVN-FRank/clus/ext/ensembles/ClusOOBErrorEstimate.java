@@ -114,9 +114,15 @@ public class ClusOOBErrorEstimate {
 			//this should have a [][].for each attribute we store: Majority: the winning class, for Probability distribution, the class distribution
 			ClassificationStat stat = (ClassificationStat)model.predictWeighted(tuple);
 			switch (Settings.m_ClassificationVoteType.getValue()){//default is Majority Vote
-				case 0: m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));break;
-				case 1: m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToProbabilityDistribution(stat.m_ClassCounts));break;
-				default: m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
+				case 0:
+					m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
+					break;
+				case 1:
+					m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToProbabilityDistribution(stat.m_ClassCounts));
+					break;
+				default:
+					m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
+					break;
 			}
 		}
 	}
@@ -149,9 +155,15 @@ public class ClusOOBErrorEstimate {
 			ClassificationStat stat =(ClassificationStat) model.predictWeighted(tuple);
 			double[][] predictions = stat.m_ClassCounts.clone();
 			switch (Settings.m_ClassificationVoteType.getValue()){//default is Majority Vote
-				case 0: predictions = ClusEnsembleInduceOptimization.transformToMajority(predictions);break;
-				case 1: predictions = ClusEnsembleInduceOptimization.transformToProbabilityDistribution(predictions);break;
-				default: predictions = ClusEnsembleInduceOptimization.transformToMajority(predictions);
+				case 0:
+					predictions = ClusEnsembleInduceOptimization.transformToMajority(predictions);
+					break;
+				case 1:
+					predictions = ClusEnsembleInduceOptimization.transformToProbabilityDistribution(predictions);
+					break;
+				default:
+					predictions = ClusEnsembleInduceOptimization.transformToMajority(predictions);
+					break;
 			}
 			double[][] sum_predictions = (double[][])m_OOBPredictions.get(tuple.hashCode());
 			sum_predictions = ClusEnsembleInduceOptimization.incrementPredictions(sum_predictions, predictions);
@@ -159,7 +171,7 @@ public class ClusOOBErrorEstimate {
 		}
 	}
 	
-	public final void calcOOBError(OOBSelection oob_tot, RowData all_data, int type, ClusRun cr) throws IOException, ClusException {
+	public final void calcOOBError(OOBSelection oob_tot, RowData all_data, 	 int type, ClusRun cr) throws IOException, ClusException {
 		ClusSchema mschema = all_data.getSchema();
 //		if (iter.shouldAttach()) attachModels(mschema, cr);
 		cr.initModelProcessors(type, mschema);

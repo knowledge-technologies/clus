@@ -23,7 +23,6 @@
 package clus.error;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
@@ -34,7 +33,7 @@ import clus.statistic.ClusStatistic;
 /**
  * @author matejp
  * 
- * MLROCAndPRCurve is used in multi-label classification scenario, and it is an analog of clus.error.ROCAndPRCurve.
+ * MLROCAndPRCurve is used in multi-label classification scenario, and it is an analogue of clus.error.ROCAndPRCurve.
  */
 public abstract class MLROCAndPRCurve extends ClusNominalError{
 	
@@ -228,18 +227,12 @@ public abstract class MLROCAndPRCurve extends ClusNominalError{
 		return "MLROCAndPRCurve";
 	}
 
-//	public ClusError getErrorClone(ClusErrorList par) {
-//		return new MLROCAndPRCurve(par, m_Attrs); // TO DO: preveriti
-//	}
-
 	public void addExample(DataTuple tuple, ClusStatistic pred) {			
 		double[][] probabilities = ((ClassificationStat) pred).getProbabilityPrediction(); // probabilities[i][0] = P(label_i is relevant for the example)
 		NominalAttrType attr;
-		boolean atLeastOneKnown = false;
 		for(int i = 0; i < m_Dim; i++){
 			attr = getAttr(i);
 			if(!attr.isMissing(tuple)){
-				atLeastOneKnown = true;
 				boolean groundTruth = attr.getNominal(tuple) == 0; // label relevant for tuple IFF attr.getNominal(tuple) == 0
 				m_ClassWisePredictions[i].addExample(groundTruth, probabilities[i][0]);				
 			}
@@ -252,6 +245,8 @@ public abstract class MLROCAndPRCurve extends ClusNominalError{
 	//NEDOTAKNJENO
 	public void addInvalid(DataTuple tuple) {
 	}
+	
+	public abstract ClusError getErrorClone(ClusErrorList par);
 
 }
 

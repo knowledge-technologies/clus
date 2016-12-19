@@ -3,6 +3,7 @@ package clus.algo.Relief;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 
@@ -14,43 +15,70 @@ import clus.data.type.NumericAttrType;
 import clus.data.type.StringAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.ext.ensembles.ClusEnsembleFeatureRanking;
+import clus.ext.hierarchical.ClassHierarchy;
+import clus.ext.hierarchical.ClassesAttrType;
+import clus.ext.hierarchical.ClassesTuple;
+import clus.ext.hierarchical.ClassesValue;
 import clus.ext.timeseries.DTWTimeSeriesDist;
 import clus.ext.timeseries.QDMTimeSeriesDist;
 import clus.ext.timeseries.TSCTimeSeriesDist;
 import clus.ext.timeseries.TimeSeries;
 import clus.main.Settings;
 import clus.util.ClusException;
+import jeans.math.MathUtil;
 /**
  * 
  * @author matejp
  *
  */
 public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
-	private int m_NbNeighbours;						// number of neighours considered in the importances calculation
-	private int m_NbIterations;						// number of iterations considered in the importances calculation
-	private boolean m_WeightNeighbours;				// is contribution of the neighbours is weighted?
-	private double m_Sigma;							// >= 0, see m_NeighbourWeights, m_Sigma == 0 <=> m_WeightNeighbours == false
-	private double[] m_NeighbourWeights;			// value on the i-th place is exp((- m_Sigma * i)**2)
+	/** number of neighbours in the importances calculation */
+	private int m_NbNeighbours;
+	/** number of iterations in the importances calculation */
+	private int m_NbIterations;
+	/** Tells, whether the contributions of the neighbours are weighted */
+	private boolean m_WeightNeighbours;
+	/** >= 0, see m_NeighbourWeights, m_Sigma == 0 <=> m_WeightNeighbours == false */
+	private double m_Sigma;
+	/** Weights for the contributions of the nearest neighbours. Value on the i-th place is exp((- m_Sigma * i)**2). */
+	private double[] m_NeighbourWeights;
 
+	/** {array of descriptive attributes, array of target attributes} */
+	private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][];
 	
-	private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][];	// {array of descriptive attributes, array of target attributes}
+	/** number of descriptive attributes */
+	private int m_NbDescriptiveAttrs;
+	/** number of target attributes */
+	private int m_NbTargetAttrs;
 	
-	private int m_NbDescriptiveAttrs, m_NbTargetAttrs;		// number of descriptive and target attributes, respectively
+	/** {numericAttributeName:  minimalValueOfTheAttribute, ...} */
+	private HashMap<String, Double> m_numMins;
+	/** {numericAttributeName:  maximalValueOfTheAttribute, ...} */
+	private HashMap<String, Double> m_numMaxs; 
+	/** number of examples in the data */
+	private int m_NbExamples;
+	/** distance in the case of missing values */
+	double m_bothMissing = 1.0;
+	/** Tells whether the next instance generator is deterministic (if and only if m_NbIterations == m_NbExamples) */
+	boolean m_isDeterministic; 
+	/** Random generator for sampling of the next instance. It is used iff not m_isDeterministic */
+	Random m_rnd = new Random(1234);
+	/** standard classification or general case */
+	boolean m_isStandardClassification;
+	/** number of target values: if m_isStandardClassification: the number of classes, else: 1 */
+	int m_NbTargetValues;
+	/** relative frequencies of the target values, used in standard classification */
+	double[] m_targetProbabilities;
+	/** type of the time series distance */
+	int m_TimeSeriesDistance;
+	/** Hash map for hierarchical attributes: {attributeName: hierarchy, ... } */
+	private HashMap<String, ClassHierarchy> m_Hierarchies = new HashMap<String, ClassHierarchy>();
+	/** Weight used in Weighted Euclidean distance for hierarchical attributes */
+	private double m_HierarWeight = -1.0;
 	
-	
-	private HashMap<String, Double> m_numMins, m_numMaxs;	// min and max for each numeric attribute
-	private int m_NbExamples;								// number of examples in the data		
-	double m_bothMissing = 1.0;								// distances in the case of missing values
-	boolean m_isDeterministic;								// tells whether the next instance generator is deterministic (if and only if m_NbIterations == m_NbExamples)
-	Random m_rnd = new Random(1234);						// random generator that is used iff not m_isDeterministic
-	boolean m_isStandardClassification;						// standard classification or general case
-	int m_NbTargetValues;									// number of target values: if m_isStandardClassification: the number of classes, else: 1
-	double[] m_targetProbabilities;							// relative frequencies of the target values
-	
-	int m_TimeSeriesDistance; 								// type of the time series distance
 	
 	/**
-	 * Contructor for the {@code ClusReliefFeatureRanking}, with the standard parameters of (R)Relief(F).
+	 * Constructor for the {@code ClusReliefFeatureRanking}, with the standard parameters of (R)Relief(F).
 	 * @param neighbours The number of neighbours that is used in the feature importance calculation. Constraints: <p>{@code 0 < neighbours <= number of instances in the dataset}
 	 * @param iterations The number of iterations in the feature importance calculation. Constraints: <p> {@code 0 < iterations <= number of instances in the dataset}
 	 * @param weightNeighbours If {@code weightNeighbours}, then the contribution of the {@code i}-th nearest neighbour in the feature importance calculation are weighted with factor {@code exp((- sigma * i) ** 2)}.
@@ -82,7 +110,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 		m_NbExamples = data.getNbRows();
 		m_isDeterministic = m_NbExamples == m_NbIterations;
 		
-		// initialize descriptive and target attributes if necessary
+		// Initialise descriptive and target attributes if necessary
 		int attrType;
 		for(int space = 0; space < 2; space++){
 			attrType = space == 0 ? ClusAttrType.ATTR_USE_DESCRIPTIVE : ClusAttrType.ATTR_USE_TARGET;
@@ -101,8 +129,8 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 				m_targetProbabilities[attr.getNominal(data.getTuple(example))] += 1.0;
 			}
 			if(m_NbExamples > m_targetProbabilities[m_NbTargetValues]){ // otherwise: m_TargetProbabilities = {0, 0, ... , 0, m_NbExamples}
-				// normalize probabilities: examples with unknown targets are ignored
-				// The formula for standard classification class weighting still holds (sum over other classes of P(other class) / (1 - P(class)) equals 1)
+				// Normalise probabilities: examples with unknown targets are ignored
+				// The formula for standard classification class weighting still holds, i.e. sum over other classes of P(other class) / (1 - P(class)) equals 1
 				for(int value = 0; value < m_NbTargetValues; value++){
 					m_targetProbabilities[value] /= m_NbExamples - m_targetProbabilities[m_NbTargetValues];
 				}
@@ -132,6 +160,22 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 				}
 			}			
 		}
+		
+		// check for hierarchical attributes
+		for(int space = 0; space < 2; space++){
+			for(int attrInd = 0; attrInd < m_DescriptiveTargetAttr[space].length; attrInd++){
+				if(m_DescriptiveTargetAttr[space][attrInd] instanceof ClassesAttrType){
+					ClassesAttrType attr = (ClassesAttrType) m_DescriptiveTargetAttr[space][attrInd];
+					m_Hierarchies.put(attr.getName(), attr.getHier());
+					if (m_HierarWeight < 0){
+						m_HierarWeight = data.getSchema().getSettings().getHierWParam();
+						if(m_HierarWeight < MathUtil.C1E_6 || m_HierarWeight > 1.0 -  MathUtil.C1E_6 ){
+							throw new RuntimeException("The condition 10^-6 <= m_HierarWeight <= 1 - 10^-6 is broken: " + m_HierarWeight);
+						}
+					} 
+				}
+			}
+		}
 
 		// attribute relevance estimation
 		double[] sumDistAttr = new double[m_NbDescriptiveAttrs];
@@ -149,7 +193,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			if(!(m_isStandardClassification && m_DescriptiveTargetAttr[1][0].isMissing(tuple))){
 				successfulItearions++;
 				nearestNeighbours = findNearestNeighbours(tupleInd, data);
-				// CALCULATE IMPORTANCES
+				// CALCULATE THE SUMS OF DISTANCES
 				for(int targetValue = 0; targetValue < m_NbTargetValues; targetValue++){
 					double tempSumDistTarget = 0.0;
 					double[] tempSumDistAttr = new double[m_NbDescriptiveAttrs];
@@ -199,7 +243,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	 * Computes the nearest neighbours of example with index {@code tupleInd} in the dataset {@code data}.
 	 * @param tupleInd Row index of the example in the dataset {@code data}, whose nearest neighbours are computed.
 	 * @param data The dataset
-	 * @return An array of {@code m_NbTargetValues} arrays of {@code NearestNeighbour}s. Each of the arrays belongs to one target value and
+	 * @return An array of {@code m_NbTargetValues} arrays of {@link NearestNeighbour}s. Each of the arrays belongs to one target value and
 	 * is sorted decreasingly with respect to the distance(neighbour, considered tuple).
 	 * @throws ClusException
 	 */
@@ -234,7 +278,6 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	        			        }
 	        			    }
 	        			    isSorted[targetValue] = true;
-	        				
 	        			}       			
         			} else{
         				sortingNeeded = true;
@@ -317,8 +360,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			return calculateTimeSeriesDist1D(t1, t2, (TimeSeriesAttrType) attr);
 		} else if(attr instanceof StringAttrType){
 			return calculateStringDist1D(t1, t2, (StringAttrType) attr);
+		} else if(attr instanceof ClassesAttrType){			
+			return calculateHierarchicalDist1D(t1, t2, (ClassesAttrType) attr);
 		} else{
-			throw new ClusException("Unknown attribute type for attribute " + attr.getName());
+			throw new ClusException("Unknown attribute type for attribute " + attr.getName() + ": " + attr.getClass().toString());
 		}
     	
     }
@@ -416,6 +461,44 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     public double calculateStringDist1D(DataTuple t1, DataTuple t2, StringAttrType attr){
     	return new Levenshtein(t1, t2, attr).getDist();    	
     }
+    /**
+     * Calculates the weighted Euclidean distance between the two classes in the hierarchy, where the weight of
+     * a label is {@code m_HierarWeight^depth}. The distance is at the end normalised by the upper bound
+     * {@code m_HierarWeight / (1 - m_HierarWeight)}.
+     * @param t1 First tuple
+     * @param t2 Second tuple
+     * @param attr The dimension in which the distance between {@code t1} and {@code t2} is computed. 
+     * @return Normalised weighted Euclidean distance. 
+     */
+    public double calculateHierarchicalDist1D(DataTuple t1, DataTuple t2, ClassesAttrType attr){
+    	ClassHierarchy hier = m_Hierarchies.get(attr.getName());
+    	double upperBound = m_HierarWeight / (1.0 - m_HierarWeight);
+    	int sidx = hier.getType().getArrayIndex();
+		ClassesTuple tp1 = (ClassesTuple) t1.getObjVal(sidx);
+		ClassesTuple tp2 = (ClassesTuple) t2.getObjVal(sidx);
+		HashSet<Integer> symmetricDifferenceOfLabelSets = new HashSet<Integer>();
+		
+		// add labels for t1
+		for (int j = 0; j < tp1.getNbClasses(); j++) {
+			int labelIndex = tp1.getClass(j).getIndex();
+			symmetricDifferenceOfLabelSets.add(labelIndex);
+		}
+		// remove the intersection labels of t1 and t2, and add labels(t2) - labels(t1)
+		for (int j = 0; j < tp2.getNbClasses(); j++){
+			int labelIndex = tp2.getClass(j).getIndex();
+			if(symmetricDifferenceOfLabelSets.contains(labelIndex)){
+				symmetricDifferenceOfLabelSets.remove(labelIndex);
+			} else {
+				symmetricDifferenceOfLabelSets.add(labelIndex);
+			}
+		}    	
+    	double dist = 0.0;
+    	for(int labelIndex : symmetricDifferenceOfLabelSets){
+    		dist += hier.getWeight(labelIndex);    		
+    	}
+    	return dist / upperBound;
+    }
+    
     
 	public void sortFeatureRanks(){
 		Iterator iter = m_AllAttributes.keySet().iterator();

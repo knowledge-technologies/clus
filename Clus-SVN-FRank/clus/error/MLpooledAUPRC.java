@@ -28,6 +28,6 @@ public class MLpooledAUPRC extends MLROCAndPRCurve {
 	}
 
 	public ClusError getErrorClone(ClusErrorList par) {
-		return new MLpooledAUPRC(par, m_Attrs);
+		return new MLpooledAUPRC(par, m_Attrs); 
 	}
 }

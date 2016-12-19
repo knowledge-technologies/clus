@@ -31,7 +31,7 @@ import clus.statistic.ClusDistance;
 // todo: implement distance for ordinary attributes
 
 /**
- * @author Mitja Pugelj
+ * @author Mitja Pugelj and matejp
  */
 
 /**
@@ -50,26 +50,19 @@ public class EuclideanDistance extends ClusDistance{
 
     /**
      * Returns the Euclidean distance between given tuples.
-     * @param t1
-     * @param t2
+     * @param t1 The first tuple
+     * @param t2 The second tuple
      * @return
      */
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
-        for( ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
-            dist += Math.pow(m_Search.calcDistanceOnAttr(t1, t2, attr), 2) * m_AttrWeighting.getWeight(attr);
+        for( ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)){
+        	dist += Math.pow(m_Search.calcDistanceOnAttr(t1, t2, attr), 2) * m_AttrWeighting.getWeight(attr);
+        }
         return Math.sqrt(dist);
     }
 
     public String getName() {
         return "Euclidean distance";
     }
-    
-	/**
-	 * Returns weighting used for distance calculation.
-	 * @return
-	 */
-
-	
-
 }
