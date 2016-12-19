@@ -20,10 +20,17 @@ public class ClassHMTRNode {
         return children;
     }
 
+    public int getNumberOfChildren() {
+        return getChildren().size();
+    }
+
     public void addChild(ClassHMTRNode child) {
         this.children.add(child);
     }
 
+    public boolean hasChildren(){
+        return this.getChildren().size()>0;
+    }
 
     public boolean isRoot() {
         return isRoot;

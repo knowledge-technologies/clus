@@ -116,9 +116,11 @@ public class Clus implements CMDLineArgsProvider {
 		ResourceInfo.loadLibrary(test);
 		// Load settings file
         if(m_Sett.isSectionHMTREnabled()) {
-            System.out.println("Creating hierarchy for HMTR\n");
+            if( m_Sett.getVerbose()> 0) System.out.println("Creating hierarchy for HMTR\n");
             m_HmtrHierarchy.createHMTRHierarchy(m_Sett.getHMTRHierarchyString().getStringValue());
-            m_HmtrHierarchy.printHierarchy();
+            if( m_Sett.getVerbose()> 0) m_HmtrHierarchy.printHierarchy();
+            if( m_Sett.getVerbose()> 0 && m_Sett.getHMTRType().getValue() == Settings.HMTR_HIERTYPE_TREE) m_HmtrHierarchy.printHierarchyTree();
+
         }
 		ARFFFile arff = null;
 		if(m_Sett.getVerbose() > 0) System.out.println("Loading '" + m_Sett.getAppName() + "'");

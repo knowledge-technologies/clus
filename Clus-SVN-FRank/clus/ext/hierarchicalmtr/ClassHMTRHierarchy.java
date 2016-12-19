@@ -40,12 +40,14 @@ public class ClassHMTRHierarchy {
 
         hier = hier.replace("(","");
         hier = hier.replace(")","");
+        hier = hier.replace(" ","");
+        hier = hier.replace(">","");
         String[] relationships = hier.split(",");
 
         boolean root = true;
 
         for (String relationship : relationships) {
-            String[] pcr = relationship.split("->");
+            String[] pcr = relationship.split("-");
 
             if(root == true) this.nodes.add(new ClassHMTRNode(true, pcr[0]));
             root = false;
@@ -71,6 +73,12 @@ public class ClassHMTRHierarchy {
         return parents;
     }
 
+    public boolean hasParents(ClassHMTRNode node){
+
+        return getParents(node).size()>0;
+
+    }
+
     public void printHierarchy(){
 
         System.out.println("Hiearchy: ");
@@ -89,6 +97,49 @@ public class ClassHMTRHierarchy {
         }
 
         System.out.println();
+    }
+
+    private String printHierarchyTree(ClassHMTRNode node) {
+        int indent = 0;
+        StringBuilder sb = new StringBuilder();
+        printHierarchyTree(node, indent, sb);
+        return sb.toString();
+    }
+
+    public void printHierarchyTree(){
+
+        for (ClassHMTRNode n : this.getNodes()){
+
+            if (n.isRoot()) {
+                System.out.println(printHierarchyTree(n));
+                break;
+            }
+
+        }
+
+    }
+
+    private void printHierarchyTree(ClassHMTRNode node, int indent, StringBuilder sb) {
+
+        sb.append(getIndentString(indent));
+        if (hasParents(node)) sb.append("└──");
+        sb.append(node.getName());
+        sb.append("\n");
+        for (ClassHMTRNode n : node.getChildren()) {
+
+            printHierarchyTree(n, indent + 1, sb);
+
+        }
+
+    }
+
+
+    private String getIndentString(int indent) {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < indent; i++) {
+            sb.append("·     ");
+        }
+        return sb.toString();
     }
 
     public ClassHMTRHierarchy(String hierarchyName) {
