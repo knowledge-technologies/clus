@@ -10,6 +10,16 @@ public class ClassHMTRNode {
 
     private boolean isRoot;
     private String name;
+    private boolean isAggregate;
+
+    public boolean isAggregate() {
+        return isAggregate;
+    }
+
+    public void setAggregate(boolean aggregate) {
+        isAggregate = aggregate;
+    }
+
     private List<ClassHMTRNode> children;
 
     public String getName() {
@@ -40,12 +50,14 @@ public class ClassHMTRNode {
         this.isRoot = isRoot;
         this.name = name;
         this.children = new ArrayList<ClassHMTRNode>();
+        this.isAggregate = false;
     }
 
     public ClassHMTRNode(String name) {
         this.isRoot = false;
         this.name = name;
         this.children = new ArrayList<ClassHMTRNode>();
+        this.isAggregate = false;
     }
 
     public String printNodeAndChildren(){

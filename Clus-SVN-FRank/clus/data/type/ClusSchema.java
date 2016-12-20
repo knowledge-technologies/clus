@@ -47,6 +47,11 @@ public class ClusSchema implements Serializable {
 	protected String m_Relation;
 	protected int m_NbAttrs;
 	protected int m_NbInts, m_NbDoubles, m_NbObjects;
+
+	public ArrayList getM_Attr() {
+		return m_Attr;
+	}
+
 	protected ArrayList m_Attr = new ArrayList();
 	protected ClusAttrType[][] m_AllAttrUse;
 	protected NominalAttrType[][] m_NominalAttrUse;

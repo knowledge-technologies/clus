@@ -22,6 +22,8 @@
 
 package clus.main;
 
+import clus.ext.hierarchicalmtr.ClassHMTRHierarchy;
+import clus.ext.hierarchicalmtr.ClassHMTRNode;
 import jeans.io.ini.*;
 import jeans.io.range.IntRangeCheck;
 import jeans.util.cmdline.*;
@@ -3069,5 +3071,40 @@ public class Settings implements Serializable {
 	}
 
 
+    public void addHMTRTargets(ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) {
 
+        if (this.isSectionHMTREnabled()) {
+
+            ArrayList<ClusAttrType> attributes = schema.getM_Attr();
+
+            ArrayList<String> attrNames = new ArrayList<>();
+
+                for (ClusAttrType attribute : attributes){
+
+                    attrNames.add(attribute.getName());
+
+                }
+
+            if (VERBOSE>0) System.out.print("Aggregate attributes: ");
+
+                String comma = "";
+
+            for (ClassHMTRNode node : hmtrHierarchy.getNodes()) {
+                if (!attrNames.contains(node.getName())){
+
+                    node.setAggregate(true);
+                    System.out.print(comma + node.getName());
+                    comma = ", ";
+                    schema.addAttrType(new IntegerAttrType(node.getName()));
+
+                }
+            }
+
+            int nb = schema.getNbAttributes();
+            m_Target.setValue(String.valueOf(nb));
+            System.out.println();
+
+        }
+
+    }
 }

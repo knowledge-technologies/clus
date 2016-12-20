@@ -115,13 +115,7 @@ public class Clus implements CMDLineArgsProvider {
 		boolean test = m_Sett.getResourceInfoLoaded() == Settings.RESOURCE_INFO_LOAD_TEST;
 		ResourceInfo.loadLibrary(test);
 		// Load settings file
-        if(m_Sett.isSectionHMTREnabled()) {
-            if( m_Sett.getVerbose()> 0) System.out.println("Creating hierarchy for HMTR\n");
-            m_HmtrHierarchy.createHMTRHierarchy(m_Sett.getHMTRHierarchyString().getStringValue());
-            if( m_Sett.getVerbose()> 0) m_HmtrHierarchy.printHierarchy();
-            if( m_Sett.getVerbose()> 0 && m_Sett.getHMTRType().getValue() == Settings.HMTR_HIERTYPE_TREE) m_HmtrHierarchy.printHierarchyTree();
-
-        }
+        createHMTRHierarchy(); // creates the hierarchy for hierarchical MTR if the section HMTR is present
 		ARFFFile arff = null;
 		if(m_Sett.getVerbose() > 0) System.out.println("Loading '" + m_Sett.getAppName() + "'");
 		ClusRandom.initialize(m_Sett);
@@ -140,6 +134,7 @@ public class Clus implements CMDLineArgsProvider {
 		// Updata schema based on settings
 		
 		m_Sett.updateTarget(m_Schema);
+		m_Sett.addHMTRTargets(m_Schema, m_HmtrHierarchy);
 		m_Schema.initializeSettings(m_Sett);
 		m_Sett.setTarget(m_Schema.getTarget().toString());
 		m_Sett.setDisabled(m_Schema.getDisabled().toString());
@@ -208,7 +203,18 @@ public class Clus implements CMDLineArgsProvider {
 		}
 	}
 
-	public void initialize(RowData data, ClusSchema schema, Settings sett, ClusInductionAlgorithmType clss) throws IOException, ClusException {
+    private void createHMTRHierarchy() {
+
+        if(m_Sett.isSectionHMTREnabled()) {
+            if( m_Sett.getVerbose()> 0) System.out.println("Creating hierarchy for HMTR\n");
+            m_HmtrHierarchy.createHMTRHierarchy(m_Sett.getHMTRHierarchyString().getStringValue());
+            if( m_Sett.getVerbose()> 0) m_HmtrHierarchy.printHierarchy();
+            if( m_Sett.getVerbose()> 0 && m_Sett.getHMTRType().getValue() == Settings.HMTR_HIERTYPE_TREE) m_HmtrHierarchy.printHierarchyTree();
+        }
+
+    }
+
+    public void initialize(RowData data, ClusSchema schema, Settings sett, ClusInductionAlgorithmType clss) throws IOException, ClusException {
 		m_Data = data;
 		m_Sett = sett;
 		m_Classifier = clss;

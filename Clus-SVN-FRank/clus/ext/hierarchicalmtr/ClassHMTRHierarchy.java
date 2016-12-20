@@ -28,7 +28,7 @@ public class ClassHMTRHierarchy {
 
     }
 
-    private boolean nodeExists(String name){
+    public boolean nodeExists(String name){
 
         for (ClassHMTRNode node : this.getNodes()) {
             if (node.getName().equals(name)) return true;
@@ -99,7 +99,7 @@ public class ClassHMTRHierarchy {
         System.out.println();
     }
 
-    private String printHierarchyTree(ClassHMTRNode node) {
+    public String printHierarchyTree(ClassHMTRNode node) {
         int indent = 0;
         StringBuilder sb = new StringBuilder();
         printHierarchyTree(node, indent, sb);
