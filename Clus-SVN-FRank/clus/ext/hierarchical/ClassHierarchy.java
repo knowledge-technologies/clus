@@ -59,7 +59,7 @@ public class ClassHierarchy implements Serializable {
 	protected int m_MaxDepth = 0;
 	protected int m_HierType = TREE;
 	protected ClassesTuple m_Eval;
-	protected ArrayList m_ClassList = new ArrayList();
+	protected ArrayList<ClassTerm> m_ClassList = new ArrayList<ClassTerm>();
 	protected HashMap m_ClassMap = new HashMap();
 	protected ClassTerm m_Root;
 	protected NumericAttrType[] m_DummyTypes;
@@ -320,7 +320,10 @@ public class ClassHierarchy implements Serializable {
 		m_Root.getMeanBranch(enabled, stat);
 		return stat;
 	}
-
+	/**
+	 * Returns the number of terms in the hierarchy.
+	 * @return the number of terms in the hierarchy
+	 */
 	public final int getTotal() {
 		return m_ClassList.size();
 	}

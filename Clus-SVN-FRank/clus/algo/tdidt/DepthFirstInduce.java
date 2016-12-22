@@ -45,6 +45,7 @@ import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
+import clus.util.NonstaticRandom;
 
 public class DepthFirstInduce extends ClusInductionAlgorithm {
 
@@ -86,7 +87,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
 	}
 
-	public ClusAttrType[] getDescriptiveAttributes() {
+	public ClusAttrType[] getDescriptiveAttributes(NonstaticRandom rnd) { // PARALELNO
 		ClusSchema schema = getSchema();
 		Settings sett = getSettings();
 		if (!sett.isEnsembleMode()) {
@@ -97,7 +98,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 				return schema.getDescriptiveAttributes();
 			case Settings.ENSEMBLE_RFOREST:
 				ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
-				ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected());
+				ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), rnd);
 				//ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll, schema.getSettings().getNbRandomAttrSelected());
 				return ClusEnsembleInduce.getRandomSubspaces();
 			case Settings.ENSEMBLE_RSUBSPACES:
@@ -106,11 +107,11 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 				return ClusEnsembleInduce.getRandomSubspaces();
 			case Settings.ENSEMBLE_NOBAGRFOREST:
 				ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
-				ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected());
+				ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), rnd);
 				return ClusEnsembleInduce.getRandomSubspaces();
 			case Settings.ENSEMBLE_EXTRA_TREES://same as for Random Forests
 				ClusAttrType[] attrs_all = schema.getDescriptiveAttributes();
-				ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected());
+				ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), rnd);
 				//ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll, schema.getSettings().getNbRandomAttrSelected());
 				return ClusEnsembleInduce.getRandomSubspaces();
 			default:
@@ -195,7 +196,9 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		}
 	}
 	
-	public void induce(ClusNode node, RowData data) {
+	public void induce(ClusNode node, RowData data, NonstaticRandom rnd) {//PARALELNO
+		// rnd may be null due to some calls of induce that do not support parallelisation yet.
+		
 		//System.out.println("nonsparse induce");
 		// Initialize selector and perform various stopping criteria
 		if (initSelectorAndStopCrit(node, data)) {
@@ -206,13 +209,17 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		
 //		long start_time = System.currentTimeMillis();
 		
-		ClusAttrType[] attrs = getDescriptiveAttributes();
+		ClusAttrType[] attrs = getDescriptiveAttributes(rnd); // PARALELNO
 		for (int i = 0; i < attrs.length; i++) {
 			ClusAttrType at = attrs[i];
 			if ((getSettings().isEnsembleMode()) && (getSettings().getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES)){
-
-				if (at instanceof NominalAttrType) m_FindBestTest.findNominalExtraTree((NominalAttrType)at, data, ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
-				else m_FindBestTest.findNumericExtraTree((NumericAttrType)at, data, ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
+				if (at instanceof NominalAttrType){
+					// PARALELNO
+					m_FindBestTest.findNominalExtraTree((NominalAttrType)at, data, rnd);
+				} else{
+					// PARALELNO
+					m_FindBestTest.findNumericExtraTree((NumericAttrType)at, data, rnd);					
+				}
 
 //				if (at instanceof NominalAttrType) m_FindBestTest.findNominalExtraTree((NominalAttrType)at, data, ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
 //				else m_FindBestTest.findNumeric((NumericAttrType)at, data);//,ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
@@ -268,7 +275,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 				node.setChild(child, j);
 				child.initClusteringStat(m_StatManager, m_Root.getClusteringStat(), subsets[j]);
 				child.initTargetStat(m_StatManager, m_Root.getTargetStat(), subsets[j]);
-				induce(child, subsets[j]);
+				induce(child, subsets[j], rnd);
 			}
 		} else {
 			makeLeaf(node);
@@ -344,11 +351,12 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		}
 	}*/
 	
-	
-	public void rankFeatures(ClusNode node, RowData data) throws IOException {
+
+	@Deprecated
+	public void rankFeatures(ClusNode node, RowData data, NonstaticRandom rnd) throws IOException { // PARALELNO
 		// Find best test
 		PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream("ranking.csv")));
-		ClusAttrType[] attrs = getDescriptiveAttributes();
+		ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
 		for (int i = 0; i < attrs.length; i++) {
 			ClusAttrType at = attrs[i];
 			initSelectorAndStopCrit(node, data);
@@ -377,7 +385,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		m_FindBestTest.cleanSplit();
 	}
 
-	public ClusNode induceSingleUnpruned(RowData data) throws ClusException, IOException {
+	public ClusNode induceSingleUnpruned(RowData data, NonstaticRandom rnd) throws ClusException, IOException {// PARALELNO
 		m_Root = null;
 		// Beginning of induction process
 		int nbr = 0;
@@ -396,7 +404,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 				inducePert(m_Root, data);
 			}
 			else {*/
-			induce(m_Root, data);
+			induce(m_Root, data, rnd); // PARALELNO
 			/*}*/
 			// rankFeatures(m_Root, data);
 			// Refinement finished
@@ -408,8 +416,13 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		return m_Root;
 	}
 
+	public ClusModel induceSingleUnpruned(ClusRun cr, NonstaticRandom rnd) throws ClusException, IOException {//PARALELNO
+		return induceSingleUnpruned((RowData)cr.getTrainingSet(), rnd);
+	}
+
+	@Override
 	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
-		return induceSingleUnpruned((RowData)cr.getTrainingSet());
+		throw new RuntimeException("Instead of this method, the induceSingleUnpruned(RowData data, NonstaticRandom rnd) should be used!");
 	}
 
 

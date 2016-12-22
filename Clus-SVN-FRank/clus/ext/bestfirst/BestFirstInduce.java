@@ -86,7 +86,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 		return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
 	}
 
-	public ClusAttrType[] getDescriptiveAttributes() {
+	public ClusAttrType[] getDescriptiveAttributes() { // PARALELNO: here, setRandomSubspaces is given a null second argument, will not work properly in parallelised setting of ensemble induce.
 		ClusSchema schema = getSchema();
 		Settings sett = getSettings();
 		if (!sett.isEnsembleMode()) {
@@ -97,7 +97,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 				return schema.getDescriptiveAttributes();
 			case Settings.ENSEMBLE_RFOREST:
 				ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
-				ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected());
+				ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), null);
 				return ClusEnsembleInduce.getRandomSubspaces();
 			case Settings.ENSEMBLE_RSUBSPACES:
 				return ClusEnsembleInduce.getRandomSubspaces();
@@ -105,7 +105,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 				return ClusEnsembleInduce.getRandomSubspaces();
 			case Settings.ENSEMBLE_NOBAGRFOREST:
 				ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
-				ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected());
+				ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), null);
 				return ClusEnsembleInduce.getRandomSubspaces();
 			default:
 				return schema.getDescriptiveAttributes();
@@ -407,7 +407,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 	}
 
 
-
+	@Deprecated
 	public void rankFeatures(ClusNode node, RowData data) throws IOException {
 		// Find best test
 		PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream("ranking.csv")));

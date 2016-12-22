@@ -96,7 +96,7 @@ if (Debug.debug == 1) {
 			ClusNode onode = new ClusNode();
 			onode.m_ClusteringStat = mgrp.getTotStat(fold);
 			node.setNode(fold, onode);
-			m_DFirst.induce(onode, mgrp.getData().getFoldData(fold));
+			m_DFirst.induce(onode, mgrp.getData().getFoldData(fold), null); // PARALELNO
 			return;
 		}
 		// Init test selectors

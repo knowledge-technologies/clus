@@ -72,7 +72,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
 				return;
 			}
 			ClusAttrType at = test.getType();
-			if (at instanceof NominalAttrType) getFindBestTest().findNominal((NominalAttrType)at, data);
+			if (at instanceof NominalAttrType) getFindBestTest().findNominal((NominalAttrType)at, data); // PARALELNO
 			else getFindBestTest().findNumeric((NumericAttrType)at, data);
 			CurrentBestTestAndHeuristic best = m_FindBestTest.getBestTest();
 			if (best.hasBestTest()) {
@@ -115,7 +115,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
 
 	public void induceRecursive(ClusNode node, RowData data) {
 		if (node.atBottomLevel()) {
-			induce(node, data);
+			induce(node, data, null); // PARALELNO: TODO ...
 		} else {
 			NodeTest test = node.getTest();
 			for (int j = 0; j < node.getNbChildren(); j++) {

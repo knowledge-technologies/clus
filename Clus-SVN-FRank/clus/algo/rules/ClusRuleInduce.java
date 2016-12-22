@@ -516,7 +516,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 		for (int z = 0; z < nb_sets; z++) {
 			// Select the data using bootstrap
 			RowData data_sel = (RowData)data.cloneData();
-			BaggingSelection msel = new BaggingSelection(nb_rows, getSettings().getEnsembleBagSize());
+			BaggingSelection msel = new BaggingSelection(nb_rows, getSettings().getEnsembleBagSize(), null); // PARALELL
 			data_sel.update(msel);
 			// Reset tuple indexes used in heuristic
 			if (getSettings().isHeurRuleDist()) {

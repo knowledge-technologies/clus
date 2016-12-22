@@ -82,28 +82,28 @@ public class OOTIndNO extends OOTInduce {
 
 	public final void xvalInduce(OptXValNode node, OptXValGroup mgrp) {
 	    long t0;
-if (Debug.debug == 1) {
-		t0 = ResourceInfo.getCPUTime();
-}
+		if (Debug.debug == 1) {
+			t0 = ResourceInfo.getCPUTime();
+		}
 
-if (Debug.debug == 1) {
-		ClusStat.updateMaxMemory();
-}
+		if (Debug.debug == 1) {
+			ClusStat.updateMaxMemory();
+		}
 
 		node.init(mgrp.getFolds());
 		mgrp.stopCrit(node);
 		if (mgrp.cleanFolds()) return;
 		// Optimize for one fold
 		if (mgrp.getNbFolds() == 1) {
-		        int fold = mgrp.getFold();
+		    int fold = mgrp.getFold();
 			ClusNode onode = new ClusNode();
 			onode.m_ClusteringStat = mgrp.getTotStat(fold);
 			node.setNode(fold, onode);
-if (Debug.debug == 1) {
-			ClusStat.deltaSplit();
-}
+			if (Debug.debug == 1) {
+				ClusStat.deltaSplit();
+			}
 
-			m_DFirst.induce(onode, mgrp.getData().getFoldData2(fold));
+			m_DFirst.induce(onode, mgrp.getData().getFoldData2(fold), null); // PARALELNO
 			return;
 		}
 		// Optimize?
@@ -112,26 +112,26 @@ if (Debug.debug == 1) {
 		}
 		// Init test selectors
 		initTestSelectors(mgrp);
-if (Debug.debug == 1) {
-		ClusStat.deltaSplit();
-}
+		if (Debug.debug == 1) {
+			ClusStat.deltaSplit();
+		}
 
 		findBestTest(mgrp);
-if (Debug.debug == 1) {
-		ClusStat.deltaTest();
-}
+		if (Debug.debug == 1) {
+			ClusStat.deltaTest();
+		}
 
 		mgrp.preprocNodes2(node, this);
 		// Make new groups
 		MyListIter ngrps = new MyListIter();
 		int nb_groups = mkNewGroups(mgrp, ngrps);
-if (Debug.debug == 1) {
-		ClusStat.deltaSplit();
-}
+		if (Debug.debug == 1) {
+			ClusStat.deltaSplit();
+		}
 
-if (Debug.debug == 1) {
-		node.m_Time = ResourceInfo.getCPUTime() - t0;
-}
+		if (Debug.debug == 1) {
+			node.m_Time = ResourceInfo.getCPUTime() - t0;
+		}
 
 		// Recursive calls
 		if (nb_groups > 0) {
@@ -145,9 +145,9 @@ if (Debug.debug == 1) {
 				node.setChild(split, idx++);
 				RowData gdata = grp.getData();
 				long t01;
-if (Debug.debug == 1) {
-				t01 = ResourceInfo.getCPUTime();
-}
+				if (Debug.debug == 1) {
+					t01 = ResourceInfo.getCPUTime();
+				}
 
 				for (int i = 0; i < arity; i++) {
 					OptXValNode child = new OptXValNode();

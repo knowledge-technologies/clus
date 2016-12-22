@@ -61,7 +61,7 @@ public class HierNodeWeights {
 
 	public void initExponentialDepthWeightsDAG(ClassHierarchy hier, int wtype, double w0) {
 		boolean[] weight_computed = new boolean[hier.getTotal()];
-		ArrayList todo = new ArrayList();
+		ArrayList<ClassTerm> todo = new ArrayList<ClassTerm>();
 		for (int i = 0; i < hier.getTotal(); i++) {
 			ClassTerm term = hier.getTermAt(i);
 			todo.add(term);

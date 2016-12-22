@@ -52,7 +52,7 @@ public class DataTuple implements Serializable {
 	public Object[] m_Objects;
 
 	/**
-	 *  Wight of the tuple.
+	 *  Weight of the tuple.
 	 */
 	public double m_Weight;
 	

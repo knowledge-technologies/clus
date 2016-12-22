@@ -48,6 +48,7 @@ import jeans.resource.ResourceInfo;
 import jeans.util.MyArray;
 import jeans.util.cmdline.CMDLineArgs;
 
+@Deprecated
 public class OOTInd {
 
 	protected Clus m_Clus;
@@ -55,7 +56,7 @@ public class OOTInd {
 	public OOTInd(Clus clus) {
 		m_Clus = clus;
 	}
-
+	
 	public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
 		schema.addIndices(ClusSchema.ROWS);
 		int nb_num = schema.getNbNumericDescriptiveAttributes();
@@ -97,7 +98,7 @@ public class OOTInd {
 		int nbsets = sett.getBaggingSets();
 		MyArray sels = new MyArray();
 		for (int i = 0; i < nbsets; i++) {
-			sels.addElement(new BaggingSelection(nbrows, m_Clus.getSettings().getEnsembleBagSize()));
+			sels.addElement(new BaggingSelection(nbrows, m_Clus.getSettings().getEnsembleBagSize(),  null)); // PARALELNO
 		}
 		// Add set numbers to our datset
 		addSetNrs(set, sels, nbsets);

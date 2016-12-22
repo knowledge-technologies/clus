@@ -23,6 +23,7 @@
 package clus.selection;
 
 import clus.util.ClusRandom;
+import clus.util.NonstaticRandom;
 
 public class BaggingSelection extends ClusSelection {
 
@@ -44,13 +45,21 @@ public class BaggingSelection extends ClusSelection {
 	 * If <code>nbselected</code> == 0, a bagging selection of size <code>nbrows</code> is created
 	 * @param nbrows the total number of instances
 	 * @param nbselected the size of the bagging selection
+	 * @param rnd random generator object that is used for creating the bag. May be null. In that case, ClusRandom is used instead, which will
+	 * result in non-reproducibility if the number of cores is greater than one.
 	 */
-	public BaggingSelection(int nbrows, int nbselected) {
+	public BaggingSelection(int nbrows, int nbselected, NonstaticRandom rnd) { // PARALELNO
 	       super(nbrows);
 	       m_Counts = new int[nbrows];
 	       if(nbselected == 0) nbselected = nbrows;
-	       for (int i = 0; i < nbselected; i++) {
-	           m_Counts[ClusRandom.nextInt(ClusRandom.RANDOM_SELECTION, nbrows)]++;
+	       if(rnd == null){
+		       for (int i = 0; i < nbselected; i++) {
+		           m_Counts[ClusRandom.nextInt(ClusRandom.RANDOM_SELECTION, nbrows)]++;
+		       }
+	       } else{
+		       for (int i = 0; i < nbselected; i++) {
+		           m_Counts[rnd.nextInt(NonstaticRandom.RANDOM_SELECTION, nbrows)]++;
+		       }	    	   
 	       }
 	       for (int i = 0; i < nbrows; i++) {
 	           if (m_Counts[i] != 0) m_NbSel++;

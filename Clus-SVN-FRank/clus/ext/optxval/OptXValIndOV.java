@@ -487,7 +487,7 @@ if (Debug.debug == 1) {
 			ClusStat.deltaSplit();
 }
 
-			m_DFirst.induce(onode, mgrp.getData().getOVFoldData(fold));
+			m_DFirst.induce(onode, mgrp.getData().getOVFoldData(fold), null); // PARALELNO
 			return;
 		}
 		// Init test selectors

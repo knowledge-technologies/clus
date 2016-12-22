@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 
+import clus.algo.kNN.distance.EuclideanDistance;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
@@ -16,9 +17,9 @@ import clus.data.type.StringAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.ext.ensembles.ClusEnsembleFeatureRanking;
 import clus.ext.hierarchical.ClassHierarchy;
+import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesTuple;
-import clus.ext.hierarchical.ClassesValue;
 import clus.ext.timeseries.DTWTimeSeriesDist;
 import clus.ext.timeseries.QDMTimeSeriesDist;
 import clus.ext.timeseries.TSCTimeSeriesDist;
@@ -38,9 +39,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbIterations;
 	/** Tells, whether the contributions of the neighbours are weighted */
 	private boolean m_WeightNeighbours;
-	/** >= 0, see m_NeighbourWeights, m_Sigma == 0 <=> m_WeightNeighbours == false */
+	/** {@code >= 0}, see {@link m_NeighbourWeights}, {@code m_Sigma == 0 <=> m_WeightNeighbours == false} */
 	private double m_Sigma;
-	/** Weights for the contributions of the nearest neighbours. Value on the i-th place is exp((- m_Sigma * i)**2). */
+	/** Weights for the contributions of the nearest neighbours. Value on the i-th place is {@code exp((- m_Sigma * i)^2)}. */
 	private double[] m_NeighbourWeights;
 
 	/** {array of descriptive attributes, array of target attributes} */
@@ -59,7 +60,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	private int m_NbExamples;
 	/** distance in the case of missing values */
 	double m_bothMissing = 1.0;
-	/** Tells whether the next instance generator is deterministic (if and only if m_NbIterations == m_NbExamples) */
+	/** Tells whether the next instance generator is deterministic (if and only if {@code m_NbIterations == m_NbExamples}). */
 	boolean m_isDeterministic; 
 	/** Random generator for sampling of the next instance. It is used iff not m_isDeterministic */
 	Random m_rnd = new Random(1234);
@@ -73,8 +74,8 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	int m_TimeSeriesDistance;
 	/** Hash map for hierarchical attributes: {attributeName: hierarchy, ... } */
 	private HashMap<String, ClassHierarchy> m_Hierarchies = new HashMap<String, ClassHierarchy>();
-	/** Weight used in Weighted Euclidean distance for hierarchical attributes */
-	private double m_HierarWeight = -1.0;
+	/** The weights, used in Weighted Euclidean distance, for each hierarchical attribute */
+	private HashMap<String, Double> m_HierarUpperBounds = new HashMap<String, Double>();
 	
 	
 	/**
@@ -166,13 +167,11 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			for(int attrInd = 0; attrInd < m_DescriptiveTargetAttr[space].length; attrInd++){
 				if(m_DescriptiveTargetAttr[space][attrInd] instanceof ClassesAttrType){
 					ClassesAttrType attr = (ClassesAttrType) m_DescriptiveTargetAttr[space][attrInd];
-					m_Hierarchies.put(attr.getName(), attr.getHier());
-					if (m_HierarWeight < 0){
-						m_HierarWeight = data.getSchema().getSettings().getHierWParam();
-						if(m_HierarWeight < MathUtil.C1E_6 || m_HierarWeight > 1.0 -  MathUtil.C1E_6 ){
-							throw new RuntimeException("The condition 10^-6 <= m_HierarWeight <= 1 - 10^-6 is broken: " + m_HierarWeight);
-						}
-					} 
+					attrName = attr.getName();
+					m_Hierarchies.put(attrName, attr.getHier());
+					computeDepthsOfTerms(attr);
+					m_HierarUpperBounds.put(attrName, upperBound(attr));
+					
 				}
 			}
 		}
@@ -339,6 +338,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     	}
         return dist / dimensions;
     }
+    
     /**
      * Calculates the distance between to tuples in a given component {@code attr}. 
      * @param t1 The first tuple
@@ -369,6 +369,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     }
 	
     // TODO: make handling of missing values reliefish for all dist.
+    
     /**
      * Calculates distance between the nominal values of the component {@code attr}. In the case of missing values, we follow Weka's solution
      * and not the paper Theoretical and Empirical Analysis of ReliefF and RReliefF, by Robnik Sikonja and Kononenko (time complexity ...).
@@ -461,18 +462,19 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     public double calculateStringDist1D(DataTuple t1, DataTuple t2, StringAttrType attr){
     	return new Levenshtein(t1, t2, attr).getDist();    	
     }
+    
     /**
      * Calculates the weighted Euclidean distance between the two classes in the hierarchy, where the weight of
      * a label is {@code m_HierarWeight^depth}. The distance is at the end normalised by the upper bound
-     * {@code m_HierarWeight / (1 - m_HierarWeight)}.
+     * {@code m_HierarDistBound}.
      * @param t1 First tuple
      * @param t2 Second tuple
      * @param attr The dimension in which the distance between {@code t1} and {@code t2} is computed. 
      * @return Normalised weighted Euclidean distance. 
      */
     public double calculateHierarchicalDist1D(DataTuple t1, DataTuple t2, ClassesAttrType attr){
-    	ClassHierarchy hier = m_Hierarchies.get(attr.getName());
-    	double upperBound = m_HierarWeight / (1.0 - m_HierarWeight);
+    	String name = attr.getName();
+    	ClassHierarchy hier = m_Hierarchies.get(name);
     	int sidx = hier.getType().getArrayIndex();
 		ClassesTuple tp1 = (ClassesTuple) t1.getObjVal(sidx);
 		ClassesTuple tp2 = (ClassesTuple) t2.getObjVal(sidx);
@@ -496,7 +498,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
     	for(int labelIndex : symmetricDifferenceOfLabelSets){
     		dist += hier.getWeight(labelIndex);    		
     	}
-    	return dist / upperBound;
+    	return dist / m_HierarUpperBounds.get(name);
     }
     
     
@@ -526,4 +528,137 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 			return (int) (m_rnd.nextDouble() * m_NbExamples);
 		}
 	}
+	
+	/**
+	 * Computes the depth of each term in the hierarchy, which can be DAG or tree-shaped.
+	 * @param attr The attribute, which the hierarchy belongs to.
+	 */
+	private void computeDepthsOfTerms(ClassesAttrType attr){
+		ClassHierarchy hier = m_Hierarchies.get(attr.getName());
+		ArrayList<ClassTerm> toProcess = new ArrayList<ClassTerm>();		
+		HashMap<ClassTerm, Integer> numberOfProcessedParents = new HashMap<ClassTerm, Integer>();
+		for(int i = 0; i < hier.getTotal(); i++){
+			ClassTerm term = hier.getTermAt(i);
+			numberOfProcessedParents.put(term, term.getNbParents());
+			if(numberOfProcessedParents.get(term) == 0){
+				toProcess.add(term);
+			}
+		}
+		toProcess.add(hier.getRoot());
+		while(toProcess.size() > 0){
+			ClassTerm term = toProcess.remove(toProcess.size() - 1);
+			// compute the depth
+			if(term.getNbParents() == 0){
+				term.setDepth(-1.0); // root
+			} else{
+				double avgDepth = 0.0;
+				for(int i = 0; i < term.getNbParents(); i++){
+					avgDepth += term.getParent(i).getDepth();
+				}
+				avgDepth /= term.getNbParents();
+				term.setDepth(avgDepth + 1.0);				
+			}
+			// see the children
+			for (int i = 0; i < term.getNbChildren(); i++){
+				ClassTerm child = (ClassTerm) term.getChild(i);
+				int nbParentsToProcess = numberOfProcessedParents.get(child);				
+				if(nbParentsToProcess == 1){
+					toProcess.add(child);					
+				}
+				numberOfProcessedParents.put(child, nbParentsToProcess - 1);
+			}			
+		}
+		
+	}
+	
+	/**
+	 * Finds the maximal depth of the subtree with a given root. Works also for DAGs.
+	 * @param root The root of the subtree/subDAG.
+	 * @return
+	 */
+	private double maxDepthSubtree(ClassTerm root){
+		if(root.getNbChildren() == 0){
+			return root.getDepth();
+		} else {
+			double maxDepth = 0.0;
+			for(int child = 0; child < root.getNbChildren(); child++){
+				maxDepth = Math.max(maxDepth, maxDepthSubtree((ClassTerm) root.getChild(child)));
+			}
+			return maxDepth;
+		}
+	}
+	
+	/**
+	 * If the hierarchy {@code hier} is tree-shaped, this computes the maximal distance {@code d(x, y)} over the vectors {@code x} and {@code y} that correspond to the labels in the hierarchy.
+	 * If the hierarchy is only DAG, then the computed upper-bound may not be tight, i.e., it is possible that {@code max d(x, y) < upperBound(hier)}.
+	 * @param hier The hierarchy
+	 * @return (If DAG: an approximation of) {@code max d(x, y)}
+	 */
+	private double upperBound(ClassesAttrType attr){
+		// TODO: Implement this for DAGs (https://en.wikipedia.org/wiki/Longest_path_problem#Acyclic_graphs_and_critical_paths)
+		ClassHierarchy hier = m_Hierarchies.get(attr.getName());
+		
+		double bound = 0.0;
+		ClassTerm root = hier.getRoot();
+		while (root.getNbChildren() == 1){
+			root = (ClassTerm) root.getChild(0);
+		}
+		if(root.getNbChildren() != 0){
+			double[] depths = new double[root.getNbChildren()];
+			for(int i = 0; i < depths.length; i++){
+				depths[i] = maxDepthSubtree((ClassTerm) root.getChild(i));
+			}
+			int maxInd = 0, almostMaxInd = -1;
+			double optValue = depths[0];
+			// no need for optimisation of the following two loops ...
+			for(int i = 1; i < depths.length; i++){
+				if (depths[i] > optValue + MathUtil.C1E_6){
+					optValue = depths[i];
+					maxInd = i;
+				}
+			}
+			optValue = -1.0;
+			for(int i = 0; i < depths.length; i++){
+				if (i != maxInd && depths[i] > optValue + MathUtil.C1E_6){
+					optValue = depths[i];
+					almostMaxInd = i;
+				}
+			}
+			double hierarWeight = getWeight(hier);
+			// this works only for trees: sum_{i = rootDepth + 1}^maxDepth w^i + sum_{i = rootDepth + 1}^almostMaxDepth w^i
+			double firstPath = geometricSum(hierarWeight, depths[maxInd]);
+			double secondPath = geometricSum(hierarWeight, depths[almostMaxInd]);
+			bound = firstPath + secondPath - 2 * geometricSum(hierarWeight, root.getDepth());	
+		}	
+		return bound;
+	}
+	
+	/**
+	 * Computes the geometric sum {@code 1 + q + ... + q^lastPower}.
+	 * @param q
+	 * @param lastPower
+	 * @return
+	 */
+	private double geometricSum(double q, double lastPower){
+		return (1 - Math.pow(q, lastPower + 1)) / (1 - q);
+	}
+	
+	/**
+	 * The weight, used in Weighted Euclidean distance.
+	 * @param hier
+	 * @return The the biggest among the weights of the labels that are smaller than 1.0.
+	 */
+	private double getWeight(ClassHierarchy hier){
+		double[] weights = hier.getWeights();
+		double maxW = 0.0;
+		for(double w: weights){
+			if(w < 1.0 - MathUtil.C1E_6 && w > maxW){
+				maxW = w;
+			}
+		}
+		return maxW;
+	}
+	
+
+	
 }

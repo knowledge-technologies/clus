@@ -41,10 +41,14 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
 	protected String m_ID;
 	protected HashMap m_Hash = new HashMap();
 	protected ArrayList m_SubTerms = new ArrayList();
-	protected ArrayList m_Parents = new ArrayList();
+	protected ArrayList<ClassTerm> m_Parents = new ArrayList<ClassTerm>();
+	/** Minimal depth of the parents */
 	protected int m_MinDepth = Integer.MAX_VALUE;
+	/** Maximal depth of the parents */
 	protected int m_MaxDepth = 0;
-
+	/** Depth of the term in the hierarchy. If the term is the root, its depth is zero. Otherwise, it is 1 + AGG(depths of parents). */
+	protected double m_Depth;
+	
 	public ClassTerm() {
 		m_ID = "root";
 	}
@@ -356,5 +360,19 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
 		} else {
 			return toPathString();
 		}
+	}
+	/**
+	 * Setter for m_Depth.
+	 * @param depth
+	 */
+	public void setDepth(double depth){
+		m_Depth = depth;
+	}
+	/**
+	 * Getter for m_Depth.
+	 * @return
+	 */
+	public double getDepth(){
+		return m_Depth;
 	}
 }

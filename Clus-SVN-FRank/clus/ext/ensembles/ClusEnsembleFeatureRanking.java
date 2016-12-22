@@ -300,7 +300,7 @@ public class ClusEnsembleFeatureRanking {
 	}
 	
 	
-	/*
+	/**
 	 * @param selection
 	 * @param data
 	 * @param type    -> 0 nominal, 1 numeric
@@ -491,7 +491,7 @@ public class ClusEnsembleFeatureRanking {
 		m_AllAttributes.put(attribute, info);
 	}
 	
-	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel) throws ClusException{
+	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel) throws ClusException{ // matej: paralelizacija: info ...
 		ArrayList<String> attests = new ArrayList<String>();
 		fillWithAttributesInTree((ClusNode)model, attests);
 		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
