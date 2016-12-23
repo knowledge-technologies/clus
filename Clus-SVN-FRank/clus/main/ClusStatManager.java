@@ -521,7 +521,7 @@ public class ClusStatManager implements Serializable {
 		}
 	}
 
-	public void initStatistic() throws ClusException {
+	public synchronized void initStatistic() throws ClusException {
 		m_StatisticAttrUse = new ClusStatistic[ClusAttrType.NB_ATTR_USE];
 		// Statistic over all attributes
 		NumericAttrType[] num1 = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
@@ -1066,25 +1066,25 @@ public class ClusStatManager implements Serializable {
 		}
 	}
 
-	public void setTargetStatistic(ClusStatistic stat) {
+	public synchronized void setTargetStatistic(ClusStatistic stat) {
 		// System.out.println("Setting target statistic: " + stat.getClass().getName());
 		m_StatisticAttrUse[ClusAttrType.ATTR_USE_TARGET] = stat;
 	}
 
-	public void setClusteringStatistic(ClusStatistic stat) {
+	public synchronized void setClusteringStatistic(ClusStatistic stat) {
 		// System.out.println("Setting clustering statistic: " + stat.getClass().getName());
 		m_StatisticAttrUse[ClusAttrType.ATTR_USE_CLUSTERING] = stat;
 	}
 
-	public boolean hasClusteringStat() {
+	public synchronized boolean hasClusteringStat() {
 		return m_StatisticAttrUse[ClusAttrType.ATTR_USE_CLUSTERING] != null;
 	}
 
-	public ClusStatistic createClusteringStat() {
+	public synchronized ClusStatistic createClusteringStat() {
 		return m_StatisticAttrUse[ClusAttrType.ATTR_USE_CLUSTERING].cloneStat();
 	}
 
-	public ClusStatistic createTargetStat() {
+	public synchronized ClusStatistic createTargetStat() {
 		return m_StatisticAttrUse[ClusAttrType.ATTR_USE_TARGET].cloneStat();
 	}
 
@@ -1093,7 +1093,7 @@ public class ClusStatManager implements Serializable {
 	 *            attribute use type (eg., ClusAttrType.ATTR_USE_TARGET)
 	 * @return the statistic
 	 */
-	public ClusStatistic createStatistic(int attType) {
+	public synchronized ClusStatistic createStatistic(int attType) {
 		return m_StatisticAttrUse[attType].cloneStat();
 	}
 
@@ -1102,7 +1102,7 @@ public class ClusStatManager implements Serializable {
 	 * @param attType attribute use type (eg., ClusAttrType.ATTR_USE_TARGET)
 	 * @return The statistic
 	 */
-	public ClusStatistic getStatistic(int attType) {
+	public synchronized ClusStatistic getStatistic(int attType) {
 		return m_StatisticAttrUse[attType];
 	}
 

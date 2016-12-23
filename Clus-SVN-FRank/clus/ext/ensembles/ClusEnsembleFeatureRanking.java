@@ -63,7 +63,7 @@ import jeans.util.StringUtils;
 
 public class ClusEnsembleFeatureRanking {
 
-	protected HashMap m_AllAttributes;//key is the AttributeName, and the value is array with the order in the file and the rank
+	protected HashMap<String, double[]> m_AllAttributes;//key is the AttributeName, and the value is array with the order in the file and the rank
 //	boolean m_FeatRank;
 	protected TreeMap m_FeatureRanks;//sorted by the rank
 	HashMap m_FeatureRankByName;  // Part of fimp's header
@@ -71,7 +71,7 @@ public class ClusEnsembleFeatureRanking {
 	String m_RankingDescription;
 	
 	public ClusEnsembleFeatureRanking(){
-		m_AllAttributes = new HashMap();
+		m_AllAttributes = new HashMap<String, double[]>();
 		m_FeatureRankByName = new HashMap();
 		m_FeatureRanks = new TreeMap();
 	}
@@ -106,9 +106,9 @@ public class ClusEnsembleFeatureRanking {
 	
 	
 	public void sortFeatureRanks(){
-		Iterator iter = m_AllAttributes.keySet().iterator();
+		Iterator<String> iter = m_AllAttributes.keySet().iterator();
 		while (iter.hasNext()){
-			String attr = (String)iter.next();
+			String attr = iter.next();
 			double score = ((double[])m_AllAttributes.get(attr))[2]/ClusEnsembleInduce.getMaxNbBags();
 //			double score = ((double[])m_AllAttributes.get(attr))[2];
 			ArrayList attrs = new ArrayList();
@@ -488,7 +488,7 @@ public class ClusEnsembleFeatureRanking {
 		return (double[])m_AllAttributes.get(attribute);
 	}
 	
-	public void putAttributeInfo(String attribute, double[]info){
+	public synchronized void putAttributeInfo(String attribute, double[]info){
 		m_AllAttributes.put(attribute, info);
 	}
 	
