@@ -134,7 +134,7 @@ public class Clus implements CMDLineArgsProvider {
 		// Updata schema based on settings
 		
 		m_Sett.updateTarget(m_Schema);
-		m_Sett.addHMTRTargets(m_Schema, m_HmtrHierarchy);
+		m_Sett.addHMTRTargets(m_Schema, m_HmtrHierarchy); //only if HMTR is enabled
 		m_Schema.initializeSettings(m_Sett);
 		m_Sett.setTarget(m_Schema.getTarget().toString());
 		m_Sett.setDisabled(m_Schema.getDisabled().toString());

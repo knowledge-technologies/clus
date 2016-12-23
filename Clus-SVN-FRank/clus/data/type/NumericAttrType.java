@@ -151,6 +151,53 @@ public class NumericAttrType extends ClusAttrType {
 			return true;
 		}
 
+		public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema) throws IOException {
+
+
+        //            HMTR_AGG_SUM = 0;
+        //            HMTR_AGG_AVG = 1;
+        //            HMTR_AGG_MEDIAN = 2;
+        //            HMTR_AGG_MIN = 3;
+        //            HMTR_AGG_MAX = 4;
+        //            HMTR_AGG_AND = 5;
+        //            HMTR_AGG_OR = 6;
+        //            HMTR_AGG_COUNT = 7;
+        //            HMTR_AGG_VAR = 8;
+        //            HMTR_AGG_STDEV = 9;
+
+            double val = Double.NaN;
+		    switch (getSettings().getHMTRAggregation().getValue()){
+
+                case 0: val = 999.0; break;
+		        case 1: val = 999.0; break;
+                case 2: val = 999.0; break;
+                case 3: val = 999.0; break;
+                case 4: val = 999.0; break;
+                case 5: val = 999.0; break;
+                case 6: val = 999.0; break;
+                case 7: val = 999.0; break;
+                case 8: val = 999.0; break;
+                case 9: val = 999.0; break;
+            }
+
+            if (Double.isNaN(val)) throw new IOException("Error calculating HMTR aggregate! Aggregation function is: "+getSettings().getHMTRAggregation().getValue());
+
+            System.out.println("CALCULATING HMTR AGGREGATE: " + val + " ggregation function is: "+getSettings().getHMTRAggregation().getValue());
+
+			tuple.setDoubleVal(val, getArrayIndex());
+			if (val == MISSING) {
+				incNbMissing();
+				m_NbZero++;
+			}
+			if (val == 0.0) {
+				m_NbZero++;
+			} else if (val < 0.0) {
+				m_NbNeg++;
+			}
+			m_NbTotal++;
+			return true;
+		}
+
 		public void term(ClusSchema schema) {
 			// System.out.println("Attribute: "+getName()+" "+((double)100.0*m_NbZero/m_NbTotal));
 			if (m_NbNeg == 0 && m_NbZero > m_NbTotal*5/10) {

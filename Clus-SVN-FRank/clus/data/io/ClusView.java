@@ -105,12 +105,19 @@ public class ClusView {
 			if (m_Attr.size() > 0) {
 				ClusSerializable attr_0 = (ClusSerializable)m_Attr.get(0);
 				if (!attr_0.read(reader, tuple)) return null;
-				for (int j = 1; j < m_Attr.size(); j++) {
+				for (int j = 1; j < m_Attr.size()-schema.getNbHierarchicalMTR(); j++) {
 					ClusSerializable attr = (ClusSerializable)m_Attr.get(j);
 					if (!attr.read(reader, tuple)) {
 						throw new IOException("Error reading attirbute "+m_Attr+" at row "+(reader.getRow()+1));
 					}
 				}
+                // do not read but calculate the Hierarchical MTR aggregate attributes
+                for (int j = m_Attr.size()-schema.getNbHierarchicalMTR(); j < m_Attr.size(); j++) {
+                    ClusSerializable attr = (ClusSerializable)m_Attr.get(j);
+                    if (!attr.calculateHMTRAttribute(reader, tuple, schema)) {
+                        throw new IOException("Error calculating Hierarchical  MTR attribute "+m_Attr+" at row "+(reader.getRow()+1));
+                    }
+                }
 			}
 		}
 		// Attribute read operations eat ',' after attribute field

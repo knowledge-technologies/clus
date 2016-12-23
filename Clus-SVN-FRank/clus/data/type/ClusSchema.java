@@ -66,8 +66,17 @@ public class ClusSchema implements Serializable {
 	protected IntervalCollection m_Descriptive = IntervalCollection.EMPTY;
 	protected IntervalCollection m_Key = IntervalCollection.EMPTY;
 	protected int[] m_NbVt;
+	protected int m_NbHierarchicalMTR;
 
-	public ClusSchema(String name) {
+    public int getNbHierarchicalMTR() {
+        return m_NbHierarchicalMTR;
+    }
+
+    public void setNbHierarchicalMTR(int m_NbHierarchicalMTR) {
+        this.m_NbHierarchicalMTR = m_NbHierarchicalMTR;
+    }
+
+    public ClusSchema(String name) {
 		m_Relation = name;
 	}
 

@@ -3088,6 +3088,7 @@ public class Settings implements Serializable {
             if (VERBOSE>0) System.out.print("Aggregate attributes: ");
 
                 String comma = "";
+                int numAggregates = 0;
 
             for (ClassHMTRNode node : hmtrHierarchy.getNodes()) {
                 if (!attrNames.contains(node.getName())){
@@ -3095,14 +3096,21 @@ public class Settings implements Serializable {
                     node.setAggregate(true);
                     System.out.print(comma + node.getName());
                     comma = ", ";
-                    schema.addAttrType(new IntegerAttrType(node.getName()));
+                    schema.addAttrType(new NumericAttrType(node.getName()));
+                    numAggregates++;
 
                 }
             }
-
-            int nb = schema.getNbAttributes();
-            m_Target.setValue(String.valueOf(nb));
             System.out.println();
+            int nb = schema.getNbAttributes();
+
+            String targets = m_Target.getStringValue();
+
+            for (int i = numAggregates; i > 0 ;i--){
+                targets+=","+(nb-i+1);
+            }
+            m_Target.setValue(targets);
+            schema.setNbHierarchicalMTR(numAggregates);
 
         }
 
