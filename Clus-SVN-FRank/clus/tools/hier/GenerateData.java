@@ -33,6 +33,7 @@ import jeans.io.MyFile;
 import jeans.math.SingleStat;
 import jeans.util.MyArray;
 
+@Deprecated
 public class GenerateData {
 
 	public static double MEAN_BRANCH = 2.75;

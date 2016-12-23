@@ -364,7 +364,7 @@ public class Clus implements CMDLineArgsProvider {
 		} else {
 			sel = new RandomSelection(nb_rows, Integer.parseInt(svalue));
 		}
-		m_Data = (RowData) m_Data.selectFrom(sel);
+		m_Data = (RowData) m_Data.selectFrom(sel, null); // PARALELNO: no problems, parallelism comes later 
 		int nb_sel = m_Data.getNbRows();
 		System.out.println("Sample (" + svalue + ") " + nb_rows + " -> "
 				+ nb_sel);

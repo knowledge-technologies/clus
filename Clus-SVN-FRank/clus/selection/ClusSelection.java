@@ -22,6 +22,8 @@
 
 package clus.selection;
 
+import clus.util.NonstaticRandom;
+
 public abstract class ClusSelection {
 
 	protected int m_NbRows;
@@ -46,7 +48,7 @@ public abstract class ClusSelection {
 		return 1.0;
 	}
 
-	public int getIndex(int i) {
+	public int getIndex(NonstaticRandom rnd) {
 		return 0;
 	}
 

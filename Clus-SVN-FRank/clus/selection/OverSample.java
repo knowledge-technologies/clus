@@ -23,6 +23,7 @@
 package clus.selection;
 
 import clus.util.ClusRandom;
+import clus.util.NonstaticRandom;
 
 public class OverSample extends ClusSelection {
 
@@ -37,8 +38,12 @@ public class OverSample extends ClusSelection {
 		return true;
 	}
 
-	public int getIndex(int i) {
-		return ClusRandom.nextInt(ClusRandom.RANDOM_SELECTION, m_NbRows);
+	public int getIndex(NonstaticRandom rnd) { // PARALELNO
+		if (rnd == null){
+			return ClusRandom.nextInt(ClusRandom.RANDOM_SELECTION, m_NbRows);
+		} else{
+			return rnd.nextInt(NonstaticRandom.RANDOM_SELECTION, m_NbRows);
+		}
 	}
 
 	public int getNbSelected() {

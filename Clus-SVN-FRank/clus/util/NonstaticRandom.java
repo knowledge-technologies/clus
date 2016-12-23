@@ -13,8 +13,9 @@ public class NonstaticRandom {
 	
 	public NonstaticRandom(int seed){
 		m_Random = new Random[m_Lenght];
+		Random seedGenerator = new Random(seed);
 		for(int i = 0; i < m_Lenght; i++){
-			m_Random[i] = new Random(seed); // TODO: cist razlicno?
+			m_Random[i] = new Random(seedGenerator.nextInt());
 		}
 	}
 		
