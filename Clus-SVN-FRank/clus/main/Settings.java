@@ -2181,6 +2181,8 @@ public class Settings implements Serializable {
 	protected INIFileBool m_SortFeaturesByRelevance;
 	protected INIFileBool m_WriteEnsemblePredictions;
 	protected INIFileNominalOrIntOrVector m_BagSelection;
+	/** Number of threads that are used when growing the trees. */
+	protected INIFileInt m_NumberOfThreads;
 
 	/** Do we want to use different random depth for different iterations of ensemble.
 	 * Used in tree to rules optimization method. The MaxDepth of tree is used as average.
@@ -2424,6 +2426,10 @@ public class Settings implements Serializable {
 	 */
 	public void setEnsembleBagSize(int value) {
 		m_EnsembleBagSize.setValue(value);
+	}
+	
+	public int getNumberOfThreads(){
+		return m_NumberOfThreads.getValue();
 	}
 	
 	
@@ -2861,6 +2867,8 @@ public class Settings implements Serializable {
 		m_BagSelection.setInt(-1);
 		m_SectionEnsembles.addNode(m_EnsembleBagSize = new INIFileInt("BagSize", 0));
 		m_EnsembleBagSize.setValueCheck(new IntRangeCheck(0, Integer.MAX_VALUE));
+		m_SectionEnsembles.addNode(m_NumberOfThreads = new INIFileInt("NumberOfThreads", 1));
+		m_NumberOfThreads.setValueCheck(new IntRangeCheck(1, Integer.MAX_VALUE));
 		m_SectionEnsembles.setEnabled(false);
 
 //		m_SectionKNN = new INIFileSection("kNN");

@@ -306,7 +306,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
 		}
 	}
 
-	public void findBestSize(ClusData trset) throws ClusException, IOException {
+	public void findBestSize(ClusData trset) throws ClusException, IOException, InterruptedException {
 		int prevVerb = Settings.enableVerbose(0);
 		ClusStatManager mgr = getStatManager();
 		ClusSummary summ = new ClusSummary();
@@ -419,7 +419,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
 		return stat;
 	}
 
-	public void induceAll(ClusRun cr) throws ClusException {
+	public void induceAll(ClusRun cr) throws ClusException, InterruptedException {
 		try {
 			long start_time = System.currentTimeMillis();
 			m_OrigSize = getSettings().getSizeConstraintPruning(0);

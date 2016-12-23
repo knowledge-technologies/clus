@@ -28,7 +28,14 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import clus.Clus;
 import clus.algo.ClusInductionAlgorithm;
@@ -87,6 +94,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	ClusEnsembleFeatureRanking m_FeatureRanking;
 	int m_NbFeatureRankings;
 	
+	/** Number of the threads when growing the trees. */
+	private int m_NbThreads;
+	
     /** Random tree depths for different iterations, used for tree to rules optimization procedures.
      * This is static because we want different tree depths for different folds. */
 //	static protected Random m_randTreeDepth = new Random(0);
@@ -141,6 +151,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 //				}
 //			}
 		}
+		m_NbThreads = sett.getNumberOfThreads();
 	}
 	
 	public void setNbFeatureRankings(ClusSchema schema){
@@ -170,8 +181,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		return m_NbFeatureRankings;
 	}
 
-	/** Train a decision tree ensemble with an algorithm given in settings  */
-	public void induceAll(ClusRun cr) throws ClusException, IOException {
+	/** Train a decision tree ensemble with an algorithm given in settings  
+	 * @throws ClusException, IOException, InterruptedException */
+	public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		System.out.println("Memory And Time Optimization = " + m_OptMode);
 		System.out.println("Out-Of-Bag Estimate of the error = " + Settings.shouldEstimateOOB());
 		System.out.println("\tPerform Feature Ranking = " + m_FeatRank);
@@ -250,7 +262,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	}
 
 	
-	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		ClusRun myRun = new ClusRun(cr);
 		induceAll(myRun);
 		ClusModelInfo info = myRun.getModelInfo(ClusModel.ORIGINAL);
@@ -412,7 +424,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	}
 	
 
-	public void induceBagging(ClusRun cr) throws ClusException, IOException {
+	public void induceBagging(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		int nbrows = cr.getTrainingSet().getNbRows();
 		((RowData)cr.getTrainingSet()).addIndices(); // necessary to be able to print paths
 		if ((RowData)cr.getTestSet() != null) {
@@ -460,6 +472,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		for(int i = 0; i < m_NbMaxBags; i++){
 			seeds[i] = bagSeedGenerator.nextInt();
 		}
+		
+		ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
+		ArrayList<Future<Boolean>> everythingOk = new ArrayList<Future<Boolean>>();			
+		
 		if (bagSelections[0] == -1) {
 			// normal bagging procedure
 			for (int i = 1; i <= m_NbMaxBags; i++) {
@@ -474,7 +490,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 						oob_total.addToThis(oob_sel);
 					}
 				}
-				induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
+				// induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
+                Future<Boolean> submit = executor.submit(worker);
+                everythingOk.add(submit);
+				
 			}
 		}
 		else if (bagSelections[0] == 0) {
@@ -494,7 +514,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 				if (Settings.shouldEstimateOOB()){		//OOB estimate is on
 					oob_sel = new OOBSelection(msel);
 				}
-				induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
+				// induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
+                Future<Boolean> submit = executor.submit(worker);
+                everythingOk.add(submit);
 			}
 		}
 
@@ -502,6 +525,21 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		if (origMaxDepth != -1) {
 			getSettings().setTreeMaxDepth(origMaxDepth);
 		}
+		
+        executor.shutdown();
+        executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
+		
+        for (Future<Boolean> future : everythingOk) {
+            try {
+            	future.get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            } catch (ExecutionException e) {
+            	e.printStackTrace();
+            	System.exit(-1);
+            }
+        }
 
 	}
 	

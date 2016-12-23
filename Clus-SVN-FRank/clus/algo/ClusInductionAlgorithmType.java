@@ -86,8 +86,9 @@ public abstract class ClusInductionAlgorithmType {
 	 * @param cr
 	 * @throws ClusException
 	 * @throws IOException
+	 * @throws InterruptedException 
 	 */
-	public void induceAll(ClusRun cr) throws ClusException, IOException {
+	public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		long start_time = ResourceInfo.getTime();
 		
 		getInduce().induceAll(cr); // Train the algorithms of this type.
@@ -103,12 +104,12 @@ public abstract class ClusInductionAlgorithmType {
 		}
 	}
 
-	public ClusModel induceSingle(ClusRun cr) throws ClusException, IOException {
+	public ClusModel induceSingle(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		ClusModel unpruned = induceSingleUnpruned(cr);
 		return pruneSingle(unpruned, cr);
 	}
 
-	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		return getInduce().induceSingleUnpruned(cr);
 	}
 

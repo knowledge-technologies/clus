@@ -68,7 +68,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
 	protected Hashtable m_Mappings;
 	protected double[] m_FTests;
 
-	public void run(String[] args) throws IOException, ClusException, ClassNotFoundException {
+	public void run(String[] args) throws IOException, ClusException, ClassNotFoundException, InterruptedException {
 			m_Clus = new Clus();
 			Settings sett = m_Clus.getSettings();
 			m_Cargs = new CMDLineArgs(this);
@@ -181,7 +181,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
 		return cschema;
 	}
 
-	public void doOneNode(ClassTerm node, ClassHierarchy hier, RowData train, RowData valid, RowData test) throws ClusException, IOException {
+	public void doOneNode(ClassTerm node, ClassHierarchy hier, RowData train, RowData valid, RowData test) throws ClusException, IOException, InterruptedException {
 		// get data relevant to node
 		RowData nodeData = getNodeData(train, node.getIndex());
 		String nodeName = node.toPathString("=");
@@ -243,7 +243,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
 		}
 	}
 
-	public void computeRecursive(ClassTerm node, ClassHierarchy hier, RowData train, RowData valid, RowData test, boolean[] computed) throws ClusException, IOException {
+	public void computeRecursive(ClassTerm node, ClassHierarchy hier, RowData train, RowData valid, RowData test, boolean[] computed) throws ClusException, IOException, InterruptedException {
 		if (!computed[node.getIndex()]) {
 			// remember that we did this one
 			computed[node.getIndex()] = true;
@@ -256,7 +256,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
 		}
 	}
 
-	public void computeRecursiveRoot(ClassTerm node, ClassHierarchy hier, RowData train, RowData valid, RowData test, boolean[] computed) throws ClusException, IOException {
+	public void computeRecursiveRoot(ClassTerm node, ClassHierarchy hier, RowData train, RowData valid, RowData test, boolean[] computed) throws ClusException, IOException, InterruptedException {
 		doOneNode(node, hier, train, valid, test);
 		for (int i = 0; i < node.getNbChildren(); i++) {
 			ClassTerm child = (ClassTerm)node.getChild(i);
@@ -264,7 +264,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
 		}
 	}
 
-	public void doRun() throws IOException, ClusException, ClassNotFoundException {
+	public void doRun() throws IOException, ClusException, ClassNotFoundException, InterruptedException {
 		Settings sett = m_Clus.getSettings();
 		ClusRun cr = m_Clus.partitionData();
 		RowData train = (RowData)cr.getTrainingSet();
@@ -303,6 +303,9 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
 			cl.printStackTrace();
 		} catch (ClassNotFoundException cn) {
 			System.out.println("Error: "+cn.getMessage());
+		} catch (InterruptedException ie) {
+			System.out.println("Error: " + ie.getMessage());
+			ie.printStackTrace();
 		}
 	}
 

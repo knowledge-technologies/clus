@@ -380,9 +380,10 @@ public class Clus implements CMDLineArgsProvider {
 	 *            Type of learning algorithm used.
 	 * @throws ClusException
 	 * @throws IOException
+	 * @throws InterruptedException 
 	 */
 	public final void induce(ClusRun cr, ClusInductionAlgorithmType clss)
-			throws ClusException, IOException {
+			throws ClusException, IOException, InterruptedException {
 		if (Settings.VERBOSE > 0) {
 			System.out.println("Run: " + cr.getIndexString());
 			System.out.println("Verbose: "  + Settings.VERBOSE);
@@ -1209,7 +1210,7 @@ public class Clus implements CMDLineArgsProvider {
 			}
 	}
 
-	public ClusRun train(RowData train) throws ClusException, IOException  {
+	public ClusRun train(RowData train) throws ClusException, IOException, InterruptedException  {
 		m_Induce = getClassifier().createInduce(train.getSchema(), m_Sett, m_CmdLine);
 		ClusRun cr = partitionDataBasic(train);
 		m_Induce.initialize();
@@ -1221,7 +1222,7 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final void singleRun(ClusInductionAlgorithmType clss)
-			throws IOException, ClusException {
+			throws IOException, ClusException, InterruptedException {
 		ClusModelCollectionIO io = new ClusModelCollectionIO();
 		m_Summary.setTotalRuns(1);
 		ClusRun run = singleRunMain(clss, null);
@@ -1245,7 +1246,7 @@ public class Clus implements CMDLineArgsProvider {
 	 * exit.
 	 */
 	public final ClusRun singleRunMain(ClusInductionAlgorithmType clss,
-			ClusSummary summ) throws IOException, ClusException {
+			ClusSummary summ) throws IOException, ClusException, InterruptedException {
 		// ClusOutput output = new ClusOutput(m_Sett.getAppName() + ".out",
 		// m_Schema, m_Sett);
 		ClusOutput output;
@@ -1310,7 +1311,7 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final void combineAllFoldRuns(ClusInductionAlgorithmType clss)
-			throws IOException, ClusException {
+			throws IOException, ClusException, InterruptedException {
 		ClusOutput output = new ClusOutput(m_Sett.getAppName() + ".xval",
 				m_Schema, m_Sett);
 		output.writeHeader();
@@ -1359,7 +1360,7 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final void oneFoldRun(ClusInductionAlgorithmType clss, int fold)
-			throws IOException, ClusException {
+			throws IOException, ClusException, InterruptedException {
 		if (fold == 0) {
 			combineAllFoldRuns(clss);
 		} else {
@@ -1394,7 +1395,7 @@ public class Clus implements CMDLineArgsProvider {
 	public final ClusRun doOneFold(int fold, ClusInductionAlgorithmType clss,
 			XValMainSelection sel, ClusModelCollectionIO io,
 			PredictionWriter wrt, ClusOutput output, ClusErrorOutput errOutput, ClusEnsemblePredictionWriter ens_pred)
-			throws IOException, ClusException {
+			throws IOException, ClusException, InterruptedException {
 		XValSelection msel = new XValSelection(sel, fold);
 		ClusRun cr = partitionData(msel, fold + 1);
 		// Create statistic for the training set
@@ -1452,7 +1453,7 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final void xvalRun(ClusInductionAlgorithmType clss)
-			throws IOException, ClusException {
+			throws IOException, ClusException, InterruptedException {
 		ClusErrorOutput errFileOutput = null;
 		if (getSettings().isWriteErrorFile()) {
 			errFileOutput = new ClusErrorOutput(m_Sett.getAppName() + ".err",
@@ -1499,7 +1500,7 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final void baggingRun(ClusInductionAlgorithmType clss)
-			throws IOException, ClusException {
+			throws IOException, ClusException, InterruptedException {
 		ClusOutput output = new ClusOutput(m_Sett.getAppName() + ".bag", m_Schema, m_Sett);
 		output.writeHeader();
 		ClusStatistic target = getStatManager().createStatistic(
@@ -1531,7 +1532,7 @@ public class Clus implements CMDLineArgsProvider {
 	 * Modify to have more than one model as an output !
 	 */
 	public final void exhaustiveRun(ClusInductionAlgorithmType clss)
-			throws IOException, ClusException {
+			throws IOException, ClusException, InterruptedException {
 		ClusOutput output = new ClusOutput(m_Sett.getAppName() + ".all",
 				m_Schema, m_Sett);
 		output.writeHeader();
@@ -1826,6 +1827,9 @@ public class Clus implements CMDLineArgsProvider {
 		} catch (ClassNotFoundException e) {
 			System.err.println();
 			System.err.println("Class not found" + e);
+		} catch (InterruptedException e) {
+			System.err.println();
+			System.err.println("Error: " + e);
 		}
 	}
 }

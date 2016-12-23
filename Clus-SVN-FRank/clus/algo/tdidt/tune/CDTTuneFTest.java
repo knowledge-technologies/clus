@@ -123,7 +123,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
 		return cr;
 	}
 
-	public double doParamXVal(RowData trset, RowData pruneset) throws ClusException, IOException {
+	public double doParamXVal(RowData trset, RowData pruneset) throws ClusException, IOException, InterruptedException {
 		int prevVerb = Settings.enableVerbose(0);
 		ClusStatManager mgr = getStatManager();
 		ClusSummary summ = new ClusSummary();
@@ -169,7 +169,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
 		return err.getModelError();
 	}
 
-	public void findBestFTest(RowData trset, RowData pruneset) throws ClusException, IOException {
+	public void findBestFTest(RowData trset, RowData pruneset) throws ClusException, IOException, InterruptedException {
 		int best_value = 0;
 		boolean low = createTuneError(getStatManager()).getFirstError().shouldBeLow();
 		double best_error = low ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
@@ -216,6 +216,8 @@ public class CDTTuneFTest extends ClusDecisionTree {
 		    System.err.println("Error: "+e);
 		} catch (IOException e) {
 		    System.err.println("IO Error: "+e);
+		} catch (InterruptedException e) {
+			System.err.println("InterruptedException: " + e);
 		}
 	}
 }

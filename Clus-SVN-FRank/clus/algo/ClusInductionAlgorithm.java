@@ -98,13 +98,13 @@ public abstract class ClusInductionAlgorithm {
 		return new RowData(m_Schema);
 	}
 
-	public void induceAll(ClusRun cr) throws ClusException, IOException {
+	public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		ClusModel model = induceSingleUnpruned(cr);
 		ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL);
 		model_info.setModel(model);
 	}
 
-	public abstract ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException;
+	public abstract ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException;
 
 	public void initializeHeuristic() {
 	}

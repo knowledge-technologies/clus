@@ -45,8 +45,9 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
 
 	/**
 	 * Induces rules from ensemble tree, similar to ClusRuleInduce.induce
+	 * @throws InterruptedException 
 	 */
-	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
 
 		// The params may already have been disabled, thus we do not want to disable them again
 		// (forgets original values)
@@ -157,8 +158,9 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
 	/**
 	 * Induces the rule models. ClusModel.PRUNED = the optimized rule model
 	 * ClusModel.DEFAULT = the ensemble tree model.
+	 * @throws InterruptedException 
 	 */
-	public void induceAll(ClusRun cr) throws ClusException, IOException {
+	public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		RowData trainData = (RowData)cr.getTrainingSet();
 		getStatManager().getHeuristic().setTrainData(trainData);
 //		ClusStatistic trainStat = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING);

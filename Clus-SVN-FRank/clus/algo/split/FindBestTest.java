@@ -148,7 +148,7 @@ public class FindBestTest {
 		m_Split.findRandomSplit(m_BestTest, at, rn);
 	}
 	
-	public void findNominalExtraTree(NominalAttrType at, RowData data, NonstaticRandom rnd) {
+	public void findNominalExtraTree(NominalAttrType at, RowData data, NonstaticRandom rnd) { // PARALELNO
 		Random rn;
 		if(rnd == null){
 			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
@@ -171,7 +171,7 @@ public class FindBestTest {
 	}
 
 	public void findNumeric(NumericAttrType at, RowData data) {
-		RowData sample = createSample(data, null);
+		RowData sample = createSample(data, null); // PARALELNO
 		DataTuple tuple;
 		if (at.isSparse()) {
 			sample.sortSparse(at, m_SortHelper);

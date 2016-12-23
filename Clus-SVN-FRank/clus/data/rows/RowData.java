@@ -349,7 +349,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 	}
 
 	// Does not change original distribution
-	public ClusData selectFrom(ClusSelection sel, NonstaticRandom rnd) {
+	public ClusData selectFrom(ClusSelection sel, NonstaticRandom rnd) { // PARALELNO
 		int nbsel = sel.getNbSelected();
 		RowData res = new RowData(m_Schema, nbsel);
 		if (sel.supportsReplacement()) {

@@ -69,7 +69,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree{
 		System.out.flush();
 	}
 
-	public ClusError doParamXVal(ClusData trset, ClusData pruneset) throws ClusException, IOException {
+	public ClusError doParamXVal(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
 		int prevVerb = Settings.enableVerbose(0);
 		ClusStatManager mgr = getStatManager();
 		ClusSummary summ = new ClusSummary();
@@ -121,7 +121,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree{
 	}
 
 
-	private double addBestSupportTasks(double[] weights,int emc, int[] support_range,ClusData trset, ClusData pruneset) throws ClusException, IOException{
+	private double addBestSupportTasks(double[] weights,int emc, int[] support_range,ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException{
 
 		ClusStatManager mgr = getStatManager();
 		//variables for holding the current best found weights/err
@@ -177,7 +177,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree{
 
 		return best_err;
 	}
-	private double substractBestSupportTasks(double[] weights,int emc, int[] support_range,ClusData trset, ClusData pruneset) throws ClusException, IOException{
+	private double substractBestSupportTasks(double[] weights,int emc, int[] support_range,ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException{
 
 		ClusStatManager mgr = getStatManager();
 		//variables for holding the current best found weights/err
@@ -235,7 +235,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree{
 		return best_err;
 	}
 
-	public void findBestSupportTasks(ClusData trset, ClusData pruneset) throws ClusException, IOException {
+	public void findBestSupportTasks(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
 		ClusStatManager mgr = getStatManager();
 		Settings settings = mgr.getSettings();
 		int main_target = new Integer(settings.getMainTarget())-1;////we try to optimize for this target. Index! 0 = target 1
@@ -270,7 +270,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree{
 
 	}
 
-	public void twoSidedSit(ClusData trset, ClusData pruneset) throws ClusException, IOException {
+	public void twoSidedSit(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
 		ClusStatManager mgr = getStatManager();
 		Settings settings = mgr.getSettings();
 		int main_target = new Integer(settings.getMainTarget())-1;////we try to optimize for this target. Index! 0 = target 1
@@ -336,7 +336,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree{
 
 	}
 
-	public void superSit(ClusData trset, ClusData pruneset) throws ClusException, IOException {
+	public void superSit(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
 		ClusStatManager mgr = getStatManager();
 		Settings settings = mgr.getSettings();
 		int main_target = new Integer(settings.getMainTarget())-1;////we try to optimize for this target. Index! 0 = target 1
@@ -398,7 +398,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree{
 		System.out.println();
 	}
 
-	public void sweepSit(ClusData trset, ClusData pruneset) throws ClusException, IOException {
+	public void sweepSit(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
 		ClusStatManager mgr = getStatManager();
 		Settings settings = mgr.getSettings();
 		int main_target = new Integer(settings.getMainTarget())-1;////we try to optimize for this target. Index! 0 = target 1
@@ -485,7 +485,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree{
 
 	}
 
-	public void exhaustiveSearch(ClusRun cr) throws ClusException, IOException{
+	public void exhaustiveSearch(ClusRun cr) throws ClusException, IOException, InterruptedException{
 		ClusStatManager mgr = getStatManager();
 		Settings settings = mgr.getSettings();
 		//int main_target = new Integer(settings.getMainTarget())-1;////we try to optimize for this target. Index! 0 = target 1
@@ -530,7 +530,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree{
 		double best_err = err.getModelErrorComponent(0);
 	}
 
-	public void induceAll(ClusRun cr) throws ClusException, IOException {
+	public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		ClusStatManager mgr = getStatManager();
 		Settings settings = mgr.getSettings();
 

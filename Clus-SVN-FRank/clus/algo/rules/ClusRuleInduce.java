@@ -516,7 +516,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 		for (int z = 0; z < nb_sets; z++) {
 			// Select the data using bootstrap
 			RowData data_sel = (RowData)data.cloneData();
-			BaggingSelection msel = new BaggingSelection(nb_rows, getSettings().getEnsembleBagSize(), null); // PARALELL
+			BaggingSelection msel = new BaggingSelection(nb_rows, getSettings().getEnsembleBagSize(), null); // PARALELNO
 			data_sel.update(msel);
 			// Reset tuple indexes used in heuristic
 			if (getSettings().isHeurRuleDist()) {
@@ -1125,7 +1125,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 		return result;
 	}
 
-	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		// ClusRulesForAttrs rfa = new ClusRulesForAttrs();
 		// return rfa.constructRules(cr);
 		resetAll();
@@ -1136,7 +1136,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 		}
 	}
 
-	public void induceAll(ClusRun cr) throws ClusException, IOException {
+	public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		// Set the defaults for heuristic
 		RowData trainData = (RowData)cr.getTrainingSet();
 		getStatManager().getHeuristic().setTrainData(trainData);
