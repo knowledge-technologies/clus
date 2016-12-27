@@ -75,7 +75,7 @@ public class ClusOOBErrorEstimate {
 //		m_OOBCalculation = false;
 	}
 	
-	public void updateOOBTuples(OOBSelection oob_sel, RowData train_data, ClusModel model) throws IOException, ClusException{
+	public synchronized void updateOOBTuples(OOBSelection oob_sel, RowData train_data, ClusModel model) throws IOException, ClusException{
 		for (int i = 0; i < train_data.getNbRows(); i++){
 			if (oob_sel.isSelected(i)){
 				DataTuple tuple = train_data.getTuple(i);

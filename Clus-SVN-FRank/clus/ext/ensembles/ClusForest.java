@@ -116,7 +116,7 @@ public class ClusForest implements ClusModel, Serializable{
 		m_TargetSubspaceInfo = tinfo;
 	}
 
-	public void addModelToForest(ClusModel model){
+	public synchronized void addModelToForest(ClusModel model){
 		m_Forest.add(model);
 	}
 
