@@ -22,8 +22,12 @@
 
 package clus.data.type;
 
-import java.io.*; 
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
+import clus.ext.hierarchicalmtr.ClassHMTRHierarchy;
+import clus.ext.hierarchicalmtr.ClassHMTRNode;
 import clus.io.*;
 import clus.main.Settings;
 import clus.util.*;
@@ -31,6 +35,7 @@ import clus.data.rows.*;
 import clus.data.cols.*;
 import clus.data.cols.attribute.*;
 import clus.data.io.ClusReader;
+import jeans.util.IntervalCollection;
 
 /**
  * Attribute of numeric (continuous) value.
@@ -151,7 +156,36 @@ public class NumericAttrType extends ClusAttrType {
 			return true;
 		}
 
-		public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema) throws IOException {
+		public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) throws IOException {
+
+
+			int nbHMTRTargets = schema.getNbHierarchicalMTR();
+            IntervalCollection key = schema.m_Key;
+
+           	int nbAttributes = schema.getNbAttributes()-schema.getNbNominalDescriptiveAttributes();
+            if(!key.isEmpty()) nbAttributes--;
+
+
+			int nbNominalTargets = schema.getNbNominalTargetAttributes();
+			if (nbNominalTargets>0) throw new IOException("Nominal attributes used as targets in Hierarchical Multi-Target Regression!");
+
+            int NbAll = schema.getNbAttributes();
+
+            int ai = getArrayIndex();
+            double value;
+            String name;
+
+            ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
+
+
+//			for (int i = NbAll-nbAttributes; i<nbAttributes;i++){
+//
+//               value = tuple.getDoubleVal(i);
+//               name = targets[i-(schema.getNbAttributes()-nbAttributes)].getName();
+//
+//                System.out.println();
+//
+//            }
 
 
         //            HMTR_AGG_SUM = 0;
@@ -166,9 +200,32 @@ public class NumericAttrType extends ClusAttrType {
         //            HMTR_AGG_STDEV = 9;
 
             double val = Double.NaN;
+
+            List<ClassHMTRNode> nodes = hmtrHierarchy.getNodes();
+
+            name = targets[ai-(schema.getNbAttributes()-nbAttributes)].getName();
+
+            for (ClassHMTRNode node : nodes){
+
+                if(node.getName().equals(name)){
+                    if(!node.isAggregate())throw new IOException("Attribute "+node.getName()+" is  not aggregate!");
+
+
+
+                    System.out.println(name);
+                }
+
+            }
+
+
 		    switch (getSettings().getHMTRAggregation().getValue()){
 
-                case 0: val = 999.0; break;
+                case 0:
+
+
+
+                    val = 999.0;
+                    break;
 		        case 1: val = 999.0; break;
                 case 2: val = 999.0; break;
                 case 3: val = 999.0; break;
@@ -182,7 +239,7 @@ public class NumericAttrType extends ClusAttrType {
 
             if (Double.isNaN(val)) throw new IOException("Error calculating HMTR aggregate! Aggregation function is: "+getSettings().getHMTRAggregation().getValue());
 
-            System.out.println("CALCULATING HMTR AGGREGATE: " + val + " ggregation function is: "+getSettings().getHMTRAggregation().getValue());
+            System.out.println("CALCULATING HMTR AGGREGATE: " + val + " aggregation function is: "+getSettings().getHMTRAggregation().getValue());
 
 			tuple.setDoubleVal(val, getArrayIndex());
 			if (val == MISSING) {

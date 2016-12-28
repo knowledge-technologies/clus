@@ -27,6 +27,7 @@ import java.io.*;
 import clus.data.io.ClusReader;
 import clus.data.rows.*;
 import clus.data.type.*;
+import clus.ext.hierarchicalmtr.ClassHMTRHierarchy;
 
 public abstract class ClusSerializable {
 
@@ -37,7 +38,7 @@ public abstract class ClusSerializable {
 		throw new IOException("Attribute does not support tuple wise reading");
 	}
 
-	public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema) throws IOException {
+	public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) throws IOException {
 		throw new IOException("Attribute does not support tuple wise reading");
 	}
 }
