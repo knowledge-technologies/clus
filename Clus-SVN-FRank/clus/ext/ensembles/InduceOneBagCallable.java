@@ -3,13 +3,14 @@ package clus.ext.ensembles;
 import java.util.concurrent.Callable;
 
 import clus.data.rows.TupleIterator;
+import clus.ext.ensembles.pairs.ModelFimportancesPair;
 import clus.main.ClusRun;
 import clus.model.ClusModel;
 import clus.selection.BaggingSelection;
 import clus.selection.OOBSelection;
 import clus.util.NonstaticRandom;
 
-public class InduceOneBagCallable implements Callable<ClusModel> {
+public class InduceOneBagCallable implements Callable<ModelFimportancesPair> {
 	private ClusEnsembleInduce m_Cei;
 	private ClusRun m_Cr;
 	private int m_I, m_OrigMaxDepth;
@@ -32,7 +33,7 @@ public class InduceOneBagCallable implements Callable<ClusModel> {
 	}
 
 	@Override
-	public ClusModel call() throws Exception {
+	public ModelFimportancesPair call() throws Exception {
 		return m_Cei.induceOneBag(m_Cr, m_I, m_OrigMaxDepth, m_Oob_sel, m_Oob_total, m_Train_iterator, m_Test_iterator, m_Msel, m_Rnd);
 	}
 

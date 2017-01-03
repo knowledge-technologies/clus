@@ -25,7 +25,7 @@ public class ReliefInduce extends ClusInductionAlgorithm{
 	}
 
 	@Override
-	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		ReliefModel reliefModel = new ReliefModel(cr.getStatManager().getSettings().getReliefNbNeighboursValue(),
 												  cr.getStatManager().getSettings().getReliefNbIterationsValue(),
 												  cr.getStatManager().getSettings().getReliefWeightNeighbours(),

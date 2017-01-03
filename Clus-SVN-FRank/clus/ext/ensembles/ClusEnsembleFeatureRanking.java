@@ -11,6 +11,8 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.TreeMap;
 
+import javax.naming.SizeLimitExceededException;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -50,6 +52,7 @@ import clus.error.OneError;
 import clus.error.RMSError;
 import clus.error.RankingLoss;
 import clus.error.SubsetAccuracy;
+import clus.ext.ensembles.pairs.NodeDepthPair;
 import clus.ext.hierarchical.HierErrorMeasures;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
@@ -68,12 +71,16 @@ public class ClusEnsembleFeatureRanking {
 	protected TreeMap m_FeatureRanks;//sorted by the rank
 	HashMap m_FeatureRankByName;  // Part of fimp's header
 	
+	/** Description of the ranking that appears in the first line of the .fimp file */
 	String m_RankingDescription;
+	
+	ImportancesReadWriteLock m_Lock;
 	
 	public ClusEnsembleFeatureRanking(){
 		m_AllAttributes = new HashMap<String, double[]>();
 		m_FeatureRankByName = new HashMap();
 		m_FeatureRanks = new TreeMap();
+		m_Lock = new ImportancesReadWriteLock();
 	}
 	
 	public void initializeAttributes(ClusAttrType[] descriptive, int nbRankings){
@@ -99,7 +106,7 @@ public class ClusEnsembleFeatureRanking {
 					info[2 + j] = 0; //current rank
 				}
 //					System.out.print(type.getName()+": "+info[1]+"\t");
-				m_AllAttributes.put(type.getName(),info);
+				m_AllAttributes.put(type.getName(), info);
 			}
 		}
 	}
@@ -302,16 +309,17 @@ public class ClusEnsembleFeatureRanking {
 	
 	
 	/**
+	 * Implements the Fisher–Yates algorithm for uniform shuffling.
 	 * @param selection
 	 * @param data
-	 * @param type    -> 0 nominal, 1 numeric
-	 * @param position -> at which position
+	 * @param type 0 nominal, 1 numeric
+	 * @param position position at which the attribute whose values are being shuffled, is 
 	 * @return
 	 */
-	public RowData createRandomizedOOBdata(OOBSelection selection, RowData data, int type, int position){
+	public RowData createRandomizedOOBdata(OOBSelection selection, RowData data, int type, int position, int seed){
 		RowData result = data;
-		Random rndm = new Random(data.getNbRows());
-		for (int i = 0; i < result.getNbRows(); i++){
+		Random rndm = new Random(seed);
+		for (int i = 0; i < result.getNbRows() - 1; i++){
 //			int rnd = i + ClusRandom.nextInt(ClusRandom.RANDOM_ALGO_INTERNAL, result.getNbRows()- i);
 			int rnd = i + rndm.nextInt(result.getNbRows()- i);
 			DataTuple first = result.getTuple(i);
@@ -484,25 +492,42 @@ public class ClusEnsembleFeatureRanking {
 		return m_FeatureRankByName;
 	}
 	
-	public double[] getAttributeInfo(String attribute){
-		return (double[])m_AllAttributes.get(attribute);
+	public double[] getAttributeInfo(String attribute) throws InterruptedException{
+		m_Lock.readingLock();
+		double[] info = Arrays.copyOf(m_AllAttributes.get(attribute), m_AllAttributes.get(attribute).length);
+		m_Lock.readingUnlock();
+		return info;
 	}
 	
-	public synchronized void putAttributeInfo(String attribute, double[]info){
+	public void putAttributeInfo(String attribute, double[] info) throws InterruptedException{
+		m_Lock.writingLock();
 		m_AllAttributes.put(attribute, info);
+		m_Lock.writingUnlock();
 	}
 	
-	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, NonstaticRandom rnd) throws ClusException{ // matej: paralelizacija: info ...
+	public void putAttributesInfos(HashMap<String, double[]> partialFimportances) throws InterruptedException {
+		for(String attribute : partialFimportances.keySet()){
+			double[] info = getAttributeInfo(attribute);
+			double[] partialInfo = partialFimportances.get(attribute);
+			for(int i = 0; i < partialInfo.length; i++){
+				info[i + 2] += partialInfo[i];
+			}
+			putAttributeInfo(attribute, info);
+		}	
+	}
+	
+	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, NonstaticRandom rnd) throws ClusException, InterruptedException{ // matej: paralelizacija: info ...
 		ArrayList<String> attests = new ArrayList<String>();
 		fillWithAttributesInTree((ClusNode)model, attests);
 		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
 		double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel, rnd), model, cr);
 		for (int z = 0; z < attests.size(); z++){//for the attributes that appear in the tree
 			String current_attribute = (String)attests.get(z);
-			double [] info = getAttributeInfo(current_attribute);
+			double[] info = getAttributeInfo(current_attribute);
 			double type = info[0];
 			double position = info[1];
-			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel, rnd), (int)type, (int)position);
+			int permutationSeed = rnd.nextInt(NonstaticRandom.RANDOM_SEED);
+			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel, rnd), (int)type, (int)position, permutationSeed);
 			double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
 			for(int i = 0; i < oob_errs.length; i++){
 				info[2 + i] += (oob_errs[i][0] != 0.0 || permuted_oob_errs[i][0] != 0.0) ? oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0] : 0.0;
@@ -512,13 +537,13 @@ public class ClusEnsembleFeatureRanking {
 	}
 	
 	
-	public void calculateGENIE3importance(ClusNode node, ClusRun cr){
+	public void calculateGENIE3importance(ClusNode node, ClusRun cr) throws InterruptedException{
 		if(m_RankingDescription == null){
 			setGenie3Description();
 		}
 		if (!node.atBottomLevel()){
 			String attribute = node.getTest().getType().getName();
-			double [] info = getAttributeInfo(attribute);
+			double[] info = getAttributeInfo(attribute);
 			info[2] += calculateGENI3value(node, cr);//variable importance
 			putAttributeInfo(attribute, info);
 			for (int i = 0; i < node.getNbChildren(); i++)
@@ -538,28 +563,86 @@ public class ClusEnsembleFeatureRanking {
 	}
 	
 	/**
+	 * An iterative version of {@link calculateGENIE3importance}, which does not update feature importances in place.
+	 * Rather, it returns the partial importances for all attributes. These are combined later.
+	 * @param root
+	 * @param weights
+	 * @return
+	 * @throws InterruptedException
+	 */
+	public synchronized HashMap<String, double[]> calculateGENIE3importanceIteratively(ClusNode root, ClusRun cr){
+		if(m_RankingDescription == null){
+			setGenie3Description();
+		}
+		ArrayList<NodeDepthPair> nodes = getInternalNodes(root);		
+		HashMap<String, double[]> partialImportances = new HashMap<String, double[]>();
+		
+		for(NodeDepthPair pair : nodes){
+			String attribute = pair.getNode().getTest().getType().getName();
+			if(! partialImportances.containsKey(attribute)){
+				partialImportances.put(attribute, new double[1]);
+			}
+			double[] info = partialImportances.get(attribute);
+			info[0] += calculateGENI3value(pair.getNode(), cr);
+		}
+		return partialImportances;
+		
+	}
+	
+	/**
 	 * Recursively computes the symbolic importance of attributes, importance(attribute) = importance(attribute, {@code node}), where <p>
 	 * importance({@code attribute}, {@code node}) = (0.0 : 1.0 ? {@code node} has {@code attribute} as a test) + sum_subnodes {@code weight} * importance({@code attribute}, subnode),<p>
 	 * for all weights in {@code weights}.
 	 * @param node
-	 * @param cr
 	 * @param weights
 	 * @param depth Depth of {@code node}, root's depth is 0
+	 * @throws InterruptedException 
 	 */
-	public void calculateSYMBOLICimportance(ClusNode node, ClusRun cr, double[] weights, int depth){
+	public synchronized void calculateSYMBOLICimportance(ClusNode node, double[] weights, double depth) throws InterruptedException{
 		if(m_RankingDescription == null){
 			setSymbolicDescription(weights);
 		}
+				
 		if (!node.atBottomLevel()){
 			String attribute = node.getTest().getType().getName();
-			double [] info = getAttributeInfo(attribute);
+			double[] info = getAttributeInfo(attribute);
 			for(int ranking = 0; ranking < weights.length; ranking++){
 				info[2 + ranking] += Math.pow(weights[ranking], depth);//variable importance
 			}
 			putAttributeInfo(attribute, info);
 			for (int i = 0; i < node.getNbChildren(); i++)
-				calculateSYMBOLICimportance((ClusNode)node.getChild(i), cr, weights, depth + 1);
+				calculateSYMBOLICimportance((ClusNode)node.getChild(i), weights, depth + 1.0);
 		}//if it is a leaf - do nothing
+	}
+	
+	/**
+	 * An iterative version of {@link calculateSYMBOLICimportance}, which does not update feature importances in place.
+	 * Rather, it returns the partial importances for all attributes. These are combined later.
+	 * @param root
+	 * @param weights
+	 * @return
+	 * @throws InterruptedException
+	 */
+	public synchronized HashMap<String, double[]> calculateSYMBOLICimportanceIteratively(ClusNode root, double[] weights) throws InterruptedException{
+		if(m_RankingDescription == null){
+			setSymbolicDescription(weights);
+		}
+		ArrayList<NodeDepthPair> nodes = getInternalNodes(root);		
+		HashMap<String, double[]> partialImportances = new HashMap<String, double[]>();
+		
+		for(NodeDepthPair pair : nodes){
+			String attribute = pair.getNode().getTest().getType().getName();
+			if(! partialImportances.containsKey(attribute)){
+				partialImportances.put(attribute, new double[weights.length]);
+			}
+			double[] info = partialImportances.get(attribute);
+			for(int ranking = 0; ranking < weights.length; ranking++){
+				info[ranking] += Math.pow(weights[ranking], pair.getDepth());
+			}
+		}
+		
+		return partialImportances;
+		
 	}
 	
 	public void setRForestDescription(ClusErrorList error){
@@ -570,14 +653,35 @@ public class ClusEnsembleFeatureRanking {
 		
 	}
 	
-	public void setGenie3Description(){
+	public ArrayList<NodeDepthPair> getInternalNodes(ClusNode node){
+		ArrayList<NodeDepthPair> nodes = new ArrayList<NodeDepthPair>();
+		
+		ArrayList<NodeDepthPair> stack = new ArrayList<NodeDepthPair>();
+		stack.add(new NodeDepthPair(node, 0.0));
+		
+		while (stack.size() > 0){
+			NodeDepthPair top = stack.remove(stack.size() - 1);
+			ClusNode topNode = top.getNode();
+			if(!topNode.atBottomLevel()){
+				nodes.add(top);
+			}
+			for(int i = 0; i < topNode.getNbChildren(); i++){
+				stack.add(new NodeDepthPair((ClusNode) topNode.getChild(i), top.getDepth() + 1.0));
+			}
+		}
+		
+		return nodes;
+		
+	}
+	
+	public synchronized void setGenie3Description(){
 		m_RankingDescription = "Ranking via Random Forests: Genie3";
 	}
 	
-	public void setSymbolicDescription(double[] weights){
+	public synchronized void setSymbolicDescription(double[] weights){
 		m_RankingDescription = "Ranking via Random Forests: Symbolic with weights " + Arrays.toString(weights);		
 	}
-	public void setReliefDescription(int neighbours, int iterations){
+	public synchronized void setReliefDescription(int neighbours, int iterations){
 		m_RankingDescription = String.format("Ranking via Relief: %d neighbours and %d iterations", neighbours, iterations);
 	}
 }

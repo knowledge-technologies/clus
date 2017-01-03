@@ -104,8 +104,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking{
 	 * Calculates the feature importances for a given dataset.
 	 * @param data The dataset, whose features are importances calculated for.
 	 * @throws ClusException
+	 * @throws InterruptedException 
 	 */
-	public void calculateReliefImportance(RowData data) throws ClusException {
+	public void calculateReliefImportance(RowData data) throws ClusException, InterruptedException {
 		m_TimeSeriesDistance = data.m_Schema.getSettings().m_TimeSeriesDistance.getValue();		
 		setReliefDescription(m_NbNeighbours, m_NbIterations);
 		m_NbExamples = data.getNbRows();
