@@ -47,6 +47,7 @@ import clus.data.rows.TupleIterator;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.error.ClusErrorList;
+import clus.ext.ensembles.cloner.Cloner;
 import clus.ext.ensembles.pairs.ModelFimportancesPair;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusOutput;
@@ -473,6 +474,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			seeds[i] = bagSeedGenerator.nextInt();
 		}
 		
+		// PARALELLNO
+		ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];		
+		Cloner cloner = new Cloner();
+		for(int bag = 0; bag < statManagerClones.length; bag++){
+			statManagerClones[bag] = cloner.deepClone(cr.getStatManager());
+		}		
+		
 		ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
 		ArrayList<Future<ModelFimportancesPair>> everythingOk = new ArrayList<Future<ModelFimportancesPair>>();			
 		
@@ -689,12 +697,17 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			// Set random tree max depth
 			getSettings().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(
 //					m_randTreeDepth.nextDouble(),
-					rnd.nextDouble(NonstaticRandom.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));  // PARELENO <---- ClusRandom.nextDouble(ClusRandom.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
+					rnd.nextDouble(NonstaticRandom.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));  // PARALELNO <---- ClusRandom.nextDouble(ClusRandom.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
 		}
 
 		long one_bag_time = ResourceInfo.getTime();
 		if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
+		
+		
 		ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(),msel,cr.getSummary(),i);
+		
+
+		
 		DepthFirstInduce ind;
 		
 		// ordinary bagging run
@@ -720,12 +733,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		
 		HashMap<String, double[]> fimportances = new HashMap<String, double[]>();
 		if (m_FeatRank){//franking
+			
 			if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
 				m_FeatureRanking.calculateRFimportance(model, cr, oob_sel, rnd);
 			}
 			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3){
 				//m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
-				fimportances = m_FeatureRanking.calculateGENIE3importanceIteratively((ClusNode)model, cr);
+				fimportances = m_FeatureRanking.calculateGENIE3importanceIteratively((ClusNode)model, cr.getStatManager());
 			}
 			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC){
 				double[] weights = m_BagClus.getSettings().getSymbolicWeights();
@@ -1020,6 +1034,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 //					m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
 				if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3) {
 					m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
+					//m_FeatureRanking.calculateGENIE3importanceIteratively((ClusNode)model, cr);
 				}
 				
 				else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {

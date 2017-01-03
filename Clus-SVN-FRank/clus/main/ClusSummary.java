@@ -36,6 +36,8 @@ public class ClusSummary extends ClusModelInfoList {
 	protected ClusErrorList m_TestErr;
 	protected ClusErrorList m_ValidErr;
 	protected ClusStatManager m_StatMgr;
+	
+	
 
 	public void resetAll() {
 		m_Models.clear();

@@ -536,7 +536,7 @@ public class ClusEnsembleFeatureRanking {
 		}
 	}
 	
-	
+	@Deprecated
 	public void calculateGENIE3importance(ClusNode node, ClusRun cr) throws InterruptedException{
 		if(m_RankingDescription == null){
 			setGenie3Description();
@@ -550,7 +550,7 @@ public class ClusEnsembleFeatureRanking {
 				calculateGENIE3importance((ClusNode)node.getChild(i),cr);
 		}//if it is a leaf - do nothing
 	}
-	
+	@Deprecated
 	public double calculateGENI3value(ClusNode node, ClusRun cr){
 		ClusStatistic total = node.getClusteringStat();
 		double total_variance = total.getSVarS(cr.getStatManager().getClusteringWeights());
@@ -570,7 +570,7 @@ public class ClusEnsembleFeatureRanking {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	public synchronized HashMap<String, double[]> calculateGENIE3importanceIteratively(ClusNode root, ClusRun cr){
+	public synchronized HashMap<String, double[]> calculateGENIE3importanceIteratively(ClusNode root, ClusStatManager statManager){
 		if(m_RankingDescription == null){
 			setGenie3Description();
 		}
@@ -583,10 +583,20 @@ public class ClusEnsembleFeatureRanking {
 				partialImportances.put(attribute, new double[1]);
 			}
 			double[] info = partialImportances.get(attribute);
-			info[0] += calculateGENI3value(pair.getNode(), cr);
+			info[0] += calculateGENI3value(pair.getNode(), statManager);
 		}
 		return partialImportances;
-		
+	}
+	
+	public double calculateGENI3value(ClusNode node, ClusStatManager statManager){
+		ClusStatistic total = node.getClusteringStat();
+		double total_variance = total.getSVarS(statManager.getClusteringWeights());
+		double summ_variances = 0.0;
+		for (int j = 0; j < node.getNbChildren(); j++){
+			ClusNode child = (ClusNode)node.getChild(j); 
+			summ_variances += child.getClusteringStat().getSVarS(statManager.getClusteringWeights());
+		}
+		return total_variance - summ_variances;
 	}
 	
 	/**
@@ -598,7 +608,7 @@ public class ClusEnsembleFeatureRanking {
 	 * @param depth Depth of {@code node}, root's depth is 0
 	 * @throws InterruptedException 
 	 */
-	public synchronized void calculateSYMBOLICimportance(ClusNode node, double[] weights, double depth) throws InterruptedException{
+	public void calculateSYMBOLICimportance(ClusNode node, double[] weights, double depth) throws InterruptedException{
 		if(m_RankingDescription == null){
 			setSymbolicDescription(weights);
 		}
