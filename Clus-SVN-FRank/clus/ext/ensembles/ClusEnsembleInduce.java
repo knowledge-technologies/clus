@@ -153,6 +153,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 //			}
 		}
 		m_NbThreads = sett.getNumberOfThreads();
+		if (m_NbThreads == 0) m_NbThreads = Runtime.getRuntime().availableProcessors(); // if Settings.NumberOfThreads = 0 then use all available processors
 	}
 	
 	public void setNbFeatureRankings(ClusSchema schema){
@@ -396,7 +397,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			ind.initialize();
 			crSingle.getStatManager().initClusteringWeights();
 			
-			initializeBagTargetSubspacing(crSingle, i); 
+			initializeBagTargetSubspacing(crSingle.getStatManager(), i); // this needs to be changed for parallel implementation 
 			
 			ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
 			summ_time += ResourceInfo.getTime() - one_bag_time;
@@ -661,14 +662,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 	}
 	
-	void initializeBagTargetSubspacing(ClusRun crSingle, int bagNo) throws ClusException
+	void initializeBagTargetSubspacing(ClusStatManager mgr, int bagNo) throws ClusException
 	{	
 		if (Settings.isEnsembleTargetSubspacingEnabled()) {
 			
-			ClusStatManager m = crSingle.getStatManager();
-			
 			// get heuristic in use
-			ClusHeuristic h = m.getHeuristic();
+			ClusHeuristic h = mgr.getHeuristic();
 
 			// check if the attribute weights are set
 		    if(h.getClusteringAttributeWeights() == null)  throw new RuntimeException("Heuristic does not support target subspacing!");
@@ -717,10 +716,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	
 		ind.initialize();
 		
+		
 		crSingle.getStatManager().initClusteringWeights();
 		ind.getStatManager().initClusteringWeights(); // isto kot mgr.initClusteringWeights();		
 		
-		initializeBagTargetSubspacing(crSingle, i);
+		initializeBagTargetSubspacing(mgr, i);
 
  		ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);// PARALELNO
 		m_SummTime += ResourceInfo.getTime() - one_bag_time;
@@ -1012,7 +1012,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			ind.initialize();
 			crSingle.getStatManager().initClusteringWeights();
 			
-			initializeBagTargetSubspacing(crSingle, i);
+			initializeBagTargetSubspacing(crSingle.getStatManager(), i); // this needs to be changed for parallel implementation 
 			
 			ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
 			summ_time += ResourceInfo.getTime() - one_bag_time;
@@ -1148,13 +1148,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	 * @param attrs -- For which attributes
 	 * @param select -- How many
 	 */
-	public static ClusAttrType[] selectRandomSubspaces(ClusAttrType[] attrs, int select, int randomizerVersion, ClusRandomNonstatic rand) { // PARALELNO
+	public static ClusAttrType[] selectRandomSubspaces(ClusAttrType[] attrs, int select, int randomizerVersion, ClusRandomNonstatic rand) {
 		int origsize = attrs.length;
 		int[] samples = new int [origsize];
 		int rnd;
 		boolean randomize = true;
 		int i = 0;
-		if(rand == null){ // PARALELNO
+		if(rand == null){
 			while (randomize) {
 				rnd = ClusRandom.nextInt(randomizerVersion, origsize);
 				if (samples[rnd] == 0) {
@@ -1174,8 +1174,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			}
 		}
 		
-		rnd = rand.nextInt(randomizerVersion, origsize);
-		
 		ClusAttrType[] result = new ClusAttrType[select];
 		int res = 0;
 		for (int k = 0; k < origsize; k++) {
@@ -1191,8 +1189,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		return m_RandomSubspaces;
 	}
 
-	public static void setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd){ // PARALELNO
-		m_RandomSubspaces = ClusEnsembleInduce.selectRandomSubspaces(attrs, select, ClusRandomNonstatic.RANDOM_SELECTION, rnd); // PARALELNO
+	public static void setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd){
+		m_RandomSubspaces = ClusEnsembleInduce.selectRandomSubspaces(attrs, select, ClusRandomNonstatic.RANDOM_SELECTION, rnd);
 	}
 
 	/** Memory optimization
