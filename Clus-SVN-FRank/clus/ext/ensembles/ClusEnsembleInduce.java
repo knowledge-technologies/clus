@@ -63,7 +63,7 @@ import clus.selection.OOBSelection;
 import clus.tools.optimization.GDProbl;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
-import clus.util.NonstaticRandom;
+import clus.util.ClusRandomNonstatic;
 import jeans.resource.ResourceInfo;
 
 
@@ -305,7 +305,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			long one_bag_time = ResourceInfo.getTime();
 			if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
 			
-			NonstaticRandom rnd = new NonstaticRandom(seeds[i - 1]); // PARALELNO
+			ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]); // PARALELNO
 			
 			ClusRun crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());
 			DepthFirstInduce ind;
@@ -382,7 +382,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			long one_bag_time = ResourceInfo.getTime();
 			if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
 			
-			NonstaticRandom rnd = new NonstaticRandom(seeds[i - 1]); // PARALELNO
+			ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]); // PARALELNO
 			
 			ClusRun crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());
 			ClusEnsembleInduce.setRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getNbRandomAttrSelected(), rnd);
@@ -468,7 +468,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		int[] bagSelections = getSettings().getBagSelection().getIntVectorSorted();
 		// bagSelections is either -1, 0, a value in [1,Iterations], or 2 values in [1,Iterations]
 		
-		Random bagSeedGenerator = new Random(123); // PARALELNO
+		Random bagSeedGenerator = new Random(getSettings().getRandomSeed()); // PARALELNO
 		int[] seeds = new int[m_NbMaxBags];
 		for(int i = 0; i < m_NbMaxBags; i++){
 			seeds[i] = bagSeedGenerator.nextInt();
@@ -477,17 +477,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		// PARALELLNO
 		ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];		
 		Cloner cloner = new Cloner();
-		for(int bag = 0; bag < statManagerClones.length; bag++){
-			statManagerClones[bag] = cloner.deepClone(cr.getStatManager());
-		}		
 		
 		ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
-		ArrayList<Future<ModelFimportancesPair>> everythingOk = new ArrayList<Future<ModelFimportancesPair>>();			
+		ArrayList<Future<ModelFimportancesPair>> bagResults = new ArrayList<Future<ModelFimportancesPair>>();			
 		
 		if (bagSelections[0] == -1) {
 			// normal bagging procedure
 			for (int i = 1; i <= m_NbMaxBags; i++) {
-				NonstaticRandom rnd = new NonstaticRandom(seeds[i - 1]); // PARALELNO
+				ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]); // PARALELNO
 				
 			    msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);	// PARALELNO
 				if (Settings.shouldEstimateOOB()){		//OOB estimate is on
@@ -498,10 +495,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 						oob_total.addToThis(oob_sel);
 					}
 				}
-				// CE TU NE DAM VEDNO ISTEGA; DOBIM DRUGE REZULTATE
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]); // <-- induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
+
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, cloner.deepClone(cr.getStatManager())); // <-- induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
                 Future<ModelFimportancesPair> submit = executor.submit(worker);
-                everythingOk.add(submit);
+                bagResults.add(submit);
 				
 			}
 		}
@@ -517,27 +514,22 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 				msel = new BaggingSelection(nbrows,getSettings().getEnsembleBagSize(), null); // PARALELNO: not really necessary
 			}
 			for (int i=bagSelections[0]; i<=bagSelections[1]; i++) {
-				NonstaticRandom rnd = new NonstaticRandom(seeds[i - 1]);
+				ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
 				msel = new BaggingSelection(nbrows,getSettings().getEnsembleBagSize(), rnd);
 				if (Settings.shouldEstimateOOB()){		//OOB estimate is on
 					oob_sel = new OOBSelection(msel);
 				}
 				// induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]);
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, cloner.deepClone(cr.getStatManager()));
                 Future<ModelFimportancesPair> submit = executor.submit(worker);
-                everythingOk.add(submit);
+                bagResults.add(submit);
 			}
 		}
 
-		// Restore the old maxDepth
-		if (origMaxDepth != -1) {
-			getSettings().setTreeMaxDepth(origMaxDepth);
-		}
-		
         executor.shutdown();
         executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
 		
-        for (Future<ModelFimportancesPair> future : everythingOk) {
+        for (Future<ModelFimportancesPair> future : bagResults) {
             try {
             	ModelFimportancesPair pair = future.get();
             	m_OForest.addModelToForest(pair.getModel());
@@ -550,6 +542,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             	System.exit(-1);
             }
         }
+        
+		// Restore the old maxDepth
+		if (origMaxDepth != -1) {
+			getSettings().setTreeMaxDepth(origMaxDepth);
+		}
 
 	}
 	
@@ -693,20 +690,17 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 	}
 
-	public ModelFimportancesPair induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, NonstaticRandom rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
+	public ModelFimportancesPair induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
 		if (getSettings().isEnsembleRandomDepth()) {
 			// Set random tree max depth
 			getSettings().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(
 //					m_randTreeDepth.nextDouble(),
-					rnd.nextDouble(NonstaticRandom.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));  // PARALELNO <---- ClusRandom.nextDouble(ClusRandom.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
+					rnd.nextDouble(ClusRandomNonstatic.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));  // PARALELNO <---- ClusRandom.nextDouble(ClusRandom.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
 		}
 
 		long one_bag_time = ResourceInfo.getTime();
 		if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
-		
-		// TEGA NE SMEM: PRIDEJO DRUGI REZULTATI: OR CAN I?
-		//cr.getSummary().setStatManager(mgr); 
-		
+			
 		ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(),msel,cr.getSummary(),i);
 				
 		DepthFirstInduce ind;
@@ -822,7 +816,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			}
 			for (int i=1; i<=m_NbMaxBags; i++) {
 				System.out.println("Loading model for bag " + i);
-				NonstaticRandom rnd = new NonstaticRandom(seeds[i - 1]);// PARALELNO
+				ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);// PARALELNO
 				
 				ClusModelCollectionIO io = ClusModelCollectionIO.load(m_BagClus.getSettings().getFileAbsolute(getSettings().getAppName() + "_bag" + i + ".model"));
 				ClusModel orig_bag_model = io.getModel("Original");
@@ -909,7 +903,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			long one_bag_time = ResourceInfo.getTime();
 			if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
 			
-			NonstaticRandom rnd = new NonstaticRandom(seeds[i - 1]); // PARALELNO
+			ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]); // PARALELNO
 			BaggingSelection msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);
 			
 			ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(),msel,cr.getSummary(),i);
@@ -1002,7 +996,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			long one_bag_time = ResourceInfo.getTime();
 			if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
 			
-			NonstaticRandom rnd = new NonstaticRandom(seeds[i - 1]); // PARALELNO
+			ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]); // PARALELNO
 			
 			ClusRun crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());
 //			ClusEnsembleInduce.setRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getNbRandomAttrSelected());
@@ -1152,7 +1146,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	 * @param attrs -- For which attributes
 	 * @param select -- How many
 	 */
-	public static ClusAttrType[] selectRandomSubspaces(ClusAttrType[] attrs, int select, int randomizerVersion, NonstaticRandom rand) { // PARALELNO
+	public static ClusAttrType[] selectRandomSubspaces(ClusAttrType[] attrs, int select, int randomizerVersion, ClusRandomNonstatic rand) { // PARALELNO
 		int origsize = attrs.length;
 		int[] samples = new int [origsize];
 		int rnd;
@@ -1195,8 +1189,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		return m_RandomSubspaces;
 	}
 
-	public static void setRandomSubspaces(ClusAttrType[] attrs, int select, NonstaticRandom rnd){ // PARALELNO
-		m_RandomSubspaces = ClusEnsembleInduce.selectRandomSubspaces(attrs, select, NonstaticRandom.RANDOM_SELECTION, rnd); // PARALELNO
+	public static void setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd){ // PARALELNO
+		m_RandomSubspaces = ClusEnsembleInduce.selectRandomSubspaces(attrs, select, ClusRandomNonstatic.RANDOM_SELECTION, rnd); // PARALELNO
 	}
 
 	/** Memory optimization

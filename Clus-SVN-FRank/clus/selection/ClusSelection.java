@@ -22,7 +22,7 @@
 
 package clus.selection;
 
-import clus.util.NonstaticRandom;
+import clus.util.ClusRandomNonstatic;
 
 public abstract class ClusSelection {
 
@@ -48,7 +48,7 @@ public abstract class ClusSelection {
 		return 1.0;
 	}
 
-	public int getIndex(NonstaticRandom rnd) {
+	public int getIndex(ClusRandomNonstatic rnd) {
 		return 0;
 	}
 

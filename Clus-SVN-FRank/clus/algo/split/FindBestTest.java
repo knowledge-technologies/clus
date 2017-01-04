@@ -36,7 +36,7 @@ import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
-import clus.util.NonstaticRandom;
+import clus.util.ClusRandomNonstatic;
 
 public class FindBestTest {
 
@@ -125,12 +125,12 @@ public class FindBestTest {
 	}
 
 	@Deprecated
-	public void findNominalRandom(NominalAttrType at, RowData data, NonstaticRandom rnd) { // PARALELNO
+	public void findNominalRandom(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) { // PARALELNO
 		Random rn;
 		if(rnd == null){
 			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
 		} else{
-			rn = rnd.getRandom(NonstaticRandom.RANDOM_EXTRATREE);
+			rn = rnd.getRandom(ClusRandomNonstatic.RANDOM_EXTRATREE);
 		}
 		
 		// Reset positive statistic
@@ -148,12 +148,12 @@ public class FindBestTest {
 		m_Split.findRandomSplit(m_BestTest, at, rn);
 	}
 	
-	public void findNominalExtraTree(NominalAttrType at, RowData data, NonstaticRandom rnd) { // PARALELNO
+	public void findNominalExtraTree(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) { // PARALELNO
 		Random rn;
 		if(rnd == null){
 			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
 		} else{
-			rn = rnd.getRandom(NonstaticRandom.RANDOM_EXTRATREE);
+			rn = rnd.getRandom(ClusRandomNonstatic.RANDOM_EXTRATREE);
 		}
 		// Reset positive statistic
 		RowData sample = createSample(data, rnd);
@@ -207,14 +207,14 @@ public class FindBestTest {
 		}
 	}
 		
-	public void findNumericExtraTree(NumericAttrType at, RowData orig_data, NonstaticRandom rnd) {// PARALELNO
+	public void findNumericExtraTree(NumericAttrType at, RowData orig_data, ClusRandomNonstatic rnd) {// PARALELNO
 		// TODO: if this method gets completed, sampling of the RowDatas must be included as well
 		
 		Random rn;
 		if(rnd == null){
 			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
 		} else{
-			rn = rnd.getRandom(NonstaticRandom.RANDOM_EXTRATREE);
+			rn = rnd.getRandom(ClusRandomNonstatic.RANDOM_EXTRATREE);
 		}
 		
 		RowData data = createSample(orig_data, rnd);
@@ -386,7 +386,7 @@ public class FindBestTest {
 	}
 	
 
-	private RowData createSample(RowData original, NonstaticRandom rnd) { // PARALELNO
+	private RowData createSample(RowData original, ClusRandomNonstatic rnd) { // PARALELNO
  		return original.sample(getSettings().getTreeSplitSampling(), rnd);
 	}
 

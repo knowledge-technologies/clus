@@ -42,7 +42,7 @@ import clus.selection.ClusSelection;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
-import clus.util.NonstaticRandom;
+import clus.util.ClusRandomNonstatic;
 import jeans.util.compound.DoubleObject;
 import jeans.util.sort.MSortable;
 import jeans.util.sort.MSorter;
@@ -349,7 +349,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 	}
 
 	// Does not change original distribution
-	public ClusData selectFrom(ClusSelection sel, NonstaticRandom rnd) { // PARALELNO
+	public ClusData selectFrom(ClusSelection sel, ClusRandomNonstatic rnd) { // PARALELNO
 		int nbsel = sel.getNbSelected();
 		RowData res = new RowData(m_Schema, nbsel);
 		if (sel.supportsReplacement()) {
@@ -853,7 +853,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 	 * 		   If N == 0: a copy of this RowData object (i.e. no sampling)
 	 * @throws IllegalArgumentException if N < 0
 	 */
-	public RowData sample2(int N, NonstaticRandom rnd) { // PARALELNO
+	public RowData sample2(int N, ClusRandomNonstatic rnd) { // PARALELNO
 		if(N < 0) throw new IllegalArgumentException("N should be larger than or equal to zero");
 		int nbRows = getNbRows();
 		if(N == 0) return new RowData(this);
@@ -861,12 +861,12 @@ public class RowData extends ClusData implements MSortable, Serializable {
 		// sample with replacement
 		int i;
 		for(int size = 0; size < N; size++) {
-			i = rnd.nextInt(NonstaticRandom.RANDOM_SAMPLE, nbRows);  // <---- i = ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE,nbRows);
+			i = rnd.nextInt(ClusRandomNonstatic.RANDOM_SAMPLE, nbRows);  // <---- i = ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE,nbRows);
 			res.add(getTuple(i));
 		}
 		return new RowData(res, getSchema().cloneSchema());
 	}
-	public RowData sample(int N, NonstaticRandom rnd) { // PARALELNO
+	public RowData sample(int N, ClusRandomNonstatic rnd) { // PARALELNO
 		if(N < 0) throw new IllegalArgumentException("N should be larger than or equal to zero");
 		int nbRows = getNbRows();
 		if(N == 0) return new RowData(this);
@@ -878,7 +878,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 			if(rnd == null){
 				i = ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE,nbRows);
 			} else{
-				i = rnd.nextInt(NonstaticRandom.RANDOM_SAMPLE, nbRows); 
+				i = rnd.nextInt(ClusRandomNonstatic.RANDOM_SAMPLE, nbRows); 
 			}
 			res.add(getTuple(i));
 		}

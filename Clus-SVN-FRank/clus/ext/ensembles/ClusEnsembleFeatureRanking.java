@@ -61,7 +61,7 @@ import clus.model.ClusModel;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import clus.util.NonstaticRandom;
+import clus.util.ClusRandomNonstatic;
 import jeans.util.StringUtils;
 
 public class ClusEnsembleFeatureRanking {
@@ -516,7 +516,7 @@ public class ClusEnsembleFeatureRanking {
 		}	
 	}
 	
-	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, NonstaticRandom rnd) throws ClusException, InterruptedException{ // matej: paralelizacija: info ...
+	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, ClusRandomNonstatic rnd) throws ClusException, InterruptedException{ // matej: paralelizacija: info ...
 		ArrayList<String> attests = new ArrayList<String>();
 		fillWithAttributesInTree((ClusNode)model, attests);
 		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
@@ -526,7 +526,7 @@ public class ClusEnsembleFeatureRanking {
 			double[] info = getAttributeInfo(current_attribute);
 			double type = info[0];
 			double position = info[1];
-			int permutationSeed = rnd.nextInt(NonstaticRandom.RANDOM_SEED);
+			int permutationSeed = rnd.nextInt(ClusRandomNonstatic.RANDOM_SEED);
 			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel, rnd), (int)type, (int)position, permutationSeed);
 			double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
 			for(int i = 0; i < oob_errs.length; i++){

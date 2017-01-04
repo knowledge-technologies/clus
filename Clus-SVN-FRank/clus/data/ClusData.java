@@ -28,7 +28,7 @@ import clus.error.ClusErrorList;
 import clus.selection.ClusSelection;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import clus.util.NonstaticRandom;
+import clus.util.ClusRandomNonstatic;
 
 public abstract class ClusData {
 
@@ -42,7 +42,7 @@ public abstract class ClusData {
 		m_NbRows = nb;
 	}
 
-	public ClusData selectFrom(ClusSelection sel, NonstaticRandom rnd) { // PARALELNO
+	public ClusData selectFrom(ClusSelection sel, ClusRandomNonstatic rnd) { // PARALELNO
 		return null;
 	}
 

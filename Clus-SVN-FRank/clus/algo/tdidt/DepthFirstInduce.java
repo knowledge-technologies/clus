@@ -46,7 +46,7 @@ import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
-import clus.util.NonstaticRandom;
+import clus.util.ClusRandomNonstatic;
 
 public class DepthFirstInduce extends ClusInductionAlgorithm {
 
@@ -100,7 +100,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
 	}
 
-	public ClusAttrType[] getDescriptiveAttributes(NonstaticRandom rnd) { // PARALELNO
+	public ClusAttrType[] getDescriptiveAttributes(ClusRandomNonstatic rnd) { // PARALELNO
 		ClusSchema schema = getSchema();
 		Settings sett = getSettings();
 		if (!sett.isEnsembleMode()) {
@@ -209,7 +209,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		}
 	}
 	
-	public void induce(ClusNode node, RowData data, NonstaticRandom rnd) {//PARALELNO
+	public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {//PARALELNO
 		// rnd may be null due to some calls of induce that do not support parallelisation yet.
 		
 		//System.out.println("nonsparse induce");
@@ -366,7 +366,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 	
 
 	@Deprecated
-	public void rankFeatures(ClusNode node, RowData data, NonstaticRandom rnd) throws IOException { // PARALELNO
+	public void rankFeatures(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws IOException { // PARALELNO
 		// Find best test
 		PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream("ranking.csv")));
 		ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
@@ -398,7 +398,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		m_FindBestTest.cleanSplit();
 	}
 
-	public ClusNode induceSingleUnpruned(RowData data, NonstaticRandom rnd) throws ClusException, IOException {// PARALELNO
+	public ClusNode induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) throws ClusException, IOException {// PARALELNO
 		m_Root = null;
 		// Beginning of induction process
 		int nbr = 0;
@@ -429,13 +429,13 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		return m_Root;
 	}
 
-	public ClusModel induceSingleUnpruned(ClusRun cr, NonstaticRandom rnd) throws ClusException, IOException {//PARALELNO
+	public ClusModel induceSingleUnpruned(ClusRun cr, ClusRandomNonstatic rnd) throws ClusException, IOException {//PARALELNO
 		return induceSingleUnpruned((RowData)cr.getTrainingSet(), rnd);
 	}
 
 	@Override
 	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
-		System.err.println("This method is not appropriate for parallelism - induceSingleUnpruned(RowData data, NonstaticRandom rnd) should be used instead.");
+		System.err.println("This method is not appropriate for parallelism - induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) should be used instead.");
 		return induceSingleUnpruned((RowData)cr.getTrainingSet(), null);
 	}
 
