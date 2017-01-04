@@ -103,7 +103,7 @@ public class OOTIndNO extends OOTInduce {
 				ClusStat.deltaSplit();
 			}
 
-			m_DFirst.induce(onode, mgrp.getData().getFoldData2(fold), null); // PARALELNO
+			m_DFirst.induce(onode, mgrp.getData().getFoldData2(fold), null);
 			return;
 		}
 		// Optimize?

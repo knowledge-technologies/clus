@@ -126,7 +126,7 @@ if (Debug.debug == 1) {
 			ClusStat.deltaSplit();
 }
 
-			m_DFirst.induce(onode, mgrp.getData().getFoldData2(fold), null); // PARALELNO
+			m_DFirst.induce(onode, mgrp.getData().getFoldData2(fold), null);
 			return;
 		}
 		// Optimize?

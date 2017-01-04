@@ -73,7 +73,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
 				return;
 			}
 			ClusAttrType at = test.getType();
-			if (at instanceof NominalAttrType) getFindBestTest().findNominal((NominalAttrType)at, data); // PARALELNO
+			if (at instanceof NominalAttrType) getFindBestTest().findNominal((NominalAttrType)at, data);
 			else getFindBestTest().findNumeric((NumericAttrType)at, data);
 			CurrentBestTestAndHeuristic best = m_FindBestTest.getBestTest();
 			if (best.hasBestTest()) {

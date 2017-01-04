@@ -34,7 +34,7 @@ public class CriterionBasedSelection {
 		if (sel.getNbSelected() != nbrows) {
 			System.out.println("Tuples with missing target: "
 					+ (nbrows - sel.getNbSelected()));
-			return (RowData)data.selectFrom(sel, null); // PARALELNO: no problem, parallelism comes later
+			return (RowData)data.selectFrom(sel, null); // no problem, parallelism comes later
 		} else {
 			return data;
 		}

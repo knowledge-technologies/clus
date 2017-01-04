@@ -98,7 +98,7 @@ public class OOTInd {
 		int nbsets = sett.getBaggingSets();
 		MyArray sels = new MyArray();
 		for (int i = 0; i < nbsets; i++) {
-			sels.addElement(new BaggingSelection(nbrows, m_Clus.getSettings().getEnsembleBagSize(),  null)); // PARALELNO
+			sels.addElement(new BaggingSelection(nbrows, m_Clus.getSettings().getEnsembleBagSize(),  null));
 		}
 		// Add set numbers to our datset
 		addSetNrs(set, sels, nbsets);

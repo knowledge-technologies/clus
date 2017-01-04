@@ -48,7 +48,7 @@ public class BaggingSelection extends ClusSelection {
 	 * @param rnd random generator object that is used for creating the bag. May be null. In that case, ClusRandom is used instead, which will
 	 * result in non-reproducibility if the number of cores is greater than one.
 	 */
-	public BaggingSelection(int nbrows, int nbselected, ClusRandomNonstatic rnd) { // PARALELNO
+	public BaggingSelection(int nbrows, int nbselected, ClusRandomNonstatic rnd) {
 	       super(nbrows);
 	       m_Counts = new int[nbrows];
 	       if(nbselected == 0) nbselected = nbrows;

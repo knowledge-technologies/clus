@@ -103,7 +103,7 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
 				System.out.println("Tree: "+i+" (of max: "+nbTrees+")");
 			}
 			RowData train = trainData.sampleWeighted(m_Random);
-			ClusNode tree = tdidt.induceSingleUnpruned(train, null); // PARALELNO
+			ClusNode tree = tdidt.induceSingleUnpruned(train, null);
 			double[] L = computeNormalizedLoss(trainData, tree);
 			double Lbar = computeAverageLoss(trainData, L);
 			double beta = Lbar / (1-Lbar);

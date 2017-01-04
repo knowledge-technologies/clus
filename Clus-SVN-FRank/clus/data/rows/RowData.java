@@ -349,7 +349,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 	}
 
 	// Does not change original distribution
-	public ClusData selectFrom(ClusSelection sel, ClusRandomNonstatic rnd) { // PARALELNO
+	public ClusData selectFrom(ClusSelection sel, ClusRandomNonstatic rnd) {
 		int nbsel = sel.getNbSelected();
 		RowData res = new RowData(m_Schema, nbsel);
 		if (sel.supportsReplacement()) {
@@ -853,7 +853,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 	 * 		   If N == 0: a copy of this RowData object (i.e. no sampling)
 	 * @throws IllegalArgumentException if N < 0
 	 */
-	public RowData sample2(int N, ClusRandomNonstatic rnd) { // PARALELNO
+	public RowData sample2(int N, ClusRandomNonstatic rnd) {
 		if(N < 0) throw new IllegalArgumentException("N should be larger than or equal to zero");
 		int nbRows = getNbRows();
 		if(N == 0) return new RowData(this);
@@ -866,21 +866,23 @@ public class RowData extends ClusData implements MSortable, Serializable {
 		}
 		return new RowData(res, getSchema().cloneSchema());
 	}
-	public RowData sample(int N, ClusRandomNonstatic rnd) { // PARALELNO
+	public RowData sample(int N, ClusRandomNonstatic rnd) {
 		if(N < 0) throw new IllegalArgumentException("N should be larger than or equal to zero");
 		int nbRows = getNbRows();
 		if(N == 0) return new RowData(this);
 		ArrayList<DataTuple> res = new ArrayList<DataTuple>();
 		// sample with replacement
 		int i;
-		for(int size = 0; size < N; size++) {
-			// PARALELNO
-			if(rnd == null){
+		if (rnd == null){
+			for(int size = 0; size < N; size++) {	
 				i = ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE,nbRows);
-			} else{
-				i = rnd.nextInt(ClusRandomNonstatic.RANDOM_SAMPLE, nbRows); 
+				res.add(getTuple(i));
 			}
-			res.add(getTuple(i));
+		} else {
+			for(int size = 0; size < N; size++) {
+				i = rnd.nextInt(ClusRandomNonstatic.RANDOM_SAMPLE, nbRows); 
+				res.add(getTuple(i));
+			}
 		}
 		return new RowData(res, getSchema().cloneSchema());
 	}
