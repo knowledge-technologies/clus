@@ -533,7 +533,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             try {
             	ModelFimportancesPair pair = future.get();
             	m_OForest.addModelToForest(pair.getModel());
-            	m_FeatureRanking.putAttributesInfos(pair.getFimportances());
+            	if (getSettings().shouldPerformRanking()){
+            		m_FeatureRanking.putAttributesInfos(pair.getFimportances());
+            	}
             } catch (InterruptedException e) {
                 e.printStackTrace();
                 System.exit(-1);
