@@ -351,7 +351,7 @@ public class ClusStatManager implements Serializable {
 		NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
 		NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
 		initWeights((ClusNormalizedAttributeWeights) m_ClusteringWeights, num, nom, getSettings().getClusteringWeights());
-		if (getSettings().getVerbose() >= 1) {
+		if (getSettings().getVerbose() > 1) {
 			System.out.println("Clustering: " + m_ClusteringWeights.getName(m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING)));
 		}
 	}

@@ -355,7 +355,7 @@ public class ClusEnsembleFeatureRanking {
 		return result;
 	}
 
-	public static void fillWithAttributesInTree(ClusNode node, ArrayList attributes){
+	public static void fillWithAttributesInTree(ClusNode node, ArrayList<String> attributes){
 		for (int i = 0; i < node.getNbChildren(); i++){
 			String att = node.getTest().getType().getName();
 			if (!attributes.contains(att))attributes.add(att); // tole je pa O(n^2)
@@ -516,24 +516,32 @@ public class ClusEnsembleFeatureRanking {
 		}	
 	}
 	
-	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, InterruptedException{ // matej: paralelizacija: info ...
+	public HashMap<String, double[]> calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, InterruptedException{
+		HashMap<String, double[]> partialImportances = new HashMap<String, double[]>();
+		
 		ArrayList<String> attests = new ArrayList<String>();
 		fillWithAttributesInTree((ClusNode)model, attests);
 		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
 		double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel, rnd), model, mgr);
 		for (int z = 0; z < attests.size(); z++){//for the attributes that appear in the tree
-			String current_attribute = (String)attests.get(z);
-			double[] info = getAttributeInfo(current_attribute);
+			String current_attribute = attests.get(z);
+			if(! partialImportances.containsKey(current_attribute)){
+				partialImportances.put(current_attribute, new double[oob_errs.length]);
+			}
+			double[] info = getAttributeInfo(current_attribute);		
 			double type = info[0];
 			double position = info[1];
+			double[] importances = partialImportances.get(current_attribute);
 			int permutationSeed = rnd.nextInt(ClusRandomNonstatic.RANDOM_SEED);
 			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel, rnd), (int)type, (int)position, permutationSeed);
 			double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, mgr);
 			for(int i = 0; i < oob_errs.length; i++){
-				info[2 + i] += (oob_errs[i][0] != 0.0 || permuted_oob_errs[i][0] != 0.0) ? oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0] : 0.0;
+				importances[i] += (oob_errs[i][0] != 0.0 || permuted_oob_errs[i][0] != 0.0) ? oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0] : 0.0; // info[i + 2] += ...
 			}
-			putAttributeInfo(current_attribute, info);
+			// putAttributeInfo(current_attribute, info);
 		}
+		
+		return partialImportances;
 	}
 	
 	@Deprecated
