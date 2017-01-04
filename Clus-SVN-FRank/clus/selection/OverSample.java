@@ -38,7 +38,7 @@ public class OverSample extends ClusSelection {
 		return true;
 	}
 
-	public int getIndex(ClusRandomNonstatic rnd) { // PARALELNO
+	public int getIndex(ClusRandomNonstatic rnd) {
 		if (rnd == null){
 			return ClusRandom.nextInt(ClusRandom.RANDOM_SELECTION, m_NbRows);
 		} else{

@@ -371,15 +371,15 @@ public class ClusEnsembleFeatureRanking {
 	 * @return [[err1, sign1], [err2, sign2], ...], where signI = errorI.shouldBeLow() ? -1.0 : 1.0
 	 * @throws ClusException
 	 */
-	public double[][] calcAverageErrors(RowData data, ClusModel model, ClusRun cr) throws ClusException{
+	public double[][] calcAverageErrors(RowData data, ClusModel model, ClusStatManager mgr) throws ClusException{
 		ClusSchema schema = data.getSchema();
 		/* create error measure */
 		ClusErrorList error = new ClusErrorList();
 		NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
 		if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
-			if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
-				int[] measures = cr.getStatManager().getSettings().getMultiLabelRankingMeasures();
+			if(mgr.getSettings().getSectionMultiLabel().isEnabled()){
+				int[] measures = mgr.getSettings().getMultiLabelRankingMeasures();
 				for(int measure: measures){
 					switch(measure){
 					case Settings.MULTILABEL_MEASURES_HAMMINGLOSS:
@@ -452,7 +452,7 @@ public class ClusEnsembleFeatureRanking {
 //			error.addError(new RelativeError(error, num));
 			error.addError(new RMSError(error, num));
 		} else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-			error.addError(new HierErrorMeasures(error, cr.getStatManager().getHier(), cr.getStatManager().getSettings().getRecallValues().getDoubleVector(), cr.getStatManager().getSettings().getCompatibility(), Settings.HIERMEASURE_POOLED_AUPRC, false));
+			error.addError(new HierErrorMeasures(error, mgr.getHier(), mgr.getSettings().getRecallValues().getDoubleVector(), mgr.getSettings().getCompatibility(), Settings.HIERMEASURE_POOLED_AUPRC, false));
 		} else {
 			System.err.println("Feature ranking with Random Forests is supported only for:");
 			System.err.println("- multi-target classification (multi-label classification)");
@@ -516,11 +516,11 @@ public class ClusEnsembleFeatureRanking {
 		}	
 	}
 	
-	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, ClusRandomNonstatic rnd) throws ClusException, InterruptedException{ // matej: paralelizacija: info ...
+	public void calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, InterruptedException{ // matej: paralelizacija: info ...
 		ArrayList<String> attests = new ArrayList<String>();
 		fillWithAttributesInTree((ClusNode)model, attests);
 		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
-		double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel, rnd), model, cr);
+		double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel, rnd), model, mgr);
 		for (int z = 0; z < attests.size(); z++){//for the attributes that appear in the tree
 			String current_attribute = (String)attests.get(z);
 			double[] info = getAttributeInfo(current_attribute);
@@ -528,7 +528,7 @@ public class ClusEnsembleFeatureRanking {
 			double position = info[1];
 			int permutationSeed = rnd.nextInt(ClusRandomNonstatic.RANDOM_SEED);
 			RowData permuted = createRandomizedOOBdata(oob_sel, (RowData)tdata.selectFrom(oob_sel, rnd), (int)type, (int)position, permutationSeed);
-			double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, cr);
+			double[][] permuted_oob_errs = calcAverageErrors((RowData)permuted, model, mgr);
 			for(int i = 0; i < oob_errs.length; i++){
 				info[2 + i] += (oob_errs[i][0] != 0.0 || permuted_oob_errs[i][0] != 0.0) ? oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0])/oob_errs[i][0] : 0.0;
 			}
@@ -570,7 +570,7 @@ public class ClusEnsembleFeatureRanking {
 	 * @return
 	 * @throws InterruptedException
 	 */
-	public synchronized HashMap<String, double[]> calculateGENIE3importanceIteratively(ClusNode root, ClusStatManager statManager){
+	public HashMap<String, double[]> calculateGENIE3importanceIteratively(ClusNode root, ClusStatManager statManager){
 		if(m_RankingDescription == null){
 			setGenie3Description();
 		}

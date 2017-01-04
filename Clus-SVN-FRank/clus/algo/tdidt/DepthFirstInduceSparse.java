@@ -63,7 +63,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 	}
 	
 	
-	public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) { // PARALELNO
+	public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
 		if (getSettings().isEnsembleMode() && ((getSettings().getEnsembleMethod() == Settings.ENSEMBLE_RFOREST) || (getSettings().getEnsembleMethod() == Settings.ENSEMBLE_NOBAGRFOREST)) )
 		{
 			induceRandomForest(node,data, rnd);
@@ -191,13 +191,13 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 	
 	
 	// for random forests, a different induce approach is taken, because at each node, we have a different set of attributes
-	public void induceRandomForest(ClusNode node, RowData data, ClusRandomNonstatic rnd) { // PARALELNO
+	public void induceRandomForest(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
 		ClusAttrType[] attrs = getSchema().getDescriptiveAttributes();
 		initializeExamples(attrs, data);
 		induceRandomForestRecursive(node,data, rnd);
 	}
 	
-	public void induceRandomForestRecursive(ClusNode node, RowData data, ClusRandomNonstatic rnd) { // PARALELNO
+	public void induceRandomForestRecursive(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
 		ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
 		ArrayList<ClusAttrType> attrList = new ArrayList<ClusAttrType>();
 		for (int i = 0; i < attrs.length; i++) {
@@ -216,7 +216,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 
 	}
 	
-	public void induceRandomForestRecursive2(ClusNode node, RowData data, Object[] attrs, ClusRandomNonstatic rnd) { // PARALELNO
+	public void induceRandomForestRecursive2(ClusNode node, RowData data, Object[] attrs, ClusRandomNonstatic rnd) {
 		//System.out.println("INDUCE SPARSE with " + attrs.length + " attributes and " + data.getNbRows() + " examples");
 		// Initialize selector and perform various stopping criteria
 		if (initSelectorAndStopCrit(node, data)) {

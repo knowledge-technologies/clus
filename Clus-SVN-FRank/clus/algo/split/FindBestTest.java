@@ -87,7 +87,7 @@ public class FindBestTest {
 	public void findNominal(NominalAttrType at, RowData data) {
 		// Reset positive statistic
 //		long start_time = System.currentTimeMillis();
-		RowData sample = createSample(data, null); // PARALELNO: 
+		RowData sample = createSample(data, null);
 		int nbvalues = at.getNbValues();
 		m_BestTest.reset(nbvalues + 1);
 		int nb_rows = sample.getNbRows();
@@ -125,7 +125,7 @@ public class FindBestTest {
 	}
 
 	@Deprecated
-	public void findNominalRandom(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) { // PARALELNO
+	public void findNominalRandom(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) {
 		Random rn;
 		if(rnd == null){
 			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
@@ -148,7 +148,7 @@ public class FindBestTest {
 		m_Split.findRandomSplit(m_BestTest, at, rn);
 	}
 	
-	public void findNominalExtraTree(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) { // PARALELNO
+	public void findNominalExtraTree(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) {
 		Random rn;
 		if(rnd == null){
 			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
@@ -171,7 +171,7 @@ public class FindBestTest {
 	}
 
 	public void findNumeric(NumericAttrType at, RowData data) {
-		RowData sample = createSample(data, null); // PARALELNO
+		RowData sample = createSample(data, null);
 		DataTuple tuple;
 		if (at.isSparse()) {
 			sample.sortSparse(at, m_SortHelper);
@@ -207,7 +207,7 @@ public class FindBestTest {
 		}
 	}
 		
-	public void findNumericExtraTree(NumericAttrType at, RowData orig_data, ClusRandomNonstatic rnd) {// PARALELNO
+	public void findNumericExtraTree(NumericAttrType at, RowData orig_data, ClusRandomNonstatic rnd) {
 		// TODO: if this method gets completed, sampling of the RowDatas must be included as well
 		
 		Random rn;
@@ -263,11 +263,11 @@ public class FindBestTest {
 	}
 	
 	// for sparse attributes (already sorted)
-	public void findNumeric(NumericAttrType at, ArrayList data) {// PARALELNO
+	public void findNumeric(NumericAttrType at, ArrayList data) {
 		ArrayList sample;
 		if(getSettings().getTreeSplitSampling() > 0) {
 			RowData tmp = new RowData(data, getSchema());
-			RowData smpl = createSample(tmp, null); // PARALELNO
+			RowData smpl = createSample(tmp, null);
 			if(at.isSparse()) {
 				smpl.sortSparse(at, getSortHelper());
 			}
@@ -386,7 +386,7 @@ public class FindBestTest {
 	}
 	
 
-	private RowData createSample(RowData original, ClusRandomNonstatic rnd) { // PARALELNO
+	private RowData createSample(RowData original, ClusRandomNonstatic rnd) {
  		return original.sample(getSettings().getTreeSplitSampling(), rnd);
 	}
 

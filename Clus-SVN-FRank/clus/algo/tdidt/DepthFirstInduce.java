@@ -100,7 +100,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
 	}
 
-	public ClusAttrType[] getDescriptiveAttributes(ClusRandomNonstatic rnd) { // PARALELNO
+	public ClusAttrType[] getDescriptiveAttributes(ClusRandomNonstatic rnd) {
 		ClusSchema schema = getSchema();
 		Settings sett = getSettings();
 		if (!sett.isEnsembleMode()) {
@@ -209,7 +209,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		}
 	}
 	
-	public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {//PARALELNO
+	public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
 		// rnd may be null due to some calls of induce that do not support parallelisation yet.
 		
 		//System.out.println("nonsparse induce");
@@ -222,15 +222,13 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		
 //		long start_time = System.currentTimeMillis();
 		
-		ClusAttrType[] attrs = getDescriptiveAttributes(rnd); // PARALELNO
+		ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
 		for (int i = 0; i < attrs.length; i++) {
 			ClusAttrType at = attrs[i];
 			if ((getSettings().isEnsembleMode()) && (getSettings().getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES)){
 				if (at instanceof NominalAttrType){
-					// PARALELNO
 					m_FindBestTest.findNominalExtraTree((NominalAttrType)at, data, rnd);
 				} else{
-					// PARALELNO
 					m_FindBestTest.findNumericExtraTree((NumericAttrType)at, data, rnd);					
 				}
 
@@ -366,7 +364,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 	
 
 	@Deprecated
-	public void rankFeatures(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws IOException { // PARALELNO
+	public void rankFeatures(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws IOException {
 		// Find best test
 		PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream("ranking.csv")));
 		ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
@@ -398,7 +396,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		m_FindBestTest.cleanSplit();
 	}
 
-	public ClusNode induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) throws ClusException, IOException {// PARALELNO
+	public ClusNode induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) throws ClusException, IOException {
 		m_Root = null;
 		// Beginning of induction process
 		int nbr = 0;
@@ -417,7 +415,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 				inducePert(m_Root, data);
 			}
 			else {*/
-			induce(m_Root, data, rnd); // PARALELNO
+			induce(m_Root, data, rnd);
 			/*}*/
 			// rankFeatures(m_Root, data);
 			// Refinement finished
@@ -429,7 +427,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		return m_Root;
 	}
 
-	public ClusModel induceSingleUnpruned(ClusRun cr, ClusRandomNonstatic rnd) throws ClusException, IOException {//PARALELNO
+	public ClusModel induceSingleUnpruned(ClusRun cr, ClusRandomNonstatic rnd) throws ClusException, IOException {
 		return induceSingleUnpruned((RowData)cr.getTrainingSet(), rnd);
 	}
 

@@ -42,7 +42,7 @@ public abstract class ClusData {
 		m_NbRows = nb;
 	}
 
-	public ClusData selectFrom(ClusSelection sel, ClusRandomNonstatic rnd) { // PARALELNO
+	public ClusData selectFrom(ClusSelection sel, ClusRandomNonstatic rnd) {
 		return null;
 	}
 

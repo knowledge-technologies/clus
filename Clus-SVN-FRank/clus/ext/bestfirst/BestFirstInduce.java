@@ -86,7 +86,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 		return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
 	}
 
-	public ClusAttrType[] getDescriptiveAttributes() { // PARALELNO: here, setRandomSubspaces is given a null second argument, will not work properly in parallelised setting of ensemble induce.
+	public ClusAttrType[] getDescriptiveAttributes() {// here, setRandomSubspaces is given a null second argument, will not work properly in parallelised setting of ensemble induce.
 		ClusSchema schema = getSchema();
 		Settings sett = getSettings();
 		if (!sett.isEnsembleMode()) {

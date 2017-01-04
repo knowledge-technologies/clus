@@ -364,7 +364,7 @@ public class Clus implements CMDLineArgsProvider {
 		} else {
 			sel = new RandomSelection(nb_rows, Integer.parseInt(svalue));
 		}
-		m_Data = (RowData) m_Data.selectFrom(sel, null); // PARALELNO: no problems, parallelism comes later 
+		m_Data = (RowData) m_Data.selectFrom(sel, null); // no problem, parallelism comes later 
 		int nb_sel = m_Data.getNbRows();
 		System.out.println("Sample (" + svalue + ") " + nb_rows + " -> "
 				+ nb_sel);
@@ -643,7 +643,7 @@ public class Clus implements CMDLineArgsProvider {
 		return partitionDataBasic(train, null, null, summary, 1);
 	}
 
-	public final ClusRun partitionDataBasic(ClusData data, ClusSelection sel, ClusSummary summary, int idx) throws IOException, ClusException {
+	public synchronized final ClusRun partitionDataBasic(ClusData data, ClusSelection sel, ClusSummary summary, int idx) throws IOException, ClusException {
 		return partitionDataBasic(data, sel, null, summary, idx);
 	}
 
@@ -1511,7 +1511,7 @@ public class Clus implements CMDLineArgsProvider {
 		int nbsets = m_Sett.getBaggingSets();
 		int nbrows = m_Data.getNbRows();
 		for (int i = 0; i < nbsets; i++) {
-			BaggingSelection msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), null); // PARALELNO
+			BaggingSelection msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), null);
 			ClusRun cr = partitionData(msel, i + 1);
 			ClusModelInfo mi = cr.getModelInfo(ClusModel.PRUNED);
 			mi.addModelProcessor(ClusModelInfo.TEST_ERR, wrt);
