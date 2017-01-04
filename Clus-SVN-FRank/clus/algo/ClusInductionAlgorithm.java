@@ -63,6 +63,16 @@ public abstract class ClusInductionAlgorithm {
 		m_StatManager = other.m_StatManager;
 	}
 
+	/**
+	 * Used in parallelisation.
+	 * @param other
+	 * @param mgr
+	 */
+	public ClusInductionAlgorithm(ClusInductionAlgorithm other, ClusStatManager mgr) {
+		m_Schema = other.m_Schema;
+		m_StatManager = mgr;
+	}
+
 	public ClusSchema getSchema() {
 		return m_Schema;
 	}

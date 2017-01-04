@@ -37,8 +37,6 @@ public class ClusSummary extends ClusModelInfoList {
 	protected ClusErrorList m_ValidErr;
 	protected ClusStatManager m_StatMgr;
 	
-	
-
 	public void resetAll() {
 		m_Models.clear();
 		m_IndTime = 0; m_PrepTime = 0; m_PruneTime = 0;
@@ -47,7 +45,7 @@ public class ClusSummary extends ClusModelInfoList {
 	public void setStatManager(ClusStatManager mgr) {
 		m_StatMgr = mgr;
 	}
-
+	
 	public ClusStatManager getStatManager() {
 		return m_StatMgr;
 	}

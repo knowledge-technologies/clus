@@ -263,9 +263,7 @@ public class ClusStatManager implements Serializable {
 		return false;
 	}
 
-	public void initWeights(ClusNormalizedAttributeWeights result, 
-			NumericAttrType[] num, NominalAttrType[] nom, 
-			INIFileNominalOrDoubleOrVector winfo) throws ClusException {
+	public void initWeights(ClusNormalizedAttributeWeights result, NumericAttrType[] num, NominalAttrType[] nom, INIFileNominalOrDoubleOrVector winfo) throws ClusException {
 		result.setAllWeights(0.0);
 		int nbattr = result.getNbAttributes();
 		if (winfo.hasArrayIndexNames()) {

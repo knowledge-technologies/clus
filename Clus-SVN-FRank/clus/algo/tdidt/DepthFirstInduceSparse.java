@@ -13,6 +13,7 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.data.type.SparseNumericAttrType;
+import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
@@ -35,6 +36,17 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 		if (Settings.VERBOSE > 0) System.out.println("Sparse implementation");
 	}
 		
+	/**
+	 * Used in parallelisation.
+	 * @param other
+	 * @param mgr
+	 * @param parallelism Used only to distinguish between this constructor and {@code DepthFirstInduce(ClusInductionAlgorithm, NominalSplit)}, when the second argument is {@code null}.
+	 */
+	public DepthFirstInduceSparse(ClusInductionAlgorithm other, ClusStatManager mgr, boolean parallelism) {
+		super(other, mgr, parallelism);
+		if (Settings.VERBOSE > 0) System.out.println("Sparse implementation");
+	}
+
 	public void initializeExamples(ClusAttrType[] attrs, RowData data) {
 		// first remove all examplelists from attributes (-> ensembles!)
 		for (int i = 0; i < attrs.length; i++) {

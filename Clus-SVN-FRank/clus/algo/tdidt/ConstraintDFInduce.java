@@ -29,6 +29,7 @@ import java.io.IOException;
 
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.split.CurrentBestTestAndHeuristic;
+import clus.algo.split.NominalSplit;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;

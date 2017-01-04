@@ -39,6 +39,7 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.main.ClusRun;
+import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
@@ -60,6 +61,18 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 	public DepthFirstInduce(ClusInductionAlgorithm other) {
 		super(other);
 		m_FindBestTest = new FindBestTest(getStatManager());
+	}
+	
+	/**
+	 * Used in parallelisation.
+	 * @param other
+	 * @param mgr
+	 * @param parallelism Used only to distinguish between this constructor and {@code DepthFirstInduce(ClusInductionAlgorithm, NominalSplit)}, when the second argument is {@code null}.
+	 */
+	public DepthFirstInduce(ClusInductionAlgorithm other, ClusStatManager mgr, boolean parallelism){
+		super(other, mgr);
+		m_FindBestTest = new FindBestTest(getStatManager());
+		
 	}
 
 	public DepthFirstInduce(ClusInductionAlgorithm other, NominalSplit split) {

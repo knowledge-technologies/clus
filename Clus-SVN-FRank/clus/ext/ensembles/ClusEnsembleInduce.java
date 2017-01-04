@@ -498,7 +498,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 						oob_total.addToThis(oob_sel);
 					}
 				}
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // <-- induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
+				// CE TU NE DAM VEDNO ISTEGA; DOBIM DRUGE REZULTATE
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]); // <-- induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
                 Future<ModelFimportancesPair> submit = executor.submit(worker);
                 everythingOk.add(submit);
 				
@@ -522,7 +523,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 					oob_sel = new OOBSelection(msel);
 				}
 				// induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd); // PARALELNO
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]);
                 Future<ModelFimportancesPair> submit = executor.submit(worker);
                 everythingOk.add(submit);
 			}
@@ -692,7 +693,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 	}
 
-	public ModelFimportancesPair induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, NonstaticRandom rnd) throws ClusException, IOException, InterruptedException {
+	public ModelFimportancesPair induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, NonstaticRandom rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
 		if (getSettings().isEnsembleRandomDepth()) {
 			// Set random tree max depth
 			getSettings().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(
@@ -703,23 +704,25 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		long one_bag_time = ResourceInfo.getTime();
 		if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
 		
+		// TEGA NE SMEM: PRIDEJO DRUGI REZULTATI: OR CAN I?
+		//cr.getSummary().setStatManager(mgr); 
 		
 		ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(),msel,cr.getSummary(),i);
-		
-
-		
+				
 		DepthFirstInduce ind;
 		
 		// ordinary bagging run
 		if (getSchema().isSparse()) {
-			ind = new DepthFirstInduceSparse(this);
+			ind = new DepthFirstInduceSparse(this, mgr, true);
 		}
 		else {
-			ind = new DepthFirstInduce(this);
+			ind = new DepthFirstInduce(this, mgr, true);
 		}
 	
 		ind.initialize();
+		
 		crSingle.getStatManager().initClusteringWeights();
+		ind.getStatManager().initClusteringWeights(); // isto kot mgr.initClusteringWeights();		
 		
 		initializeBagTargetSubspacing(crSingle, i);
 
@@ -739,7 +742,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			}
 			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3){
 				//m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
-				fimportances = m_FeatureRanking.calculateGENIE3importanceIteratively((ClusNode)model, cr.getStatManager());
+				fimportances = m_FeatureRanking.calculateGENIE3importanceIteratively((ClusNode)model, ind.getStatManager()); // mgr prej cr.getStatManager()
 			}
 			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC){
 				double[] weights = m_BagClus.getSettings().getSymbolicWeights();

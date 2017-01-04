@@ -5,6 +5,7 @@ import java.util.concurrent.Callable;
 import clus.data.rows.TupleIterator;
 import clus.ext.ensembles.pairs.ModelFimportancesPair;
 import clus.main.ClusRun;
+import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.selection.BaggingSelection;
 import clus.selection.OOBSelection;
@@ -18,8 +19,9 @@ public class InduceOneBagCallable implements Callable<ModelFimportancesPair> {
 	private TupleIterator m_Train_iterator, m_Test_iterator;
 	private BaggingSelection m_Msel;
 	private NonstaticRandom m_Rnd;
+	private ClusStatManager m_Mgr;
 	
-	public InduceOneBagCallable(ClusEnsembleInduce cei, ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, NonstaticRandom rnd) {
+	public InduceOneBagCallable(ClusEnsembleInduce cei, ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, NonstaticRandom rnd, ClusStatManager mgr) {
 		this.m_Cei = cei;
 		this.m_Cr = cr;
 		this.m_I = i;
@@ -30,11 +32,12 @@ public class InduceOneBagCallable implements Callable<ModelFimportancesPair> {
 		this.m_Test_iterator = test_iterator;
 		this.m_Msel = msel;
 		this.m_Rnd = rnd;
+		this.m_Mgr = mgr;
 	}
 
 	@Override
 	public ModelFimportancesPair call() throws Exception {
-		return m_Cei.induceOneBag(m_Cr, m_I, m_OrigMaxDepth, m_Oob_sel, m_Oob_total, m_Train_iterator, m_Test_iterator, m_Msel, m_Rnd);
+		return m_Cei.induceOneBag(m_Cr, m_I, m_OrigMaxDepth, m_Oob_sel, m_Oob_total, m_Train_iterator, m_Test_iterator, m_Msel, m_Rnd, m_Mgr);
 	}
 
 }
