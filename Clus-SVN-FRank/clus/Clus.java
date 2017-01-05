@@ -147,9 +147,8 @@ public class Clus implements CMDLineArgsProvider {
 		}
 		ClusView view = m_Schema.createNormalView();
 		if(!m_Sett.isSectionHMTREnabled()){
-			m_Data = view.readData(reader, m_Schema);
-		}
-		else  m_Data = view.readDataHMTR(reader, m_Schema, m_HmtrHierarchy);
+			    m_Data = view.readData(reader, m_Schema);
+		} else  m_Data = view.readDataHMTR(reader, m_Schema, m_HmtrHierarchy);
 
 		reader.close();
 		if(m_Sett.getVerbose() > 0) System.out.println("Found " + m_Data.getNbRows() + " rows");

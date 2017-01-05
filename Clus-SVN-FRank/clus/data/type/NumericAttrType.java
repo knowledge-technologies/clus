@@ -24,6 +24,7 @@ package clus.data.type;
 
 import java.io.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import clus.ext.hierarchicalmtr.ClassHMTRHierarchy;
@@ -158,84 +159,25 @@ public class NumericAttrType extends ClusAttrType {
 
 		public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) throws IOException {
 
-
 			int nbHMTRTargets = schema.getNbHierarchicalMTR();
             IntervalCollection key = schema.m_Key;
 
            	int nbAttributes = schema.getNbAttributes()-schema.getNbNominalDescriptiveAttributes();
             if(!key.isEmpty()) nbAttributes--;
 
-
 			int nbNominalTargets = schema.getNbNominalTargetAttributes();
 			if (nbNominalTargets>0) throw new IOException("Nominal attributes used as targets in Hierarchical Multi-Target Regression!");
 
-            int NbAll = schema.getNbAttributes();
-
             int ai = getArrayIndex();
-            double value;
             String name;
 
             ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
 
-
-//			for (int i = NbAll-nbAttributes; i<nbAttributes;i++){
-//
-//               value = tuple.getDoubleVal(i);
-//               name = targets[i-(schema.getNbAttributes()-nbAttributes)].getName();
-//
-//                System.out.println();
-//
-//            }
-
-
-        //            HMTR_AGG_SUM = 0;
-        //            HMTR_AGG_AVG = 1;
-        //            HMTR_AGG_MEDIAN = 2;
-        //            HMTR_AGG_MIN = 3;
-        //            HMTR_AGG_MAX = 4;
-        //            HMTR_AGG_AND = 5;
-        //            HMTR_AGG_OR = 6;
-        //            HMTR_AGG_COUNT = 7;
-        //            HMTR_AGG_VAR = 8;
-        //            HMTR_AGG_STDEV = 9;
-
             double val = Double.NaN;
-
+            name = targets[ai-(schema.getNbAttributes()-nbAttributes)].getName();
             List<ClassHMTRNode> nodes = hmtrHierarchy.getNodes();
 
-            name = targets[ai-(schema.getNbAttributes()-nbAttributes)].getName();
-
-            for (ClassHMTRNode node : nodes){
-
-                if(node.getName().equals(name)){
-                    if(!node.isAggregate())throw new IOException("Attribute "+node.getName()+" is  not aggregate!");
-
-
-
-                    System.out.println(name);
-                }
-
-            }
-
-
-		    switch (getSettings().getHMTRAggregation().getValue()){
-
-                case 0:
-
-
-
-                    val = 999.0;
-                    break;
-		        case 1: val = 999.0; break;
-                case 2: val = 999.0; break;
-                case 3: val = 999.0; break;
-                case 4: val = 999.0; break;
-                case 5: val = 999.0; break;
-                case 6: val = 999.0; break;
-                case 7: val = 999.0; break;
-                case 8: val = 999.0; break;
-                case 9: val = 999.0; break;
-            }
+		    val = calcHMTR(nodes, name, tuple, schema, nbAttributes);
 
             if (Double.isNaN(val)) throw new IOException("Error calculating HMTR aggregate! Aggregation function is: "+getSettings().getHMTRAggregation().getValue());
 
@@ -261,6 +203,87 @@ public class NumericAttrType extends ClusAttrType {
 				setSparse(true);
 			}
 		}
+
+		private double calcHMTR(List<ClassHMTRNode> nodes, String name, DataTuple tuple, ClusSchema schema, int nbAttrs) throws IOException{
+
+            for (ClassHMTRNode node : nodes){
+                if(node.getName().equals(name)){
+                    if(!node.isAggregate())throw new IOException("Attribute "+node.getName()+" is  not aggregate!");
+
+                    List<ClassHMTRNode> children = node.getChildren(); // children of the node
+
+                    double sum = 0;
+                    List<Double> values = new ArrayList<Double>();
+
+                    for (ClassHMTRNode child : children){
+
+                        String n = child.getName();
+                        System.out.println(n);
+                        if (child.isAggregate()){
+                            double res = calcHMTR(nodes,child.getName(), tuple, schema, nbAttrs);
+                            sum += res;
+                            values.add(res);
+                        } else {
+                            double res = getHMTRValue(tuple, schema, nbAttrs, child.getName());
+                            sum += res;
+                            values.add(res);
+                        }
+                    }
+        //            HMTR_AGG_SUM = 0;
+        //            HMTR_AGG_AVG = 1;
+        //            HMTR_AGG_MEDIAN = 2;
+        //            HMTR_AGG_MIN = 3;
+        //            HMTR_AGG_MAX = 4;
+        //            HMTR_AGG_AND = 5;
+        //            HMTR_AGG_OR = 6;
+        //            HMTR_AGG_COUNT = 7;
+        //            HMTR_AGG_VAR = 8;
+        //            HMTR_AGG_STDEV = 9;
+                    Collections.sort(values);
+                    switch (getSettings().getHMTRAggregation().getValue()){
+                        case 0: return sum;
+                        case 1: return sum/children.size();
+                        case 2:
+                            int middle = values.size()/2;
+                            if (values.size()%2 == 1) {
+                                return values.get(middle);
+                            } else { return ((values.get(middle-1) + values.get(middle)) / 2.0);}
+                        case 3: return Collections.min(values);
+                        case 4: return Collections.max(values);
+                        case 5: return Double.NaN;
+                        case 6: return Double.NaN;
+                        case 7: return values.size();
+                        case 8: return Double.NaN;
+                        case 9: return Double.NaN;
+                    }
+                }
+            }
+		    return Double.NaN;
+        }
+
+        public double getHMTRValue(DataTuple tuple, ClusSchema schema, int nbAttrs, String name){
+
+		    double value = Double.NaN;
+
+            int NbAll = schema.getNbAttributes();
+
+            int j = 0;
+            ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
+
+            for (int i = NbAll-nbAttrs; i<nbAttrs;i++){
+
+
+                if (targets[j].getName().equals(name)) {
+                    value = tuple.getDoubleVal(i);
+                    break;
+                }
+                j++;
+
+            }
+
+            return value;
+        }
+
 	}
 
 }
