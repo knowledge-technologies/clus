@@ -153,6 +153,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 //			}
 		}
 		m_NbThreads = sett.getNumberOfThreads();
+		if (m_NbThreads == 0) m_NbThreads = Runtime.getRuntime().availableProcessors(); // if Settings.NumberOfThreads = 0 then use all available processors
 	}
 	
 	public void setNbFeatureRankings(ClusSchema schema){
@@ -396,7 +397,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			ind.initialize();
 			crSingle.getStatManager().initClusteringWeights();
 			
-			initializeBagTargetSubspacing(crSingle, i, null); 
+			initializeBagTargetSubspacing(crSingle.getStatManager(), i); // this needs to be changed for parallel implementation 
 			
 			ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
 			summ_time += ResourceInfo.getTime() - one_bag_time;
@@ -660,19 +661,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		}
 	}
 	
-	void initializeBagTargetSubspacing(ClusRun crSingle, int bagNo, ClusStatManager mgr) throws ClusException
+	void initializeBagTargetSubspacing(ClusStatManager mgr, int bagNo) throws ClusException
 	{	
 		if (Settings.isEnsembleTargetSubspacingEnabled()) {
 			
-			ClusStatManager m;
-			if(mgr != null){
-				m = mgr;// 
-			} else{
-				m = crSingle.getStatManager();
-			}
-			
 			// get heuristic in use
-			ClusHeuristic h = m.getHeuristic();
+			ClusHeuristic h = mgr.getHeuristic();
 
 			// check if the attribute weights are set
 		    if(h.getClusteringAttributeWeights() == null)  throw new RuntimeException("Heuristic does not support target subspacing!");
@@ -721,10 +715,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	
 		ind.initialize();
 		
+		
 		crSingle.getStatManager().initClusteringWeights();
 		ind.getStatManager().initClusteringWeights(); // equivalent to mgr.initClusteringWeights();		
 		
-		initializeBagTargetSubspacing(crSingle, i, ind.getStatManager());
+		initializeBagTargetSubspacing(mgr, i);
 
  		ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
 		m_SummTime += ResourceInfo.getTime() - one_bag_time;
@@ -1016,7 +1011,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			ind.initialize();
 			crSingle.getStatManager().initClusteringWeights();
 			
-			initializeBagTargetSubspacing(crSingle, i, null);
+			initializeBagTargetSubspacing(crSingle.getStatManager(), i); // this needs to be changed for parallel implementation 
 			
 			ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
 			summ_time += ResourceInfo.getTime() - one_bag_time;
