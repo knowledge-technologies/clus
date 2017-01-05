@@ -7,6 +7,7 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
 import java.util.TreeMap;
@@ -355,12 +356,33 @@ public class ClusEnsembleFeatureRanking {
 		return result;
 	}
 
-	public static void fillWithAttributesInTree(ClusNode node, ArrayList<String> attributes){
-		for (int i = 0; i < node.getNbChildren(); i++){
-			String att = node.getTest().getType().getName();
-			if (!attributes.contains(att))attributes.add(att); // tole je pa O(n^2)
-			fillWithAttributesInTree((ClusNode)node.getChild(i), attributes);
+	/**
+	 * Finds all attributes that appear as (part of) the test in a node in the given tree. Depth first search is used to
+	 * traverse the tree.
+	 * @param root The root of the tree
+	 * @return List of attributes' names
+	 */
+	public ArrayList<String> getInternalAttributesNames(ClusNode root){
+		ArrayList<String> attributes = new ArrayList<String>(); // list of attribute names in the tree
+		ArrayList<ClusNode> stack = new ArrayList<ClusNode>();  // stack of nodes to be processed
+		HashSet<String> discovered = new HashSet<String>();     // names that are currently in attributes, used for faster look-up.
+		if(!root.atBottomLevel()){
+			stack.add(root);
+		}		
+		while (stack.size() > 0){
+			ClusNode top = stack.remove(stack.size() - 1);
+			String name = top.getTest().getType().getName();
+			if(!(discovered.contains(name) || top.atBottomLevel())){ // top not discovered yet and is internal node
+				discovered.add(name);
+				attributes.add(name);
+			}
+			for(int i = 0; i < top.getNbChildren(); i++){
+				if(!top.getChild(i).atBottomLevel()){
+					stack.add((ClusNode) top.getChild(i));
+				}
+			}
 		}
+		return attributes;
 	}
 	
 	/**
@@ -519,8 +541,8 @@ public class ClusEnsembleFeatureRanking {
 	public HashMap<String, double[]> calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, InterruptedException{
 		HashMap<String, double[]> partialImportances = new HashMap<String, double[]>();
 		
-		ArrayList<String> attests = new ArrayList<String>();
-		fillWithAttributesInTree((ClusNode)model, attests);
+		ArrayList<String> attests = getInternalAttributesNames((ClusNode) model);
+		
 		RowData tdata = (RowData)((RowData)cr.getTrainingSet()).deepCloneData();
 		double[][] oob_errs = calcAverageErrors((RowData)tdata.selectFrom(oob_sel, rnd), model, mgr);
 		for (int z = 0; z < attests.size(); z++){//for the attributes that appear in the tree
@@ -582,7 +604,7 @@ public class ClusEnsembleFeatureRanking {
 		if(m_RankingDescription == null){
 			setGenie3Description();
 		}
-		ArrayList<NodeDepthPair> nodes = getInternalNodes(root);		
+		ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);		
 		HashMap<String, double[]> partialImportances = new HashMap<String, double[]>();
 		
 		for(NodeDepthPair pair : nodes){
@@ -645,7 +667,7 @@ public class ClusEnsembleFeatureRanking {
 		if(m_RankingDescription == null){
 			setSymbolicDescription(weights);
 		}
-		ArrayList<NodeDepthPair> nodes = getInternalNodes(root);		
+		ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);		
 		HashMap<String, double[]> partialImportances = new HashMap<String, double[]>();
 		
 		for(NodeDepthPair pair : nodes){
@@ -671,11 +693,17 @@ public class ClusEnsembleFeatureRanking {
 		
 	}
 	
-	public ArrayList<NodeDepthPair> getInternalNodes(ClusNode node){
+	/**
+	 * Finds all internal nodes in the given tree. Depth first search is used to traverse the tree.
+	 * We return the nodes and their depths.
+	 * @param root The root of the tree
+	 * @return List of {@code NodeDepthPair} pairs
+	 */
+	public ArrayList<NodeDepthPair> getInternalNodesWithDepth(ClusNode root){
 		ArrayList<NodeDepthPair> nodes = new ArrayList<NodeDepthPair>();
 		
 		ArrayList<NodeDepthPair> stack = new ArrayList<NodeDepthPair>();
-		stack.add(new NodeDepthPair(node, 0.0));
+		stack.add(new NodeDepthPair(root, 0.0));
 		
 		while (stack.size() > 0){
 			NodeDepthPair top = stack.remove(stack.size() - 1);

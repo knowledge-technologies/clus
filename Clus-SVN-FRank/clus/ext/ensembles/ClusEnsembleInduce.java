@@ -488,6 +488,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 				
 			    msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);
 				if (Settings.shouldEstimateOOB()){		//OOB estimate is on
+					// TODO: synchronisation
 					oob_sel = new OOBSelection(msel);
 					if (i == 1){ //initialization
 						oob_total = new OOBSelection(msel);
