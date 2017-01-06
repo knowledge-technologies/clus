@@ -638,7 +638,7 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final ClusRun partitionDataBasic(RowData train) throws IOException,
-			ClusException {
+			ClusException, InterruptedException {
 		ClusSummary summary = new ClusSummary();
 		return partitionDataBasic(train, null, null, summary, 1);
 	}
@@ -707,7 +707,7 @@ public class Clus implements CMDLineArgsProvider {
 		} else if (num.length != 0) {
 			error.addError(new PearsonCorrelation(error, num));
 		} else if (ts.length != 0) {
-			error.addError(new PearsonCorrelation(error, num));
+			throw new RuntimeException("There are some time series targets, no numeric targets, but we try to perform the step\nerror.addError(new PearsonCorrelation(error, num)).");
 		}
 		/* attach model to given schema */
 		schema.attachModel(model);
@@ -860,7 +860,7 @@ public class Clus implements CMDLineArgsProvider {
 		}
 	}
 
-	public final void out2model(String fname) throws IOException, ClusException {
+	public final void out2model(String fname) throws IOException, ClusException, InterruptedException {
 		String model_name = FileUtil.getName(fname) + ".model";
 		ClusTreeReader rdr = new ClusTreeReader();
 		ClusNode node = rdr.loadOutTree(fname, m_Schema, "Original Model");
@@ -1140,7 +1140,7 @@ public class Clus implements CMDLineArgsProvider {
 				System.out.println();
 			}
 		}
-		ArrayList normalized = new ArrayList();
+		ArrayList<DataTuple> normalized = new ArrayList<DataTuple>();
 		for (int i = 0; i < data.getNbRows(); i++) {
 			DataTuple tuple = data.getTuple(i).deepCloneTuple();
 			for (int j = 0; j < numtypes.length; j++) {
@@ -1164,7 +1164,7 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final void testModel(String fname) throws IOException,
-			ClusException, ClassNotFoundException {
+			ClusException, ClassNotFoundException, InterruptedException {
 		ClusModelCollectionIO io = ClusModelCollectionIO.load(fname);
 		ClusModel res = io.getModel("Original");
 		String test_name = m_Sett.getAppName() + ".test";

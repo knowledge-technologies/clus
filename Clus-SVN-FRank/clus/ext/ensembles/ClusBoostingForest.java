@@ -13,7 +13,7 @@ import jeans.util.array.MDoubleArrayComparator;
 
 public class ClusBoostingForest extends ClusForest {
 
-	protected ArrayList m_BetaI = new ArrayList();
+	protected ArrayList<Double> m_BetaI = new ArrayList<Double>();
 	protected transient MDoubleArrayComparator m_Compare = new MDoubleArrayComparator(0);
 
 	public ClusBoostingForest() {

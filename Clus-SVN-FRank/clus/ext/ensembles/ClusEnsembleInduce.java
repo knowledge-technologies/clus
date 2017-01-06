@@ -152,8 +152,21 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 //				}
 //			}
 		}
-		m_NbThreads = sett.getNumberOfThreads();
-		if (m_NbThreads == 0) m_NbThreads = Runtime.getRuntime().availableProcessors(); // if Settings.NumberOfThreads = 0 then use all available processors
+		setNumberOfThreads(sett.getNumberOfThreads());
+		
+	}
+	
+	/**
+	 * Sets the number of threads used when inducing an ensemble. If the wanted number of threads
+	 * ({@code Settings.m_NumberOfThreads}) equals {@code 0}, then all available processors are used.
+	 * @param nbThreads number of threads, greater or equal to {@code 0}.
+	 */
+	public void setNumberOfThreads(int nbThreads){
+		if (nbThreads == 0){
+			m_NbThreads = Runtime.getRuntime().availableProcessors();
+		} else {
+			m_NbThreads = nbThreads;
+		}
 	}
 	
 	public void setNbFeatureRankings(ClusSchema schema){
@@ -188,7 +201,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
 		System.out.println("Memory And Time Optimization = " + m_OptMode);
 		System.out.println("Out-Of-Bag Estimate of the error = " + Settings.shouldEstimateOOB());
-		System.out.println("\tPerform Feature Ranking = " + m_FeatRank);
+		System.out.println("Perform Feature Ranking = " + m_FeatRank);
 		
 		prepareEnsembleTargetSubspaces();
 		
@@ -474,9 +487,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		for(int i = 0; i < m_NbMaxBags; i++){
 			seeds[i] = bagSeedGenerator.nextInt();
 		}
-		
-		ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];		
+			
 		Cloner cloner = new Cloner();
+		ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];
+		for(int i = 0; i < statManagerClones.length; i++){
+			statManagerClones[i] = cloner.deepClone(cr.getStatManager()); // must be cloned here
+		}
 		
 		ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
 		ArrayList<Future<ModelFimportancesPair>> bagResults = new ArrayList<Future<ModelFimportancesPair>>();			
@@ -497,7 +513,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 					}
 				}
 
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, cloner.deepClone(cr.getStatManager())); // <-- induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]); // <-- induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
                 Future<ModelFimportancesPair> submit = executor.submit(worker);
                 bagResults.add(submit);
 				
@@ -702,7 +718,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		long one_bag_time = ResourceInfo.getTime();
 		if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
 			
-		ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(), msel, cr.getSummary(), i);
+		ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(), msel, cr.getSummary(), i); 
 				
 		DepthFirstInduce ind;
 		
@@ -717,10 +733,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		ind.initialize();
 		
 		
-		crSingle.getStatManager().initClusteringWeights();
+		crSingle.getStatManager().initClusteringWeights(); // MORA MET SVEZI STAT MANAGER ZARAD stvari v TELESU if (checkToOutEnsemble(i) && (getSettings().getBagSelection().getIntVectorSorted()[0] == -1))
 		ind.getStatManager().initClusteringWeights(); // equivalent to mgr.initClusteringWeights();		
 		
-		initializeBagTargetSubspacing(mgr, i);
+		initializeBagTargetSubspacing(ind.getStatManager(), i);
 
  		ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
 		m_SummTime += ResourceInfo.getTime() - one_bag_time;
@@ -777,9 +793,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 			crSingle.setInductionTime(m_SummTime);
 			postProcessForest(crSingle);
 			if (Settings.shouldEstimateOOB()){
-				if (i == m_NbMaxBags)
+				if (i == m_NbMaxBags){
 					m_OOBEstimation.postProcessForestForOOBEstimate(crSingle, oob_total, (RowData)cr.getTrainingSet(), m_BagClus, "");
-				else m_OOBEstimation.postProcessForestForOOBEstimate(crSingle, oob_total, (RowData)cr.getTrainingSet(), m_BagClus, "_"+ i +"_");
+				} else{
+					m_OOBEstimation.postProcessForestForOOBEstimate(crSingle, oob_total, (RowData)cr.getTrainingSet(), m_BagClus, "_"+ i +"_");
+				}
 			}
 
 			if (m_OptMode && (i != m_NbMaxBags)){

@@ -45,7 +45,7 @@ public class BaggingSelection extends ClusSelection {
 	 * If <code>nbselected</code> == 0, a bagging selection of size <code>nbrows</code> is created
 	 * @param nbrows the total number of instances
 	 * @param nbselected the size of the bagging selection
-	 * @param rnd random generator object that is used for creating the bag. May be null. In that case, ClusRandom is used instead, which will
+	 * @param rnd random generator object that is used for creating the bag. May be null. In that case, ClusRandom is used instead, which might
 	 * result in non-reproducibility if the number of cores is greater than one.
 	 */
 	public BaggingSelection(int nbrows, int nbselected, ClusRandomNonstatic rnd) {

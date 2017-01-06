@@ -69,19 +69,19 @@ public class ClusEnsembleFeatureRanking {
 
 	protected HashMap<String, double[]> m_AllAttributes;//key is the AttributeName, and the value is array with the order in the file and the rank
 //	boolean m_FeatRank;
-	protected TreeMap m_FeatureRanks;//sorted by the rank
-	HashMap m_FeatureRankByName;  // Part of fimp's header
+	protected TreeMap<Double, ArrayList<String>> m_FeatureRanks;//sorted by the rank
+	HashMap<String, Double> m_FeatureRankByName;  // Part of fimp's header
 	
 	/** Description of the ranking that appears in the first line of the .fimp file */
 	String m_RankingDescription;
 	
-	ImportancesReadWriteLock m_Lock;
+	ClusReadWriteLock m_Lock;
 	
 	public ClusEnsembleFeatureRanking(){
 		m_AllAttributes = new HashMap<String, double[]>();
-		m_FeatureRankByName = new HashMap();
-		m_FeatureRanks = new TreeMap();
-		m_Lock = new ImportancesReadWriteLock();
+		m_FeatureRankByName = new HashMap<String, Double>();
+		m_FeatureRanks = new TreeMap<Double, ArrayList<String>>();
+		m_Lock = new ClusReadWriteLock();
 	}
 	
 	public void initializeAttributes(ClusAttrType[] descriptive, int nbRankings){
@@ -117,22 +117,22 @@ public class ClusEnsembleFeatureRanking {
 		Iterator<String> iter = m_AllAttributes.keySet().iterator();
 		while (iter.hasNext()){
 			String attr = iter.next();
-			double score = ((double[])m_AllAttributes.get(attr))[2]/ClusEnsembleInduce.getMaxNbBags();
+			double score = m_AllAttributes.get(attr)[2]/ClusEnsembleInduce.getMaxNbBags();
 //			double score = ((double[])m_AllAttributes.get(attr))[2];
-			ArrayList attrs = new ArrayList();
+			ArrayList<String> attrs = new ArrayList<String>();
 			if (m_FeatureRanks.containsKey(score))
-				attrs = (ArrayList)m_FeatureRanks.get(score);
+				attrs = m_FeatureRanks.get(score);
 			attrs.add(attr);
 			m_FeatureRanks.put(score, attrs);
 		}
 	}
 
 	public void convertRanksByName(){
-		TreeMap sorted = (TreeMap)m_FeatureRanks.clone();
+		TreeMap<Double, ArrayList<String>> sorted = (TreeMap<Double, ArrayList<String>>)m_FeatureRanks.clone();
 		while (!sorted.isEmpty()){
-			double score = (Double)sorted.lastKey();
-			ArrayList attrs = new ArrayList();
-			attrs = (ArrayList) sorted.get(sorted.lastKey());
+			double score = sorted.lastKey();
+			ArrayList<String> attrs = new ArrayList<String>();
+			attrs = sorted.get(sorted.lastKey());
 			for (int i = 0; i < attrs.size(); i++)
 				m_FeatureRankByName.put(attrs.get(i), score);
 			sorted.remove(sorted.lastKey());
@@ -140,7 +140,7 @@ public class ClusEnsembleFeatureRanking {
 	}
 
 	public void writeRanking(String fname, int rankingMethod) throws IOException{
-		TreeMap ranking = (TreeMap)m_FeatureRanks.clone();
+		TreeMap<Double, ArrayList<String>> ranking = (TreeMap<Double, ArrayList<String>>)m_FeatureRanks.clone();
 		
 		File franking = new File(fname+".fimp");
 		FileWriter wrtr = new FileWriter(franking);
@@ -149,7 +149,7 @@ public class ClusEnsembleFeatureRanking {
 		wrtr.write(StringUtils.makeString('-', m_RankingDescription.length()) + "\n");
 		while (!ranking.isEmpty()){
 //			wrtr.write(sorted.get(sorted.lastKey()) + "\t" + sorted.lastKey()+"\n");
-			wrtr.write(writeRow((ArrayList)ranking.get(ranking.lastKey()),(Double)ranking.lastKey()));
+			wrtr.write(writeRow(ranking.get(ranking.lastKey()), ranking.lastKey()));
 			ranking.remove(ranking.lastKey());
 		}
 		wrtr.flush();
@@ -158,7 +158,7 @@ public class ClusEnsembleFeatureRanking {
 	}
 
 	
-	public String writeRow(ArrayList attributes, double value){
+	public String writeRow(ArrayList<String> attributes, double value){
 		String output = "";
 		for (int i = 0; i < attributes.size(); i++){
 			String attr = (String)attributes.get(i);
@@ -176,14 +176,14 @@ public class ClusEnsembleFeatureRanking {
 
 		wrtr.write(m_RankingDescription + "\n");
 		wrtr.write(StringUtils.makeString('-', m_RankingDescription.length()) + "\n");
-		int nbRankings = ((double[])m_AllAttributes.get(descriptive[0].getName())).length - 2;
+		int nbRankings = m_AllAttributes.get(descriptive[0].getName()).length - 2;
 		for (int i = 0; i < descriptive.length; i++){
 			String attribute = descriptive[i].getName();
 			if(nbRankings == 1){
-				double value = ((double[])m_AllAttributes.get(attribute))[2]/Math.max(1.0, ClusEnsembleInduce.getMaxNbBags());
+				double value = m_AllAttributes.get(attribute)[2]/Math.max(1.0, ClusEnsembleInduce.getMaxNbBags());
 				wrtr.write(attribute +"\t"+value+"\n");
 			} else{
-				double[] values = Arrays.copyOfRange((double[])m_AllAttributes.get(attribute), 2, nbRankings + 2);
+				double[] values = Arrays.copyOfRange(m_AllAttributes.get(attribute), 2, nbRankings + 2);
 				for(int j = 0; j < values.length; j++){
 					values[j] /= ClusEnsembleInduce.getMaxNbBags();
 				}
@@ -279,13 +279,13 @@ public class ClusEnsembleFeatureRanking {
 		functionOutputJSON.add("algorithmSpecification", algorithmSpec);
 
 		JsonArray rankingResults = new JsonArray();
-		TreeMap sorted = (TreeMap)m_FeatureRanks.clone();
-		Iterator iter = sorted.keySet().iterator();
+		TreeMap<Double, ArrayList<String>> sorted = (TreeMap<Double, ArrayList<String>>)m_FeatureRanks.clone();
+		//this was not used: Iterator<Double> iter = sorted.keySet().iterator();
 
 		int count = 1;
 		while(!sorted.isEmpty()){
-			double score = (Double)sorted.lastKey();
-			ArrayList attrs = (ArrayList)sorted.get(score);
+			double score = sorted.lastKey();
+			ArrayList<String> attrs = sorted.get(score);
 			for (int i = 0; i < attrs.size(); i++){
 				JsonObject elm = new JsonObject();
 				elm.addProperty("attributeName", (String)attrs.get(i));
@@ -505,12 +505,12 @@ public class ClusEnsembleFeatureRanking {
 	}
 	
 	//	returns sorted feature ranking
-	public TreeMap getFeatureRanks(){
+	public TreeMap<Double, ArrayList<String>> getFeatureRanks(){
 		return m_FeatureRanks;
 	}
 
 	//	returns feature ranking
-	public HashMap getFeatureRanksByName(){ 
+	public HashMap<String, Double> getFeatureRanksByName(){ 
 		return m_FeatureRankByName;
 	}
 	
@@ -715,9 +715,7 @@ public class ClusEnsembleFeatureRanking {
 				stack.add(new NodeDepthPair((ClusNode) topNode.getChild(i), top.getDepth() + 1.0));
 			}
 		}
-		
-		return nodes;
-		
+		return nodes;	
 	}
 	
 	public synchronized void setGenie3Description(){

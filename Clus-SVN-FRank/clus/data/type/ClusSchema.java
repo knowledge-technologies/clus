@@ -555,14 +555,14 @@ public class ClusSchema implements Serializable {
 	}
 
 	public final void attachModel(ClusModel model) throws ClusException {
-		HashMap table = buildAttributeHash();
+		HashMap<String, ClusAttrType> table = buildAttributeHash();
 		model.attachModel(table);
 	}
 
-	public final HashMap buildAttributeHash() throws ClusException {
-		HashMap hash = new HashMap();
+	public final HashMap<String, ClusAttrType> buildAttributeHash() throws ClusException {
+		HashMap<String, ClusAttrType> hash = new HashMap<String, ClusAttrType>();
 		for (int j = 0; j < m_NbAttrs; j++) {
-			ClusAttrType at = (ClusAttrType)m_Attr.get(j);
+			ClusAttrType at = (ClusAttrType) m_Attr.get(j);
 			if (hash.containsKey(at.getName())) {
 				throw new ClusException("Duplicate attribute name: '"+at.getName()+"'");
 			} else {

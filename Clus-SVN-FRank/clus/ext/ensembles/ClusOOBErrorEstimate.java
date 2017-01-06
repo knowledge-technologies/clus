@@ -1,6 +1,7 @@
 package clus.ext.ensembles;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 
 import clus.Clus;
@@ -25,31 +26,65 @@ import clus.util.ClusException;
 public class ClusOOBErrorEstimate {
 	
 	static HashMap m_OOBPredictions;
-	static HashMap m_OOBUsage;
+	static HashMap<Integer, Integer> m_OOBUsage;
 	static boolean m_OOBCalculation;
 	int m_Mode;
 	
+	static ClusReadWriteLock m_LockPredictions = new ClusReadWriteLock();
+	static ClusReadWriteLock m_LockUsage = new ClusReadWriteLock();
+	static ClusReadWriteLock m_LockCalculation = new ClusReadWriteLock();
+	
+	
 	public ClusOOBErrorEstimate(int mode){
 		m_OOBPredictions = new HashMap();
-		m_OOBUsage = new HashMap();
+		m_OOBUsage = new HashMap<Integer, Integer>();
 		m_OOBCalculation = false;
 		m_Mode = mode;
 	}
 	
 	public static boolean containsPredictionForTuple(DataTuple tuple){
-		return m_OOBPredictions.containsKey(tuple.hashCode());		
+		try {
+			m_LockPredictions.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		boolean contains = m_OOBPredictions.containsKey(tuple.hashCode());
+		m_LockPredictions.readingUnlock();
+		return contains;
 	}
 	
 	public static double[] getPredictionForRegressionHMCTuple(DataTuple tuple){
-		return (double[])m_OOBPredictions.get(tuple.hashCode());
+		try {
+			m_LockPredictions.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		double[] pred = (double[]) m_OOBPredictions.get(tuple.hashCode());
+		double[] predictions = Arrays.copyOf(pred, pred.length);
+		m_LockPredictions.readingUnlock();
+		return predictions;
 	}
 	
 	public static double[][] getPredictionForClassificationTuple(DataTuple tuple){
-		return (double[][])m_OOBPredictions.get(tuple.hashCode());
+		try {
+			m_LockPredictions.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		double[][] pred = (double[][])m_OOBPredictions.get(tuple.hashCode());
+		double[][] predictions = new double[pred.length][];
+		for(int i = 0; i < pred.length; i++){
+			predictions[i] = Arrays.copyOf(pred[i], pred[i].length);
+		}
+		m_LockPredictions.readingUnlock();
+		return predictions;
 	}
 	
 	
-	public void postProcessForestForOOBEstimate(ClusRun cr, OOBSelection oob_total, RowData all_data, Clus cl, String addname) throws ClusException, IOException{
+	public synchronized void postProcessForestForOOBEstimate(ClusRun cr, OOBSelection oob_total, RowData all_data, Clus cl, String addname) throws ClusException, IOException{
 		Settings sett = cr.getStatManager().getSettings();
 		ClusSchema schema = all_data.getSchema();
 		ClusOutput output = new ClusOutput(sett.getAppName() + addname +".oob", schema, sett);
@@ -86,28 +121,31 @@ public class ClusOOBErrorEstimate {
 	}
 
 	public boolean existsOOBtuple(DataTuple tuple){
-		if (m_OOBUsage.containsKey(tuple.hashCode()) && m_OOBPredictions.containsKey(tuple.hashCode()))
-			return true;
-		if (!m_OOBUsage.containsKey(tuple.hashCode()) && m_OOBPredictions.containsKey(tuple.hashCode()))
+		boolean exists = false;
+		boolean existsInUsage = existsInOOBUsage(tuple); // m_OOBUsage.containsKey(tuple.hashCode())
+		boolean existsInPred = existsInOOBPredictions(tuple); // m_OOBPredictions.containsKey(tuple.hashCode())
+		if (existsInUsage && existsInPred)
+			exists = true;
+		if (!existsInUsage && existsInPred)
 			System.err.println(this.getClass().getName()+":existsOOBtuple(DataTuple) OOB tuples mismatch-> Usage = False, Predictions = True");
-		if (m_OOBUsage.containsKey(tuple.hashCode()) && !m_OOBPredictions.containsKey(tuple.hashCode()))
+		if (existsInUsage && !existsInPred)
 			System.err.println(this.getClass().getName()+":existsOOBtuple(DataTuple) OOB tuples mismatch-> Usage = True, Predictions = False");
-		return false;
+		return exists;
 	}
 
 	public void addOOBTuple(DataTuple tuple, ClusModel model){
-		m_OOBUsage.put(tuple.hashCode(), 1);
+		putToOOBUsage(tuple, 1); // m_OOBUsage.put(tuple.hashCode(), 1);
 
 		if (m_Mode == ClusStatManager.MODE_HIERARCHICAL){
 			//for HMC we store the averages
 			WHTDStatistic stat = (WHTDStatistic)model.predictWeighted(tuple);
-			m_OOBPredictions.put(tuple.hashCode(),stat.getNumericPred());
+			put1DArrayToOOBPredictions(tuple, stat.getNumericPred());//m_OOBPredictions.put(tuple.hashCode(),stat.getNumericPred());
 		}
 
 		if (m_Mode == ClusStatManager.MODE_REGRESSION){
 			//for Regression we store the averages
 			RegressionStat stat = (RegressionStat)model.predictWeighted(tuple);
-			m_OOBPredictions.put(tuple.hashCode(), stat.getNumericPred());
+			put1DArrayToOOBPredictions(tuple, stat.getNumericPred());//m_OOBPredictions.put(tuple.hashCode(), stat.getNumericPred());
 		}
 
 		if (m_Mode == ClusStatManager.MODE_CLASSIFY){
@@ -115,39 +153,42 @@ public class ClusOOBErrorEstimate {
 			ClassificationStat stat = (ClassificationStat)model.predictWeighted(tuple);
 			switch (Settings.m_ClassificationVoteType.getValue()){//default is Majority Vote
 				case 0:
-					m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
+					//m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
+					put2DArrayToOOBPredictions(tuple, ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));//
 					break;
 				case 1:
-					m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToProbabilityDistribution(stat.m_ClassCounts));
+					//m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToProbabilityDistribution(stat.m_ClassCounts));
+					put2DArrayToOOBPredictions(tuple,  ClusEnsembleInduceOptimization.transformToProbabilityDistribution(stat.m_ClassCounts));
 					break;
 				default:
-					m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
+					//m_OOBPredictions.put(tuple.hashCode(), ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
+					put2DArrayToOOBPredictions(tuple, ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
 					break;
 			}
 		}
 	}
 
 	public void updateOOBTuple(DataTuple tuple, ClusModel model){
-		Integer used = (Integer)m_OOBUsage.get(tuple.hashCode());
-		used = used.intValue()+1;
-		m_OOBUsage.put(tuple.hashCode(), used);
+		Integer used = getFromOOBUsage(tuple); // m_OOBUsage.get(tuple.hashCode());
+		used = used.intValue() + 1;
+		putToOOBUsage(tuple, used); //m_OOBUsage.put(tuple.hashCode(), used);
 
 		if (m_Mode == ClusStatManager.MODE_HIERARCHICAL){
 			//the HMC and Regression have the same voting scheme: average
 			WHTDStatistic stat = (WHTDStatistic)model.predictWeighted(tuple);
 			double[] predictions = stat.getNumericPred();
-			double[] avg_predictions = (double[])m_OOBPredictions.get(tuple.hashCode());
+			double[] avg_predictions = get1DArrayFromOOBPredictions(tuple); // (double[])m_OOBPredictions.get(tuple.hashCode());
 			avg_predictions = ClusEnsembleInduceOptimization.incrementPredictions(avg_predictions, predictions, used.doubleValue());
-			m_OOBPredictions.put(tuple.hashCode(), avg_predictions);
+			put1DArrayToOOBPredictions(tuple, avg_predictions); //m_OOBPredictions.put(tuple.hashCode(), avg_predictions);
 		}
 
 		if (m_Mode == ClusStatManager.MODE_REGRESSION){
 			//the HMC and Regression have the same voting scheme: average
 			RegressionStat stat = (RegressionStat)model.predictWeighted(tuple);
 			double[] predictions = stat.getNumericPred();
-			double[] avg_predictions = (double[])m_OOBPredictions.get(tuple.hashCode());
+			double[] avg_predictions = get1DArrayFromOOBPredictions(tuple); // (double[])m_OOBPredictions.get(tuple.hashCode());
 			avg_predictions = ClusEnsembleInduceOptimization.incrementPredictions(avg_predictions, predictions, used.doubleValue());
-			m_OOBPredictions.put(tuple.hashCode(), avg_predictions);
+			put1DArrayToOOBPredictions(tuple, avg_predictions); // m_OOBPredictions.put(tuple.hashCode(), avg_predictions);
 		}
 
 		if (m_Mode == ClusStatManager.MODE_CLASSIFY){
@@ -165,13 +206,13 @@ public class ClusOOBErrorEstimate {
 					predictions = ClusEnsembleInduceOptimization.transformToMajority(predictions);
 					break;
 			}
-			double[][] sum_predictions = (double[][])m_OOBPredictions.get(tuple.hashCode());
+			double[][] sum_predictions = get2DArrayFromOOBPredictions(tuple); //(double[][])m_OOBPredictions.get(tuple.hashCode());
 			sum_predictions = ClusEnsembleInduceOptimization.incrementPredictions(sum_predictions, predictions);
-			m_OOBPredictions.put(tuple.hashCode(), sum_predictions);
+			put2DArrayToOOBPredictions(tuple, sum_predictions);//m_OOBPredictions.put(tuple.hashCode(), sum_predictions);
 		}
 	}
 	
-	public final void calcOOBError(OOBSelection oob_tot, RowData all_data, 	 int type, ClusRun cr) throws IOException, ClusException {
+	public final void calcOOBError(OOBSelection oob_tot, RowData all_data, int type, ClusRun cr) throws IOException, ClusException {
 		ClusSchema mschema = all_data.getSchema();
 //		if (iter.shouldAttach()) attachModels(mschema, cr);
 		cr.initModelProcessors(type, mschema);
@@ -205,15 +246,156 @@ public class ClusOOBErrorEstimate {
 		cr.termModelProcessors(type);
 	}
 
+	// NONSTATIC GETTERS, SETTERS and 'CHECKERS' for
+	
+	// OOBCalculation
 	
 	public static boolean isOOBCalculation(){
-		return m_OOBCalculation;
+		try {
+			m_LockCalculation.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		boolean isCalc = m_OOBCalculation;
+		m_LockCalculation.readingUnlock();
+		return isCalc;
 	}
 	
 	public void setOOBCalculation(boolean value){
+		try {
+			m_LockCalculation.writingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 		m_OOBCalculation = value;
+		try {
+			m_LockCalculation.writingUnlock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
 	}
 	
+	// OOBPredictions
+	
+	private boolean existsInOOBPredictions(DataTuple tuple){
+		try {
+			m_LockPredictions.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		boolean exists = m_OOBPredictions.containsKey(tuple.hashCode());
+		m_LockPredictions.readingUnlock();
+		return exists;
+	}
+	
+	public void put1DArrayToOOBPredictions(DataTuple tuple, double[] value){
+		try {
+			m_LockPredictions.writingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		m_OOBPredictions.put(tuple.hashCode(), value);
+		try {
+			m_LockPredictions.writingUnlock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+	
+	
+	public void put2DArrayToOOBPredictions(DataTuple tuple, double[][] value){
+		try {
+			m_LockPredictions.writingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		m_OOBPredictions.put(tuple.hashCode(), value);
+		try {
+			m_LockPredictions.writingUnlock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+
+	}
+	
+	private double[] get1DArrayFromOOBPredictions(DataTuple tuple){
+		try {
+			m_LockPredictions.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		double[] pred = (double[]) m_OOBPredictions.get(tuple.hashCode());
+		double[] predictions = Arrays.copyOf(pred, pred.length);
+		m_LockPredictions.readingUnlock();
+		return predictions;
+	}
+	
+	private double[][] get2DArrayFromOOBPredictions(DataTuple tuple){
+		try {
+			m_LockPredictions.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		double[][] pred = (double[][])m_OOBPredictions.get(tuple.hashCode());
+		double[][] predictions = new double[pred.length][];
+		for(int i = 0; i < pred.length; i++){
+			predictions[i] = Arrays.copyOf(pred[i], pred[i].length);
+		}
+		m_LockPredictions.readingUnlock();
+		return predictions;
+	}
+	
+	// OOBUsage
+	
+	private boolean existsInOOBUsage(DataTuple tuple){
+		try {
+			m_LockUsage.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		boolean exists = m_OOBUsage.containsKey(tuple.hashCode());
+		m_LockUsage.readingUnlock();
+		return exists;
+	}
+	
+	private void putToOOBUsage(DataTuple tuple, int i){
+		try {
+			m_LockUsage.writingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		m_OOBUsage.put(tuple.hashCode(), i);
+		try {
+			m_LockUsage.writingUnlock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+	}
+	
+	public Integer getFromOOBUsage(DataTuple tuple){
+		try {
+			m_LockUsage.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+		Integer i = m_OOBUsage.get(tuple.hashCode());
+		m_LockUsage.readingUnlock();
+		return i;
+	}
 
 	
 }

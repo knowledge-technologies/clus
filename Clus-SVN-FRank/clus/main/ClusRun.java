@@ -29,6 +29,7 @@ import clus.data.ClusData;
 import clus.data.rows.RowData;
 import clus.data.rows.TupleIterator;
 import clus.error.ClusErrorList;
+import clus.ext.ensembles.ClusReadWriteLock;
 import clus.model.ClusModelInfo;
 import clus.selection.ClusSelection;
 import clus.util.ClusException;
@@ -43,6 +44,8 @@ public class ClusRun extends ClusModelInfoList {
 	protected ClusSelection m_TestSel, m_PruneSel;
 	protected TupleIterator m_Test;
 	protected ClusSummary m_Summary;
+	
+	ClusReadWriteLock m_Lock = new ClusReadWriteLock();
 
 	public ClusRun(ClusData train, ClusSummary summary) {
 		m_Index = 1;
@@ -127,10 +130,19 @@ public class ClusRun extends ClusModelInfoList {
 
 /***************************************************************************
  * Training set
+ * @throws InterruptedException 
  ***************************************************************************/
 
 	public final ClusData getTrainingSet() {
-		return m_Train;
+		try {
+			m_Lock.readingLock();
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		ClusData train = m_Train;
+		m_Lock.readingUnlock();
+		return train;
 	}
 
 	public final void setTrainingSet(ClusData data) {

@@ -22,7 +22,7 @@
 
 package clus.ext.ensembles;
 
-public class ImportancesReadWriteLock {
+public class ClusReadWriteLock {
 	private int m_NbReaders = 0;
 	private int m_NbWriters = 0;
 	private int m_NbWriteRequests = 0;
