@@ -433,7 +433,14 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 	@Override
 	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
-		System.err.println("This method is not appropriate for parallelism - induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) should be used instead.");
+		int threads = getSettings().getNumberOfThreads();
+		if (threads != 1){
+			String warning = String.format("WARNING:\n"
+					+ "The chosen number of threads (%d) is not equal to 1, and the method\n"
+					+ "induceSingleUnpruned(ClusRun cr) is not appropriate for parallelism (the results might not be reproducible).\n"
+					+ "The method induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) should be used instead.", threads);
+			System.err.println(warning);
+		}
 		return induceSingleUnpruned((RowData)cr.getTrainingSet(), null);
 	}
 
