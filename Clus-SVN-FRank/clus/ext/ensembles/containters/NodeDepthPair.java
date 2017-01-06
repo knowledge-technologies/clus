@@ -1,4 +1,4 @@
-package clus.ext.ensembles.pairs;
+package clus.ext.ensembles.containters;
 
 import clus.algo.tdidt.ClusNode;
 

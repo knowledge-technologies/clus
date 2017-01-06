@@ -53,7 +53,7 @@ import clus.error.OneError;
 import clus.error.RMSError;
 import clus.error.RankingLoss;
 import clus.error.SubsetAccuracy;
-import clus.ext.ensembles.pairs.NodeDepthPair;
+import clus.ext.ensembles.containters.NodeDepthPair;
 import clus.ext.hierarchical.HierErrorMeasures;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
