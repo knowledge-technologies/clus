@@ -179,9 +179,9 @@ public class NumericAttrType extends ClusAttrType {
 
 		    val = calcHMTR(nodes, name, tuple, schema, nbAttributes);
 
-            if (Double.isNaN(val)) throw new IOException("Error calculating HMTR aggregate! Aggregation function is: "+getSettings().getHMTRAggregation().getValue());
+            if (Double.isNaN(val)) throw new IOException("Error calculating HMTR aggregate! Aggregation function is: "+ Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
-            System.out.println("CALCULATING HMTR AGGREGATE: " + val + " aggregation function is: "+getSettings().getHMTRAggregation().getValue());
+            System.out.println("CALCULATING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + " value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
 			tuple.setDoubleVal(val, getArrayIndex());
 			if (val == MISSING) {
@@ -218,7 +218,6 @@ public class NumericAttrType extends ClusAttrType {
                     for (ClassHMTRNode child : children){
 
                         String n = child.getName();
-                        System.out.println(n);
                         if (child.isAggregate()){
                             double res = calcHMTR(nodes,child.getName(), tuple, schema, nbAttrs);
                             sum += res;
@@ -250,11 +249,44 @@ public class NumericAttrType extends ClusAttrType {
                             } else { return ((values.get(middle-1) + values.get(middle)) / 2.0);}
                         case 3: return Collections.min(values);
                         case 4: return Collections.max(values);
-                        case 5: return Double.NaN;
-                        case 6: return Double.NaN;
+                        case 5:
+                            for (int i = 0; i < values.size(); i++)
+                            {
+                                double val = values.get(i);
+                                if (!(val == 0) && !(val == 1)) throw new IOException("Value "+val+" is not 1 or 0 while using AND or OR");
+                                if (val==0) return 0;
+                            }
+                            return 1;
+                        case 6:
+                            for (int i = 0; i < values.size(); i++)
+                            {
+                                double val = values.get(i);
+                                if (!(val == 0) && !(val == 1)) throw new IOException("Value "+val+" is not 1 or 0 while using AND or OR");
+                                if (val==1) return 1;
+                            }
+                            return 0;
                         case 7: return values.size();
-                        case 8: return Double.NaN;
-                        case 9: return Double.NaN;
+                        case 8:
+                            double sumDiffsSquared = 0.0;
+                            double avg = sum/children.size();
+                            for (int i = 0; i < values.size(); i++)
+                            {
+                                double diff = values.get(i) - avg;
+                                diff *= diff;
+                                sumDiffsSquared += diff;
+                            }
+                            return sumDiffsSquared  / (double) (values.size());
+                        case 9:
+                            double mean = sum/children.size();
+                            double temp = 0;
+                            for (int i = 0; i < values.size(); i++)
+                            {
+                                double val = values.get(i);
+                                double squrDiffToMean = Math.pow(val - mean, 2);
+                                temp += squrDiffToMean;
+                            }
+                            double meanOfDiffs = (double) temp / (double) (values.size());
+                            return Math.sqrt(meanOfDiffs);
                     }
                 }
             }
