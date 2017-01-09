@@ -42,6 +42,7 @@ import clus.algo.tdidt.ClusDecisionTree;
 import clus.algo.tdidt.ClusNode;
 import clus.algo.tdidt.DepthFirstInduce;
 import clus.algo.tdidt.DepthFirstInduceSparse;
+import clus.data.ClusData;
 import clus.data.rows.RowData;
 import clus.data.rows.TupleIterator;
 import clus.data.type.ClusAttrType;
@@ -154,8 +155,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 //				}
 //			}
 		}
-		setNumberOfThreads(sett.getNumberOfThreads());
-		
+		setNumberOfThreads(sett.getNumberOfThreads());		
 	}
 	
 	/**
@@ -519,7 +519,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, current_oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]); // <-- induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
                 Future<OneBagResults> submit = executor.submit(worker);
                 bagResults.add(submit);
-				
 			}
 		}
 		else if (bagSelections[0] == 0) {
@@ -734,15 +733,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 	}
 
 	public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
+		long one_bag_time = ResourceInfo.getTime();
+		if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
+		
 		if (getSettings().isEnsembleRandomDepth()) {
 			// Set random tree max depth
 			getSettings().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(
 //					m_randTreeDepth.nextDouble(),
 					rnd.nextDouble(ClusRandomNonstatic.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));  // <---- ClusRandom.nextDouble(ClusRandom.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
 		}
-
-		long one_bag_time = ResourceInfo.getTime();
-		if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
 			
 		ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(), msel, cr.getSummary(), i); 
 				
@@ -1056,45 +1055,67 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
 		ArrayList<Future<OneBagResults>> bagResults = new ArrayList<Future<OneBagResults>>();
 		
-		for (int i = 1; i <= m_NbMaxBags; i++) {
-			long one_bag_time = ResourceInfo.getTime();
-			if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
-			
+		for (int i = 1; i <= m_NbMaxBags; i++) {			
 			ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-			InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]); // <-- induceExtraTree(cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]);
+			InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, summ_time, statManagerClones[i - 1]); // <-- induceExtraTree(cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]);
             Future<OneBagResults> submit = executor.submit(worker);
             bagResults.add(submit);
-			
 		}
 		
 		executor.shutdown();
         executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
+
+        for (int i = 1; i <= bagResults.size(); i++) { // must start with 1 and end with the size
+        	Future<OneBagResults> future = bagResults.get(i - 1);
+            try {
+            	OneBagResults results = future.get();
+            	m_OForest.addModelToForest(results.getModel());
+            	if (getSettings().shouldPerformRanking()){
+            		m_FeatureRanking.putAttributesInfos(results.getFimportances());
+            	}
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                System.exit(-1);
+            } catch (ExecutionException e) {
+            	e.printStackTrace();
+            	System.exit(-1);
+            }
+        }
+        
+        
 	}
 	
-	public OneBagResults induceExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, long summ_time, long one_bag_time, ClusStatManager mgr) throws ClusException, IOException, InterruptedException{
+	public OneBagResults induceExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, long summ_time, ClusStatManager mgr) throws ClusException, IOException, InterruptedException{
+ 		long one_bag_time = ResourceInfo.getTime();
+		if (Settings.VERBOSE > 0) System.out.println("Bag: " + i);
+		
 		ClusRun crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());
 //		ClusEnsembleInduce.setRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getNbRandomAttrSelected());
 		DepthFirstInduce ind;
 		if (getSchema().isSparse()) {
-			ind = new DepthFirstInduceSparse(this);
+			ind = new DepthFirstInduceSparse(this, mgr, true);
 		}
 		else {
-			ind = new DepthFirstInduce(this);
+			ind = new DepthFirstInduce(this, mgr, true);
 		}
 		ind.initialize();
 		crSingle.getStatManager().initClusteringWeights();
+		ind.getStatManager().initClusteringWeights();
 		
-		initializeBagTargetSubspacing(crSingle.getStatManager(), i); // this needs to be changed for parallel implementation 
+		initializeBagTargetSubspacing(ind.getStatManager(), i); 
 		
 		ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
 		summ_time += ResourceInfo.getTime() - one_bag_time;
+		
 		if (m_OptMode){
 			//for i == 1 [i.e. the first run] it will initialize the predictions
 			if (i == 1) m_Optimization.initModelPredictionForTuples(model, train_iterator, test_iterator);
 			else m_Optimization.addModelPredictionForTuples(model, train_iterator, test_iterator, i);
 		}
 		else{
-			m_OForest.addModelToForest(model);
+			// m_OForest.addModelToForest(model); THIS IS DONE IN induceExtraTrees
+			
+			
 //			ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
 //			m_DForest.addModelToForest(defmod);
 		}
@@ -1104,8 +1125,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 //			if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST)
 //				m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
 			if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3) {
-				m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
-				//m_FeatureRanking.calculateGENIE3importanceIteratively((ClusNode)model, cr);
+				//m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
+				fimportances = m_FeatureRanking.calculateGENIE3importanceIteratively((ClusNode)model, ind.getStatManager());
 			}
 			
 			else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
@@ -1113,8 +1134,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 				if(weights == null){
 					weights = new double[]{m_BagClus.getSettings().getSymbolicWeight()};
 				}
-				m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, weights, 0);
-				//fimportances = m_FeatureRanking.calculateSYMBOLICimportanceIteratively((ClusNode) model, weights);
+				//m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, weights, 0);
+				fimportances = m_FeatureRanking.calculateSYMBOLICimportanceIteratively((ClusNode) model, weights);
 			} else{
 				System.err.println("The following feature ranking methods are implemented for Extra trees:");
 				System.err.println("Genie3");
@@ -1139,7 +1160,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 		crSingle.setModels(new ArrayList());
 		
 		
-		return null;
+		return new OneBagResults(model, fimportances, crSingle, null);
 	}
 	
 
