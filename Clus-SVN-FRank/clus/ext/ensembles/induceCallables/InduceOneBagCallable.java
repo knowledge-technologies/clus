@@ -1,8 +1,9 @@
-package clus.ext.ensembles;
+package clus.ext.ensembles.induceCallables;
 
 import java.util.concurrent.Callable;
 
 import clus.data.rows.TupleIterator;
+import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.ext.ensembles.containters.OneBagResults;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
