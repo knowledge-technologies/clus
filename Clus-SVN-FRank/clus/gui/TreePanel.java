@@ -39,14 +39,14 @@ import clus.pruning.SizeConstraintPruning;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import jeans.graph.swing.drawable.Drawable;
-import jeans.graph.swing.drawable.DrawableCanvas;
-import jeans.graph.swing.drawable.DrawableScrollableCanvas;
-import jeans.graph.tree.MyDrawableNode;
-import jeans.graph.tree.MyNodePainter;
-import jeans.graph.tree.NodePainterSettings;
-import jeans.graph.tree.TreeRenderer;
-import jeans.tree.Node;
+import clus.jeans.graph.swing.drawable.Drawable;
+import clus.jeans.graph.swing.drawable.DrawableCanvas;
+import clus.jeans.graph.swing.drawable.DrawableScrollableCanvas;
+import clus.jeans.graph.tree.MyDrawableNode;
+import clus.jeans.graph.tree.MyNodePainter;
+import clus.jeans.graph.tree.NodePainterSettings;
+import clus.jeans.graph.tree.TreeRenderer;
+import clus.jeans.tree.Node;
 
 public class TreePanel extends JPanel {
 

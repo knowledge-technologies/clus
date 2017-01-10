@@ -22,8 +22,8 @@
 
 package clus.statistic;
 
-import jeans.math.*;
-import jeans.util.StringUtils;
+import clus.jeans.math.*;
+import clus.jeans.util.StringUtils;
 
 import java.io.IOException;
 import java.io.PrintWriter;

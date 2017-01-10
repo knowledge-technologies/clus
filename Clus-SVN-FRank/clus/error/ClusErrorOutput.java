@@ -9,7 +9,7 @@ import clus.main.Settings;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import jeans.util.IntervalCollection;
+import clus.jeans.util.IntervalCollection;
 
 public class ClusErrorOutput extends ClusOutput {
 

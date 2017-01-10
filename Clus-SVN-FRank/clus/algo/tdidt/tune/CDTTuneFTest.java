@@ -53,7 +53,7 @@ import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 //added 18-05-06
 //import clus.ext.hierarchical.*;

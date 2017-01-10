@@ -28,8 +28,8 @@ package clus.algo.tdidt.tune;
 import java.io.*;
 import java.util.*;
 
-import jeans.io.MyFile;
-import jeans.math.*;
+import clus.jeans.io.MyFile;
+import clus.jeans.math.*;
 
 import clus.main.*;
 import clus.model.ClusModel;

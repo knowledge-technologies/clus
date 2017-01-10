@@ -30,7 +30,7 @@ import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 public class ModelProcessorCollection extends MyArray {
 

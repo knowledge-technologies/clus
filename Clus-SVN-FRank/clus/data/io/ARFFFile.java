@@ -43,8 +43,8 @@ import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesAttrTypeSingleLabel;
 import clus.main.Settings;
 import clus.util.ClusException;
-import jeans.util.MStreamTokenizer;
-import jeans.util.StringUtils;
+import clus.jeans.util.MStreamTokenizer;
+import clus.jeans.util.StringUtils;
 
 /// The ARFF files include the data and description of variable types.
 public class ARFFFile {

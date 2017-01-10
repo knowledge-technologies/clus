@@ -24,7 +24,7 @@ package clus.pruning;
 
 import java.util.*;
 
-import jeans.io.MyFile;
+import clus.jeans.io.MyFile;
 
 import clus.algo.tdidt.*;
 import clus.data.attweights.*;

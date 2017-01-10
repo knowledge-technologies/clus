@@ -27,9 +27,9 @@ import clus.ext.hierarchical.*;
 import java.util.*;
 
 import clus.util.*;
-import jeans.math.*;
-import jeans.util.*;
-import jeans.io.*;
+import clus.jeans.math.*;
+import clus.jeans.util.*;
+import clus.jeans.io.*;
 
 public class GenerateData {
 

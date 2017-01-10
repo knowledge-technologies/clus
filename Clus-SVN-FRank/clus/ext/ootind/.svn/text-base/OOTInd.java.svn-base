@@ -29,9 +29,9 @@ import clus.ext.optxval.*;
 import java.io.*;
 import java.util.*;
 
-import jeans.util.*;
-import jeans.util.cmdline.*;
-import jeans.resource.*;
+import clus.jeans.util.*;
+import clus.jeans.util.cmdline.*;
+import clus.jeans.resource.*;
 
 import clus.*;
 import clus.main.*;

@@ -28,8 +28,8 @@ import java.util.Arrays;
 import clus.algo.tdidt.ClusNode;
 import clus.main.Settings;
 import clus.util.ClusFormat;
-import jeans.tree.MyNode;
-import jeans.util.array.MyIntArray;
+import clus.jeans.tree.MyNode;
+import clus.jeans.util.array.MyIntArray;
 
 public class OptXValNode extends MyNode {
 

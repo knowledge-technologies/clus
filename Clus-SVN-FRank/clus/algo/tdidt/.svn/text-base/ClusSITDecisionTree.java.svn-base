@@ -4,8 +4,8 @@ import java.io.IOException;
 
 import java.util.Random;
 
-import jeans.resource.ResourceInfo;
-import jeans.util.IntervalCollection;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.IntervalCollection;
 
 import clus.main.*;
 import clus.model.ClusModel;

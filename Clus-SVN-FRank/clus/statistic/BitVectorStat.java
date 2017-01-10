@@ -28,7 +28,7 @@ import clus.data.cols.ColTarget;
 import clus.data.rows.DataTuple;
 import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.main.Settings;
-import jeans.list.BitList;
+import clus.jeans.list.BitList;
 
 public class BitVectorStat extends ClusStatistic {
 

@@ -29,8 +29,8 @@ package clus.ext.exhaustivesearch;
 import java.io.*;
 import java.util.*;
 
-import jeans.util.*;
-import jeans.math.*;
+import clus.jeans.util.*;
+import clus.jeans.math.*;
 
 import clus.model.test.*;
 import clus.Clus;

@@ -22,9 +22,9 @@
 
 package clus.algo.tdidt;
 
-import jeans.tree.*;
-import jeans.util.*;
-import jeans.util.compound.*;
+import clus.jeans.tree.*;
+import clus.jeans.util.*;
+import clus.jeans.util.compound.*;
 
 import java.util.*;
 import java.io.*;

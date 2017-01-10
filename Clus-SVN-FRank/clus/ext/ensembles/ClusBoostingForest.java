@@ -9,7 +9,7 @@ import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
-import jeans.util.array.MDoubleArrayComparator;
+import clus.jeans.util.array.MDoubleArrayComparator;
 
 public class ClusBoostingForest extends ClusForest {
 

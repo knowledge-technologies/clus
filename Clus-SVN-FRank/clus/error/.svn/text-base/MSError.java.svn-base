@@ -33,7 +33,7 @@ import clus.data.type.*;
 import clus.main.*;
 import clus.statistic.*;
 
-// import jeans.util.array.*;
+// import clus.jeans.util.array.*;
 
 public class MSError extends ClusNumericError {
 

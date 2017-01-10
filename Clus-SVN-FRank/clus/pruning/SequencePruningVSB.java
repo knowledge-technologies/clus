@@ -29,7 +29,7 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
 import clus.error.ClusError;
 import clus.error.ClusErrorList;
-import jeans.io.MyFile;
+import clus.jeans.io.MyFile;
 
 public class SequencePruningVSB extends PruneTree {
 

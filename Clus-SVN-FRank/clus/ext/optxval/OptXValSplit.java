@@ -26,7 +26,7 @@ import java.util.Arrays;
 
 import clus.main.Settings;
 import clus.model.test.NodeTest;
-import jeans.tree.MyNode;
+import clus.jeans.tree.MyNode;
 
 public class OptXValSplit extends MyNode {
 

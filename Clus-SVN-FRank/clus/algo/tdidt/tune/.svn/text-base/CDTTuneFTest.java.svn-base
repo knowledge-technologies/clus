@@ -25,7 +25,7 @@ package clus.algo.tdidt.tune;
 import java.io.*;
 import java.util.*;
 
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 import clus.main.*;
 import clus.model.ClusModel;

@@ -22,7 +22,7 @@
 
 package clus.main;
 
-import jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 
 import clus.util.*;
 import clus.data.ClusData;

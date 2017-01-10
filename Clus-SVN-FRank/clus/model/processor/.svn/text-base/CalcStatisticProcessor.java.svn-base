@@ -24,7 +24,7 @@ package clus.model.processor;
 
 import java.io.*;
 
-import jeans.tree.*;
+import clus.jeans.tree.*;
 
 import clus.model.ClusModel;
 import clus.algo.tdidt.ClusNode;

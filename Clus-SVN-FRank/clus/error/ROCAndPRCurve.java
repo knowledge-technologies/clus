@@ -4,8 +4,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import clus.main.Settings;
-import jeans.math.MathUtil;
-import jeans.util.compound.DoubleBooleanCount;
+import clus.jeans.math.MathUtil;
+import clus.jeans.util.compound.DoubleBooleanCount;
 
 public class ROCAndPRCurve implements Serializable {
 

@@ -28,8 +28,8 @@ package clus.weka;
 import java.io.*;
 import java.util.*;
 
-import jeans.io.*;
-import jeans.util.*;
+import clus.jeans.io.*;
+import clus.jeans.util.*;
 import clus.data.rows.*;
 import clus.main.*;
 import clus.model.ClusModel;

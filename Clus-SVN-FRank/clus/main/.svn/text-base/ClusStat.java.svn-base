@@ -22,8 +22,8 @@
 
 package clus.main;
 
-import jeans.resource.*;
-import jeans.io.*;
+import clus.jeans.resource.*;
+import clus.jeans.io.*;
 
 public class ClusStat {
 

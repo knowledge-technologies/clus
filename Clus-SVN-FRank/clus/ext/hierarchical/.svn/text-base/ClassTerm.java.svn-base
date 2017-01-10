@@ -25,11 +25,11 @@ package clus.ext.hierarchical;
 import java.io.*;
 import java.util.*;
 
-import jeans.math.*;
-import jeans.util.*;
-import jeans.util.compound.*;
+import clus.jeans.math.*;
+import clus.jeans.util.*;
+import clus.jeans.util.compound.*;
 
-import jeans.tree.*;
+import clus.jeans.tree.*;
 import clus.util.*;
 import clus.main.*;
 

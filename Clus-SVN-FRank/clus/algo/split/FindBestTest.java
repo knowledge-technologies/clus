@@ -124,29 +124,29 @@ public class FindBestTest {
 		m_Split.findSplit(m_BestTest, at);
 	}
 
-	@Deprecated
-	public void findNominalRandom(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) {
-		Random rn;
-		if(rnd == null){
-			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
-		} else{
-			rn = rnd.getRandom(ClusRandomNonstatic.RANDOM_EXTRATREE);
-		}
-		
-		// Reset positive statistic
-		RowData sample = createSample(data, rnd);
-		int nbvalues = at.getNbValues();
-		m_BestTest.reset(nbvalues + 1);
-		// For each attribute value
-		int nb_rows = sample.getNbRows();
-		for (int i = 0; i < nb_rows; i++) {
-			DataTuple tuple = sample.getTuple(i);
-			int value = at.getNominal(tuple);
-			m_BestTest.m_TestStat[value].updateWeighted(tuple, i);
-		}
-		// Find the split
-		m_Split.findRandomSplit(m_BestTest, at, rn);
-	}
+//	@Deprecated
+//	public void findNominalRandom(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) {
+//		Random rn;
+//		if(rnd == null){
+//			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
+//		} else{
+//			rn = rnd.getRandom(ClusRandomNonstatic.RANDOM_EXTRATREE);
+//		}
+//		
+//		// Reset positive statistic
+//		RowData sample = createSample(data, rnd);
+//		int nbvalues = at.getNbValues();
+//		m_BestTest.reset(nbvalues + 1);
+//		// For each attribute value
+//		int nb_rows = sample.getNbRows();
+//		for (int i = 0; i < nb_rows; i++) {
+//			DataTuple tuple = sample.getTuple(i);
+//			int value = at.getNominal(tuple);
+//			m_BestTest.m_TestStat[value].updateWeighted(tuple, i);
+//		}
+//		// Find the split
+//		m_Split.findRandomSplit(m_BestTest, at, rn);
+//	}
 	
 	public void findNominalExtraTree(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) {
 		Random rn;

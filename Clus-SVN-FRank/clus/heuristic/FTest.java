@@ -30,7 +30,7 @@ import org.apache.commons.math.distribution.FDistribution;
 
 import clus.main.Settings;
 import clus.util.ClusFormat;
-import jeans.math.MathUtil;
+import clus.jeans.math.MathUtil;
 
 public class FTest {
 

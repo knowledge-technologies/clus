@@ -26,9 +26,9 @@ import java.awt.Color;
 
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
-import jeans.graph.plot.MDistrInfo;
-import jeans.graph.swing.drawable.Drawable;
-import jeans.graph.swing.drawable.DrawableDistrGraph;
+import clus.jeans.graph.plot.MDistrInfo;
+import clus.jeans.graph.swing.drawable.Drawable;
+import clus.jeans.graph.swing.drawable.DrawableDistrGraph;
 
 public class ClassStatVis implements ClusStatVisualizer, MDistrInfo {
 

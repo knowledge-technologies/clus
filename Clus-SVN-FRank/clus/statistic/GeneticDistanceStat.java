@@ -6,7 +6,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.util.ClusFormat;
-import jeans.list.BitList;
+import clus.jeans.list.BitList;
 
 public class GeneticDistanceStat extends BitVectorStat {
 

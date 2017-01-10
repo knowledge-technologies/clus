@@ -41,7 +41,7 @@ import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.util.ClusFormat;
-import jeans.util.StringUtils;
+import clus.jeans.util.StringUtils;
 
 public abstract class RegressionStatBase extends ClusStatistic {
 

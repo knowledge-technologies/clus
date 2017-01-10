@@ -44,9 +44,9 @@ import clus.selection.XValMainSelection;
 import clus.selection.XValSelection;
 import clus.tools.debug.Debug;
 import clus.util.ClusException;
-import jeans.resource.ResourceInfo;
-import jeans.util.MyArray;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.MyArray;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 @Deprecated
 public class OOTInd {

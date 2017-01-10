@@ -1,7 +1,7 @@
 package clus.data.rows;
 
-import jeans.util.compound.DoubleObject;
-import jeans.util.sort.MSortable;
+import clus.jeans.util.compound.DoubleObject;
+import clus.jeans.util.sort.MSortable;
 
 public class RowDataSortHelper implements MSortable {
 

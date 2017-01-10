@@ -34,8 +34,8 @@ import java.util.Vector;
 import clus.algo.tdidt.ClusNode;
 import clus.model.modelio.tilde.TildeOutReader;
 import clus.statistic.ClassificationStat;
-import jeans.util.FileUtil;
-import jeans.util.MStreamTokenizer;
+import clus.jeans.util.FileUtil;
+import clus.jeans.util.MStreamTokenizer;
 
 public class Tilde2PMMLv2 {
 

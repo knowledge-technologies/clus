@@ -33,8 +33,8 @@ import clus.data.type.NominalAttrType;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.util.ClusException;
-import jeans.util.MStreamTokenizer;
-import jeans.util.MyArray;
+import clus.jeans.util.MStreamTokenizer;
+import clus.jeans.util.MyArray;
 
 public class TildeOutReader {
 

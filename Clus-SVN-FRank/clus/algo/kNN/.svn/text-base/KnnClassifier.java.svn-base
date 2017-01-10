@@ -34,7 +34,7 @@ import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
 import java.io.IOException;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 /**
  *

@@ -22,7 +22,7 @@
 
 package clus.model.test;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 
 import clus.data.rows.*;
 import clus.data.type.*;

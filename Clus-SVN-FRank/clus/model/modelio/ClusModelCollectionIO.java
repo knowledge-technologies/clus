@@ -33,8 +33,8 @@ import java.util.ArrayList;
 
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import jeans.io.ObjectLoadStream;
-import jeans.io.ObjectSaveStream;
+import clus.jeans.io.ObjectLoadStream;
+import clus.jeans.io.ObjectSaveStream;
 
 public class ClusModelCollectionIO implements Serializable {
 

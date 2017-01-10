@@ -61,7 +61,7 @@ import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 /**
  *

@@ -35,7 +35,7 @@ import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 /**
  *

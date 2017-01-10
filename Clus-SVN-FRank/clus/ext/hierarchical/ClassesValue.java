@@ -27,7 +27,7 @@ import java.util.StringTokenizer;
 
 import clus.main.Settings;
 import clus.util.ClusException;
-import jeans.util.array.StringTable;
+import clus.jeans.util.array.StringTable;
 
 public class ClassesValue implements Serializable {
 

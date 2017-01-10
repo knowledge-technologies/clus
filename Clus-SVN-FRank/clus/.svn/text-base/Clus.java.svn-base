@@ -33,10 +33,10 @@ import clus.algo.tdidt.processor.NodeIDWriter;
 import clus.algo.tdidt.tune.CDTTuneFTest;
 import clus.algo.tdidt.tune.CDTuneSizeConstrPruning;
 
-import jeans.io.*;
-import jeans.util.*;
-import jeans.util.cmdline.*;
-import jeans.resource.*;
+import clus.jeans.io.*;
+import clus.jeans.util.*;
+import clus.jeans.util.cmdline.*;
+import clus.jeans.resource.*;
 
 import java.io.*;
 import java.text.NumberFormat;

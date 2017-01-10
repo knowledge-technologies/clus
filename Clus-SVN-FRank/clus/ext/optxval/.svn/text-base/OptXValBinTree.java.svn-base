@@ -22,8 +22,8 @@
 
 package clus.ext.optxval;
 
-import jeans.tree.*;
-import jeans.util.*;
+import clus.jeans.tree.*;
+import clus.jeans.util.*;
 
 import clus.algo.tdidt.ClusNode;
 import clus.main.*;

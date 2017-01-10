@@ -22,7 +22,7 @@
 
 package clus.data.cols.attribute;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 
 import clus.io.*;
 import clus.main.*;

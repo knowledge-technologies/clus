@@ -28,7 +28,7 @@ package clus.model.modelio;
 import java.io.*;
 import java.util.*;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 
 import clus.algo.tdidt.*;
 import clus.data.type.*;

@@ -25,7 +25,7 @@ import clus.tools.debug.Debug;
 
 import clus.ext.optxval.*;
 
-import jeans.resource.*;
+import clus.jeans.resource.*;
 
 import java.io.*;
 

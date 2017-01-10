@@ -29,8 +29,8 @@ import java.io.Reader;
 import java.util.zip.ZipInputStream;
 
 import clus.main.Settings;
-import jeans.util.FileUtil;
-import jeans.util.MStreamTokenizer;
+import clus.jeans.util.FileUtil;
+import clus.jeans.util.MStreamTokenizer;
 
 public class ClusReader {
 

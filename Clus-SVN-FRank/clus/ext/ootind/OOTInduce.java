@@ -48,7 +48,7 @@ import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.tools.debug.Debug;
 import clus.util.ClusException;
-import jeans.resource.ResourceInfo;
+import clus.jeans.resource.ResourceInfo;
 
 public abstract class OOTInduce extends ClusInductionAlgorithm {
 

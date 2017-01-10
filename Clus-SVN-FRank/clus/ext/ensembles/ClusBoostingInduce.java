@@ -41,7 +41,7 @@ import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import jeans.util.array.MDoubleArray;
+import clus.jeans.util.array.MDoubleArray;
 
 // Method based on:
 // "Improving Regressors using Boosting Techniques" by Harris Drucker

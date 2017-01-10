@@ -29,9 +29,9 @@ import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.HierIO;
 import clus.util.ClusFormat;
 import clus.util.ClusRandom;
-import jeans.io.MyFile;
-import jeans.math.SingleStat;
-import jeans.util.MyArray;
+import clus.jeans.io.MyFile;
+import clus.jeans.math.SingleStat;
+import clus.jeans.util.MyArray;
 
 @Deprecated
 public class GenerateData {

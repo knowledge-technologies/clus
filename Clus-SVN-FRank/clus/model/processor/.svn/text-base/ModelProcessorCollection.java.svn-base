@@ -29,7 +29,7 @@ import clus.data.type.*;
 import clus.statistic.*;
 import clus.util.*;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 
 import java.io.*;
 

@@ -22,7 +22,7 @@
 
 package clus.data.type;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 
 import java.io.*;
 import java.util.*;

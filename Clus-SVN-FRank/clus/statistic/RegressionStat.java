@@ -30,7 +30,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.NumericAttrType;
 import clus.main.Settings;
 import clus.util.ClusFormat;
-import jeans.math.MathUtil;
+import clus.jeans.math.MathUtil;
 
 public class RegressionStat extends RegressionStatBase {
 

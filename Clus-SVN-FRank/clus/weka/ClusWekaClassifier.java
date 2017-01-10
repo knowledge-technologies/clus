@@ -38,7 +38,7 @@ import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.cmdline.CMDLineArgs;
 import weka.classifiers.Classifier;
 import weka.core.Instances;
 

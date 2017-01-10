@@ -22,9 +22,9 @@
 
 package clus.data.rows;
 
-import jeans.resource.ResourceInfo;
-import jeans.util.sort.*;
-import jeans.util.compound.*;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.sort.*;
+import clus.jeans.util.compound.*;
 
 import java.util.*;
 import java.io.*;

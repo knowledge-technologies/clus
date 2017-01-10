@@ -52,10 +52,10 @@ import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.ClusUtil;
-import jeans.tree.MyNode;
-import jeans.util.MyArray;
-import jeans.util.StringUtils;
-import jeans.util.compound.IntObject;
+import clus.jeans.tree.MyNode;
+import clus.jeans.util.MyArray;
+import clus.jeans.util.StringUtils;
+import clus.jeans.util.compound.IntObject;
 
 public class ClusNode extends MyNode implements ClusModel {
 

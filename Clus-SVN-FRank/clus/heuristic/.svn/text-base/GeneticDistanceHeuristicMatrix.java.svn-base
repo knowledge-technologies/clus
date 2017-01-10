@@ -7,13 +7,13 @@ import clus.ext.sspd.SSPDMatrix;
 import clus.main.Settings;
 import clus.statistic.GeneticDistanceStat;
 import clus.statistic.ClusStatistic;
-import jeans.resource.ResourceInfo;
-import jeans.list.BitList;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.list.BitList;
 
 import java.io.IOException;
 import java.util.*;
 
-import jeans.math.matrix.*;
+import clus.jeans.math.matrix.*;
 
 public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 

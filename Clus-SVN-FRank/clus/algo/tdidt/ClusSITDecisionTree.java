@@ -24,8 +24,8 @@ import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
-import jeans.resource.ResourceInfo;
-import jeans.util.IntervalCollection;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.IntervalCollection;
 
 
 public class ClusSITDecisionTree extends ClusDecisionTree{

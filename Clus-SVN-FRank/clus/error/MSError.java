@@ -35,7 +35,7 @@ import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 
-// import jeans.util.array.*;
+// import clus.jeans.util.array.*;
 
 public class MSError extends ClusNumericError {
 

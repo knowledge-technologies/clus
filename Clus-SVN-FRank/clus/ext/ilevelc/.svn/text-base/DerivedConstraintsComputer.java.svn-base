@@ -24,7 +24,7 @@ package clus.ext.ilevelc;
 
 import java.util.*;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 import clus.data.rows.*;
 
 public class DerivedConstraintsComputer {

@@ -29,7 +29,7 @@ import java.io.*;
 import java.text.NumberFormat;
 import java.util.*;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.*;

@@ -42,9 +42,9 @@ import clus.model.ClusModelInfo;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import jeans.resource.ResourceInfo;
-import jeans.util.FileUtil;
-import jeans.util.StringUtils;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.FileUtil;
+import clus.jeans.util.StringUtils;
 
 /**
  * Class for outputting the training and testing results to .out file.

@@ -29,7 +29,7 @@ import clus.data.io.ClusReader;
 import clus.data.type.NominalAttrType;
 import clus.main.ClusStatManager;
 import clus.selection.ClusSelection;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 public class NominalAttribute extends NominalAttrBase {
 

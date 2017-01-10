@@ -37,8 +37,8 @@ import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import jeans.util.MyArray;
-import jeans.util.StringUtils;
+import clus.jeans.util.MyArray;
+import clus.jeans.util.StringUtils;
 
 public class PredictionWriter extends ClusModelProcessor {
 

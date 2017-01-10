@@ -36,7 +36,7 @@ import clus.data.type.StringAttrType;
 import clus.io.ClusSerializable;
 import clus.main.Settings;
 import clus.util.ClusException;
-import jeans.util.array.StringTable;
+import clus.jeans.util.array.StringTable;
 
 public class ClassesAttrType extends ClusAttrType {
 

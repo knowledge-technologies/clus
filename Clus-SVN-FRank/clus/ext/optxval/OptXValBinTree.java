@@ -24,8 +24,8 @@ package clus.ext.optxval;
 
 import clus.algo.tdidt.ClusNode;
 import clus.main.Settings;
-import jeans.tree.MyNode;
-import jeans.util.MyArray;
+import clus.jeans.tree.MyNode;
+import clus.jeans.util.MyArray;
 
 public class OptXValBinTree extends MyNode {
 

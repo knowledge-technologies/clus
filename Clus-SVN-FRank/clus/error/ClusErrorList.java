@@ -39,7 +39,7 @@ import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import jeans.util.StringUtils;
+import clus.jeans.util.StringUtils;
 
 // FIXME : replace nbexamples by sumweight (not?) !
 

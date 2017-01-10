@@ -22,6 +22,7 @@
 
 package clus;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -115,15 +116,15 @@ import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.ClusRandom;
 import clus.util.DebugFile;
-import jeans.io.MyFile;
-import jeans.io.ObjectLoadStream;
-import jeans.io.ObjectSaveStream;
-import jeans.resource.ResourceInfo;
-import jeans.util.FileUtil;
-import jeans.util.IntervalCollection;
-import jeans.util.StringUtils;
-import jeans.util.cmdline.CMDLineArgs;
-import jeans.util.cmdline.CMDLineArgsProvider;
+import clus.jeans.io.MyFile;
+import clus.jeans.io.ObjectLoadStream;
+import clus.jeans.io.ObjectSaveStream;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.FileUtil;
+import clus.jeans.util.IntervalCollection;
+import clus.jeans.util.StringUtils;
+import clus.jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.cmdline.CMDLineArgsProvider;
 
 // import clus.weka.*;
 
@@ -160,6 +161,16 @@ public class Clus implements CMDLineArgsProvider {
 	protected boolean isxval = false;
 	protected CMDLineArgs m_CmdLine;
 
+	private static String getRelativePath(File file, File folder) {
+	    String filePath = file.getAbsolutePath();
+	    String folderPath = folder.getAbsolutePath();
+	    if (filePath.startsWith(folderPath)) {
+	        return filePath.substring(folderPath.length() + 1);
+	    } else {
+	        return null;
+	    }
+	}
+	
 	public final void initialize(CMDLineArgs cargs,	ClusInductionAlgorithmType clss) throws IOException, ClusException {
 		m_CmdLine = cargs;
 		m_Classifier = clss;
@@ -170,6 +181,7 @@ public class Clus implements CMDLineArgsProvider {
 		ARFFFile arff = null;
 		if(m_Sett.getVerbose() > 0) System.out.println("Loading '" + m_Sett.getAppName() + "'");
 		ClusRandom.initialize(m_Sett);
+		
 		ClusReader reader = new ClusReader(m_Sett.getDataFile(), m_Sett);
 		if(m_Sett.getVerbose() > 0) System.out.println();
 		if (cargs.hasOption("c45")) {

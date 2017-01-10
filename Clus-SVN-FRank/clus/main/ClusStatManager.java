@@ -139,7 +139,7 @@ import clus.statistic.GeneticDistanceStat;
 import clus.statistic.RegressionStat;
 import clus.statistic.SumPairwiseDistancesStat;
 import clus.util.ClusException;
-import jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 
 /** Statistics manager
  * Includes information about target attributes and weights etc.

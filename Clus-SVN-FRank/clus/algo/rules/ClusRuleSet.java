@@ -57,7 +57,7 @@ import clus.tools.optimization.OptProbl;
 //import clus.tools.optimization.de.DeProbl; // Optimization information (data, predictions)
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 /**
  * Class representing a set of predictive clustering rules.

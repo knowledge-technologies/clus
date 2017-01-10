@@ -24,7 +24,7 @@ package clus.ext.ilevelc;
 
 import java.util.*;
 
-import jeans.util.DisjointSetForest;
+import clus.jeans.util.DisjointSetForest;
 
 import clus.statistic.*;
 import clus.util.ClusRandom;

@@ -43,9 +43,9 @@ import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.util.ClusFormat;
-import jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import jeans.math.MathUtil;
-import jeans.util.StringUtils;
+import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.jeans.math.MathUtil;
+import clus.jeans.util.StringUtils;
 
 /**
  * Classification statistics about the data. A child of ClusStatistic.

@@ -31,8 +31,8 @@ import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.util.ClusException;
-import jeans.resource.ResourceInfo;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 /**
  * For each type of algorithm there should be a ClusClassifier object.

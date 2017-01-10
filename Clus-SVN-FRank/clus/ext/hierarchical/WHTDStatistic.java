@@ -51,7 +51,7 @@ import clus.statistic.RegressionStatBinaryNomiss;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import jeans.util.array.MIntArray;
+import clus.jeans.util.array.MIntArray;
 
 public class WHTDStatistic extends RegressionStatBinaryNomiss {
 

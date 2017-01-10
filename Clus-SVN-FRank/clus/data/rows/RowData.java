@@ -46,9 +46,9 @@ import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
 import clus.util.ClusRandomNonstatic;
-import jeans.util.compound.DoubleObject;
-import jeans.util.sort.MSortable;
-import jeans.util.sort.MSorter;
+import clus.jeans.util.compound.DoubleObject;
+import clus.jeans.util.sort.MSortable;
+import clus.jeans.util.sort.MSorter;
 
 /**
  * Multiple rows (tuples) of data.

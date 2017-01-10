@@ -1,6 +1,6 @@
 package clus.ext.semisupervised;
 
-import jeans.math.MathUtil;
+import clus.jeans.math.MathUtil;
 import clus.heuristic.*;
 import clus.main.Settings;
 import clus.statistic.ClassificationStat;
