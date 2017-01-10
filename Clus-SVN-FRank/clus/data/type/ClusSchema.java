@@ -702,7 +702,7 @@ public class ClusSchema implements Serializable {
 				}
 			}
 			m_NonSparse = vectorToAttrArray(nonSparse);
-			System.out.println("Number of sparse attributes: "+nbSparse);
+			if(getSettings().getVerbose() > 0) System.out.println("Number of sparse attributes: " + nbSparse);
 			addRowsIndex();
 			m_IsSparse = true;
 		}
