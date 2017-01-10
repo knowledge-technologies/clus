@@ -51,7 +51,7 @@ public class SparseNumericAttrType extends NumericAttrType {
 		return VALUE_TYPE_NONE;
 	}
 	
-	public ArrayList getExamples() {
+	public ArrayList<SparseDataTuple> getExamples() {
 		return m_Examples;
 	}
 	

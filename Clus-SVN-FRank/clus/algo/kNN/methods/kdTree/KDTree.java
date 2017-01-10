@@ -63,7 +63,7 @@ public class KDTree extends SearchAlgorithm{
 		RowData data = getRun().getDataSet(ClusRun.TRAINSET);
 		// copy tuples into LinkedList for easier manipulation
 		LinkedList<DataTuple> tuples = new LinkedList<DataTuple>();
-		for( DataTuple tuple : data.m_Data)
+		for( DataTuple tuple : data.getData()) // instead of m_Data
 			tuples.add(tuple);
 		// create root node
 		m_Root = new KDNode(this,0);

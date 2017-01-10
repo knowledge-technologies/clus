@@ -118,7 +118,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
 	}
 
 	public RowData getNodeData(RowData train, int nodeid) {
-		ArrayList selected = new ArrayList();
+		ArrayList<DataTuple> selected = new ArrayList<DataTuple>();
 		for (int i = 0; i < train.getNbRows(); i++) {
 			DataTuple tuple;
 			if (m_Clus.getSchema().isSparse()) {

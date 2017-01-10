@@ -49,7 +49,7 @@ public class ClusView {
 
 	public RowData readData(ClusReader reader, ClusSchema schema) throws IOException, ClusException {
 		schema.setReader(true);
-		ArrayList items = new ArrayList();
+		ArrayList<DataTuple> items = new ArrayList<DataTuple>();
 		DataTuple tuple = readDataTupleFirst(reader, schema);
 		while (tuple != null) {
 			items.add(tuple);

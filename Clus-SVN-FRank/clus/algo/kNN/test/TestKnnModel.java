@@ -316,14 +316,14 @@ public class TestKnnModel implements ClusModel, Serializable{
 		try{
 			System.out.println("--------------");
 			System.out.println("K = " + Settings.kNN_k.getValue());
-			System.out.println(clus.getSchema().getNbDescriptiveAttributes() + " " + clus.getData().m_Data.length);
+			System.out.println(clus.getSchema().getNbDescriptiveAttributes() + " " + clus.getData().getData().length); // clus.getData().m_Data.length
 			for( String key : TestKnnModel.watches.keySet() ){
 				System.out.println(key + " - " + TestKnnModel.watches.get(key).readValue());
 			}
 			FileWriter f = new FileWriter("output.data",true);
 			f.write(clus.getSchema().getRelationName() + "\t\t");
 			f.write(clus.getSchema().getNbDescriptiveAttributes() + "\t");
-			f.write(clus.getData().m_Data.length+"\t");
+			f.write(clus.getData().getData().length+"\t");
 			f.write(TestKnnModel.watches.get("bf").readValue() + "\t");
 			f.write(TestKnnModel.watches.get("kd").readValue() + "\t");
 			f.write(TestKnnModel.watches.get("vp").readValue() + "\t");

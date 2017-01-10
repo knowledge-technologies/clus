@@ -46,7 +46,7 @@ public class BrutForce extends SearchAlgorithm{
 
 	public void build() throws ClusException, IOException {
 		// does nothing at all
-		m_List = getRun().getDataSet(ClusRun.TRAINSET).m_Data;
+		m_List = getRun().getDataSet(ClusRun.TRAINSET).getData(); //m_Data;
 	}
 
 	public LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) {

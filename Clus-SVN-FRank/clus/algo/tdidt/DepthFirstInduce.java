@@ -435,7 +435,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
 		int threads = getSettings().getNumberOfThreads();
 		if (threads != 1){
-			String warning = String.format("WARNING:\n"
+			String warning = String.format("Potential WARNING:\n"
+					+ "It seems that you are trying to build an ensemble in parallel.\n If this is not the case, ignore this message. Otherwise:"
 					+ "The chosen number of threads (%d) is not equal to 1, and the method\n"
 					+ "induceSingleUnpruned(ClusRun cr) is not appropriate for parallelism (the results might not be reproducible).\n"
 					+ "The method induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) should be used instead.", threads);

@@ -56,7 +56,7 @@ public class VPTree extends SearchAlgorithm {
 	public void build() throws ClusException, IOException {
 		RowData data = getRun().getDataSet(ClusRun.TRAINSET);
 		LinkedList<VPItem> list = new LinkedList<VPItem>();
-		for( DataTuple tuple : data.m_Data )
+		for( DataTuple tuple : data.getData()) // data.m_Data
 			list.add(new VPItem(tuple));
 		m_Root = recursiveBuild(list);;
 	}

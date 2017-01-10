@@ -32,6 +32,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import clus.algo.ClusInductionAlgorithm;
@@ -249,6 +250,48 @@ public class Clus implements CMDLineArgsProvider {
 			System.out.println("Memory usage: loading data took "
 					+ (ClusStat.m_LoadedMemory - ClusStat.m_InitialMemory)
 					+ " kB");
+		}
+	}
+	
+	/**
+	 * Condensed version of {@code clus.Clus.initialize(CMDLineArgs, ClusInductionAlgorithmType)} that more or less
+	 * prepares the dataset. Used for unit testing.
+	 * @param cargs
+	 * @throws ClusException
+	 * @throws IOException
+	 */
+	public final void initialize(CMDLineArgs cargs) throws ClusException, IOException{
+		ARFFFile arff = null;
+		ClusReader reader = new ClusReader(m_Sett.getDataFile(), m_Sett);
+		arff = new ARFFFile(reader);
+		m_Schema = arff.read(m_Sett);
+		
+		m_Sett.updateTarget(m_Schema);
+		m_Schema.initializeSettings(m_Sett);
+		m_Sett.setTarget(m_Schema.getTarget().toString());
+		m_Sett.setDisabled(m_Schema.getDisabled().toString());
+		m_Sett.setClustering(m_Schema.getClustering().toString());
+		m_Sett.setDescriptive(m_Schema.getDescriptive().toString());
+
+		// Load data from file
+		if (ResourceInfo.isLibLoaded()) {
+			ClusStat.m_InitialMemory = ResourceInfo.getMemory();
+		}
+		ClusView view = m_Schema.createNormalView();
+		m_Data = view.readData(reader, m_Schema);
+		reader.close();
+
+		if (getSettings().getNormalizeData() != Settings.NORMALIZE_DATA_NONE) {
+			if(m_Sett.getVerbose() > 0) System.out.println("Normalizing numerical data");
+			m_Data = returnNormalizedData(m_Data);
+		}
+
+		if (ResourceInfo.isLibLoaded()) {
+			ClusStat.m_LoadedMemory = ResourceInfo.getMemory();
+		}
+		if (getSettings().isRemoveMissingTarget()) {
+			m_Data = CriterionBasedSelection.removeMissingTarget(m_Data);
+			CriterionBasedSelection.clearMissingFlagTargetAttrs(m_Schema);
 		}
 	}
 

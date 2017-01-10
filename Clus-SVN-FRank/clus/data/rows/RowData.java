@@ -26,6 +26,9 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Random;
 
 import clus.algo.tdidt.ClusNode;
@@ -55,7 +58,9 @@ public class RowData extends ClusData implements MSortable, Serializable {
 
 	public int m_Index;
 	public ClusSchema m_Schema;
-	public DataTuple[] m_Data;
+	private DataTuple[] m_Data;
+	/** The keys are non-sparse numeric attributes that have had to be sorted, and the values are tuple indices, sorted with respect to the key. */
+	private HashMap<NumericAttrType, Integer[]> m_SortedInstances = new HashMap<NumericAttrType, Integer[]>();
 
 	public RowData(ClusSchema schema) {
 		m_Schema = schema;
@@ -80,6 +85,10 @@ public class RowData extends ClusData implements MSortable, Serializable {
 	public RowData(ArrayList list, ClusSchema schema) {
 		m_Schema = schema;
 		setFromList(list);
+	}
+	
+	public DataTuple[] getData(){
+		return m_Data;
 	}
 
 	public void setFromList(ArrayList list) {
@@ -281,6 +290,12 @@ public class RowData extends ClusData implements MSortable, Serializable {
 		m_Schema = schema;
 	}
 	
+	/**
+	 * Sorts the instances with respect to the given attribute {@code at}, so that<p>
+	 * missing > decreasing regular values > zeros
+	 * @param at
+	 * @param helper
+	 */
 	public void sortSparse(NumericAttrType at, RowDataSortHelper helper) {
 		int nbmiss = 0, nbzero = 0, nbother = 0;
 		helper.resize(m_NbRows+1);
@@ -335,6 +350,88 @@ public class RowData extends ClusData implements MSortable, Serializable {
 		m_Data[i] = m_Data[j];
 		m_Data[j] = temp;
 	}
+	
+	
+	public Integer[] smartSort(NumericAttrType at){
+		if(m_SortedInstances.containsKey(at) && m_SortedInstances.get(at).length == m_Data.length){
+			// here, we assume that m_Data has not changed from the last call of this method
+			return m_SortedInstances.get(at);
+		} else if(at.isSparse()){
+			return smartSortSparse(at);
+		} else{
+			return smartSortNonSparse(at);
+		}
+	}
+
+	public Integer[] smartSortNonSparse(NumericAttrType at){
+		int attrInd = at.getArrayIndex();
+		Integer[] indices = new Integer[m_Data.length];
+		final double[] featureVector = new double[m_Data.length];
+		for(int i = 0; i < m_Data.length; i++){
+			indices[i] = i;
+			featureVector[i] = m_Data[i].getDoubleVal(attrInd);				
+		}
+		Arrays.sort(indices, new Comparator<Integer>() {
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				return Double.compare(featureVector[o2], featureVector[o1]); // we sort in decreasing order!
+			}
+		});
+		m_SortedInstances.put(at, indices);
+		
+		return indices;
+	}
+	
+	public Integer[] smartSortSparse(NumericAttrType at) {
+		// divide instances into three groups: missing, zero and other
+		ArrayList<Integer> missing = new ArrayList<Integer>();
+		ArrayList<Integer> zero = new ArrayList<Integer>();
+		final ArrayList<Integer> other = new ArrayList<Integer>();						
+		for (int i = 0; i < m_NbRows; i++) {
+			double featureValue = at.getNumeric(m_Data[i]);
+			if (featureValue == 0.0) {
+				zero.add(i);
+			} else if (featureValue == NumericAttrType.MISSING) {
+				missing.add(i);
+			} else if (featureValue > 0.0) {
+				other.add(i);
+			} else {
+				System.err.println("Sparse attribute has negative value!");
+				System.exit(-1);
+			}
+		}			
+		// sort other
+		final double[] featureVector = new double[other.size()];
+		Integer[] temp = new Integer[other.size()];
+		for(int i = 0; i < featureVector.length; i++){
+			featureVector[i] = at.getNumeric(m_Data[other.get(i)]);
+			temp[i] = i;
+		}
+		Arrays.sort(temp, new Comparator<Integer>() {
+			@Override
+			public int compare(Integer o1, Integer o2) {
+				return Double.compare(featureVector[o2], featureVector[o1]); // we sort in decreasing order!
+			}
+		});
+		// join instances again
+		Integer[] indices = new Integer[m_Data.length];
+		int nbMiss = missing.size(), nbOther = other.size(), nbZero = zero.size();
+		int pos = 0;
+		for (int i = 0; i < nbMiss; i++) {
+			indices[pos++] = missing.get(i);
+		}
+		for (int i = 0; i < nbOther; i++) {
+			indices[pos++] = other.get(temp[i]);
+		}
+		for (int i = 0; i < nbZero; i++) {
+			indices[pos++] = zero.get(i);
+		}
+		m_SortedInstances.put(at, indices);
+
+		return indices;
+	}
+	
+	
 
 	public DataTuple findTupleByKey(String key_value) {
 		ClusAttrType[] key = getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_KEY);

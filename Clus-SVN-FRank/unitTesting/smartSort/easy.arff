@@ -1,0 +1,19 @@
+@relation easy
+
+% atr1: already ordered
+% atr2: reversed
+% atr3: 3 1 4 5 2 6 7
+
+@attribute atr1 numeric
+@attribute atr2 numeric
+@attribute atr3 numeric
+@attribute tar1 numeric
+
+@data
+1,6,-2.21,3.14
+2,5.0,23,3.14
+3,4.0,-12.0,3.14
+4,2.0,0.0,3.14
+5,-21.0,22.2,3.14
+6,-232.231,100.0,3.14
+7,-2313.222,1234.4321,3.14
