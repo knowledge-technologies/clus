@@ -1,3 +1,4 @@
+
 package clus.sit.searchAlgorithm;
 
 import clus.data.type.ClusAttrType;
@@ -12,21 +13,24 @@ import clus.sit.mtLearner.MTLearner;
  * @author beau
  *
  */
-public class OneTarget implements SearchAlgorithm{
+public class OneTarget implements SearchAlgorithm {
 
-	public TargetSet search(ClusAttrType mainTarget, TargetSet candidates) {
-		return new TargetSet(mainTarget);
-	}
+    public TargetSet search(ClusAttrType mainTarget, TargetSet candidates) {
+        return new TargetSet(mainTarget);
+    }
 
-	public void setMTLearner(MTLearner learner) {
-	}
 
-	public String getName() {
-		return "OneTarget";
-	}
+    public void setMTLearner(MTLearner learner) {
+    }
 
-	public void setSettings(Settings s) {
 
-	}
+    public String getName() {
+        return "OneTarget";
+    }
+
+
+    public void setSettings(Settings s) {
+
+    }
 
 }

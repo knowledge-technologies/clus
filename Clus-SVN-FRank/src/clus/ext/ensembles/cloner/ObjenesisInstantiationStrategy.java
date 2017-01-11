@@ -1,26 +1,28 @@
+
 package clus.ext.ensembles.cloner;
 
 import org.objenesis.Objenesis;
 import org.objenesis.ObjenesisStd;
 
+
 /**
  * @author kostantinos.kougios
  *
- * 17 Jul 2012
+ *         17 Jul 2012
  */
-public class ObjenesisInstantiationStrategy implements IInstantiationStrategy
-{
-	private final Objenesis	objenesis	= new ObjenesisStd();
+public class ObjenesisInstantiationStrategy implements IInstantiationStrategy {
 
-	public <T> T newInstance(Class<T> c)
-	{
-		return objenesis.newInstance(c);
-	}
+    private final Objenesis objenesis = new ObjenesisStd();
 
-	private static ObjenesisInstantiationStrategy	instance	= new ObjenesisInstantiationStrategy();
 
-	public static ObjenesisInstantiationStrategy getInstance()
-	{
-		return instance;
-	}
+    public <T> T newInstance(Class<T> c) {
+        return objenesis.newInstance(c);
+    }
+
+    private static ObjenesisInstantiationStrategy instance = new ObjenesisInstantiationStrategy();
+
+
+    public static ObjenesisInstantiationStrategy getInstance() {
+        return instance;
+    }
 }

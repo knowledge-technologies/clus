@@ -1,23 +1,23 @@
 /*************************************************************************
- * Clus - Software for Predictive Clustering                             *
- * Copyright (C) 2007                                                    *
- *    Katholieke Universiteit Leuven, Leuven, Belgium                    *
- *    Jozef Stefan Institute, Ljubljana, Slovenia                        *
- *                                                                       *
- * This program is free software: you can redistribute it and/or modify  *
- * it under the terms of the GNU General Public License as published by  *
- * the Free Software Foundation, either version 3 of the License, or     *
- * (at your option) any later version.                                   *
- *                                                                       *
- * This program is distributed in the hope that it will be useful,       *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- * GNU General Public License for more details.                          *
- *                                                                       *
- * You should have received a copy of the GNU General Public License     *
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *                                                                       *
- * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>.         *
+ * Clus - Software for Predictive Clustering *
+ * Copyright (C) 2007 *
+ * Katholieke Universiteit Leuven, Leuven, Belgium *
+ * Jozef Stefan Institute, Ljubljana, Slovenia *
+ * *
+ * This program is free software: you can redistribute it and/or modify *
+ * it under the terms of the GNU General Public License as published by *
+ * the Free Software Foundation, either version 3 of the License, or *
+ * (at your option) any later version. *
+ * *
+ * This program is distributed in the hope that it will be useful, *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the *
+ * GNU General Public License for more details. *
+ * *
+ * You should have received a copy of the GNU General Public License *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>. *
+ * *
+ * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
 package clus.data.cols.attribute;
@@ -25,47 +25,59 @@ package clus.data.cols.attribute;
 import clus.data.cols.ColTarget;
 import clus.data.type.ClusAttrType;
 import clus.io.ClusSerializable;
+import clus.jeans.util.MyArray;
 import clus.main.ClusStatManager;
 import clus.selection.ClusSelection;
-import clus.jeans.util.MyArray;
+
 
 public abstract class ClusAttribute extends ClusSerializable {
 
-	protected boolean m_Split;
+    protected boolean m_Split;
 
-	public void resize(int rows) {
-	}
 
-	public void setSplit(boolean split) {
-		m_Split = split;
-	}
+    public void resize(int rows) {
+    }
 
-	public boolean isSplit() {
-		return m_Split;
-	}
 
-	public String getName() {
-		return getType().getName();
-	}
+    public void setSplit(boolean split) {
+        m_Split = split;
+    }
 
-	public abstract ClusAttrType getType();
 
-	public void prepare() {
-	}
+    public boolean isSplit() {
+        return m_Split;
+    }
 
-	public void unprepare() {
-	}
 
-	public void findBestTest(MyArray leaves, ColTarget target, ClusStatManager smanager) {
-	}
+    public String getName() {
+        return getType().getName();
+    }
 
-	public void split(ColTarget target) {
-	}
 
-	public ClusAttribute select(ClusSelection sel, int nbsel) {
-		return null;
-	}
+    public abstract ClusAttrType getType();
 
-	public void insert(ClusAttribute attr, ClusSelection sel, int nb_new) {
-	}
+
+    public void prepare() {
+    }
+
+
+    public void unprepare() {
+    }
+
+
+    public void findBestTest(MyArray leaves, ColTarget target, ClusStatManager smanager) {
+    }
+
+
+    public void split(ColTarget target) {
+    }
+
+
+    public ClusAttribute select(ClusSelection sel, int nbsel) {
+        return null;
+    }
+
+
+    public void insert(ClusAttribute attr, ClusSelection sel, int nb_new) {
+    }
 }

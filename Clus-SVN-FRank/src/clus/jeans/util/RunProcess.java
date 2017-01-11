@@ -1,23 +1,23 @@
 /*************************************************************************
- * Clus - Software for Predictive Clustering                             *
- * Copyright (C) 2007                                                    *
- *    Katholieke Universiteit Leuven, Leuven, Belgium                    *
- *    Jozef Stefan Institute, Ljubljana, Slovenia                        *
- *                                                                       *
- * This program is free software: you can redistribute it and/or modify  *
- * it under the terms of the GNU General Public License as published by  *
- * the Free Software Foundation, either version 3 of the License, or     *
- * (at your option) any later version.                                   *
- *                                                                       *
- * This program is distributed in the hope that it will be useful,       *
- * but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- * GNU General Public License for more details.                          *
- *                                                                       *
- * You should have received a copy of the GNU General Public License     *
- * along with this program.  If not, see <http://www.gnu.org/licenses/>. *
- *                                                                       *
- * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>.         *
+ * Clus - Software for Predictive Clustering *
+ * Copyright (C) 2007 *
+ * Katholieke Universiteit Leuven, Leuven, Belgium *
+ * Jozef Stefan Institute, Ljubljana, Slovenia *
+ * *
+ * This program is free software: you can redistribute it and/or modify *
+ * it under the terms of the GNU General Public License as published by *
+ * the Free Software Foundation, either version 3 of the License, or *
+ * (at your option) any later version. *
+ * *
+ * This program is distributed in the hope that it will be useful, *
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of *
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the *
+ * GNU General Public License for more details. *
+ * *
+ * You should have received a copy of the GNU General Public License *
+ * along with this program. If not, see <http://www.gnu.org/licenses/>. *
+ * *
+ * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
 package clus.jeans.util;
@@ -27,25 +27,30 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 
+
 public class RunProcess {
 
-	protected Process m_Process;
+    protected Process m_Process;
 
-	public void run(String pname, String wdir) throws IOException {
-		Runtime rt = Runtime.getRuntime();
-		File dir = wdir != null ? new File(wdir) : null;
-		m_Process = rt.exec(pname, null, dir);
-	}
 
-	public Reader getOutputReader() {
-		return new InputStreamReader(m_Process.getInputStream());
-	}
+    public void run(String pname, String wdir) throws IOException {
+        Runtime rt = Runtime.getRuntime();
+        File dir = wdir != null ? new File(wdir) : null;
+        m_Process = rt.exec(pname, null, dir);
+    }
 
-	public MStreamTokenizer getOutputTokenizer() {
-		return new MStreamTokenizer(getOutputReader());
-	}
 
-	public void waitFor() throws InterruptedException {
-		m_Process.waitFor();
-	}
+    public Reader getOutputReader() {
+        return new InputStreamReader(m_Process.getInputStream());
+    }
+
+
+    public MStreamTokenizer getOutputTokenizer() {
+        return new MStreamTokenizer(getOutputReader());
+    }
+
+
+    public void waitFor() throws InterruptedException {
+        m_Process.waitFor();
+    }
 }
