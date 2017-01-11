@@ -67,12 +67,8 @@ import clus.util.ClusException;
 
 public class HMCAverageSingleClass implements CMDLineArgsProvider {
 
-    private static String[] g_Options =
-        {
-            "models", "hsc", "stats", "loadPredictions" };
-    private static int[] g_OptionArities =
-        {
-            1, 0, 0, 1 };
+    private static String[] g_Options = { "models", "hsc", "stats", "loadPredictions" };
+    private static int[] g_OptionArities = { 1, 0, 0, 1 };
 
     protected Clus m_Clus;
     protected StringTable m_Table = new StringTable();

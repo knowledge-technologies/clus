@@ -63,9 +63,7 @@ public class TreePanel extends JPanel {
     ClusStatManager m_Manager;
     boolean m_HorzVert = true;
 
-    private final static int[] XGAPS =
-        {
-            10, 5, 3, 3, 2 };
+    private final static int[] XGAPS = { 10, 5, 3, 3, 2 };
 
 
     public TreePanel() {

@@ -55,9 +55,7 @@ public class AvgLearner extends MTLearnerImpl {
             predictions.setTuple(result, i);
         }
 
-        RowData[] final_result =
-            {
-                test, predictions };
+        RowData[] final_result = { test, predictions };
         return final_result;
     }
 

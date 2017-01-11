@@ -33,9 +33,7 @@ import clus.statistic.ClusStatistic;
 
 public class ClassStatVis implements ClusStatVisualizer, MDistrInfo {
 
-    public final static Color[] m_Colors =
-        {
-            Color.red, Color.yellow, Color.cyan, Color.blue, Color.green, Color.white, Color.black };
+    public final static Color[] m_Colors = { Color.red, Color.yellow, Color.cyan, Color.blue, Color.green, Color.white, Color.black };
 
     ClassificationStat m_Stat;
 

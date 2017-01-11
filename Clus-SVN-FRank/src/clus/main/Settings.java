@@ -79,18 +79,12 @@ public class Settings implements Serializable {
 
     public final static String DEFAULT = "Default";
     public final static String NONE = "None";
-    public final static String[] NONELIST =
-        {
-            "None" };
+    public final static String[] NONELIST = { "None" };
     public final static String[] EMPTY = {};
-    public final static String[] INFINITY =
-        {
-            "Infinity" };
+    public final static String[] INFINITY = { "Infinity" };
     public final static String INFINITY_STRING = "Infinity";
     public final static int INFINITY_VALUE = 0;
-    public final static double[] FOUR_ONES =
-        {
-            1.0, 1.0, 1.0, 1.0 };
+    public final static double[] FOUR_ONES = { 1.0, 1.0, 1.0, 1.0 };
 
     /***********************************************************************
      * Generic information *
@@ -180,9 +174,7 @@ public class Settings implements Serializable {
      * Section: General - Compatibility mode *
      ***********************************************************************/
 
-    public final static String[] COMPATIBILITY =
-        {
-            "CMB05", "MLJ08", "Latest" };
+    public final static String[] COMPATIBILITY = { "CMB05", "MLJ08", "Latest" };
 
     public final static int COMPATIBILITY_CMB05 = 0;
     public final static int COMPATIBILITY_MLJ08 = 1;
@@ -192,9 +184,7 @@ public class Settings implements Serializable {
      * Section: General - ResourceInfo loaded *
      ***********************************************************************/
 
-    public final static String[] RESOURCE_INFO_LOAD =
-        {
-            "Yes", "No", "Test" };
+    public final static String[] RESOURCE_INFO_LOAD = { "Yes", "No", "Test" };
 
     public final static int RESOURCE_INFO_LOAD_YES = 0;
     public final static int RESOURCE_INFO_LOAD_NO = 1;
@@ -214,9 +204,7 @@ public class Settings implements Serializable {
 
     // Gradient descent optimization algorithm
     /** Possible values for normalizeData */
-    public final static String[] NORMALIZE_DATA_VALUES =
-        {
-            "None", "Numeric" };
+    public final static String[] NORMALIZE_DATA_VALUES = { "None", "Numeric" };
     /** Do not normalize data. DEFAULT */
     public final static int NORMALIZE_DATA_NONE = 0;
     /** Normalize only numeric variables */
@@ -469,18 +457,14 @@ public class Settings implements Serializable {
      * Section: Attribute - Normalization *
      ***********************************************************************/
 
-    public final static String[] NORMALIZATIONS =
-        {
-            "Normalize" };
+    public final static String[] NORMALIZATIONS = { "Normalize" };
     public final static int NORMALIZATION_DEFAULT = 0;
 
     /***********************************************************************
      * Section: Attribute - Target weights *
      ***********************************************************************/
 
-    public final static String[] NUM_NOM_TAR_NTAR_WEIGHTS =
-        {
-            "TargetWeight", "NonTargetWeight", "NumericWeight", "NominalWeight" };
+    public final static String[] NUM_NOM_TAR_NTAR_WEIGHTS = { "TargetWeight", "NonTargetWeight", "NumericWeight", "NominalWeight" };
 
     public final static int TARGET_WEIGHT = 0;
     public final static int NON_TARGET_WEIGHT = 1;
@@ -813,29 +797,19 @@ public class Settings implements Serializable {
      * Section: Output - Show info in .out file *
      ***********************************************************************/
 
-    public final static String[] SHOW_MODELS =
-        {
-            "Default", "Original", "Pruned", "Others" };
+    public final static String[] SHOW_MODELS = { "Default", "Original", "Pruned", "Others" };
 
-    public final static int[] SHOW_MODELS_VALUES =
-        {
-            0, 2, 3 };
+    public final static int[] SHOW_MODELS_VALUES = { 0, 2, 3 };
     public final static int SHOW_MODELS_DEFAULT = 0;
     public final static int SHOW_MODELS_ORIGINAL = 1;
     public final static int SHOW_MODELS_PRUNED = 2;
     public final static int SHOW_MODELS_OTHERS = 3;
 
-    public final static String[] SHOW_INFO =
-        {
-            "Count", "CountByTarget", "Distribution", "Index", "NodePrototypes", "Key" };
+    public final static String[] SHOW_INFO = { "Count", "CountByTarget", "Distribution", "Index", "NodePrototypes", "Key" };
 
-    public final static int[] SHOW_INFO_VALUES =
-        {
-            0 };
+    public final static int[] SHOW_INFO_VALUES = { 0 };
 
-    public final static String[] CONVERT_RULES =
-        {
-            "No", "Leaves", "AllNodes" };
+    public final static String[] CONVERT_RULES = { "No", "Leaves", "AllNodes" };
 
     public final static int CONVERT_RULES_NONE = 0;
     public final static int CONVERT_RULES_LEAVES = 1;
@@ -848,13 +822,9 @@ public class Settings implements Serializable {
      * Section: Output - Write predictions to file *
      ***********************************************************************/
 
-    public final static String[] WRITE_PRED =
-        {
-            "None", "Test", "Train" };
+    public final static String[] WRITE_PRED = { "None", "Test", "Train" };
 
-    public final static int[] WRITE_PRED_VALUES =
-        {
-            0 };
+    public final static int[] WRITE_PRED_VALUES = { 0 };
     public final static int WRITE_PRED_NONE = 0;
     public final static int WRITE_PRED_TEST = 1;
     public final static int WRITE_PRED_TRAIN = 2;
@@ -863,18 +833,14 @@ public class Settings implements Serializable {
      * Section: Tree *
      ***********************************************************************/
 
-    public final static String[] TREE_OPTIMIZE_VALUES =
-        {
-            "NoClusteringStats", "NoInodeStats" };
+    public final static String[] TREE_OPTIMIZE_VALUES = { "NoClusteringStats", "NoInodeStats" };
     public final static int[] TREE_OPTIMIZE_NONE = {};
     public final static int TREE_OPTIMIZE_NO_CLUSTERING_STATS = 0;
     public final static int TREE_OPTIMIZE_NO_INODE_STATS = 1;
 
     // Added by Eduardo Costa - 06/06/2011
 
-    public final static String[] INDUCTION_ORDER =
-        {
-            "DepthFirst", "BestFirst" };
+    public final static String[] INDUCTION_ORDER = { "DepthFirst", "BestFirst" };
     public final static int DEPTH_FIRST = 0;
     public final static int BEST_FIRST = 1;
 
@@ -884,9 +850,7 @@ public class Settings implements Serializable {
 
     // Added by Eduardo Costa - 27/09/2011
 
-    public final static String[] ENTROPY_TYPE =
-        {
-            "StandardEntropy", "ModifiedEntropy" };
+    public final static String[] ENTROPY_TYPE = { "StandardEntropy", "ModifiedEntropy" };
     public final static int STANDARD_ENTROPY = 0;
     public final static int MODIFIED_ENTROPY = 1;
 
@@ -1086,9 +1050,7 @@ public class Settings implements Serializable {
      * Section: Tree - Heuristic *
      ***********************************************************************/
 
-    public final static String[] HEURISTICS =
-        {
-            "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing" };
+    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing" };
 
     public final static int HEURISTIC_DEFAULT = 0;
     public final static int HEURISTIC_REDUCED_ERROR = 1;
@@ -1117,9 +1079,7 @@ public class Settings implements Serializable {
      * Section: Tree - Pruning method *
      ***********************************************************************/
 
-    public final static String[] PRUNING_METHODS =
-        {
-            "Default", "None", "C4.5", "M5", "M5Multi", "ReducedErrorVSB", "Garofalakis", "GarofalakisVSB", "CartVSB", "CartMaxSize", "EncodingCost", "CategoryUtility" };
+    public final static String[] PRUNING_METHODS = { "Default", "None", "C4.5", "M5", "M5Multi", "ReducedErrorVSB", "Garofalakis", "GarofalakisVSB", "CartVSB", "CartMaxSize", "EncodingCost", "CategoryUtility" };
 
     public final static int PRUNING_METHOD_DEFAULT = 0;
     public final static int PRUNING_METHOD_NONE = 1;
@@ -1151,9 +1111,7 @@ public class Settings implements Serializable {
         return m_PrintAllRules.getValue();
     }
 
-    public final static String[] COVERING_METHODS =
-        {
-            "Standard", "WeightedMultiplicative", "WeightedAdditive", "WeightedError", "Union", "BeamRuleDefSet", "RandomRuleSet", "StandardBootstrap", "HeurOnly", "RulesFromTree" };
+    public final static String[] COVERING_METHODS = { "Standard", "WeightedMultiplicative", "WeightedAdditive", "WeightedError", "Union", "BeamRuleDefSet", "RandomRuleSet", "StandardBootstrap", "HeurOnly", "RulesFromTree" };
 
     // Standard covering: ordered rules (decision list)
     public final static int COVERING_METHOD_STANDARD = 0;
@@ -1205,9 +1163,7 @@ public class Settings implements Serializable {
      */
     public final static int COVERING_METHOD_RULES_FROM_TREE = 9;
 
-    public final static String[] RULE_PREDICTION_METHODS =
-        {
-            "DecisionList", "TotCoverageWeighted", "CoverageWeighted", "AccuracyWeighted", "AccCovWeighted", "EquallyWeighted", "Optimized", "Union", "GDOptimized", "GDOptimizedBinary" };
+    public final static String[] RULE_PREDICTION_METHODS = { "DecisionList", "TotCoverageWeighted", "CoverageWeighted", "AccuracyWeighted", "AccCovWeighted", "EquallyWeighted", "Optimized", "Union", "GDOptimized", "GDOptimizedBinary" };
 
     public final static int RULE_PREDICTION_METHOD_DECISION_LIST = 0;
 
@@ -1243,9 +1199,7 @@ public class Settings implements Serializable {
     /** Use external binary file for gradient descent optimization of rule weights */
     public final static int RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY = 9;
 
-    public final static String[] RULE_ADDING_METHODS =
-        {
-            "Always", "IfBetter", "IfBetterBeam" };
+    public final static String[] RULE_ADDING_METHODS = { "Always", "IfBetter", "IfBetterBeam" };
     // Always adds a rule to the rule set
     public final static int RULE_ADDING_METHOD_ALWAYS = 0;
     // Only adds a rule to the rule set if it improves the rule set performance
@@ -1260,9 +1214,7 @@ public class Settings implements Serializable {
 
     // Differential evolution algorithm
     /** Possible loss functions for evolutionary algorithm optimization */
-    public final static String[] OPT_LOSS_FUNCTIONS =
-        {
-            "Squared", "01Error", "RRMSE", "Huber" };
+    public final static String[] OPT_LOSS_FUNCTIONS = { "Squared", "01Error", "RRMSE", "Huber" };
 
     /** Optimization Loss function type. Default for regression: Square of differences. */
     public final static int OPT_LOSS_FUNCTIONS_SQUARED = 0;
@@ -1277,9 +1229,7 @@ public class Settings implements Serializable {
     public final static int OPT_LOSS_FUNCTIONS_HUBER = 3;
 
     /** GD optimization. Possible values for combining gradient targets to single gradient value. */
-    public final static String[] OPT_GD_MT_COMBINE_GRADIENTS =
-        {
-            "Avg", "Max", "MaxLoss", "MaxLossFast" };
+    public final static String[] OPT_GD_MT_COMBINE_GRADIENTS = { "Avg", "Max", "MaxLoss", "MaxLossFast" };
     /** GD optimization, combining of targets - combine by taking average. */
     public final static int OPT_GD_MT_GRADIENT_AVG = 0;
     /** GD optimization, combining of targets - combine by taking max gradient. */
@@ -1294,15 +1244,11 @@ public class Settings implements Serializable {
     public final static int OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE_FAST = 3;
 
     /** For external GD binary, do we use GD or brute force method */
-    public final static String[] GD_EXTERNAL_METHOD_VALUES =
-        {
-            "update", "brute" };
+    public final static String[] GD_EXTERNAL_METHOD_VALUES = { "update", "brute" };
     public final static int GD_EXTERNAL_METHOD_GD = 0;
     public final static int GD_EXTERNAL_METHOD_BRUTE = 1;
 
-    public final static String[] OPT_LINEAR_TERM_NORM_VALUES =
-        {
-            "No", "Yes", "YesAndConvert" };
+    public final static String[] OPT_LINEAR_TERM_NORM_VALUES = { "No", "Yes", "YesAndConvert" };
     /** Do not normalize linear terms at all */
     public final static int OPT_LIN_TERM_NORM_NO = 0;
     /**
@@ -1317,9 +1263,7 @@ public class Settings implements Serializable {
      */
     public final static int OPT_LIN_TERM_NORM_CONVERT = 2;
 
-    public final static String[] OPT_GD_ADD_LINEAR_TERMS =
-        {
-            "No", "Yes", "YesSaveMemory" };
+    public final static String[] OPT_GD_ADD_LINEAR_TERMS = { "No", "Yes", "YesSaveMemory" };
     /** Do not add linear terms. DEFAULT */
     public final static int OPT_GD_ADD_LIN_NO = 0;
     /** Add linear terms explicitly. May cause huge memory usage if lots of targets and descriptive attrs. */
@@ -1327,9 +1271,7 @@ public class Settings implements Serializable {
     /** Use linear terms in optimization, but add them explicitly after optimization (if weight is zero). */
     public final static int OPT_GD_ADD_LIN_YES_SAVE_MEMORY = 2;
 
-    public final static String[] OPT_NORMALIZATION =
-        {
-            "No", "Yes", "OnlyScaling", "YesVariance" };
+    public final static String[] OPT_NORMALIZATION = { "No", "Yes", "OnlyScaling", "YesVariance" };
     /** Do not normalize */
     public final static int OPT_NORMALIZATION_NO = 0;
     /** Normalize during optimization with 2*std dev and shifting with average. Default. */
@@ -1954,15 +1896,11 @@ public class Settings implements Serializable {
     protected INIFileNominal m_MultiLabelOptimizeThreshold;
     protected INIFileNominalOrIntOrVector m_MultiLabelRankingMeasure;
 
-    public final static String[] MULTILABEL_THRESHOLD_OPTIMIZATION =
-        {
-            "Yes", "No" };
+    public final static String[] MULTILABEL_THRESHOLD_OPTIMIZATION = { "Yes", "No" };
     public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_YES = 0;
     public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_NO = 1;
 
-    public final static String[] MULTILABEL_MEASURES =
-        {
-            "HammingLoss", "MLAccuracy", "MLPrecision", "MLRecall", "MLFOne", "SubsetAccuracy", // Example
+    public final static String[] MULTILABEL_MEASURES = { "HammingLoss", "MLAccuracy", "MLPrecision", "MLRecall", "MLFOne", "SubsetAccuracy", // Example
             // based
             // measures
             "MacroPrecision", "MacroRecall", "MacroFOne", "MicroPrecision", "MicroRecall", "MicroFOne", // Label based
@@ -2036,16 +1974,12 @@ public class Settings implements Serializable {
 
     // Hierarchical multi-classification now supports both trees and DAGS
     // This was required because Gene Ontology terms are organized in a partial order
-    public final static String[] HIERTYPES =
-        {
-            "Tree", "DAG" };
+    public final static String[] HIERTYPES = { "Tree", "DAG" };
 
     public final static int HIERTYPE_TREE = 0;
     public final static int HIERTYPE_DAG = 1;
 
-    public final static String[] HIERWEIGHT =
-        {
-            "ExpSumParentWeight", "ExpAvgParentWeight", "ExpMinParentWeight", "ExpMaxParentWeight", "NoWeight" };
+    public final static String[] HIERWEIGHT = { "ExpSumParentWeight", "ExpAvgParentWeight", "ExpMinParentWeight", "ExpMaxParentWeight", "NoWeight" };
 
     public final static int HIERWEIGHT_EXP_SUM_PARENT_WEIGHT = 0;
     public final static int HIERWEIGHT_EXP_AVG_PARENT_WEIGHT = 1;
@@ -2053,17 +1987,13 @@ public class Settings implements Serializable {
     public final static int HIERWEIGHT_EXP_MAX_PARENT_WEIGHT = 3;
     public final static int HIERWEIGHT_NO_WEIGHT = 4;
 
-    public final static String[] HIERDIST =
-        {
-            "WeightedEuclidean", "Jaccard", "NoDistance" };
+    public final static String[] HIERDIST = { "WeightedEuclidean", "Jaccard", "NoDistance" };
 
     public final static int HIERDIST_WEIGHTED_EUCLIDEAN = 0;
     public final static int HIERDIST_JACCARD = 1;
     public final static int HIERDIST_NO_DIST = 2; // for poolAUPRC case
 
-    public final static String[] HIERMEASURES =
-        {
-            "AverageAUROC", "AverageAUPRC", "WeightedAverageAUPRC", "PooledAUPRC" };
+    public final static String[] HIERMEASURES = { "AverageAUROC", "AverageAUPRC", "WeightedAverageAUPRC", "PooledAUPRC" };
 
     public final static int HIERMEASURE_AUROC = 0;
     public final static int HIERMEASURE_AUPRC = 1;
@@ -2357,17 +2287,13 @@ public class Settings implements Serializable {
      * Section: Time series *
      ***********************************************************************/
 
-    public final static String[] TIME_SERIES_DISTANCE_MEASURE =
-        {
-            "DTW", "QDM", "TSC" };
+    public final static String[] TIME_SERIES_DISTANCE_MEASURE = { "DTW", "QDM", "TSC" };
 
     public final static int TIME_SERIES_DISTANCE_MEASURE_DTW = 0;
     public final static int TIME_SERIES_DISTANCE_MEASURE_QDM = 1;
     public final static int TIME_SERIES_DISTANCE_MEASURE_TSC = 2;
 
-    public final static String[] TIME_SERIES_PROTOTYPE_COMPLEXITY =
-        {
-            "N2", "LOG", "LINEAR", "NPAIRS", "TEST" };
+    public final static String[] TIME_SERIES_PROTOTYPE_COMPLEXITY = { "N2", "LOG", "LINEAR", "NPAIRS", "TEST" };
 
     INIFileSection m_SectionTimeSeries;
     public INIFileNominal m_TimeSeriesDistance;
@@ -2407,9 +2333,7 @@ public class Settings implements Serializable {
      * Section: Phylogeny *
      ***********************************************************************/
 
-    public final static String[] PHYLOGENY_DISTANCE_MEASURE =
-        {
-            "PDist", "Edit", "JC", "Kimura", "AminoKimura" };
+    public final static String[] PHYLOGENY_DISTANCE_MEASURE = { "PDist", "Edit", "JC", "Kimura", "AminoKimura" };
 
     public final static int PHYLOGENY_DISTANCE_MEASURE_PDIST = 0;
     public final static int PHYLOGENY_DISTANCE_MEASURE_EDIT = 1;
@@ -2417,17 +2341,13 @@ public class Settings implements Serializable {
     public final static int PHYLOGENY_DISTANCE_MEASURE_KIMURA = 3;
     public final static int PHYLOGENY_DISTANCE_MEASURE_AMINOKIMURA = 4;
 
-    public final static String[] PHYLOGENY_SEQUENCE =
-        {
-            "DNA", "Protein", "Any" };
+    public final static String[] PHYLOGENY_SEQUENCE = { "DNA", "Protein", "Any" };
 
     public final static int PHYLOGENY_SEQUENCE_DNA = 0;
     public final static int PHYLOGENY_SEQUENCE_AMINO = 1;
     public final static int PHYLOGENY_SEQUENCE_ANY = 2;
 
-    public final static String[] PHYLOGENY_CRITERION =
-        {
-            "MinTotBranchLength", "MaxAvgPWDistance", "MaxMinPWDistance" };
+    public final static String[] PHYLOGENY_CRITERION = { "MinTotBranchLength", "MaxAvgPWDistance", "MaxMinPWDistance" };
 
     public final static int PHYLOGENY_CRITERION_BRANCHLENGTHS = 0;
     public final static int PHYLOGENY_CRITERION_MAXAVGPWDIST = 1;
@@ -2537,9 +2457,7 @@ public class Settings implements Serializable {
      * Section: Ensemble methods *
      ***********************************************************************/
 
-    public final static String[] ENSEMBLE_TYPE =
-        {
-            "Bagging", "RForest", "RSubspaces", "BagSubspaces", "Boosting", "RFeatSelection", "Pert", "ExtraTrees" };
+    public final static String[] ENSEMBLE_TYPE = { "Bagging", "RForest", "RSubspaces", "BagSubspaces", "Boosting", "RFeatSelection", "Pert", "ExtraTrees" };
 
     public final static int ENSEMBLE_BAGGING = 0;
     public final static int ENSEMBLE_RFOREST = 1;
@@ -2552,25 +2470,19 @@ public class Settings implements Serializable {
     public final static int ENSEMBLE_PERT = 6;
     public final static int ENSEMBLE_EXTRA_TREES = 7;
 
-    public final static String[] VOTING_TYPE =
-        {
-            "Majority", "ProbabilityDistribution" };
+    public final static String[] VOTING_TYPE = { "Majority", "ProbabilityDistribution" };
 
     public final static int VOTING_TYPE_MAJORITY = 0;
     public final static int VOTING_TYPE_PROBAB_DISTR = 1;
 
-    public final static String[] RANKING_TYPE =
-        {
-            "None", "RForest", "GENIE3", "SYMBOLIC" };
+    public final static String[] RANKING_TYPE = { "None", "RForest", "GENIE3", "SYMBOLIC" };
 
     public final static int RANKING_NONE = 0;
     public final static int RANKING_RFOREST = 1;
     public final static int RANKING_GENIE3 = 2;
     public final static int RANKING_SYMBOLIC = 3;
 
-    public final static String[] ENSEMBLE_TARGET_SUBSPACING_TYPE =
-        {
-            "None", "RandomPredictWithAll", "RandomPredictWithSubset", "SMARTERWAY" };
+    public final static String[] ENSEMBLE_TARGET_SUBSPACING_TYPE = { "None", "RandomPredictWithAll", "RandomPredictWithSubset", "SMARTERWAY" };
     public final static int ENSEMBLE_TARGET_SUBSPACING_NONE = 0;
     public final static int ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_ALL = 1;
     public final static int ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_SUBSET = 2;

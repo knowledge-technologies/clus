@@ -34,9 +34,7 @@ public class MDouble {
     public final static int RND_CEIL = 1;
     public final static int RND_ROUND = 2;
 
-    protected final static double[] vb =
-        {
-            12, 1.2, 3, 21, 0.01, 1500, 1350, 0.2654 };
+    protected final static double[] vb = { 12, 1.2, 3, 21, 0.01, 1500, 1350, 0.2654 };
 
     protected int m_iNbDigits = 2;
     protected double m_fReal, m_fDigit;

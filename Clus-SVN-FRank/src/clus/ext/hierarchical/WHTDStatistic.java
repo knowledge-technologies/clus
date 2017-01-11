@@ -612,9 +612,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 double threshold = positives[classInd.get(i)]; // the real threshold is positives[classInd.get(i)] /
                                                                // m_SumWeight ??????????????
                 if (threshold != prev && !first) {
-                    PRcurve.add(new double[]
-                        {
-                            TP / conditionPositives, TP / (TP + FP) });
+                    PRcurve.add(new double[] { TP / conditionPositives, TP / (TP + FP) });
                 }
                 TP += threshold;
                 FP += m_SumWeight - threshold;
@@ -622,10 +620,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 prev = threshold;
                 first = false;
             }
-            PRcurve.add(new double[]
-                {
-                    TP / conditionPositives, TP / (TP + FP) }); // maybe, this was added twice, but
-                                                                  // area will stay the same
+            PRcurve.add(new double[] { TP / conditionPositives, TP / (TP + FP) }); // maybe, this was added twice, but
+                                                                                   // area will stay the same
             return computeArea(PRcurve);
         }
         else {
@@ -672,9 +668,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 double threshold = positives[classInd.get(i)]; // the real threshold is positives[classInd.get(i)] /
                                                                // m_SumWeight ??????????????
                 if (threshold != prev && !first) {
-                    PRcurve.add(new double[]
-                        {
-                            TP / conditionPositives, TP / (TP + FP) });
+                    PRcurve.add(new double[] { TP / conditionPositives, TP / (TP + FP) });
                 }
                 TP += threshold;
                 FP += m_SumWeight - threshold;
@@ -682,10 +676,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 prev = threshold;
                 first = false;
             }
-            PRcurve.add(new double[]
-                {
-                    TP / conditionPositives, TP / (TP + FP) }); // maybe, this was added twice, but
-                                                                  // area will stay the same
+            PRcurve.add(new double[] { TP / conditionPositives, TP / (TP + FP) }); // maybe, this was added twice, but
+                                                                                   // area will stay the same
             return computeArea(PRcurve);
         }
         else {

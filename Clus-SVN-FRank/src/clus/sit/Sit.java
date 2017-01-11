@@ -233,12 +233,8 @@ public class Sit implements CMDLineArgsProvider {
     /*************************************
      * CMDLineArgsProvider implementation
      *************************************/
-    public final static String[] OPTION_ARGS =
-        {
-            "xval" };
-    public final static int[] OPTION_ARITIES =
-        {
-            0 };
+    public final static String[] OPTION_ARGS = { "xval" };
+    public final static int[] OPTION_ARITIES = { 0 };
 
 
     public int getNbMainArgs() {

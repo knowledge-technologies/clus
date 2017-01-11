@@ -66,12 +66,8 @@ import clus.util.ClusException;
 
 public class ClusAmandaRules implements CMDLineArgsProvider {
 
-    private static String[] g_Options =
-        {
-            "sgene" };
-    private static int[] g_OptionArities =
-        {
-            1 };
+    private static String[] g_Options = { "sgene" };
+    private static int[] g_OptionArities = { 1 };
 
     protected Clus m_Clus;
 

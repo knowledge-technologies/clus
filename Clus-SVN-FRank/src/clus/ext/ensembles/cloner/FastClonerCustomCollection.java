@@ -10,9 +10,7 @@ import java.util.Map;
  *
  *         21 May 2009
  */
-@SuppressWarnings(
-    {
-        "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class FastClonerCustomCollection<T extends Collection> implements IFastCloner {
 
     public abstract T getInstance(T o);

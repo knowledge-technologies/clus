@@ -44,9 +44,7 @@ public class KNNLearner extends MTLearnerImpl {
 
             int benchmk_cnt = (train.getNbRows());
             // /data/home/u0051096/top40/
-            String[] commands = new String[]
-                {
-                    "/home/beau/SIT_evaluation/gent/top40/ga_basic_SIT", "config.txt", test.getNbRows() + "", nrFeatures + "", nrTargets + "", "train.csv" + appName, "test.csv" + appName, "result.csv" + appName, benchmk_cnt + "" };
+            String[] commands = new String[] { "/home/beau/SIT_evaluation/gent/top40/ga_basic_SIT", "config.txt", test.getNbRows() + "", nrFeatures + "", nrTargets + "", "train.csv" + appName, "test.csv" + appName, "result.csv" + appName, benchmk_cnt + "" };
 
             for (int i = 0; i < commands.length; i++) {
                 System.out.print(commands[i] + " ");
@@ -74,9 +72,7 @@ public class KNNLearner extends MTLearnerImpl {
         RowData predictions = new RowData(test.m_Schema, test.getNbRows());
 
         readResult(targets, predictions);
-        RowData[] result =
-            {
-                test, predictions };
+        RowData[] result = { test, predictions };
 
         return result;
     }

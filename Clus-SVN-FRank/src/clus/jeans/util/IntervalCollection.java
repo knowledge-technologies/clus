@@ -32,9 +32,7 @@ public class IntervalCollection implements Serializable {
 
     public final static IntervalCollection EMPTY = new IntervalCollection();
 
-    protected final static String[] DELIMS =
-        {
-            "-", "," };
+    protected final static String[] DELIMS = { "-", "," };
 
     protected int m_Total;
     protected int m_CrInt;

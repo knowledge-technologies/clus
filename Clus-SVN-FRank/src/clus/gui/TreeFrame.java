@@ -89,9 +89,7 @@ public class TreeFrame extends JFrame {
     public final static int INITIAL_WD = 800;
     public final static int INITIAL_HI = 600;
 
-    public final static int[] m_Permute =
-        {
-            1, 2, 0 };
+    public final static int[] m_Permute = { 1, 2, 0 };
 
     double m_VPerc = 0.75;
     double m_HPerc = 0.8;

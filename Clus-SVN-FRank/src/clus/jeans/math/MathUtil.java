@@ -80,12 +80,8 @@ public class MathUtil {
         }
     }
 
-    protected double[] blackBoxTestInterpolateX =
-        {
-            2, 5, 5, 5, 9.5 };
-    protected double[] blackBoxTestInterpolateY =
-        {
-            3.5, 3.5, 4.5, 5.5, 1.5 };
+    protected double[] blackBoxTestInterpolateX = { 2, 5, 5, 5, 9.5 };
+    protected double[] blackBoxTestInterpolateY = { 3.5, 3.5, 4.5, 5.5, 1.5 };
 
 
     protected void blackBoxTestInterpolate() {

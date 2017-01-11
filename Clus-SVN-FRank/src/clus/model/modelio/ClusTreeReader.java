@@ -46,9 +46,7 @@ import clus.model.test.SubsetTest;
 
 public class ClusTreeReader {
 
-    public final static String[] YESNO =
-        {
-            "yes", "no" };
+    public final static String[] YESNO = { "yes", "no" };
 
     String m_FName;
     ClusSchema m_Schema;

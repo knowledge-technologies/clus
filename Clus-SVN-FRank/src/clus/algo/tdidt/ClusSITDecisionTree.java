@@ -253,11 +253,9 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         settings.getTarget();
         IntervalCollection targets = new IntervalCollection(settings.getTarget());
 
-        int support_range[] =
-            {
-                targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
-                                                                         // attribute in this range,
-                                                                         // should be equal to "targets"
+        int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
+                                                                                       // attribute in this range,
+                                                                                       // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
         boolean recursive = settings.getRecursive();
 
@@ -293,11 +291,9 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         settings.getTarget();
         IntervalCollection targets = new IntervalCollection(settings.getTarget());
 
-        int support_range[] =
-            {
-                targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
-                                                                         // attribute in this range,
-                                                                         // should be equal to "targets"
+        int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
+                                                                                       // attribute in this range,
+                                                                                       // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
         boolean recursive = settings.getRecursive();
 
@@ -359,11 +355,9 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         settings.getTarget();
         IntervalCollection targets = new IntervalCollection(settings.getTarget());
 
-        int support_range[] =
-            {
-                targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
-                                                                         // attribute in this range,
-                                                                         // should be equal to "targets"
+        int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
+                                                                                       // attribute in this range,
+                                                                                       // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
         boolean recursive = settings.getRecursive();
 
@@ -425,11 +419,9 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         settings.getTarget();
         IntervalCollection targets = new IntervalCollection(settings.getTarget());
 
-        int support_range[] =
-            {
-                targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
-                                                                         // attribute in this range,
-                                                                         // should be equal to "targets"
+        int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
+                                                                                       // attribute in this range,
+                                                                                       // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
         boolean recursive = settings.getRecursive();
 
@@ -526,12 +518,10 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         settings.getTarget();
         IntervalCollection targets = new IntervalCollection(settings.getTarget());
 
-        int support_range[] =
-            {
-                targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
-                                                                         // attribute in this range,
-                                                                         // should be equal to "targets"
-                                                                         // int emc = main_target - support_range[0];//error model component of the main target
+        int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
+                                                                                       // attribute in this range,
+                                                                                       // should be equal to "targets"
+                                                                                       // int emc = main_target - support_range[0];//error model component of the main target
         boolean recursive = settings.getRecursive();
 
         resetWeights();

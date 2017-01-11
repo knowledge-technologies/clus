@@ -46,9 +46,7 @@ public class ResultsCache {
                 // we found a matching targetset, now check the testdata
                 if (test.equals(m_TestData.get(i))) {
                     // System.out.println("Cache hit for targetset "+targets);
-                    RowData[] result =
-                        {
-                            test, m_Predictions.get(i) };
+                    RowData[] result = { test, m_Predictions.get(i) };
                     return result;
                 }
             }

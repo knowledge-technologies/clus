@@ -51,9 +51,7 @@ import clus.util.ClusException;
 public class ARFFFile {
 
     protected final static String TAG_ERROR = " tag not found in ARFF file, found instead: '";
-    protected final static String[] TAG_NAME =
-        {
-            "@RELATION", "@ATTRIBUTE", "@DATA" };
+    protected final static String[] TAG_NAME = { "@RELATION", "@ATTRIBUTE", "@DATA" };
 
     protected ClusReader m_Reader;
     protected int m_DataLine = -1;

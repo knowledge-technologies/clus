@@ -10,9 +10,7 @@ import java.util.Set;
  *
  *         21 May 2009
  */
-@SuppressWarnings(
-    {
-        "unchecked", "rawtypes" })
+@SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class FastClonerCustomMap<T extends Map> implements IFastCloner {
 
     public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {

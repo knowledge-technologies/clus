@@ -69,9 +69,7 @@ public class DigitalFont {
     Graphics bufGrp;
 
     private int xpts[], ypts[];
-    private final static int[] segs =
-        {
-            1 + 2 + 4 + 8 + 16 + 32, 1 + 2, 32 + 1 + 64 + 8 + 4, 32 + 1 + 64 + 2 + 4, 16 + 64 + 1 + 2, 32 + 16 + 64 + 2 + 4, 32 + 16 + 8 + 4 + 2 + 64, 32 + 1 + 2, 32 + 16 + 64 + 1 + 2 + 8 + 4, 16 + 32 + 1 + 64 + 2 + 4 };
+    private final static int[] segs = { 1 + 2 + 4 + 8 + 16 + 32, 1 + 2, 32 + 1 + 64 + 8 + 4, 32 + 1 + 64 + 2 + 4, 16 + 64 + 1 + 2, 32 + 16 + 64 + 2 + 4, 32 + 16 + 8 + 4 + 2 + 64, 32 + 1 + 2, 32 + 16 + 64 + 1 + 2 + 8 + 4, 16 + 32 + 1 + 64 + 2 + 4 };
 
 
     public DigitalFont() {
