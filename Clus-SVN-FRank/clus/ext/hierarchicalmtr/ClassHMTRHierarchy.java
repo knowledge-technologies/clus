@@ -1,7 +1,10 @@
 package clus.ext.hierarchicalmtr;
 
+import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Map;
 
 /**
  * Created by Vanja Mileski on 12/15/2016.
@@ -10,6 +13,8 @@ public class ClassHMTRHierarchy {
 
     private String hierarchyName;
     private List<ClassHMTRNode> nodes;
+
+    private Map<String, Integer> nodeDepth;
 
     public List<ClassHMTRNode> getNodes() {
         return nodes;
@@ -25,6 +30,25 @@ public class ClassHMTRHierarchy {
             if (node.getName().equals(nodeName)) return node;
         }
         return null;
+
+    }
+
+    public void calculateDepth(){
+
+        this.nodeDepth = new HashMap<>();
+
+        for (ClassHMTRNode node : this.nodes){
+            this.nodeDepth.put(node.getName(),getNodeDepth(node.getName()));
+        }
+    }
+
+    public void printDepth(){
+
+        for (Map.Entry<String, Integer> entry : this.nodeDepth.entrySet()){
+
+            System.out.println("Attribute: " + entry.getKey() + ", depth: " + entry.getValue());
+
+        }
 
     }
 
@@ -59,6 +83,7 @@ public class ClassHMTRHierarchy {
             getNode(pcr[0]).addChild(getNode(pcr[1]));
 
         }
+        calculateDepth();
     }
 
     public List<ClassHMTRNode> getParents(ClassHMTRNode node){
@@ -133,7 +158,6 @@ public class ClassHMTRHierarchy {
 
     }
 
-
     private String getIndentString(int indent) {
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i < indent; i++) {
@@ -141,6 +165,34 @@ public class ClassHMTRHierarchy {
         }
         return sb.toString();
     }
+
+
+    private int getNodeDepth(String nodeName){
+        return getNodeDepth(nodeName,0);
+    }
+
+    private int getNodeDepth(String nodeName, int currentDepth){
+
+        ClassHMTRNode node = getNode(nodeName);
+
+        if (node.isRoot()) return currentDepth;
+
+        List<ClassHMTRNode>  parents = getParents(node);
+
+        int depth = 2147483647;
+        for (ClassHMTRNode parent : parents){
+
+            int parDepth = getNodeDepth(parent.getName(), currentDepth+1);
+            if (parDepth<depth) depth = parDepth;
+        }
+        if (depth == 2147483647) try {
+            throw new IOException("Depth for "+node.getName()+" was not calculated!");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return depth;
+    }
+
 
     public ClassHMTRHierarchy(String hierarchyName) {
         this.hierarchyName = hierarchyName;

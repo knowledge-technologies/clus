@@ -181,7 +181,7 @@ public class NumericAttrType extends ClusAttrType {
 
             if (Double.isNaN(val)) throw new IOException("Error calculating HMTR aggregate! Aggregation function is: "+ Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
-            System.out.println("CALCULATING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + " value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+            if(Settings.VERBOSE > 0) System.out.println("CALCULATING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
 			tuple.setDoubleVal(val, getArrayIndex());
 			if (val == MISSING) {
