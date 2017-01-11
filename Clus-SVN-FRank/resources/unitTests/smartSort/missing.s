@@ -1,3 +1,6 @@
+[General]
+Verbose = 0
+
 [Data]
 File = resources/unitTests/smartSort/missing.arff
 
