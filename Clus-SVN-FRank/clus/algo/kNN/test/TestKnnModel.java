@@ -62,7 +62,7 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 /**
  * @author Mitja Pugelj

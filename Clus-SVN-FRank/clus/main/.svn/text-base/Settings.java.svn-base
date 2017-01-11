@@ -22,11 +22,11 @@
 
 package clus.main;
 
-import jeans.io.ini.*;
-import jeans.io.range.IntRangeCheck;
-import jeans.util.cmdline.*;
-import jeans.util.*;
-import jeans.resource.*;
+import clus.jeans.io.ini.*;
+import clus.jeans.io.range.IntRangeCheck;
+import clus.jeans.util.cmdline.*;
+import clus.jeans.util.*;
+import clus.jeans.resource.*;
 
 import java.io.*;
 import java.util.*;

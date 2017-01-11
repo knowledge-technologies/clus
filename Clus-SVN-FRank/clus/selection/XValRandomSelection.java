@@ -26,7 +26,7 @@ import java.util.Random;
 
 import clus.util.ClusException;
 import clus.util.ClusRandom;
-import jeans.util.array.MyIntArray;
+import clus.jeans.util.array.MyIntArray;
 
 // "almost linear" algorithm for randomisation
 // algorithm divide2 chooses random nr. of bucket

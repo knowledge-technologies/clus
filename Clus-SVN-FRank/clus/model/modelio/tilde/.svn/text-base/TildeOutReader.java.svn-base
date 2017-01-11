@@ -24,7 +24,7 @@ package clus.model.modelio.tilde;
 
 import java.io.*;
 import java.util.*;
-import jeans.util.*;
+import clus.jeans.util.*;
 
 import clus.main.*;
 import clus.algo.tdidt.ClusNode;

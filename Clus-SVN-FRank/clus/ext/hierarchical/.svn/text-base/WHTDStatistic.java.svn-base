@@ -40,7 +40,7 @@ import clus.main.*;
 import clus.statistic.*;
 import clus.util.*;
 
-import jeans.util.array.*;
+import clus.jeans.util.array.*;
 
 public class WHTDStatistic extends RegressionStatBinaryNomiss {
 

@@ -22,8 +22,8 @@
 
 package clus.ext.optxval;
 
-import jeans.util.sort.*;
-import jeans.util.array.*;
+import clus.jeans.util.sort.*;
+import clus.jeans.util.array.*;
 
 import java.util.*;
 

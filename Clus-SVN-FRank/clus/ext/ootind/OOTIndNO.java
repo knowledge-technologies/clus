@@ -35,8 +35,8 @@ import clus.main.Settings;
 import clus.model.test.NodeTest;
 import clus.tools.debug.Debug;
 import clus.util.ClusException;
-import jeans.resource.ResourceInfo;
-import jeans.util.list.MyListIter;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.list.MyListIter;
 
 public class OOTIndNO extends OOTInduce {
 

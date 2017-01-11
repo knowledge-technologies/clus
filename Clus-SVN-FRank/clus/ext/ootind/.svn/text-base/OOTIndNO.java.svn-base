@@ -25,8 +25,8 @@ package clus.ext.ootind;
 import clus.tools.debug.Debug;
 import clus.ext.optxval.*;
 
-import jeans.util.list.*;
-import jeans.resource.*;
+import clus.jeans.util.list.*;
+import clus.jeans.resource.*;
 
 import java.io.*;
 

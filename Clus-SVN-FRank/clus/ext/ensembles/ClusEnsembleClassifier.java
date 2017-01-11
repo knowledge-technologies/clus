@@ -32,7 +32,7 @@ import clus.main.ClusRun;
 import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.util.ClusException;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
 

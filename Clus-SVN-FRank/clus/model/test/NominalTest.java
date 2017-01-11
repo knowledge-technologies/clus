@@ -28,7 +28,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.util.ClusRandom;
-import jeans.util.sort.DoubleIndexSorter;
+import clus.jeans.util.sort.DoubleIndexSorter;
 
 public class NominalTest extends NodeTest {
 

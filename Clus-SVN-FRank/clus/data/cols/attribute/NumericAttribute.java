@@ -32,8 +32,8 @@ import clus.data.io.ClusReader;
 import clus.data.type.NumericAttrType;
 import clus.main.ClusStatManager;
 import clus.selection.ClusSelection;
-import jeans.util.MyArray;
-import jeans.util.sort.DoubleIndexSorter;
+import clus.jeans.util.MyArray;
+import clus.jeans.util.sort.DoubleIndexSorter;
 
 public class NumericAttribute extends NumericAttrBase {
 

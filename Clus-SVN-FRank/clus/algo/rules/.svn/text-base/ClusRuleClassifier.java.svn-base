@@ -27,8 +27,8 @@ package clus.algo.rules;
 
 import java.io.*;
 
-import jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.*;
 import clus.data.type.*;
 import clus.algo.*;

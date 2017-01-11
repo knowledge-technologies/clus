@@ -28,10 +28,10 @@ package clus.ext.beamsearch;
 import java.io.*;
 import java.util.*;
 
-import jeans.util.cmdline.CMDLineArgs;
-import jeans.util.*;
-import jeans.math.*;
-import jeans.io.*;
+import clus.jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.*;
+import clus.jeans.math.*;
+import clus.jeans.io.*;
 
 import clus.model.*;
 import clus.model.test.*;

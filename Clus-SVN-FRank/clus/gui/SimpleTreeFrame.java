@@ -34,9 +34,9 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.type.ClusSchema;
 import clus.main.Settings;
 import clus.model.modelio.tilde.TildeOutReader;
-import jeans.graph.WindowClosingListener;
-import jeans.io.ObjectLoadStream;
-import jeans.util.FileUtil;
+import clus.jeans.graph.WindowClosingListener;
+import clus.jeans.io.ObjectLoadStream;
+import clus.jeans.util.FileUtil;
 
 public class SimpleTreeFrame extends JFrame {
 

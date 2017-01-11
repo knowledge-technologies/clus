@@ -34,8 +34,8 @@ import clus.model.test.NodeTest;
 import clus.model.test.NumericTest;
 import clus.model.test.SoftTest;
 import clus.util.ClusFormat;
-import jeans.util.array.MyIntArray;
-import jeans.util.sort.DoubleIndexSorter;
+import clus.jeans.util.array.MyIntArray;
+import clus.jeans.util.sort.DoubleIndexSorter;
 
 public class SoftNumericTest extends SoftTest {
 

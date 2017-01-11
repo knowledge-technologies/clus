@@ -29,7 +29,7 @@ import clus.data.type.NominalAttrType;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
-import jeans.util.StringUtils;
+import clus.jeans.util.StringUtils;
 
 public class ContingencyTable extends ClusNominalError {
 

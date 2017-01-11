@@ -28,7 +28,7 @@ import clus.algo.tdidt.ClusNode;
 import clus.main.ClusStatManager;
 import clus.model.test.FakeTest;
 import clus.statistic.ClassificationStat;
-import jeans.util.MStreamTokenizer;
+import clus.jeans.util.MStreamTokenizer;
 
 public class TildeTreeReader {
 

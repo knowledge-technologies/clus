@@ -22,8 +22,8 @@
 
 package clus.algo.tdidt.processor;
 
-import jeans.util.*;
-import jeans.tree.*;
+import clus.jeans.util.*;
+import clus.jeans.tree.*;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.*;

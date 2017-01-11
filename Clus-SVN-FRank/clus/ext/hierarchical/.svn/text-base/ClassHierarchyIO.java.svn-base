@@ -22,9 +22,9 @@
 
 package clus.ext.hierarchical;
 
-import jeans.util.array.*;
-import jeans.util.*;
-import jeans.tree.*;
+import clus.jeans.util.array.*;
+import clus.jeans.util.*;
+import clus.jeans.tree.*;
 
 import java.io.*;
 

@@ -27,7 +27,7 @@ import clus.data.type.ClusAttrType;
 import clus.io.ClusSerializable;
 import clus.main.ClusStatManager;
 import clus.selection.ClusSelection;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 public abstract class ClusAttribute extends ClusSerializable {
 

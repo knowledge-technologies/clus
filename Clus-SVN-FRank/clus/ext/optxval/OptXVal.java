@@ -42,9 +42,9 @@ import clus.selection.XValMainSelection;
 import clus.selection.XValSelection;
 import clus.tools.debug.Debug;
 import clus.util.ClusException;
-import jeans.resource.ResourceInfo;
-import jeans.util.array.MDoubleArray;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.array.MDoubleArray;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 public class OptXVal {
 

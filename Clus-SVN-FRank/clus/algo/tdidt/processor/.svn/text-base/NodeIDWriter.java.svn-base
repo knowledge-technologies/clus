@@ -22,7 +22,7 @@
 
 package clus.algo.tdidt.processor;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 
 import java.io.*;
 

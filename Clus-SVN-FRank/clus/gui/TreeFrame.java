@@ -77,9 +77,9 @@ import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import jeans.graph.PercentLayout;
-import jeans.graph.WindowClosingListener;
-import jeans.util.FileUtil;
+import clus.jeans.graph.PercentLayout;
+import clus.jeans.graph.WindowClosingListener;
+import clus.jeans.util.FileUtil;
 
 public class TreeFrame extends JFrame {
 

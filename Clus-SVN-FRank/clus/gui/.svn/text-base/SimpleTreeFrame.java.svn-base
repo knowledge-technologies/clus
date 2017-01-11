@@ -26,9 +26,9 @@ import java.awt.*;
 import javax.swing.*;
 
 import java.io.*;
-import jeans.util.*;
-import jeans.graph.*;
-import jeans.io.*;
+import clus.jeans.util.*;
+import clus.jeans.graph.*;
+import clus.jeans.io.*;
 
 import clus.main.*;
 import clus.algo.tdidt.ClusNode;

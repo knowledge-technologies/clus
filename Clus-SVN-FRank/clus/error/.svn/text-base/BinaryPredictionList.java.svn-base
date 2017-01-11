@@ -8,7 +8,7 @@ import java.util.HashMap;
 
 import clus.main.Settings;
 
-import jeans.util.compound.DoubleBooleanCount;
+import clus.jeans.util.compound.DoubleBooleanCount;
 
 public class BinaryPredictionList implements Serializable {
 

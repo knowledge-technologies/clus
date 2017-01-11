@@ -30,8 +30,8 @@ import java.io.PrintWriter;
 
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import jeans.util.StringUtils;
-import jeans.util.array.StringTable;
+import clus.jeans.util.StringUtils;
+import clus.jeans.util.array.StringTable;
 
 public class HierIO {
 

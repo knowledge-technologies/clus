@@ -54,7 +54,7 @@ import clus.statistic.RegressionStat;
 import clus.statistic.RegressionStatBase;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 /**
  * Ensemble of decision trees.
@@ -508,8 +508,9 @@ public class ClusForest implements ClusModel, Serializable{
 
 			// Transform the tree into rules and add them to current rule set
 //			numberOfUniqueRules +=
-				ruleSet.addRuleSet(treeTransform.constructRules(treeRootNode,
-						cr.getStatManager()), addOnlyUnique);
+				ruleSet.addRuleSet(
+						treeTransform.constructRules(treeRootNode, cr.getStatManager()), 
+						addOnlyUnique);
 		}
 
 		ruleSet.addDataToRules((RowData)cr.getTrainingSet());

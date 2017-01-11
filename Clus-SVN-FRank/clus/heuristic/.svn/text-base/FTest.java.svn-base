@@ -24,7 +24,7 @@ package clus.heuristic;
 
 import clus.main.*;
 import clus.util.*;
-import jeans.math.*;
+import clus.jeans.math.*;
 
 import java.util.*;
 

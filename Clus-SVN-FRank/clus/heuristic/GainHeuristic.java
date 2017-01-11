@@ -25,7 +25,7 @@ package clus.heuristic;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
-import jeans.math.MathUtil;
+import clus.jeans.math.MathUtil;
 
 public class GainHeuristic extends ClusHeuristic {
 

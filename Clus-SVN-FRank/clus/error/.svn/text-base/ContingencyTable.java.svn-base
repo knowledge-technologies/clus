@@ -23,7 +23,7 @@
 package clus.error;
 
 import java.io.*;
-import jeans.util.*;
+import clus.jeans.util.*;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.*;

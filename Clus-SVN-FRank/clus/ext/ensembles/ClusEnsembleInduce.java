@@ -67,7 +67,7 @@ import clus.tools.optimization.GDProbl;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
 import clus.util.ClusRandomNonstatic;
-import jeans.resource.ResourceInfo;
+import clus.jeans.resource.ResourceInfo;
 
 
 public class ClusEnsembleInduce extends ClusInductionAlgorithm {

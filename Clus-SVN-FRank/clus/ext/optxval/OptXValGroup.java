@@ -31,7 +31,7 @@ import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
-import jeans.util.list.MyList;
+import clus.jeans.util.list.MyList;
 
 public class OptXValGroup extends MyList {
 

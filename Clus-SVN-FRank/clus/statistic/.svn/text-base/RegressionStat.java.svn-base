@@ -28,8 +28,8 @@ import java.text.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jeans.math.MathUtil;
-import jeans.util.StringUtils;
+import clus.jeans.math.MathUtil;
+import clus.jeans.util.StringUtils;
 
 import org.apache.commons.math.MathException;
 import org.apache.commons.math.distribution.*;

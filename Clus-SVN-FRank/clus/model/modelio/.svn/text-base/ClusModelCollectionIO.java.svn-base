@@ -28,7 +28,7 @@ package clus.model.modelio;
 import java.io.*;
 import java.util.*;
 
-import jeans.io.*;
+import clus.jeans.io.*;
 
 import clus.model.*;
 

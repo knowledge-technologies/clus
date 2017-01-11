@@ -56,8 +56,8 @@ import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import jeans.io.MyFile;
-import jeans.math.SingleStatList;
+import clus.jeans.io.MyFile;
+import clus.jeans.math.SingleStatList;
 
 /*
 import org.apache.commons.math.distribution.*;

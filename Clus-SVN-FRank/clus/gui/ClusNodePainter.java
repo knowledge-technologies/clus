@@ -41,12 +41,12 @@ import clus.model.test.NodeTest;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import jeans.graph.swing.drawable.Drawable;
-import jeans.graph.swing.drawable.DrawableCanvas;
-import jeans.graph.swing.drawable.DrawableExpandButton;
-import jeans.graph.swing.drawable.DrawableLines;
-import jeans.graph.tree.MyDrawableNode;
-import jeans.graph.tree.MyNodePainter;
+import clus.jeans.graph.swing.drawable.Drawable;
+import clus.jeans.graph.swing.drawable.DrawableCanvas;
+import clus.jeans.graph.swing.drawable.DrawableExpandButton;
+import clus.jeans.graph.swing.drawable.DrawableLines;
+import clus.jeans.graph.tree.MyDrawableNode;
+import clus.jeans.graph.tree.MyNodePainter;
 
 public class ClusNodePainter extends MyNodePainter implements ActionListener {
 

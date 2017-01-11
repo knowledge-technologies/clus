@@ -30,7 +30,7 @@ import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.*;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 //import clus.algo.kNN.KNNStatistics;
 //import clus.algo.kNN.NumericStatistic;
 import clus.data.rows.*;

@@ -63,7 +63,7 @@ import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandomNonstatic;
-import jeans.util.StringUtils;
+import clus.jeans.util.StringUtils;
 
 public class ClusEnsembleFeatureRanking {
 

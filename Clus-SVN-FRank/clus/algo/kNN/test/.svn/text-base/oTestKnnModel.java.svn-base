@@ -47,7 +47,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 /**
  * @author Mitja Pugelj

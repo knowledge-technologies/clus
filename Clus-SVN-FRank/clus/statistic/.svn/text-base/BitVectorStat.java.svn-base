@@ -24,7 +24,7 @@ package clus.statistic;
 
 import java.util.ArrayList;
 
-import jeans.list.*;
+import clus.jeans.list.*;
 
 import clus.data.cols.*;
 import clus.data.rows.*;

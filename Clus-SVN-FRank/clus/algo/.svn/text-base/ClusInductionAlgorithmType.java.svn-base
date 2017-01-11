@@ -24,8 +24,8 @@ package clus.algo;
 
 import java.io.IOException;
 
-import jeans.resource.ResourceInfo;
-import jeans.util.cmdline.*;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.cmdline.*;
 import clus.*;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;

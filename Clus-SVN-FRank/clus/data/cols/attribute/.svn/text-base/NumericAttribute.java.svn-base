@@ -23,8 +23,8 @@
 package clus.data.cols.attribute;
 
 import java.io.*;
-import jeans.util.*;
-import jeans.util.sort.*;
+import clus.jeans.util.*;
+import clus.jeans.util.sort.*;
 
 import clus.main.*;
 import clus.data.cols.*;

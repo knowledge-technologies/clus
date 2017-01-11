@@ -23,7 +23,7 @@
 package clus.ext.ensembles;
 
 
-import jeans.util.*;
+import clus.jeans.util.*;
 
 import clus.main.*;
 import clus.model.ClusModel;

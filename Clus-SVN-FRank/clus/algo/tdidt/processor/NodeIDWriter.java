@@ -32,7 +32,7 @@ import clus.data.type.ClusSchema;
 import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.processor.ClusModelProcessor;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 public class NodeIDWriter extends ClusModelProcessor {
 

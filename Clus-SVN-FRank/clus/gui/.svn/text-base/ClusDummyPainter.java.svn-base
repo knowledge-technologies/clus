@@ -22,8 +22,8 @@
 
 package clus.gui;
 
-import jeans.graph.swing.drawable.*;
-import jeans.graph.tree.*;
+import clus.jeans.graph.swing.drawable.*;
+import clus.jeans.graph.tree.*;
 import java.awt.*;
 
 import clus.algo.tdidt.*;

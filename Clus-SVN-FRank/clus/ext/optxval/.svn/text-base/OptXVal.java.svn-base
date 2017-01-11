@@ -27,9 +27,9 @@ import clus.tools.debug.Debug;
 import java.io.*;
 import java.util.*;
 
-import jeans.util.array.*;
-import jeans.util.cmdline.*;
-import jeans.resource.*;
+import clus.jeans.util.array.*;
+import clus.jeans.util.cmdline.*;
+import clus.jeans.resource.*;
 
 import clus.*;
 import clus.main.*;

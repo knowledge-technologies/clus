@@ -22,8 +22,8 @@
 
 package clus.gui.statvis;
 
-import jeans.graph.swing.drawable.*;
-import jeans.graph.plot.*;
+import clus.jeans.graph.swing.drawable.*;
+import clus.jeans.graph.plot.*;
 
 import java.awt.*;
 

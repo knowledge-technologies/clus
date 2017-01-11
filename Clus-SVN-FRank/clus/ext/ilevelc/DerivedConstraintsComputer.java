@@ -27,7 +27,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 
 import clus.data.rows.DataTuple;
-import jeans.util.DisjointSetForest;
+import clus.jeans.util.DisjointSetForest;
 
 public class DerivedConstraintsComputer {
 

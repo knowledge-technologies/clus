@@ -26,8 +26,8 @@ import java.io.*;
 import java.text.*;
 import java.util.*;
 
-import jeans.resource.ResourceInfo;
-import jeans.util.*;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.*;
 
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;

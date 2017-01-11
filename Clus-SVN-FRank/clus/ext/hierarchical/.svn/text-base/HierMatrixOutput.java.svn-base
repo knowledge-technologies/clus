@@ -27,7 +27,7 @@ import java.io.*;
 
 import clus.data.rows.*;
 
-import jeans.util.array.*;
+import clus.jeans.util.array.*;
 
 
 public class HierMatrixOutput {

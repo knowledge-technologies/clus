@@ -37,8 +37,8 @@ import clus.model.ClusModel;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
-import jeans.io.ObjectSaveStream;
-import jeans.util.MyArray;
+import clus.jeans.io.ObjectSaveStream;
+import clus.jeans.util.MyArray;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 

@@ -56,11 +56,11 @@ import clus.model.modelio.ClusModelCollectionIO;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import jeans.io.MyFile;
-import jeans.math.SingleStat;
-import jeans.util.MyArray;
-import jeans.util.StringUtils;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.io.MyFile;
+import clus.jeans.math.SingleStat;
+import clus.jeans.util.MyArray;
+import clus.jeans.util.StringUtils;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 
 public class ClusBeamSearch extends ClusInductionAlgorithmType {

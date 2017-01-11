@@ -24,7 +24,7 @@ package clus.ext.ensembles;
 
 import java.io.IOException;
 
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 import clus.main.*;
 import clus.model.ClusModel;

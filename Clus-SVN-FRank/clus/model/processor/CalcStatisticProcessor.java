@@ -29,7 +29,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusSchema;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
-import jeans.tree.CompleteTreeIterator;
+import clus.jeans.tree.CompleteTreeIterator;
 
 public class CalcStatisticProcessor extends ClusModelProcessor {
 

@@ -34,7 +34,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.statistic.ClusStatistic;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 public class OldPredictionWriter {
 

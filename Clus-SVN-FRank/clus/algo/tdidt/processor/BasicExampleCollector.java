@@ -29,7 +29,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusSchema;
 import clus.model.ClusModel;
 import clus.model.processor.ClusModelProcessor;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 public class BasicExampleCollector extends ClusModelProcessor {
 

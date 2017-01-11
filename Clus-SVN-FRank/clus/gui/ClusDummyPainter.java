@@ -28,11 +28,11 @@ import java.awt.SystemColor;
 
 import clus.algo.tdidt.ClusNode;
 import clus.model.test.NodeTest;
-import jeans.graph.swing.drawable.Drawable;
-import jeans.graph.swing.drawable.DrawableCanvas;
-import jeans.graph.swing.drawable.DrawableLines;
-import jeans.graph.tree.MyDrawableNode;
-import jeans.graph.tree.MyNodePainter;
+import clus.jeans.graph.swing.drawable.Drawable;
+import clus.jeans.graph.swing.drawable.DrawableCanvas;
+import clus.jeans.graph.swing.drawable.DrawableLines;
+import clus.jeans.graph.tree.MyDrawableNode;
+import clus.jeans.graph.tree.MyNodePainter;
 
 public class ClusDummyPainter extends MyNodePainter {
 

@@ -2,7 +2,7 @@ package clus.error;
 
 import java.io.IOException;
 
-import jeans.util.IntervalCollection;
+import clus.jeans.util.IntervalCollection;
 
 import clus.data.type.ClusSchema;
 import clus.main.ClusOutput;

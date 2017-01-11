@@ -28,9 +28,9 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
 import clus.util.ClusException;
-import jeans.tree.CompleteTreeIterator;
-import jeans.util.MStreamTokenizer;
-import jeans.util.array.StringTable;
+import clus.jeans.tree.CompleteTreeIterator;
+import clus.jeans.util.MStreamTokenizer;
+import clus.jeans.util.array.StringTable;
 
 public class ClassHierarchyIO {
 

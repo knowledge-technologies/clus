@@ -49,9 +49,9 @@ import clus.main.Settings;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import jeans.math.MDouble;
-import jeans.util.MyArray;
-import jeans.util.StringUtils;
+import clus.jeans.math.MDouble;
+import clus.jeans.util.MyArray;
+import clus.jeans.util.StringUtils;
 
 public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
 

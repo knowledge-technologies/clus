@@ -3,7 +3,7 @@ package clus.ext.ensembles;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import jeans.util.array.MDoubleArrayComparator;
+import clus.jeans.util.array.MDoubleArrayComparator;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;

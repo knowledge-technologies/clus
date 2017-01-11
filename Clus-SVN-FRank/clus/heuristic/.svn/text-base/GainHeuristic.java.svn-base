@@ -24,7 +24,7 @@ package clus.heuristic;
 
 import clus.statistic.*;
 
-import jeans.math.*;
+import clus.jeans.math.*;
 
 public class GainHeuristic extends ClusHeuristic {
 

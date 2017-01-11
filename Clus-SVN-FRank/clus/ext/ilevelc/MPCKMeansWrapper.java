@@ -41,7 +41,7 @@ import clus.data.type.NominalAttrType;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.util.ClusException;
-import jeans.util.FileUtil;
+import clus.jeans.util.FileUtil;
 
 public class MPCKMeansWrapper {
 

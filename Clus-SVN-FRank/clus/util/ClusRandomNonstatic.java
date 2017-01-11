@@ -11,8 +11,11 @@ public class ClusRandomNonstatic {
 		
 	private Random[] m_Random;
 	private int m_Length = 5;
+	private int m_Seed;
 	
 	public ClusRandomNonstatic(int seed){
+		
+		m_Seed = seed; // remember the initial seed		
 		m_Random = new Random[m_Length];
 		Random seedGenerator = new Random(seed);
 		for(int i = 0; i < m_Length; i++){

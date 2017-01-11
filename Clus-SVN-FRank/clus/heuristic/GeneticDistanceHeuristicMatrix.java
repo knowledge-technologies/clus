@@ -10,8 +10,8 @@ import clus.data.rows.RowData;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.GeneticDistanceStat;
-import jeans.list.BitList;
-import jeans.math.matrix.MSymMatrix;
+import clus.jeans.list.BitList;
+import clus.jeans.math.matrix.MSymMatrix;
 
 public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 

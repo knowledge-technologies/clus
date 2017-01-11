@@ -32,8 +32,8 @@ import clus.data.type.ClusSchema;
 import clus.data.type.StringAttrType;
 import clus.main.Settings;
 import clus.model.ClusModel;
-import jeans.tree.LeafTreeIterator;
-import jeans.util.MyArray;
+import clus.jeans.tree.LeafTreeIterator;
+import clus.jeans.util.MyArray;
 
 public class NodeExampleCollector extends BasicExampleCollector {
 

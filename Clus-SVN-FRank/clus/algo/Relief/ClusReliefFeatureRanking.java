@@ -26,7 +26,7 @@ import clus.ext.timeseries.TSCTimeSeriesDist;
 import clus.ext.timeseries.TimeSeries;
 import clus.main.Settings;
 import clus.util.ClusException;
-import jeans.math.MathUtil;
+import clus.jeans.math.MathUtil;
 /**
  * 
  * @author matejp

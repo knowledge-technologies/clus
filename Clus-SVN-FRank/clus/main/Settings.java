@@ -37,22 +37,22 @@ import clus.ext.hierarchical.ClassesValue;
 import clus.heuristic.FTest;
 import clus.model.ClusModel;
 import clus.statistic.StatisticPrintInfo;
-import jeans.io.ini.INIFile;
-import jeans.io.ini.INIFileBool;
-import jeans.io.ini.INIFileDouble;
-import jeans.io.ini.INIFileInt;
-import jeans.io.ini.INIFileNominal;
-import jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import jeans.io.ini.INIFileNominalOrIntOrVector;
-import jeans.io.ini.INIFileSection;
-import jeans.io.ini.INIFileString;
-import jeans.io.ini.INIFileStringOrDouble;
-import jeans.io.ini.INIFileStringOrInt;
-import jeans.io.range.IntRangeCheck;
-import jeans.resource.ResourceInfo;
-import jeans.util.FileUtil;
-import jeans.util.StringUtils;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.io.ini.INIFile;
+import clus.jeans.io.ini.INIFileBool;
+import clus.jeans.io.ini.INIFileDouble;
+import clus.jeans.io.ini.INIFileInt;
+import clus.jeans.io.ini.INIFileNominal;
+import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.jeans.io.ini.INIFileNominalOrIntOrVector;
+import clus.jeans.io.ini.INIFileSection;
+import clus.jeans.io.ini.INIFileString;
+import clus.jeans.io.ini.INIFileStringOrDouble;
+import clus.jeans.io.ini.INIFileStringOrInt;
+import clus.jeans.io.range.IntRangeCheck;
+import clus.jeans.resource.ResourceInfo;
+import clus.jeans.util.FileUtil;
+import clus.jeans.util.StringUtils;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 /**
  * All the settings. Includes the command line parameters as boolean class attributes.

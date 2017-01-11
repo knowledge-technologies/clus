@@ -55,7 +55,7 @@ import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import jeans.util.MyArray;
+import clus.jeans.util.MyArray;
 
 public class ClusRule implements ClusModel, Serializable {
 

@@ -63,7 +63,7 @@ trees!
 import clus.main.Settings;
 import clus.statistic.ClusDistance;
 import clus.util.ClusException;
-import jeans.math.matrix.MSymMatrix;
+import clus.jeans.math.matrix.MSymMatrix;
 
 public class SSPDMatrix extends ClusDistance {
 

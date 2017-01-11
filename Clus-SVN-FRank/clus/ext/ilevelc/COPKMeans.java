@@ -38,7 +38,7 @@ import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.statistic.RegressionStat;
 import clus.util.ClusRandom;
-import jeans.util.DisjointSetForest;
+import clus.jeans.util.DisjointSetForest;
 
 public class COPKMeans {
 

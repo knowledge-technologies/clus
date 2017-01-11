@@ -39,7 +39,7 @@ import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.pruning.PruneTree;
 import clus.util.ClusException;
-import jeans.util.cmdline.CMDLineArgs;
+import clus.jeans.util.cmdline.CMDLineArgs;
 
 public class ClusDecisionTree extends ClusInductionAlgorithmType {
 

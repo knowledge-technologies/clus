@@ -25,7 +25,7 @@ package clus.ext.hierarchical;
 import java.io.*;
 import java.util.*;
 
-import jeans.util.array.*;
+import clus.jeans.util.array.*;
 
 import clus.util.*;
 import clus.main.*;

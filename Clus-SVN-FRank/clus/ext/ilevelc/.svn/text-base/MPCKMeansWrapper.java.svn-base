@@ -25,7 +25,7 @@ package clus.ext.ilevelc;
 import java.io.*;
 import java.util.*;
 
-import jeans.util.*;
+import clus.jeans.util.*;
 import clus.data.io.*;
 import clus.data.rows.*;
 import clus.data.type.*;

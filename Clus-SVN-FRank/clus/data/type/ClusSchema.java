@@ -41,8 +41,8 @@ import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import jeans.util.IntervalCollection;
-import jeans.util.StringUtils;
+import clus.jeans.util.IntervalCollection;
+import clus.jeans.util.StringUtils;
 
 public class ClusSchema implements Serializable {
 
