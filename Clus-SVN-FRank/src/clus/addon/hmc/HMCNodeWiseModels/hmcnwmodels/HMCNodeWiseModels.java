@@ -60,8 +60,12 @@ import clus.util.ClusException;
 
 public class HMCNodeWiseModels implements CMDLineArgsProvider {
 
-    private static String[] g_Options = { "forest" };
-    private static int[] g_OptionArities = { 0 };
+    private static String[] g_Options =
+        {
+            "forest" };
+    private static int[] g_OptionArities =
+        {
+            0 };
 
     protected Clus m_Clus;
     protected CMDLineArgs m_Cargs;

@@ -76,7 +76,9 @@ public class ClusLearner extends MTLearnerImpl {
              * p.flush();
              */
             RowData predictions = ClusModelPredictor.predict(pruned, test);
-            RowData[] final_result = { test, predictions };
+            RowData[] final_result =
+                {
+                    test, predictions };
             return final_result;
         }
         catch (Exception e1) {

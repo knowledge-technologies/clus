@@ -173,7 +173,9 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // initialize min values of numeric attributes: needed for normalization in the distance computation
-        int[] data_types = new int[] { ClusModelInfoList.TRAINSET, ClusModelInfoList.TESTSET, ClusModelInfoList.VALIDATIONSET };
+        int[] data_types = new int[]
+            {
+                ClusModelInfoList.TRAINSET, ClusModelInfoList.TESTSET, ClusModelInfoList.VALIDATIONSET };
         double[] mins = null;
         double[] maxs = null;
         int nb_attrs = -1;

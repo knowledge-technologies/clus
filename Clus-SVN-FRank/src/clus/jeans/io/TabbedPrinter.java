@@ -156,7 +156,9 @@ public class TabbedPrinter {
 
     public static void main(String[] args) {
         TabbedPrinter result = TabbedPrinter.getSystemOutPrinter();
-        int[] tabs = { 10, 20, 30 };
+        int[] tabs =
+            {
+                10, 20, 30 };
         result.addTabs(tabs);
         result.println("1\t2\t3\t4");
         result.printTab("jakke");

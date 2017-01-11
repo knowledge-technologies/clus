@@ -44,7 +44,9 @@ public class NominalAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = 1L;
 
-    public final static String[] BINARY_NAMES = { "1", "0" };
+    public final static String[] BINARY_NAMES =
+        {
+            "1", "0" };
     public final static int THIS_TYPE = 0;
     public final static String THIS_TYPE_NAME = "Nominal";
 

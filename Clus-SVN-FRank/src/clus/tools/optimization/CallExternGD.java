@@ -159,7 +159,7 @@ public class CallExternGD {
 
         weights[0] = undoNormalization(weights[0], rulePreds, nbTargs, targetAvg, rset, normFactors); // Undo the effect
                                                                                                       // on default rule
-        // System.out.print("Toimii Javakin\n");
+                                                                                                      // System.out.print("Toimii Javakin\n");
         ArrayList<Double> result = new ArrayList<Double>(nbOfWeights);
         for (int i = 0; i < nbOfWeights; i++) {
             result.add(weights[i]);

@@ -34,7 +34,9 @@ public class MFileEntry {
     public final static int T_TIME = 3;
     public final static int T_SIZE = 4;
 
-    public final static String m_hSizeString[] = { "kB", "MB", "GB" };
+    public final static String m_hSizeString[] =
+        {
+            "kB", "MB", "GB" };
 
     protected String m_sName;
     protected long m_iLength;

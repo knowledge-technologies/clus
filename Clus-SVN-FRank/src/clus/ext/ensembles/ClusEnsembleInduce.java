@@ -855,7 +855,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
                 double[] weights = m_BagClus.getSettings().getSymbolicWeights();
                 if (weights == null) {
-                    weights = new double[] { m_BagClus.getSettings().getSymbolicWeight() };
+                    weights = new double[]
+                        {
+                            m_BagClus.getSettings().getSymbolicWeight() };
                 }
                 // m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, weights, 0);
                 fimportances = m_FeatureRanking.calculateSYMBOLICimportanceIteratively((ClusNode) model, weights);
@@ -1240,7 +1242,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
                 double[] weights = m_BagClus.getSettings().getSymbolicWeights();
                 if (weights == null) {
-                    weights = new double[] { m_BagClus.getSettings().getSymbolicWeight() };
+                    weights = new double[]
+                        {
+                            m_BagClus.getSettings().getSymbolicWeight() };
                 }
                 // m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, weights, 0);
                 fimportances = m_FeatureRanking.calculateSYMBOLICimportanceIteratively((ClusNode) model, weights);

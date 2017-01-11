@@ -427,7 +427,9 @@ public class MFileDialog extends JDialog implements MCallback {
 
         public final static long serialVersionUID = 1;
 
-        final String[] columnNames = { "", "Name", "Time", "Date", "Size" };
+        final String[] columnNames =
+            {
+                "", "Name", "Time", "Date", "Size" };
 
 
         public int getColumnCount() {

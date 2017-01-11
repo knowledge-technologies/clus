@@ -157,9 +157,9 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
             }
             if (m_NbExamples > m_targetProbabilities[m_NbTargetValues]) { // otherwise: m_TargetProbabilities = {0, 0,
                                                                           // ... , 0, m_NbExamples}
-                // Normalise probabilities: examples with unknown targets are ignored
-                // The formula for standard classification class weighting still holds, i.e. sum over other classes of
-                // P(other class) / (1 - P(class)) equals 1
+                                                                          // Normalise probabilities: examples with unknown targets are ignored
+                                                                          // The formula for standard classification class weighting still holds, i.e. sum over other classes of
+                                                                          // P(other class) / (1 - P(class)) equals 1
                 for (int value = 0; value < m_NbTargetValues; value++) {
                     m_targetProbabilities[value] /= m_NbExamples - m_targetProbabilities[m_NbTargetValues];
                 }

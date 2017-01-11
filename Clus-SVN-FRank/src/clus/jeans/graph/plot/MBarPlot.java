@@ -35,7 +35,9 @@ public class MBarPlot extends JComponent {
 
     public final static long serialVersionUID = 1;
 
-    Color[] m_hColors = { Color.red, Color.yellow, Color.blue };
+    Color[] m_hColors =
+        {
+            Color.red, Color.yellow, Color.blue };
 
     MVerticalGraphScale m_hVScale = new MVerticalGraphScale();
     MBarPlotModel m_hModel;

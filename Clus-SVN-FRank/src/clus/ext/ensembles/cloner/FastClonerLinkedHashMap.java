@@ -12,7 +12,9 @@ import java.util.Map;
  */
 public class FastClonerLinkedHashMap implements IFastCloner {
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings(
+        {
+            "unchecked", "rawtypes" })
     public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
         final LinkedHashMap<?, ?> al = (LinkedHashMap) t;
         final LinkedHashMap result = new LinkedHashMap();

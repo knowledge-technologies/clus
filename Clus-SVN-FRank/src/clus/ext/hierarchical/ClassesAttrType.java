@@ -112,7 +112,9 @@ public class ClassesAttrType extends ClusAttrType {
         String name = getName();
         schema.addAttrType(new StringAttrType(name + "-a"));
         ClassHierarchy hier = getHier();
-        String[] vals = { "1", "0" };
+        String[] vals =
+            {
+                "1", "0" };
         for (int i = 0; i < hier.getTotal(); i++) {
             ClassTerm term = hier.getTermAt(i);
             schema.addAttrType(new NominalAttrType(name + "-a-" + term.toStringHuman(hier), vals));

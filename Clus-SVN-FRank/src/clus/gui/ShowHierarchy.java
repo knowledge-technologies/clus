@@ -273,7 +273,9 @@ public class ShowHierarchy extends JPanel {
         return zValue;
     }
 
-    protected Color[] COLOR_BOUNDS = { Color.black, Color.blue, Color.green, Color.red };
+    protected Color[] COLOR_BOUNDS =
+        {
+            Color.black, Color.blue, Color.green, Color.red };
 
 
     public Color createColor(double val) {

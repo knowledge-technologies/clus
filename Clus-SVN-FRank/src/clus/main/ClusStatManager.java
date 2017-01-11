@@ -444,8 +444,10 @@ public class ClusStatManager implements Serializable {
         TimeSeriesAttrType[] ts = m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
         boolean is_multilabel = num.length == 0 && ts.length == 0 && nom.length > 1;
         if (is_multilabel) {
-            String[] twoLabels = new String[] { "1", "0" }; // Clus saves the values of @attribute atrName {1,0}/{0,1}
-                                                            // to {"1", "0"}.
+            String[] twoLabels = new String[]
+                {
+                    "1", "0" }; // Clus saves the values of @attribute atrName {1,0}/{0,1}
+                                  // to {"1", "0"}.
             for (int attr = 0; attr < nom.length; attr++) {
                 if (!Arrays.equals(nom[attr].m_Values, twoLabels)) {
                     is_multilabel = false;

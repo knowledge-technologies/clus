@@ -30,7 +30,9 @@ import java.io.LineNumberReader;
 
 public class MultiDelimStringTokenizer {
 
-    public final static String[] $example_delims = { "&nbsp;", "&", ";" };
+    public final static String[] $example_delims =
+        {
+            "&nbsp;", "&", ";" };
 
     protected String[] $delims;
     protected String $line;

@@ -12,7 +12,9 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class FastClonerConcurrentHashMap implements IFastCloner {
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
+    @SuppressWarnings(
+        {
+            "unchecked", "rawtypes" })
     public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
         final ConcurrentHashMap<Object, Object> m = (ConcurrentHashMap) t;
         final ConcurrentHashMap result = new ConcurrentHashMap();
