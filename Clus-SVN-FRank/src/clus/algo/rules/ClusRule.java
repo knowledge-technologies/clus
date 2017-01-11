@@ -334,9 +334,9 @@ public class ClusRule implements ClusModel, Serializable {
                 new_weight = old_weight * cov_w_par;
             }
             else { // COVERING_METHOD_WEIGHTED_ERROR
-                // DONE: weighted by a proportion of incorrectly classified target attributes.
-                // TODO: weighted by a distance to a prototype of examples covered by this rule.
-                // if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
+                   // DONE: weighted by a proportion of incorrectly classified target attributes.
+                   // TODO: weighted by a distance to a prototype of examples covered by this rule.
+                   // if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
                 if (m_TargetStat instanceof ClassificationStat) {
                     int[] predictions = predictWeighted(tuple).getNominalPred();
                     NominalAttrType[] targetAttrs = data.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
