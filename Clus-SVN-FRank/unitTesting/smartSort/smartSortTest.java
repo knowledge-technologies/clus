@@ -2,7 +2,10 @@ package unitTesting.smartSort;
 
 import static org.junit.Assert.assertArrayEquals;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.junit.Test;
@@ -24,7 +27,8 @@ public class smartSortTest {
 		String[] settingsFiles = new String[]{"unitTesting/smartSort/easy.s",
 											  "unitTesting/smartSort/missing.s",
 											  "unitTesting/smartSort/sparse.s",
-											  "unitTesting/smartSort/sparseMissing.s"};
+											  "unitTesting/smartSort/sparseMissing.s",
+											  "unitTesting/smartSort/soilTrain.s"};
 		String[] firstArgs = new String[settingsFiles.length];
 		Arrays.fill(firstArgs, "-silent");
 		
@@ -54,7 +58,8 @@ public class smartSortTest {
 				{3, 20, 28, 14, 29, 27, 24, 23, 22, 21, 25, 19, 18, 17, 15, 13, 12, 11, 10, 9, 7, 6, 5, 4, 2, 1, 0, 8, 16, 26},
 				{9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29},
 				{18, 12, 1, 16, 28, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29}
-			}
+			},
+			loadSolution("C:/Users/matejp/Documents/clusFR/testMultiThread/ET/soil_qualityTrain.UnitTest.txt")
 		};
 		for(int i = 0; i < argss.length; i++){
 			String[] args = argss[i];
@@ -74,6 +79,39 @@ public class smartSortTest {
 		
 	}
 	
+	private Integer[][] loadSolution(String solFile) throws IOException {
+		BufferedReader br = new BufferedReader(new FileReader(solFile));
+		ArrayList<Integer[]> sols = new ArrayList<Integer[]>();
+		try {
+		    String line = br.readLine();
+		    while (line != null) {
+		        Integer[] sol = parseLine(line);
+		        sols.add(sol);
+		        line = br.readLine();
+		    }
+		} catch (Exception e) {
+		    br.close();
+		    e.printStackTrace();
+		}
+		Integer[][] ans = new Integer[sols.size()][];
+		for(int i = 0; i < ans.length; i++){
+			ans[i] = sols.get(i);
+		}
+		return ans;
+	}
+
+	private Integer[] parseLine(String line) {
+		if(line.length() == 2) { // {}
+			return new Integer[0];
+		}
+		String[] list = line.substring(1, line.length() - 1).split(","); // {1, 2, 323, 33, ... , 32}
+		Integer[] ans = new Integer[list.length];
+		for(int i = 0; i < list.length; i++){
+			ans[i] = Integer.parseInt(list[i].trim());
+		}
+		return ans;
+	}
+
 	public RowData loadData(String[] args) throws IOException, ClusException{	
 		Clus clus = new Clus();
 		Settings sett = clus.getSettings();

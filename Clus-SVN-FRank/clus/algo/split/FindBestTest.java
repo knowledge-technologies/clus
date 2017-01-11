@@ -220,40 +220,45 @@ public class FindBestTest {
 		RowData data = createSample(orig_data, rnd);
 		DataTuple tuple;
 		int idx = at.getArrayIndex();
+		
 		// Sort values from large to small
-		if (at.isSparse()) {
-			data.sortSparse(at, m_SortHelper);
-		} else {
-			data.sort(at);
-		}
+//		if (at.isSparse()) {
+//			data.sortSparse(at, m_SortHelper);
+//		} else {
+//			data.sort(at);			
+//		}
+		
+		Integer[] indicesSorted = data.smartSort(at);
+		
 		m_BestTest.reset(2);
 		// Missing values
-		int first = 0;
+		int pos = 0; // <--- first = 0 
 		int nb_rows = data.getNbRows();
 		// Copy total statistic into corrected total
 		m_BestTest.copyTotal();
 		if (at.hasMissing()) {
 			// Because of sorting, all missing values are in the front :-)
-			while (first < nb_rows && (tuple = data.getTuple(first)).hasNumMissing(idx)) {
-				m_BestTest.m_MissingStat.updateWeighted(tuple, first);
-				first++;
+			while (pos < nb_rows && (tuple = data.getTuple(indicesSorted[pos])).hasNumMissing(idx)) {  // <--- first < nb_rows &&  (tuple = data.getTuple(first)).hasNumMissing(idx)
+				m_BestTest.m_MissingStat.updateWeighted(tuple, indicesSorted[pos]); // <-- first
+				pos++; // <--- first++;
 			}
 			m_BestTest.subtractMissing();
 		}
+		// here, now indicesSorted[pos] (first before) is the index of the tuple that has the highest (and non-missing) value of the attribute
 
 		// Generate the random split value based on the original data
 		
 //		System.out.println("first = " + first + "/ datasize = " + nb_rows);
-		if (first == nb_rows){//this can prevent illegal tests
+		if (pos == nb_rows){// this can prevent illegal tests; <--- first == nb_rows
 			m_BestTest.m_BestHeur = Double.NEGATIVE_INFINITY;
-		}else{			
-			double min_value = orig_data.getTuple(nb_rows-1).getDoubleVal(idx);
-			double max_value = orig_data.getTuple(first).getDoubleVal(idx);
+		}else{
+			double min_value = orig_data.getTuple(indicesSorted[nb_rows - 1]).getDoubleVal(idx);// <-- orig_data.getTuple(nb_rows-1).getDoubleVal(idx);
+			double max_value = orig_data.getTuple(indicesSorted[pos]).getDoubleVal(idx);// <-- orig_data.getTuple(first).getDoubleVal(idx); // sort
 			double split_value = (max_value - min_value) * rn.nextDouble() + min_value;
-			for (int i = first; i < nb_rows; i++) {
-				tuple = data.getTuple(i);
+			for (int i = pos; i < nb_rows; i++) { // <-- i = first; ...
+				tuple = data.getTuple(indicesSorted[i]); // <-- data.getTuple(i);
 				if (tuple.getDoubleVal(idx) <= split_value) break;
-				m_BestTest.m_PosStat.updateWeighted(tuple, i);
+				m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]); // <-- updateWeighted(tuple, i)
 			}
 			m_BestTest.updateNumeric(split_value, at);			
 		}

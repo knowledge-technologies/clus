@@ -80,8 +80,10 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 						attrList.add(at);
 						
 						Object[] exampleArray = ((SparseNumericAttrType)at).getExamples().toArray(); // tuples with non zero value for this attribute
-						RowData exampleData = new RowData(exampleArray,exampleArray.length);					
-						exampleData.sortSparse((SparseNumericAttrType)at, m_FindBestTest.getSortHelper());
+						RowData exampleData = new RowData(exampleArray,exampleArray.length);
+						
+						exampleData.sortSparse((SparseNumericAttrType)at, m_FindBestTest.getSortHelper()); // TODO: change sort
+						
 						ArrayList<SparseDataTuple> exampleList = new ArrayList<SparseDataTuple>(); // tuples, sorted in descending order by at.value
 						for (int j=0; j<exampleData.getNbRows(); j++) {
 							exampleList.add((SparseDataTuple)exampleData.getTuple(j));
