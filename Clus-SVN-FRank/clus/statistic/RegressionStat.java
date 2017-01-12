@@ -25,6 +25,7 @@ package clus.statistic;
 import java.text.*;
 import java.util.Arrays;
 
+import clus.ext.hierarchicalmtr.*;
 import jeans.math.MathUtil;
 import clus.main.Settings;
 import clus.util.*;
@@ -40,7 +41,13 @@ public class RegressionStat extends RegressionStatBase {
 	public double[] m_SumWeights;
 	public double[] m_SumSqValues;
 	public RegressionStat m_Training;
-	
+
+	public ClassHMTRHierarchy m_HMTRHierarchy;
+
+    public RegressionStat(NumericAttrType[] attrs, ClassHMTRHierarchy hier) {
+        this(attrs, hier, false);
+    }
+
 	public RegressionStat(NumericAttrType[] attrs) {
 		this(attrs, false);
 	}
@@ -53,11 +60,21 @@ public class RegressionStat extends RegressionStatBase {
 			m_SumSqValues = new double[m_NbAttrs];
 		}
 	}
+    protected RegressionStat(NumericAttrType[] attrs, ClassHMTRHierarchy hier, boolean onlymean) {
+        super(attrs, onlymean);
+        this.m_HMTRHierarchy = hier;
+        if (!onlymean) {
+            m_SumValues = new double[m_NbAttrs];
+            m_SumWeights = new double[m_NbAttrs];
+            m_SumSqValues = new double[m_NbAttrs];
+        }
+    }
+
 
 	public void setTrainingStat(ClusStatistic train) {
 		m_Training = (RegressionStat)train;
-	}	
-	
+	}
+
 	public ClusStatistic cloneStat() {
 		RegressionStat res = new RegressionStat(m_Attrs, false);
 		res.m_Training = m_Training;
@@ -197,15 +214,15 @@ public class RegressionStat extends RegressionStatBase {
 		}
 	}
 
- 
+
 	public double getSVarSTargetSubspace(ClusAttributeWeights scale) {
 		double result = 0.0;
 		int cnt = 0;
 		for (int i = 0; i < m_NbAttrs; i++) {
 			if (!scale.getEnabled(m_Attrs[i].getIndex())) continue;
-			
+
 			cnt++;
-			
+
 			double n_tot = m_SumWeight;
 			double k_tot = m_SumWeights[i];
 			double sv_tot = m_SumValues[i];
@@ -223,10 +240,11 @@ public class RegressionStat extends RegressionStatBase {
 
 		return result / cnt;
 	}
-	
+
 	public double getSVarS(ClusAttributeWeights scale) {
+	    if (ClassHMTRHierarchy.isIsHmtrHierCreated()) return getSVarSHMTR(scale);
 		if (Settings.isEnsembleTargetSubspacingEnabled()) return getSVarSTargetSubspace(scale);
-		
+
 		double result = 0.0;
 		for (int i = 0; i < m_NbAttrs; i++) {
 			double n_tot = m_SumWeight;
@@ -245,16 +263,38 @@ public class RegressionStat extends RegressionStatBase {
 		}
 		return result / m_NbAttrs;
 	}
-	
+
+    public double getSVarSHMTR(ClusAttributeWeights scale) {
+        if (Settings.isEnsembleTargetSubspacingEnabled()) return getSVarSTargetSubspace(scale);
+
+        double result = 0.0;
+        for (int i = 0; i < m_NbAttrs; i++) {
+            double n_tot = m_SumWeight;
+            double k_tot = m_SumWeights[i];
+            double sv_tot = m_SumValues[i];
+            double ss_tot = m_SumSqValues[i];
+            if (k_tot == n_tot) {
+                result += (ss_tot - sv_tot*sv_tot/n_tot)*scale.getWeight(m_Attrs[i]);
+            } else {
+                if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
+                    result += m_Training.getSVarS(i)*scale.getWeight(m_Attrs[i]);
+                } else {
+                    result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot/k_tot*sv_tot/k_tot)*scale.getWeight(m_Attrs[i]);
+                }
+            }
+        }
+        return result / m_NbAttrs;
+    }
+
 	public double getSVarSDiffTargetSubspace(ClusAttributeWeights scale, ClusStatistic other) {
 		double result = 0.0;
 		int cnt = 0;
 		RegressionStat or = (RegressionStat)other;
 		for (int i = 0; i < m_NbAttrs; i++) {
 			if (!scale.getEnabled(m_Attrs[i].getIndex())) continue;
-			
+
 			cnt++;
-			
+
 			double n_tot = m_SumWeight - or.m_SumWeight;
 			double k_tot = m_SumWeights[i] - or.m_SumWeights[i];
 			double sv_tot = m_SumValues[i] - or.m_SumValues[i];
@@ -271,10 +311,10 @@ public class RegressionStat extends RegressionStatBase {
 		}
 		return result / cnt;
 	}
-	
+
 	public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
 		if (Settings.isEnsembleTargetSubspacingEnabled()) return getSVarSDiffTargetSubspace(scale, other);
-		
+
 		double result = 0.0;
 		RegressionStat or = (RegressionStat)other;
 		for (int i = 0; i < m_NbAttrs; i++) {
@@ -340,8 +380,8 @@ public class RegressionStat extends RegressionStatBase {
 	public RegressionStat getRegressionStat() {
 		return this;
 	}
-	
-	
+
+
 	public double getSquaredDistance(ClusStatistic other) {
 		double result = 0.0;
 		RegressionStat o = (RegressionStat)other;
@@ -351,5 +391,5 @@ public class RegressionStat extends RegressionStatBase {
 		}
 		return result;
 	}
-	
+
 }

@@ -11,6 +11,17 @@ import java.util.Map;
  */
 public class ClassHMTRHierarchy {
 
+    public static boolean isIsHmtrHierCreated() {
+        return IS_HMTR_HIER_CREATED;
+    }
+
+    public static void setIsHmtrHierCreated(boolean isHmtrHierCreated) {
+        IS_HMTR_HIER_CREATED = isHmtrHierCreated;
+    }
+
+    private static boolean IS_HMTR_HIER_CREATED = false;
+
+
     private String hierarchyName;
     private List<ClassHMTRNode> nodes;
 
@@ -84,6 +95,7 @@ public class ClassHMTRHierarchy {
 
         }
         calculateDepth();
+        setIsHmtrHierCreated(true);
     }
 
     public List<ClassHMTRNode> getParents(ClassHMTRNode node){

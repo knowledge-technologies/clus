@@ -2254,7 +2254,7 @@ public class Settings implements Serializable {
 	public static boolean isEnsembleTargetSubspacingEnabled() {
 		return Settings.getEnsembleTargetSubspacingMethod() != Settings.ENSEMBLE_TARGET_SUBSPACING_NONE;
 	}
-	
+
 	public int getRankingMethod() {
 		return m_FeatureRanking.getValue();
 	}

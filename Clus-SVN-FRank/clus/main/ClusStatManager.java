@@ -477,17 +477,25 @@ public class ClusStatManager implements Serializable {
 					setTargetStatistic(new WHTDStatistic(m_Hier, getCompatibility()));
 				}
 			} else {
-				ClusDistance dist = null;
-				if (getSettings().getHierDistance() == Settings.HIERDIST_JACCARD) {
-					dist = new HierJaccardDistance(m_Hier.getType());
+					ClusDistance dist = null;
+					if (getSettings().getHierDistance() == Settings.HIERDIST_JACCARD) {
+						dist = new HierJaccardDistance(m_Hier.getType());
+					}
+					setClusteringStatistic(new HierSumPairwiseDistancesStat(m_Hier, dist, getCompatibility()));
+					setTargetStatistic(new HierSumPairwiseDistancesStat(m_Hier, dist, getCompatibility()));
 				}
-				setClusteringStatistic(new HierSumPairwiseDistancesStat(m_Hier, dist, getCompatibility()));
-				setTargetStatistic(new HierSumPairwiseDistancesStat(m_Hier, dist, getCompatibility()));
-			}
 			break;
         case MODE_HIERARCHICAL_MTR:
-            if (m_Settings.getVerbose()>0) System.out.println("HIERARCHICAL MTR");
-        break;
+			if (getSettings().getHMTRDistance().getValue() == Settings.HMTR_HIERDIST_WEIGHTED_EUCLIDEAN) {
+			    if (getSettings().getVerbose()>0) System.out.println("HMTR - Euclidean distance");
+			} else if (getSettings().getHMTRDistance().getValue() == Settings.HMTR_HIERDIST_JACCARD) {
+                if (getSettings().getVerbose()>0) System.out.println("HMTR - Jaccard distance");
+			}
+
+            setTargetStatistic(new RegressionStat(num2, m_HMTRHier));
+            setClusteringStatistic(new RegressionStat(num3, m_HMTRHier));
+
+            break;
 		case MODE_SSPD:
 			ClusAttrType[] target = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
 			m_SSPDMtrx.setTarget(target);
