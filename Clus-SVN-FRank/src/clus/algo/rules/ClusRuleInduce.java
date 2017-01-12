@@ -327,7 +327,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     public void separateAndConquorWeighted(ClusRuleSet rset, RowData data) throws ClusException {
         int max_rules = getSettings().getMaxRulesNb();
         int i = 0;
-        RowData data_copy = (RowData) data.deepCloneData(); // Taking copy of data. Probably not nice
+        RowData data_copy = data.deepCloneData(); // Taking copy of data. Probably not nice
         ArrayList bit_vect_array = new ArrayList();
         // Learn the rules
         while ((data.getNbRows() > 0) && (i < max_rules)) {
@@ -391,7 +391,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     public void separateAndConquorAddRulesIfBetter(ClusRuleSet rset, RowData data) throws ClusException {
         int max_rules = getSettings().getMaxRulesNb();
         int i = 0;
-        RowData data_copy = (RowData) data.deepCloneData();
+        RowData data_copy = data.deepCloneData();
         ArrayList bit_vect_array = new ArrayList();
         ClusStatistic left_over = createTotalTargetStat(data_copy);
         left_over.calcMean();
@@ -456,7 +456,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     public void separateAndConquorAddRulesIfBetterFromBeam(ClusRuleSet rset, RowData data) throws ClusException {
         int max_rules = getSettings().getMaxRulesNb();
         int i = 0;
-        RowData data_copy = (RowData) data.deepCloneData();
+        RowData data_copy = data.deepCloneData();
         ArrayList bit_vect_array = new ArrayList();
         ClusStatistic left_over = createTotalTargetStat(data);
         ClusStatistic new_left_over = left_over;
@@ -632,7 +632,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         }
         int max_rules = getSettings().getMaxRulesNb();
         int i = 0;
-        RowData data_copy = (RowData) data.deepCloneData();
+        RowData data_copy = data.deepCloneData();
         ClusStatistic left_over = createTotalTargetStat(data);
         ClusStatistic new_left_over = left_over;
         left_over.calcMean();
@@ -718,7 +718,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     public void separateAndConquorAddRulesIfBetterFromBeam2(ClusRuleSet rset, RowData data) throws ClusException {
         int max_rules = getSettings().getMaxRulesNb();
         int i = 0;
-        RowData data_copy = (RowData) data.deepCloneData();
+        RowData data_copy = data.deepCloneData();
         ClusStatistic left_over = createTotalTargetStat(data);
         // ClusStatistic new_left_over = left_over;
         left_over.calcMean();
@@ -740,7 +740,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                     rules[j].computePrediction();
                     ClusRuleSet new_rset = rset.cloneRuleSet();
                     new_rset.add(rules[j]);
-                    RowData data_copy2 = (RowData) data_copy.deepCloneData();
+                    RowData data_copy2 = data_copy.deepCloneData();
                     data_copy2 = rules[j].reweighCovered(data_copy2);
                     // ClusStatistic new_left_over2 = m_Induce.createTotalTargetStat(data_copy2);
                     // new_left_over2.calcMean();

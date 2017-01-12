@@ -578,7 +578,7 @@ public class ClusEnsembleFeatureRanking {
 
         ArrayList<String> attests = getInternalAttributesNames((ClusNode) model);
 
-        RowData tdata = (RowData) ((RowData) cr.getTrainingSet()).deepCloneData();
+        RowData tdata = ((RowData) cr.getTrainingSet()).deepCloneData();
         double[][] oob_errs = calcAverageErrors((RowData) tdata.selectFrom(oob_sel, rnd), model, mgr);
         for (int z = 0; z < attests.size(); z++) {// for the attributes that appear in the tree
             String current_attribute = attests.get(z);

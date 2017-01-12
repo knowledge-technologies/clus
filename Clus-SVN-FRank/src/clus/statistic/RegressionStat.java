@@ -39,8 +39,8 @@ public class RegressionStat extends RegressionStatBase {
 
     public double[] m_SumValues;
     public double[] m_SumWeights;
-    public double[] m_SumSqValues;
-    public RegressionStat m_Training;
+    private double[] m_SumSqValues;
+    private RegressionStat m_Training;
 
 
     public RegressionStat(NumericAttrType[] attrs) {

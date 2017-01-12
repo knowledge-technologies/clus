@@ -108,11 +108,11 @@ public abstract class ClusStatistic implements Serializable {
     }
 
 
-    public void optimizePreCalc(RowData data) {
+    public void optimizePreCalc(RowData data) { // only clus.statistic.SumPairwiseDistancesStat actually has its own implementation of the method
     }
 
 
-    public void showRootInfo() {
+    public void showRootInfo() { // only clus.ext.hierarchical.WHTDStatistic actually has its own implementation of the method
     }
 
 

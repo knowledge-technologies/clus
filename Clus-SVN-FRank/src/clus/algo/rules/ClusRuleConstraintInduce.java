@@ -360,7 +360,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
     public void separateAndConquorWeighted(ClusRuleSet rset, RowData data) throws ClusException {
         int max_rules = getSettings().getMaxRulesNb();
         int i = 0;
-        RowData data_copy = (RowData) data.deepCloneData(); // Probably not nice
+        RowData data_copy = data.deepCloneData(); // Probably not nice
         ArrayList<boolean[]> bit_vect_array = new ArrayList<boolean[]>();
         while ((data.getNbRows() > 0) && (i < max_rules)) {
             ClusRule rule = learnOneRule(data);

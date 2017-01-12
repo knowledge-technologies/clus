@@ -410,7 +410,7 @@ public class Sit implements CMDLineArgsProvider {
             // add new data to training
 
             RowData pred = predictions[1];
-            RowData xtr_train = (RowData) test.deepCloneData();
+            RowData xtr_train = test.deepCloneData();
             for (int t = 0; t < pred.getNbRows(); t++) {
                 DataTuple tp = pred.getTuple(t);
                 double dp = mainTarget.getNumeric(tp);

@@ -208,7 +208,7 @@ public class DataTuple implements Serializable {
     }
 
 
-    public final double getDoubleVal(int idx) {
+    public final synchronized double getDoubleVal(int idx) {
         return m_Doubles[idx];
     }
 

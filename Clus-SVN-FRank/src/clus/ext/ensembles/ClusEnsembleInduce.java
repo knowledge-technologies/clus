@@ -72,7 +72,7 @@ import clus.util.ClusRandomNonstatic;
 public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     Clus m_BagClus;
-    static ClusAttrType[] m_RandomSubspaces;
+    static ClusAttrType[] m_RandomSubspaces; // this field should be removed in the future
     ClusForest m_OForest;// Forest with the original models
     ClusForest m_DForest;
     static int m_Mode;
@@ -107,6 +107,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * This is static because we want different tree depths for different folds.
      */
     // static protected Random m_randTreeDepth = new Random(0);
+    
+    
+    public static final int m_PARALLEL_TRAP_BestFirst_getDescriptiveAttributes = 0;
+    public static final int m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes = 1;
+    private static boolean[] m_WarningsGiven = new boolean[2];
+    
 
     public ClusEnsembleInduce(ClusSchema schema, Settings sett, Clus clus) throws ClusException, IOException {
         super(schema, sett);
@@ -426,7 +432,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
 
             ClusRun crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());
-            ClusEnsembleInduce.setRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getNbRandomAttrSelected(), rnd);
+            // parallelisation !!!
+            ClusEnsembleInduce.setRandomSubspaces(ClusEnsembleInduce.selectRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd));
             DepthFirstInduce ind;
             if (getSchema().isSparse()) {
                 ind = new DepthFirstInduceSparse(this);
@@ -1047,7 +1054,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             BaggingSelection msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);
 
             ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(), msel, cr.getSummary(), i);
-            ClusEnsembleInduce.setRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getNbRandomAttrSelected(), rnd);
+            // parallelisation !!!
+            ClusEnsembleInduce.setRandomSubspaces(ClusEnsembleInduce.selectRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd));
             DepthFirstInduce ind;
             if (getSchema().isSparse()) {
                 ind = new DepthFirstInduceSparse(this);
@@ -1150,17 +1158,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         for (int i = 1; i <= m_NbMaxBags; i++) {
             ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-            InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, summ_time, statManagerClones[i - 1]); // <--
-                                                                                                                                                                // induceExtraTree(cr,
-                                                                                                                                                                // i,
-                                                                                                                                                                // train_iterator,
-                                                                                                                                                                // test_iterator,
-                                                                                                                                                                // rnd,
-                                                                                                                                                                // summ_time,
-                                                                                                                                                                // one_bag_time,
-                                                                                                                                                                // statManagerClones[i
-                                                                                                                                                                // -
-                                                                                                                                                                // 1]);
+            InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, summ_time, statManagerClones[i - 1]); // <-- induceExtraTree(cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]);
             Future<OneBagResults> submit = executor.submit(worker);
             bagResults.add(submit);
         }
@@ -1205,12 +1203,16 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         else {
             ind = new DepthFirstInduce(this, mgr, true);
         }
+               
         ind.initialize();
         crSingle.getStatManager().initClusteringWeights();
         ind.getStatManager().initClusteringWeights();
 
         initializeBagTargetSubspacing(ind.getStatManager(), i);
-
+        
+        
+       
+        
         ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
         summ_time += ResourceInfo.getTime() - one_bag_time;
 
@@ -1403,10 +1405,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         return m_RandomSubspaces;
     }
 
-
-    public static void setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd) {
-        m_RandomSubspaces = ClusEnsembleInduce.selectRandomSubspaces(attrs, select, ClusRandomNonstatic.RANDOM_SELECTION, rnd);
+    public static void setRandomSubspaces(ClusAttrType[] attrs){
+    	m_RandomSubspaces = attrs;
     }
+    
+//    public static void setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd) {
+//        m_RandomSubspaces = ClusEnsembleInduce.selectRandomSubspaces(attrs, select, ClusRandomNonstatic.RANDOM_SELECTION, rnd);
+//    }
 
 
     /**
@@ -1419,6 +1424,25 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     public ClusEnsembleFeatureRanking getEnsembleFeatureRanking() {
         return m_FeatureRanking;
+    }
+    
+    public synchronized static void giveParallelisationWarning(int reason){
+    	if (!m_WarningsGiven[reason]){
+    		String message;
+    		switch (reason){
+    		case ClusEnsembleInduce.m_PARALLEL_TRAP_BestFirst_getDescriptiveAttributes:
+    			message = "clus.ext.bestfirst.BestFirstInduce.getDescriptiveAttributes() has been called. This may not work in parallel setting.";
+    			break;
+    		case ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes:
+    			message = "clus.algo.tdidt.DepthFirstInduce.getDescriptiveAttributes(ClusRandomNonstatic) has been called. This may not work in parallel setting.";
+    		default:
+    			throw new RuntimeException("Wrong reason for giveParallelisationWarning: " + reason);
+    		}
+    		System.err.println("Warning:");
+    		System.err.println(message);
+    		System.err.println("There will be no additional warnings for this.");
+    		
+    	}
     }
 
 }

@@ -16,9 +16,8 @@ public class ClusRandomNonstatic {
     private int m_Length = 5;
     private int m_Seed;
 
-
+    
     public ClusRandomNonstatic(int seed) {
-
         m_Seed = seed; // remember the initial seed
         m_Random = new Random[m_Length];
         Random seedGenerator = new Random(seed);
@@ -45,6 +44,10 @@ public class ClusRandomNonstatic {
 
     public Random getRandom(int idx) {
         return m_Random[idx];
+    }
+    
+    public int getSeed(){
+    	return m_Seed;
     }
 
 }

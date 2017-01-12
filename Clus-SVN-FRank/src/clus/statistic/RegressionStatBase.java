@@ -49,7 +49,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public int m_NbAttrs;
-    public NumericAttrType[] m_Attrs;
+    public NumericAttrType[] m_Attrs; // why is this public?
     public double[] m_Means;
 
 

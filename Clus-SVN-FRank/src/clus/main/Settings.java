@@ -3263,7 +3263,7 @@ public class Settings implements Serializable {
         m_SectionEnsembles.addNode(m_EnsembleBagSize = new INIFileInt("BagSize", 0));
         m_EnsembleBagSize.setValueCheck(new IntRangeCheck(0, Integer.MAX_VALUE));
         m_SectionEnsembles.addNode(m_NumberOfThreads = new INIFileInt("NumberOfThreads", 1));
-        m_NumberOfThreads.setValueCheck(new IntRangeCheck(0, Runtime.getRuntime().availableProcessors()));
+        m_NumberOfThreads.setValueCheck(new IntRangeCheck(0, 20));//Runtime.getRuntime().availableProcessors()));
 
         m_SectionEnsembles.setEnabled(false);
 

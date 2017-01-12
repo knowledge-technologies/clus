@@ -255,10 +255,7 @@ public class FindBestTest {
         m_BestTest.copyTotal();
         if (at.hasMissing()) {
             // Because of sorting, all missing values are in the front :-)
-            while (pos < nb_rows && (tuple = data.getTuple(indicesSorted[pos])).hasNumMissing(idx)) { // <--- first <
-                                                                                                      // nb_rows &&
-                                                                                                      // (tuple =
-                                                                                                      // data.getTuple(first)).hasNumMissing(idx)
+            while (pos < nb_rows && (tuple = data.getTuple(indicesSorted[pos])).hasNumMissing(idx)) { // <--- first < nb_rows && (tuple = data.getTuple(first)).hasNumMissing(idx)
                 m_BestTest.m_MissingStat.updateWeighted(tuple, indicesSorted[pos]); // <-- first
                 pos++; // <--- first++;
             }
@@ -274,11 +271,8 @@ public class FindBestTest {
             m_BestTest.m_BestHeur = Double.NEGATIVE_INFINITY;
         }
         else {
-            double min_value = orig_data.getTuple(indicesSorted[nb_rows - 1]).getDoubleVal(idx);// <--
-                                                                                                // orig_data.getTuple(nb_rows-1).getDoubleVal(idx);
-            double max_value = orig_data.getTuple(indicesSorted[pos]).getDoubleVal(idx);// <--
-                                                                                        // orig_data.getTuple(first).getDoubleVal(idx);
-                                                                                        // // sort
+            double min_value = orig_data.getTuple(indicesSorted[nb_rows - 1]).getDoubleVal(idx);// <-- orig_data.getTuple(nb_rows-1).getDoubleVal(idx);
+            double max_value = orig_data.getTuple(indicesSorted[pos]).getDoubleVal(idx);// <-- orig_data.getTuple(first).getDoubleVal(idx); // sort
             double split_value = (max_value - min_value) * rn.nextDouble() + min_value;
             for (int i = pos; i < nb_rows; i++) { // <-- i = first; ...
                 tuple = data.getTuple(indicesSorted[i]); // <-- data.getTuple(i);

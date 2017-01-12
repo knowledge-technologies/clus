@@ -53,7 +53,6 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     protected FindBestTest m_FindBestTest;
     protected ClusNode m_Root;
 
-
     public DepthFirstInduce(ClusSchema schema, Settings sett) throws ClusException, IOException {
         super(schema, sett);
         m_FindBestTest = new FindBestTest(getStatManager());
@@ -117,32 +116,49 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             return schema.getDescriptiveAttributes();
         }
         else {
-            switch (sett.getEnsembleMethod()) {
+        	ClusAttrType[] selected;
+        	boolean shouldSet = false;
+            switch (sett.getEnsembleMethod()) { // setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd)
                 case Settings.ENSEMBLE_BAGGING:
-                    return schema.getDescriptiveAttributes();
+                    selected = schema.getDescriptiveAttributes();
+                    break;
                 case Settings.ENSEMBLE_RFOREST:
-                    ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
-                    ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();  
+                    selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
+                    shouldSet = true; //ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    break;                    
                     // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
                     // schema.getSettings().getNbRandomAttrSelected());
-                    return ClusEnsembleInduce.getRandomSubspaces();
                 case Settings.ENSEMBLE_RSUBSPACES:
-                    return ClusEnsembleInduce.getRandomSubspaces();
+                    selected = ClusEnsembleInduce.getRandomSubspaces();
+                    ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
+                    break;
                 case Settings.ENSEMBLE_BAGSUBSPACES:
-                    return ClusEnsembleInduce.getRandomSubspaces();
+                	ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
+                    selected = ClusEnsembleInduce.getRandomSubspaces();
+                    break;
                 case Settings.ENSEMBLE_NOBAGRFOREST:
+                	ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
-                    ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), rnd);
-                    return ClusEnsembleInduce.getRandomSubspaces();
+                    selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
+                    shouldSet = true;// ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    break;
                 case Settings.ENSEMBLE_EXTRA_TREES:// same as for Random Forests
                     ClusAttrType[] attrs_all = schema.getDescriptiveAttributes();
-                    ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    selected = ClusEnsembleInduce.selectRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
+                    shouldSet = true; // ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
                     // schema.getSettings().getNbRandomAttrSelected());
-                    return ClusEnsembleInduce.getRandomSubspaces();
+                    break;
                 default:
-                    return schema.getDescriptiveAttributes();
+                    selected = schema.getDescriptiveAttributes();
+                    break;
             }
+            // Current references of the method do not need this
+            // if (shouldSet){
+            // 	ClusEnsembleInduce.setRandomSubspaces(selected);
+            // }
+            return selected;
         }
     }
 
@@ -432,10 +448,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     public ClusNode induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) throws ClusException, IOException {
         m_Root = null;
-        // Beginning of induction process
-        int nbr = 0;
         while (true) {
-            nbr++;
             // Init root node
             m_Root = new ClusNode();
             m_Root.initClusteringStat(m_StatManager, data);
@@ -458,6 +471,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             if (Settings.EXACT_TIME == false)
                 break;
         }
+
         m_Root.postProc(null, m_StatManager);
 
         cleanSplit();

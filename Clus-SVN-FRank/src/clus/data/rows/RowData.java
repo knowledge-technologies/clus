@@ -299,7 +299,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    public ClusData deepCloneData() {
+    public synchronized RowData deepCloneData() {
         RowData res = new RowData(m_Schema, m_NbRows);
         for (int i = 0; i < m_NbRows; i++) {
             res.setTuple(m_Data[i].deepCloneTuple(), i);
@@ -388,10 +388,10 @@ public class RowData extends ClusData implements MSortable, Serializable {
         m_Data[j] = temp;
     }
 
-
     public Integer[] smartSort(NumericAttrType at) {
         if (m_SortedInstances.containsKey(at) && m_SortedInstances.get(at).length == m_Data.length) {
             // here, we assume that m_Data has not changed from the last call of this method
+        	//throw new RuntimeException("This should not be true");
             return m_SortedInstances.get(at);
         }
         else if (at.isSparse()) {
@@ -887,7 +887,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    public void calcTotalStatBitVector(ClusStatistic stat) {
+    public synchronized void calcTotalStatBitVector(ClusStatistic stat) {
         stat.setSDataSize(getNbRows());
         calcTotalStat(stat);
         stat.optimizePreCalc(this);
@@ -1003,7 +1003,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    public void addIndices() {
+    public synchronized void addIndices() {
         for (int i = 0; i < m_NbRows; i++) {
             m_Data[i].setIndex(i);
         }
