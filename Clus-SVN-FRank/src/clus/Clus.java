@@ -402,7 +402,7 @@ public class Clus implements CMDLineArgsProvider {
             DataTuple tuple = data.getTuple(i);
             if (targetclass.getString(tuple).equals("[pos]")) { // tuple is
                                                                 // positive
-                // System.out.println("Tuple"+tuple.toString()+" Klasse"+targetclass.getString(tuple));
+                                                                // System.out.println("Tuple"+tuple.toString()+" Klasse"+targetclass.getString(tuple));
                 DataTuple newTuple = tuple.changeWeight(we[0]);
                 data.setTuple(newTuple, i);
                 // make hash table for mapping classes with their weights?

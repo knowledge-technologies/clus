@@ -151,7 +151,7 @@ public class SubsetSplit extends NominalSplit {
                                                                                     // both singletons were valid AND
                                                                                     // you want to reuse their
                                                                                     // computations
-                            // System.out.println("mheur: " + mheur);
+                                                                                    // System.out.println("mheur: " + mheur);
                             if (mheur > bheur) {
                                 bheur = mheur;
                                 isin = new boolean[nbvalues];

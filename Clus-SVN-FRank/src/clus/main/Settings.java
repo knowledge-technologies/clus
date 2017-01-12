@@ -1901,10 +1901,10 @@ public class Settings implements Serializable {
     public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_NO = 1;
 
     public final static String[] MULTILABEL_MEASURES = { "HammingLoss", "MLAccuracy", "MLPrecision", "MLRecall", "MLFOne", "SubsetAccuracy", // Example
-                                                                                                                                             // based
-                                                                                                                                             // measures
+            // based
+            // measures
             "MacroPrecision", "MacroRecall", "MacroFOne", "MicroPrecision", "MicroRecall", "MicroFOne", // Label based
-                                                                                                        // measures
+            // measures
             "OneError", "Coverage", "RankingLoss", "AveragePrecision", // Ranking based measures
             "AverageAUROC", "AverageAUPRC", "WeightedAverageAUPRC", "PooledAUPRC", // ROC- and PR-curves based measures
             "all" }; // all previous errors: must be the last!

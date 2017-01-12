@@ -102,7 +102,7 @@ public class RandomForestWeighting extends AttributeWeighting {
             new_sett.disableRuleInduceParams();
             new_clus.preprocess(); // necessary in order to link the labels to the class hierarchy in HMC (needs to be
                                    // before m_Induce.initialize())
-            // new_clus.singleRun(new_clus.getClassifier());
+                                   // new_clus.singleRun(new_clus.getClassifier());
 
             ensemble.induceBagging(run);
             ensemble.getEnsembleFeatureRanking().sortFeatureRanks();

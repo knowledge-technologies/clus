@@ -327,7 +327,7 @@ public class ClusForest implements ClusModel, Serializable {
             for (int k = 0; k < m_Stat.getNbAttributes(); k++)
                 ((ClassificationStat) m_Stat).m_SumWeights[k] = 1.0;// the m_SumWeights variable is not used in mode
                                                                     // optimize
-            // m_Stat.setTrainingStat(ClusEnsembleInduceOptClassification.getTrainingStat());
+                                                                    // m_Stat.setTrainingStat(ClusEnsembleInduceOptClassification.getTrainingStat());
             return m_Stat;
         }
         return null;
