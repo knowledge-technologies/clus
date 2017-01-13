@@ -22,9 +22,11 @@
 
 package clus.ext.ensembles;
 
-public class ClusReadWriteLock {
+import java.io.Serializable;
 
-    private int m_NbReaders = 0;
+public class ClusReadWriteLock implements Serializable {
+
+	private int m_NbReaders = 0;
     private int m_NbWriters = 0;
     private int m_NbWriteRequests = 0;
 

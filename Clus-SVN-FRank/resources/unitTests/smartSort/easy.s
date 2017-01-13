@@ -5,5 +5,5 @@ Verbose = 0
 File = resources/unitTests/smartSort/easy.arff
 
 [Attributes]
-Descriptive = 1-3
-Target = 4
+Descriptive = 1-4
+Target = 5

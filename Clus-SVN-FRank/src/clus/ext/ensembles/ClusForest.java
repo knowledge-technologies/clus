@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.concurrent.locks.ReadWriteLock;
 
 import clus.algo.rules.ClusRuleSet;
 import clus.algo.rules.ClusRulesFromTree;
@@ -65,8 +66,18 @@ public class ClusForest implements ClusModel, Serializable {
     private static final long serialVersionUID = 1L;
 
     ArrayList<ClusModel> m_Forest; // List of decision trees
+    /** Number of threes in the forest */
+    private int m_NbModels = 0; // may not be equal to m_Forest.size() because of memory optimisation
+    /** The sum of nodes over the trees in the forest */
+    private int m_NbNodes = 0;
+    /** The sum of leaves over the trees in the forest */
+    private int m_NbLeaves = 0;
     ClusEnsembleTargetSubspaceInfo m_TargetSubspaceInfo; // Info about target subspacing method
-
+    
+    private ClusReadWriteLock m_NbModelsLock = new ClusReadWriteLock();
+    private ClusReadWriteLock m_NbNodesLock = new ClusReadWriteLock();
+    private ClusReadWriteLock m_NbLeavesLock = new ClusReadWriteLock();
+    
     ClusStatistic m_Stat;
     boolean m_PrintModels;
     String m_AttributeList;
@@ -152,15 +163,105 @@ public class ClusForest implements ClusModel, Serializable {
         return 0;
     }
 
+    
+    public int getNbModels(){
+    	try {
+			m_NbModelsLock.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    	int ans = m_NbModels;
+    	m_NbModelsLock.readingUnlock();
+    	return ans;
+    }
+    
+    private void increaseNbModels(int n){
+    	try {
+			m_NbModelsLock.writingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    	m_NbModels += n;
+    	try {
+			m_NbModelsLock.writingUnlock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    private int getNbNodes(){
+    	try {
+			m_NbNodesLock.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    	int ans = m_NbNodes;
+    	m_NbNodesLock.readingUnlock();
+    	return ans;
+    }
+    
+    private void increaseNbNodes(int n){
+    	try {
+			m_NbNodesLock.writingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    	m_NbNodes += n;
+    	try {
+			m_NbNodesLock.writingUnlock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    }
+    
+    private int getNbLeaves(){
+    	try {
+			m_NbLeavesLock.readingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    	int ans = m_NbLeaves;
+    	m_NbLeavesLock.readingUnlock();
+    	return ans;
+    }
+    
+    private void increaseNbLeaves(int n){
+    	try {
+			m_NbLeavesLock.writingLock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    	m_NbLeaves += n;
+    	try {
+			m_NbLeavesLock.writingUnlock();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+			System.exit(-1);
+		}
+    }
+    
+    
+    public void updateCounts(ClusNode model){
+    	increaseNbModels(1);
+    	increaseNbNodes(model.getNbNodes());
+    	increaseNbLeaves(model.getNbLeaves());    	
+    }
 
     public String getModelInfo() {
-        int sumOfLeaves = 0;
-        for (int i = 0; i < getNbModels(); i++)
-            sumOfLeaves += ((ClusNode) getModel(i)).getNbLeaves();
-
-        int sumOfNodes = 0;
-        for (int i = 0; i < getNbModels(); i++)
-            sumOfNodes += ((ClusNode) getModel(i)).getNbNodes();
+//        int sumOfLeaves = 0;
+//        for (int i = 0; i < getNbModels(); i++)
+//            sumOfLeaves += ((ClusNode) getModel(i)).getNbLeaves();
+//
+//        int sumOfNodes = 0;
+//        for (int i = 0; i < getNbModels(); i++)
+//            sumOfNodes += ((ClusNode) getModel(i)).getNbNodes();
 
         String targetSubspaces = "";
         if (m_TargetSubspaceInfo != null) {
@@ -169,7 +270,7 @@ public class ClusForest implements ClusModel, Serializable {
             targetSubspaces = indent + m_TargetSubspaceInfo.getAverageNumberOfTargetsUsedInfo() + indent + m_TargetSubspaceInfo.getCoverageInfo() + indent + m_TargetSubspaceInfo.getCoverageNormalizedInfo();
         }
 
-        String result = "FOREST with " + getNbModels() + " models (Total nodes: " + sumOfNodes + " and leaves: " + sumOfLeaves + ")" + targetSubspaces + "\n";
+        String result = String.format("FOREST with %d models (Total nodes: %d and leaves: %d)%s\n", getNbModels(), getNbNodes(), getNbLeaves(), targetSubspaces);
 
         if (Settings.isPrintEnsembleModelInfo()) {
             for (int i = 0; i < getNbModels(); i++) {
@@ -206,7 +307,7 @@ public class ClusForest implements ClusModel, Serializable {
         }
         if (ClusOOBErrorEstimate.isOOBCalculation())
             return predictWeightedOOB(tuple);
-        if (!ClusEnsembleInduce.m_OptMode)
+        if (!ClusEnsembleInduce.isOptimized())
             return predictWeightedStandard(tuple);
         else
             return predictWeightedOpt(tuple);
@@ -458,7 +559,8 @@ public class ClusForest implements ClusModel, Serializable {
     /**
      * @return Number of decision trees in the ensemble.
      */
-    public int getNbModels() {
+    @Deprecated
+    public int getNbModelsOld() {
         // for now same as getModelSize();
         return m_Forest.size();
     }

@@ -5,5 +5,5 @@ Verbose = 0
 File = resources/unitTests/smartSort/missing.arff
 
 [Attributes]
-Descriptive = 1-3
-Target = 4
+Descriptive = 1-5
+Target = 6

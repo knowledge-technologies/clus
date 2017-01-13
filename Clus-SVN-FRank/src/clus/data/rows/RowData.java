@@ -300,7 +300,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    public synchronized RowData deepCloneData() {
+    public RowData deepCloneData() {
         RowData res = new RowData(m_Schema, m_NbRows);
         for (int i = 0; i < m_NbRows; i++) {
             res.setTuple(m_Data[i].deepCloneTuple(), i);

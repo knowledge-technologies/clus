@@ -79,7 +79,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     long m_SummTime = 0;
 
     // Memory optimization
-    static boolean m_OptMode;
+    private static boolean m_OptMode;
     ClusEnsembleInduceOptimization m_Optimization;
 
     // Output ensemble at different values
@@ -364,6 +364,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
             ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
             summ_time += ResourceInfo.getTime() - one_bag_time;
+            
+            m_OForest.updateCounts((ClusNode) model);
             if (m_OptMode) {
                 // for i == 1 [i.e. the first run] it will initialize the predictions
                 if (i == 1)
@@ -451,6 +453,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
             summ_time += ResourceInfo.getTime() - one_bag_time;
 
+            m_OForest.updateCounts((ClusNode) model);
             if (m_OptMode) {
                 // for i == 1 [i.e. the first run] it will initialize the predictions
                 if (i == 1)
@@ -551,19 +554,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     else {
                         oob_total.addToThis(oob_sel);
                     }
-
                 }
                 OOBSelection current_oob_total = cloner.deepClone(oob_total);
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, current_oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]); // <--
-                                                                                                                                                                                                   // induceOneBag(cr,
-                                                                                                                                                                                                   // i,
-                                                                                                                                                                                                   // origMaxDepth,
-                                                                                                                                                                                                   // oob_sel,
-                                                                                                                                                                                                   // oob_total,
-                                                                                                                                                                                                   // train_iterator,
-                                                                                                                                                                                                   // test_iterator,
-                                                                                                                                                                                                   // msel,
-                                                                                                                                                                                                   // rnd);
+                // induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, current_oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]); 
                 Future<OneBagResults> submit = executor.submit(worker);
                 bagResults.add(submit);
             }
@@ -578,8 +572,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             // or because we want to add a number of trees to an existing forest.
             for (int i = 1; i < bagSelections[0]; i++) {
                 // we eventually want the same bags as when computing them sequentially.
-                msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), null); // not really necessary
-                                                                                               // any more
+                msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), null); // not really necessary any more
             }
             for (int i = bagSelections[0]; i <= bagSelections[1]; i++) {
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
@@ -601,7 +594,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             Future<OneBagResults> future = bagResults.get(i - 1);
             try {
                 OneBagResults results = future.get();
-                m_OForest.addModelToForest(results.getModel());
+                if(!m_OptMode){
+                	m_OForest.addModelToForest(results.getModel());
+                }
                 if (getSettings().shouldPerformRanking()) {
                     m_FeatureRanking.putAttributesInfos(results.getFimportances());
                 }
@@ -814,9 +809,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             // Set random tree max depth
             getSettings().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(
                     // m_randTreeDepth.nextDouble(),
-                    rnd.nextDouble(ClusRandomNonstatic.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth)); // <----
-                                                                                                      // ClusRandom.nextDouble(ClusRandom.RANDOM_INT_RANFOR_TREE_DEPTH),
-                                                                                                      // origMaxDepth));
+                    rnd.nextDouble(ClusRandomNonstatic.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
         }
 
         ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(), msel, cr.getSummary(), i);
@@ -833,16 +826,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         ind.initialize();
 
-        crSingle.getStatManager().initClusteringWeights(); // MORA MET SVEZI STAT MANAGER ZARAD stvari v TELESU if
-                                                           // (checkToOutEnsemble(i) &&
-                                                           // (getSettings().getBagSelection().getIntVectorSorted()[0]
-                                                           // == -1)) ? postprocess...()
+        crSingle.getStatManager().initClusteringWeights(); // TODO: when using rules: if (checkToOutEnsemble(i) && (getSettings().getBagSelection().getIntVectorSorted()[0] == -1)) ----> postprocess... To we need more than one stat manager?
         ind.getStatManager().initClusteringWeights(); // equivalent to mgr.initClusteringWeights();
 
         initializeBagTargetSubspacing(ind.getStatManager(), i);
 
         ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
         m_SummTime += ResourceInfo.getTime() - one_bag_time;
+        
+        m_OForest.updateCounts((ClusNode) model);
 
         // OOB estimate for the parallel implementation is done in makeForestFromBags method <--- matejp: This is some
         // old parallelisation
@@ -852,7 +844,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         HashMap<String, double[]> fimportances = new HashMap<String, double[]>();
         if (m_FeatRank) {// franking
-
             if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
                 fimportances = m_FeatureRanking.calculateRFimportance(model, cr, oob_sel, rnd, ind.getStatManager());
             }
@@ -869,20 +860,21 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 fimportances = m_FeatureRanking.calculateSYMBOLICimportanceIteratively((ClusNode) model, weights);
             }
         }
-
-        if (m_OptMode) { // TODO: not synchronized yet
+        boolean canForgetTheRun = true;
+        if (m_OptMode) {
             if (i == 1)
                 m_Optimization.initModelPredictionForTuples(model, train_iterator, test_iterator);
             else
                 m_Optimization.addModelPredictionForTuples(model, train_iterator, test_iterator, i);
+            model = null;
         }
         // instead of adding the model here, we will do this in after all bags are completed to keep the order of the
         // models invariant
         // else{
         // m_OForest.addModelToForest(model);
 
-        // ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
-        // m_DForest.addModelToForest(defmod);
+        // this was commented out before parallelism ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
+        // this was commented out before parallelism m_DForest.addModelToForest(defmod);
         // }
 
         // printing paths taken by each example in each tree (used in ICDM'11 paper on "Random forest based feature
@@ -897,10 +889,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         // Valid only when test set is supplied
-        boolean canForgetTheModel = true;
         if (checkToOutEnsemble(i) && (getSettings().getBagSelection().getIntVectorSorted()[0] == -1)) {
             crSingle.setInductionTime(m_SummTime);
-            canForgetTheModel = false;
+            canForgetTheRun = false;
 
             // Lines that are commented out are executed AT THE END of induceBagging
 
@@ -930,7 +921,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             io.save(m_BagClus.getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName() + "_bag" + i + ".model"));
         }
 
-        if (canForgetTheModel) {
+        if (canForgetTheRun) {
             crSingle.deleteData();
             crSingle.setModels(new ArrayList());
         }
@@ -960,6 +951,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 ClusModelCollectionIO io = ClusModelCollectionIO.load(m_BagClus.getSettings().getFileAbsolute(getSettings().getAppName() + "_bag" + i + ".model"));
                 ClusModel orig_bag_model = io.getModel("Original");
                 if (orig_bag_model == null) { throw new ClusException(cr.getStatManager().getSettings().getAppName() + "_bag" + i + ".model file does not contain model named 'Original'"); }
+                
+                m_OForest.updateCounts((ClusNode) orig_bag_model);
                 if (m_OptMode) {
                     // the first run will initialize the predictions
                     if (i == 1)
@@ -1072,6 +1065,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
             summ_time += ResourceInfo.getTime() - one_bag_time;
 
+            m_OForest.updateCounts((ClusNode) model);
             if (Settings.shouldEstimateOOB()) { // OOB estimate is on
                 oob_sel = new OOBSelection(msel);
                 if (i == 1)
