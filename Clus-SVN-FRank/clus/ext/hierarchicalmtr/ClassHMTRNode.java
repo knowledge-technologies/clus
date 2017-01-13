@@ -1,12 +1,13 @@
 package clus.ext.hierarchicalmtr;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by Vanja Mileski on 12/16/2016.
  */
-public class ClassHMTRNode {
+public class ClassHMTRNode implements Serializable{
 
     private boolean isRoot;
     private String name;

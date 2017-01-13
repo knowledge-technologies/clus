@@ -129,6 +129,20 @@ public class ClusStatManager implements Serializable {
 		}
 	}
 
+    public ClusStatManager(ClusSchema schema, Settings sett, ClassHMTRHierarchy hier) throws ClusException, IOException {
+        this(schema, sett, hier, true);
+    }
+
+    public ClusStatManager(ClusSchema schema, Settings sett, ClassHMTRHierarchy hier, boolean docheck) throws ClusException, IOException {
+        m_Schema = schema;
+        m_Settings = sett;
+        m_HMTRHier = hier;
+        if (docheck) {
+            check();
+            initStructure();
+        }
+    }
+
 	public Settings getSettings() {
 		return m_Settings;
 	}
@@ -491,7 +505,7 @@ public class ClusStatManager implements Serializable {
 			} else if (getSettings().getHMTRDistance().getValue() == Settings.HMTR_HIERDIST_JACCARD) {
                 if (getSettings().getVerbose()>0) System.out.println("HMTR - Jaccard distance");
 			}
-
+            m_HMTRHier = m_Schema.get_HMTRHierarchy();
             setTargetStatistic(new RegressionStat(num2, m_HMTRHier));
             setClusteringStatistic(new RegressionStat(num3, m_HMTRHier));
 

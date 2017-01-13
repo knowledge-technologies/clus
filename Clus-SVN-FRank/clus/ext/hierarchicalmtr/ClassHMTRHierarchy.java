@@ -1,6 +1,7 @@
 package clus.ext.hierarchicalmtr;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.ArrayList;
@@ -9,9 +10,9 @@ import java.util.Map;
 /**
  * Created by Vanja Mileski on 12/15/2016.
  */
-public class ClassHMTRHierarchy {
+public class ClassHMTRHierarchy implements Serializable{
 
-    public static boolean isIsHmtrHierCreated() {
+    public static boolean isHmtrHierCreated() {
         return IS_HMTR_HIER_CREATED;
     }
 
@@ -26,6 +27,7 @@ public class ClassHMTRHierarchy {
     private List<ClassHMTRNode> nodes;
 
     private Map<String, Integer> nodeDepth;
+    private Map<String, Double> nodeWeights;
 
     public List<ClassHMTRNode> getNodes() {
         return nodes;
@@ -63,6 +65,16 @@ public class ClassHMTRHierarchy {
 
     }
 
+    public void printWeights(){
+
+        for (Map.Entry<String, Double> entry : this.nodeWeights.entrySet()){
+
+            System.out.println("Attribute: " + entry.getKey() + ", weight: " + entry.getValue());
+
+        }
+
+    }
+
     public boolean nodeExists(String name){
 
         for (ClassHMTRNode node : this.getNodes()) {
@@ -71,7 +83,7 @@ public class ClassHMTRHierarchy {
         return false;
     }
 
-    public void createHMTRHierarchy(String hier){
+    public void createHMTRHierarchy(String hier, double weight){
 
         hier = hier.replace("(","");
         hier = hier.replace(")","");
@@ -95,8 +107,26 @@ public class ClassHMTRHierarchy {
 
         }
         calculateDepth();
+        calculateWeights(weight);
         setIsHmtrHierCreated(true);
     }
+
+    private void calculateWeights(double weight) {
+
+        this.nodeWeights = new HashMap<>();
+
+        for (Map.Entry<String, Integer> entry : this.nodeDepth.entrySet()){
+
+            this.nodeWeights.put(entry.getKey(),Math.pow(entry.getValue(),weight));
+
+        }
+
+    }
+
+    public double getWeight(String name) {
+        return nodeWeights.get(name).doubleValue();
+    }
+
 
     public List<ClassHMTRNode> getParents(ClassHMTRNode node){
 
@@ -180,7 +210,7 @@ public class ClassHMTRHierarchy {
 
 
     private int getNodeDepth(String nodeName){
-        return getNodeDepth(nodeName,0);
+        return getNodeDepth(nodeName,1);
     }
 
     private int getNodeDepth(String nodeName, int currentDepth){

@@ -1815,14 +1815,17 @@ public class Settings implements Serializable {
     public final static int HMTR_AGG_OR = 6;
     public final static int HMTR_AGG_COUNT = 7;
     public final static int HMTR_AGG_VAR = 8;
-    public final static int HMTR_AGG_STDEV = 9;
 
     INIFileSection m_SectionHMTR;
     protected INIFileNominal m_HMTRType;
     protected INIFileNominal m_HMTRDistance;
     protected INIFileNominal m_HMTRAggregation;
     protected INIFileString m_HMTRHierarchyString;
+    protected INIFileDouble m_HMTRHierarchyWeight;
 
+    public INIFileDouble get_HMTRHierarchyWeight() {
+        return m_HMTRHierarchyWeight;
+    }
 
     public INIFileSection getSectionHMTREnabled() {
         return m_SectionHMTR;
@@ -2808,6 +2811,7 @@ public class Settings implements Serializable {
         m_SectionHMTR.addNode(m_HMTRDistance = new INIFileNominal("Distance", HMTR_HIERDIST, 0));
         m_SectionHMTR.addNode(m_HMTRAggregation = new INIFileNominal("Aggregation", HMTR_AGGS, 0));
         m_SectionHMTR.addNode(m_HMTRHierarchyString = new INIFileString("Hierarchy"));
+        m_SectionHMTR.addNode(m_HMTRHierarchyWeight = new INIFileDouble("Weight"));
         m_SectionHMTR.setEnabled(false);
 
 		m_SectionILevelC = new INIFileSection("ILevelC");

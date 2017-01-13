@@ -187,6 +187,7 @@ public class Clus implements CMDLineArgsProvider {
 		preprocess(); // necessary in order to link the labels to the class
 						// hierarchy in HMC (needs to be before
 						// m_Induce.initialize())
+		m_Schema.setHMTRHierarchy(m_HmtrHierarchy);
 		m_Induce.initialize();
 		initializeAttributeWeights(m_Data);
 		m_Induce.initializeHeuristic();
@@ -210,10 +211,11 @@ public class Clus implements CMDLineArgsProvider {
 
         if(m_Sett.isSectionHMTREnabled()) {
             if( m_Sett.getVerbose()> 0) System.out.println("Creating hierarchy for HMTR\n");
-            m_HmtrHierarchy.createHMTRHierarchy(m_Sett.getHMTRHierarchyString().getStringValue());
+            m_HmtrHierarchy.createHMTRHierarchy(m_Sett.getHMTRHierarchyString().getStringValue(),m_Sett.get_HMTRHierarchyWeight().getValue());
             if( m_Sett.getVerbose()> 0) m_HmtrHierarchy.printHierarchy();
             if( m_Sett.getVerbose()> 0 && m_Sett.getHMTRType().getValue() == Settings.HMTR_HIERTYPE_TREE) m_HmtrHierarchy.printHierarchyTree();
             if( m_Sett.getVerbose()> 0) m_HmtrHierarchy.printDepth();
+            if( m_Sett.getVerbose()> 0) m_HmtrHierarchy.printWeights();
         }
 
     }

@@ -22,6 +22,7 @@
 
 package clus.data.type;
 
+import clus.ext.hierarchicalmtr.ClassHMTRHierarchy;
 import jeans.util.*;
 
 import java.io.*;
@@ -67,6 +68,12 @@ public class ClusSchema implements Serializable {
 	protected IntervalCollection m_Key = IntervalCollection.EMPTY;
 	protected int[] m_NbVt;
 	protected int m_NbHierarchicalMTR;
+
+    public ClassHMTRHierarchy get_HMTRHierarchy() {
+        return m_HMTRHierarchy;
+    }
+
+    public ClassHMTRHierarchy m_HMTRHierarchy;
 
     public int getNbHierarchicalMTR() {
         return m_NbHierarchicalMTR;
@@ -808,4 +815,8 @@ public class ClusSchema implements Serializable {
 		}
 		return buf.toString();
 	}
+
+    public void setHMTRHierarchy(ClassHMTRHierarchy m_hmtrHierarchy) {
+        m_HMTRHierarchy = m_hmtrHierarchy;
+    }
 }
