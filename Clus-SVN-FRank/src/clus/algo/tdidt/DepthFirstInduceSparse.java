@@ -84,45 +84,39 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
             initializeExamples(attrs, data);
             ArrayList<ClusAttrType> attrList = new ArrayList<ClusAttrType>();
-            ArrayList<ArrayList> examplelistList = new ArrayList<ArrayList>();
+            // ArrayList<ArrayList<SparseDataTuple>> examplelistList = new ArrayList<ArrayList<SparseDataTuple>>();
             for (int i = 0; i < attrs.length; i++) {
                 ClusAttrType at = attrs[i];
                 if (at.isSparse()) {
                     if (((SparseNumericAttrType) at).getExampleWeight() >= getSettings().getMinimalWeight()) {
                         attrList.add(at);
 
-                        Object[] exampleArray = ((SparseNumericAttrType) at).getExamples().toArray(); // tuples with non
-                                                                                                      // zero value for
-                                                                                                      // this attribute
-                        RowData exampleData = new RowData(exampleArray, exampleArray.length);
+                        // Object[] exampleArray = ((SparseNumericAttrType) at).getExamples().toArray(); // tuples with non-zero value for this attribute
+                        // RowData exampleData = new RowData(exampleArray, exampleArray.length);
 
-                        exampleData.sortSparse((SparseNumericAttrType) at, m_FindBestTest.getSortHelper()); // TODO:
-                                                                                                            // change
-                                                                                                            // sort
+                        // exampleData.sortSparse((SparseNumericAttrType) at, m_FindBestTest.getSortHelper());
 
-                        ArrayList<SparseDataTuple> exampleList = new ArrayList<SparseDataTuple>(); // tuples, sorted in
-                                                                                                   // descending order
-                                                                                                   // by at.value
-                        for (int j = 0; j < exampleData.getNbRows(); j++) {
-                            exampleList.add((SparseDataTuple) exampleData.getTuple(j));
-                        }
-                        ((SparseNumericAttrType) at).setExamples(exampleList);
-                        examplelistList.add(exampleList);
+                        // ArrayList<SparseDataTuple> exampleList = new ArrayList<SparseDataTuple>(); // tuples, sorted in descending order by at.value
+                        // for (int j = 0; j < exampleData.getNbRows(); j++) {
+                        //     exampleList.add((SparseDataTuple) exampleData.getTuple(j));
+                        // }
+                        // ((SparseNumericAttrType) at).setExamples(exampleList);
+                        // examplelistList.add(exampleList);
                     }
                 }
                 else {
                     attrList.add(at);
-                    examplelistList.add(null);
+                    // examplelistList.add(null);
                 }
             }
             Object[] attrArray = attrList.toArray();
-            Object[] examplelistArray = examplelistList.toArray();
-            induce(node, data, attrArray, examplelistArray);
+            // Object[] examplelistArray = examplelistList.toArray();
+            induce(node, data, attrArray, rnd);//, examplelistArray);
         }
     }
 
 
-    public void induce(ClusNode node, RowData data, Object[] attrs, Object[] examplelists) {
+    public void induce(ClusNode node, RowData data, Object[] attrs, ClusRandomNonstatic rnd) { // , Object[] examplelists
         // System.out.println("INDUCE SPARSE with " + attrs.length + " attributes and " + data.getNbRows() + "
         // examples");
         // Initialize selector and perform various stopping criteria
@@ -131,17 +125,17 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             return;
         }
         // Find best test
-
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = (ClusAttrType) attrs[i];
-            ArrayList examplelist = (ArrayList) examplelists[i];
-            if (at instanceof NominalAttrType)
-                m_FindBestTest.findNominal((NominalAttrType) at, data);
-            else if (examplelist == null) {
-                m_FindBestTest.findNumeric((NumericAttrType) at, data);
+            // ArrayList examplelist = (ArrayList) examplelists[i];
+            if (at instanceof NominalAttrType){
+            	m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
             }
+            // else if (examplelist == null) {
+            //    m_FindBestTest.findNumeric((NumericAttrType) at, data, null);
+            // }
             else {
-                m_FindBestTest.findNumeric((NumericAttrType) at, examplelist);
+                m_FindBestTest.findNumeric((NumericAttrType) at, data, rnd);//examplelist);
             }
         }
 
@@ -174,25 +168,25 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
                 child.initClusteringStat(m_StatManager, m_Root.getClusteringStat(), subsets[j]);
                 child.initTargetStat(m_StatManager, m_Root.getTargetStat(), subsets[j]);
                 ArrayList<ClusAttrType> attrList = new ArrayList<ClusAttrType>();
-                ArrayList<ArrayList> examplelistList = new ArrayList<ArrayList>();
+                // ArrayList<ArrayList> examplelistList = new ArrayList<ArrayList>();
                 for (int i = 0; i < attrs.length; i++) {
                     ClusAttrType at = (ClusAttrType) attrs[i];
                     if (at.isSparse()) {
-                        ArrayList newExampleList = ((SparseNumericAttrType) at).pruneExampleList(subsets[j]);
+                        ArrayList<SparseDataTuple> newExampleList = ((SparseNumericAttrType) at).pruneExampleList(subsets[j]);
                         double exampleWeight = getExampleWeight(newExampleList);
                         if (exampleWeight >= getSettings().getMinimalWeight()) {
                             attrList.add(at);
-                            examplelistList.add(newExampleList);
+                            // examplelistList.add(newExampleList);
                         }
                     }
                     else {
                         attrList.add(at);
-                        examplelistList.add(null);
+                        // examplelistList.add(null);
                     }
                 }
                 Object[] attrArray = attrList.toArray();
-                Object[] exampleListArray = examplelistList.toArray();
-                induce(child, subsets[j], attrArray, exampleListArray);
+                // Object[] exampleListArray = examplelistList.toArray();
+                induce(child, subsets[j], attrArray, rnd);//exampleListArray);
             }
         }
         else {
@@ -252,9 +246,9 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = (ClusAttrType) attrs[i];
             if (at instanceof NominalAttrType)
-                m_FindBestTest.findNominal((NominalAttrType) at, data);
+                m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
             else
-                m_FindBestTest.findNumeric((NumericAttrType) at, data);
+                m_FindBestTest.findNumeric((NumericAttrType) at, data, rnd);
         }
 
         // Partition data + recursive calls
@@ -262,7 +256,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         if (best.hasBestTest()) {
             node.testToNode(best);
             // Output best test
-            if (Settings.VERBOSE > 0)
+            if (Settings.VERBOSE > 1)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();

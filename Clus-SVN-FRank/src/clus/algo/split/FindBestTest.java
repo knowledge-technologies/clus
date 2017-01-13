@@ -31,6 +31,8 @@ import clus.data.rows.RowDataSortHelper;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
+import clus.data.type.SparseNumericAttrType;
+import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
@@ -93,10 +95,10 @@ public class FindBestTest {
     }
 
 
-    public void findNominal(NominalAttrType at, RowData data) {
+    public void findNominal(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) {
         // Reset positive statistic
         // long start_time = System.currentTimeMillis();
-        RowData sample = createSample(data, null);
+        RowData sample = createSample(data, rnd);
         int nbvalues = at.getNbValues();
         m_BestTest.reset(nbvalues + 1);
         int nb_rows = sample.getNbRows();
@@ -164,6 +166,7 @@ public class FindBestTest {
         Random rn;
         if (rnd == null) {
             rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
+            ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
         }
         else {
             rn = rnd.getRandom(ClusRandomNonstatic.RANDOM_EXTRATREE);
@@ -184,32 +187,35 @@ public class FindBestTest {
     }
 
 
-    public void findNumeric(NumericAttrType at, RowData data) {
-        RowData sample = createSample(data, null);
+    public void findNumeric(NumericAttrType at, RowData data, ClusRandomNonstatic rnd) {
+        RowData sample = createSample(data, rnd);
         DataTuple tuple;
-        if (at.isSparse()) {
-            sample.sortSparse(at, m_SortHelper);
-        }
-        else {
-            sample.sort(at);
-        }
+//        if (at.isSparse()) {
+//            sample.sortSparse(at, m_SortHelper);
+//        }
+//        else {
+//            sample.sort(at);
+//        }
+        Integer[] indicesSorted = sample.smartSort(at);
+        
         m_BestTest.reset(2);
         // Missing values
-        int first = 0;
+        int pos = 0;
         int nb_rows = sample.getNbRows();
         // Copy total statistic into corrected total
         m_BestTest.copyTotal();
         if (at.hasMissing()) {
             // Because of sorting, all missing values are in the front :-)
-            while (first < nb_rows && at.isMissing(tuple = sample.getTuple(first))) {
-                m_BestTest.m_MissingStat.updateWeighted(tuple, first);
-                first++;
+            while (pos < nb_rows && at.isMissing(tuple = sample.getTuple(indicesSorted[pos]))) {
+                m_BestTest.m_MissingStat.updateWeighted(tuple, indicesSorted[pos]);
+                pos++;
             }
             m_BestTest.subtractMissing();
         }
+        double minValue =  (pos < nb_rows) ? at.getNumeric(sample.getTuple(indicesSorted[nb_rows - 1])) : Double.NaN;
         double prev = Double.NaN;
-        for (int i = first; i < nb_rows; i++) {
-            tuple = sample.getTuple(i);
+        for (int i = pos; i < nb_rows; i++) {
+            tuple = sample.getTuple(indicesSorted[i]);
             double value = at.getNumeric(tuple);
             if (value != prev) {
                 if (value != Double.NaN) {
@@ -219,6 +225,9 @@ public class FindBestTest {
                 prev = value;
             }
             m_BestTest.m_PosStat.updateWeighted(tuple, i);
+            if (value == minValue && at instanceof SparseNumericAttrType){
+            	break;
+            }
         }
     }
 
@@ -229,6 +238,7 @@ public class FindBestTest {
         Random rn;
         if (rnd == null) {
             rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
+            ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
         }
         else {
             rn = rnd.getRandom(ClusRandomNonstatic.RANDOM_EXTRATREE);
@@ -249,36 +259,33 @@ public class FindBestTest {
 
         m_BestTest.reset(2);
         // Missing values
-        int pos = 0; // <--- first = 0
+        int pos = 0;
         int nb_rows = data.getNbRows();
         // Copy total statistic into corrected total
         m_BestTest.copyTotal();
         if (at.hasMissing()) {
             // Because of sorting, all missing values are in the front :-)
-            while (pos < nb_rows && (tuple = data.getTuple(indicesSorted[pos])).hasNumMissing(idx)) { // <--- first < nb_rows && (tuple = data.getTuple(first)).hasNumMissing(idx)
-                m_BestTest.m_MissingStat.updateWeighted(tuple, indicesSorted[pos]); // <-- first
-                pos++; // <--- first++;
+            while (pos < nb_rows && (tuple = data.getTuple(indicesSorted[pos])).hasNumMissing(idx)) {
+                m_BestTest.m_MissingStat.updateWeighted(tuple, indicesSorted[pos]);
+                pos++;
             }
             m_BestTest.subtractMissing();
         }
-        // here, now indicesSorted[pos] (first before) is the index of the tuple that has the highest (and non-missing)
-        // value of the attribute
+        // now indicesSorted[pos] is the index of the tuple that has the highest (and non-missing) value of the attribute
 
         // Generate the random split value based on the original data
-
-        // System.out.println("first = " + first + "/ datasize = " + nb_rows);
-        if (pos == nb_rows) {// this can prevent illegal tests; <--- first == nb_rows
+        if (pos == nb_rows) {// this can prevent illegal tests;
             m_BestTest.m_BestHeur = Double.NEGATIVE_INFINITY;
         }
         else {
-            double min_value = orig_data.getTuple(indicesSorted[nb_rows - 1]).getDoubleVal(idx);// <-- orig_data.getTuple(nb_rows-1).getDoubleVal(idx);
-            double max_value = orig_data.getTuple(indicesSorted[pos]).getDoubleVal(idx);// <-- orig_data.getTuple(first).getDoubleVal(idx); // sort
+            double min_value = data.getTuple(indicesSorted[nb_rows - 1]).getDoubleVal(idx);
+            double max_value = data.getTuple(indicesSorted[pos]).getDoubleVal(idx);
             double split_value = (max_value - min_value) * rn.nextDouble() + min_value;
-            for (int i = pos; i < nb_rows; i++) { // <-- i = first; ...
-                tuple = data.getTuple(indicesSorted[i]); // <-- data.getTuple(i);
+            for (int i = pos; i < nb_rows; i++) {
+                tuple = data.getTuple(indicesSorted[i]);
                 if (tuple.getDoubleVal(idx) <= split_value)
                     break;
-                m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]); // <-- updateWeighted(tuple, i)
+                m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]);
             }
             m_BestTest.updateNumeric(split_value, at);
         }
@@ -288,8 +295,9 @@ public class FindBestTest {
     }
 
 
-    // for sparse attributes (already sorted)
-    public void findNumeric(NumericAttrType at, ArrayList data) {
+   @Deprecated
+    public void findNumeric(NumericAttrType at, ArrayList data){
+    	 // for sparse attributes, (already sorted data)
         ArrayList sample;
         if (getSettings().getTreeSplitSampling() > 0) {
             RowData tmp = new RowData(data, getSchema());
@@ -338,7 +346,7 @@ public class FindBestTest {
         m_BestTest.updateNumeric(0.0, at); // otherwise tests of the form "X>0.0" are not considered
     }
 
-
+    @Deprecated
     public void findNumericRandom(NumericAttrType at, RowData data, RowData orig_data, Random rn) {
         // TODO: if this method gets completed, sampling of the RowDatas must be included as well
         DataTuple tuple;
@@ -421,7 +429,15 @@ public class FindBestTest {
 
 
     private RowData createSample(RowData original, ClusRandomNonstatic rnd) {
-        return original.sample(getSettings().getTreeSplitSampling(), rnd);
+    	int N = getSettings().getTreeSplitSampling();
+    	if (N == 0){
+    		return original.sample(N, rnd);
+    	}
+    	else{
+    		String message = String.format("The value of SplitSampling = %d will result in wrong results.\n"
+    				+ "Use SplitSampling = 0 or correct the code. Exiting now.", N);
+    		throw new RuntimeException(message);
+    	}
     }
 
 }

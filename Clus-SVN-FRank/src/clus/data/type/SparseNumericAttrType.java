@@ -86,7 +86,7 @@ public class SparseNumericAttrType extends NumericAttrType {
     }
 
 
-    public ArrayList pruneExampleList(RowData data) {
+    public ArrayList<SparseDataTuple> pruneExampleList(RowData data) {
         ArrayList<SparseDataTuple> dataList = data.toArrayList();
         ArrayList<SparseDataTuple> newExamples = new ArrayList<SparseDataTuple>();
         for (int i = 0; i < m_Examples.size(); i++) {

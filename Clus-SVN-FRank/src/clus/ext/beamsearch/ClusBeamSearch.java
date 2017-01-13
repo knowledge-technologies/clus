@@ -221,9 +221,9 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
             ClusAttrType at = attrs[i];
             // System.out.println("Attribute: "+at.getName());
             if (at instanceof NominalAttrType)
-                find.findNominal((NominalAttrType) at, data);
+                find.findNominal((NominalAttrType) at, data, null);
             else
-                find.findNumeric((NumericAttrType) at, data);
+                find.findNumeric((NumericAttrType) at, data, null);
             // found good test for attribute ?
             if (sel.hasBestTest()) {
                 ClusNode ref_leaf = (ClusNode) leaf.cloneNode();

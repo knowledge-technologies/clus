@@ -136,9 +136,9 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
                 sel.resetBestTest();
                 ClusAttrType at = attrs[i];
                 if (at instanceof NominalAttrType)
-                    find.findNominal((NominalAttrType) at, data);
+                    find.findNominal((NominalAttrType) at, data, null);
                 else
-                    find.findNumeric((NumericAttrType) at, data);
+                    find.findNumeric((NumericAttrType) at, data, null);
                 // found good test for attribute ?
                 if (sel.hasBestTest()) {
                     NodeTest test = sel.updateTest();

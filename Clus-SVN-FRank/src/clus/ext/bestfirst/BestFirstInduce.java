@@ -242,9 +242,9 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
             if (at instanceof NominalAttrType)
-                m_FindBestTest.findNominal((NominalAttrType) at, data);
+                m_FindBestTest.findNominal((NominalAttrType) at, data, null);
             else
-                m_FindBestTest.findNumeric((NumericAttrType) at, data);
+                m_FindBestTest.findNumeric((NumericAttrType) at, data, null);
         }
 
         // Partition data + recursive calls
@@ -325,9 +325,9 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
             if (at instanceof NominalAttrType)
-                m_FindBestTest.findNominal((NominalAttrType) at, data);
+                m_FindBestTest.findNominal((NominalAttrType) at, data, null);
             else
-                m_FindBestTest.findNumeric((NumericAttrType) at, data);
+                m_FindBestTest.findNumeric((NumericAttrType) at, data, null);
         }
 
         // in case we want to print alternative splits
@@ -369,9 +369,9 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
                 for (int i = 0; i < attrs.length; i++) {
                     ClusAttrType at = attrs[i];
                     if (at instanceof NominalAttrType)
-                        m_FindBestTest.findNominal((NominalAttrType) at, subsetsLocal[j]);
+                        m_FindBestTest.findNominal((NominalAttrType) at, subsetsLocal[j], null);
                     else
-                        m_FindBestTest.findNumeric((NumericAttrType) at, subsetsLocal[j]);
+                        m_FindBestTest.findNumeric((NumericAttrType) at, subsetsLocal[j], null);
                 }
 
                 // find the best test
@@ -422,9 +422,9 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
             ClusAttrType at = attrs[i];
             initSelectorAndStopCrit(node, data);
             if (at instanceof NominalAttrType)
-                m_FindBestTest.findNominal((NominalAttrType) at, data);
+                m_FindBestTest.findNominal((NominalAttrType) at, data, null);
             else
-                m_FindBestTest.findNumeric((NumericAttrType) at, data);
+                m_FindBestTest.findNumeric((NumericAttrType) at, data, null);
             CurrentBestTestAndHeuristic cbt = m_FindBestTest.getBestTest();
             if (cbt.hasBestTest()) {
                 NodeTest test = cbt.updateTest();

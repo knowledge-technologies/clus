@@ -247,6 +247,9 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
+    	if(rnd == null){
+    		ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
+    	}
         // rnd may be null due to some calls of induce that do not support parallelisation yet.
 
         // System.out.println("nonsparse induce");
@@ -286,10 +289,10 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 // System.out.println("HERE");
             }
             else if (at instanceof NominalAttrType) {
-                m_FindBestTest.findNominal((NominalAttrType) at, data);
+                m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
             }
             else {
-                m_FindBestTest.findNumeric((NumericAttrType) at, data);
+                m_FindBestTest.findNumeric((NumericAttrType) at, data, rnd);
             }
         }
 
@@ -416,9 +419,9 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             ClusAttrType at = attrs[i];
             initSelectorAndStopCrit(node, data);
             if (at instanceof NominalAttrType)
-                m_FindBestTest.findNominal((NominalAttrType) at, data);
+                m_FindBestTest.findNominal((NominalAttrType) at, data, null);
             else
-                m_FindBestTest.findNumeric((NumericAttrType) at, data);
+                m_FindBestTest.findNumeric((NumericAttrType) at, data, null);
             CurrentBestTestAndHeuristic cbt = m_FindBestTest.getBestTest();
             if (cbt.hasBestTest()) {
                 NodeTest test = cbt.updateTest();

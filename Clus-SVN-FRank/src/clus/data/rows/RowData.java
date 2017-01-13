@@ -37,6 +37,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.error.ClusErrorList;
+import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.jeans.util.compound.DoubleObject;
 import clus.jeans.util.sort.MSortable;
 import clus.jeans.util.sort.MSorter;
@@ -262,7 +263,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    public void addTo(ArrayList array) {
+    public void addTo(ArrayList<DataTuple> array) {
         for (int i = 0; i < getNbRows(); i++) {
             array.add(getTuple(i));
         }
@@ -1091,7 +1092,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         return new RowData(res, getSchema().cloneSchema());
     }
 
-
+    // Be careful when using this method! Current use in FindBestTest is wrong in the case when N != 0
     public RowData sample(int N, ClusRandomNonstatic rnd) {
         if (N < 0)
             throw new IllegalArgumentException("N should be larger than or equal to zero");
@@ -1102,6 +1103,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         // sample with replacement
         int i;
         if (rnd == null) {
+        	ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
             for (int size = 0; size < N; size++) {
                 i = ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE, nbRows);
                 res.add(getTuple(i));

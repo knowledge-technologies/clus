@@ -22,6 +22,7 @@
 
 package clus.jeans.util.sort;
 
+@Deprecated
 public class MSorter {
 
     public static void quickSort(MSortable x, int off, int len) {

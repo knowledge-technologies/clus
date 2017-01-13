@@ -111,7 +111,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     
     public static final int m_PARALLEL_TRAP_BestFirst_getDescriptiveAttributes = 0;
     public static final int m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes = 1;
-    private static boolean[] m_WarningsGiven = new boolean[2];
+    public static final int m_PARALLEL_TRAP_staticRandom = 2;
+    private static boolean[] m_WarningsGiven = new boolean[3];
     
 
     public ClusEnsembleInduce(ClusSchema schema, Settings sett, Clus clus) throws ClusException, IOException {
@@ -1435,6 +1436,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     			break;
     		case ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes:
     			message = "clus.algo.tdidt.DepthFirstInduce.getDescriptiveAttributes(ClusRandomNonstatic) has been called. This may not work in parallel setting.";
+    			break;
+    		case ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom:
+    			message = "Static random has been called. This may not work in parallel setting.";
+    			break;
     		default:
     			throw new RuntimeException("Wrong reason for giveParallelisationWarning: " + reason);
     		}

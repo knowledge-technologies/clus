@@ -232,9 +232,9 @@ public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
             // System.out.println("Attribute: "+at.getName());
             // look for the best avlue of the attribute the attribute
             if (at instanceof NominalAttrType)
-                find.findNominal((NominalAttrType) at, data);
+                find.findNominal((NominalAttrType) at, data, null);
             else
-                find.findNumeric((NumericAttrType) at, data);
+                find.findNumeric((NumericAttrType) at, data, null);
             // found good test for attribute (the test type has been changed in the finnominal function)?
             if (sel.hasBestTest()) {
                 ClusNode ref_leaf = (ClusNode) leaf.cloneNode();
