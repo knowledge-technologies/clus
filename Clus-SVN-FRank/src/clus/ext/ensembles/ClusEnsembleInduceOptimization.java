@@ -2,20 +2,27 @@
 package clus.ext.ensembles;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.TupleIterator;
-import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 
 
-public class ClusEnsembleInduceOptimization {
+public abstract class ClusEnsembleInduceOptimization implements Serializable{
 
-    static int[] m_HashCodeTuple;
-
+    protected int[] m_HashCodeTuple;
+    /**
+     * When updating predictions in the subclass, the method <br>
+     * {@code m_ShouldAddPredictions ? addModelPredictionForTuples : initModelPredictionForTuples} <br>
+     * will used. This is needed in the parallel setting.
+     */
+    protected boolean m_ShouldAddPredictions = false;
+    protected ClusReadWriteLock m_ShouldAddPredictionsLock = new ClusReadWriteLock();
+    
 
     public ClusEnsembleInduceOptimization(TupleIterator train, TupleIterator test, int nb_tuples) throws IOException, ClusException {
         m_HashCodeTuple = new int[nb_tuples];
@@ -68,7 +75,7 @@ public class ClusEnsembleInduceOptimization {
     }
 
 
-    public static int locateTuple(DataTuple tuple) {
+    public int locateTuple(DataTuple tuple) {
         int position = -1;
         boolean found = false;
         int i = 0;
@@ -82,11 +89,14 @@ public class ClusEnsembleInduceOptimization {
         }
         return position;
     }
-
-
+    
+    
     public void initPredictions(ClusStatistic stat) {
     }
 
+    public void updatePredictionsForTuples(){
+    	throw new RuntimeException("This method should be implemented by a subclass.");
+    };
 
     public void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException {
 
@@ -97,7 +107,14 @@ public class ClusEnsembleInduceOptimization {
 
     }
 
-
+    /**
+     * The average predictions {@code avg_predictions} of {@code nb_models - 1}, and the predictions {@code predictions} of one additional model
+     * are combined into the average predictions of all {@code nb_models}.
+     * @param avg_predictions
+     * @param predictions
+     * @param nb_models
+     * @return
+     */
     public static double[] incrementPredictions(double[] avg_predictions, double[] predictions, double nb_models) {
         // the current averages are stored in the avg_predictions
         int plength = avg_predictions.length;
@@ -108,7 +125,7 @@ public class ClusEnsembleInduceOptimization {
     }
 
 
-    public static double[][] incrementPredictions(double[][] sum_predictions, double[][] predictions, int nb_models) {
+    public double[][] incrementPredictions(double[][] sum_predictions, double[][] predictions, int nb_models) {
         // the current sums are stored in sum_predictions
         double[][] result = new double[sum_predictions.length][];
         for (int i = 0; i < sum_predictions.length; i++) {
@@ -120,9 +137,13 @@ public class ClusEnsembleInduceOptimization {
         return result;
     }
 
-
+    /**
+     * Returns the componentwise sum of the current sums and another predictions
+     * @param sum_predictions The current sums
+     * @param predictions
+     * @return
+     */
     public static double[][] incrementPredictions(double[][] sum_predictions, double[][] predictions) {
-        // the current sums are stored in sum_predictions
         double[][] result = new double[sum_predictions.length][];
         for (int i = 0; i < sum_predictions.length; i++) {
             result[i] = new double[sum_predictions[i].length];
@@ -134,7 +155,11 @@ public class ClusEnsembleInduceOptimization {
     }
 
 
-    // transform the class counts to majority vote (the one with max votes gets 1)
+    /**
+     * Transform the class counts to majority vote (the one with max votes gets 1)
+     * @param m_Counts
+     * @return
+     */
     public static double[][] transformToMajority(double[][] m_Counts) {
         int[] maxPerTarget = new int[m_Counts.length];
         for (int i = 0; i < m_Counts.length; i++) {
@@ -156,7 +181,11 @@ public class ClusEnsembleInduceOptimization {
     }
 
 
-    // transform the class counts to probability distributions
+    /**
+     * Transform the class counts to probability distributions.
+     * @param m_Counts
+     * @return
+     */
     public static double[][] transformToProbabilityDistribution(double[][] m_Counts) {
         double[] sumPerTarget = new double[m_Counts.length];
         for (int i = 0; i < m_Counts.length; i++)
@@ -174,40 +203,47 @@ public class ClusEnsembleInduceOptimization {
     }
 
 
-    public static int getPredictionLength(int tuple) {// i.e., get number of targets
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
-            return ClusEnsembleInduceOptRegHMLC.getPredictionLength(tuple);
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
-            return ClusEnsembleInduceOptClassification.getPredictionLength(tuple);
+    public int getPredictionLength(int tuple) {// i.e., get number of targets
+//        if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
+//            return ClusEnsembleInduceOptRegHMLC.getPredictionLength(tuple);
+//        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
+//            return ClusEnsembleInduceOptClassification.getPredictionLength(tuple);
         return -1;
     }
 
 
-    public static double getPredictionValue(int tuple, int attribute) {
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
-            return ClusEnsembleInduceOptRegHMLC.getPredictionValue(tuple, attribute);
+    public double getPredictionValue(int tuple, int attribute) {
+//        if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
+//            return ClusEnsembleInduceOptRegHMLC.getPredictionValue(tuple, attribute);
         return -1;
     }
 
 
-    public static double[] getPredictionValueClassification(int tuple, int attribute) {
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
-            return ClusEnsembleInduceOptClassification.getPredictionValueClassification(tuple, attribute);
+    public double[] getPredictionValueClassification(int tuple, int attribute) {
+//        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
+//            return ClusEnsembleInduceOptClassification.getPredictionValueClassification(tuple, attribute);
         return null;
     }
 
 
-    public static void roundPredictions() {
-        System.out.println("Rounding up predictions!");
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
-            ClusEnsembleInduceOptClassification.roundPredictions();
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
-            ClusEnsembleInduceOptRegHMLC.roundPredictions();
-        else {
+    public void roundPredictions() {
+//        System.out.println("Rounding up predictions!");
+//        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
+//            ClusEnsembleInduceOptClassification.roundPredictions();
+//        else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
+//            ClusEnsembleInduceOptRegHMLC.roundPredictions();
+//        else {
             System.err.println("Illegal call of the method roundPredictions from class ClusEnsembleInduceOptimization!");
             System.err.println("Execution proceeds without rounding up of the predictions.");
-        }
+//        }
 
+    }
+    
+    protected boolean shouldAddPredictions(){
+		m_ShouldAddPredictionsLock.readingLock();
+    	boolean ans = m_ShouldAddPredictions;
+    	m_ShouldAddPredictionsLock.readingUnlock();
+    	return ans;
     }
 
 }

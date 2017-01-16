@@ -183,10 +183,10 @@ public class TestKnnModel implements ClusModel, Serializable {
         System.out.println(Settings.kNN_distanceWeight.getStringValue());
         System.out.println("------------------------------------------------");
 
-        // save prediction template
+		// save prediction template
         // @todo : should all this be repalced with:
         // statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
-        if (cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY) {
+        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()) {
                 m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelTrheshold());
             }
@@ -194,9 +194,9 @@ public class TestKnnModel implements ClusModel, Serializable {
                 m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
             }
         }
-        else if (cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION)
+        else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
             m_StatTemplate = new RegressionStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
-        else if (cr.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES) {
+        else if (ClusStatManager.getMode() == ClusStatManager.MODE_TIME_SERIES) {
             // TimeSeriesAttrType attr =
             // this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET)[0];
             // statTemplate = new TimeSeriesStat(attxr, new DTWTimeSeriesDist(attr), 0 );
@@ -205,7 +205,7 @@ public class TestKnnModel implements ClusModel, Serializable {
             System.out.println(m_StatTemplate.getDistanceName());
             System.out.println("----------------");
         }
-        else if (cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             m_StatTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
             System.out.println("----------------------");
             System.out.println(m_StatTemplate.getDistanceName());

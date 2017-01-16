@@ -14,9 +14,11 @@ import clus.util.ClusFormat;
 
 public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization {
 
-    static double[][] m_AvgPredictions;
-
-
+    private double[][] m_AvgPredictions;
+    
+    private ClusReadWriteLock m_AvgPredictionsLock = new ClusReadWriteLock();
+    
+    
     public ClusEnsembleInduceOptRegHMLC(TupleIterator train, TupleIterator test, int nb_tuples) throws IOException, ClusException {
         super(train, test, nb_tuples);
     }
@@ -32,6 +34,22 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
     }
 
 
+    public synchronized void updatePredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test, int bagIndex){
+		m_ShouldAddPredictionsLock.writingLock();
+    	boolean shouldAdd = m_ShouldAddPredictions;
+		m_AvgPredictionsLock.writingLock();
+		if (shouldAdd){
+			
+			
+		}
+
+    
+		m_AvgPredictionsLock.writingUnlock();
+		m_ShouldAddPredictionsLock.writingUnlock();
+    	
+    	
+    }
+    
     public void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException {
         if (train != null) {
             train.init();
@@ -84,17 +102,17 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
     }
 
 
-    public static int getPredictionLength(int tuple) {
+    public int getPredictionLength(int tuple) {
         return m_AvgPredictions[tuple].length;
     }
 
 
-    public static double getPredictionValue(int tuple, int attribute) {
+    public double getPredictionValue(int tuple, int attribute) {
         return m_AvgPredictions[tuple][attribute];
     }
 
 
-    public static void roundPredictions() {
+    public void roundPredictions() {
         // System.out.println("Rounding up predictions!");
         for (int i = 0; i < m_AvgPredictions.length; i++) {
             for (int j = 0; j < m_AvgPredictions[i].length; j++) {

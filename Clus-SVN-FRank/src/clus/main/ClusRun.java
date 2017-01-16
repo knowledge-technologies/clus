@@ -149,18 +149,10 @@ public class ClusRun extends ClusModelInfoList {
 
     /***************************************************************************
      * Training set
-     * 
-     * @throws InterruptedException
      ***************************************************************************/
 
     public final ClusData getTrainingSet() {
-        try {
-            m_Lock.readingLock();
-        }
-        catch (InterruptedException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
+        m_Lock.readingLock();
         ClusData train = m_Train;
         m_Lock.readingUnlock();
         return train;

@@ -25,7 +25,7 @@ public class ClusBoostingForest extends ClusForest {
 
 
     public ClusBoostingForest(ClusStatManager statmgr) {
-        super(statmgr);
+        super(statmgr, null);
     }
 
 

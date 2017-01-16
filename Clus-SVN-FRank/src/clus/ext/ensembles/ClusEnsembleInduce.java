@@ -236,6 +236,37 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         System.out.println("Perform Feature Ranking = " + m_FeatRank);
 
         prepareEnsembleTargetSubspaces();
+        
+        
+        m_OForest = new ClusForest(getStatManager(), m_Optimization);
+        m_DForest = new ClusForest(getStatManager(), m_Optimization);
+        TupleIterator train_iterator = null; // = train set iterator
+        TupleIterator test_iterator = null; // = test set iterator
+
+        m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+
+        if (m_OptMode) {
+            train_iterator = cr.getTrainIter();
+            if (cr.getTestIter() != null) {
+                test_iterator = cr.getTestSet().getIterator();
+                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
+                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
+                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
+                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
+            }
+            else {
+                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
+                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
+                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
+                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
+            }
+            m_Optimization.initPredictions(m_OForest.getStat());
+            
+            m_OForest.setOptimization(m_Optimization);
+            m_DForest.setOptimization(m_Optimization);
+        }
+        
+        
 
         switch (cr.getStatManager().getSettings().getEnsembleMethod()) {
             case Settings.ENSEMBLE_BAGGING: { // Bagging
@@ -293,7 +324,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         }
         if (m_OptMode) {
-            ClusEnsembleInduceOptimization.roundPredictions();
+            m_Optimization.roundPredictions();
         }
 
         postProcessForest(cr);
@@ -315,29 +346,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     // this ensemble method builds random forests (i.e. chooses the best test from a subset of attributes at each node),
     // but does not construct bootstrap replicates of the dataset
     public void induceRForestNoBagging(ClusRun cr) throws ClusException, IOException {
-        m_OForest = new ClusForest(getStatManager());
-        m_DForest = new ClusForest(getStatManager());
         long summ_time = 0; // = ResourceInfo.getTime();
-        TupleIterator train_iterator = null; // = train set iterator
-        TupleIterator test_iterator = null; // = test set iterator
-
-        if (m_OptMode) {
-            train_iterator = cr.getTrainIter();
-            if (m_BagClus.hasTestSet()) {
-                test_iterator = cr.getTestSet().getIterator();
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-            }
-            else {
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-            }
-            m_Optimization.initPredictions(m_OForest.getStat());
-        }
+        
+        TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
+        TupleIterator test_iterator = m_OptMode ? cr.getTestIter() :null; // = test set iterator
 
         Random bagSeedGenerator = new Random(getSettings().getRandomSeed());
         int[] seeds = new int[m_NbMaxBags];
@@ -395,32 +407,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     public void induceSubspaces(ClusRun cr) throws ClusException, IOException {
-        m_OForest = new ClusForest(getStatManager());
-        m_DForest = new ClusForest(getStatManager());
         long summ_time = 0; // = ResourceInfo.getTime();
-        TupleIterator train_iterator = null; // = train set iterator
-        TupleIterator test_iterator = null; // = test set iterator
+        TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
+        TupleIterator test_iterator = m_OptMode ? cr.getTestIter() :null; // = test set iterator
 
         m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
-
-        if (m_OptMode) {
-            train_iterator = cr.getTrainIter();
-            if (m_BagClus.hasTestSet()) {
-                test_iterator = cr.getTestSet().getIterator();
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-
-            }
-            else {
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-            }
-            m_Optimization.initPredictions(m_OForest.getStat());
-        }
 
         Random bagSeedGenerator = new Random(getSettings().getRandomSeed());
         int[] seeds = new int[m_NbMaxBags];
@@ -487,32 +478,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             ((RowData) cr.getTestSet()).addIndices();
         }
 
-        m_OForest = new ClusForest(getStatManager());
-        m_DForest = new ClusForest(getStatManager());
-        TupleIterator train_iterator = null; // = train set iterator
-        TupleIterator test_iterator = null; // = test set iterator
+        TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
+        TupleIterator test_iterator = m_OptMode ? cr.getTestIter() :null; // = test set iterator
+
         OOBSelection oob_total = null; // = total OOB selection
         OOBSelection oob_sel = null; // = current OOB selection
 
         m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
 
-        if (m_OptMode) {
-            train_iterator = cr.getTrainIter();
-            if (cr.getTestIter() != null) {
-                test_iterator = cr.getTestSet().getIterator();
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-            }
-            else {
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-            }
-            m_Optimization.initPredictions(m_OForest.getStat());
-        }
+
         // We store the old maxDepth to this if needed. Thus we get the right depth to .out files etc.
         int origMaxDepth = -1;
         if (getSettings().isEnsembleRandomDepth()) {
@@ -690,21 +664,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
             // if number of randomly selected targets should also be randomized
             if (isRandom)
-                subspaceCount = ClusRandom.nextInt(ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING_SUBSPACE_SIZE_SELECTION, 1, targets.length); // use
-                                                                                                                                             // a
-                                                                                                                                             // separate
-                                                                                                                                             // randomizer
-                                                                                                                                             // for
-                                                                                                                                             // randomized
-                                                                                                                                             // target
-                                                                                                                                             // subspace
-                                                                                                                                             // size
-                                                                                                                                             // selection
+                subspaceCount = ClusRandom.nextInt(ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING_SUBSPACE_SIZE_SELECTION, 1, targets.length); // use a separate randomizer for randomized target subspace size selection
 
             // randomly select targets
-            ClusAttrType[] selected = selectRandomSubspaces(targets, subspaceCount, ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING, null); // inject
-                                                                                                                                         // ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING
-                                                                                                                                         // randomizer
+            ClusAttrType[] selected = selectRandomSubspaces(targets, subspaceCount, ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING, null); // inject ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING randomizer
 
             // enable selected targets
             for (int i = 0; i < selected.length; i++)
@@ -932,8 +895,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     public void makeForestFromBags(ClusRun cr, TupleIterator train_iterator, TupleIterator test_iterator) throws ClusException, IOException {
         try {
-            m_OForest = new ClusForest(getStatManager());
-            m_DForest = new ClusForest(getStatManager());
             OOBSelection oob_total = null; // = total OOB selection
             OOBSelection oob_sel = null; // = current OOB selection
             BaggingSelection msel = null;
@@ -1008,31 +969,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     public void induceBaggingSubspaces(ClusRun cr) throws ClusException, IOException {
         int nbrows = cr.getTrainingSet().getNbRows();
-        m_OForest = new ClusForest(getStatManager());
-        m_DForest = new ClusForest(getStatManager());
+
         long summ_time = 0; // = ResourceInfo.getTime();
-        TupleIterator train_iterator = null; // = train set iterator
-        TupleIterator test_iterator = null; // = test set iterator
+
+        TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
+        TupleIterator test_iterator = m_OptMode ? cr.getTestIter() :null; // = test set iterator
+        
         OOBSelection oob_total = null; // = total OOB selection
         OOBSelection oob_sel = null; // = current OOB selection
-
-        if (m_OptMode) {
-            train_iterator = cr.getTrainIter();
-            if (m_BagClus.hasTestSet()) {
-                test_iterator = cr.getTestSet().getIterator();
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-            }
-            else {
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-            }
-            m_Optimization.initPredictions(m_OForest.getStat());
-        }
 
         Random bagSeedGenerator = new Random(getSettings().getRandomSeed());
         int[] seeds = new int[m_NbMaxBags];
@@ -1109,32 +1053,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     public void induceExtraTrees(ClusRun cr) throws ClusException, IOException, InterruptedException {
-        m_OForest = new ClusForest(getStatManager());
-        m_DForest = new ClusForest(getStatManager());
         long summ_time = 0; // = ResourceInfo.getTime();
-        TupleIterator train_iterator = null; // = train set iterator
-        TupleIterator test_iterator = null; // = test set iterator
+        TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
+        TupleIterator test_iterator = m_OptMode ? cr.getTestIter() : null; // = test set iterator
 
         m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
-
-        if (m_OptMode) {
-            train_iterator = cr.getTrainIter();
-            if (m_BagClus.hasTestSet()) {
-                test_iterator = cr.getTestSet().getIterator();
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
-
-            }
-            else {
-                if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-                if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
-            }
-            m_Optimization.initPredictions(m_OForest.getStat());
-        }
 
         Random bagSeedGenerator = new Random(getSettings().getRandomSeed());
         int[] seeds = new int[m_NbMaxBags];

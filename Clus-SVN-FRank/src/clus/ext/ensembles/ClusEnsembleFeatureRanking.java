@@ -546,7 +546,7 @@ public class ClusEnsembleFeatureRanking {
     }
 
 
-    public double[] getAttributeInfo(String attribute) throws InterruptedException {
+    public double[] getAttributeInfo(String attribute) {
         m_Lock.readingLock();
         double[] info = Arrays.copyOf(m_AllAttributes.get(attribute), m_AllAttributes.get(attribute).length);
         m_Lock.readingUnlock();

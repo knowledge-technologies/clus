@@ -93,7 +93,7 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
         ClusBeamSimilarityOutput bsimout = new ClusBeamSimilarityOutput(getSettings());
         bsimout.appendToFile(lst, cr);
         boolean toForest = cr.getStatManager().getSettings().isBeamToForest();
-        ClusForest bForest = new ClusForest(getStatManager());
+        ClusForest bForest = new ClusForest(getStatManager(), null); // no optimisation for now
 
         for (int i = 0; i < lst.size(); i++) {
             ClusBeamModel mdl = (ClusBeamModel) lst.get(lst.size() - i - 1);

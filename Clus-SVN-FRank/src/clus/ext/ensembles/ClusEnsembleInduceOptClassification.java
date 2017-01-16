@@ -15,7 +15,7 @@ import clus.util.ClusFormat;
 
 public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptimization {
 
-    static double[][][] m_AvgPredictions;
+    private double[][][] m_AvgPredictions;
 
 
     public ClusEnsembleInduceOptClassification(TupleIterator train, TupleIterator test, int nb_tuples) throws IOException, ClusException {
@@ -151,17 +151,17 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     }
 
 
-    public static int getPredictionLength(int tuple) {
+    public int getPredictionLength(int tuple) {
         return m_AvgPredictions[tuple].length;
     }
 
 
-    public static double[] getPredictionValueClassification(int tuple, int attribute) {
+    public double[] getPredictionValueClassification(int tuple, int attribute) {
         return m_AvgPredictions[tuple][attribute];
     }
 
 
-    public static void roundPredictions() {
+    public void roundPredictions() {
         // System.out.println("Rounding up predictions!");
         for (int i = 0; i < m_AvgPredictions.length; i++) {
             for (int j = 0; j < m_AvgPredictions[i].length; j++) {

@@ -31,7 +31,7 @@ public class ClusOOBErrorEstimate {
     static HashMap<Integer, Integer> m_OOBUsage;
     static boolean m_OOBCalculation;
     int m_Mode;
-
+    
     static ClusReadWriteLock m_LockPredictions = new ClusReadWriteLock();
     static ClusReadWriteLock m_LockUsage = new ClusReadWriteLock();
     static ClusReadWriteLock m_LockCalculation = new ClusReadWriteLock();
@@ -46,13 +46,7 @@ public class ClusOOBErrorEstimate {
 
 
     public static boolean containsPredictionForTuple(DataTuple tuple) {
-        try {
-            m_LockPredictions.readingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockPredictions.readingLock();
         boolean contains = m_OOBPredictions.containsKey(tuple.hashCode());
         m_LockPredictions.readingUnlock();
         return contains;
@@ -60,13 +54,7 @@ public class ClusOOBErrorEstimate {
 
 
     public static double[] getPredictionForRegressionHMCTuple(DataTuple tuple) {
-        try {
-            m_LockPredictions.readingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockPredictions.readingLock();
         double[] pred = (double[]) m_OOBPredictions.get(tuple.hashCode());
         double[] predictions = Arrays.copyOf(pred, pred.length);
         m_LockPredictions.readingUnlock();
@@ -75,13 +63,7 @@ public class ClusOOBErrorEstimate {
 
 
     public static double[][] getPredictionForClassificationTuple(DataTuple tuple) {
-        try {
-            m_LockPredictions.readingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockPredictions.readingLock();   
         double[][] pred = (double[][]) m_OOBPredictions.get(tuple.hashCode());
         double[][] predictions = new double[pred.length][];
         for (int i = 0; i < pred.length; i++) {
@@ -276,13 +258,7 @@ public class ClusOOBErrorEstimate {
     // OOBCalculation
 
     public static boolean isOOBCalculation() {
-        try {
-            m_LockCalculation.readingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockCalculation.readingLock();
         boolean isCalc = m_OOBCalculation;
         m_LockCalculation.readingUnlock();
         return isCalc;
@@ -290,34 +266,16 @@ public class ClusOOBErrorEstimate {
 
 
     public void setOOBCalculation(boolean value) {
-        try {
-            m_LockCalculation.writingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockCalculation.writingLock();
         m_OOBCalculation = value;
-        try {
-            m_LockCalculation.writingUnlock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockCalculation.writingUnlock();
     }
 
 
     // OOBPredictions
 
     private boolean existsInOOBPredictions(DataTuple tuple) {
-        try {
-            m_LockPredictions.readingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockPredictions.readingLock();
         boolean exists = m_OOBPredictions.containsKey(tuple.hashCode());
         m_LockPredictions.readingUnlock();
         return exists;
@@ -325,52 +283,21 @@ public class ClusOOBErrorEstimate {
 
 
     public void put1DArrayToOOBPredictions(DataTuple tuple, double[] value) {
-        try {
-            m_LockPredictions.writingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockPredictions.writingLock();
         m_OOBPredictions.put(tuple.hashCode(), value);
-        try {
-            m_LockPredictions.writingUnlock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockPredictions.writingUnlock();
     }
 
 
     public void put2DArrayToOOBPredictions(DataTuple tuple, double[][] value) {
-        try {
-            m_LockPredictions.writingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockPredictions.writingLock();
         m_OOBPredictions.put(tuple.hashCode(), value);
-        try {
-            m_LockPredictions.writingUnlock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
-
+        m_LockPredictions.writingUnlock();
     }
 
 
     private double[] get1DArrayFromOOBPredictions(DataTuple tuple) {
-        try {
-            m_LockPredictions.readingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockPredictions.readingLock();
         double[] pred = (double[]) m_OOBPredictions.get(tuple.hashCode());
         double[] predictions = Arrays.copyOf(pred, pred.length);
         m_LockPredictions.readingUnlock();
@@ -379,13 +306,7 @@ public class ClusOOBErrorEstimate {
 
 
     private double[][] get2DArrayFromOOBPredictions(DataTuple tuple) {
-        try {
-            m_LockPredictions.readingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockPredictions.readingLock();
         double[][] pred = (double[][]) m_OOBPredictions.get(tuple.hashCode());
         double[][] predictions = new double[pred.length][];
         for (int i = 0; i < pred.length; i++) {
@@ -399,13 +320,7 @@ public class ClusOOBErrorEstimate {
     // OOBUsage
 
     private boolean existsInOOBUsage(DataTuple tuple) {
-        try {
-            m_LockUsage.readingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockUsage.readingLock();
         boolean exists = m_OOBUsage.containsKey(tuple.hashCode());
         m_LockUsage.readingUnlock();
         return exists;
@@ -413,32 +328,14 @@ public class ClusOOBErrorEstimate {
 
 
     private void putToOOBUsage(DataTuple tuple, int i) {
-        try {
-            m_LockUsage.writingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockUsage.writingLock();
         m_OOBUsage.put(tuple.hashCode(), i);
-        try {
-            m_LockUsage.writingUnlock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockUsage.writingUnlock();
     }
 
 
     public Integer getFromOOBUsage(DataTuple tuple) {
-        try {
-            m_LockUsage.readingLock();
-        }
-        catch (InterruptedException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        m_LockUsage.readingLock();
         Integer i = m_OOBUsage.get(tuple.hashCode());
         m_LockUsage.readingUnlock();
         return i;

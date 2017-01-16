@@ -82,6 +82,8 @@ public class ClusForest implements ClusModel, Serializable {
     boolean m_PrintModels;
     String m_AttributeList;
     String m_AppName;
+    
+    ClusEnsembleInduceOptimization m_Optimization;
 
 
     public ClusForest() {
@@ -90,10 +92,10 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public ClusForest(ClusStatManager statmgr) {
+    public ClusForest(ClusStatManager statmgr, ClusEnsembleInduceOptimization opt) {
         m_Forest = new ArrayList<ClusModel>();
 
-        if (statmgr.getMode() == ClusStatManager.MODE_CLASSIFY) {
+        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (statmgr.getSettings().getSectionMultiLabel().isEnabled()) {
                 m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), statmgr.getSettings().getMultiLabelTrheshold());
             }
@@ -101,10 +103,10 @@ public class ClusForest implements ClusModel, Serializable {
                 m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
             }
         }
-        else if (statmgr.getMode() == ClusStatManager.MODE_REGRESSION) {
+        else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION) {
             m_Stat = new RegressionStat(statmgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
         }
-        else if (statmgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             if (statmgr.getSettings().getHierSingleLabel()) {
                 m_Stat = new HierSingleLabelStat(statmgr.getHier(), statmgr.getCompatibility());
             }
@@ -112,11 +114,11 @@ public class ClusForest implements ClusModel, Serializable {
                 m_Stat = new WHTDStatistic(statmgr.getHier(), statmgr.getCompatibility());
             }
         }
-        else if (statmgr.getMode() == ClusStatManager.MODE_PHYLO) {
+        else if (ClusStatManager.getMode() == ClusStatManager.MODE_PHYLO) {
             m_Stat = new GeneticDistanceStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
         }
         else {
-            System.err.println(getClass().getName() + " initForest(): Error initializing the statistic " + statmgr.getMode());
+            System.err.println(getClass().getName() + " initForest(): Error initializing the statistic " + ClusStatManager.getMode());
         }
         m_AppName = statmgr.getSettings().getFileAbsolute(statmgr.getSettings().getAppName());
         m_AttributeList = "";
@@ -126,10 +128,14 @@ public class ClusForest implements ClusModel, Serializable {
                 m_AttributeList = m_AttributeList.concat(cat[ii].getName() + ", ");
             m_AttributeList = m_AttributeList.concat(cat[cat.length - 1].getName());
         }
+        m_Optimization = opt;
 
     }
 
-
+    public void setOptimization(ClusEnsembleInduceOptimization opt){
+    	m_Optimization = opt;
+    }
+    
     public void addTargetSubspaceInfo(ClusEnsembleTargetSubspaceInfo tinfo) {
         m_TargetSubspaceInfo = tinfo;
     }
@@ -165,86 +171,43 @@ public class ClusForest implements ClusModel, Serializable {
 
     
     public int getNbModels(){
-    	try {
-			m_NbModelsLock.readingLock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+		m_NbModelsLock.readingLock();
     	int ans = m_NbModels;
     	m_NbModelsLock.readingUnlock();
     	return ans;
     }
     
     private void increaseNbModels(int n){
-    	try {
-			m_NbModelsLock.writingLock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+		m_NbModelsLock.writingLock();
     	m_NbModels += n;
-    	try {
-			m_NbModelsLock.writingUnlock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+		m_NbModelsLock.writingUnlock();
+
     }
     
     private int getNbNodes(){
-    	try {
-			m_NbNodesLock.readingLock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+    	m_NbNodesLock.readingLock();
     	int ans = m_NbNodes;
     	m_NbNodesLock.readingUnlock();
     	return ans;
     }
     
     private void increaseNbNodes(int n){
-    	try {
-			m_NbNodesLock.writingLock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+		m_NbNodesLock.writingLock();
     	m_NbNodes += n;
-    	try {
-			m_NbNodesLock.writingUnlock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+		m_NbNodesLock.writingUnlock();
     }
     
     private int getNbLeaves(){
-    	try {
-			m_NbLeavesLock.readingLock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+		m_NbLeavesLock.readingLock();
     	int ans = m_NbLeaves;
     	m_NbLeavesLock.readingUnlock();
     	return ans;
     }
     
     private void increaseNbLeaves(int n){
-    	try {
-			m_NbLeavesLock.writingLock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+ 		m_NbLeavesLock.writingLock();
     	m_NbLeaves += n;
-    	try {
-			m_NbLeavesLock.writingUnlock();
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-			System.exit(-1);
-		}
+		m_NbLeavesLock.writingUnlock();
     }
     
     
@@ -407,14 +370,14 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public ClusStatistic predictWeightedOpt(DataTuple tuple) {
-        int position = ClusEnsembleInduceOptimization.locateTuple(tuple);
-        int predlength = ClusEnsembleInduceOptimization.getPredictionLength(position);
+    public ClusStatistic predictWeightedOpt(DataTuple tuple) { // TODO: paralelno pazi matejp
+        int position = m_Optimization.locateTuple(tuple);
+        int predlength = m_Optimization.getPredictionLength(position);
         m_Stat.reset();
         if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION || ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             ((RegressionStatBase) m_Stat).m_Means = new double[predlength];
             for (int i = 0; i < predlength; i++) {
-                ((RegressionStatBase) m_Stat).m_Means[i] = ClusEnsembleInduceOptimization.getPredictionValue(position, i);
+                ((RegressionStatBase) m_Stat).m_Means[i] = m_Optimization.getPredictionValue(position, i);
             }
             m_Stat.computePrediction();
             return m_Stat;
@@ -422,7 +385,7 @@ public class ClusForest implements ClusModel, Serializable {
         if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             ((ClassificationStat) m_Stat).m_ClassCounts = new double[predlength][];
             for (int j = 0; j < predlength; j++) {
-                ((ClassificationStat) m_Stat).m_ClassCounts[j] = ClusEnsembleInduceOptimization.getPredictionValueClassification(position, j);
+                ((ClassificationStat) m_Stat).m_ClassCounts[j] = m_Optimization.getPredictionValueClassification(position, j);
             }
             m_Stat.computePrediction();
             for (int k = 0; k < m_Stat.getNbAttributes(); k++)

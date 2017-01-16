@@ -31,9 +31,14 @@ public class ClusReadWriteLock implements Serializable {
     private int m_NbWriteRequests = 0;
 
 
-    public synchronized void readingLock() throws InterruptedException {
+    public synchronized void readingLock() {
         while (m_NbWriters > 0 || m_NbWriteRequests > 0) {
-            wait();
+            try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
         }
         m_NbReaders++;
     }
@@ -45,17 +50,22 @@ public class ClusReadWriteLock implements Serializable {
     }
 
 
-    public synchronized void writingLock() throws InterruptedException {
+    public synchronized void writingLock() {
         m_NbWriteRequests++;
         while (m_NbReaders > 0 || m_NbWriters > 0) {
-            wait();
+            try {
+				wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+				System.exit(-1);
+			}
         }
         m_NbWriteRequests--;
         m_NbWriters++;
     }
 
 
-    public synchronized void writingUnlock() throws InterruptedException {
+    public synchronized void writingUnlock() {
         m_NbWriters--;
         notifyAll();
     }
