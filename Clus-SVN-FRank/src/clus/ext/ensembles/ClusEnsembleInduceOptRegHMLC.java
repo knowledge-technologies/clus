@@ -14,14 +14,11 @@ import clus.util.ClusFormat;
 
 public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization {
 
-    private double[][] m_AvgPredictions;
+    private double[][] m_AvgPredictions;   
     
-    private ClusReadWriteLock m_AvgPredictionsLock = new ClusReadWriteLock();
-    
-    
-    public ClusEnsembleInduceOptRegHMLC(TupleIterator train, TupleIterator test, int nb_tuples) throws IOException, ClusException {
-        super(train, test, nb_tuples);
-    }
+//    public ClusEnsembleInduceOptRegHMLC(TupleIterator train, TupleIterator test, int nb_tuples) throws IOException, ClusException {
+//        super(train, test, nb_tuples);
+//    }
 
 
     public ClusEnsembleInduceOptRegHMLC(TupleIterator train, TupleIterator test) throws IOException, ClusException {
@@ -30,26 +27,52 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
 
 
     public void initPredictions(ClusStatistic stat) {
-        m_AvgPredictions = new double[m_HashCodeTuple.length][stat.getNbAttributes()];
+        m_AvgPredictions = new double[m_TuplePositions.size()][stat.getNbAttributes()]; // m_HashCodeTuple.length
     }
 
 
-    public synchronized void updatePredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test, int bagIndex){
-		m_ShouldAddPredictionsLock.writingLock();
-    	boolean shouldAdd = m_ShouldAddPredictions;
+    public synchronized void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException{
+		m_NbUpdatesLock.writingLock();
 		m_AvgPredictionsLock.writingLock();
-		if (shouldAdd){
-			
-			
-		}
-
-    
+		
+		m_NbUpdates++;		
+        if (train != null) {
+            train.init();
+            DataTuple train_tuple = train.readTuple();
+            while (train_tuple != null) {
+                int position = locateTuple(train_tuple);
+                RegressionStatBase stat = (RegressionStatBase) model.predictWeighted(train_tuple);
+                m_AvgPredictions[position] = (m_NbUpdates == 1) ? stat.getNumericPred() : incrementPredictions(m_AvgPredictions[position], stat.getNumericPred(), m_NbUpdates);
+                train_tuple = train.readTuple();
+            }
+            train.init();
+        }
+        if (test != null) {
+            test.init();
+            DataTuple test_tuple = test.readTuple();
+            while (test_tuple != null) {
+                int position = locateTuple(test_tuple);
+                if(m_NbUpdates == 1){
+                	RegressionStatBase stat = (RegressionStatBase) model.predictWeighted(test_tuple);
+                	m_AvgPredictions[position] = stat.getNumericPred();
+                }
+                else{
+                	ClusStatistic stat = model.predictWeighted(test_tuple);
+                    m_AvgPredictions[position] = incrementPredictions(m_AvgPredictions[position], stat.getNumericPred(), m_NbUpdates);
+                }
+                
+                test_tuple = test.readTuple();
+            }
+            test.init();
+        }		
+		
 		m_AvgPredictionsLock.writingUnlock();
-		m_ShouldAddPredictionsLock.writingUnlock();
+		m_NbUpdatesLock.writingUnlock();
     	
     	
     }
     
+    @Deprecated
     public void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException {
         if (train != null) {
             train.init();
@@ -74,8 +97,7 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
             test.init();
         }
     }
-
-
+    @Deprecated
     public void addModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test, int nb_models) throws IOException, ClusException {
         if (train != null) {
             train.init();
@@ -122,5 +144,4 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
             }
         }
     }
-
 }

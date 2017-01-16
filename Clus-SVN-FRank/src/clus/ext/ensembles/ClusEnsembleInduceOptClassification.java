@@ -18,9 +18,9 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     private double[][][] m_AvgPredictions;
 
 
-    public ClusEnsembleInduceOptClassification(TupleIterator train, TupleIterator test, int nb_tuples) throws IOException, ClusException {
-        super(train, test, nb_tuples);
-    }
+//    public ClusEnsembleInduceOptClassification(TupleIterator train, TupleIterator test, int nb_tuples) throws IOException, ClusException {
+//        super(train, test, nb_tuples);
+//    }
 
 
     public ClusEnsembleInduceOptClassification(TupleIterator train, TupleIterator test) throws IOException, ClusException {
@@ -30,13 +30,70 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
 
     public void initPredictions(ClusStatistic stat) {
         ClassificationStat nstat = (ClassificationStat) stat;
-        m_AvgPredictions = new double[m_HashCodeTuple.length][nstat.getNbAttributes()][];
+        m_AvgPredictions = new double[m_TuplePositions.size()][nstat.getNbAttributes()][]; // m_HashCodeTuple.length
         for (int i = 0; i < nstat.getNbAttributes(); i++) {
-            m_AvgPredictions[m_HashCodeTuple.length - 1][i] = new double[nstat.getNbClasses(i)];
+            m_AvgPredictions[m_TuplePositions.size() - 1][i] = new double[nstat.getNbClasses(i)]; // m_HashCodeTuple.length - 1
         }
     }
+    
+    public synchronized void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException{
+		m_NbUpdatesLock.writingLock();
+		m_AvgPredictionsLock.writingLock();
+		m_NbUpdates++;
+		
+		if (train != null) {
+            train.init();
+            DataTuple train_tuple = train.readTuple();
+            while (train_tuple != null) {
+                int position = locateTuple(train_tuple);
+                ClassificationStat stat = (ClassificationStat) model.predictWeighted(train_tuple);
+                double[][] counts = stat.getClassCounts().clone();
+                switch (Settings.m_ClassificationVoteType.getValue()) {// default is Majority Vote
+                    case 0:
+                        counts = transformToMajority(counts);
+                        break;
+                    case 1:
+                        counts = transformToProbabilityDistribution(counts);
+                        break;
+                    default:
+                        counts = transformToMajority(counts);
+                }
+                m_AvgPredictions[position] = (m_NbUpdates == 1) ? counts : incrementPredictions(m_AvgPredictions[position], counts, m_NbUpdates);
+                train_tuple = train.readTuple();
+            }
+            train.init();
+        }
+        if (test != null) {
+            test.init();
+            DataTuple test_tuple = test.readTuple();
+            while (test_tuple != null) {
+                int position = locateTuple(test_tuple);
+                ClassificationStat stat = (ClassificationStat) model.predictWeighted(test_tuple);
+                double[][] counts = stat.getClassCounts().clone();
+                switch (Settings.m_ClassificationVoteType.getValue()) {// default is Majority Vote
+                    case 0:
+                        counts = transformToMajority(counts);
+                        break;
+                    case 1:
+                        counts = transformToProbabilityDistribution(counts);
+                        break;
+                    default:
+                        counts = transformToMajority(counts);
+                }
+                m_AvgPredictions[position] = (m_NbUpdates == 1) ? counts : incrementPredictions(m_AvgPredictions[position], counts, m_NbUpdates);
+                test_tuple = test.readTuple();
+            }
+            test.init();
+        }
 
 
+    
+		m_AvgPredictionsLock.writingUnlock();
+		m_NbUpdatesLock.writingUnlock();
+    	
+    	
+    }
+    @Deprecated
     public void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException {
         if (train != null) {
             train.init();
@@ -91,8 +148,7 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
             test.init();
         }
     }
-
-
+    @Deprecated
     public void addModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test, int nb_models) throws IOException, ClusException {
         if (train != null) {
             train.init();

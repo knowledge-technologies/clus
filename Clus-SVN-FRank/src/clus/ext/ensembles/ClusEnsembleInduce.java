@@ -250,15 +250,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             if (cr.getTestIter() != null) {
                 test_iterator = cr.getTestSet().getIterator();
                 if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
+                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator);//, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
                 if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
+                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator);//, cr.getTrainingSet().getNbRows() + cr.getTestSet().getNbRows());
             }
             else {
                 if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION)
-                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
+                    m_Optimization = new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator);//, cr.getTrainingSet().getNbRows());
                 if (m_Mode == ClusStatManager.MODE_CLASSIFY)
-                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, cr.getTrainingSet().getNbRows());
+                    m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator);//, cr.getTrainingSet().getNbRows());
             }
             m_Optimization.initPredictions(m_OForest.getStat());
             
@@ -379,11 +379,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             
             m_OForest.updateCounts((ClusNode) model);
             if (m_OptMode) {
-                // for i == 1 [i.e. the first run] it will initialize the predictions
-                if (i == 1)
-                    m_Optimization.initModelPredictionForTuples(model, train_iterator, test_iterator);
-                else
-                    m_Optimization.addModelPredictionForTuples(model, train_iterator, test_iterator, i);
+            	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
             }
             else {
                 m_OForest.addModelToForest(model);
@@ -446,11 +442,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
             m_OForest.updateCounts((ClusNode) model);
             if (m_OptMode) {
-                // for i == 1 [i.e. the first run] it will initialize the predictions
-                if (i == 1)
-                    m_Optimization.initModelPredictionForTuples(model, train_iterator, test_iterator);
-                else
-                    m_Optimization.addModelPredictionForTuples(model, train_iterator, test_iterator, i);
+            	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
             }
             else {
                 m_OForest.addModelToForest(model);
@@ -825,10 +817,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         boolean canForgetTheRun = true;
         if (m_OptMode) {
-            if (i == 1)
-                m_Optimization.initModelPredictionForTuples(model, train_iterator, test_iterator);
-            else
-                m_Optimization.addModelPredictionForTuples(model, train_iterator, test_iterator, i);
+        	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
             model = null;
         }
         // instead of adding the model here, we will do this in after all bags are completed to keep the order of the
@@ -915,11 +904,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 
                 m_OForest.updateCounts((ClusNode) orig_bag_model);
                 if (m_OptMode) {
-                    // the first run will initialize the predictions
-                    if (i == 1)
-                        m_Optimization.initModelPredictionForTuples(orig_bag_model, train_iterator, test_iterator);
-                    else
-                        m_Optimization.addModelPredictionForTuples(orig_bag_model, train_iterator, test_iterator, i);
+                	m_Optimization.updatePredictionsForTuples(orig_bag_model, train_iterator, test_iterator);
                 }
                 else {
                     m_OForest.addModelToForest(orig_bag_model);
@@ -1020,10 +1005,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             }
 
             if (m_OptMode) {
-                if (i == 1)
-                    m_Optimization.initModelPredictionForTuples(model, train_iterator, test_iterator);
-                else
-                    m_Optimization.addModelPredictionForTuples(model, train_iterator, test_iterator, i);
+            	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
             }
             else {
                 m_OForest.addModelToForest(model);
@@ -1135,11 +1117,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         summ_time += ResourceInfo.getTime() - one_bag_time;
 
         if (m_OptMode) {
-            // for i == 1 [i.e. the first run] it will initialize the predictions
-            if (i == 1)
-                m_Optimization.initModelPredictionForTuples(model, train_iterator, test_iterator);
-            else
-                m_Optimization.addModelPredictionForTuples(model, train_iterator, test_iterator, i);
+        	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
         }
         else {
             // m_OForest.addModelToForest(model); THIS IS DONE IN induceExtraTrees

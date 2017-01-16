@@ -377,7 +377,7 @@ public class ClusForest implements ClusModel, Serializable {
         if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION || ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             ((RegressionStatBase) m_Stat).m_Means = new double[predlength];
             for (int i = 0; i < predlength; i++) {
-                ((RegressionStatBase) m_Stat).m_Means[i] = m_Optimization.getPredictionValue(position, i);
+                ((RegressionStatBase) m_Stat).m_Means[i] = ((ClusEnsembleInduceOptRegHMLC) m_Optimization).getPredictionValue(position, i);
             }
             m_Stat.computePrediction();
             return m_Stat;
@@ -385,7 +385,7 @@ public class ClusForest implements ClusModel, Serializable {
         if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             ((ClassificationStat) m_Stat).m_ClassCounts = new double[predlength][];
             for (int j = 0; j < predlength; j++) {
-                ((ClassificationStat) m_Stat).m_ClassCounts[j] = m_Optimization.getPredictionValueClassification(position, j);
+                ((ClassificationStat) m_Stat).m_ClassCounts[j] = ((ClusEnsembleInduceOptClassification) m_Optimization).getPredictionValueClassification(position, j);
             }
             m_Stat.computePrediction();
             for (int k = 0; k < m_Stat.getNbAttributes(); k++)
