@@ -67,9 +67,7 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
         }		
 		
 		m_AvgPredictionsLock.writingUnlock();
-		m_NbUpdatesLock.writingUnlock();
-    	
-    	
+		m_NbUpdatesLock.writingUnlock();    	
     }
     
     @Deprecated

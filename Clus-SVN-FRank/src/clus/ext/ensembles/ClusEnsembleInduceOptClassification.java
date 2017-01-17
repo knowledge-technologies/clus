@@ -86,12 +86,8 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
             test.init();
         }
 
-
-    
 		m_AvgPredictionsLock.writingUnlock();
 		m_NbUpdatesLock.writingUnlock();
-    	
-    	
     }
     @Deprecated
     public void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException {

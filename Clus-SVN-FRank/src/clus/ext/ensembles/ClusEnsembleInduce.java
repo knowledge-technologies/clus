@@ -112,7 +112,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     public static final int m_PARALLEL_TRAP_BestFirst_getDescriptiveAttributes = 0;
     public static final int m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes = 1;
     public static final int m_PARALLEL_TRAP_staticRandom = 2;
-    private static boolean[] m_WarningsGiven = new boolean[3];
+    public static final int m_PARALLEL_TRAP_optimization = 3;
+    private static boolean[] m_WarningsGiven = new boolean[4];
     
 
     public ClusEnsembleInduce(ClusSchema schema, Settings sett, Clus clus) throws ClusException, IOException {
@@ -859,6 +860,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             // }
             //
             if (m_OptMode && (i != m_NbMaxBags)) {
+            	if(m_NbThreads > 1){
+            		giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_optimization);
+            	}
                 crSingle.setTestSet(cr.getTestIter());
                 crSingle.setTrainingSet(cr.getTrainingSet());
                 outputBetweenForest(crSingle, m_BagClus, "_" + i + "_");
@@ -1070,7 +1074,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             Future<OneBagResults> future = bagResults.get(i - 1);
             try {
                 OneBagResults results = future.get();
-                m_OForest.addModelToForest(results.getModel());
+                
+                if (!m_OptMode){
+                	m_OForest.addModelToForest(results.getModel());
+                } 
                 if (getSettings().shouldPerformRanking()) {
                     m_FeatureRanking.putAttributesInfos(results.getFimportances());
                 }
@@ -1116,15 +1123,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
         summ_time += ResourceInfo.getTime() - one_bag_time;
 
-        if (m_OptMode) {
-        	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
-        }
-        else {
-            // m_OForest.addModelToForest(model); THIS IS DONE IN induceExtraTrees
-
-            // ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
-            // m_DForest.addModelToForest(defmod);
-        }
+        m_OForest.updateCounts((ClusNode) model);
 
         HashMap<String, double[]> fimportances = new HashMap<String, double[]>();
         if (m_FeatRank) {// franking genie3
@@ -1153,9 +1152,23 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
             }
         }
+        
+        if (m_OptMode) {
+        	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
+        	model = null;
+        }
+        else {
+            // m_OForest.addModelToForest(model); <-- THIS IS DONE IN induceExtraTrees
+
+            // ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
+            // m_DForest.addModelToForest(defmod);
+        }
 
         // Valid only when test set is supplied
         if (m_OptMode && (i != m_NbMaxBags) && checkToOutEnsemble(i)) {
+        	if (m_NbThreads > 1){
+        		giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_optimization);
+        	}
             crSingle.setInductionTime(summ_time);
             postProcessForest(crSingle);
             crSingle.setTestSet(cr.getTestIter());
@@ -1334,6 +1347,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     			break;
     		case ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom:
     			message = "Static random has been called. This may not work in parallel setting.";
+    			break;
+    		case ClusEnsembleInduce.m_PARALLEL_TRAP_optimization:
+    			message = "Memory usage optimization is on. You have reached a place where there might be some unexpected behaviour in parallel setting because of that.";
     			break;
     		default:
     			throw new RuntimeException("Wrong reason for giveParallelisationWarning: " + reason);
