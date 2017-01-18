@@ -12,6 +12,20 @@ import java.util.Map;
  */
 public class ClassHMTRHierarchy implements Serializable{
 
+
+    private static boolean IS_HMTR_HIER_CREATED = false;
+    private static boolean IS_USING_DUMP = false;
+    private String hierarchyName;
+    private List<ClassHMTRNode> nodes;
+    private Map<String, Integer> nodeDepth;
+    private Map<String, Double> nodeWeights;
+
+
+
+    public static boolean isUsingDump() {
+        return IS_USING_DUMP;
+    }
+
     public static boolean isHmtrHierCreated() {
         return IS_HMTR_HIER_CREATED;
     }
@@ -20,14 +34,10 @@ public class ClassHMTRHierarchy implements Serializable{
         IS_HMTR_HIER_CREATED = isHmtrHierCreated;
     }
 
-    private static boolean IS_HMTR_HIER_CREATED = false;
 
-
-    private String hierarchyName;
-    private List<ClassHMTRNode> nodes;
-
-    private Map<String, Integer> nodeDepth;
-    private Map<String, Double> nodeWeights;
+    public static void setIsUsingDump(boolean isUsingDump) {
+        IS_USING_DUMP = isUsingDump;
+    }
 
     public List<ClassHMTRNode> getNodes() {
         return nodes;
@@ -117,7 +127,7 @@ public class ClassHMTRHierarchy implements Serializable{
 
         for (Map.Entry<String, Integer> entry : this.nodeDepth.entrySet()){
 
-            this.nodeWeights.put(entry.getKey(),Math.pow(entry.getValue(),weight));
+            this.nodeWeights.put(entry.getKey(),Math.pow(weight, entry.getValue()));
 
         }
 
@@ -210,7 +220,7 @@ public class ClassHMTRHierarchy implements Serializable{
 
 
     private int getNodeDepth(String nodeName){
-        return getNodeDepth(nodeName,1);
+        return getNodeDepth(nodeName,0);
     }
 
     private int getNodeDepth(String nodeName, int currentDepth){

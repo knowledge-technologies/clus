@@ -41,4 +41,9 @@ public abstract class ClusSerializable {
 	public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) throws IOException {
 		throw new IOException("Attribute does not support tuple wise reading");
 	}
+
+	public boolean readHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy, String line) throws IOException {
+		throw new IOException("Attribute does not support tuple wise reading");
+	}
+
 }

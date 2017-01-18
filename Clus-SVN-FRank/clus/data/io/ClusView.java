@@ -23,13 +23,19 @@
 package clus.data.io;
 
 import java.io.*;
+import java.nio.file.Paths;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import clus.ext.hierarchicalmtr.ClassHMTRHierarchy;
 import clus.io.*;
+import clus.main.Settings;
 import clus.util.ClusException;
 import clus.data.rows.*;
 import clus.data.type.*;
+
+import javax.xml.crypto.Data;
 
 public class ClusView {
 
@@ -131,23 +137,126 @@ public class ClusView {
 
 //	***************** HMTR ********************
 
-    public RowData readDataHMTR(ClusReader reader, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) throws IOException, ClusException {
+    public RowData readDataHMTR(ClusReader reader, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy, Settings settings) throws IOException, ClusException {
+
         schema.setReader(true);
         ArrayList items = new ArrayList();
-        DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy);
-        while (tuple != null) {
-            items.add(tuple);
-            tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy);
+
+        FileWriter fr = null;
+        BufferedWriter br = null;
+
+        File file = Paths.get(settings.getDataFile()+".hmtr").toFile();
+
+        String newLine=System.getProperty("line.separator");
+        try{
+            if(file.exists()){
+
+                FileInputStream inputStream = null;
+                Scanner sc = null;
+                try {
+                    inputStream = new FileInputStream(file);
+                    sc = new Scanner(inputStream, "UTF-8");
+
+
+                    String agg = "";
+                    String hier = "";
+                    String line = "";
+
+                    if (sc.hasNextLine()) agg = sc.nextLine();
+                    if (sc.hasNextLine()) hier = sc.nextLine();
+                    if (sc.hasNextLine()) sc.nextLine();
+
+
+                    String aggFromS = settings.getHMTRAggregation().getStringValue();
+                    String hierFromS = settings.getHMTRHierarchyString().getStringValue();
+
+                    if(agg.equals(aggFromS) && hier.equals(hierFromS)){
+
+                        ClassHMTRHierarchy.setIsUsingDump(true);
+
+
+                        if (sc.hasNextLine()) {line = sc.nextLine();} else {throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());}
+                        DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
+
+
+                        while (tuple != null) {
+                            items.add(tuple);
+                            String oldline = line;
+                            if (sc.hasNextLine()) {line = sc.nextLine();}
+
+                            tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
+                            if(tuple != null && line.equals(oldline)) {throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());}
+
+                        }
+
+
+                    } else {
+
+                        fr = new FileWriter(file);
+                        br = new BufferedWriter(fr);
+
+                        br.write(settings.getHMTRAggregation().getStringValue() + newLine +
+                                settings.getHMTRHierarchyString().getStringValue() + newLine + newLine);
+
+
+
+                        DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
+
+                        String toWrites[];
+                        String toWrite;
+
+                        while (tuple != null) {
+                            toWrites = tuple.toString().split(",");
+                            toWrite = "";
+
+                            for(int i = schema.getNbAttributes()-schema.getNbHierarchicalMTR(); i < schema.getNbAttributes();i++){
+                                toWrite+=","+toWrites[i];
+                            }
+                            toWrite=toWrite.substring(1);
+
+                            items.add(tuple);
+                            br.write(toWrite+newLine);
+                            tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
+                        }
+
+                    }
+
+                    if (sc.ioException() != null) {
+                        throw sc.ioException();
+                    }
+                } finally {
+                    if (inputStream != null) {
+                        inputStream.close();
+                    }
+                    if (sc != null) {
+                        sc.close();
+                    }
+                }
+
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }finally{
+            try {
+               if (br != null) br.close();
+               if (fr != null) fr.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
+
+
         for (int j = 0; j < m_Attr.size(); j++) {
             ClusSerializable attr = (ClusSerializable)m_Attr.get(j);
             attr.term(schema);
         }
         schema.setReader(false);
+
         return new RowData(items, schema);
     }
 
-    public DataTuple readDataHMTRTupleFirst(ClusReader reader, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) throws IOException, ClusException {
+    public DataTuple readDataHMTRTupleFirst(ClusReader reader, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy, String line) throws IOException, ClusException {
         if (!reader.hasMoreTokens()) return null;
         boolean sparse = reader.isNextChar('{');
         if (sparse) {
@@ -155,25 +264,25 @@ public class ClusView {
             schema.ensureSparse();
             schema.createNormalView(this);
         }
-        return readDataHMTRTuple(reader, schema, sparse, hmtrHierarchy);
+        return readDataHMTRTuple(reader, schema, sparse, hmtrHierarchy,  line);
     }
 
-    public DataTuple readDataHMTRTupleNext(ClusReader reader, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) throws IOException {
+    public DataTuple readDataHMTRTupleNext(ClusReader reader, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy, String line) throws IOException {
         if (!reader.hasMoreTokens()) return null;
         boolean sparse = reader.isNextChar('{');
         if (sparse && !schema.isSparse()) {
             throw new IOException("Sparse tuple found in a non-sparse data set (at row "+(reader.getRow()+1)+")");
         }
-        return readDataHMTRTuple(reader, schema, sparse, hmtrHierarchy);
+        return readDataHMTRTuple(reader, schema, sparse, hmtrHierarchy,  line);
     }
 
-    public DataTuple readDataHMTRTuple(ClusReader reader, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) throws IOException {
+    public DataTuple readDataHMTRTuple(ClusReader reader, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy, String line) throws IOException {
         if (!reader.hasMoreTokens()) return null;
         boolean sparse = reader.isNextChar('{');
-        return readDataHMTRTuple(reader, schema, sparse, hmtrHierarchy);
+        return readDataHMTRTuple(reader, schema, sparse, hmtrHierarchy,  line);
     }
 
-    public DataTuple readDataHMTRTuple(ClusReader reader, ClusSchema schema, boolean sparse, ClassHMTRHierarchy hmtrHierarchy) throws IOException {
+    public DataTuple readDataHMTRTuple(ClusReader reader, ClusSchema schema, boolean sparse, ClassHMTRHierarchy hmtrHierarchy, String line) throws IOException {
         DataTuple tuple = schema.createTuple();
         if (sparse) {
             while (!reader.isNextChar('}')) {
@@ -196,13 +305,30 @@ public class ClusView {
                         throw new IOException("Error reading attirbute "+m_Attr+" at row "+(reader.getRow()+1));
                     }
                 }
-                // do not read but calculate the Hierarchical MTR aggregate attributes
-                for (int j = m_Attr.size()-schema.getNbHierarchicalMTR(); j < m_Attr.size(); j++) {
-                    ClusSerializable attr = (ClusSerializable)m_Attr.get(j);
-                    if (!attr.calculateHMTRAttribute(reader, tuple, schema, hmtrHierarchy)) {
-                        throw new IOException("Error calculating Hierarchical  MTR attribute "+m_Attr+" at row "+(reader.getRow()+1));
+
+                if(ClassHMTRHierarchy.isUsingDump()){
+
+                    // read attributes from dump
+                    for (int j = m_Attr.size()-schema.getNbHierarchicalMTR(); j < m_Attr.size(); j++) {
+                        ClusSerializable attr = (ClusSerializable)m_Attr.get(j);
+                        if (!attr.readHMTRAttribute(reader, tuple, schema, hmtrHierarchy, line)) {
+                            throw new IOException("Error calculating Hierarchical  MTR attribute "+m_Attr+" at row "+(reader.getRow()+1));
+                        }
                     }
+
                 }
+                else {
+
+                    // do not read but calculate the Hierarchical MTR aggregate attributes
+                    for (int j = m_Attr.size()-schema.getNbHierarchicalMTR(); j < m_Attr.size(); j++) {
+                        ClusSerializable attr = (ClusSerializable)m_Attr.get(j);
+                        if (!attr.calculateHMTRAttribute(reader, tuple, schema, hmtrHierarchy)) {
+                            throw new IOException("Error calculating Hierarchical  MTR attribute "+m_Attr+" at row "+(reader.getRow()+1));
+                        }
+                    }
+
+                }
+
             }
         }
         // Attribute read operations eat ',' after attribute field
@@ -218,6 +344,7 @@ public class ClusView {
         reader.readEol();
         return tuple;
     }
+
 
 
 }

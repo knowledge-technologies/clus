@@ -197,6 +197,39 @@ public class NumericAttrType extends ClusAttrType {
 			return true;
 		}
 
+        public boolean readHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy, String line) throws IOException {
+
+           int pos = getArrayIndex()-(tuple.getSchema().getNbNumericDescriptiveAttributes()+tuple.getSchema().getNbNumericTargetAttributes()-tuple.getSchema().getNbHierarchicalMTR());
+
+           String[] lineElements = line.split(",");
+
+           double val = Double.parseDouble(lineElements[pos]);
+
+            IntervalCollection key = schema.m_Key;
+            int nbAttributes = schema.getNbAttributes()-schema.getNbNominalDescriptiveAttributes();
+            if(!key.isEmpty()) nbAttributes--;
+            ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
+            String name = targets[getArrayIndex()-(schema.getNbAttributes()-nbAttributes)].getName();
+
+            if (Double.isNaN(val)) throw new IOException("Error reading HMTR aggregate from dump! Aggregation function is: "+ Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+
+            if(Settings.VERBOSE > 0) System.out.println("READING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+
+            tuple.setDoubleVal(val, getArrayIndex());
+            if (val == MISSING) {
+                incNbMissing();
+                m_NbZero++;
+            }
+            if (val == 0.0) {
+                m_NbZero++;
+            } else if (val < 0.0) {
+                m_NbNeg++;
+            }
+            m_NbTotal++;
+            return true;
+        }
+
+
 		public void term(ClusSchema schema) {
 			// System.out.println("Attribute: "+getName()+" "+((double)100.0*m_NbZero/m_NbTotal));
 			if (m_NbNeg == 0 && m_NbZero > m_NbTotal*5/10) {
