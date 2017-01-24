@@ -174,7 +174,8 @@ public abstract class ClusError implements Serializable {
     }
 
 
-    public double getModelErrorComponent(int i) {
+    public double getModelErrorComponent(int i)
+    {
         return 0.0;
     }
 

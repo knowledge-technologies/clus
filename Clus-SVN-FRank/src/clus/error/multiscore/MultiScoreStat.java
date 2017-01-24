@@ -159,4 +159,10 @@ public class MultiScoreStat extends ClusStatistic {
 
     public void updateWeighted(SparseDataTuple tuple, int idx) {
     }
+
+	@Override
+	public int getNbStatisticComponents() {
+		throw new RuntimeException(getClass().getName() + "getNbStatisticComponents(): not implemented");
+	}
+
 }

@@ -875,4 +875,9 @@ public class CombStat extends ClusStatistic {
     public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
         System.err.println(getClass().getName() + "vote (): Not implemented");
     }
+
+	@Override
+	public int getNbStatisticComponents() {
+		throw new RuntimeException("CombStat: getNbStatisticComponents() not implemented.");
+	}
 }

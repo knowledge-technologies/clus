@@ -33,7 +33,7 @@ import clus.main.Settings;
 import clus.util.ClusFormat;
 
 
-public class RegressionStat extends RegressionStatBase {
+public class RegressionStat extends RegressionStatBase implements ComponentStatistic {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
@@ -207,7 +207,7 @@ public class RegressionStat extends RegressionStatBase {
     }
 
 
-    public double getSVarS(int i) {
+    public double getSVarS(int  i) {
         double n_tot = m_SumWeight;
         double k_tot = m_SumWeights[i];
         double sv_tot = m_SumValues[i];
@@ -397,5 +397,11 @@ public class RegressionStat extends RegressionStatBase {
         }
         return result;
     }
+
+
+	@Override
+	public int getNbStatisticComponents() {
+		return m_SumWeights.length;
+	}
 
 }

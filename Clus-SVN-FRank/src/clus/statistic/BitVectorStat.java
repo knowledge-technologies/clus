@@ -161,4 +161,10 @@ public class BitVectorStat extends ClusStatistic {
     public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
         System.err.println(getClass().getName() + "BitVectorStat: vote not implemented");
     }
+
+
+	@Override
+	public int getNbStatisticComponents() {
+		throw new RuntimeException("BitVectorStat: getNbStatisticComponents() not implemented.");
+	}
 }

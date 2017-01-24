@@ -52,7 +52,7 @@ import clus.util.ClusFormat;
  * Classification statistics about the data. A child of ClusStatistic.
  *
  */
-public class ClassificationStat extends ClusStatistic {
+public class ClassificationStat extends ClusStatistic implements ComponentStatistic {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
@@ -695,18 +695,23 @@ public class ClassificationStat extends ClusStatistic {
 
         // System.err.println(": here");
         double result = 0.0;
-        double sum = m_SumWeight;
+        //double sum = m_SumWeight;
         for (int i = 0; i < m_NbTarget; i++) {
             // System.out.println(gini(i) + " " + scale.getWeight(m_Attrs[i]) + " " + sum);
-            result += gini(i) * scale.getWeight(m_Attrs[i]) * sum;
+            result += getSVarS(i) * scale.getWeight(m_Attrs[i]);
         }
         return result / m_NbTarget;
+    }
+    
+    public double getSVarS(int i){
+    	double sumW = m_SumWeight;
+    	return gini(i) * sumW;
     }
 
 
     public double getSVarSTargetSubspace(ClusAttributeWeights scale) {
         double result = 0.0;
-        double sum = m_SumWeight;
+        // double sum = m_SumWeight;
         int cnt = 0;
 
         for (int i = 0; i < m_NbTarget; i++) {
@@ -714,7 +719,7 @@ public class ClassificationStat extends ClusStatistic {
                 continue;
 
             cnt++;
-            result += gini(i) * scale.getWeight(m_Attrs[i]) * sum;
+            result += getSVarS(i) * scale.getWeight(m_Attrs[i]);
         }
         return result / cnt;
     }
@@ -1254,5 +1259,11 @@ public class ClassificationStat extends ClusStatistic {
     public double getSumWeights(int attr) {
         return (m_SumWeights[attr]);
     }
+
+
+	@Override
+	public int getNbStatisticComponents() {
+		return m_NbTarget;
+	}
 
 }

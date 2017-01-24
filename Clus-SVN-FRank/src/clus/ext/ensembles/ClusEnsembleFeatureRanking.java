@@ -13,6 +13,8 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.TreeMap;
 
+import javax.xml.validation.Schema;
+
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -30,6 +32,7 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.error.Accuracy;
 import clus.error.AveragePrecision;
+import clus.error.ClusError;
 import clus.error.ClusErrorList;
 import clus.error.Coverage;
 import clus.error.HammingLoss;
@@ -52,6 +55,7 @@ import clus.error.RMSError;
 import clus.error.RankingLoss;
 import clus.error.SubsetAccuracy;
 import clus.ext.ensembles.containters.NodeDepthPair;
+import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.HierErrorMeasures;
 import clus.jeans.util.StringUtils;
 import clus.main.ClusRun;
@@ -60,6 +64,7 @@ import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
+import clus.statistic.ComponentStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandomNonstatic;
 
@@ -415,18 +420,51 @@ public class ClusEnsembleFeatureRanking {
      * @param data
      * @param model
      * @param cr
-     * @return [[err1, sign1], [err2, sign2], ...], where signI = errorI.shouldBeLow() ? -1.0 : 1.0
+     * @return {@code [[listOfResultsForErr1, [sign1]], [listOfResultsForErr2, [sign2]], ...]},<br> where {@code signI = errorI.shouldBeLow() ? -1.0 : 1.0}, and
+     * {@code listOfResultsForErr} always contains the overall {@code Err} error in the position 0, and possibly also per target calculations for {@code Err}
+     * in the positions i > 0.
      * @throws ClusException
      */
-    public double[][] calcAverageErrors(RowData data, ClusModel model, ClusStatManager mgr) throws ClusException {
-        ClusSchema schema = data.getSchema();
-        /* create error measure */
+    public double[][][] calcAverageErrors(RowData data, ClusModel model, ClusStatManager mgr) throws ClusException {
+    	ClusSchema schema = data.getSchema();
+    	ClusErrorList error = computeErrorList(schema, mgr);
+        /* attach model to given schema */
+        schema.attachModel(model);
+        /* iterate over tuples and compute error */
+        for (int i = 0; i < data.getNbRows(); i++) {
+            DataTuple tuple = data.getTuple(i);
+            ClusStatistic pred = model.predictWeighted(tuple);
+            error.addExample(tuple, pred);
+        }
+        if (m_RankingDescription == null) {
+            setRForestDescription(error);
+        }
+        /* return the average errors */
+        double[][][] errors = new double[error.getNbErrors()][2][];
+        for (int i = 0; i < errors.length; i++) {
+        	ClusError currentError = error.getError(i);
+        	int nbResultsPerError = 1 + (mgr.getSettings().shouldPerformRankingPerTarget() ? currentError.getDimension() : 0);
+        	errors[i][0] = new double[nbResultsPerError];
+        	// compute overall error
+        	errors[i][0][0] = currentError.getModelError();
+        	// compute per target errors if necessary
+        	for(int dim = 1; dim < errors[i][0].length; dim++){
+        		errors[i][0][dim] = currentError.getModelErrorComponent(dim - 1);
+        	}	
+        	// should be low?
+        	errors[i][1] = new double[]{currentError.shouldBeLow() ? -1.0 : 1.0};
+        }
+        return errors;
+    }
+
+    public ClusErrorList computeErrorList(ClusSchema schema, ClusStatManager mgr){
+    	Settings sett = mgr.getSettings();
         ClusErrorList error = new ClusErrorList();
         NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
         NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
         if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
-            if (mgr.getSettings().getSectionMultiLabel().isEnabled()) {
-                int[] measures = mgr.getSettings().getMultiLabelRankingMeasures();
+            if (sett.getSectionMultiLabel().isEnabled()) {
+                int[] measures = sett.getMultiLabelRankingMeasures();
                 for (int measure : measures) {
                     switch (measure) {
                         case Settings.MULTILABEL_MEASURES_HAMMINGLOSS:
@@ -502,7 +540,7 @@ public class ClusEnsembleFeatureRanking {
             error.addError(new RMSError(error, num));
         }
         else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            error.addError(new HierErrorMeasures(error, mgr.getHier(), mgr.getSettings().getRecallValues().getDoubleVector(), mgr.getSettings().getCompatibility(), Settings.HIERMEASURE_POOLED_AUPRC, false));
+            error.addError(new HierErrorMeasures(error, mgr.getHier(), sett.getRecallValues().getDoubleVector(), sett.getCompatibility(), Settings.HIERMEASURE_POOLED_AUPRC, false));
         }
         else {
             System.err.println("Feature ranking with Random Forests is supported only for:");
@@ -511,28 +549,8 @@ public class ClusEnsembleFeatureRanking {
             System.err.println("- hierarchical multi-label classification");
             System.exit(-1);
         }
-
-        /* attach model to given schema */
-        schema.attachModel(model);
-        /* iterate over tuples and compute error */
-        for (int i = 0; i < data.getNbRows(); i++) {
-            DataTuple tuple = data.getTuple(i);
-            ClusStatistic pred = model.predictWeighted(tuple);
-            error.addExample(tuple, pred);
-        }
-        if (m_RankingDescription == null) {
-            setRForestDescription(error);
-        }
-        /* return the average errors */
-        double[][] errors = new double[error.getNbErrors()][2];
-        for (int i = 0; i < errors.length; i++) {
-            errors[i][0] = error.getError(i).getModelError();
-            errors[i][1] = error.getError(i).shouldBeLow() ? -1.0 : 1.0;
-
-        }
-        return errors;
+        return error;
     }
-
 
     // returns sorted feature ranking
     public TreeMap<Double, ArrayList<String>> getFeatureRanks() {
@@ -561,45 +579,54 @@ public class ClusEnsembleFeatureRanking {
     }
 
 
-    public void putAttributesInfos(HashMap<String, double[]> partialFimportances) throws InterruptedException {
+    public void putAttributesInfos(HashMap<String, double[][]> partialFimportances) throws InterruptedException {
         for (String attribute : partialFimportances.keySet()) {
             double[] info = getAttributeInfo(attribute);
-            double[] partialInfo = partialFimportances.get(attribute);
+            double[][] partialInfo = partialFimportances.get(attribute);
+            int ind = 0;
             for (int i = 0; i < partialInfo.length; i++) {
-                info[i + 2] += partialInfo[i];
+            	for(int j = 0; j < partialInfo[i].length; j++)
+                info[ind + 2] += partialInfo[i][j];
+            	ind++;
             }
             putAttributeInfo(attribute, info);
         }
     }
 
 
-    public HashMap<String, double[]> calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, InterruptedException {
-        HashMap<String, double[]> partialImportances = new HashMap<String, double[]>();
+    public HashMap<String, double[][]> calculateRFimportance(ClusModel model, ClusRun cr, OOBSelection oob_sel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, InterruptedException {
+        HashMap<String, double[][]> partialImportances = new HashMap<String, double[][]>();
 
         ArrayList<String> attests = getInternalAttributesNames((ClusNode) model);
 
         RowData tdata = ((RowData) cr.getTrainingSet()).deepCloneData();
-        double[][] oob_errs = calcAverageErrors((RowData) tdata.selectFrom(oob_sel, rnd), model, mgr);
+        double[][][] oob_errs = calcAverageErrors((RowData) tdata.selectFrom(oob_sel, rnd), model, mgr);
         for (int z = 0; z < attests.size(); z++) {// for the attributes that appear in the tree
             String current_attribute = attests.get(z);
             if (!partialImportances.containsKey(current_attribute)) {
-                partialImportances.put(current_attribute, new double[oob_errs.length]);
+            	double[][] impos = new double[oob_errs.length][];
+            	for(int errInd = 0; errInd < oob_errs.length; errInd++){
+            		int nbResultsPerError = oob_errs[errInd][0].length;
+            		impos[errInd] = new double[nbResultsPerError];
+            	} 
+                partialImportances.put(current_attribute, impos);
             }
             double[] info = getAttributeInfo(current_attribute);
             double type = info[0];
             double position = info[1];
-            double[] importances = partialImportances.get(current_attribute);
+            double[][] importances = partialImportances.get(current_attribute);
             int permutationSeed = rnd.nextInt(ClusRandomNonstatic.RANDOM_SEED);
             RowData permuted = createRandomizedOOBdata(oob_sel, (RowData) tdata.selectFrom(oob_sel, rnd), (int) type, (int) position, permutationSeed);
-            double[][] permuted_oob_errs = calcAverageErrors((RowData) permuted, model, mgr);
+            double[][][] permuted_oob_errs = calcAverageErrors((RowData) permuted, model, mgr);
             for (int i = 0; i < oob_errs.length; i++) {
-                importances[i] += (oob_errs[i][0] != 0.0 || permuted_oob_errs[i][0] != 0.0) ? oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0]) / oob_errs[i][0] : 0.0; // info[i
-                                                                                                                                                                                  // +
-                                                                                                                                                                                  // 2]
-                                                                                                                                                                                  // +=
-                                                                                                                                                                                  // ...
+            	for(int j = 0; j < oob_errs[i][0].length; j++){
+            		double oobE = oob_errs[i][0][j];
+            		double permOobE = permuted_oob_errs[i][0][j];
+            		double sign = oob_errs[i][1][0];
+            		importances[i][j] += (oobE != 0.0 || permOobE != 0.0) ? sign * (oobE - permOobE) / oobE : 0.0;
+            		//importances[i] += (oob_errs[i][0] != 0.0 || permuted_oob_errs[i][0] != 0.0) ? oob_errs[i][1] * (oob_errs[i][0] - permuted_oob_errs[i][0]) / oob_errs[i][0] : 0.0;
+            	}
             }
-            // putAttributeInfo(current_attribute, info);
         }
 
         return partialImportances;
@@ -644,34 +671,56 @@ public class ClusEnsembleFeatureRanking {
      * @return
      * @throws InterruptedException
      */
-    public HashMap<String, double[]> calculateGENIE3importanceIteratively(ClusNode root, ClusStatManager statManager) {
+    public HashMap<String, double[][]> calculateGENIE3importanceIteratively(ClusNode root, ClusStatManager statManager) {
         if (m_RankingDescription == null) {
             setGenie3Description();
         }
         ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);
-        HashMap<String, double[]> partialImportances = new HashMap<String, double[]>();
-
+        HashMap<String, double[][]> partialImportances = new HashMap<String, double[][]>();
+        int nbTargetComponents = 0;
+        boolean perTargetRanking = root.getClusteringStat() instanceof ComponentStatistic &&
+        						   statManager.getSettings().shouldPerformRankingPerTarget(); 
+        if (perTargetRanking){
+        	nbTargetComponents += ((ComponentStatistic) root.getClusteringStat()).getNbStatisticComponents();
+        }
         for (NodeDepthPair pair : nodes) {
             String attribute = pair.getNode().getTest().getType().getName();
             if (!partialImportances.containsKey(attribute)) {
-                partialImportances.put(attribute, new double[1]);
+            	double[][] impos = new double[1][1 + nbTargetComponents];            	
+                partialImportances.put(attribute, impos);
             }
-            double[] info = partialImportances.get(attribute);
-            info[0] += calculateGENI3value(pair.getNode(), statManager);
+            double[][] info = partialImportances.get(attribute);
+            double[] gain = calculateGENI3value(pair.getNode(), statManager, nbTargetComponents);
+            for(int i = 0; i < gain.length; i++){
+            	info[0][i] += gain[i]; 
+            }
         }
         return partialImportances;
     }
 
 
-    public double calculateGENI3value(ClusNode node, ClusStatManager statManager) {
-        ClusStatistic total = node.getClusteringStat();
+    public double[] calculateGENI3value(ClusNode node, ClusStatManager statManager, int nbTargetComponents) {
+    	double[] gain = new double[1 + nbTargetComponents];
+    	ClusStatistic total = node.getClusteringStat();
+    	// overall
         double total_variance = total.getSVarS(statManager.getClusteringWeights());
         double summ_variances = 0.0;
         for (int j = 0; j < node.getNbChildren(); j++) {
             ClusNode child = (ClusNode) node.getChild(j);
             summ_variances += child.getClusteringStat().getSVarS(statManager.getClusteringWeights());
         }
-        return total_variance - summ_variances;
+        gain[0] = total_variance - summ_variances;
+        // per target
+        for(int i = 1; i < gain.length; i++){
+        	double total_variance_comp = ((ComponentStatistic) total).getSVarS(i - 1);
+        	double summ_variances_comp = 0.0;
+            for (int j = 0; j < node.getNbChildren(); j++) {
+                ClusNode child = (ClusNode) node.getChild(j);
+                summ_variances += ((ComponentStatistic) child.getClusteringStat()).getSVarS(i - 1);
+            }
+        	gain[i] = total_variance_comp - summ_variances_comp;
+        }
+        return gain; 
     }
 
 
@@ -690,6 +739,7 @@ public class ClusEnsembleFeatureRanking {
      *        Depth of {@code node}, root's depth is 0
      * @throws InterruptedException
      */
+    @Deprecated
     public void calculateSYMBOLICimportance(ClusNode node, double[] weights, double depth) throws InterruptedException {
         if (m_RankingDescription == null) {
             setSymbolicDescription(weights);
@@ -717,21 +767,23 @@ public class ClusEnsembleFeatureRanking {
      * @return
      * @throws InterruptedException
      */
-    public synchronized HashMap<String, double[]> calculateSYMBOLICimportanceIteratively(ClusNode root, double[] weights) throws InterruptedException {
+    public synchronized HashMap<String, double[][]> calculateSYMBOLICimportanceIteratively(ClusNode root, double[] weights) throws InterruptedException {
         if (m_RankingDescription == null) {
             setSymbolicDescription(weights);
         }
         ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);
-        HashMap<String, double[]> partialImportances = new HashMap<String, double[]>();
+        // it would suffice to have String --> double[], but we need to allow for
+        // double[][] in the Genie3 and RForest methods for feature ranking.
+        HashMap<String, double[][]> partialImportances = new HashMap<String, double[][]>();
 
         for (NodeDepthPair pair : nodes) {
             String attribute = pair.getNode().getTest().getType().getName();
             if (!partialImportances.containsKey(attribute)) {
-                partialImportances.put(attribute, new double[weights.length]);
+                partialImportances.put(attribute, new double[weights.length][1]);
             }
-            double[] info = partialImportances.get(attribute);
+            double[][] info = partialImportances.get(attribute);
             for (int ranking = 0; ranking < weights.length; ranking++) {
-                info[ranking] += Math.pow(weights[ranking], pair.getDepth());
+                info[ranking][0] += Math.pow(weights[ranking], pair.getDepth());
             }
         }
 

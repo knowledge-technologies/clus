@@ -219,4 +219,5 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
     public String getDistanceName() {
         return getDistance().getDistanceName();
     }
+
 }

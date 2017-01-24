@@ -40,10 +40,7 @@ public class BinaryPredictionList implements Serializable {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected int m_NbPos, m_NbNeg; // number of positive and negative examples seen
-    protected transient ArrayList<DoubleBooleanCount> m_Values = new ArrayList<DoubleBooleanCount>(); // either empty
-                                                                                                      // list or sorted
-                                                                                                      // list of values
-                                                                                                      // of m_ValueSet
+    protected transient ArrayList<DoubleBooleanCount> m_Values = new ArrayList<DoubleBooleanCount>(); // either empty list or sorted list of values of m_ValueSet
     protected transient HashMap<DoubleBooleanCount, DoubleBooleanCount> m_ValueSet = new HashMap<DoubleBooleanCount, DoubleBooleanCount>(); // key:value
                                                                                                                                             // pairs
                                                                                                                                             // are

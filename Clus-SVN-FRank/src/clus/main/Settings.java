@@ -2481,7 +2481,7 @@ public class Settings implements Serializable {
     public final static int RANKING_RFOREST = 1;
     public final static int RANKING_GENIE3 = 2;
     public final static int RANKING_SYMBOLIC = 3;
-
+    
     public final static String[] ENSEMBLE_TARGET_SUBSPACING_TYPE = { "None", "RandomPredictWithAll", "RandomPredictWithSubset", "SMARTERWAY" };
     public final static int ENSEMBLE_TARGET_SUBSPACING_NONE = 0;
     public final static int ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_ALL = 1;
@@ -2531,6 +2531,16 @@ public class Settings implements Serializable {
     protected INIFileBool m_EnsembleRandomDepth;
 
     protected INIFileInt m_EnsembleBagSize;
+    
+    private INIFileBool m_FeatureRankingPerTarget;
+    
+    public boolean shouldPerformRankingPerTarget(){
+    	return m_FeatureRankingPerTarget.getValue();
+    }
+    
+	public void setPerformRankingPerTarget(boolean b) {
+		m_FeatureRankingPerTarget.setValue(b);		
+	}
 
 
     public boolean isEnsembleMode() {
@@ -3253,6 +3263,7 @@ public class Settings implements Serializable {
         m_SectionEnsembles.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
         m_SectionEnsembles.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
         m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileNominal("FeatureRanking", RANKING_TYPE, 0));
+        m_SectionEnsembles.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
         m_SectionEnsembles.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
         m_SymbolicWeight.setDouble(1.0);
         m_SectionEnsembles.addNode(m_SortFeaturesByRelevance = new INIFileBool("SortRankingByRelevance", true));
@@ -3464,5 +3475,6 @@ public class Settings implements Serializable {
         String path = getFileAbsolute(fname);
         return new PrintWriter(new OutputStreamWriter(new FileOutputStream(path)));
     }
+
 
 }

@@ -184,4 +184,9 @@ public class GeneticDistanceStat extends BitVectorStat {
     // public ClassificationStat getClassificationStat() {
     // return this;
     // }
+    
+	@Override
+	public int getNbStatisticComponents() {
+		throw new RuntimeException(getClass().getName() + "getNbStatisticComponents(): not implemented");
+	}
 }

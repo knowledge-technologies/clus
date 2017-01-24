@@ -31,7 +31,7 @@ import clus.main.Settings;
 import clus.util.ClusFormat;
 
 
-public class RegressionStatBinaryNomiss extends RegressionStatBase {
+public class RegressionStatBinaryNomiss extends RegressionStatBase implements ComponentStatistic{
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
@@ -201,4 +201,10 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase {
         }
         return buf.toString();
     }
+
+
+	@Override
+	public int getNbStatisticComponents() {
+		return m_SumValues.length;
+	}
 }

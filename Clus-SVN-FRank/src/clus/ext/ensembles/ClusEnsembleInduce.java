@@ -63,6 +63,8 @@ import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
 import clus.selection.BaggingSelection;
 import clus.selection.OOBSelection;
+import clus.statistic.ClusStatistic;
+import clus.statistic.ComponentStatistic;
 import clus.tools.optimization.GDProbl;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
@@ -159,8 +161,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
             }
             m_FeatureRanking = new ClusEnsembleFeatureRanking();
-            setNbFeatureRankings(schema);
+                  
+            setNbFeatureRankings(schema, clus.getStatManager());
             int nbRankings = getNbFeatureRankings();
+            if(getSettings().getVerbose() > 0){
+            	System.out.println("Number of feature rankings computed: " + nbRankings);
+            }
             m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes(), nbRankings);
             // if (sett.getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES){
             // // moj komentar //Dragi comment - take 2
@@ -193,30 +199,43 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void setNbFeatureRankings(ClusSchema schema) {
-        int nb = 0;
+    public void setNbFeatureRankings(ClusSchema schema, ClusStatManager mgr) {
+    	ClusStatistic clusteringStat =  mgr.getStatistic(ClusAttrType.ATTR_USE_CLUSTERING);
+    	Settings sett = schema.getSettings();
+    	if(!(clusteringStat instanceof ComponentStatistic) && sett.shouldPerformRankingPerTarget()){
+    		System.err.println("Cannot perform per-target ranking for the given type(s) of targets!");
+    		System.err.println("This option is now set to false.");
+    		sett.setPerformRankingPerTarget(false);
+    	}
+    	
+        int nbRankings = 0;
         switch (schema.getSettings().getRankingMethod()) {
             case Settings.RANKING_RFOREST:
-                if (schema.getSettings().getSectionMultiLabel().isEnabled()) { // popravi
-                    nb = schema.getSettings().getMultiLabelRankingMeasures().length;
-                }
-                else {
-                    nb = 1; // TO DO: HIERARCHICAL?
-                }
+            	ClusErrorList errLst = m_FeatureRanking.computeErrorList(schema, mgr);
+            	int nbErrors = errLst.getNbErrors();
+            	for(int i = 0; i < nbErrors; i++){
+            		nbRankings++; // overall
+                    if (sett.shouldPerformRankingPerTarget()){
+                    	nbRankings += errLst.getError(i).getDimension();
+                    }
+            	}
                 break;
             case Settings.RANKING_GENIE3:
-                nb = 1; // FUTURE WARNING:)
+                nbRankings++; // overall
+                if (sett.shouldPerformRankingPerTarget()){
+                	nbRankings += ((ComponentStatistic) clusteringStat).getNbStatisticComponents();
+                }
                 break;
             case Settings.RANKING_SYMBOLIC:
                 double[] weights = schema.getSettings().getSymbolicWeights();
                 if (weights != null) {
-                    nb = weights.length;// vector of weights
+                	nbRankings = weights.length;// vector of weights
                 }
                 else {
-                    nb = 1; // single weight
+                	nbRankings = 1; // single weight
                 }
         }
-        m_NbFeatureRankings = nb;
+        m_NbFeatureRankings = nbRankings;
     }
 
 
@@ -798,7 +817,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             m_OOBEstimation.updateOOBTuples(oob_sel, (RowData) cr.getTrainingSet(), model);
         }
 
-        HashMap<String, double[]> fimportances = new HashMap<String, double[]>();
+        HashMap<String, double[][]> fimportances = new HashMap<String, double[][]>();
         if (m_FeatRank) {// franking
             if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
                 fimportances = m_FeatureRanking.calculateRFimportance(model, cr, oob_sel, rnd, ind.getStatManager());
@@ -1125,7 +1144,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         m_OForest.updateCounts((ClusNode) model);
 
-        HashMap<String, double[]> fimportances = new HashMap<String, double[]>();
+        HashMap<String, double[][]> fimportances = new HashMap<String, double[][]>();
         if (m_FeatRank) {// franking genie3
             // if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST)
             // m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);

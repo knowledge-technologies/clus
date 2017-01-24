@@ -11,12 +11,12 @@ import clus.selection.OOBSelection;
 public class OneBagResults {
 
     private ClusModel m_Model;
-    private HashMap<String, double[]> m_Fimportances;
+    private HashMap<String, double[][]> m_Fimportances;
     private ClusRun m_SingleRun;
     private OOBSelection m_OOBTotal;
 
 
-    public OneBagResults(ClusModel model, HashMap<String, double[]> fimportances, ClusRun crSingle, OOBSelection oob_total) {
+    public OneBagResults(ClusModel model, HashMap<String, double[][]> fimportances, ClusRun crSingle, OOBSelection oob_total) {
         m_Model = model;
         m_Fimportances = fimportances;
         m_SingleRun = crSingle;
@@ -29,7 +29,7 @@ public class OneBagResults {
     }
 
 
-    public HashMap<String, double[]> getFimportances() {
+    public HashMap<String, double[][]> getFimportances() {
         return m_Fimportances;
     }
 

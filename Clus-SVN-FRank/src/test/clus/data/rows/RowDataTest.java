@@ -74,7 +74,6 @@ public class RowDataTest extends BaseTestCase {
                 }
             }
         }
-
     }
 
 
@@ -93,7 +92,6 @@ public class RowDataTest extends BaseTestCase {
         CMDLineArgs cargs = new CMDLineArgs(clus);
         cargs.process(new String[] { "-silent", settingsFile });
         sett.setAppName(cargs.getMainArg(0));
-
         clus.initSettings(cargs);
         clus.initialize(cargs);
         return clus.getData();

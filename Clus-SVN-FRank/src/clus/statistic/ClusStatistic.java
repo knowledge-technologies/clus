@@ -75,7 +75,7 @@ public abstract class ClusStatistic implements Serializable {
      * @return The number of all attributes in this statistic. If the statistic
      *         is a target statistic, it returns the number of target attributes.
      */
-    public int getNbAttributes() {
+    public int getNbAttributes(){
         return getNbNominalAttributes() + getNbNumericAttributes();
     }
 
@@ -94,6 +94,8 @@ public abstract class ClusStatistic implements Serializable {
     public int getNbNumericAttributes() {
         return 0;
     }
+    
+    public abstract int getNbStatisticComponents();
 
 
     public void printDebug() {
