@@ -437,9 +437,9 @@ public class ClusEnsembleFeatureRanking {
             ClusStatistic pred = model.predictWeighted(tuple);
             error.addExample(tuple, pred);
         }
-        if (m_RankingDescription == null) {
-            setRForestDescription(error);
-        }
+//        if (m_RankingDescription == null) {
+//            setRForestDescription(error);
+//        }
         /* return the average errors */
         double[][][] errors = new double[error.getNbErrors()][2][];
         for (int i = 0; i < errors.length; i++) {
@@ -589,9 +589,10 @@ public class ClusEnsembleFeatureRanking {
             double[][] partialInfo = partialFimportances.get(attribute);
             int ind = 0;
             for (int i = 0; i < partialInfo.length; i++) {
-            	for(int j = 0; j < partialInfo[i].length; j++)
-                info[ind + 2] += partialInfo[i][j];
-            	ind++;
+            	for(int j = 0; j < partialInfo[i].length; j++){
+            		info[ind + 2] += partialInfo[i][j];
+            		ind++;
+            	}
             }
             putAttributeInfo(attribute, info);
         }
@@ -639,9 +640,9 @@ public class ClusEnsembleFeatureRanking {
 
     @Deprecated
     public void calculateGENIE3importance(ClusNode node, ClusRun cr) throws InterruptedException {
-        if (m_RankingDescription == null) {
-            setGenie3Description();
-        }
+//        if (m_RankingDescription == null) {
+//            setGenie3Description();
+//        }
         if (!node.atBottomLevel()) {
             String attribute = node.getTest().getType().getName();
             double[] info = getAttributeInfo(attribute);
@@ -676,9 +677,9 @@ public class ClusEnsembleFeatureRanking {
      * @throws InterruptedException
      */
     public HashMap<String, double[][]> calculateGENIE3importanceIteratively(ClusNode root, ClusStatManager statManager) {
-        if (m_RankingDescription == null) {
-            setGenie3Description();
-        }
+//        if (m_RankingDescription == null) {
+//            setGenie3Description();
+//        }
         ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);
         HashMap<String, double[][]> partialImportances = new HashMap<String, double[][]>();
         int nbTargetComponents = 0;
@@ -771,9 +772,9 @@ public class ClusEnsembleFeatureRanking {
      * @throws InterruptedException
      */
     public synchronized HashMap<String, double[][]> calculateSYMBOLICimportanceIteratively(ClusNode root, double[] weights) throws InterruptedException {
-        if (m_RankingDescription == null) {
-            setSymbolicDescription(weights);
-        }
+//        if (m_RankingDescription == null) {
+//            setSymbolicDescription(weights);
+//        }
         ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);
         // it would suffice to have String --> double[], but we need to allow for
         // double[][] in the Genie3 and RForest methods for feature ranking.
@@ -795,12 +796,9 @@ public class ClusEnsembleFeatureRanking {
     }
 
 
-    public void setRForestDescription(ClusErrorList error) {
-        m_RankingDescription = "Ranking via Random Forests: RForest for error measure(s) ";
-        for (int i = 0; i < error.getNbErrors(); i++) {
-            m_RankingDescription += error.getError(i).getName() + (i == error.getNbErrors() - 1 ? "" : ", ");
-        }
-
+    public void setRForestDescription(ArrayList<String> names) {
+        m_RankingDescription = "Ranking via Random Forests: RForest method\n";
+        m_RankingDescription += "attributeName," + String.join(",", names);
     }
 
 
@@ -832,13 +830,19 @@ public class ClusEnsembleFeatureRanking {
     }
 
 
-    public synchronized void setGenie3Description() {
-        m_RankingDescription = "Ranking via Random Forests: Genie3";
+    public synchronized void setGenie3Description(ArrayList<String> names) {
+        m_RankingDescription = "Ranking via Random Forests: Genie3\n";
+        m_RankingDescription += "attributeName," + String.join(",", names);
     }
 
 
     public synchronized void setSymbolicDescription(double[] weights) {
-        m_RankingDescription = "Ranking via Random Forests: Symbolic with weights " + Arrays.toString(weights);
+        m_RankingDescription = "Ranking via Random Forests: Symbolic\n";
+        String[] names = new String[weights.length];
+        for(int i = 0; i < names.length; i++){
+        	names[i] = "w=" + Double.toString(weights[i]);
+        }
+        m_RankingDescription += "attributeName," + String.join(",", names);
     }
 
 

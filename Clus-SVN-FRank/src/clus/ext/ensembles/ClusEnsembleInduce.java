@@ -161,14 +161,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     m_BagClus.getSettings().setToAllMultiLabelRankingMeasures();
                 }
             }
-            m_FeatureRanking = new ClusEnsembleFeatureRanking();
+            
+            // m_FeatureRanking = new ClusEnsembleFeatureRanking();
                   
-            setNbFeatureRankings(schema, clus.getStatManager());
-            int nbRankings = getNbFeatureRankings();
-            if(getSettings().getVerbose() > 0){
-            	System.out.println("Number of feature rankings computed: " + nbRankings);
-            }
-            m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes(), nbRankings);
+            // setNbFeatureRankings(schema, clus.getStatManager());
+            //int nbRankings = getNbFeatureRankings();
+            //if(getSettings().getVerbose() > 0){
+            //	System.out.println("Number of feature rankings computed: " + nbRankings);
+            //}
+            // m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes(), nbRankings);
             // if (sett.getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES){
             // // moj komentar //Dragi comment - take 2
             // if (sett.getRankingMethod() != Settings.RANKING_GENIE3 && sett.getRankingMethod() !=
@@ -199,25 +200,39 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
     }
 
-
+    /**
+     * Sets the number of feature rankings and the ranking description.
+     * @param schema
+     * @param mgr
+     */
     public void setNbFeatureRankings(ClusSchema schema, ClusStatManager mgr) {
     	ClusStatistic clusteringStat =  mgr.getStatistic(ClusAttrType.ATTR_USE_CLUSTERING);
     	Settings sett = schema.getSettings();
     	
         int nbRankings = 0;
+        ClusAttrType[] clusteringAttrs = schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
+        ArrayList<String> rankingNames = new ArrayList<String>();
         switch (schema.getSettings().getRankingMethod()) {
             case Settings.RANKING_RFOREST:
-            	ClusErrorList errLst = m_FeatureRanking.computeErrorList(schema, mgr);
+            	ClusErrorList errLst = m_FeatureRanking.computeErrorList(schema, mgr);            	
             	int nbErrors = errLst.getNbErrors();
             	for(int i = 0; i < nbErrors; i++){
             		nbRankings++; // overall
+            		rankingNames.add(String.format("%s:%s", errLst.getError(i).getName(), "overAll"));
+            		
                     if (sett.shouldPerformRankingPerTarget() && (errLst.getError(i) instanceof ComponentError)){
-                    	nbRankings += errLst.getError(i).getDimension();
+                    	int nbDim =  errLst.getError(i).getDimension();
+                    	nbRankings += nbDim;
+                    	for(int j = 0; j < nbDim; j++){
+                    		rankingNames.add(String.format("%s:%s", errLst.getError(i).getName(), clusteringAttrs[j].getName()));
+                    	}                    	
                     }
             	}
+            	m_FeatureRanking.setRForestDescription(rankingNames);
                 break;
             case Settings.RANKING_GENIE3:
                 nbRankings++; // overall
+                rankingNames.add(String.format("overAll"));
                 if (sett.shouldPerformRankingPerTarget()){
                 	if(!(clusteringStat instanceof ComponentStatistic)){
                 		System.err.println("Cannot perform per-target ranking for the given type(s) of targets!");
@@ -225,18 +240,23 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 		sett.setPerformRankingPerTarget(false);
                 	}
                 	else{
-                		nbRankings += ((ComponentStatistic) clusteringStat).getNbStatisticComponents();
+                		int nbComponents = ((ComponentStatistic) clusteringStat).getNbStatisticComponents();
+                		nbRankings += nbComponents;
+                		for(int j = 0; j < nbComponents; j++){
+                			rankingNames.add(String.format("%s", clusteringAttrs[j].getName()));
+                		}
                 	}
                 }
+                m_FeatureRanking.setGenie3Description(rankingNames);
                 break;
             case Settings.RANKING_SYMBOLIC:
                 double[] weights = schema.getSettings().getSymbolicWeights();
-                if (weights != null) {
-                	nbRankings = weights.length;// vector of weights
+                if (weights == null) {
+                    weights = new double[] { schema.getSettings().getSymbolicWeight() };
                 }
-                else {
-                	nbRankings = 1; // single weight
-                }
+                nbRankings = weights.length;
+                m_FeatureRanking.setSymbolicDescription(weights);                
+                break;
         }
         m_NbFeatureRankings = nbRankings;
     }
@@ -260,6 +280,16 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         prepareEnsembleTargetSubspaces();
         
+        // initialise ranking stuff here: we need stat manager with clustering statistics != null
+        m_FeatureRanking = new ClusEnsembleFeatureRanking();
+        ClusStatManager mgr = getStatManager();
+        ClusSchema schema = mgr.getSchema();
+        setNbFeatureRankings(schema, mgr);
+        int nbRankings = getNbFeatureRankings();
+        if(getSettings().getVerbose() > 0){
+        	System.out.println("Number of feature rankings computed: " + nbRankings);
+        }
+        m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes(), nbRankings);
         
         m_OForest = new ClusForest(getStatManager(), m_Optimization);
         m_DForest = new ClusForest(getStatManager(), m_Optimization);
