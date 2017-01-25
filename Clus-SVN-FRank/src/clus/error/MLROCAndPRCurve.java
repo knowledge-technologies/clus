@@ -37,7 +37,7 @@ import clus.statistic.ClusStatistic;
  *         MLROCAndPRCurve is used in multi-label classification scenario, and it is an analogue of
  *         clus.error.ROCAndPRCurve.
  */
-public abstract class MLROCAndPRCurve extends ClusNominalError {
+public abstract class MLROCAndPRCurve extends ClusNominalError { // does not implement ComponentError - would this make sense?
 
     protected static final int averageAUROC = 0;
     protected static final int averageAUPRC = 1;
@@ -118,16 +118,10 @@ public abstract class MLROCAndPRCurve extends ClusNominalError {
     }
 
 
-    // NEDOTAKNJENO SE
-    public double getMLROCAndPRCurve(int i) {
-        return getModelErrorComponent(i);
-    }
-
-
-    public double getModelErrorComponent(int i) {
-        throw new RuntimeException("Tole pa se ni implementiran.");
-    }
-
+    // ZAKOMENTIRAL - je smiselno?
+//    public double getMLROCAndPRCurve(int i) {
+//        return getModelErrorComponent(i);
+//    }
 
     public double getModelError() {
         throw new RuntimeException("This must be implemented by a subclas.");

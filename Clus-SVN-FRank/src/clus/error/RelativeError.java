@@ -7,11 +7,8 @@ import clus.data.type.NumericAttrType;
 import clus.statistic.ClusStatistic;
 
 
-public class RelativeError extends ClusNumericError {
+public class RelativeError extends ClusNumericError implements ComponentError {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 1L;
     protected double[] m_SumRelErr;
 

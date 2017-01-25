@@ -11,7 +11,7 @@ import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 
 
-public class MSNominalError extends ClusNominalError {
+public class MSNominalError extends ClusNominalError implements ComponentError {
 
     public final static long serialVersionUID = 1L;
 

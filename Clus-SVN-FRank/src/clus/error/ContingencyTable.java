@@ -32,7 +32,7 @@ import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 
-public class ContingencyTable extends ClusNominalError {
+public class ContingencyTable extends ClusNominalError implements ComponentError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 

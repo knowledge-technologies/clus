@@ -36,7 +36,7 @@ import clus.data.type.ClusSchema;
 import clus.jeans.util.MyArray;
 import clus.statistic.ClusStatistic;
 
-
+@Deprecated
 public class OldPredictionWriter {
 
     protected PrintWriter m_Writer;

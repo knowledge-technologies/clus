@@ -30,7 +30,7 @@ import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 
 
-public class AvgDistancesError extends ClusError {
+public class AvgDistancesError extends ClusError { // does not implements ComponentError
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 

@@ -31,7 +31,7 @@ import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 
 
-public class PearsonCorrelation extends ClusNumericError {
+public class PearsonCorrelation extends ClusNumericError implements ComponentError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 

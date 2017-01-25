@@ -47,6 +47,7 @@ import clus.data.rows.TupleIterator;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.error.ClusErrorList;
+import clus.error.ComponentError;
 import clus.ext.ensembles.cloner.Cloner;
 import clus.ext.ensembles.containters.OneBagResults;
 import clus.ext.ensembles.induceCallables.InduceExtraTreeCallable;
@@ -202,11 +203,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     public void setNbFeatureRankings(ClusSchema schema, ClusStatManager mgr) {
     	ClusStatistic clusteringStat =  mgr.getStatistic(ClusAttrType.ATTR_USE_CLUSTERING);
     	Settings sett = schema.getSettings();
-    	if(!(clusteringStat instanceof ComponentStatistic) && sett.shouldPerformRankingPerTarget()){
-    		System.err.println("Cannot perform per-target ranking for the given type(s) of targets!");
-    		System.err.println("This option is now set to false.");
-    		sett.setPerformRankingPerTarget(false);
-    	}
     	
         int nbRankings = 0;
         switch (schema.getSettings().getRankingMethod()) {
@@ -215,7 +211,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             	int nbErrors = errLst.getNbErrors();
             	for(int i = 0; i < nbErrors; i++){
             		nbRankings++; // overall
-                    if (sett.shouldPerformRankingPerTarget()){
+                    if (sett.shouldPerformRankingPerTarget() && (errLst.getError(i) instanceof ComponentError)){
                     	nbRankings += errLst.getError(i).getDimension();
                     }
             	}
@@ -223,7 +219,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             case Settings.RANKING_GENIE3:
                 nbRankings++; // overall
                 if (sett.shouldPerformRankingPerTarget()){
-                	nbRankings += ((ComponentStatistic) clusteringStat).getNbStatisticComponents();
+                	if(!(clusteringStat instanceof ComponentStatistic)){
+                		System.err.println("Cannot perform per-target ranking for the given type(s) of targets!");
+                		System.err.println("This option is now set to false.");
+                		sett.setPerformRankingPerTarget(false);
+                	}
+                	else{
+                		nbRankings += ((ComponentStatistic) clusteringStat).getNbStatisticComponents();
+                	}
                 }
                 break;
             case Settings.RANKING_SYMBOLIC:

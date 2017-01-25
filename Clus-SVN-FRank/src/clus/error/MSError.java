@@ -39,7 +39,7 @@ import clus.statistic.RegressionStat;
 
 // import clus.jeans.util.array.*;
 
-public class MSError extends ClusNumericError {
+public class MSError extends ClusNumericError implements ComponentError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 

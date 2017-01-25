@@ -52,8 +52,8 @@ public class SpearmanRankCorrelation extends ClusNumericError {
 
     @Override
     public double getModelErrorComponent(int i) {
-        System.err.println("SpearmanRankCorrelation does not have multiple components (it's a measure over all dimensions)");
-        return 0.0;
+        throw new RuntimeException("SpearmanRankCorrelation does not have multiple components (it's a measure over all dimensions)");
+        // return 0.0;
     }
 
 

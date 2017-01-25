@@ -36,7 +36,7 @@ import clus.util.ClusFormat;
  * @author matejp
  * 
  */
-public class MacroRecall extends ClusNominalError {
+public class MacroRecall extends ClusNominalError implements ComponentError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 

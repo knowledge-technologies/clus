@@ -38,17 +38,16 @@ import clus.main.Settings;
 public class BinaryPredictionList implements Serializable {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
-
-    protected int m_NbPos, m_NbNeg; // number of positive and negative examples seen
-    protected transient ArrayList<DoubleBooleanCount> m_Values = new ArrayList<DoubleBooleanCount>(); // either empty list or sorted list of values of m_ValueSet
-    protected transient HashMap<DoubleBooleanCount, DoubleBooleanCount> m_ValueSet = new HashMap<DoubleBooleanCount, DoubleBooleanCount>(); // key:value
-                                                                                                                                            // pairs
-                                                                                                                                            // are
-                                                                                                                                            // (hash
-                                                                                                                                            // of)
-                                                                                                                                            // x:
-                                                                                                                                            // x
-
+    /** The number of positive examples seen */
+    protected int m_NbPos;
+    /** The number of negative examples seen */
+    protected int m_NbNeg; 
+    /** Either empty list or sorted list of values of m_ValueSet */
+    protected transient ArrayList<DoubleBooleanCount> m_Values = new ArrayList<DoubleBooleanCount>(); 
+    /**
+     * Hash map with key: value pairs that are of form (hash of) x: x
+     */
+    protected transient HashMap<DoubleBooleanCount, DoubleBooleanCount> m_ValueSet = new HashMap<DoubleBooleanCount, DoubleBooleanCount>();
 
     /**
      * Updates the binary-classification statistics.

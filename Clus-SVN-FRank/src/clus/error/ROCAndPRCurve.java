@@ -9,7 +9,7 @@ import clus.jeans.util.compound.DoubleBooleanCount;
 import clus.main.Settings;
 
 
-public class ROCAndPRCurve implements Serializable {
+public class ROCAndPRCurve implements Serializable { // does not implement ComponentError - would this make sense?
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 

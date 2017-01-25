@@ -176,7 +176,8 @@ public abstract class ClusError implements Serializable {
 
     public double getModelErrorComponent(int i)
     {
-        return 0.0;
+    	throw new RuntimeException("This method should be either implemented by a subclass or not at all.");
+        // return 0.0;
     }
 
 

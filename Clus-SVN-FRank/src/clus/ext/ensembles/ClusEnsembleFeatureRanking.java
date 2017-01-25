@@ -34,6 +34,7 @@ import clus.error.Accuracy;
 import clus.error.AveragePrecision;
 import clus.error.ClusError;
 import clus.error.ClusErrorList;
+import clus.error.ComponentError;
 import clus.error.Coverage;
 import clus.error.HammingLoss;
 import clus.error.MLAccuracy;
@@ -443,7 +444,10 @@ public class ClusEnsembleFeatureRanking {
         double[][][] errors = new double[error.getNbErrors()][2][];
         for (int i = 0; i < errors.length; i++) {
         	ClusError currentError = error.getError(i);
-        	int nbResultsPerError = 1 + (mgr.getSettings().shouldPerformRankingPerTarget() ? currentError.getDimension() : 0);
+        	int nbResultsPerError = 1;
+        	if (mgr.getSettings().shouldPerformRankingPerTarget() && (currentError instanceof ComponentError)){
+        		nbResultsPerError += currentError.getDimension();
+        	}
         	errors[i][0] = new double[nbResultsPerError];
         	// compute overall error
         	errors[i][0][0] = currentError.getModelError();
@@ -678,8 +682,7 @@ public class ClusEnsembleFeatureRanking {
         ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);
         HashMap<String, double[][]> partialImportances = new HashMap<String, double[][]>();
         int nbTargetComponents = 0;
-        boolean perTargetRanking = root.getClusteringStat() instanceof ComponentStatistic &&
-        						   statManager.getSettings().shouldPerformRankingPerTarget(); 
+        boolean perTargetRanking = statManager.getSettings().shouldPerformRankingPerTarget(); // we set this option to false if !(root.getClusteringStat() instanceof ComponentStatistic) 
         if (perTargetRanking){
         	nbTargetComponents += ((ComponentStatistic) root.getClusteringStat()).getNbStatisticComponents();
         }
