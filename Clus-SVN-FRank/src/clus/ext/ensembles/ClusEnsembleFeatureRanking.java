@@ -71,14 +71,17 @@ import clus.util.ClusRandomNonstatic;
 
 
 public class ClusEnsembleFeatureRanking {
-
-    protected HashMap<String, double[]> m_AllAttributes;// key is the AttributeName, and the value is array with the
-                                                        // order in the file and the rank
-                                                        // boolean m_FeatRank;
+	/**
+	 * The keys are attribute names and the values are the arrays of the following form:<br>
+	 * {@code [type of the attribute, position of the attribute, relevance1, relevance2, ..., relevanceK]}<br>
+	 * where {@code K >= 1} and each relevance corresponds to some ranking.
+	 */
+    protected HashMap<String, double[]> m_AllAttributes;
+    // boolean m_FeatRank;
     protected TreeMap<Double, ArrayList<String>> m_FeatureRanks;// sorted by the rank
     HashMap<String, Double> m_FeatureRankByName; // Part of fimp's header
 
-    /** Description of the ranking that appears in the first line of the .fimp file */
+    /** Description of the ranking that appears in the first two lines of the .fimp file */
     String m_RankingDescription;
 
     ClusReadWriteLock m_Lock;

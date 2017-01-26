@@ -462,7 +462,7 @@ public class ClusForest implements ClusModel, Serializable {
             for (int i = 0; i < m_Forest.size(); i++) {
                 ClusModel model = (ClusModel) m_Forest.get(i);
                 wrtr.println("#Model " + (i + 1));
-                wrtr.println("def clus_tree_" + (i + 1) + "( " + m_AttributeList + " ):");
+                wrtr.println("def clus_tree_" + (i + 1) + "(" + m_AttributeList + "):");
                 model.printModelToPythonScript(wrtr);
                 wrtr.println();
             }

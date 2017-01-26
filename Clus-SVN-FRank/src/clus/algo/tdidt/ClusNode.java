@@ -964,7 +964,8 @@ public class ClusNode extends MyNode implements ClusModel {
 
 
     public void printModelToPythonScript(PrintWriter wrt) {
-        printTreeToPythonScript(wrt, "\t");
+    	// changed tab to 4 spaces
+        printTreeToPythonScript(wrt, "    ");
     }
 
 
@@ -1268,14 +1269,14 @@ public class ClusNode extends MyNode implements ClusModel {
         if (arity > 0) {
             int delta = hasUnknownBranch() ? 1 : 0;
             if (arity - delta == 2) {
-                writer.println(prefix + "IF " + m_Test.getPythonTestString() + ":");
-                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "\t");
-                writer.println(prefix + "ELSE: ");
+                writer.println(prefix + "if " + m_Test.getPythonTestString() + ":");
+                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "    ");
+                writer.println(prefix + "else: ");
                 if (hasUnknownBranch()) {
                     // TODO anything to do???
                 }
                 else {
-                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "\t");
+                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "    ");
                 }
             }
             else {
@@ -1284,8 +1285,8 @@ public class ClusNode extends MyNode implements ClusModel {
         }
         else {
             if (m_TargetStat != null) {
-                writer.println(prefix + "RETURN " + m_TargetStat.getArrayOfStatistic());
-                System.out.println(m_TargetStat.getClass());
+                writer.println(prefix + "return " + m_TargetStat.getArrayOfStatistic());
+                // System.out.println(m_TargetStat.getClass());
             }
         }
     }

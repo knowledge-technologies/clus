@@ -187,7 +187,7 @@ public class ClusOutput {
             }
         }
 
-        // print multilable thresholds
+        // print multi-label thresholds
         if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()) {
             String mlThresholdsTitle = "MultiLabelThresholds:";
             m_Writer.println(mlThresholdsTitle);
@@ -276,12 +276,12 @@ public class ClusOutput {
                     }
                     else {
                         // use following lines for getting tree as Python function
-                        m_Writer.print("def clus_tree( ");
+                        m_Writer.print("def clus_tree(");
                         ClusAttrType[] cat = ClusSchema.vectorToAttrArray(m_Schema.collectAttributes(ClusAttrType.ATTR_USE_DESCRIPTIVE, ClusAttrType.THIS_TYPE));
                         for (int ii = 0; ii < cat.length - 1; ii++) {
-                            m_Writer.print(cat[ii].getName() + ",");
+                            m_Writer.print(cat[ii].getName() + ", ");
                         }
-                        m_Writer.println(cat[cat.length - 1].getName() + " ):");
+                        m_Writer.println(cat[cat.length - 1].getName() + "):");
                         root.printModelToPythonScript(m_Writer);
                         m_Writer.println();
                     }
