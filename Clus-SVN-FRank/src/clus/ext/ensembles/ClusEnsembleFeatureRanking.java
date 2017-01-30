@@ -68,6 +68,8 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.ComponentStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandomNonstatic;
+import weka.attributeSelection.ASEvaluation;
+import weka.attributeSelection.AttributeEvaluator;
 
 
 public class ClusEnsembleFeatureRanking {
@@ -81,8 +83,10 @@ public class ClusEnsembleFeatureRanking {
     protected TreeMap<Double, ArrayList<String>> m_FeatureRanks;// sorted by the rank
     HashMap<String, Double> m_FeatureRankByName; // Part of fimp's header
 
-    /** Description of the ranking that appears in the first two lines of the .fimp file */
+    /** Description of the ranking that appears in the first lines of the .fimp file */
     String m_RankingDescription;
+    /** Header for the table of relevances in the .fimp file*/
+    String m_FimpTableHeader;
 
     ClusReadWriteLock m_Lock;
 
@@ -151,7 +155,12 @@ public class ClusEnsembleFeatureRanking {
         }
     }
 
-
+    /**
+     * Writes fimp with attributes sorted decreasingly by relevances. This method should be called only if the number of feature rankings is 1.
+     * @param fname
+     * @param rankingMethod
+     * @throws IOException
+     */
     public void writeRanking(String fname, int rankingMethod) throws IOException {
         TreeMap<Double, ArrayList<String>> ranking = (TreeMap<Double, ArrayList<String>>) m_FeatureRanks.clone();
 
@@ -159,7 +168,8 @@ public class ClusEnsembleFeatureRanking {
         FileWriter wrtr = new FileWriter(franking);
 
         wrtr.write(m_RankingDescription + "\n");
-        wrtr.write(StringUtils.makeString('-', m_RankingDescription.length()) + "\n");
+        wrtr.write(m_FimpTableHeader + "\n");
+        wrtr.write(StringUtils.makeString('-', m_FimpTableHeader.length()) + "\n");
         while (!ranking.isEmpty()) {
             // wrtr.write(sorted.get(sorted.lastKey()) + "\t" + sorted.lastKey()+"\n");
             wrtr.write(writeRow(ranking.get(ranking.lastKey()), ranking.lastKey()));
@@ -177,18 +187,19 @@ public class ClusEnsembleFeatureRanking {
             String attr = (String) attributes.get(i);
             attr = attr.replaceAll("\\[", "");
             attr = attr.replaceAll("\\]", "");
-            output += attr + "\t" + value + "\n";
+            output += attr + "\t[" + value + "]\n"; // added [ and ] to make fimps look the same, when #rankings == 1 or #rankings > 1.
         }
         return output;
     }
 
-
+    
     public void writeRankingByAttributeName(String fname, ClusAttrType[] descriptive, int rankingMethod) throws IOException {
         File franking = new File(fname + ".fimp");
         FileWriter wrtr = new FileWriter(franking);
-
+        
         wrtr.write(m_RankingDescription + "\n");
-        wrtr.write(StringUtils.makeString('-', m_RankingDescription.length()) + "\n");
+        wrtr.write(m_FimpTableHeader + "\n");
+        wrtr.write(StringUtils.makeString('-', m_FimpTableHeader.length()) + "\n");
         int nbRankings = m_AllAttributes.get(descriptive[0].getName()).length - 2;
         for (int i = 0; i < descriptive.length; i++) {
             String attribute = descriptive[i].getName();
@@ -440,7 +451,7 @@ public class ClusEnsembleFeatureRanking {
             ClusStatistic pred = model.predictWeighted(tuple);
             error.addExample(tuple, pred);
         }
-//        if (m_RankingDescription == null) {
+//        if (m_FimpTableHeader == null) {
 //            setRForestDescription(error);
 //        }
         /* return the average errors */
@@ -449,7 +460,8 @@ public class ClusEnsembleFeatureRanking {
         	ClusError currentError = error.getError(i);
         	int nbResultsPerError = 1;
         	if (mgr.getSettings().shouldPerformRankingPerTarget() && (currentError instanceof ComponentError)){
-        		nbResultsPerError += currentError.getDimension();
+        		int dim = currentError.getDimension();
+        		nbResultsPerError += dim > 1 ? dim : 0; // if dim == 1, then overAllError == perTargetError
         	}
         	errors[i][0] = new double[nbResultsPerError];
         	// compute overall error
@@ -643,7 +655,7 @@ public class ClusEnsembleFeatureRanking {
 
     @Deprecated
     public void calculateGENIE3importance(ClusNode node, ClusRun cr) throws InterruptedException {
-//        if (m_RankingDescription == null) {
+//        if (m_FimpTableHeader == null) {
 //            setGenie3Description();
 //        }
         if (!node.atBottomLevel()) {
@@ -680,7 +692,7 @@ public class ClusEnsembleFeatureRanking {
      * @throws InterruptedException
      */
     public HashMap<String, double[][]> calculateGENIE3importanceIteratively(ClusNode root, ClusStatManager statManager) {
-//        if (m_RankingDescription == null) {
+//        if (m_FimpTableHeader == null) {
 //            setGenie3Description();
 //        }
         ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);
@@ -688,7 +700,8 @@ public class ClusEnsembleFeatureRanking {
         int nbTargetComponents = 0;
         boolean perTargetRanking = statManager.getSettings().shouldPerformRankingPerTarget(); // we set this option to false if !(root.getClusteringStat() instanceof ComponentStatistic) 
         if (perTargetRanking){
-        	nbTargetComponents += ((ComponentStatistic) root.getClusteringStat()).getNbStatisticComponents();
+        	int comp = ((ComponentStatistic) root.getClusteringStat()).getNbStatisticComponents();
+        	nbTargetComponents += comp > 1 ? comp : 0;  // if comp == 1, then overAll variance reduction equals perTarget var. red.
         }
         for (NodeDepthPair pair : nodes) {
             String attribute = pair.getNode().getTest().getType().getName();
@@ -748,8 +761,8 @@ public class ClusEnsembleFeatureRanking {
      */
     @Deprecated
     public void calculateSYMBOLICimportance(ClusNode node, double[] weights, double depth) throws InterruptedException {
-        if (m_RankingDescription == null) {
-            setSymbolicDescription(weights);
+        if (m_FimpTableHeader == null) {
+            setSymbolicFimpHeader(weights);
         }
 
         if (!node.atBottomLevel()) {
@@ -775,7 +788,7 @@ public class ClusEnsembleFeatureRanking {
      * @throws InterruptedException
      */
     public synchronized HashMap<String, double[][]> calculateSYMBOLICimportanceIteratively(ClusNode root, double[] weights) throws InterruptedException {
-//        if (m_RankingDescription == null) {
+//        if (m_FimpTableHeader == null) {
 //            setSymbolicDescription(weights);
 //        }
         ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);
@@ -796,12 +809,6 @@ public class ClusEnsembleFeatureRanking {
 
         return partialImportances;
 
-    }
-
-
-    public void setRForestDescription(ArrayList<String> names) {
-        m_RankingDescription = "Ranking via Random Forests: RForest method\n";
-        m_RankingDescription += "attributeName," + String.join(",", names);
     }
 
 
@@ -833,23 +840,42 @@ public class ClusEnsembleFeatureRanking {
     }
 
 
-    public synchronized void setGenie3Description(ArrayList<String> names) {
-        m_RankingDescription = "Ranking via Random Forests: Genie3\n";
-        m_RankingDescription += "attributeName," + String.join(",", names);
+
+    public void setRForestFimpHeader(ArrayList<String> names) {
+        m_FimpTableHeader = "attributeName\t[" + String.join(",", names) + "]";
+    }
+
+    public void setGenie3FimpHeader(ArrayList<String> names) {
+        m_FimpTableHeader = fimpTableHeader(names);
     }
 
 
-    public synchronized void setSymbolicDescription(double[] weights) {
-        m_RankingDescription = "Ranking via Random Forests: Symbolic\n";
+    public void setSymbolicFimpHeader(double[] weights) {
         String[] names = new String[weights.length];
         for(int i = 0; i < names.length; i++){
         	names[i] = "w=" + Double.toString(weights[i]);
         }
-        m_RankingDescription += "attributeName," + String.join(",", names);
+        String.join("", names);
+        m_FimpTableHeader = fimpTableHeader(names); 
+    }
+    
+    public void setRankigDescription(int ensembleType, int rankingType, int nbTrees){
+    	String[] description_parts = new String[]{String.format("Ensemble method: %s", Settings.ENSEMBLE_TYPE[ensembleType]),
+    											  String.format("Ranking method: %s", Settings.RANKING_TYPE[rankingType]),
+    											  String.format("Ensemble size: %d", nbTrees)};
+    	m_RankingDescription = String.join("\n", description_parts);
     }
 
 
-    public synchronized void setReliefDescription(int neighbours, int iterations) {
+    public void setReliefDescription(int neighbours, int iterations) {
         m_RankingDescription = String.format("Ranking via Relief: %d neighbours and %d iterations", neighbours, iterations);
+    }
+    
+    public String fimpTableHeader(Iterable<? extends CharSequence> list){
+    	return "attributeName,\t[" + String.join(",", list) + "]";
+    }
+    
+    public String fimpTableHeader(CharSequence... list){
+    	return "attributeName,\t[" + String.join(",", list) + "]";
     }
 }

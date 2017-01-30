@@ -222,13 +222,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             		
                     if (sett.shouldPerformRankingPerTarget() && (errLst.getError(i) instanceof ComponentError)){
                     	int nbDim =  errLst.getError(i).getDimension();
+                    	nbDim = nbDim > 1 ? nbDim : 0;  // in the case of one target, overAll == per target
                     	nbRankings += nbDim;
                     	for(int j = 0; j < nbDim; j++){
                     		rankingNames.add(String.format("%s:%s", errLst.getError(i).getName(), clusteringAttrs[j].getName()));
                     	}                    	
                     }
             	}
-            	m_FeatureRanking.setRForestDescription(rankingNames);
+            	m_FeatureRanking.setRForestFimpHeader(rankingNames);
                 break;
             case Settings.RANKING_GENIE3:
                 nbRankings++; // overall
@@ -241,13 +242,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 	}
                 	else{
                 		int nbComponents = ((ComponentStatistic) clusteringStat).getNbStatisticComponents();
+                		nbComponents = nbComponents > 1 ? nbComponents : 0; // in the case of one target, overAll == per target
                 		nbRankings += nbComponents;
                 		for(int j = 0; j < nbComponents; j++){
                 			rankingNames.add(String.format("%s", clusteringAttrs[j].getName()));
                 		}
                 	}
                 }
-                m_FeatureRanking.setGenie3Description(rankingNames);
+                m_FeatureRanking.setGenie3FimpHeader(rankingNames);
                 break;
             case Settings.RANKING_SYMBOLIC:
                 double[] weights = schema.getSettings().getSymbolicWeights();
@@ -255,10 +257,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     weights = new double[] { schema.getSettings().getSymbolicWeight() };
                 }
                 nbRankings = weights.length;
-                m_FeatureRanking.setSymbolicDescription(weights);                
+                m_FeatureRanking.setSymbolicFimpHeader(weights);                
                 break;
         }
         m_NbFeatureRankings = nbRankings;
+        int ensType = getSettings().getEnsembleMethod();
+        int rankType = getSettings().getRankingMethod();
+        int nbTrees = getSettings().getNbBaggingSets().getInt();
+        m_FeatureRanking.setRankigDescription(ensType, rankType, nbTrees);
     }
 
 
