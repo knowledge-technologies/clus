@@ -211,6 +211,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     	
         int nbRankings = 0;
         ClusAttrType[] clusteringAttrs = schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
+        if(clusteringAttrs.length < 2 && sett.shouldPerformRankingPerTarget()){
+        	System.err.println("Situation:");
+        	System.err.println("- there is only one clustering attribute");
+        	System.err.println("- per target ranking is set to Yes");
+        	System.err.println("Consequences:");
+        	System.err.println("- per target ranking == overAll ranking");
+        	System.err.println("- per target ranking will be set to No");
+        	sett.setPerformRankingPerTarget(false);
+        }
         ArrayList<String> rankingNames = new ArrayList<String>();
         switch (schema.getSettings().getRankingMethod()) {
             case Settings.RANKING_RFOREST:
@@ -222,7 +231,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             		
                     if (sett.shouldPerformRankingPerTarget() && (errLst.getError(i) instanceof ComponentError)){
                     	int nbDim =  errLst.getError(i).getDimension();
-                    	nbDim = nbDim > 1 ? nbDim : 0;  // in the case of one target, overAll == per target
                     	nbRankings += nbDim;
                     	for(int j = 0; j < nbDim; j++){
                     		rankingNames.add(String.format("%s:%s", errLst.getError(i).getName(), clusteringAttrs[j].getName()));
@@ -242,7 +250,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 	}
                 	else{
                 		int nbComponents = ((ComponentStatistic) clusteringStat).getNbStatisticComponents();
-                		nbComponents = nbComponents > 1 ? nbComponents : 0; // in the case of one target, overAll == per target
                 		nbRankings += nbComponents;
                 		for(int j = 0; j < nbComponents; j++){
                 			rankingNames.add(String.format("%s", clusteringAttrs[j].getName()));

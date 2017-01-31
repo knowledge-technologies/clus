@@ -460,8 +460,7 @@ public class ClusEnsembleFeatureRanking {
         	ClusError currentError = error.getError(i);
         	int nbResultsPerError = 1;
         	if (mgr.getSettings().shouldPerformRankingPerTarget() && (currentError instanceof ComponentError)){
-        		int dim = currentError.getDimension();
-        		nbResultsPerError += dim > 1 ? dim : 0; // if dim == 1, then overAllError == perTargetError
+        		nbResultsPerError += currentError.getDimension();
         	}
         	errors[i][0] = new double[nbResultsPerError];
         	// compute overall error
@@ -699,9 +698,8 @@ public class ClusEnsembleFeatureRanking {
         HashMap<String, double[][]> partialImportances = new HashMap<String, double[][]>();
         int nbTargetComponents = 0;
         boolean perTargetRanking = statManager.getSettings().shouldPerformRankingPerTarget(); // we set this option to false if !(root.getClusteringStat() instanceof ComponentStatistic) 
-        if (perTargetRanking){
-        	int comp = ((ComponentStatistic) root.getClusteringStat()).getNbStatisticComponents();
-        	nbTargetComponents += comp > 1 ? comp : 0;  // if comp == 1, then overAll variance reduction equals perTarget var. red.
+        if (perTargetRanking){ 
+        	nbTargetComponents += ((ComponentStatistic) root.getClusteringStat()).getNbStatisticComponents();
         }
         for (NodeDepthPair pair : nodes) {
             String attribute = pair.getNode().getTest().getType().getName();
