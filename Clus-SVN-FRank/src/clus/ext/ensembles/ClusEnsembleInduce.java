@@ -48,7 +48,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.error.ClusErrorList;
 import clus.error.ComponentError;
-import clus.ext.ensembles.cloner.Cloner;
+import clus.util.cloner.Cloner;
 import clus.ext.ensembles.containters.OneBagResults;
 import clus.ext.ensembles.induceCallables.InduceExtraTreeCallable;
 import clus.ext.ensembles.induceCallables.InduceOneBagCallable;
