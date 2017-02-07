@@ -2831,6 +2831,10 @@ public class Settings implements Serializable {
     public int getNumberOfThreads() {
         return m_NumberOfThreads.getValue();
     }
+    
+    public boolean isEnsembleWithParallelExecution() {
+        return isEnsembleMode() && (m_NumberOfThreads.getValue() > 1);
+    }
 
     /***********************************************************************
      * Section: KNN *

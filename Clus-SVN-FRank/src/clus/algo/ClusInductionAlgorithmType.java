@@ -33,6 +33,7 @@ import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.util.ClusException;
+import clus.util.ClusFormat;
 
 
 /**
@@ -103,16 +104,24 @@ public abstract class ClusInductionAlgorithmType {
      */
     public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
         long start_time = ResourceInfo.getTime();
-
         getInduce().induceAll(cr); // Train the algorithms of this type.
         long done_time = ResourceInfo.getTime();
+        
         cr.setInductionTime(done_time - start_time);
+       
         pruneAll(cr);
         cr.setPruneTime(ResourceInfo.getTime() - done_time);
         postProcess(cr);
+        
         if (Settings.VERBOSE > 0) {
+            
+            String parallelTime = "";
+            if (getSettings().isEnsembleWithParallelExecution()){
+                parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format(((double)cr.getInductionTimeSequential() / 1000.0)) + " sec)";
+            }
+            
             String cpu = ResourceInfo.isLibLoaded() ? " (CPU)" : "";
-            System.out.println("Induction Time: " + (double) cr.getInductionTime() / 1000 + " sec" + cpu);
+            System.out.println("Induction Time: " + (double) cr.getInductionTime() / 1000 + " sec" + parallelTime + cpu);
             System.out.println("Pruning Time: " + (double) cr.getPruneTime() / 1000 + " sec" + cpu);
         }
     }

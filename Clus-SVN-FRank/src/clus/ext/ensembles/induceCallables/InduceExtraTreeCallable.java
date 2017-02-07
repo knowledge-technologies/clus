@@ -18,18 +18,16 @@ public class InduceExtraTreeCallable implements Callable<OneBagResults> {
     private int m_I;
     private TupleIterator m_Train_iterator, m_Test_iterator;
     private ClusRandomNonstatic m_Rnd;
-    private long m_Summ_time;
     private ClusStatManager m_Mgr;
 
 
-    public InduceExtraTreeCallable(ClusEnsembleInduce cei, ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, long summ_time, ClusStatManager mgr) {
+    public InduceExtraTreeCallable(ClusEnsembleInduce cei, ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager mgr) {
         m_Cei = cei;
         m_Cr = cr;
         m_I = i;
         m_Train_iterator = train_iterator;
         m_Test_iterator = test_iterator;
         m_Rnd = rnd;
-        m_Summ_time = summ_time;
         m_Mgr = mgr;
     }
 
@@ -37,7 +35,7 @@ public class InduceExtraTreeCallable implements Callable<OneBagResults> {
     @Override
     public OneBagResults call() throws Exception {
         // TODO Auto-generated method stub
-        return m_Cei.induceExtraTree(m_Cr, m_I, m_Train_iterator, m_Test_iterator, m_Rnd, m_Summ_time, m_Mgr);
+        return m_Cei.induceOneExtraTree(m_Cr, m_I, m_Train_iterator, m_Test_iterator, m_Rnd, m_Mgr);
     }
 
 }

@@ -42,6 +42,7 @@ public abstract class ClusModelInfoList implements Serializable {
     protected ClusModelInfo m_AllModelsMI = new ClusModelInfo("AllModels");
     protected ArrayList m_Models = new ArrayList();
     protected long m_IndTime, m_PrepTime, m_PruneTime;
+    protected long m_IndTimeSequential = 0; // to be used with ensemble parallel execution
 
 
     /***************************************************************************
@@ -330,6 +331,13 @@ public abstract class ClusModelInfoList implements Serializable {
         return m_IndTime;
     }
 
+    public final void setInductionTimeSequential(long time) {
+        m_IndTimeSequential = time;
+    }
+    
+    public final long getInductionTimeSequential() {
+        return m_IndTimeSequential;
+    }
 
     public final void setPruneTime(long time) {
         m_PruneTime = time;

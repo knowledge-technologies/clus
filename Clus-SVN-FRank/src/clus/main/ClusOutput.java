@@ -163,9 +163,15 @@ public class ClusOutput {
                 models.add(null);
             }
         }
+        
+        String parallelTime = "";
+        if (getSettings().isEnsembleWithParallelExecution()){
+            parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format(((double)cr.getInductionTimeSequential() / 1000.0)) + " sec)";
+        }
+        
         // Compute statistics
         String cpu = ResourceInfo.isLibLoaded() ? " (CPU)" : "";
-        m_Writer.println("Induction Time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec" + cpu);
+        m_Writer.println("Induction Time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec" + parallelTime + cpu);
         m_Writer.println("Pruning Time: " + ClusFormat.FOUR_AFTER_DOT.format(tpru) + " sec" + cpu);
         m_Writer.println("Model information");
         for (int i = 0; i < cr.getNbModels(); i++) {

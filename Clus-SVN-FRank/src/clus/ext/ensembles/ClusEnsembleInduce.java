@@ -79,7 +79,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     ClusForest m_OForest;// Forest with the original models
     ClusForest m_DForest;
     static int m_Mode;
-    long m_SummTime = 0;
 
     // Memory optimization
     private static boolean m_OptMode;
@@ -853,7 +852,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         initializeBagTargetSubspacing(ind.getStatManager(), i);
 
         ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
-        m_SummTime += ResourceInfo.getTime() - one_bag_time;
+        //m_SummTime += ResourceInfo.getTime() - one_bag_time;
+        one_bag_time = ResourceInfo.getTime() - one_bag_time;
         
         m_OForest.updateCounts((ClusNode) model);
 
@@ -908,7 +908,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         // Valid only when test set is supplied
         if (checkToOutEnsemble(i) && (getSettings().getBagSelection().getIntVectorSorted()[0] == -1)) {
-            crSingle.setInductionTime(m_SummTime);
+            //crSingle.setInductionTime(m_SummTime);
+            crSingle.setInductionTime(one_bag_time);
             canForgetTheRun = false;
 
             // Lines that are commented out are executed AT THE END of induceBagging
@@ -947,7 +948,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             crSingle.setModels(new ArrayList());
         }
 
-        return new OneBagResults(model, fimportances, crSingle, oob_total);
+        return new OneBagResults(model, fimportances, crSingle, oob_total, one_bag_time);
     }
 
 
@@ -1104,7 +1105,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     public void induceExtraTrees(ClusRun cr) throws ClusException, IOException, InterruptedException {
-        long summ_time = 0; // = ResourceInfo.getTime();
+        long indTimeSequential = 0;
+        
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
         TupleIterator test_iterator = m_OptMode ? cr.getTestIter() : null; // = test set iterator
 
@@ -1127,7 +1129,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         for (int i = 1; i <= m_NbMaxBags; i++) {
             ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-            InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, summ_time, statManagerClones[i - 1]); // <-- induceExtraTree(cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]);
+            InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, statManagerClones[i - 1]); // <-- induceExtraTree(cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]);
             Future<OneBagResults> submit = executor.submit(worker);
             bagResults.add(submit);
         }
@@ -1146,6 +1148,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 if (getSettings().shouldPerformRanking()) {
                     m_FeatureRanking.putAttributesInfos(results.getFimportances());
                 }
+                
+                indTimeSequential += results.getInductionTime();
             }
             catch (InterruptedException e) {
                 e.printStackTrace();
@@ -1156,11 +1160,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 System.exit(-1);
             }
         }
+        
+        cr.setInductionTimeSequential(indTimeSequential);
 
     }
 
 
-    public OneBagResults induceExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, long summ_time, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
+    public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
         long one_bag_time = ResourceInfo.getTime();
         if (Settings.VERBOSE > 0)
             System.out.println("Bag: " + i);
@@ -1181,12 +1187,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         ind.getStatManager().initClusteringWeights();
 
         initializeBagTargetSubspacing(ind.getStatManager(), i);
-        
-        
        
         
         ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
-        summ_time += ResourceInfo.getTime() - one_bag_time;
+      
+        one_bag_time = ResourceInfo.getTime() - one_bag_time;
 
         m_OForest.updateCounts((ClusNode) model);
 
@@ -1234,7 +1239,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         	if (m_NbThreads > 1){
         		giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_optimization);
         	}
-            crSingle.setInductionTime(summ_time);
+            crSingle.setInductionTime(one_bag_time);
             postProcessForest(crSingle);
             crSingle.setTestSet(cr.getTestIter());
             crSingle.setTrainingSet(cr.getTrainingSet());
@@ -1244,7 +1249,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         crSingle.deleteData();
         crSingle.setModels(new ArrayList());
 
-        return new OneBagResults(model, fimportances, crSingle, null);
+        return new OneBagResults(model, fimportances, crSingle, null, one_bag_time);
     }
 
 

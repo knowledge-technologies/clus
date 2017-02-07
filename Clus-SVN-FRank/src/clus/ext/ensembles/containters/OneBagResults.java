@@ -14,13 +14,14 @@ public class OneBagResults {
     private HashMap<String, double[][]> m_Fimportances;
     private ClusRun m_SingleRun;
     private OOBSelection m_OOBTotal;
+    private long m_InductionTime;
 
-
-    public OneBagResults(ClusModel model, HashMap<String, double[][]> fimportances, ClusRun crSingle, OOBSelection oob_total) {
+    public OneBagResults(ClusModel model, HashMap<String, double[][]> fimportances, ClusRun crSingle, OOBSelection oob_total, long inductionTime) {
         m_Model = model;
         m_Fimportances = fimportances;
         m_SingleRun = crSingle;
         m_OOBTotal = oob_total;
+        m_InductionTime = inductionTime;
     }
 
 
@@ -41,6 +42,10 @@ public class OneBagResults {
 
     public OOBSelection getOOBTotal() {
         return m_OOBTotal;
+    }
+    
+    public long getInductionTime() {
+        return m_InductionTime;
     }
 
 }
