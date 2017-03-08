@@ -119,6 +119,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
         else {
             Arrays.fill(m_NeighbourWeights, 1.0);
         }
+        
+        ArrayList<String> rankings = new ArrayList<String>();
+        rankings.add("overAll");
+        setReliefFimpHeader(rankings);
     }
 
 
@@ -778,6 +782,6 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
             }
         }
         return maxW;
-    }
+    }   
 
 }

@@ -857,6 +857,10 @@ public class ClusEnsembleFeatureRanking {
         m_FimpTableHeader = fimpTableHeader(names); 
     }
     
+    public void setReliefFimpHeader(ArrayList<String> names){
+    	m_FimpTableHeader = fimpTableHeader(names);    	
+    }
+    
     public void setRankigDescription(int ensembleType, int rankingType, int nbTrees){
     	String[] description_parts = new String[]{String.format("Ensemble method: %s", Settings.ENSEMBLE_TYPE[ensembleType]),
     											  String.format("Ranking method: %s", Settings.RANKING_TYPE[rankingType]),
@@ -866,7 +870,7 @@ public class ClusEnsembleFeatureRanking {
 
 
     public void setReliefDescription(int neighbours, int iterations) {
-        m_RankingDescription = String.format("Ranking via Relief: %d neighbours and %d iterations", neighbours, iterations);
+        m_RankingDescription = String.format("Ranking method: Relief (%d neighbours and %d iterations)", neighbours, iterations);
     }
     
     public String fimpTableHeader(Iterable<? extends CharSequence> list){
