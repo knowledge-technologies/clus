@@ -205,10 +205,10 @@ public class ClusRuleLinearTerm extends ClusRule {
         stat.m_Means = new double[nbTargets];
         stat.m_Means[iTargetDim] = 1; // It does not matter what the value is.
         stat.m_NbAttrs = nbTargets;
-        stat.m_SumValues = new double[nbTargets];
-        stat.m_SumWeights = new double[nbTargets];
-        stat.m_SumValues[iTargetDim] = 1;
-        stat.m_SumWeights[iTargetDim] = 1;
+        stat.resetSumValues(nbTargets);    //stat.m_SumValues = new double[nbTargets];
+        stat.resetSumWeights(nbTargets);   // stat.m_SumWeights = new double[nbTargets];
+        stat.setSumValues(iTargetDim, 1);  //stat.m_SumValues[iTargetDim] = 1;
+        stat.setSumWeights(iTargetDim, 1); // stat.m_SumWeights[iTargetDim] = 1;
     }
 
 
@@ -228,19 +228,19 @@ public class ClusRuleLinearTerm extends ClusRule {
             // Mark all the target values as NaN. Otherwise causes problems in optimization.
             for (int i = 0; i < stat.m_NbAttrs; i++) {
                 stat.m_Means[i] = Double.NaN;
-                stat.m_SumValues[i] = Double.NaN;
-                stat.m_SumWeights[i] = 1;
+                stat.setSumValues(i, Double.NaN);  // stat.m_SumValues[i] = Double.NaN;
+                stat.setSumWeights(i, 1);  // stat.m_SumWeights[i] = 1;
             }
         }
         else {
             // If defined prediction, clear predictions (do not leave NaNs)
             for (int i = 0; i < stat.m_NbAttrs; i++) {
                 stat.m_Means[i] = 0;
-                stat.m_SumValues[i] = stat.m_Means[i];
-                stat.m_SumWeights[i] = 1;
+                stat.setSumValues(i, stat.m_Means[i]);  // stat.m_SumValues[i] = stat.m_Means[i];
+                stat.setSumWeights(i, 1); // stat.m_SumWeights[i] = 1;
             }
             stat.m_Means[m_targetDimForLinearTerm] = pred;
-            stat.m_SumValues[m_targetDimForLinearTerm] = stat.m_Means[m_targetDimForLinearTerm];
+            stat.setSumValues(m_targetDimForLinearTerm, stat.m_Means[m_targetDimForLinearTerm]);  // stat.m_SumValues[m_targetDimForLinearTerm] = stat.m_Means[m_targetDimForLinearTerm];
         }
 
         return m_TargetStat;

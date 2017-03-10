@@ -411,8 +411,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
         for (int iTarget = 0; iTarget < firstRuleStat.m_NbAttrs; iTarget++) {
             firstRuleStat.m_Means[iTarget] += addToDefaultPred[iTarget];
-            firstRuleStat.m_SumValues[iTarget] = firstRuleStat.m_Means[iTarget];
-            firstRuleStat.m_SumWeights[iTarget] = 1;
+            firstRuleStat.setSumValues(iTarget, firstRuleStat.m_Means[iTarget]);  // firstRuleStat.m_SumValues[iTarget] = firstRuleStat.m_Means[iTarget];
+            firstRuleStat.setSumWeights(iTarget, 1); // firstRuleStat.m_SumWeights[iTarget] = 1;
         }
     }
 
@@ -1171,8 +1171,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
                 for (int iTarget = 0; iTarget < stat.m_NbAttrs; iTarget++) {
 
                     stat.m_Means[iTarget] -= defaultPred[iTarget];
-                    stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
-                    stat.m_SumWeights[iTarget] = 1;
+                    stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
+                    stat.setSumWeights(iTarget, 1);  // stat.m_SumWeights[iTarget] = 1;
                 }
             }
         }
@@ -1239,8 +1239,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
                         stat.m_Means[iTarget] /= scalingValue;
                         // Bigger one (on absolute value) is 1
-                        stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
-                        stat.m_SumWeights[iTarget] = 1;
+                        stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
+                        stat.setSumWeights(iTarget, 1);  // stat.m_SumWeights[iTarget] = 1;
 
                         // System.out.println(stat.m_Means[iTarget]/(2*getTargStd(iTarget)));
                     }
@@ -1252,8 +1252,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
                         stat.m_Means[0] = 2 * getTargStd(0);
                     else
                         stat.m_Means[0] = 1;
-                    stat.m_SumValues[0] = stat.m_Means[0];
-                    stat.m_SumWeights[0] = 1;
+                    stat.setSumValues(0, stat.m_Means[0]);  // stat.m_SumValues[0] = stat.m_Means[0];
+                    stat.setSumWeights(0, 1);  // stat.m_SumWeights[0] = 1;
                 }
 
             }
@@ -1284,8 +1284,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
                 double scalingFactor = stat.m_SumWeight / (double) nbOfExamples;
                 for (int iTarget = 0; iTarget < stat.m_NbAttrs; iTarget++) {
                     stat.m_Means[iTarget] *= scalingFactor;
-                    stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
-                    stat.m_SumWeights[iTarget] = 1;
+                    stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
+                    stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;
                 }
             }
         }

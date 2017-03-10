@@ -694,8 +694,9 @@ public class ClusRule implements ClusModel, Serializable {
 
         for (int iTarget = 0; iTarget < stat.m_NbAttrs; iTarget++) {
             stat.m_Means[iTarget] = newPred[iTarget];
-            stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
-            stat.m_SumWeights[iTarget] = 1;
+            
+            stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];            
+            stat.setSumWeights(iTarget, 1);  // stat.m_SumWeights[iTarget] = 1;
         }
         setTargetStat(stat);
     }
