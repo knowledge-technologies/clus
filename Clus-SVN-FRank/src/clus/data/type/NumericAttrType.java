@@ -42,7 +42,7 @@ public class NumericAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static int THIS_TYPE = 1;
+    public final static int THIS_TYPE = NUMERIC_ATR_TYPE;
     public final static String THIS_TYPE_NAME = "Numeric";
 
     public final static double MISSING = Double.POSITIVE_INFINITY;
@@ -183,6 +183,10 @@ public class NumericAttrType extends ClusAttrType {
                 setSparse(true);
             }
         }
+    }
+    
+    public boolean isNumeric(){
+    	return true;
     }
 
 }

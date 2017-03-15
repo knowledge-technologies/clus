@@ -128,7 +128,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = (ClusAttrType) attrs[i];
             // ArrayList examplelist = (ArrayList) examplelists[i];
-            if (at instanceof NominalAttrType){
+            if (at.isNominal()){ // at instanceof NominalAttrType
             	m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
             }
             // else if (examplelist == null) {
@@ -245,7 +245,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         // Find best test
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = (ClusAttrType) attrs[i];
-            if (at instanceof NominalAttrType)
+            if (at.isNominal()) // at instanceof NominalAttrType
                 m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
             else
                 m_FindBestTest.findNumeric((NumericAttrType) at, data, rnd);

@@ -39,7 +39,21 @@ public abstract class ClusHeuristic {
     protected ClusAttributeWeights m_ClusteringWeights;
 
     protected ClusStopCriterion m_StopCrit;
+    
+    /**
+     * Used for more efficient split quality estimation. For now only in the case when
+     * the heuristic is VarianceReductionHeuristicEfficient.
+     */
+    protected double m_NumericSplitTotStatSVarS;
+    
+    
+    public void setSplitStatSVarS(double value){
+    	m_NumericSplitTotStatSVarS = value;
+    }    
 
+    public boolean isEfficient(){
+    	return false;
+    }
 
     public void setData(RowData data) {
     }
@@ -64,7 +78,7 @@ public abstract class ClusHeuristic {
 
 
     public abstract double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing);
-
+    
 
     public abstract String getName();
 

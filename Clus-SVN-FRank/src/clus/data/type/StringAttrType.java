@@ -30,13 +30,14 @@ import clus.data.rows.DataTuple;
 import clus.io.ClusSerializable;
 import clus.main.Settings;
 import clus.util.ClusException;
+import weka.gui.beans.StripChartBeanInfo;
 
 
 public class StringAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static int THIS_TYPE = 3;
+    public final static int THIS_TYPE = STRING_ATR_TYPE;
     public final static String THIS_TYPE_NAME = "String";
 
 

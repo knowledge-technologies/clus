@@ -29,6 +29,7 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.heuristic.ClusHeuristic;
+import clus.heuristic.VarianceReductionHeuristicEfficient;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.model.test.InverseNumericTest;
@@ -55,6 +56,8 @@ public class CurrentBestTestAndHeuristic {
     // Heuristic
     public ClusHeuristic m_Heuristic;
     public ClusAttributeWeights m_ClusteringWeights;
+    
+
 
     // Best test information
     public NodeTest m_BestTest;
@@ -268,7 +271,7 @@ public class CurrentBestTestAndHeuristic {
     /***************************************************************************
      * Numeric splits
      ***************************************************************************/
-
+    
     // Where is this used?
     public final void updateNumeric(double val, ClusStatistic pos, ClusAttrType at) {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, pos, m_MissingStat);
@@ -286,7 +289,7 @@ public class CurrentBestTestAndHeuristic {
 
 
     public final void updateNumeric(double val, ClusAttrType at) {
-        double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
+    	double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);      
         if (Settings.VERBOSE >= 2)
             System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
@@ -368,8 +371,7 @@ public class CurrentBestTestAndHeuristic {
     public void checkAcceptable(ClusStatistic tot, ClusStatistic pos) {
         m_IsAcceptable = m_Heuristic.isAcceptable(tot, pos, m_MissingStat);
     }
-
-
+    
     /***************************************************************************
      * Statistics on data
      ***************************************************************************/

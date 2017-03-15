@@ -66,6 +66,14 @@ public abstract class ClusAttrType implements Serializable, Comparable {
 
     public final static int NB_TYPES = 5;
     public final static int THIS_TYPE = -1;
+    
+    public final static int NOMINAL_ATR_TYPE = 0;
+    public final static int NUMERIC_ATR_TYPE = 1;
+    public final static int CLASSES_ATR_TYPE = 2;
+    public final static int INDEX_ATR_TYPE = 2;  // INDEX and CLASSES have the same value because THIS_TYPE of these two classes had the hard-coded value 2
+    public final static int STRING_ATR_TYPE = 3;
+    public final static int INTEGER_ATR_TYPE = 4;
+    public final static int TIME_SERIES_ATR_TYPE = 5; 
 
     protected String m_Name;
     protected int m_Index, m_ArrayIndex;
@@ -329,6 +337,14 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     public boolean isSparse() {
         return false;
     }
+    
+    public boolean isNumeric(){
+    	return false;
+    }
+    
+    public boolean isNominal(){
+    	return false;
+    }
 
 
     public JsonObject getAttributeJSON() {
@@ -347,6 +363,5 @@ public abstract class ClusAttrType implements Serializable, Comparable {
         }
 
         return elm;
-    }
-
+    }    
 }

@@ -33,6 +33,7 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.data.type.SparseNumericAttrType;
 import clus.ext.ensembles.ClusEnsembleInduce;
+import clus.heuristic.VarianceReductionHeuristicEfficient;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
@@ -50,7 +51,7 @@ public class FindBestTest {
     protected ClusStatManager m_StatManager;
     protected NominalSplit m_Split;
     protected int m_MaxStats;
-
+    
 
     public FindBestTest(ClusStatManager mgr) {
         m_StatManager = mgr;
@@ -214,18 +215,22 @@ public class FindBestTest {
         }
         double minValue =  (pos < nb_rows) ? at.getNumeric(sample.getTuple(indicesSorted[nb_rows - 1])) : Double.NaN;
         double prev = Double.NaN;
+        boolean isSparseAtr = at.isSparse();
+
+//		if(m_BestTest.m_Heuristic.isEfficient()){
+//			double tot_corr_SVarS = m_BestTest.m_TotCorrStat.getSVarS(m_BestTest.m_Heuristic.getClusteringAttributeWeights());
+//			m_BestTest.m_Heuristic.setSplitStatSVarS(tot_corr_SVarS);
+//		} 
+        
         for (int i = pos; i < nb_rows; i++) {
             tuple = sample.getTuple(indicesSorted[i]);
             double value = at.getNumeric(tuple);
             if (value != prev) {
-                if (value != Double.NaN) {
-                    // System.err.println("Value (>): " + value);
-                    m_BestTest.updateNumeric(value, at);
-                }
+            	m_BestTest.updateNumeric(value, at);
                 prev = value;
             }
             m_BestTest.m_PosStat.updateWeighted(tuple, i);
-            if (value == minValue && at instanceof SparseNumericAttrType){
+            if (isSparseAtr && value == minValue){
             	break;
             }
         }
@@ -287,7 +292,7 @@ public class FindBestTest {
                     break;
                 m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]);
             }
-            m_BestTest.updateNumeric(split_value, at);
+            m_BestTest.updateNumeric(split_value, at);  // we test only one split per attribute --> no need for precomputing tot_corr_SVarS
         }
 
         // System.err.println("Inverse splits not yet included!");
@@ -335,7 +340,7 @@ public class FindBestTest {
             tuple = (DataTuple) sample.get(i);
             double value = at.getNumeric(tuple);
             if (value != prev) {
-                if (value != Double.NaN) {
+                if (!Double.isNaN(value)) {
                     // System.err.println("Value (>): " + value);
                     m_BestTest.updateNumeric(value, at);
                 }

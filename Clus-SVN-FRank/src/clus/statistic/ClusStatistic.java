@@ -441,4 +441,8 @@ public abstract class ClusStatistic implements Serializable {
 
     public void setBeam(ClusBeam beam) {
     }
+    
+    public double getSumWeight(){
+    	return m_SumWeight;
+    }
 }

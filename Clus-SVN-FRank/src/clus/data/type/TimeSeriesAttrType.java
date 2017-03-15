@@ -38,7 +38,7 @@ public class TimeSeriesAttrType extends ClusAttrType {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static String THIS_TYPE_NAME = "TimeSeries";
-    public final static int THIS_TYPE = 5;
+    public final static int THIS_TYPE = TIME_SERIES_ATR_TYPE;
 
     public static boolean m_isEqualLength = true;
     int m_Length = -1;

@@ -57,10 +57,6 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         }
     }
     
-    public double[] getSumValues(){
-    	return m_SumValues;
-    }
-    
     public void setSumValues(int index, double value){
     	m_SumValues[index] = value;
     }
@@ -70,18 +66,16 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
     
     public void setSumWeights(int index, double value){
-    	m_SumWeights[index] = value;
+    	 m_SumWeights[index] = value;
     }
     
     public void resetSumWeights(int length){
-    	m_SumWeights = new double[length];
+    	 m_SumWeights = new double[length];
     }
-
 
     public void setTrainingStat(ClusStatistic train) {
         m_Training = (RegressionStat) train;
-    }
-    
+    }    
 
     public ClusStatistic cloneStat() {
         RegressionStat res = new RegressionStat(m_Attrs, false);
@@ -224,6 +218,10 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
     public double getSumWeights(int i) {
         return m_SumWeights[i];
+    }
+    
+    public RegressionStat getTraining(){
+    	return m_Training;
     }
 
 

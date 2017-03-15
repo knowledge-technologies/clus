@@ -261,34 +261,19 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         // Find best test
 
         // long start_time = System.currentTimeMillis();
-
+                
         ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
             if ((getSettings().isEnsembleMode()) && (getSettings().getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES)) {
-                if (at instanceof NominalAttrType) {
+                if (at.isNominal()) { // at instanceof NominalAttrType
                     m_FindBestTest.findNominalExtraTree((NominalAttrType) at, data, rnd);
                 }
                 else {
                     m_FindBestTest.findNumericExtraTree((NumericAttrType) at, data, rnd);
                 }
-
-                // if (at instanceof NominalAttrType) m_FindBestTest.findNominalExtraTree((NominalAttrType)at, data,
-                // ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
-                // else m_FindBestTest.findNumeric((NumericAttrType)at,
-                // data);//,ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
-                // node.printTree();
-                // data.toString();
-
-                // if (at instanceof NominalAttrType) m_FindBestTest.findNominal((NominalAttrType)at, data);
-                // else m_FindBestTest.findNumeric((NumericAttrType)at,
-                // data);//,ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE));
-
-                // System.out.println(m_FindBestTest.toString());
-                // System.out.println(m_FindBestTest.m_BestTest.toString());
-                // System.out.println("HERE");
             }
-            else if (at instanceof NominalAttrType) {
+            else if (at.isNominal()) { // at instanceof NominalAttrType
                 m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
             }
             else {
@@ -467,6 +452,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
              * }
              * else {
              */
+           
             induce(m_Root, data, rnd);
             /* } */
             // rankFeatures(m_Root, data);
