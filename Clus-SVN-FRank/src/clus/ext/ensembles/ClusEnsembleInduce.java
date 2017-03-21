@@ -1427,6 +1427,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     		System.err.println("Warning:");
     		System.err.println(message);
     		System.err.println("There will be no additional warnings for this.");
+    		m_WarningsGiven[reason] = true;
     		
     	}
     }
