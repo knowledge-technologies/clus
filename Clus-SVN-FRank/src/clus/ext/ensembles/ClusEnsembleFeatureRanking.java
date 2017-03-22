@@ -874,10 +874,10 @@ public class ClusEnsembleFeatureRanking {
     }
     
     public String fimpTableHeader(Iterable<? extends CharSequence> list){
-    	return "attributeName,\t[" + String.join(",", list) + "]";
+    	return "attributeName\t[" + String.join(",", list) + "]";
     }
     
     public String fimpTableHeader(CharSequence... list){
-    	return "attributeName,\t[" + String.join(",", list) + "]";
+    	return "attributeName\t[" + String.join(",", list) + "]";
     }
 }

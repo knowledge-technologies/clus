@@ -3063,7 +3063,7 @@ public class Settings implements Serializable {
         output.addNode(m_ShowInfo = new INIFileNominal("ShowInfo", SHOW_INFO, SHOW_INFO_VALUES));
         output.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
         output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false));
-        output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", true));
+        output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
         output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
         // If this option name is to be changed, it must also be changed in testsets/iris-classify.s
         // output.addNode(m_ModelIDFiles = new INIFileBool("WriteModelIDFiles", false));
