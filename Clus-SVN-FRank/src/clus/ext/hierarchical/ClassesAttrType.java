@@ -43,7 +43,7 @@ public class ClassesAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static int THIS_TYPE = NOMINAL_ATR_TYPE;
+    public final static int THIS_TYPE = CLASSES_ATR_TYPE;
     public final static String THIS_TYPE_NAME = "Classes";
 
     protected transient String[] m_Labels;
