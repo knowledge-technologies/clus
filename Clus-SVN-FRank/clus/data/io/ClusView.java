@@ -199,7 +199,6 @@ public class ClusView {
                                 settings.getHMTRHierarchyString().getStringValue() + newLine + newLine);
 
 
-
                         DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
 
                         String toWrites[];
