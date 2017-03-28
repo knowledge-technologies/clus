@@ -293,7 +293,7 @@ public class ClusErrorList implements Serializable {
 		return true;
 	}
 
-	public void showError(ClusModelInfoList models, int type, String bName, PrintWriter out) throws IOException {
+	public void showError(ClusModelInfoList models, int type, String bName, PrintWriter out, Settings settings) throws IOException {
 //	public void showError(ClusModelInfoList models, int type, PrintWriter out) throws IOException {
 		int nb = m_Error.size();
 		ClusModelInfo definf = models.getModelInfo(ClusModel.DEFAULT);
@@ -311,6 +311,12 @@ public class ClusErrorList implements Serializable {
 			}
 		}
 		for (int i = 0; i < nb; i++) {
+
+		    if(settings.isSectionHMTREnabled() &&  i==(nb/2)) {
+		        out.println();
+                out.println("\t***** HMTR leaves only *****");
+                out.println();
+            }
 			ClusError err1 = getError(i);
 			boolean has_models = false;
 			for (int j = 0; j < nb_models; j++) {

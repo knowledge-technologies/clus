@@ -273,19 +273,32 @@ public class Clus implements CMDLineArgsProvider {
 	}
 
 	public final void initializeSummary(ClusInductionAlgorithmType clss) {
-		ClusStatManager mgr = m_Induce.getStatManager();
-		ClusErrorList error = mgr.createErrorMeasure(m_Score);
-		m_Summary.resetAll();
-		m_Summary.setStatManager(mgr);
-		if (m_Sett.isOutTrainError()) {
-			m_Summary.setTrainError(error);
-		}
-		if (hasTestSet() && m_Sett.isOutTestError()) {
-			m_Summary.setTestError(error);
-		}
-		if (hasPruneSet() && m_Sett.isOutValidError()) {
-			m_Summary.setValidationError(error);
-		}
+        ClusStatManager mgr = m_Induce.getStatManager();
+        ClusErrorList error = mgr.createErrorMeasure(m_Score);
+        m_Summary.resetAll();
+        m_Summary.setStatManager(mgr);
+        if (m_Sett.isOutTrainError()) {
+            m_Summary.setTrainError(error);
+        }
+        if (hasTestSet() && m_Sett.isOutTestError()) {
+            m_Summary.setTestError(error);
+        }
+        if (hasPruneSet() && m_Sett.isOutValidError()) {
+            m_Summary.setValidationError(error);
+        }
+//
+//        if (m_Sett.isSectionHMTREnabled()){
+//
+//            if (m_Sett.isOutTrainError()) {
+//               // m_Summary.setHMTRTrainError(hMTRerror);
+//            }
+//            if (hasTestSet() && m_Sett.isOutTestError()) {
+//              //  m_Summary.setHMTRTestError(hMTRerror);
+//            }
+//            if (hasPruneSet() && m_Sett.isOutValidError()) {
+//            //    m_Summary.setHMTRValidationError(hMTRerror);
+//            }
+//        }
 	}
 
 	// added by Leander 7-4-2006
@@ -1196,7 +1209,7 @@ public class Clus implements CMDLineArgsProvider {
 			throws IOException, ClusException {
 		ClusModelCollectionIO io = new ClusModelCollectionIO();
 		m_Summary.setTotalRuns(1);
-		ClusRun run = singleRunMain(clss, null);
+        ClusRun run = singleRunMain(clss, null);
 		if  (!getSettings().isKNN() && getSettings().isWriteModelFile() && !getSettings().isRelief()){
 			saveModels(run, io);
 		}
@@ -1245,7 +1258,7 @@ public class Clus implements CMDLineArgsProvider {
 		 System.err.println("CHANGING DATA TO R FORMAT, REMOVE THIS CODE");
 		 */
 		// Induce model
-		induce(cr, clss);
+        induce(cr, clss);
 		if (summ == null) {
 			// E.g., rule-wise error measures
 			addModelErrorMeasures(cr);

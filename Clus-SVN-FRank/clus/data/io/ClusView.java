@@ -148,8 +148,17 @@ public class ClusView {
         File file = Paths.get(settings.getDataFile()+".hmtr").toFile();
 
         String newLine=System.getProperty("line.separator");
+
+
+        boolean incorrectDump = true;
+
         try{
-            if(file.exists()){
+
+            String agg = "";
+            String hier = "";
+            String line = "";
+
+            if(file.exists()) {
 
                 FileInputStream inputStream = null;
                 Scanner sc = null;
@@ -157,10 +166,6 @@ public class ClusView {
                     inputStream = new FileInputStream(file);
                     sc = new Scanner(inputStream, "UTF-8");
 
-
-                    String agg = "";
-                    String hier = "";
-                    String line = "";
 
                     if (sc.hasNextLine()) agg = sc.nextLine();
                     if (sc.hasNextLine()) hier = sc.nextLine();
@@ -170,59 +175,37 @@ public class ClusView {
                     String aggFromS = settings.getHMTRAggregation().getStringValue();
                     String hierFromS = settings.getHMTRHierarchyString().getStringValue();
 
-                    if(agg.equals(aggFromS) && hier.equals(hierFromS)){
+                    if (agg.equals(aggFromS) && hier.equals(hierFromS)) {
+                        incorrectDump = false;
 
                         ClassHMTRHierarchy.setIsUsingDump(true);
 
 
-                        if (sc.hasNextLine()) {line = sc.nextLine();} else {throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());}
+                        if (sc.hasNextLine()) {
+                            line = sc.nextLine();
+                        } else {
+                            throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
+                        }
                         DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
 
 
                         while (tuple != null) {
                             items.add(tuple);
                             String oldline = line;
-                            if (sc.hasNextLine()) {line = sc.nextLine();}
-
-                            tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
-                            if(tuple != null && line.equals(oldline)) {throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());}
-
-                        }
-
-
-                    } else {
-
-                        fr = new FileWriter(file);
-                        br = new BufferedWriter(fr);
-
-                        br.write(settings.getHMTRAggregation().getStringValue() + newLine +
-                                settings.getHMTRHierarchyString().getStringValue() + newLine + newLine);
-
-
-                        DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
-
-                        String toWrites[];
-                        String toWrite;
-
-                        while (tuple != null) {
-                            toWrites = tuple.toString().split(",");
-                            toWrite = "";
-
-                            for(int i = schema.getNbAttributes()-schema.getNbHierarchicalMTR(); i < schema.getNbAttributes();i++){
-                                toWrite+=","+toWrites[i];
+                            if (sc.hasNextLine()) {
+                                line = sc.nextLine();
                             }
-                            toWrite=toWrite.substring(1);
 
-                            items.add(tuple);
-                            br.write(toWrite+newLine);
                             tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
+                            if (tuple != null && line.equals(oldline)) {
+                                throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
+                            }
+
                         }
 
+
                     }
 
-                    if (sc.ioException() != null) {
-                        throw sc.ioException();
-                    }
                 } finally {
                     if (inputStream != null) {
                         inputStream.close();
@@ -233,6 +216,37 @@ public class ClusView {
                 }
 
             }
+
+            if(incorrectDump) {
+
+                fr = new FileWriter(file);
+                br = new BufferedWriter(fr);
+
+                br.write(settings.getHMTRAggregation().getStringValue() + newLine +
+                        settings.getHMTRHierarchyString().getStringValue() + newLine + newLine);
+
+
+                DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
+
+                String toWrites[];
+                String toWrite;
+
+                while (tuple != null) {
+                    toWrites = tuple.toString().split(",");
+                    toWrite = "";
+
+                    for(int i = schema.getNbAttributes()-schema.getNbHierarchicalMTR(); i < schema.getNbAttributes();i++){
+                        toWrite+=","+toWrites[i];
+                    }
+                    toWrite=toWrite.substring(1);
+
+                    items.add(tuple);
+                    br.write(toWrite+newLine);
+                    tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
+                }
+
+            }
+
 
         } catch (IOException e) {
             e.printStackTrace();

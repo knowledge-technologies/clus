@@ -810,6 +810,28 @@ public class ClusStatManager implements Serializable {
 				parent.addError(new RMSError(parent, num, m_NormalizationWeights));
 			}
 			parent.addError(new PearsonCorrelation(parent, num));
+
+
+			if(getSettings().isSectionHMTREnabled()) {
+
+               int nbHMTR =  m_Schema.getNbHierarchicalMTR();
+
+                NumericAttrType[] numHMTR = new NumericAttrType[num.length-nbHMTR];
+
+                for (int i = 0 ; i < num.length-nbHMTR; i++){
+
+                    numHMTR[i] = num[i];
+
+                }
+
+                parent.addError(new AbsoluteError(parent, numHMTR));
+                parent.addError(new MSError(parent, numHMTR));
+                parent.addError(new RMSError(parent, numHMTR));
+                if (getSettings().hasNonTrivialWeights()) {
+                    parent.addError(new RMSError(parent, numHMTR, m_NormalizationWeights));
+                }
+                parent.addError(new PearsonCorrelation(parent, numHMTR));
+            }
 		}
 		if (ts.length != 0) {
 			ClusStatistic stat = createTargetStat();
