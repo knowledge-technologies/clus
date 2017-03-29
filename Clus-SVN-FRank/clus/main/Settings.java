@@ -3089,7 +3089,7 @@ public class Settings implements Serializable {
 
                 }
 
-            if (VERBOSE>0) System.out.print("Aggregate attributes: ");
+            if (VERBOSE>0) System.out.print("Aggregate attributes (a.k.a. not present in the database): ");
 
                 String comma = "";
                 int numAggregates = 0;

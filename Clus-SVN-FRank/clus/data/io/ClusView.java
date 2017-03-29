@@ -186,6 +186,15 @@ public class ClusView {
                         } else {
                             throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
                         }
+
+                        if (line.equals("") || line.equals(" ") || line.equals("\t")){
+                            if (sc.hasNextLine()) {
+                                line = sc.nextLine();
+                            } else {
+                                throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
+                            }
+                        }
+
                         DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
 
 
@@ -195,12 +204,17 @@ public class ClusView {
                             if (sc.hasNextLine()) {
                                 line = sc.nextLine();
                             }
-
-                            tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
-                            if (tuple != null && line.equals(oldline)) {
-                                throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
+                            if (line.equals("") || line.equals(" ") || line.equals("\t")){
+                                if (sc.hasNextLine()) {
+                                    line = sc.nextLine();
+                                } else {
+                                    throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
+                                }
                             }
-
+                            tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
+//                            if (tuple != null && line.equals(oldline)) {
+//                                throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
+//                                }
                         }
 
 
@@ -235,7 +249,7 @@ public class ClusView {
                     toWrites = tuple.toString().split(",");
                     toWrite = "";
 
-                    for(int i = schema.getNbAttributes()-schema.getNbHierarchicalMTR(); i < schema.getNbAttributes();i++){
+                    for(int i = toWrites.length-schema.getNbHierarchicalMTR(); i < toWrites.length;i++){
                         toWrite+=","+toWrites[i];
                     }
                     toWrite=toWrite.substring(1);
@@ -250,6 +264,7 @@ public class ClusView {
 
         } catch (IOException e) {
             e.printStackTrace();
+            System.exit(1);
         }finally{
             try {
                if (br != null) br.close();

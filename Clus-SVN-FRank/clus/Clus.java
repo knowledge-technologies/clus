@@ -286,19 +286,6 @@ public class Clus implements CMDLineArgsProvider {
         if (hasPruneSet() && m_Sett.isOutValidError()) {
             m_Summary.setValidationError(error);
         }
-//
-//        if (m_Sett.isSectionHMTREnabled()){
-//
-//            if (m_Sett.isOutTrainError()) {
-//               // m_Summary.setHMTRTrainError(hMTRerror);
-//            }
-//            if (hasTestSet() && m_Sett.isOutTestError()) {
-//              //  m_Summary.setHMTRTestError(hMTRerror);
-//            }
-//            if (hasPruneSet() && m_Sett.isOutValidError()) {
-//            //    m_Summary.setHMTRValidationError(hMTRerror);
-//            }
-//        }
 	}
 
 	// added by Leander 7-4-2006

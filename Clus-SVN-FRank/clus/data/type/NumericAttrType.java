@@ -36,7 +36,6 @@ import clus.data.rows.*;
 import clus.data.cols.*;
 import clus.data.cols.attribute.*;
 import clus.data.io.ClusReader;
-import jeans.util.IntervalCollection;
 
 /**
  * Attribute of numeric (continuous) value.
@@ -157,27 +156,29 @@ public class NumericAttrType extends ClusAttrType {
 			return true;
 		}
 
+
 		public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy) throws IOException {
 
-			int nbHMTRTargets = schema.getNbHierarchicalMTR();
-            IntervalCollection key = schema.m_Key;
 
-           	int nbAttributes = schema.getNbAttributes()-schema.getNbNominalDescriptiveAttributes();
-            if(!key.isEmpty()) nbAttributes--;
+			int key =  schema.getKeyAttribute().length;
+            int desc =  schema.getDescriptiveAttributes().length;
+            int dis =  schema.getDisabled().getTotal();
+
 
 			int nbNominalTargets = schema.getNbNominalTargetAttributes();
 			if (nbNominalTargets>0) throw new IOException("Nominal attributes used as targets in Hierarchical Multi-Target Regression!");
 
-            int ai = getArrayIndex();
-            String name;
 
             ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
 
             double val = Double.NaN;
-            name = targets[ai-(schema.getNbAttributes()-nbAttributes)].getName();
+
+            int ind = m_Index-key-dis-desc;
+            String name = targets[ind].getName();
+
             List<ClassHMTRNode> nodes = hmtrHierarchy.getNodes();
 
-		    val = calcHMTR(nodes, name, tuple, schema, nbAttributes);
+		    val = calcHMTR(nodes, name, tuple);
 
             if (Double.isNaN(val)) throw new IOException("Error calculating HMTR aggregate! Aggregation function is: "+ Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
@@ -199,17 +200,32 @@ public class NumericAttrType extends ClusAttrType {
 
         public boolean readHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClassHMTRHierarchy hmtrHierarchy, String line) throws IOException {
 
-           int pos = getArrayIndex()-(tuple.getSchema().getNbNumericDescriptiveAttributes()+tuple.getSchema().getNbNumericTargetAttributes()-tuple.getSchema().getNbHierarchicalMTR());
+            int key =  schema.getKeyAttribute().length;
+            int desc =  schema.getDescriptiveAttributes().length;
+            int dis =  schema.getDisabled().getTotal();
+            int tar = schema.getTargetAttributes().length;
+
+
+           int pos = m_Index-key-dis-desc-tar+schema.getNbHierarchicalMTR();
 
            String[] lineElements = line.split(",");
 
-           double val = Double.parseDouble(lineElements[pos]);
+           if (data.getRow() == 232){
+               System.out.println();
+           }
 
-            IntervalCollection key = schema.m_Key;
-            int nbAttributes = schema.getNbAttributes()-schema.getNbNominalDescriptiveAttributes();
-            if(!key.isEmpty()) nbAttributes--;
+           double val = MISSING;
+           if (!lineElements[pos].contains("?")){
+               val = Double.parseDouble(lineElements[pos]);
+           }else{
+               val = MISSING;
+           }
+
             ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
-            String name = targets[getArrayIndex()-(schema.getNbAttributes()-nbAttributes)].getName();
+
+
+            int ind = m_Index-key-dis-desc;
+            String name = targets[ind].getName();
 
             if (Double.isNaN(val)) throw new IOException("Error reading HMTR aggregate from dump! Aggregation function is: "+ Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
@@ -237,7 +253,7 @@ public class NumericAttrType extends ClusAttrType {
 			}
 		}
 
-		private double calcHMTR(List<ClassHMTRNode> nodes, String name, DataTuple tuple, ClusSchema schema, int nbAttrs) throws IOException{
+		private double calcHMTR(List<ClassHMTRNode> nodes, String name, DataTuple tuple) throws IOException{
 
             for (ClassHMTRNode node : nodes){
                 if(node.getName().equals(name)){
@@ -252,11 +268,11 @@ public class NumericAttrType extends ClusAttrType {
 
                         String n = child.getName();
                         if (child.isAggregate()){
-                            double res = calcHMTR(nodes,child.getName(), tuple, schema, nbAttrs);
+                            double res = calcHMTR(nodes,child.getName(), tuple);
                             sum += res;
                             values.add(res);
                         } else {
-                            double res = getHMTRValue(tuple, schema, nbAttrs, child.getName());
+                            double res = getHMTRValue(tuple, child.getName());
                             sum += res;
                             values.add(res);
                         }
@@ -326,23 +342,19 @@ public class NumericAttrType extends ClusAttrType {
 		    return Double.NaN;
         }
 
-        public double getHMTRValue(DataTuple tuple, ClusSchema schema, int nbAttrs, String name){
+        public double getHMTRValue(DataTuple tuple, String name){
 
 		    double value = Double.NaN;
 
-            int NbAll = schema.getNbAttributes();
-
-            int j = 0;
             ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
 
-            for (int i = NbAll-nbAttrs; i<nbAttrs;i++){
+            for (ClusAttrType target : targets){
 
-
-                if (targets[j].getName().equals(name)) {
+                if (target.getName().equals(name)){
+                    int i = target.m_ArrayIndex;
                     value = tuple.getDoubleVal(i);
                     break;
                 }
-                j++;
 
             }
 

@@ -33,6 +33,10 @@ public class IntervalCollection implements Serializable {
 
 	protected final static String[] DELIMS = {"-",","};
 
+	public int getTotal() {
+		return m_Total;
+	}
+
 	protected int m_Total;
 	protected int m_CrInt;
 	protected boolean m_Done;
