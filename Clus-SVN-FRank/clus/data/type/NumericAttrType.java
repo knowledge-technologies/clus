@@ -180,8 +180,10 @@ public class NumericAttrType extends ClusAttrType {
 
 		    val = calcHMTR(nodes, name, tuple);
 
-            if (Double.isNaN(val)) throw new IOException("Error calculating HMTR aggregate! Aggregation function is: "+ Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
-
+            if (Double.isNaN(val)) {
+                System.err.println("Either error calculating aggregate or certain value is missing");
+                val=MISSING;
+            }
             if(Settings.VERBOSE > 0) System.out.println("CALCULATING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
 			tuple.setDoubleVal(val, getArrayIndex());
@@ -287,6 +289,8 @@ public class NumericAttrType extends ClusAttrType {
         //            HMTR_AGG_COUNT = 7;
         //            HMTR_AGG_VAR = 8;
         //            HMTR_AGG_STDEV = 9;
+        //            HMTR_AGG_ZERO = 10
+        //            HMTR_AGG_ONE = 11
                     Collections.sort(values);
                     switch (getSettings().getHMTRAggregation().getValue()){
                         case 0: return sum;
@@ -336,6 +340,8 @@ public class NumericAttrType extends ClusAttrType {
                             }
                             double meanOfDiffs = (double) temp / (double) (values.size());
                             return Math.sqrt(meanOfDiffs);
+                        case 10: return 0;
+                        case 11: return 1;
                     }
                 }
             }

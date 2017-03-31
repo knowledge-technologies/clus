@@ -277,7 +277,6 @@ public class RegressionStat extends RegressionStatBase {
 
     public double getSVarSHMTR(ClusAttributeWeights scale) {
 
-
         double result = 0.0;
         for (int i = 0; i < m_NbAttrs; i++) {
             double hmtrWeight = m_HMTRHierarchy.getWeight(m_Attrs[i].getName());
@@ -297,6 +296,53 @@ public class RegressionStat extends RegressionStatBase {
         }
         return result / m_NbAttrs;
     }
+
+    public double getSVarSDiffHMTR(ClusAttributeWeights scale, ClusStatistic other) {
+
+        double result = 0.0;
+        RegressionStat or = (RegressionStat)other;
+        for (int i = 0; i < m_NbAttrs; i++) {
+            double hmtrWeight = m_HMTRHierarchy.getWeight(m_Attrs[i].getName());
+            double n_tot = m_SumWeight - or.m_SumWeight;
+            double k_tot = m_SumWeights[i] - or.m_SumWeights[i];
+            double sv_tot = m_SumValues[i] - or.m_SumValues[i];
+            double ss_tot = m_SumSqValues[i] - or.m_SumSqValues[i];
+            if (k_tot == n_tot) {
+                result += (ss_tot - sv_tot*sv_tot/n_tot)*scale.getWeight(m_Attrs[i])*hmtrWeight;
+            } else {
+                if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
+                    result += m_Training.getSVarS(i)*scale.getWeight(m_Attrs[i])*hmtrWeight;
+                } else {
+                    result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot/k_tot*sv_tot/k_tot)*scale.getWeight(m_Attrs[i])*hmtrWeight;
+                }
+            }
+        }
+        return result / m_NbAttrs;
+    }
+
+	public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
+		if (Settings.isEnsembleTargetSubspacingEnabled()) return getSVarSDiffTargetSubspace(scale, other);
+        if (ClassHMTRHierarchy.isHmtrHierCreated()) return getSVarSDiffHMTR(scale, other);
+
+		double result = 0.0;
+		RegressionStat or = (RegressionStat)other;
+		for (int i = 0; i < m_NbAttrs; i++) {
+			double n_tot = m_SumWeight - or.m_SumWeight;
+			double k_tot = m_SumWeights[i] - or.m_SumWeights[i];
+			double sv_tot = m_SumValues[i] - or.m_SumValues[i];
+			double ss_tot = m_SumSqValues[i] - or.m_SumSqValues[i];
+			if (k_tot == n_tot) {
+				result += (ss_tot - sv_tot*sv_tot/n_tot)*scale.getWeight(m_Attrs[i]);
+			} else {
+				if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
+					result += m_Training.getSVarS(i)*scale.getWeight(m_Attrs[i]);
+				} else {
+					result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot/k_tot*sv_tot/k_tot)*scale.getWeight(m_Attrs[i]);
+				}
+			}
+		}
+		return result / m_NbAttrs;
+	}
 
 	public double getSVarSDiffTargetSubspace(ClusAttributeWeights scale, ClusStatistic other) {
 		double result = 0.0;
@@ -324,28 +370,6 @@ public class RegressionStat extends RegressionStatBase {
 		return result / cnt;
 	}
 
-	public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-		if (Settings.isEnsembleTargetSubspacingEnabled()) return getSVarSDiffTargetSubspace(scale, other);
-
-		double result = 0.0;
-		RegressionStat or = (RegressionStat)other;
-		for (int i = 0; i < m_NbAttrs; i++) {
-			double n_tot = m_SumWeight - or.m_SumWeight;
-			double k_tot = m_SumWeights[i] - or.m_SumWeights[i];
-			double sv_tot = m_SumValues[i] - or.m_SumValues[i];
-			double ss_tot = m_SumSqValues[i] - or.m_SumSqValues[i];
-			if (k_tot == n_tot) {
-				result += (ss_tot - sv_tot*sv_tot/n_tot)*scale.getWeight(m_Attrs[i]);
-			} else {
-				if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
-					result += m_Training.getSVarS(i)*scale.getWeight(m_Attrs[i]);
-				} else {
-					result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot/k_tot*sv_tot/k_tot)*scale.getWeight(m_Attrs[i]);
-				}
-			}
-		}
-		return result / m_NbAttrs;
-	}
 
 	public String getString(StatisticPrintInfo info) {
 		NumberFormat fr = ClusFormat.SIX_AFTER_DOT;

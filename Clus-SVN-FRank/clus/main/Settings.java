@@ -1805,7 +1805,7 @@ public class Settings implements Serializable {
     public final static int HMTR_HIERDIST_WEIGHTED_EUCLIDEAN = 0;
     public final static int HMTR_HIERDIST_JACCARD = 1;
 
-    public final static String[] HMTR_AGGS = { "SUM", "AVG", "MEDIAN", "MIN", "MAX", "AND", "OR", "COUNT", "VAR", "STDEV" };
+    public final static String[] HMTR_AGGS = { "SUM", "AVG", "MEDIAN", "MIN", "MAX", "AND", "OR", "COUNT", "VAR", "STDEV", "ZERO", "ONE" };
     public final static int HMTR_AGG_SUM = 0;
     public final static int HMTR_AGG_AVG = 1;
     public final static int HMTR_AGG_MEDIAN = 2;
@@ -1815,6 +1815,9 @@ public class Settings implements Serializable {
     public final static int HMTR_AGG_OR = 6;
     public final static int HMTR_AGG_COUNT = 7;
     public final static int HMTR_AGG_VAR = 8;
+    public final static int HMTR_AGG_STDEV = 9;
+    public final static int HMTR_AGG_ZERO = 10;
+    public final static int HMTR_AGG_ONE = 11;
 
     INIFileSection m_SectionHMTR;
     protected INIFileNominal m_HMTRType;
