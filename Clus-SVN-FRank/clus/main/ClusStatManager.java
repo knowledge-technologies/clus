@@ -957,7 +957,7 @@ public class ClusStatManager implements Serializable {
 		if (class_thr.hasVector()) {
 			return new HierClassTresholdPruner(class_thr.getDoubleVector());
 		}
-		if (m_Mode == MODE_REGRESSION || m_Mode == MODE_HIERARCHICAL_MTR) {
+		if (m_Mode == MODE_REGRESSION  ||  m_Mode == MODE_HIERARCHICAL_MTR) {
 			double mult = sett.getM5PruningMult();
 			if (sett.getPruningMethod() == Settings.PRUNING_METHOD_M5_MULTI) {
 				return new M5PrunerMulti(getClusteringWeights(), mult);
