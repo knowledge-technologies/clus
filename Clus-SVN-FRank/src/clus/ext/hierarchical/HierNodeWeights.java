@@ -183,7 +183,8 @@ public class HierNodeWeights {
         else {
             ClassTerm root = hier.getRoot();
             if (hier.isTree()) {
-                initExponentialDepthWeightsRec(root, 0, w0);
+            	// 0 ---> 1, otherwise: the weights in this and  DAG case differ for a factor w0
+                initExponentialDepthWeightsRec(root, 1, w0);
                 m_Name = "Exponential depth weights (tree) " + w0;
             }
             else {
