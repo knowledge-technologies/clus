@@ -194,7 +194,7 @@ public class ClusOutput {
         }
 
         // print multi-label thresholds
-        if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()) {
+        if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled() && !cr.getStatManager().getSettings().isRelief()) {
             String mlThresholdsTitle = "MultiLabelThresholds:";
             m_Writer.println(mlThresholdsTitle);
             m_Writer.println(StringUtils.makeString('-', mlThresholdsTitle.length()));

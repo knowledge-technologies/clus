@@ -216,17 +216,19 @@ public class FindBestTest {
         double minValue =  (pos < nb_rows) ? at.getNumeric(sample.getTuple(indicesSorted[nb_rows - 1])) : Double.NaN;
         double prev = Double.NaN;
         boolean isSparseAtr = at.isSparse();
-
-//		if(m_BestTest.m_Heuristic.isEfficient()){
-//			double tot_corr_SVarS = m_BestTest.m_TotCorrStat.getSVarS(m_BestTest.m_Heuristic.getClusteringAttributeWeights());
-//			m_BestTest.m_Heuristic.setSplitStatSVarS(tot_corr_SVarS);
-//		} 
+        
+        double tot_corr_SVarS = 0.0;  // does not matter to which value we choose;
+//        boolean isEfficient = m_BestTest.m_Heuristic.isEfficient();
+//		if(isEfficient){
+//			tot_corr_SVarS = m_BestTest.m_TotCorrStat.getSVarS(m_BestTest.m_Heuristic.getClusteringAttributeWeights());
+////			m_BestTest.m_Heuristic.setSplitStatSVarS(tot_corr_SVarS);
+//		}
         
         for (int i = pos; i < nb_rows; i++) {
             tuple = sample.getTuple(indicesSorted[i]);
             double value = at.getNumeric(tuple);
             if (value != prev) {
-            	m_BestTest.updateNumeric(value, at);
+            	m_BestTest.updateNumeric(value, at, tot_corr_SVarS, false); // isEfficient
                 prev = value;
             }
             m_BestTest.m_PosStat.updateWeighted(tuple, i);

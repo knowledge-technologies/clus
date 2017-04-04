@@ -84,6 +84,7 @@ public class HierNodeWeights {
                         maxDepth = Math.max(maxDepth, parent.getMaxDepth() + 1);
                         minDepth = Math.min(minDepth, parent.getMinDepth() + 1);
                     }
+                    // 1 + min/max depth over the parents' min/max depths
                     term.setMinDepth(minDepth);
                     term.setMaxDepth(maxDepth);
                     double agg_wi;

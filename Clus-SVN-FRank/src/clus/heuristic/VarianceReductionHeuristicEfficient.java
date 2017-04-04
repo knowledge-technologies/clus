@@ -50,10 +50,21 @@ public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
 //
 //    }
 //    
-//	@Override
-//	public boolean isEfficient(){
-//		return true;
-//	}
+	@Override
+	public boolean isEfficient(){
+		return true;
+	}
+	@Override
+    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot){
+    	// Acceptable?
+      if (stopCriterion(tstat, pstat, missing)) { return Double.NEGATIVE_INFINITY; }
+      // Compute |S|Var[S]
+      double ss_pos = pstat.getSVarS(m_ClusteringWeights);
+      double ss_neg = tstat.getSVarSDiff(m_ClusteringWeights, pstat);
+      // printInfo(ss_tot, ss_pos, ss_neg, pstat);
+      return FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
+//
+    }
     
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         // Acceptable?

@@ -35,6 +35,9 @@ import clus.util.ClusException;
  *
  */
 public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
+	private static final int DESCRIPTIVE_SPACE = 0;
+	private static final int TARGET_SPACE = 1;
+	private static final int[] SPACE_TYPES = new int[]{DESCRIPTIVE_SPACE, TARGET_SPACE};
 
     /** number of neighbours in the importances calculation */
     private int m_NbNeighbours;
@@ -142,15 +145,15 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
 
         // Initialise descriptive and target attributes if necessary
         int attrType;
-        for (int space = 0; space < 2; space++) {
-            attrType = space == 0 ? ClusAttrType.ATTR_USE_DESCRIPTIVE : ClusAttrType.ATTR_USE_TARGET;
+        for (int space : SPACE_TYPES) {
+            attrType = space == DESCRIPTIVE_SPACE ? ClusAttrType.ATTR_USE_DESCRIPTIVE : ClusAttrType.ATTR_USE_TARGET;
             if (m_DescriptiveTargetAttr[space] == null)
                 m_DescriptiveTargetAttr[space] = data.m_Schema.getAllAttrUse(attrType);
         }
-        m_NbDescriptiveAttrs = m_DescriptiveTargetAttr[0].length;
+        m_NbDescriptiveAttrs = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE].length;
         m_NbTargetAttrs = m_DescriptiveTargetAttr[1].length;
-        m_isStandardClassification = m_NbTargetAttrs == 1 && m_DescriptiveTargetAttr[1][0] instanceof NominalAttrType;
-        m_NbTargetValues = m_isStandardClassification ? ((NominalAttrType) m_DescriptiveTargetAttr[1][0]).getNbValues() : 1;
+        m_isStandardClassification = m_NbTargetAttrs == 1 && m_DescriptiveTargetAttr[TARGET_SPACE][0] instanceof NominalAttrType;
+        m_NbTargetValues = m_isStandardClassification ? ((NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][0]).getNbValues() : 1;
 
         // class counts
         if (m_isStandardClassification) {
@@ -159,11 +162,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
             for (int example = 0; example < m_NbExamples; example++) {
                 m_targetProbabilities[attr.getNominal(data.getTuple(example))] += 1.0;
             }
-            if (m_NbExamples > m_targetProbabilities[m_NbTargetValues]) { // otherwise: m_TargetProbabilities = {0, 0,
-                                                                          // ... , 0, m_NbExamples}
-                                                                          // Normalise probabilities: examples with unknown targets are ignored
-                                                                          // The formula for standard classification class weighting still holds, i.e. sum over other classes of
-                                                                          // P(other class) / (1 - P(class)) equals 1
+            if (m_NbExamples > m_targetProbabilities[m_NbTargetValues]) { // otherwise: m_TargetProbabilities = {0, 0, ... , 0, m_NbExamples}
+                // Normalise probabilities: examples with unknown targets are ignored
+                // The formula for standard classification class weighting still holds, i.e. sum over other classes of
+                // P(other class) / (1 - P(class)) equals 1
                 for (int value = 0; value < m_NbTargetValues; value++) {
                     m_targetProbabilities[value] /= m_NbExamples - m_targetProbabilities[m_NbTargetValues];
                 }
@@ -175,11 +177,8 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
         m_numMaxs = new HashMap<String, Double>();
         double value;
         String attrName;
-        for (int space = 0; space < 2; space++) {
-            if (space == 0)
-                attrType = ClusAttrType.ATTR_USE_DESCRIPTIVE;
-            else
-                attrType = ClusAttrType.ATTR_USE_TARGET;
+        for (int space : SPACE_TYPES) {
+            attrType = space == DESCRIPTIVE_SPACE ? ClusAttrType.ATTR_USE_DESCRIPTIVE : ClusAttrType.ATTR_USE_TARGET;
             for (NumericAttrType numAttr : data.m_Schema.getNumericAttrUse(attrType)) {
                 attrName = numAttr.getName();
                 m_numMins.put(attrName, Double.POSITIVE_INFINITY);
@@ -197,7 +196,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
         }
 
         // check for hierarchical attributes
-        for (int space = 0; space < 2; space++) {
+        for (int space : SPACE_TYPES) {
             for (int attrInd = 0; attrInd < m_DescriptiveTargetAttr[space].length; attrInd++) {
                 if (m_DescriptiveTargetAttr[space][attrInd] instanceof ClassesAttrType) {
                     ClassesAttrType attr = (ClassesAttrType) m_DescriptiveTargetAttr[space][attrInd];
@@ -223,7 +222,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
             // CHOOSE TUPLE AND COMPUTE NEAREST NEIGHBOURS
             tupleInd = nextInstance(iteration);
             tuple = data.getTuple(tupleInd);
-            if (!(m_isStandardClassification && m_DescriptiveTargetAttr[1][0].isMissing(tuple))) {
+            if (!(m_isStandardClassification && m_DescriptiveTargetAttr[TARGET_SPACE][0].isMissing(tuple))) {
                 successfulItearions++;
                 nearestNeighbours = findNearestNeighbours(tupleInd, data);
                 // CALCULATE THE SUMS OF DISTANCES
@@ -243,7 +242,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
                             attr = m_DescriptiveTargetAttr[0][attrInd];
                             double distAttr = calcDistance1D(tuple, data.getTuple(nearestNeighbours[targetValue][neighbour].m_indexInDataSet), attr);
                             if (m_isStandardClassification) {
-                                int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[1][0]).getNominal(tuple);
+                                int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][0]).getNominal(tuple);
                                 tempSumDistAttr[attrInd] += (targetValue == tupleTarget ? -distAttr : m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr) * (m_NeighbourWeights[neighbour] / sumNeighbourWeights);
                             }
                             else {
@@ -262,7 +261,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
         }
         // UPDATE IMPORTANCES
         for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
-            attr = m_DescriptiveTargetAttr[0][attrInd];
+            attr = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE][attrInd];
             double[] info = getAttributeInfo(attr.getName());
             if (m_isStandardClassification) {
                 info[2] += sumDistAttr[attrInd] / successfulItearions;
@@ -295,7 +294,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
         int targetValue;
 
         for (int i = 0; i < m_NbExamples; i++) {
-            distances[i] = calcDistance(tuple, data.getTuple(i), 0); // in descriptive space
+            distances[i] = calcDistance(tuple, data.getTuple(i), DESCRIPTIVE_SPACE); // in descriptive space
         }
         boolean sortingNeeded;
         boolean isSorted[] = new boolean[m_NbTargetValues]; // isSorted[target value]: tells whether the neighbours for
@@ -303,7 +302,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
         for (int i = 0; i < m_NbExamples; i++) {
             sortingNeeded = false;
             if (i != tupleInd) {
-                targetValue = m_isStandardClassification ? m_DescriptiveTargetAttr[1][0].getNominal(data.getTuple(i)) : 0;
+                targetValue = m_isStandardClassification ? m_DescriptiveTargetAttr[TARGET_SPACE][0].getNominal(data.getTuple(i)) : 0;
                 if (targetValue < m_NbTargetValues) { // non-missing
                     if (whereToPlaceNeigh[targetValue] < m_NbNeighbours) {
                         neighbours[targetValue][whereToPlaceNeigh[targetValue]] = i;
@@ -359,7 +358,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
             }
 
             for (int i = 0; i < whereToPlaceNeigh[value]; i++) {
-                nearestNeighbours[value][whereToPlaceNeigh[value] - i - 1] = new NearestNeighbour(neighbours[value][i], distances[neighbours[value][i]], calcDistance(tuple, data.getTuple(neighbours[value][i]), 1));
+                nearestNeighbours[value][whereToPlaceNeigh[value] - i - 1] = new NearestNeighbour(neighbours[value][i], distances[neighbours[value][i]], calcDistance(tuple, data.getTuple(neighbours[value][i]), TARGET_SPACE));
             }
         }
         return nearestNeighbours;
@@ -380,7 +379,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
      */
     public double calcDistance(DataTuple t1, DataTuple t2, int space) throws ClusException {
         double dist = 0.0;
-        int dimensions = space == 0 ? m_NbDescriptiveAttrs : m_NbTargetAttrs;
+        int dimensions = space == DESCRIPTIVE_SPACE ? m_NbDescriptiveAttrs : m_NbTargetAttrs;
         ClusAttrType attr;
         for (int attrInd = 0; attrInd < dimensions; attrInd++) {
             attr = m_DescriptiveTargetAttr[space][attrInd];
@@ -403,10 +402,10 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
      * @throws ClusException
      */
     public double calcDistance1D(DataTuple t1, DataTuple t2, ClusAttrType attr) throws ClusException {
-        if (attr instanceof NominalAttrType) {
+        if (attr.isNominal()) {
             return calculateNominalDist1D(t1, t2, (NominalAttrType) attr);
         }
-        else if (attr instanceof NumericAttrType) {
+        else if (attr.isNumeric()) {
             double normFactor = m_numMaxs.get(attr.getName()) - m_numMins.get(attr.getName());
             if (normFactor == 0.0) { // if and only if the attribute has only one value ... Distance will be zero and
                                      // does not depend on normFactor
@@ -731,12 +730,15 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
             int maxInd = 0, almostMaxInd = -1;
             double optValue = depths[0];
             // no need for optimisation of the following two loops ...
+            
+            // find the largest depth
             for (int i = 1; i < depths.length; i++) {
                 if (depths[i] > optValue + MathUtil.C1E_6) {
                     optValue = depths[i];
                     maxInd = i;
                 }
             }
+            // find the second largest depth
             optValue = -1.0;
             for (int i = 0; i < depths.length; i++) {
                 if (i != maxInd && depths[i] > optValue + MathUtil.C1E_6) {
@@ -745,8 +747,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
                 }
             }
             double hierarWeight = getWeight(hier);
-            // this works only for trees: sum_{i = rootDepth + 1}^maxDepth w^i + sum_{i = rootDepth + 1}^almostMaxDepth
-            // w^i
+            // this works only for trees: sum_{i = rootDepth + 1}^maxDepth w^i + sum_{i = rootDepth + 1}^almostMaxDepth w^i
             double firstPath = geometricSum(hierarWeight, depths[maxInd]);
             double secondPath = geometricSum(hierarWeight, depths[almostMaxInd]);
             bound = firstPath + secondPath - 2 * geometricSum(hierarWeight, root.getDepth());

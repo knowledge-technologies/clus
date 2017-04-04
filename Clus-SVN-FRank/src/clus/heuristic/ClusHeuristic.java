@@ -54,6 +54,18 @@ public abstract class ClusHeuristic {
     public boolean isEfficient(){
     	return false;
     }
+    
+    /**
+     * This method should be overwritten in the classes of heuristics that are efficient. It is used in the cases when we precompute the total variance.
+     * @param tstat
+     * @param pstat
+     * @param missing
+     * @param ss_tot
+     * @return
+     */
+    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot){
+    	return calcHeuristic(tstat, pstat, missing);
+    }
 
     public void setData(RowData data) {
     }

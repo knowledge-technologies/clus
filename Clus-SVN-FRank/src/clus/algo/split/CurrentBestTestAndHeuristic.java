@@ -22,6 +22,7 @@
 
 package clus.algo.split;
 
+import java.sql.Time;
 import java.util.ArrayList;
 
 import clus.algo.tdidt.ClusDecisionTree;
@@ -288,6 +289,30 @@ public class CurrentBestTestAndHeuristic {
     }
 
 
+    public final void updateNumeric(double val, ClusAttrType at, double ss_tot, boolean isEfficient) {
+    	double heur = isEfficient ? m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat, ss_tot) : m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);    	
+//    	System.out.println(t1 - t0);
+        if (Settings.VERBOSE >= 2)
+            System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (heur > m_BestHeur + ClusHeuristic.DELTA) {
+            if (Settings.VERBOSE >= 2)
+                System.err.println("Better.");
+            double tot_w = getTotWeight();
+            double tot_no_unk = getTotNoUnkW();
+            if (Settings.VERBOSE >= 2) {
+                System.err.println(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
+            }
+            m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
+            m_TestType = TYPE_NUMERIC;
+            m_PosFreq = getPosWeight() / tot_no_unk;
+            m_BestSplit = val;
+            m_BestHeur = heur;
+            m_SplitAttr = at;
+        }
+        // System.out.println("Try: "+at+">"+ClusFormat.TWO_AFTER_DOT.format(val)+" -> "+heur);
+        // DebugFile.log(""+at.getType().getName()+">"+ClusFormat.TWO_AFTER_DOT.format(val)+","+heur);
+    }
+    
     public final void updateNumeric(double val, ClusAttrType at) {
     	double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);      
         if (Settings.VERBOSE >= 2)
