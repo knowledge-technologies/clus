@@ -66,6 +66,8 @@ public class HierNodeWeights {
 
 
     public void initExponentialDepthWeightsDAG(ClassHierarchy hier, int wtype, double w0) {
+    	// 1 ---> 1/w0, otherwise: the weights in this and DAG case differ by a factor w0
+    	double rootWeight = 1.0 / w0;
         boolean[] weight_computed = new boolean[hier.getTotal()];
         ArrayList<ClassTerm> todo = new ArrayList<ClassTerm>();
         for (int i = 0; i < hier.getTotal(); i++) {
@@ -88,33 +90,33 @@ public class HierNodeWeights {
                     term.setMinDepth(minDepth);
                     term.setMaxDepth(maxDepth);
                     double agg_wi;
-                    if (wtype == 2) {
+                    if (wtype == 2) { // this is probably min aggregation
                         agg_wi = Double.MAX_VALUE;
                         for (int j = 0; j < term.getNbParents(); j++) {
                             ClassTerm parent = term.getParent(j);
                             if (parent.getIndex() == -1)
-                                agg_wi = Math.min(agg_wi, 1.0);
+                                agg_wi = Math.min(agg_wi, rootWeight);
                             else
                                 agg_wi = Math.min(agg_wi, m_Weights[parent.getIndex()]);
                         }
                     }
                     else {
-                        if (wtype == 3) {
+                        if (wtype == 3) { // this is probably max aggregation
                             agg_wi = Double.MIN_VALUE;
                             for (int j = 0; j < term.getNbParents(); j++) {
                                 ClassTerm parent = term.getParent(j);
                                 if (parent.getIndex() == -1)
-                                    agg_wi = Math.max(agg_wi, 1.0);
+                                    agg_wi = Math.max(agg_wi, rootWeight);
                                 else
                                     agg_wi = Math.max(agg_wi, m_Weights[parent.getIndex()]);
                             }
                         }
-                        else {
+                        else { // this is probably sum/average aggregation 
                             agg_wi = 0.0;
                             for (int j = 0; j < term.getNbParents(); j++) {
                                 ClassTerm parent = term.getParent(j);
                                 if (parent.getIndex() == -1)
-                                    agg_wi += 1.0;
+                                    agg_wi += rootWeight;
                                 else
                                     agg_wi += m_Weights[parent.getIndex()];
                             }
@@ -183,8 +185,7 @@ public class HierNodeWeights {
         else {
             ClassTerm root = hier.getRoot();
             if (hier.isTree()) {
-            	// 0 ---> 1, otherwise: the weights in this and  DAG case differ for a factor w0
-                initExponentialDepthWeightsRec(root, 1, w0);
+                initExponentialDepthWeightsRec(root, 0, w0);
                 m_Name = "Exponential depth weights (tree) " + w0;
             }
             else {
