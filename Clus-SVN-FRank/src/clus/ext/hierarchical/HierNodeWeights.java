@@ -24,6 +24,8 @@ package clus.ext.hierarchical;
 
 import java.util.ArrayList;
 
+import clus.main.Settings;
+
 
 public class HierNodeWeights {
 
@@ -90,7 +92,7 @@ public class HierNodeWeights {
                     term.setMinDepth(minDepth);
                     term.setMaxDepth(maxDepth);
                     double agg_wi;
-                    if (wtype == 2) { // this is probably min aggregation
+                    if (wtype == Settings.HIERWEIGHT_EXP_MIN_PARENT_WEIGHT) {
                         agg_wi = Double.MAX_VALUE;
                         for (int j = 0; j < term.getNbParents(); j++) {
                             ClassTerm parent = term.getParent(j);
@@ -99,9 +101,7 @@ public class HierNodeWeights {
                             else
                                 agg_wi = Math.min(agg_wi, m_Weights[parent.getIndex()]);
                         }
-                    }
-                    else {
-                        if (wtype == 3) { // this is probably max aggregation
+                    } else if (wtype == Settings.HIERWEIGHT_EXP_MAX_PARENT_WEIGHT) {
                             agg_wi = Double.MIN_VALUE;
                             for (int j = 0; j < term.getNbParents(); j++) {
                                 ClassTerm parent = term.getParent(j);
@@ -110,21 +110,20 @@ public class HierNodeWeights {
                                 else
                                     agg_wi = Math.max(agg_wi, m_Weights[parent.getIndex()]);
                             }
+                    } else { // max and sum aggregation
+                        agg_wi = 0.0;
+                        for (int j = 0; j < term.getNbParents(); j++) {
+                            ClassTerm parent = term.getParent(j);
+                            if (parent.getIndex() == -1)
+                                agg_wi += rootWeight;
+                            else
+                                agg_wi += m_Weights[parent.getIndex()];
                         }
-                        else { // this is probably sum/average aggregation 
-                            agg_wi = 0.0;
-                            for (int j = 0; j < term.getNbParents(); j++) {
-                                ClassTerm parent = term.getParent(j);
-                                if (parent.getIndex() == -1)
-                                    agg_wi += rootWeight;
-                                else
-                                    agg_wi += m_Weights[parent.getIndex()];
-                            }
-                            if (wtype == 1) {
-                                agg_wi = agg_wi / term.getNbParents();
-                            }
+                        if (wtype == Settings.HIERWEIGHT_EXP_AVG_PARENT_WEIGHT) {
+                            agg_wi = agg_wi / term.getNbParents();
                         }
                     }
+
                     m_Weights[term.getIndex()] = w0 * agg_wi;
                     weight_computed[term.getIndex()] = true;
                     todo.remove(i);
@@ -179,7 +178,7 @@ public class HierNodeWeights {
 
     public void initExponentialDepthWeights(ClassHierarchy hier, int wtype, double w0) {
         m_Weights = new double[hier.getTotal()];
-        if (wtype == 4) {
+        if (wtype == Settings.HIERWEIGHT_NO_WEIGHT) {
             initNoWeights(hier);
         }
         else {
