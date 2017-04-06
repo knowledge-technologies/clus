@@ -402,6 +402,6 @@ public class ClusOutput {
 
 
     public static void printGPL() {
-        System.out.println("This function will display the content of 'LICENSE.TXT'.");
+        System.out.println("The GNU GENERAL PUBLIC LICENSE is written in the file 'LICENSE.txt'.");
     }
 }

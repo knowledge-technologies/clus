@@ -23,6 +23,7 @@
 package clus.jeans.math;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 
 
 public class MathUtil {
@@ -100,6 +101,29 @@ public class MathUtil {
         System.out.println("Interpolate x = 10  -> y = 1.5: " + MathUtil.interpolate(10, fct));
     }
 
+    /**
+     * Computes the symmetric difference between the two lists of integers.
+     * @param elements1
+     * @param elements2
+     * @return
+     */
+    public static HashSet<Integer> symmetricDifference(ArrayList<Integer> elements1, ArrayList<Integer> elements2){
+    	HashSet<Integer> symmetricDifference = new HashSet<Integer>();
+    	// add elements1
+        for (int elt : elements1) {
+            symmetricDifference.add(elt);
+        }
+        // remove the intersection and add elements2 - elements1
+        for (int elt : elements2) {
+            if (symmetricDifference.contains(elt)) {
+                symmetricDifference.remove(elt);
+            }
+            else {
+                symmetricDifference.add(elt);
+            }
+        }
+        return symmetricDifference;
+    }
 
     public static void main(String[] arg) {
         MathUtil mu = new MathUtil();
