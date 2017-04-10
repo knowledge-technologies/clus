@@ -299,6 +299,7 @@ public class ClusErrorList implements Serializable {
 		ClusModelInfo definf = models.getModelInfo(ClusModel.DEFAULT);
 		ClusErrorList defpar = definf.getError(type);
 		out.println("Number of examples: "+defpar.getNbExamples());
+		if (settings.isSectionHMTREnabled()) out.println("HMTR weight: "+settings.get_HMTRHierarchyWeight().getStringValue());
 		int nb_models = models.getNbModels();
 		if (!checkCoverage(models, type, defpar.getNbExamples())) {
 			out.println("Coverage:");
@@ -314,7 +315,7 @@ public class ClusErrorList implements Serializable {
 
 		    if(settings.isSectionHMTREnabled() &&  i==(nb/2)) {
 		        out.println();
-                out.println("\t***** HMTR leaves only *****");
+                out.println("\t***** HMTR leaves only w = "+settings.get_HMTRHierarchyWeight().getStringValue()+" *****");
                 out.println();
             }
 			ClusError err1 = getError(i);

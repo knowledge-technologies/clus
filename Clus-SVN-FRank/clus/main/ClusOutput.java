@@ -123,6 +123,14 @@ public class ClusOutput {
 	public void writeOutput(ClusRun cr, boolean detail, boolean outputtrain) throws IOException, ClusException {
 		ArrayList models = new ArrayList();
 		String ridx = cr.getIndexString();
+
+		if(getSettings().isSectionHMTREnabled()){
+		    m_Writer.println("HMTR Tree");
+		    m_Writer.println("---------");
+		    m_Writer.println();
+		    m_Writer.println(m_Schema.get_HMTRHierarchy().printHierarchyTree());
+        }
+
 		m_Writer.println("Run: "+ridx);
 		m_Writer.println(StringUtils.makeString('*', 5+ridx.length()));
 		m_Writer.println();

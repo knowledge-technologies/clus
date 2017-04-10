@@ -123,6 +123,8 @@ public class ClassHMTRHierarchy implements Serializable{
 
     private void calculateWeights(double weight) {
 
+        if (weight > 1 || weight  < 0.1) System.err.println("Weird initialisation of HMTR weight! Weight = "+weight+"\nTypical weights: 0.75, 0.8333 etc.\nWeight 1 = pure MTR (not taking the hierarchy into account)\nSmaller values = more influence on the upper levels of the hierarchy\nProgram will continue anyways...");
+
         this.nodeWeights = new HashMap<>();
 
         for (Map.Entry<String, Integer> entry : this.nodeDepth.entrySet()){
@@ -183,16 +185,16 @@ public class ClassHMTRHierarchy implements Serializable{
         return sb.toString();
     }
 
-    public void printHierarchyTree(){
+    public String printHierarchyTree(){
 
         for (ClassHMTRNode n : this.getNodes()){
 
             if (n.isRoot()) {
-                System.out.println(printHierarchyTree(n));
-                break;
+                return printHierarchyTree(n);
             }
 
         }
+        return "";
 
     }
 

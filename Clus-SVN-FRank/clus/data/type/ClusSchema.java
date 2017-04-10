@@ -73,7 +73,7 @@ public class ClusSchema implements Serializable {
         return m_HMTRHierarchy;
     }
 
-    public ClassHMTRHierarchy m_HMTRHierarchy;
+    private ClassHMTRHierarchy m_HMTRHierarchy;
 
     public int getNbHierarchicalMTR() {
         return m_NbHierarchicalMTR;
