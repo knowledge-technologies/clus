@@ -345,6 +345,18 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     public boolean isNominal(){
     	return false;
     }
+    
+    public boolean isClasses(){
+    	return false;
+    }
+    
+	public boolean isTimeSeries() {
+		return false;
+	}
+	
+	public boolean isString(){
+		return false;
+	}
 
 
     public JsonObject getAttributeJSON() {
@@ -363,5 +375,5 @@ public abstract class ClusAttrType implements Serializable, Comparable {
         }
 
         return elm;
-    }    
+    }
 }

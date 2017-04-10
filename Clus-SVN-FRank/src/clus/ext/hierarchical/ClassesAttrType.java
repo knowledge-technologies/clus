@@ -237,4 +237,9 @@ public class ClassesAttrType extends ClusAttrType {
             return true;
         }
     }
+    
+    @Override
+    public boolean isClasses(){
+    	return true;
+    }
 }

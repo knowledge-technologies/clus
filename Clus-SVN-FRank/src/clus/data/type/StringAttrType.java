@@ -99,4 +99,9 @@ public class StringAttrType extends ClusAttrType {
             return true;
         }
     }
+    
+    @Override
+    public boolean isString(){
+    	return true;
+    }
 }

@@ -124,6 +124,18 @@ public class MathUtil {
         }
         return symmetricDifference;
     }
+    
+    /**
+     * Computes the geometric sum {@code 1 + q + ... + q^lastPower}.
+     * 
+     * @param q
+     * @param lastPower
+     * @return
+     */
+    private double geometricSum(double q, double lastPower) {
+        return (1 - Math.pow(q, lastPower + 1)) / (1 - q);
+    }
+    
 
     public static void main(String[] arg) {
         MathUtil mu = new MathUtil();

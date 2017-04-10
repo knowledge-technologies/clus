@@ -132,4 +132,9 @@ public class TimeSeriesAttrType extends ClusAttrType {
     public void writeARFFType(PrintWriter wrt) throws ClusException {
         wrt.print("TimeSeries");
     }
+    
+    @Override
+    public boolean isTimeSeries(){
+    	return true;
+    }
 }
