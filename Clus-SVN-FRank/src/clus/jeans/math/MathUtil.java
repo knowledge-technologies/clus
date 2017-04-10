@@ -102,19 +102,19 @@ public class MathUtil {
     }
 
     /**
-     * Computes the symmetric difference between the two lists of integers.
+     * Computes the symmetric difference between the two lists.
      * @param elements1
      * @param elements2
      * @return
      */
-    public static HashSet<Integer> symmetricDifference(ArrayList<Integer> elements1, ArrayList<Integer> elements2){
-    	HashSet<Integer> symmetricDifference = new HashSet<Integer>();
+    public static <T> HashSet<T> symmetricDifference(ArrayList<T> elements1, ArrayList<T> elements2){
+    	HashSet<T> symmetricDifference = new HashSet<T>();
     	// add elements1
-        for (int elt : elements1) {
+        for (T elt : elements1) {
             symmetricDifference.add(elt);
         }
         // remove the intersection and add elements2 - elements1
-        for (int elt : elements2) {
+        for (T elt : elements2) {
             if (symmetricDifference.contains(elt)) {
                 symmetricDifference.remove(elt);
             }

@@ -192,7 +192,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             if (val != Double.POSITIVE_INFINITY) {
                 m_SumWeights[i] += weight;
                 m_SumValues[i] += weight * val;
-                m_SumSqValues[i] += weight * val * val;
+                m_SumSqValues[i] += weight * val * val; // TODO tu lahko prisparas en korak, ce si zapomnis weight * val
             }
         }
     }

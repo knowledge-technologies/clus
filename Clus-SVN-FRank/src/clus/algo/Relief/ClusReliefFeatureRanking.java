@@ -600,17 +600,30 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
                 symmetricDifferenceOfLabelSets.add(labelIndex);
             }
         }
-        double dist = weightedEuclidean(hier, symmetricDifferenceOfLabelSets);
+        double dist = weightedEuclideanInt(hier, symmetricDifferenceOfLabelSets);
         return dist / m_HierarUpperBounds.get(name);
     }
     
-    private double weightedEuclidean(ClassHierarchy hier, HashSet<Integer> symmetricDifferenceOfLabelSets){
+    private double weightedEuclideanInt(ClassHierarchy hier, HashSet<Integer> symmetricDifferenceOfLabelSets){
     	double dist = 0.0;
         for (int labelIndex : symmetricDifferenceOfLabelSets) {
             dist += hier.getWeight(labelIndex);
         }
         return dist;
     }
+    
+    private double weightedEuclideanTerm(ClassHierarchy hier, HashSet<ClassTerm> symmetricDifferenceOfLabelSets){
+    	double dist = 0.0;
+        for (ClassTerm term : symmetricDifferenceOfLabelSets) {
+            dist += hier.getWeight(term.getIndex());
+        }
+        return dist;
+    }
+    
+    private double weightedEuclidean(ClassHierarchy hier, ClassTerm finalTerm1, ClassTerm finalTerm2){
+    	return weightedEuclideanTerm(hier, MathUtil.symmetricDifference(finalTerm1.getAllAncestors(true), finalTerm2.getAllAncestors(true)));
+    }
+    
     
     public void sortFeatureRanks() {
         Iterator iter = m_AllAttributes.keySet().iterator();
@@ -712,14 +725,19 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
 
 
     /**
-     * If the hierarchy {@code hier} is tree-shaped, this computes the maximal distance {@code d(x, y)} over the vectors
-     * {@code x} and {@code y} that correspond to the labels in the hierarchy.
-     * If the hierarchy is only DAG, then the computed upper-bound may not be tight, i.e., it is possible that
-     * {@code max d(x, y) < upperBound(hier)}.
+     * If the hierarchy {@code hier} is tree-shaped, this efficiently (in linear time) computes the maximal distance {@code d(x, y)} over the vectors
+     * {@code x} and {@code y} that correspond to the labels in the hierarchy and are present in the data.<br>
+     * If the hierarchy is only DAG, then the time complexity is O(squared number of different labels in data).
      * 
-     * @param hier
-     *        The hierarchy
-     * @return (If DAG: an approximation of) {@code max d(x, y)}
+     * @param attr
+     *        Hierarchical attribute under consideration
+     * @param presentAndFinalClasses An array of 3 arrays:
+     * <ul>
+     * <li>[..., is the i-th label present in the data, ...] </li>
+     * <li>[..., is the i-th label the most specific for some example in the data, ...] </li>
+     * <li>[is the number of different most specific labels in the data at least two]</li>
+     * </ul>
+     * @return {@code max d(x, y)} over the label sets x and y in the dataset.
      */
     private double upperBound(ClassesAttrType attr, boolean[][] presentAndFinalClasses) {
     	boolean atLeastTwoClasses = presentAndFinalClasses[2][0];
@@ -731,7 +749,7 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
 	        	return upperBoundDAG(hier, presentAndFinalClasses[0], presentAndFinalClasses[1]);
 	        } 
     	} else{
-        	return 1.0; // does not matter what, the distance will be always 0
+        	return 1.0; // does not matter what is the normalisation constant, the distance will be always 0
         }
 
         
@@ -740,31 +758,34 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
     /**
      * Recursively finds the two most distant terms of the hierarchy that represent the final classes in the data, it two such terms exist. 
      * @param root The current root of the hierarchy.
-     * @param presentClasses see upperBoundTree
-     * @param finalClasses see upperBoundTree
+     * @param presentClasses see upperBound
+     * @param finalClasses see upperBound
      * @return
      */
-    private ArrayList<ClassTerm> findDistantTerms(ClassTerm root, boolean[] presentClasses, boolean[] finalClasses){
+    private ArrayList<ClassTerm> findDistantTerms(ClassHierarchy hier, ClassTerm root, boolean[] presentClasses, boolean[] finalClasses){
     	ArrayList<ClassTerm> extremeTerms = new ArrayList<ClassTerm>();
     	int rootInd = root.getIndex();
     	if(rootInd >= 0 && !presentClasses[rootInd]){
-    		// the part of the hierarchy rooted here is not in the data --> empty list
+    		// the part of the hierarchy rooted here, is not in the data --> empty list
     		return extremeTerms;
     	}
     	ArrayList<ArrayList<ClassTerm>> childrenResults = new ArrayList<ArrayList<ClassTerm>>();
     	int nbCh = root.getNbChildren();
     	for(int i = 0; i < nbCh; i++){
-    		ArrayList<ClassTerm> resultCh = findDistantTerms((ClassTerm) root.getChild(i), presentClasses, finalClasses);
+    		ArrayList<ClassTerm> resultCh = findDistantTerms(hier, (ClassTerm) root.getChild(i), presentClasses, finalClasses);
     		if(resultCh.size() > 0){
     			childrenResults.add(resultCh);
     		}
     	}
-    	// find <= 2 best children
+    	
+    	boolean rootIsApproprite = rootInd >= 0 && finalClasses[rootInd];
+    	int nbChildrenCandidates = childrenResults.size();
+    	// find the indices of <= 2 children that have the deepest first term
 		int notAnIndex = -1234;
 		// double[] depths = new double[]{-10.0,-10.0};  // initial value does not matter
 		int[] inds = new int[]{notAnIndex, notAnIndex}; // something that is not an index (-1 not good choice because of the root term)
-		for(int i = 0; i < childrenResults.size(); i++){
-			double thisDepth =  childrenResults.get(i).get(0).getDepth();
+		for(int i = 0; i < nbChildrenCandidates; i++){
+			double thisDepth = childrenResults.get(i).get(0).getDepth();
 			int whereTo = 0;			
 			while(whereTo < inds.length){				
 				if (inds[whereTo] == notAnIndex || thisDepth > childrenResults.get(inds[whereTo]).get(0).getDepth() + MathUtil.C1E_6){
@@ -780,20 +801,48 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
 				inds[whereTo] = i;
 				}    		
     	}
-		// if childrenResults.size() > 1: maximal distance is obtained between two first components which are the deepest
-		// if childrenResults.size() == 1: maximal distance is obtained between the two terms if they exist,
-		//                                 otherwise: the first term and possibly root, if root is final
-		// if childrenResults.size() == 0: empty + possibly the root
-		for(int i = 0; i < Math.min(2, childrenResults.size()); i++){
-			extremeTerms.add(childrenResults.get(inds[i]).get(0));
-		}
-		if(extremeTerms.size() < 2 && childrenResults.size() >= 1 && childrenResults.get(inds[0]).size() >= 2){
-			// add second component if it exists
-			extremeTerms.add(childrenResults.get(inds[0]).get(1));
-		}
-		if (extremeTerms.size() < 2 && rootInd >= 0 && finalClasses[rootInd]){
-			extremeTerms.add(root);
-		}
+    	
+    	if (nbChildrenCandidates == 0){
+    		// empty + possibly the root
+    		if(rootIsApproprite){
+    			extremeTerms.add(root);
+    		}
+    	} else if (nbChildrenCandidates == 1){
+    		extremeTerms.add(childrenResults.get(0).get(0)); // always in
+    		if(childrenResults.get(0).size() == 1 && rootIsApproprite){  // add root, if root is final
+    			extremeTerms.add(root); 
+    		} else if(childrenResults.get(0).size() == 2 && rootIsApproprite){ 	// add the other child term or root
+    			double distChildRootComb = weightedEuclidean(hier, childrenResults.get(0).get(0), root);
+    			double distChildComb = weightedEuclidean(hier, childrenResults.get(0).get(0), childrenResults.get(0).get(1));
+    			if(distChildRootComb > distChildComb){
+    				extremeTerms.add(root);
+    			} else{
+    				extremeTerms.add(childrenResults.get(0).get(1));
+    			}
+    		} else if(childrenResults.get(0).size() == 2){ // add the other child term
+    			extremeTerms.add(childrenResults.get(0).get(1));
+    		}
+    	} else{ // root cannot be an option, either two deepest 1st components or one of the children
+    		double maxDistDiffChildren = weightedEuclidean(hier, childrenResults.get(inds[0]).get(0),
+    															 childrenResults.get(inds[1]).get(0));
+    		double maxInnerDistChild = 0.0;
+    		int optimal = -1;
+    		for(int i = 0; i < nbChildrenCandidates; i++){
+    			if (childrenResults.get(i).size() > 1){
+	    			double dist = weightedEuclidean(hier, childrenResults.get(i).get(0), childrenResults.get(i).get(1));
+	    			if(dist > maxInnerDistChild + MathUtil.C1E_9){
+	    				optimal = i;
+	    				maxInnerDistChild = dist;
+	    			}
+    			}
+    		}
+    		if(maxDistDiffChildren > maxInnerDistChild){
+    			extremeTerms.add(childrenResults.get(inds[0]).get(0));
+    			extremeTerms.add(childrenResults.get(inds[1]).get(0));
+    		} else{
+    			extremeTerms.addAll(childrenResults.get(optimal));
+    		}
+    	}
     	return extremeTerms;
     }
     
@@ -810,27 +859,39 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
      */
     private double upperBoundTree(ClassHierarchy hier, boolean[] presentClasses, boolean[] finalClasses){
     	double bound = 0.0;
-    	double hierarWeight = getWeight(hier);
         ClassTerm root = hier.getRoot();
         
-        ArrayList<ClassTerm> extremeTerms = findDistantTerms(root, presentClasses, finalClasses);  // must have length two!
-        ArrayList<ArrayList<Integer>> labelIndices = new ArrayList<ArrayList<Integer>>();
-        for(int i = 0; i < 2; i++){
-        	ArrayList<ClassTerm> ancestors = hier.getAllAncestors(extremeTerms.get(i));
-        	ArrayList<Integer> indices = new ArrayList<Integer>();
-        	for(ClassTerm term : ancestors){					// add ancestors
-        		indices.add(term.getIndex());
-        	}
-        	indices.add(extremeTerms.get(i).getIndex());     // add the terms itself
-        	labelIndices.add(indices);
-        }
-        HashSet<Integer> symmetricDiff = MathUtil.symmetricDifference(labelIndices.get(0), labelIndices.get(1));
-        bound = weightedEuclidean(hier, symmetricDiff);        
+        ArrayList<ClassTerm> extremeTerms = findDistantTerms(hier, root, presentClasses, finalClasses);  // must have length two!
+        bound = weightedEuclidean(hier, extremeTerms.get(0), extremeTerms.get(1));        
         return bound;
     }
-       
+      
+    /**
+     * We iterate over all pairs of different final classes and return the maximal distance achieved.
+     * @param hier
+     * @param presentClasses
+     * @param finalClasses
+     * @return
+     */
     private double upperBoundDAG(ClassHierarchy hier, boolean[] presentClasses, boolean[] finalClasses){
-    	return upperBoundTree(hier, presentClasses, finalClasses);
+    	ArrayList<Integer> finalClassesOnly = new ArrayList<Integer>();
+    	for(int termInd = 0; termInd < finalClasses.length; termInd++){
+    		if(finalClasses[termInd]){
+    			finalClassesOnly.add(termInd);
+    		}
+    	}
+    	double bound = 0.0;
+    	for(int i = 0; i < finalClassesOnly.size(); i++){
+    		ClassTerm term1 = hier.getTermAt((finalClassesOnly.get(i)));
+    		for(int j = i + 1; j < finalClassesOnly.size(); j++){
+    			ClassTerm term2 = hier.getTermAt((finalClassesOnly.get(j)));
+    			double dist = weightedEuclidean(hier, term1, term2);
+    			if(dist > bound + MathUtil.C1E_9){
+    				bound = dist;
+    			}
+    		}
+    	}	
+    	return bound;
     }
 
 
@@ -875,21 +936,27 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
     	boolean[] finalClasses = new boolean[hierarchySize];
     	int nbFinal = 0;
     	int sidx = hier.getType().getArrayIndex();
+    	boolean isTree = hier.isTree();
     	// we can break the loop if all classes are present, since in that case,
     	// the upper bound for d(x1, x2) is achieved in two leaves unless hierarchy is a line
     	// root ---> a1 ---> a2 ---> ... ---> an ... Better safe than sorry ... We will not break the loop.
     	for(int i = 0; i < m_NbExamples; i++){ //  && nbPresent < hierarchySize
     		ClassesTuple tp = (ClassesTuple) data.getTuple(i).getObjVal(sidx);
     		int nbClasses = tp.getNbClasses();
-    		int lastClassIndex = tp.getClass(nbClasses - 1).getIndex();
+    		int lastClassIndex = -123;
+    		if(isTree){
+    			lastClassIndex = tp.getClass(nbClasses - 1).getIndex();
+    		} else{
+    			lastClassIndex = mostSpecificTermIndex(tp);
+    		}
     		if(!finalClasses[lastClassIndex]){
     			finalClasses[lastClassIndex] = true;
     			nbFinal++;
     		}
-    		if(present[lastClassIndex]){
-    			continue;  // we have already an example that covers all classes of the current
+    		if(present[lastClassIndex]){ // if DAG, the leaf may not be the last in the list
+    			continue;  // we have already processed an example that covers all classes of the current
     		}
-    		for(int j = 0; j < tp.getNbClasses(); j++){
+    		for(int j = 0; j < nbClasses; j++){
     			int ind = tp.getClass(j).getIndex();
     			if (! present[ind]){
     				present[ind] = true;
@@ -898,6 +965,32 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
     		}
     	}
     	return new boolean[][]{present, finalClasses, new boolean[]{nbFinal > 1}};
+    }
+    
+    private static int mostSpecificTermIndex(ClassesTuple tp){
+    	int ind = 0;
+    	HashMap<Integer, Integer> termIndices = new HashMap<Integer, Integer>();
+    	int nbClasses = tp.getNbClasses();
+    	for(int i = 0; i < nbClasses; i++){
+    		termIndices.put(tp.getClass(i).getIndex(), i);
+    	}
+    	boolean continueSearch = true;
+    	while (continueSearch){
+    		continueSearch = false;
+    		ClassTerm term = tp.getClass(ind).getTerm();
+    		if (term.atBottomLevel()){
+    			return term.getIndex();
+    		}
+    		for(int i = 0; i < term.getNbChildren(); i++){
+    			int j = ((ClassTerm) term.getChild(i)).getIndex();
+    			if(termIndices.containsKey(j)){
+    				ind = termIndices.get(j);
+    				continueSearch = true;
+    				break;
+    			}
+    		}
+    	}
+    	return tp.getClass(ind).getIndex();
     }
     
     private HashSet<ClassTerm> blabla(ClassHierarchy hier){

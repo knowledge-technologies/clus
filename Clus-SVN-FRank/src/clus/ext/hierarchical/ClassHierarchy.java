@@ -215,35 +215,6 @@ public class ClassHierarchy implements Serializable {
         }
     }
     
-    /**
-     * Returns all non-root parents of the given node.
-     * @param node
-     * @return
-     */
-    public ArrayList<ClassTerm> getAllAncestors(ClassTerm node){
-    	ArrayList<ClassTerm> ancestors = new ArrayList<ClassTerm>();
-    	boolean[] visited = new boolean[getTotal()];
-    	Stack<ClassTerm> toVisit = new Stack<ClassTerm>();
-    	if(!node.atTopLevel()){ // to prevent index out of range in the case of root ...
-    		toVisit.push(node);
-    	}
-    	while(!toVisit.isEmpty()){
-    		ClassTerm term = toVisit.pop();
-    		for(int parentInd = 0; parentInd < term.getNbParents(); parentInd++){
-    			ClassTerm parent = term.getParent(parentInd);
-    			int hierParentInd = parent.getIndex();
-    			if(!(parent.atTopLevel() || visited[hierParentInd])){ // if not root and not visited ... add it
-    				ancestors.add(parent);
-    				toVisit.push(parent);
-    				visited[hierParentInd] = true;
-    				
-    			}
-    		}
-    	}    	
-    	return ancestors;    	
-    }
-
-
     public ArrayList getAllPaths() {
         ArrayList paths = new ArrayList();
         boolean[] visited = new boolean[getTotal()];

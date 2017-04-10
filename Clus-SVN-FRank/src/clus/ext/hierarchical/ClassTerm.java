@@ -26,6 +26,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Stack;
 
 import clus.jeans.math.SingleStat;
 import clus.jeans.tree.Node;
@@ -435,5 +437,34 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
      */
     public double getDepth() {
         return m_Depth;
+    }
+    
+    /**
+     * Returns all non-root parents of the given term.
+     * @param includeTerm tells whether to add to the ancestors also the term on which the method is used
+     * @return
+     */
+    public ArrayList<ClassTerm> getAllAncestors(boolean includeTerm){
+    	ArrayList<ClassTerm> ancestors = new ArrayList<ClassTerm>();
+    	if(includeTerm){
+    		ancestors.add(this);
+    	}
+    	HashSet<Integer> visited = new HashSet<Integer>();
+    	Stack<ClassTerm> toVisit = new Stack<ClassTerm>();
+    	toVisit.push(this);
+    	while(!toVisit.isEmpty()){
+    		ClassTerm term = toVisit.pop();
+    		for(int parentInd = 0; parentInd < term.getNbParents(); parentInd++){
+    			ClassTerm parent = term.getParent(parentInd);
+    			int hierParentInd = parent.getIndex();
+    			if(!(parent.atTopLevel() || visited.contains(hierParentInd))){ // if not artificial root and not visited ... add it
+    				ancestors.add(parent);
+    				toVisit.push(parent);
+    				visited.add(hierParentInd);
+    				
+    			}
+    		}
+    	}    	
+    	return ancestors;    	
     }
 }

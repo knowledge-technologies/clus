@@ -1,0 +1,91 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsthm,amsfonts,amssymb}
+\usepackage{algorithm,algorithmic}
+%opening
+\title{Proof of correctness of the algorithm for finding the upper bound for label hierarchies}
+\author{Matej Petković}
+
+\begin{document}
+
+\maketitle
+
+We have a hierarchical attribute with labels $\mathcal{L} = \{\ell_1, \ell_2, \dots, \ell_n\}$, and some examples
+in a dataset $\mathcal{D}$. Distance $d(x,y)$ between two $0/1$-vectors that denote presence/absence of a labels,
+is given as
+$$
+d(x, y)^2 = \sum_i w_i (x_i - y_i)^2\text{,}
+$$
+where we assume that the weights $w_i$ are positive and increase with depth. Our goal is to compute
+
+\begin{equation}
+\label{eqn:goal}
+\max_{x, y\in\mathcal{D}} d(x, y)
+\end{equation}
+Two notes: (i) do not mind the abuse of notation. For simplicity reasons, we write $\ell\in \mathcal{D}$, $x\in\mathcal{D}$ etc. (ii)
+label $r$ is defined as final if there is an example in the hierarchy with label path of form $\ell/\dots/r$.
+
+In the case that the  hierarchy is as general DAG as possible, we apply brute force algorithm. The open question is whether we can do better.
+
+In the case that the hierarchy is also a tree, we compute (\ref{eqn:goal}) in linear time as follows:
+\begin{itemize}
+	\item we find two most distant label vectors in the hierarchy using the algorithm \ref{alg:rec} recursively:
+	on each call, at most two candidates are returned
+	\item we compute the distance between the two farthest candidates.
+\end{itemize}
+
+\begin{algorithm}[H]
+	\caption{maxTree(root $r$)}\label{alg:rec}
+	\begin{algorithmic}[1]
+		\STATE{\texttt{candidates} $\gets$ empty list}
+		\IF{$r\notin\mathcal{D}$}\label{alg:base}
+			\RETURN{\texttt{candidates}}\hfill i.e., no example has label $r$
+		\ENDIF
+		\STATE{\texttt{chC} $\gets$ empty list}\hfill children candidates list
+		\FORALL{$c\in$ $r$.children}
+			\STATE{\texttt{cand} $\gets$ maxTree($c$)}
+			\STATE{add \texttt{cand} to \texttt{chC} if \texttt{cand} not empty}\label{alg:emptySubtree}
+		\ENDFOR
+		\STATE{$n\gets$ length of \texttt{chC}}
+		\IF{$n = 0$}
+			\STATE{add $r$ to \texttt{candidates} if $r$ is final label}
+		\ELSIF{$n = 1$}
+			\IF{$|\texttt{candidates}[0]| = 1$}
+				\STATE{add $r$ to \texttt{candidates} if $r$ is final label}
+			\ELSE
+				\STATE{\texttt{can1} $\gets \texttt{chC}[0]$}\label{alg:pair1}
+				\STATE{\texttt{can2} $\gets$ $\{\texttt{chC}[0][0], r\}$  (if $r$ is final label)}\label{alg:pair2}
+				\STATE{\texttt{candidates} $\gets$ the better of \texttt{can1} and \texttt{can2}}	
+			\ENDIF
+		\ELSE
+			\STATE{\texttt{can1} $\gets$ the optimal pair from \texttt{chC} (if exists)}
+			\STATE{$i_{1,2}\gets$ indices of the deepest and second deepest terms among $\texttt{chC}[i][0]$}
+			\STATE{\texttt{can2} $\gets \{\texttt{chC}[i_1][0], \texttt{chC}[i_2][0]\}$}
+			\STATE{\texttt{candidates} $\gets$ the better of \texttt{can1} and \texttt{can2}}
+		\ENDIF
+		\RETURN{\texttt{candidates}}
+	\end{algorithmic}  
+\end{algorithm}
+Note that the first component of the non-empty list of $\leq 2$ candidates is the deepest
+(among the final ones) in the current sub-hierarchy, since the maximising pair always contains
+ a term that is the deepest (among the final ones).
+ 
+If $r$ is not the final class (line \ref{alg:base}), the part of hierarchy rooted in in $r$ is not in the data, hence we
+can stop here, otherwise we proceed.
+
+Subtrees with no final classes (line \ref{alg:emptySubtree}) can be ignored. The others (their number is $n$) are processed further.
+
+If $n = 0$, the root is the only candidate.
+
+If $n = 1$, the child has either a pair of two best nodes or only one node.
+If the former, we add $r$ ot the candidates, otherwise, we check which of the pairs in lines $\ref{alg:pair1}$ and $\ref{alg:pair2}$
+yields greater distance. Both outcomes are possible.
+
+If $n \geq 2$, then the root cannot be a part of the optimal pair. This is either one of the pairs from children or
+the combination of two children pairs, where we took the first (= deepest) component of the two pairs.
+
+
+
+
+
+\end{document}
