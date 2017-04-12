@@ -14,7 +14,7 @@ import weka.core.Utils;
  * @author martinb
  *
  */
-public class ClusEnsembleTargetSubspaceInfo implements Serializable {
+public class ClusEnsembleROSInfo implements Serializable {
 
     private static final long serialVersionUID = -8192393874827673204L;
     ArrayList<int[]> m_AllSubspaces;
@@ -23,7 +23,7 @@ public class ClusEnsembleTargetSubspaceInfo implements Serializable {
     ClusSchema m_Schema;
 
 
-    public ClusEnsembleTargetSubspaceInfo(ClusSchema schema, ArrayList<int[]> info) {
+    public ClusEnsembleROSInfo(ClusSchema schema, ArrayList<int[]> info) {
         m_AllSubspaces = info;
         m_Schema = schema;
         calculateCoverage();
@@ -105,7 +105,7 @@ public class ClusEnsembleTargetSubspaceInfo implements Serializable {
         int[] vals = getOnlyTargets(getModelSubspace(i));
         String sb = "";
         if (vals.length > 15) {
-            sb = ClusEnsembleTargetSubspaceInfo.getEnabledCount(vals) + " of " + vals.length;
+            sb = ClusEnsembleROSInfo.getEnabledCount(vals) + " of " + vals.length;
         }
         else {
             sb = "";

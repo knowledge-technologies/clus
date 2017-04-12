@@ -72,7 +72,7 @@ public class ClusForest implements ClusModel, Serializable {
     private int m_NbNodes = 0;
     /** The sum of leaves over the trees in the forest */
     private int m_NbLeaves = 0;
-    ClusEnsembleTargetSubspaceInfo m_TargetSubspaceInfo; // Info about target subspacing method
+    ClusEnsembleROSInfo m_TargetSubspaceInfo; // Info about target subspacing method
     
     private ClusReadWriteLock m_NbModelsLock = new ClusReadWriteLock();
     private ClusReadWriteLock m_NbNodesLock = new ClusReadWriteLock();
@@ -136,7 +136,7 @@ public class ClusForest implements ClusModel, Serializable {
     	m_Optimization = opt;
     }
     
-    public void addTargetSubspaceInfo(ClusEnsembleTargetSubspaceInfo tinfo) {
+    public void addTargetSubspaceInfo(ClusEnsembleROSInfo tinfo) {
         m_TargetSubspaceInfo = tinfo;
     }
 
@@ -255,13 +255,12 @@ public class ClusForest implements ClusModel, Serializable {
 
 
     public ClusStatistic predictWeighted(DataTuple tuple) {
-        if (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod != Settings.ENSEMBLE_TARGET_SUBSPACING_NONE) {
+        if (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod != Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) {
             switch (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod) {
-                case Settings.ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_SUBSET: // only use predictions for
-                                                                                     // subspaces
-                    return predictWeightedStandardTargetSubspace(tuple);
+                case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING: // only use subspaces for prediction averaging
+                    return predictWeightedStandardSubspaceAveraging(tuple);
 
-                case Settings.ENSEMBLE_TARGET_SUBSPACING_SMARTERWAY:
+                case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SMARTERWAY:
                     throw new RuntimeException("NOT YET IMPLEMENTED!");
 
                 default: // case Settings.ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_ALL: // just use all predictions
@@ -301,7 +300,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public ClusStatistic predictWeightedStandardTargetSubspace(DataTuple tuple) {
+    public ClusStatistic predictWeightedStandardSubspaceAveraging(DataTuple tuple) {
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
         for (int i = 0; i < m_Forest.size(); i++) {
             votes.add(m_Forest.get(i).predictWeighted(tuple));

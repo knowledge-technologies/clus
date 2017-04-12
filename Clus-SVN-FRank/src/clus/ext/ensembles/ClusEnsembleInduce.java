@@ -90,7 +90,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     // members for target subspacing
     static int m_EnsembleTargetSubspaceMethod;
-    ClusEnsembleTargetSubspaceInfo m_TargetSubspaceInfo;
+    ClusEnsembleROSInfo m_TargetSubspaceInfo;
 
     // Out-Of-Bag Error Estimate
     ClusOOBErrorEstimate m_OOBEstimation;
@@ -138,7 +138,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         m_Mode = ClusStatManager.getMode();
         // optimize if not XVAL and HMC
         m_OptMode = (Settings.shouldOptimizeEnsemble() && ((m_Mode == ClusStatManager.MODE_HIERARCHICAL) || (m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode == ClusStatManager.MODE_CLASSIFY)));
-        m_EnsembleTargetSubspaceMethod = Settings.getEnsembleTargetSubspacingMethod();
+        m_EnsembleTargetSubspaceMethod = Settings.getEnsembleROSScope();
 
         // m_OptMode = (Settings.shouldOptimizeEnsemble() && !Settings.IS_XVAL && ((m_Mode ==
         // ClusStatManager.MODE_HIERARCHICAL)||(m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode ==
@@ -683,7 +683,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      *        size of subspace
      * @return ClusEnsembleTargetSubspaceInfo object with created subspaces
      */
-    static ClusEnsembleTargetSubspaceInfo prepareEnsembleTargetSubspaces(ClusSchema schema, int sizeOfSubspace) {
+    static ClusEnsembleROSInfo prepareEnsembleTargetSubspaces(ClusSchema schema, int sizeOfSubspace) {
         // // check for dragons
         // if (m_NbMaxBags < 2) {
         // throw new RuntimeException("Ensemble size is too small! Minimum ensemble size is 2.");
@@ -751,7 +751,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         Arrays.fill(enabled, 1); // enable all attributes
         subspaces.add(enabled);
 
-        return new ClusEnsembleTargetSubspaceInfo(schema, subspaces);
+        return new ClusEnsembleROSInfo(schema, subspaces);
     }
 
 
@@ -774,7 +774,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * Preparation for target subspacing scenario.
      */
     void prepareEnsembleTargetSubspaces() {
-        if (Settings.isEnsembleTargetSubspacingEnabled()) {
+        if (Settings.isEnsembleROSEnabled()) {
             if (getSettings().getEnsembleMethod() != Settings.ENSEMBLE_BAGGING && getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RFOREST && getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RSUBSPACES && getSettings().getEnsembleMethod() != Settings.ENSEMBLE_EXTRA_TREES)
 
                 throw new RuntimeException("Target subspacing is not implemented for the selected ensemble method!");
@@ -790,7 +790,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     void initializeBagTargetSubspacing(ClusStatManager mgr, int bagNo) throws ClusException {
-        if (Settings.isEnsembleTargetSubspacingEnabled()) {
+        if (Settings.isEnsembleROSEnabled()) {
 
             // get heuristic in use
             ClusHeuristic h = mgr.getHeuristic();
@@ -810,7 +810,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 int[] trgts = m_TargetSubspaceInfo.getOnlyTargets(m_TargetSubspaceInfo.getModelSubspace(bagNo - 1));
 
                 if (trgts.length > 15) {
-                    System.err.println("Enabled targets: " + ClusEnsembleTargetSubspaceInfo.getEnabledCount(trgts) + " of " + trgts.length);
+                    System.err.println("Enabled targets: " + ClusEnsembleROSInfo.getEnabledCount(trgts) + " of " + trgts.length);
                 }
                 else {
                     System.err.println("Enabled targets: " + Arrays.toString(trgts));

@@ -15,6 +15,7 @@ import clus.util.ClusException;
 
 public abstract class ClusEnsembleInduceOptimization implements Serializable{
 
+
     // protected int[] m_HashCodeTuple; // train + test tuples: m_HashCodeTuple[i] = hash of the i-th tuple
 	/** The keys are (hashes of) DataTuples, which are mapped to the position of the tuple in the predictions */
     protected HashMap<DataTuple, Integer> m_TuplePositions;
