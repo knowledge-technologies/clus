@@ -70,7 +70,18 @@ public abstract class MLROCAndPRCurve extends ClusNominalError { // does not imp
             m_ROCAndPRCurves[i] = new ROCAndPRCurve(predlist);
         }
     }
+    
+    public BinaryPredictionList[] getClassWisePredictions(){
+    	return m_ClassWisePredictions;
+    }
 
+    public void add(ClusError other) {
+        MLROCAndPRCurve castedOther = (MLROCAndPRCurve) other;
+        BinaryPredictionList[] otherCWP = castedOther.getClassWisePredictions();
+        for(int i = 0; i < m_Dim; i++){
+        	m_ClassWisePredictions[i].add(otherCWP[i]);
+        }
+    }
 
     public boolean shouldBeLow() {
         return false;
