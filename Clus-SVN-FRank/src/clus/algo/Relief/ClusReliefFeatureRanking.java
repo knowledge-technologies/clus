@@ -212,6 +212,12 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
         double[] sumDistAttr = new double[m_NbDescriptiveAttrs];
         double sumDistTarget = 0.0;
         double[] sumDistAttrTarget = new double[m_NbDescriptiveAttrs];
+        // per target relevance estimation
+        boolean performPerTargetRanking = data.m_Schema.getSettings().shouldPerformRanking() && false;
+        double[][] sumDistAttrPerTarget = new double[m_NbTargetAttrs][m_NbDescriptiveAttrs];
+        double[] sumDistTargetPerTarget = new double[m_NbTargetAttrs];
+        double[][] sumDistAttrTargetPerTarget = new double[m_NbTargetAttrs][m_NbDescriptiveAttrs];
+                
         DataTuple tuple;
         int tupleInd;
         NearestNeighbour[][] nearestNeighbours;
@@ -225,6 +231,8 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
                 successfulItearions++;
                 nearestNeighbours = findNearestNeighbours(tupleInd, data);
                 // CALCULATE THE SUMS OF DISTANCES
+                
+                // overall ranking
                 for (int targetValue = 0; targetValue < m_NbTargetValues; targetValue++) {
                     double tempSumDistTarget = 0.0;
                     double[] tempSumDistAttr = new double[m_NbDescriptiveAttrs];
@@ -234,27 +242,57 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
                         sumNeighbourWeights += m_NeighbourWeights[neighbour];
                     }
                     for (int neighbour = 0; neighbour < nearestNeighbours[targetValue].length; neighbour++) {
+                    	double neighbourWeight = m_NeighbourWeights[neighbour] / sumNeighbourWeights;
                         if (!m_isStandardClassification) {
-                            tempSumDistTarget += nearestNeighbours[targetValue][neighbour].m_targetDistance * (m_NeighbourWeights[neighbour] / sumNeighbourWeights);
+                            tempSumDistTarget += nearestNeighbours[targetValue][neighbour].getTargetDistance() * neighbourWeight;
                         }
                         for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
                             attr = m_DescriptiveTargetAttr[0][attrInd];
-                            double distAttr = calcDistance1D(tuple, data.getTuple(nearestNeighbours[targetValue][neighbour].m_indexInDataSet), attr);
+                            double distAttr = calcDistance1D(tuple, data.getTuple(nearestNeighbours[targetValue][neighbour].getIndexInDataset()), attr);
                             if (m_isStandardClassification) {
                                 int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][0]).getNominal(tuple);
-                                tempSumDistAttr[attrInd] += (targetValue == tupleTarget ? -distAttr : m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr) * (m_NeighbourWeights[neighbour] / sumNeighbourWeights);
+                                tempSumDistAttr[attrInd] += (targetValue == tupleTarget ? -distAttr : m_targetProbabilities[targetValue] / (1.0 - m_targetProbabilities[tupleTarget]) * distAttr) * neighbourWeight;
                             }
                             else {
-                                tempSumDistAttr[attrInd] += distAttr * (m_NeighbourWeights[neighbour] / sumNeighbourWeights);
-                                tempSumDistAttrTarget[attrInd] += distAttr * nearestNeighbours[targetValue][neighbour].m_targetDistance * (m_NeighbourWeights[neighbour] / sumNeighbourWeights);
+                                tempSumDistAttr[attrInd] += distAttr * neighbourWeight;
+                                tempSumDistAttrTarget[attrInd] += distAttr * nearestNeighbours[targetValue][neighbour].getTargetDistance() * neighbourWeight;
                             }
-                        }
+                        }                       
                     }
                     sumDistTarget += tempSumDistTarget;
                     for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
                         sumDistAttr[attrInd] += tempSumDistAttr[attrInd];
                         sumDistAttrTarget[attrInd] += tempSumDistAttrTarget[attrInd];
                     }
+                }
+                
+                if(performPerTargetRanking){
+                	// per-target ranking - regression case: the neighbours are the same
+                	for(int targetInd = 0; targetInd < m_NbTargetAttrs; targetInd++){
+                        double tempSumDistTargetPerTarget = 0.0;
+                        double[] tempSumDistAttrPerTarget = new double[m_NbDescriptiveAttrs];
+                        double[] tempSumDistAttrTargetPerTarget = new double[m_NbDescriptiveAttrs];
+                        double sumNeighbourWeights = 0.0;
+                        // this for loop unnecessary
+                        for (int neighbour = 0; neighbour < nearestNeighbours[0].length; neighbour++) {
+                            sumNeighbourWeights += m_NeighbourWeights[neighbour];
+                        }
+                        for (int neighbour = 0; neighbour < nearestNeighbours[0].length; neighbour++) {
+                        	double neighbourWeight = m_NeighbourWeights[neighbour] / sumNeighbourWeights;
+                            tempSumDistTargetPerTarget += nearestNeighbours[0][neighbour].getPerTargetDistance(targetInd) * neighbourWeight;                        	
+                            for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
+                                attr = m_DescriptiveTargetAttr[0][attrInd];
+                                double distAttr = calcDistance1D(tuple, data.getTuple(nearestNeighbours[0][neighbour].getIndexInDataset()), attr);
+                                tempSumDistAttrPerTarget[attrInd] += distAttr * neighbourWeight;
+                                tempSumDistAttrTargetPerTarget[attrInd] += distAttr * nearestNeighbours[0][neighbour].getPerTargetDistance(targetInd) * neighbourWeight;
+                            } 
+                        }
+                        sumDistTargetPerTarget[targetInd] += tempSumDistTargetPerTarget;
+                        for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
+                            sumDistAttrPerTarget[targetInd][attrInd] += tempSumDistAttrPerTarget[attrInd];
+                            sumDistAttrTargetPerTarget[targetInd][attrInd] += tempSumDistAttrTargetPerTarget[attrInd];
+                        }
+                	}
                 }
             }
         }
@@ -268,10 +306,17 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
             else {
                 info[2] += sumDistAttrTarget[attrInd] / sumDistTarget - (sumDistAttr[attrInd] - sumDistAttrTarget[attrInd]) / (successfulItearions - sumDistTarget);
             }
+            if(performPerTargetRanking){
+            	for(int targetInd = 0; targetInd < m_NbTargetAttrs; targetInd++){
+            		double p1 = sumDistAttrTargetPerTarget[targetInd][attrInd] / sumDistTargetPerTarget[targetInd];
+            		double p2 = (sumDistAttrPerTarget[targetInd][attrInd] - sumDistAttrTargetPerTarget[targetInd][attrInd]) / (successfulItearions - sumDistTargetPerTarget[targetInd]);
+            		info[2 + targetInd] += p1 - p2;
+            	}
+            }
             putAttributeInfo(attr.getName(), info);
         }
     }
-
+    
 
     /**
      * Computes the nearest neighbours of example with index {@code tupleInd} in the dataset {@code data}.
@@ -427,8 +472,6 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
 
     }
 
-
-    // TODO: make handling of missing values reliefish for all dist.
 
     /**
      * Calculates distance between the nominal values of the component {@code attr}. In the case of missing values, we
