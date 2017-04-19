@@ -1,5 +1,5 @@
 
-package clus.algo.Relief;
+package clus.ext.featureRanking.relief;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -11,7 +11,6 @@ import java.util.Stack;
 
 import javax.print.attribute.standard.PresentationDirection;
 
-import clus.algo.Relief.distances.HierarchicalMultiLabelDistance;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
@@ -19,7 +18,8 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.data.type.StringAttrType;
 import clus.data.type.TimeSeriesAttrType;
-import clus.ext.ensembles.ClusEnsembleFeatureRanking;
+import clus.ext.featureRanking.ClusFeatureRanking;
+import clus.ext.featureRanking.relief.distances.HierarchicalMultiLabelDistance;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesAttrType;
@@ -38,7 +38,7 @@ import clus.util.ClusException;
  * @author matejp
  *
  */
-public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
+public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 	private static final int DESCRIPTIVE_SPACE = 0;
 	private static final int TARGET_SPACE = 1;
 	private static final int[] SPACE_TYPES = new int[]{DESCRIPTIVE_SPACE, TARGET_SPACE};
@@ -640,5 +640,13 @@ public class ClusReliefFeatureRanking extends ClusEnsembleFeatureRanking {
             attrs.add(attr);
             m_FeatureRanks.put(score, attrs);
         }
+    }
+    
+    public void setReliefFimpHeader(ArrayList<String> names){
+    	setFimpHeader(fimpTableHeader(names));    	
+    }
+    
+    public void setReliefDescription(int neighbours, int iterations) {
+        setRankingDescription(String.format("Ranking method: Relief (%d neighbours and %d iterations)", neighbours, iterations));
     }
 }

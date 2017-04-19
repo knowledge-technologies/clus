@@ -1,5 +1,5 @@
 
-package clus.algo.Relief;
+package clus.ext.featureRanking.relief;
 
 import java.util.Arrays;
 

@@ -1,4 +1,4 @@
-package clus.algo.Relief.distances;
+package clus.ext.featureRanking.relief.distances;
 
 import java.util.ArrayList;
 import java.util.HashMap;

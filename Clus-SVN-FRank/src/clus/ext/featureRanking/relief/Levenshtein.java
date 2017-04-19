@@ -1,5 +1,5 @@
 
-package clus.algo.Relief;
+package clus.ext.featureRanking.relief;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.StringAttrType;

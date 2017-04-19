@@ -52,6 +52,8 @@ import clus.util.cloner.Cloner;
 import clus.ext.ensembles.containters.OneBagResults;
 import clus.ext.ensembles.induceCallables.InduceExtraTreeCallable;
 import clus.ext.ensembles.induceCallables.InduceOneBagCallable;
+import clus.ext.featureRanking.ClusEnsembleFeatureRanking;
+import clus.ext.featureRanking.ClusFeatureRanking;
 import clus.heuristic.ClusHeuristic;
 import clus.jeans.resource.ResourceInfo;
 import clus.main.ClusOutput;
@@ -98,7 +100,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     // Feature Ranking via Random Forests OR via Genie3 etc.
     boolean m_FeatRank;
     ClusEnsembleFeatureRanking m_FeatureRanking;
-    int m_NbFeatureRankings;
 
     /** Number of the threads when growing the trees. */
     private int m_NbThreads;
@@ -161,7 +162,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
             }
             
-            // m_FeatureRanking = new ClusEnsembleFeatureRanking();
+            // m_FeatureRanking = new ClusFeatureRanking();
                   
             // setNbFeatureRankings(schema, clus.getStatManager());
             //int nbRankings = getNbFeatureRankings();
@@ -266,18 +267,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 m_FeatureRanking.setSymbolicFimpHeader(weights);                
                 break;
         }
-        m_NbFeatureRankings = nbRankings;
+        m_FeatureRanking.setNbFeatureRankings(nbRankings);
         int ensType = getSettings().getEnsembleMethod();
         int rankType = getSettings().getRankingMethod();
         int nbTrees = getSettings().getNbBaggingSets().getInt();
-        m_FeatureRanking.setRankigDescription(ensType, rankType, nbTrees);
+        m_FeatureRanking.setEnsembleRankigDescription(ensType, rankType, nbTrees);
     }
-
-
-    public int getNbFeatureRankings() {
-        return m_NbFeatureRankings;
-    }
-
 
     /**
      * Train a decision tree ensemble with an algorithm given in settings
@@ -297,7 +292,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         ClusStatManager mgr = getStatManager();
         ClusSchema schema = mgr.getSchema();
         setNbFeatureRankings(schema, mgr);
-        int nbRankings = getNbFeatureRankings();
+        int nbRankings = m_FeatureRanking.getNbFeatureRankings();
         if(getSettings().getVerbose() > 0){
         	System.out.println("Number of feature rankings computed: " + nbRankings);
         }
@@ -372,7 +367,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         if (m_FeatRank) {
             boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
-            if (sorted && getNbFeatureRankings() > 1) {
+            if (sorted && m_FeatureRanking.getNbFeatureRankings() > 1) {
                 System.err.println("More than one feature ranking will be output. " + "The attributes will appear as in ARFF\nand will not be sorted " + "by relevance, although SortRankingByRelevance = Yes.");
                 sorted = false;
             }
@@ -386,7 +381,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 m_FeatureRanking.writeRankingByAttributeName(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()), cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getRankingMethod());
             if (getSettings().isOutputJSONModel())
                 m_FeatureRanking.writeJSON(cr);
-
         }
         if (m_OptMode) {
             m_Optimization.roundPredictions();
@@ -465,7 +459,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             crSingle.setModels(new ArrayList());
         }
     }
-
 
     public void induceSubspaces(ClusRun cr) throws ClusException, IOException {
         long summ_time = 0; // = ResourceInfo.getTime();
@@ -1401,7 +1394,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusEnsembleFeatureRanking getEnsembleFeatureRanking() {
+    public ClusFeatureRanking getEnsembleFeatureRanking() {
         return m_FeatureRanking;
     }
     
@@ -1431,5 +1424,4 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     		
     	}
     }
-
 }
