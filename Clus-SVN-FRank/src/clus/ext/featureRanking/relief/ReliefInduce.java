@@ -1,5 +1,5 @@
 
-package clus.algo.Relief;
+package clus.ext.featureRanking.relief;
 
 import java.io.IOException;
 
@@ -32,23 +32,19 @@ public class ReliefInduce extends ClusInductionAlgorithm {
 
     @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
-        ReliefModel reliefModel = new ReliefModel(cr.getStatManager().getSettings().getReliefNbNeighboursValue(), cr.getStatManager().getSettings().getReliefNbIterationsValue(), cr.getStatManager().getSettings().getReliefWeightNeighbours(), cr.getStatManager().getSettings().getReliefWeightingSigma(), (RowData) cr.getTrainingSet());
+    	int[] nbNeighbours = cr.getStatManager().getSettings().getReliefNbNeighboursValue();
+    	int[] nbIterations = cr.getStatManager().getSettings().getReliefNbIterationsValue();
+    	boolean shouldWeight = cr.getStatManager().getSettings().getReliefWeightNeighbours();
+    	double sigma = cr.getStatManager().getSettings().getReliefWeightingSigma();
+    	
+        ReliefModel reliefModel = new ReliefModel(nbNeighbours, nbIterations, shouldWeight, sigma, (RowData) cr.getTrainingSet());
 
         m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getNbNeighbours(), reliefModel.getNbIterations(), reliefModel.getWeightNeighbours(), reliefModel.getSigma());
-        m_FeatureRanking.initializeAttributes(cr.getStatManager().getSchema().getDescriptiveAttributes(), 1);
+        m_FeatureRanking.initializeAttributes(cr.getStatManager().getSchema().getDescriptiveAttributes(), reliefModel.getNbRankings());
         m_FeatureRanking.calculateReliefImportance(reliefModel.getData());
-        m_FeatureRanking.convertRanksByName();
 
-        boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
-        if (sorted) {
-            m_FeatureRanking.sortFeatureRanks();
-        }
-        m_FeatureRanking.convertRanksByName();
-        if (sorted)
-            m_FeatureRanking.writeRanking(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()), cr.getStatManager().getSettings().getRankingMethod());
-        else
-            m_FeatureRanking.writeRankingByAttributeName(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()), cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getRankingMethod());
-
+        m_FeatureRanking.createFimp(cr);
+        
         return reliefModel;
     }
 

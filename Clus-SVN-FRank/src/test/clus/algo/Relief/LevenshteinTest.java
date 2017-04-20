@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import clus.algo.Relief.Levenshtein;
+import clus.ext.featureRanking.relief.Levenshtein;
 
 
 public class LevenshteinTest {

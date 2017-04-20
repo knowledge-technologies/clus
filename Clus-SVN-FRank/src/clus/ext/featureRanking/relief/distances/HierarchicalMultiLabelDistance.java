@@ -1,4 +1,4 @@
-package clus.algo.Relief.distances;
+package clus.ext.featureRanking.relief.distances;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,13 +14,14 @@ import clus.jeans.math.MathUtil;
 
 public class HierarchicalMultiLabelDistance {
 	/** Hash map for hierarchical attributes: {attributeName: hierarchy, ... } */
-    private HashMap<String, ClassHierarchy> m_Hierarchies = new HashMap<String, ClassHierarchy>();
+    private HashMap<String, ClassHierarchy> m_Hierarchies;
     /** The weights, used in Weighted Euclidean distance, for each hierarchical attribute */
-    private HashMap<String, Double> m_HierarUpperBounds = new HashMap<String, Double>();
+    private HashMap<String, Double> m_HierarUpperBounds;
     
     
     public HierarchicalMultiLabelDistance(){
-    	// 
+    	m_Hierarchies = new HashMap<String, ClassHierarchy>();
+    	m_HierarUpperBounds = new HashMap<String, Double>();
     }
     
     public void processAttribute(ClassesAttrType attr, RowData data){
@@ -52,7 +53,7 @@ public class HierarchicalMultiLabelDistance {
         ClassesTuple tp2 = (ClassesTuple) t2.getObjVal(sidx);
         HashSet<Integer> symmetricDifferenceOfLabelSets = new HashSet<Integer>();
 
-     // add labels for t1
+        // add labels for t1
         for (int j = 0; j < tp1.getNbClasses(); j++) {
             int labelIndex = tp1.getClass(j).getIndex();
             symmetricDifferenceOfLabelSets.add(labelIndex);
@@ -70,7 +71,6 @@ public class HierarchicalMultiLabelDistance {
         double dist = weightedEuclideanInt(hier, symmetricDifferenceOfLabelSets);
         return dist / m_HierarUpperBounds.get(name);
     }
-    
     
     /**
      * Computes the depth of each term in the hierarchy, which can be DAG or tree-shaped.
@@ -115,7 +115,6 @@ public class HierarchicalMultiLabelDistance {
         }
 
     }
-    
     
     /**
      * Finds the indices of the classes in the hierarchy that at least one example belongs to. 
@@ -330,9 +329,7 @@ public class HierarchicalMultiLabelDistance {
     	}
     	return extremeTerms;
     }
-    
 
-    
     private double weightedEuclideanInt(ClassHierarchy hier, HashSet<Integer> symmetricDifferenceOfLabelSets){
     	double dist = 0.0;
         for (int labelIndex : symmetricDifferenceOfLabelSets) {

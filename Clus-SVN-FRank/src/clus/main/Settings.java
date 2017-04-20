@@ -2404,10 +2404,12 @@ public class Settings implements Serializable {
 
     INIFileSection m_SectionRelief;
 
-    public static INIFileInt m_ReliefNbNeighbours;
-    public static INIFileInt m_ReliefNbIterations;
-    public static INIFileBool m_ReliefShouldHaveNeighbourWeighting;
-    public static INIFileDouble m_ReliefWeightingSigma;
+    public static final int RELIEF_NEIGHBOUR_DEFAULT = 10;
+    public static final int RELIEF_ITERATIONS_DEFAULT = -1;
+    private INIFileNominalOrIntOrVector m_ReliefNbNeighbours;
+    private INIFileNominalOrIntOrVector m_ReliefNbIterations;
+    private INIFileBool m_ReliefShouldHaveNeighbourWeighting;
+    private INIFileDouble m_ReliefWeightingSigma;
 
 
     public void setSectionReliefEnabled(boolean value) {
@@ -2420,13 +2422,13 @@ public class Settings implements Serializable {
     }
 
 
-    public int getReliefNbNeighboursValue() {
-        return m_ReliefNbNeighbours.getValue();
+    public int[] getReliefNbNeighboursValue() {
+        return m_ReliefNbNeighbours.getIntVector();
     }
 
 
-    public int getReliefNbIterationsValue() {
-        return m_ReliefNbIterations.getValue();
+    public int[] getReliefNbIterationsValue() {
+        return m_ReliefNbIterations.getIntVector();
     }
 
 
@@ -3241,8 +3243,10 @@ public class Settings implements Serializable {
         m_SectionPhylogeny.setEnabled(false);
 
         m_SectionRelief = new INIFileSection("Relief");
-        m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileInt("neighbours", 10));
-        m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileInt("iterations", -1));
+        m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("neighbours", NONELIST));
+        m_ReliefNbNeighbours.setInt(RELIEF_NEIGHBOUR_DEFAULT);
+        m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrIntOrVector("iterations", NONELIST));
+        m_ReliefNbIterations.setInt(RELIEF_ITERATIONS_DEFAULT);        
         m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("weightNeighbours", false));
         m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 2.0)); // following Weka,
                                                                                                     // the authors do

@@ -37,7 +37,6 @@ import java.util.Date;
 
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
-import clus.algo.Relief.Relief;
 import clus.algo.kNN.KnnClassifier;
 import clus.algo.kNN.test.TestKnnModel;
 import clus.algo.kNN.test.oTestKnnClassifier;
@@ -81,6 +80,7 @@ import clus.ext.constraint.ClusConstraintFile;
 import clus.ext.ensembles.ClusEnsembleClassifier;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.ext.exhaustivesearch.ClusExhaustiveDFSearch;
+import clus.ext.featureRanking.relief.Relief;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.HierMatrixOutput;
 import clus.gui.TreeFrame;
