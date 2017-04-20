@@ -13,8 +13,6 @@ import java.util.Iterator;
 import java.util.Random;
 import java.util.TreeMap;
 
-import javax.xml.validation.Schema;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
@@ -57,8 +55,6 @@ import clus.error.RankingLoss;
 import clus.error.SubsetAccuracy;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.ext.ensembles.ClusReadWriteLock;
-import clus.ext.ensembles.containters.NodeDepthPair;
-import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.HierErrorMeasures;
 import clus.jeans.util.StringUtils;
 import clus.main.ClusRun;
@@ -67,11 +63,7 @@ import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
-import clus.statistic.ComponentStatistic;
 import clus.util.ClusException;
-import clus.util.ClusRandomNonstatic;
-import weka.attributeSelection.ASEvaluation;
-import weka.attributeSelection.AttributeEvaluator;
 
 
 public class ClusFeatureRanking {

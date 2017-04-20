@@ -4,14 +4,7 @@ package clus.ext.featureRanking.relief;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
-import java.util.Stack;
-import java.util.concurrent.ThreadLocalRandom;
-
-import javax.management.InstanceNotFoundException;
-import javax.print.attribute.standard.PresentationDirection;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
@@ -22,15 +15,11 @@ import clus.data.type.StringAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.ext.featureRanking.ClusFeatureRanking;
 import clus.ext.featureRanking.relief.distances.HierarchicalMultiLabelDistance;
-import clus.ext.hierarchical.ClassHierarchy;
-import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesAttrType;
-import clus.ext.hierarchical.ClassesTuple;
 import clus.ext.timeseries.DTWTimeSeriesDist;
 import clus.ext.timeseries.QDMTimeSeriesDist;
 import clus.ext.timeseries.TSCTimeSeriesDist;
 import clus.ext.timeseries.TimeSeries;
-import clus.jeans.math.MathUtil;
 import clus.main.Settings;
 import clus.util.ClusException;
 
