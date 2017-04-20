@@ -366,21 +366,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             }
         }
         if (m_FeatRank) {
-            boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
-            if (sorted && m_FeatureRanking.getNbFeatureRankings() > 1) {
-                System.err.println("More than one feature ranking will be output. " + "The attributes will appear as in ARFF\nand will not be sorted " + "by relevance, although SortRankingByRelevance = Yes.");
-                sorted = false;
-            }
-            if (sorted) {
-                m_FeatureRanking.sortFeatureRanks();
-            }
-            m_FeatureRanking.convertRanksByName();
-            if (sorted)
-                m_FeatureRanking.writeRanking(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()), cr.getStatManager().getSettings().getRankingMethod());
-            else
-                m_FeatureRanking.writeRankingByAttributeName(cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()), cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getRankingMethod());
-            if (getSettings().isOutputJSONModel())
-                m_FeatureRanking.writeJSON(cr);
+            m_FeatureRanking.createFimp(cr);
         }
         if (m_OptMode) {
             m_Optimization.roundPredictions();

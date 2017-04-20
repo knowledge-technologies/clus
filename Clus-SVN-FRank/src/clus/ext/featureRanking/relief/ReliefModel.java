@@ -4,12 +4,15 @@ package clus.ext.featureRanking.relief;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
@@ -18,8 +21,8 @@ import clus.util.ClusException;
 
 public class ReliefModel implements ClusModel {
 
-    private int m_NbNeighbours;
-    private int m_NbIterations;
+    private int[] m_NbNeighbours;
+    private int[] m_NbIterations;
     private boolean m_WeightNeighbours;
     private double m_Sigma;
     private RowData m_Data;
@@ -27,33 +30,47 @@ public class ReliefModel implements ClusModel {
     private double[] m_Weights;
 
 
-    public ReliefModel(int neighbours, int iterations, boolean weightNeighbours, double sigma, RowData data) throws ClusException {
+    public ReliefModel(int[] neighbours, int[] iterations, boolean weightNeighbours, double sigma, RowData data) throws ClusException {
         this.m_Data = data;
         this.m_WeightNeighbours = weightNeighbours;
         this.m_Sigma = sigma;
-        if (neighbours == -1 || neighbours >= data.getNbRows()) {
-            this.m_NbNeighbours = data.getNbRows() - 1;
-            System.out.println("Setting the number of neighbours to number of samples - 1.");
-        }
-        else if (neighbours > 0) {
-            this.m_NbNeighbours = neighbours;
-        }
-        else {
-            throw new ClusException(String.format("The number neighbours should be 0 < neighbours < number of examples (= %s) or -1.\n" + "But: neighbours = %d", data.getNbRows(), neighbours));
-        }
-        if (iterations == -1 || iterations > data.getNbRows()) {
-            this.m_NbIterations = data.getNbRows();
-            System.out.println("Setting the number of iterations to number of samples.");
-        }
-        else if (iterations > 0) {
-            this.m_NbIterations = iterations;
-        }
-        else {
-            throw new ClusException(String.format("The number iterations should be 0 < iterations <= number of examples (= %s) or -1.\n" + "But: iterations = %d", data.getNbRows(), iterations));
-        }
+        this.m_NbNeighbours = getNeighboursOrIterations(neighbours, data.getNbRows(), true);
+        this.m_NbIterations = getNeighboursOrIterations(iterations, data.getNbRows(), false);
     }
 
 
+    private int[] getNeighboursOrIterations(int[] candidateValues,  int nbExamples, boolean isNeighbours){
+    	HashSet<Integer> ok = new HashSet<Integer>();
+    	int lowerBound = 0;
+    	int upperBound = nbExamples;
+    	upperBound -= isNeighbours ? 1 : 0;
+    	String parameter = isNeighbours ? "neighbours <" : "iterations <=";
+    	int defaultValue = isNeighbours ? Settings.RELIEF_NEIGHBOUR_DEFAULT : nbExamples;
+    	defaultValue = Math.min(defaultValue, upperBound);
+    	boolean allowMinusOne = !isNeighbours;
+        for(int i = 0; i < candidateValues.length; i++){
+	        if (lowerBound < candidateValues[i] && candidateValues[i] <= upperBound) {
+	        	ok.add(candidateValues[i]);
+	        }
+	        else if (allowMinusOne && candidateValues[i] == -1){
+	        	ok.add(nbExamples);
+	        }
+	        else {
+	        	System.err.println(String.format("Oops. Condition is brorekn: %d < %d = %s number of examples (= %d).", lowerBound, candidateValues[i], parameter, upperBound));
+	            System.err.println(String.format("Changed the value to the min(default value, upperBound): %d.", defaultValue));
+	            ok.add(defaultValue);
+	        }
+       }
+       int whereTo = 0;
+       int[] okValues = new int[ok.size()];
+       for(int value : ok){
+    	   okValues[whereTo++] = value;
+       }
+       Arrays.sort(okValues);
+       return okValues;
+    	
+    }
+    
     @Override
     public ClusStatistic predictWeighted(DataTuple tuple) {
         throw new RuntimeException("Relief is not a predictive model.");
@@ -76,7 +93,10 @@ public class ReliefModel implements ClusModel {
 
     @Override
     public String getModelInfo() {
-        return String.format("Relief with the weights computed in %d iterations with %d neighbours.", m_NbIterations, m_NbNeighbours);
+    	String first = "Relief feature ranking method with the weights computed in all combinations of";
+    	String second = String.format("numbers of neighbours: %s", Arrays.toString(m_NbNeighbours));
+    	String third = String.format("numbers of iterations: %s", Arrays.toString(m_NbIterations));
+        return String.join("\n", new String[]{first, second, third});
     }
 
 
@@ -158,12 +178,12 @@ public class ReliefModel implements ClusModel {
     }
 
 
-    public int getNbNeighbours() {
+    public int[] getNbNeighbours() {
         return m_NbNeighbours;
     }
 
 
-    public int getNbIterations() {
+    public int[] getNbIterations() {
         return m_NbIterations;
     }
 
@@ -175,5 +195,9 @@ public class ReliefModel implements ClusModel {
 
     public double getSigma() {
         return m_Sigma;
+    }
+    
+    public int getNbRankings(){
+    	return m_NbNeighbours.length * m_NbIterations.length;
     }
 }

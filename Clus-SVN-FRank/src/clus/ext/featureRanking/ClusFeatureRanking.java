@@ -123,7 +123,7 @@ public class ClusFeatureRanking {
                     info[1] = num; // order in numeric attributes
                 }
                 for (int j = 0; j < nbRankings; j++) {
-                    info[2 + j] = 0; // current rank
+                    info[2 + j] = 0; // current importance
                 }
                 // System.out.print(type.getName()+": "+info[1]+"\t");
                 m_AllAttributes.put(type.getName(), info);
@@ -136,7 +136,7 @@ public class ClusFeatureRanking {
         Iterator<String> iter = m_AllAttributes.keySet().iterator();
         while (iter.hasNext()) {
             String attr = iter.next();
-            double score = m_AllAttributes.get(attr)[2] / ClusEnsembleInduce.getMaxNbBags();
+            double score = m_AllAttributes.get(attr)[2] / Math.max(1.0, ClusEnsembleInduce.getMaxNbBags());
             // double score = ((double[])m_AllAttributes.get(attr))[2];
             ArrayList<String> attrs = new ArrayList<String>();
             if (m_FeatureRanks.containsKey(score))
@@ -207,17 +207,11 @@ public class ClusFeatureRanking {
         int nbRankings = m_AllAttributes.get(descriptive[0].getName()).length - 2;
         for (int i = 0; i < descriptive.length; i++) {
             String attribute = descriptive[i].getName();
-            if (nbRankings == 1) {
-                double value = m_AllAttributes.get(attribute)[2] / Math.max(1.0, ClusEnsembleInduce.getMaxNbBags());
-                wrtr.write(attribute + "\t" + value + "\n");
+            double[] values = Arrays.copyOfRange(m_AllAttributes.get(attribute), 2, nbRankings + 2);
+            for (int j = 0; j < values.length; j++) {
+                values[j] /= Math.max(1.0, ClusEnsembleInduce.getMaxNbBags()); // Relief has 0 number of bags ...
             }
-            else {
-                double[] values = Arrays.copyOfRange(m_AllAttributes.get(attribute), 2, nbRankings + 2);
-                for (int j = 0; j < values.length; j++) {
-                    values[j] /= ClusEnsembleInduce.getMaxNbBags();
-                }
-                wrtr.write(attribute + "\t" + Arrays.toString(values) + "\n");
-            }
+            wrtr.write(attribute + "\t" + Arrays.toString(values) + "\n");
             wrtr.flush();
         }
 
@@ -635,5 +629,26 @@ public class ClusFeatureRanking {
     
     public void setNbFeatureRankings(int nbRankings){
     	m_NbFeatureRankings = nbRankings;
+    }
+    
+    public void createFimp(ClusRun cr) throws IOException{
+        boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
+        if (sorted && getNbFeatureRankings() > 1) {
+            System.err.println("More than one feature ranking will be output. " + "The attributes will appear as in ARFF\nand will not be sorted " + "by relevance, although SortRankingByRelevance = Yes.");
+            sorted = false;
+        }
+        if (sorted) {
+            sortFeatureRanks();
+        }
+        convertRanksByName();
+        String appName = cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName());
+        if (sorted){
+        	writeRanking(appName, cr.getStatManager().getSettings().getRankingMethod());
+        } else{
+        	writeRankingByAttributeName(appName, cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getRankingMethod());
+        }
+        if (cr.getStatManager().getSettings().isOutputJSONModel()){
+        	writeJSON(cr);
+        }
     }
 }
