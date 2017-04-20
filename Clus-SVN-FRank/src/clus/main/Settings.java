@@ -2486,7 +2486,7 @@ public class Settings implements Serializable {
     public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE = 0; /* IF THIS IS SELECTED, ROS IS NOT ACTIVATED */
     public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_TOTAL_AVERAGING = 1;
     public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING = 2;
-    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SMARTERWAY = 3;
+    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SMARTERWAY = 3; /* TBD */
 
     INIFileSection m_SectionEnsembles;
     protected INIFileNominalOrIntOrVector m_NbBags;
@@ -2672,7 +2672,7 @@ public class Settings implements Serializable {
             ubound = schema.getNbDescriptiveAttributes();
             s = "descriptive";
         }
-        else { // for target subspacing
+        else { // for ROS
             value = getNbRandomTargetAttrString();
             ubound = schema.getNbTargetAttributes();
             s = "target";

@@ -136,7 +136,7 @@ public class ClusForest implements ClusModel, Serializable {
     	m_Optimization = opt;
     }
     
-    public void addTargetSubspaceInfo(ClusEnsembleROSInfo tinfo) {
+    public void addEnsembleROSInfo(ClusEnsembleROSInfo tinfo) {
         m_TargetSubspaceInfo = tinfo;
     }
 
