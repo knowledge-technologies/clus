@@ -11,10 +11,10 @@
 @attribute feat5 numeric
 @attribute feat6 numeric
 @attribute feat7 numeric
-@attribute tar0 {0,1}
 @attribute tar1 {0,1}
 @attribute tar2 {0,1}
 @attribute tar3 {0,1}
+@attribute tar4 {0,1}
 @data
 0,0,1,0.5973,0.7368,0.3873,1.132,0,0,0,1
 0,0,0,1.1242,0.3487,1.1064,0.7098,0,0,1,0

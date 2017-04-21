@@ -54,7 +54,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     /** Tells, whether the contributions of the neighbours are weighted */
     private boolean m_WeightNeighbours;
     
-    /** {@code >= 0}, see {@link m_NeighbourWeights}, {@code m_Sigma == 0 <=> m_WeightNeighbours == false} */
+    /** {@code >= 0}, see {@link m_NeighbourWeights}, {@code m_Sigma == 0 <=> {@link #m_WeightNeighbours} == false} */
     private double m_Sigma;
     
     /**
@@ -161,7 +161,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_Sigma = m_WeightNeighbours ? sigma : 0.0;
         m_NeighbourWeights = new double[m_MaxNbNeighbours];
         if (m_WeightNeighbours) {
-            for (int neigh = 0; neigh < m_NeighbourWeights.length; neigh++) {
+            for (int neigh = 0; neigh < m_MaxNbNeighbours; neigh++) {
                 m_NeighbourWeights[neigh] = Math.exp(-(m_Sigma * neigh) * (m_Sigma * neigh));
             }
         }
@@ -221,7 +221,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         double[] successfulIterations = new double[nbTargets];
         
         int[] theOrder = randomPermutation(m_NbExamples);
-        
+
         int insufficientNbNeighbours = 0;
         int numIterInd = 0;
         boolean[] shouldUpdate = new boolean[nbTargets]; // [overall] or [overall, target1, target2, ...]
@@ -348,7 +348,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      */
     private int updateDistanceStatistics(RowData data, DataTuple tuple, NearestNeighbour[][] nearestNeighbours, int targetIndex, boolean isPerTarget) throws ClusException{
     	int tempInsufficientNbNeighbours = 0;
-        for (int targetValue = 0; targetValue < m_NbTargetValues; targetValue++) {
+    	int nbTargetValues = isPerTarget ? m_NbTargetValuesPerTarget[targetIndex] : m_NbTargetValues;
+        for (int targetValue = 0; targetValue < nbTargetValues; targetValue++) {
         	// The sums sum_neigh w_neigh * d, where w is non-normalised weight and d is d_class * d_attr or d_class etc. 
             double tempSumDistTarget = 0.0;
             double[] tempSumDistAttr = new double[m_NbDescriptiveAttrs];
@@ -440,7 +441,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         }
         m_NbDescriptiveAttrs = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE].length;
         m_NbTargetAttrs = m_DescriptiveTargetAttr[1].length;
-        m_performPerTargetRanking = data.m_Schema.getSettings().shouldPerformRanking() && false;
+        m_performPerTargetRanking = data.m_Schema.getSettings().shouldPerformRankingPerTarget();
         setNbFeatureRankings();
         
         m_isStandardClassification = computeStandardClassification(0, false);        
@@ -502,9 +503,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_SumDistAttrTarget = new double[m_NbNeighbours.length][m_NbDescriptiveAttrs];        
         
         // per target relevance estimation        
-        m_SumDistAttrPerTarget = new double[m_NbNeighbours.length][m_NbTargetAttrs][m_NbDescriptiveAttrs];
-        m_SumDistTargetPerTarget = new double[m_NbNeighbours.length][m_NbTargetAttrs];
-        m_SumDistAttrTargetPerTarget = new double[m_NbNeighbours.length][m_NbTargetAttrs][m_NbDescriptiveAttrs];
+        m_SumDistAttrPerTarget = new double[m_NbTargetAttrs][m_NbNeighbours.length][m_NbDescriptiveAttrs];
+        m_SumDistTargetPerTarget = new double[m_NbTargetAttrs][m_NbNeighbours.length];
+        m_SumDistAttrTargetPerTarget = new double[m_NbTargetAttrs][m_NbNeighbours.length][m_NbDescriptiveAttrs];
 
     }
     

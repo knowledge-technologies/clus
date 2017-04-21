@@ -14,7 +14,7 @@ public class NearestNeighbour {
     }
     
     public String toString() {
-        return String.format("(%d; %.4f; %.4f)", m_indexInDataSet, m_descriptiveDistance, m_targetDistance);
+        return String.format("(ind: %d; descr. dist: %.4f; tar. dist: %.4f)", m_indexInDataSet, m_descriptiveDistance, m_targetDistance);
     }
     
     public int getIndexInDataset(){
