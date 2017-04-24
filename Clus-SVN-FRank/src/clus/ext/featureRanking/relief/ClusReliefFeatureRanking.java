@@ -85,7 +85,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     public static double BOTH_MISSING_DIST = 1.0;
 
     /** Random generator for sampling of the next instance. It is used iff not m_isDeterministic */
-    private Random m_rnd = new Random(1234);
+    private Random m_rnd;
     
     /** standard classification or general (regression) case */
     private boolean m_isStandardClassification;
@@ -151,7 +151,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param sigma
      *        The rate of quadratic exponential decay. Note that Weka's sigma is the inverse of our {@code sigma}.
      */
-    public ClusReliefFeatureRanking(RowData data, int[] neighbours, int[] iterations, boolean weightNeighbours, double sigma) {
+    public ClusReliefFeatureRanking(RowData data, int[] neighbours, int[] iterations, boolean weightNeighbours, double sigma, int seed) {
         super();
         m_NbNeighbours = neighbours;
         m_MaxNbNeighbours = m_NbNeighbours[m_NbNeighbours.length - 1];
@@ -168,6 +168,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         else {
             Arrays.fill(m_NeighbourWeights, 1.0);
         }
+        m_rnd = new Random(seed);
         initialize(data);
     }
     

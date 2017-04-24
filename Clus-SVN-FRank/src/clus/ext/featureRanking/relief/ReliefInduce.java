@@ -36,10 +36,11 @@ public class ReliefInduce extends ClusInductionAlgorithm {
     	int[] nbIterations = cr.getStatManager().getSettings().getReliefNbIterationsValue();
     	boolean shouldWeight = cr.getStatManager().getSettings().getReliefWeightNeighbours();
     	double sigma = cr.getStatManager().getSettings().getReliefWeightingSigma();
+    	int randomSeed = cr.getStatManager().getSettings().getRandomSeed();
     	
         ReliefModel reliefModel = new ReliefModel(nbNeighbours, nbIterations, shouldWeight, sigma, (RowData) cr.getTrainingSet());
 
-        m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getData(), reliefModel.getNbNeighbours(), reliefModel.getNbIterations(), reliefModel.getWeightNeighbours(), reliefModel.getSigma());
+        m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getData(), reliefModel.getNbNeighbours(), reliefModel.getNbIterations(), reliefModel.getWeightNeighbours(), reliefModel.getSigma(), randomSeed);
         m_FeatureRanking.initializeAttributes(cr.getStatManager().getSchema().getDescriptiveAttributes(), m_FeatureRanking.getNbFeatureRankings());
         m_FeatureRanking.calculateReliefImportance(reliefModel.getData());
 
