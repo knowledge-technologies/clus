@@ -1,5 +1,5 @@
 
-package test.clus.algo.Relief;
+package test.clus.ext.featureRanking.relief;
 
 import static org.junit.Assert.assertEquals;
 

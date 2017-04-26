@@ -196,8 +196,4 @@ public class ReliefModel implements ClusModel {
     public double getSigma() {
         return m_Sigma;
     }
-    
-    public int getNbRankings(){
-    	return m_NbNeighbours.length * m_NbIterations.length;
-    }
 }

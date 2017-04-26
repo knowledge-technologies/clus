@@ -227,7 +227,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             	int nbErrors = errLst.getNbErrors();
             	for(int i = 0; i < nbErrors; i++){
             		nbRankings++; // overall
-            		rankingNames.add(String.format("%s:%s", errLst.getError(i).getName(), "overAll"));
+            		rankingNames.add(String.format("%s:%s", errLst.getError(i).getName(), "overall"));
             		
                     if (sett.shouldPerformRankingPerTarget() && (errLst.getError(i) instanceof ComponentError)){
                     	int nbDim =  errLst.getError(i).getDimension();
