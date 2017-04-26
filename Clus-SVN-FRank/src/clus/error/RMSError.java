@@ -51,7 +51,11 @@ public class RMSError extends MSError {
 
 
     public double getModelError() {
-        return Math.sqrt(super.getModelError());
+    	double sum = 0.0;
+    	for(int i = 0; i < m_Attrs.length; i++){
+    		sum += getModelErrorComponent(i);
+    	}
+        return sum / m_Attrs.length;
     }
 
 
