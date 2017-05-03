@@ -641,6 +641,7 @@ public class Settings implements Serializable {
     protected INIFileBool m_OutputJSONModel;
     protected INIFileBool m_OutputDatabaseQueries;
     protected INIFileBool m_WriteCurves;
+    protected INIFileBool m_OutputClowdFlowsJSON;
 
 
     public boolean isOutTrainError() {
@@ -735,6 +736,10 @@ public class Settings implements Serializable {
 
     public boolean isOutputJSONModel() {
         return m_OutputJSONModel.getValue();
+    }
+
+    public boolean isOutputClowdFlowsJSON() {
+        return m_OutputClowdFlowsJSON.getValue();
     }
 
 
@@ -3485,4 +3490,7 @@ public class Settings implements Serializable {
     }
 
 
+    public void setOutputClowdFlows(boolean value) {
+        m_OutputClowdFlowsJSON.setValue(value);
+    }
 }

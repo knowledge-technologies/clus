@@ -136,9 +136,9 @@ public class Clus implements CMDLineArgsProvider {
 
     // exhaustive was added the 1/08/2006
     // relief was added 29/08/2016
-    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc" };
+    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc", "clowdflows" };
 
-    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0 };
+    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
 
     protected Settings m_Sett = new Settings();
     protected ClusSummary m_Summary = new ClusSummary();
@@ -1825,6 +1825,10 @@ public class Clus implements CMDLineArgsProvider {
                     clss = new ClusDecisionTree(clus);
                     if (sett.getFTestArray().isVector())
                         clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
+                }
+
+                if (cargs.hasOption("clowdflows")) {
+                    clus.getSettings().setOutputClowdFlows(true);
                 }
 
                 /**
