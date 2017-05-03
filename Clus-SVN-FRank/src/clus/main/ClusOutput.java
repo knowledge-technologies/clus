@@ -305,6 +305,11 @@ public class ClusOutput {
             database_writer.close();
             System.out.println("The queries are in " + out_database_name);
         }
+
+        if (getSettings().isOutputClowdFlowsJSON()) {
+
+        }
+
         m_Writer.flush();
     }
 
