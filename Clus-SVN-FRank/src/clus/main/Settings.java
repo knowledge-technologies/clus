@@ -3079,6 +3079,7 @@ public class Settings implements Serializable {
         output.addNode(m_OutputPythonModel = new INIFileBool("OutputPythonModel", false));
         output.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
         output.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));
+        output.addNode(m_OutputClowdFlowsJSON = new INIFileBool("OutputClowdFlowsJSON", false));
 
         INIFileSection nominal = new INIFileSection("Nominal");
         nominal.addNode(m_MEstimate = new INIFileDouble("MEstimate", 1.0));
