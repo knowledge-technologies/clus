@@ -95,6 +95,21 @@ public class HMCAverageTreeModel implements ClusModel {
     public void printModelToPythonScript(PrintWriter wrt) {
     }
 
+    @Override
+    public String getModelJSON() {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
+    }
+
 
     public void attachModel(HashMap table) throws ClusException {
     }

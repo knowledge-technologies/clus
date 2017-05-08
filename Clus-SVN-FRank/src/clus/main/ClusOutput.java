@@ -307,6 +307,15 @@ public class ClusOutput {
         }
 
         if (getSettings().isOutputClowdFlowsJSON()) {
+            for (int i = 0; i < cr.getNbModels(); i++) {
+                if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.shouldShowModel(i)) {
+                    ClusModelInfo mi = cr.getModelInfo(i);
+                    ClusModel root = (ClusModel) models.get(i);
+                    String modelname = mi.getName() + " Model";
+                    
+                }
+            }
+
 
         }
 

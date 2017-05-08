@@ -579,6 +579,21 @@ public class ClusRuleSet implements ClusModel, Serializable {
     public void printModelToPythonScript(PrintWriter wrt) {
     }
 
+    @Override
+    public String getModelJSON() {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
+    }
+
 
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean ex) {
     }

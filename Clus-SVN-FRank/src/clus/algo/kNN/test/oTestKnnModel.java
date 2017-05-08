@@ -194,6 +194,21 @@ public class oTestKnnModel implements ClusModel, Serializable {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToPythonScript() - Not supported yet for kNN.");
     }
 
+    @Override
+    public String getModelJSON() {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
+    }
+
 
     public void attachModel(HashMap table) throws ClusException {
         throw new UnsupportedOperationException(this.getClass().getName() + ":attachModel - Not supported yet for kNN.");

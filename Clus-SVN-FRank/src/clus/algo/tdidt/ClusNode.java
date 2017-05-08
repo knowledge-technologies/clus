@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.data.attweights.ClusAttributeWeights;
@@ -55,6 +56,8 @@ import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.ClusUtil;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 
 public class ClusNode extends MyNode implements ClusModel {
@@ -966,6 +969,87 @@ public class ClusNode extends MyNode implements ClusModel {
     public void printModelToPythonScript(PrintWriter wrt) {
     	// changed tab to 4 spaces
         printTreeToPythonScript(wrt, "    ");
+    }
+
+    @Override
+    public String getModelJSON() {
+        return getModelJSON(null);
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info) {
+        return getModelJSON(info, null);
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+        int arity = getNbChildren();
+        if (arity > 0) {
+            /*
+            int delta = hasUnknownBranch() ? 1 : 0;
+            if (arity - delta == 2) {
+                writer.print(m_Test.getTestString());
+                showAlternatives(writer);
+
+                RowData examples0 = null;
+                RowData examples1 = null;
+                if (examples != null) {
+                    if ((m_Alternatives != null) || (m_OppositeAlternatives != null)) {
+                        // in the case of alternative tests, the classification is done based on how many of the total
+                        // tests predict left or right branch
+                        examples0 = examples.applyAllAlternativeTests(m_Test, m_Alternatives, m_OppositeAlternatives, 0);
+                        examples1 = examples.applyAllAlternativeTests(m_Test, m_Alternatives, m_OppositeAlternatives, 1);
+                    }
+                    else {
+                        examples0 = examples.apply(m_Test, 0);
+                        examples1 = examples.apply(m_Test, 1);
+                    }
+                }
+
+                writeDistributionForInternalNode(writer, info);
+                writer.print(prefix + "+--yes: ");
+                ((ClusNode) getChild(YES)).printTree(writer, info, prefix + "|       ", examples0, false);
+                writer.print(prefix + "+--no:  ");
+                if (hasUnknownBranch()) {
+                    ((ClusNode) getChild(NO)).printTree(writer, info, prefix + "|       ", examples1, false);
+                    writer.print(prefix + "+--unk: ");
+                    ((ClusNode) getChild(UNK)).printTree(writer, info, prefix + "        ", examples0, false);
+                }
+                else {
+                    ((ClusNode) getChild(NO)).printTree(writer, info, prefix + "        ", examples1, false);
+                }
+            }
+            else {
+                writer.println(m_Test.getTestString());
+                for (int i = 0; i < arity; i++) {
+                    ClusNode child = (ClusNode) getChild(i);
+                    String branchlabel = m_Test.getBranchLabel(i);
+                    RowData examplesi = null;
+                    if (examples != null) {
+                        examples.apply(m_Test, i);
+                    }
+                    writer.print(prefix + "+--" + branchlabel + ": ");
+                    String suffix = StringUtils.makeString(' ', branchlabel.length() + 4);
+                    if (i != arity - 1) {
+                        child.printTree(writer, info, prefix + "|" + suffix, examplesi, false);
+                    }
+                    else {
+                        child.printTree(writer, info, prefix + " " + suffix, examplesi, false);
+                    }
+                }
+            }
+            */
+        }
+        else {// on the leaves
+            Map<String, String> leaf = new HashMap<String, String>();
+            if (m_TargetStat == null) {
+                leaf.put("target_stat","?");
+            }
+            else {
+                leaf.put("target_stat",m_TargetStat.getString(info));
+            }
+        }
+        return null;
     }
 
 

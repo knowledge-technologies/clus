@@ -134,6 +134,21 @@ public class ReliefModel implements ClusModel {
 
     }
 
+    @Override
+    public String getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON() {
+        return null;
+    }
+
 
     @Override
     public void attachModel(HashMap table) throws ClusException {

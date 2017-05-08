@@ -451,6 +451,21 @@ public class ClusForest implements ClusModel, Serializable {
         printForestToPython();
     }
 
+    @Override
+    public String getModelJSON() {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
+    }
+
 
     public void printForestToPython() {
         // create a separate .py file

@@ -84,6 +84,15 @@ public interface ClusModel {
     public void printModelToPythonScript(PrintWriter wrt);
 
 
+    public String getModelJSON();
+
+
+    public String getModelJSON(StatisticPrintInfo info);
+
+
+    public String getModelJSON(StatisticPrintInfo info, RowData examples);
+
+
     public void attachModel(HashMap table) throws ClusException;
 
 
