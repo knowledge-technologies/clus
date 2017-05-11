@@ -194,4 +194,9 @@ public class HierLevelAccuracy extends ClusError {
         buf.append(fr.format(getOverallAccuracy()));
         out.println(buf.toString());
     }
+
+
+	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+		return false;
+	}
 }

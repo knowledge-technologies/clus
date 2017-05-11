@@ -37,8 +37,6 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 
 
-// import clus.jeans.util.array.*;
-
 public class MSError extends ClusNumericError implements ComponentError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
@@ -48,6 +46,10 @@ public class MSError extends ClusNumericError implements ComponentError {
     protected double[] m_SumSqErr;
     protected ClusAttributeWeights m_Weights;
     protected boolean m_PrintAllComps;
+    
+
+    
+    
 
 
     public MSError(ClusErrorList par, NumericAttrType[] num) {
@@ -67,9 +69,11 @@ public class MSError extends ClusNumericError implements ComponentError {
         m_SumSqErr = new double[m_Dim];
         m_Weights = weights;
         m_PrintAllComps = printall;
+        
+
     }
 
-
+    
     public void reset() {
         for (int i = 0; i < m_Dim; i++) {
             m_SumErr[i] = 0.0;
@@ -266,4 +270,9 @@ public class MSError extends ClusNumericError implements ComponentError {
         RegressionStat rstat = (RegressionStat) stat;
         return rstat.getSVarS(m_Weights) * rstat.getNbAttributes();
     }
+
+
+	public boolean shouldBeLow() {
+		return true;
+	}
 }

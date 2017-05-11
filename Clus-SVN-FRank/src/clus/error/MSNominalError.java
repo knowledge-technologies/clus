@@ -170,4 +170,9 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
         ClassificationStat cstat = (ClassificationStat) stat;
         return cstat.getSVarS(m_Weights) * cstat.getNbAttributes();
     }
+
+
+	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+		return true;
+	}
 }

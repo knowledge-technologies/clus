@@ -182,4 +182,10 @@ public class TimeSeriesSignificantChangeTesterXVAL extends ClusError {
     public String getName() {
         return "Significant Time Change XVAL";
     }
+
+
+	@Override
+	public boolean shouldBeLow() {//previously, this method was in ClusError and returned true
+		return true;
+	}
 }

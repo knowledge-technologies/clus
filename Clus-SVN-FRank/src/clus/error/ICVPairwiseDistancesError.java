@@ -146,4 +146,11 @@ public class ICVPairwiseDistancesError extends ClusError {
     public String getName() {
         return "ICV-Pairwise-Distances";
     }
+
+
+	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+		return true;
+	}
+    
+    
 }

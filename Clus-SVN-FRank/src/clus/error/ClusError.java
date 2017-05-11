@@ -71,9 +71,10 @@ public abstract class ClusError implements Serializable {
 
 
     /** Should this error be minimized (e.g. RRSE) or maximized (e.g. accuracy)? True by default. */
-    public boolean shouldBeLow() {
-        return true;
-    }
+    public abstract boolean shouldBeLow();
+//    {
+//        return true;
+//    }
 
 
     public boolean isMultiLine() {
