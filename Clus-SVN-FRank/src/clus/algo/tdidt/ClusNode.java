@@ -25,6 +25,7 @@ package clus.algo.tdidt;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,8 +57,8 @@ import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.ClusUtil;
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 
 public class ClusNode extends MyNode implements ClusModel {
@@ -972,24 +973,37 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
     @Override
-    public String getModelJSON() {
+    public JsonObject getModelJSON() {
         return getModelJSON(null);
     }
 
     @Override
-    public String getModelJSON(StatisticPrintInfo info) {
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
         return getModelJSON(info, null);
     }
 
     @Override
-    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
         int arity = getNbChildren();
         if (arity > 0) {
-            /*
+            JsonObject node = new JsonObject();
+            String testString = m_Test.getTestString();
+            if (m_Alternatives != null)
+            {
+                for (int i = 0; i < m_Alternatives.length; i++) {
+                    testString += " and " + m_Alternatives[i];
+                }
+            }
+            node.addProperty("test_string", testString);
+            JsonArray children = new JsonArray();
+            node.add("children", children);
+            StringWriter distributionStringWriter = new StringWriter();
+            PrintWriter distributionWriter = new PrintWriter(distributionStringWriter);
+            writeDistributionForInternalNode(distributionWriter, info);
+            node.addProperty("distribution",distributionStringWriter.toString());
+
             int delta = hasUnknownBranch() ? 1 : 0;
             if (arity - delta == 2) {
-                writer.print(m_Test.getTestString());
-                showAlternatives(writer);
 
                 RowData examples0 = null;
                 RowData examples1 = null;
@@ -1006,50 +1020,52 @@ public class ClusNode extends MyNode implements ClusModel {
                     }
                 }
 
-                writeDistributionForInternalNode(writer, info);
-                writer.print(prefix + "+--yes: ");
-                ((ClusNode) getChild(YES)).printTree(writer, info, prefix + "|       ", examples0, false);
-                writer.print(prefix + "+--no:  ");
+                JsonObject yes_branch = ((ClusNode) getChild(YES)).getModelJSON(info, examples0);
+                yes_branch.addProperty("branch_label", "Yes");
+                JsonObject no_branch = ((ClusNode) getChild(NO)).getModelJSON(info, examples1);
+                no_branch.addProperty("branch_label", "No");
+                children.add(yes_branch);
+                children.add(no_branch);
                 if (hasUnknownBranch()) {
-                    ((ClusNode) getChild(NO)).printTree(writer, info, prefix + "|       ", examples1, false);
-                    writer.print(prefix + "+--unk: ");
-                    ((ClusNode) getChild(UNK)).printTree(writer, info, prefix + "        ", examples0, false);
+                    JsonObject unk_branch = ((ClusNode) getChild(UNK)).getModelJSON(info, examples0);
+                    children.add(unk_branch);
                 }
-                else {
-                    ((ClusNode) getChild(NO)).printTree(writer, info, prefix + "        ", examples1, false);
-                }
+
             }
             else {
-                writer.println(m_Test.getTestString());
                 for (int i = 0; i < arity; i++) {
                     ClusNode child = (ClusNode) getChild(i);
                     String branchlabel = m_Test.getBranchLabel(i);
                     RowData examplesi = null;
                     if (examples != null) {
-                        examples.apply(m_Test, i);
+                        examplesi = examples.apply(m_Test, i);
                     }
-                    writer.print(prefix + "+--" + branchlabel + ": ");
-                    String suffix = StringUtils.makeString(' ', branchlabel.length() + 4);
-                    if (i != arity - 1) {
-                        child.printTree(writer, info, prefix + "|" + suffix, examplesi, false);
-                    }
-                    else {
-                        child.printTree(writer, info, prefix + " " + suffix, examplesi, false);
-                    }
+                    JsonObject ch = child.getModelJSON(info, examplesi);
+                    ch.addProperty("branch_label", branchlabel);
+                    children.add(ch);
                 }
             }
-            */
+            return node;
         }
         else {// on the leaves
-            Map<String, String> leaf = new HashMap<String, String>();
+            JsonObject leaf = new JsonObject();
             if (m_TargetStat == null) {
-                leaf.put("target_stat","?");
+                leaf.addProperty("target_stat","?");
             }
             else {
-                leaf.put("target_stat",m_TargetStat.getString(info));
+                leaf.addProperty("target_stat",m_TargetStat.getString(info));
             }
+            if (getID() != 0 && info.SHOW_INDEX) {
+                leaf.addProperty("id", getID());
+            }
+            if (info.SHOW_KEY && examples != null && examples.getNbRows() > 0)
+                leaf.addProperty("example_ids", examples.printIDs(""));
+            else if (examples != null && examples.getNbRows() > 0) {
+                leaf.addProperty("summary", examples.getSummary());
+            }
+
+            return leaf;
         }
-        return null;
     }
 
 

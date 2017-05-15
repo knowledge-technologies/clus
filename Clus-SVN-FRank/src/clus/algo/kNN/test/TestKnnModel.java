@@ -63,6 +63,7 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import com.google.gson.JsonObject;
 
 
 /**
@@ -325,17 +326,17 @@ public class TestKnnModel implements ClusModel, Serializable {
     }
 
     @Override
-    public String getModelJSON() {
+    public JsonObject getModelJSON() {
         return null;
     }
 
     @Override
-    public String getModelJSON(StatisticPrintInfo info) {
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
         return null;
     }
 
     @Override
-    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
         return null;
     }
 

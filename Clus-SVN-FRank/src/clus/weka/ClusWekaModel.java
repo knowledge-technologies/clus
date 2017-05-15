@@ -40,6 +40,7 @@ import clus.model.ClusModel;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
+import com.google.gson.JsonObject;
 import weka.classifiers.Classifier;
 import weka.core.Instance;
 
@@ -109,17 +110,17 @@ public class ClusWekaModel implements ClusModel {
     }
 
     @Override
-    public String getModelJSON() {
+    public JsonObject getModelJSON() {
         return null;
     }
 
     @Override
-    public String getModelJSON(StatisticPrintInfo info) {
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
         return null;
     }
 
     @Override
-    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
         return null;
     }
 

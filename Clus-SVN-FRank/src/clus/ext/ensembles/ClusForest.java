@@ -29,7 +29,6 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.concurrent.locks.ReadWriteLock;
 
 import clus.algo.rules.ClusRuleSet;
 import clus.algo.rules.ClusRulesFromTree;
@@ -55,6 +54,7 @@ import clus.statistic.RegressionStat;
 import clus.statistic.RegressionStatBase;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import com.google.gson.JsonObject;
 
 
 /**
@@ -452,17 +452,17 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
     @Override
-    public String getModelJSON() {
+    public JsonObject getModelJSON() {
         return null;
     }
 
     @Override
-    public String getModelJSON(StatisticPrintInfo info) {
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
         return null;
     }
 
     @Override
-    public String getModelJSON(StatisticPrintInfo info, RowData examples) {
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
         return null;
     }
 

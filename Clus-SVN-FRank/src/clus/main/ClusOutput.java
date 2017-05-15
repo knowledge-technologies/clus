@@ -45,6 +45,8 @@ import clus.model.ClusModelInfo;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 
 /**
@@ -307,18 +309,31 @@ public class ClusOutput {
         }
 
         if (getSettings().isOutputClowdFlowsJSON()) {
+            JsonObject output = new JsonObject();
+            StringWriter settingsStringWriter = new StringWriter();
+            PrintWriter settingsWriter = new PrintWriter(settingsStringWriter);
+            m_Sett.show(settingsWriter);
+            output.addProperty("settings", settingsStringWriter.toString());
+            JsonArray outputModels = new JsonArray();
+            output.add("models", outputModels);
             for (int i = 0; i < cr.getNbModels(); i++) {
                 if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.shouldShowModel(i)) {
                     ClusModelInfo mi = cr.getModelInfo(i);
                     ClusModel root = (ClusModel) models.get(i);
-                    String modelname = mi.getName() + " Model";
-                    
+                    String modelname = mi.getName();
+                    JsonObject currentModel = new JsonObject();
+                    currentModel.addProperty("name", modelname);
+                    currentModel.add("representation", root.getModelJSON(info));
+                    outputModels.add(currentModel);
                 }
             }
 
-
+            String jsonFileName = m_Sett2.getAppName() + ".json";
+            PrintWriter jsonWriter = m_Sett2.getFileAbsoluteWriter(jsonFileName);
+            jsonWriter.write(output.toString());
+            //System.out.print(output.toString());
+            jsonWriter.close();
         }
-
         m_Writer.flush();
     }
 
