@@ -1908,26 +1908,32 @@ public class Clus implements CMDLineArgsProvider {
         catch (ClusException e) {
             System.err.println();
             System.err.println("Error: " + e);
+            System.exit(-1);
         }
         catch (IllegalArgumentException e) {
             System.err.println();
             System.err.println("Error: " + e.getMessage());
+            System.exit(-1);
         }
         catch (FileNotFoundException e) {
             System.err.println();
             System.err.println("File not found: " + e);
+            System.exit(-1);
         }
         catch (IOException e) {
             System.err.println();
             System.err.println("IO Error: " + e);
+            System.exit(-1);
         }
         catch (ClassNotFoundException e) {
             System.err.println();
             System.err.println("Class not found" + e);
+            System.exit(-1);
         }
         catch (InterruptedException e) {
             System.err.println();
             System.err.println("Error: " + e);
+            System.exit(-1);
         }
     }
 }
