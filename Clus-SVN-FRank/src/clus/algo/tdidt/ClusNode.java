@@ -1002,6 +1002,13 @@ public class ClusNode extends MyNode implements ClusModel {
             writeDistributionForInternalNode(distributionWriter, info);
             node.addProperty("distribution",distributionStringWriter.toString());
 
+            if (m_TargetStat == null) {
+                node.addProperty("target_stat","?");
+            }
+            else {
+                node.addProperty("target_stat",m_TargetStat.getString(info));
+            }
+
             int delta = hasUnknownBranch() ? 1 : 0;
             if (arity - delta == 2) {
 
@@ -1446,6 +1453,7 @@ public class ClusNode extends MyNode implements ClusModel {
         }
         return max_idx;
     }
+
 
 
     public void adaptToData(RowData data) {
