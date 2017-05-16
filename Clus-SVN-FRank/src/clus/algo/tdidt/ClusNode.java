@@ -1001,7 +1001,9 @@ public class ClusNode extends MyNode implements ClusModel {
             PrintWriter distributionWriter = new PrintWriter(distributionStringWriter);
             writeDistributionForInternalNode(distributionWriter, info);
             node.addProperty("distribution",distributionStringWriter.toString());
-
+            if (examples != null) {
+                node.addProperty("summary", examples.getSummary());
+            }
             if (m_TargetStat == null) {
                 node.addProperty("target_stat","?");
             }

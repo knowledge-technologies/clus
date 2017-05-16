@@ -323,7 +323,11 @@ public class ClusOutput {
                     String modelname = mi.getName();
                     JsonObject currentModel = new JsonObject();
                     currentModel.addProperty("name", modelname);
-                    currentModel.add("representation", root.getModelJSON(info));
+                    RowData pex = (RowData) cr.getTrainingSet();
+                    // System.out.println(te_err);
+                    if (te_err != null)
+                        pex = (RowData) cr.getTestSet();
+                    currentModel.add("representation", root.getModelJSON(info,pex));
                     outputModels.add(currentModel);
                 }
             }
