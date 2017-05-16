@@ -35,7 +35,7 @@ public class HierarchicalMultiLabelDistance {
     /**
      * Calculates the weighted Euclidean distance between the two classes in the hierarchy, where the weight of
      * a label is {@code m_HierarWeight^depth}. The distance is at the end normalised by the upper bound
-     * {@code m_HierarDistBound}.
+     * for this hierarchy.
      * 
      * @param t1
      *        First tuple

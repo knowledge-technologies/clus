@@ -50,7 +50,8 @@ In the case that the hierarchy is also a tree, we compute (\ref{eqn:goal}) in li
 		\IF{$n = 0$}
 			\STATE{add $r$ to \texttt{candidates} if $r$ is final label}
 		\ELSIF{$n = 1$}
-			\IF{$|\texttt{candidates}[0]| = 1$}
+			\STATE{add $\texttt{chC}[0][0]$ to \texttt{candidates}}
+			\IF{$|\texttt{chC}[0]| = 1$}
 				\STATE{add $r$ to \texttt{candidates} if $r$ is final label}
 			\ELSE
 				\STATE{\texttt{can1} $\gets \texttt{chC}[0]$}\label{alg:pair1}

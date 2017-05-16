@@ -480,7 +480,11 @@ public class ClusStatManager implements Serializable {
         if (nb_types == 0) {
             System.err.println("No target value defined");
         }
-        if (nb_types > 1) { throw new ClusException("Incompatible combination of clustering attribute types"); }
+        if (nb_types > 1) {
+        	if(!getSettings().isRelief()){
+        		throw new ClusException("Incompatible combination of clustering attribute types");
+        	}
+        }
     }
 
 
