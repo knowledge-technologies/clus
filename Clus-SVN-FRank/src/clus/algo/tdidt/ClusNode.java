@@ -34,6 +34,8 @@ import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
 import clus.error.multiscore.MultiScore;
 import clus.error.multiscore.MultiScoreStat;
 import clus.jeans.tree.MyNode;
@@ -1002,7 +1004,7 @@ public class ClusNode extends MyNode implements ClusModel {
             writeDistributionForInternalNode(distributionWriter, info);
             node.addProperty("distribution",distributionStringWriter.toString());
             if (examples != null) {
-                node.addProperty("summary", examples.getSummary());
+                node.add("summary", examples.getSummaryJSON());
             }
             if (m_TargetStat == null) {
                 node.addProperty("target_stat","?");
@@ -1069,8 +1071,8 @@ public class ClusNode extends MyNode implements ClusModel {
             }
             if (info.SHOW_KEY && examples != null && examples.getNbRows() > 0)
                 leaf.addProperty("example_ids", examples.printIDs(""));
-            else if (examples != null && examples.getNbRows() > 0) {
-                leaf.addProperty("summary", examples.getSummary());
+            if (examples != null && examples.getNbRows() > 0) {
+                leaf.add("summary", examples.getSummaryJSON());
             }
 
             return leaf;
