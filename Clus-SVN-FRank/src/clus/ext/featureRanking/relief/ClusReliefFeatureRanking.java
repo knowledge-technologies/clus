@@ -254,6 +254,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             	updateImportances(data, numIterInd, successfulIterations, shouldUpdate);
             	numIterInd++;
             	shouldUpdate = new boolean[nbTargets];
+            	if(Settings.VERBOSE >= 1){
+            		System.out.println(String.format("%d/%d iterations", iteration + 1, m_MaxNbIterations));
+            	}
             }
         }
 

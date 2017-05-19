@@ -32,7 +32,9 @@ import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
 import clus.algo.ClusInductionAlgorithm;
@@ -450,6 +452,7 @@ public class Clus implements CMDLineArgsProvider {
      */
     public final void induce(ClusRun cr, ClusInductionAlgorithmType clss) throws ClusException, IOException, InterruptedException {
         if (Settings.VERBOSE > 0) {
+        	System.out.println("Time: " + (new SimpleDateFormat("HH:mm:ss")).format(Calendar.getInstance().getTime()));
             System.out.println("Run: " + cr.getIndexString());
             System.out.println("Verbose: " + Settings.VERBOSE);
             clss.printInfo();

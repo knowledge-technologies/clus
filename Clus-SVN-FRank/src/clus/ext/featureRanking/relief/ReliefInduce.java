@@ -33,7 +33,7 @@ public class ReliefInduce extends ClusInductionAlgorithm {
     @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
     	int[] nbNeighbours = cr.getStatManager().getSettings().getReliefNbNeighboursValue();
-    	int[] nbIterations = cr.getStatManager().getSettings().getReliefNbIterationsValue();
+    	int[] nbIterations = cr.getStatManager().getSettings().getReliefNbIterationsValue(cr.getTrainingSet().getNbRows());
     	boolean shouldWeight = cr.getStatManager().getSettings().getReliefWeightNeighbours();
     	double sigma = cr.getStatManager().getSettings().getReliefWeightingSigma();
     	int randomSeed = cr.getStatManager().getSettings().getRandomSeed();
