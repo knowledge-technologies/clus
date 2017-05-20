@@ -268,47 +268,58 @@ public class RowData extends ClusData implements MSortable, Serializable {
         min = new double[nda + nta];
         max = new double[nda + nta];
         stddev = new double[nda + nta];
+        int[] missing_values = new int[nda + nta];
         Arrays.fill(avg, 0);
         Arrays.fill(stddev, 0);
         Arrays.fill(min, Double.MAX_VALUE);
         Arrays.fill(max, Double.MIN_VALUE);
         int nbrows = getNbRows();
+        Arrays.fill(missing_values, 0);
         for (int i = 0; i < nbrows; i++) {
             temp = getTuple(i);
             ClusSchema schema = temp.getSchema();
             for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)[j];
                 double tmpvalue = type.getNumeric(temp);
-                if (tmpvalue > max[j]) {
-                    max[j] = tmpvalue;
+                if (tmpvalue != Double.POSITIVE_INFINITY) {
+                    if (tmpvalue > max[j]) {
+                        max[j] = tmpvalue;
+                    }
+                    if (tmpvalue < min[j]) {
+                        min[j] = tmpvalue;
+                    }
+                    avg[j] += tmpvalue;
+                    stddev[j] += tmpvalue * tmpvalue;
+                } else {
+                    missing_values[j]++;
                 }
-                if (tmpvalue < min[j]) {
-                    min[j] = tmpvalue;
-                }
-                avg[j] += tmpvalue;
-                stddev[j] += tmpvalue * tmpvalue;
             }
             for (int j = nda; j < nda + nta; j++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[j - nda];
                 double tmpvalue = type.getNumeric(temp);
-                if (tmpvalue > max[j]) {
-                    max[j] = tmpvalue;
+                if (tmpvalue != Double.POSITIVE_INFINITY) {
+                    if (tmpvalue > max[j]) {
+                        max[j] = tmpvalue;
+                    }
+                    if (tmpvalue < min[j]) {
+                        min[j] = tmpvalue;
+                    }
+                    avg[j] += tmpvalue;
+                    stddev[j] += tmpvalue * tmpvalue;
+                } else {
+                    missing_values[j]++;
                 }
-                if (tmpvalue < min[j]) {
-                    min[j] = tmpvalue;
-                }
-                avg[j] += tmpvalue;
-                stddev[j] += tmpvalue * tmpvalue;
             }
         }
+
         JsonArray minArray = new JsonArray();
         JsonArray maxArray = new JsonArray();
         JsonArray avgArray = new JsonArray();
         JsonArray stddevArray = new JsonArray();
 
         for (int i = 0; i < nda + nta; i++) {
-            avg[i] /= nbrows;
-            stddev[i] = (stddev[i] - nbrows * avg[i] * avg[i]) / nbrows;
+            avg[i] /= nbrows-missing_values[i];
+            stddev[i] = (stddev[i] - (nbrows-missing_values[i]) * avg[i] * avg[i]) / (nbrows-missing_values[i]);
             stddev[i] = Math.sqrt(stddev[i]);
             min[i] = Math.round(min[i] * 100) / 100.0;
             max[i] = Math.round(max[i] * 100) / 100.0;
