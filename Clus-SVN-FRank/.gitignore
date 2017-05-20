@@ -3,3 +3,7 @@
 *.log
 *.synctex.gz
 *.pdf
+*.iml
+.idea
+/src/META-INF/
+

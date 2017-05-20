@@ -57,6 +57,7 @@ import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import com.google.gson.JsonObject;
 
 
 public class ClusRule implements ClusModel, Serializable {
@@ -617,6 +618,21 @@ public class ClusRule implements ClusModel, Serializable {
 
 
     public void printModelToPythonScript(PrintWriter wrt) {
+    }
+
+    @Override
+    public JsonObject getModelJSON() {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
     }
 
 

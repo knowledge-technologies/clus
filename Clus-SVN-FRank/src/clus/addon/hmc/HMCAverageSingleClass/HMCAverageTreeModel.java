@@ -39,6 +39,7 @@ import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import com.google.gson.JsonObject;
 
 
 public class HMCAverageTreeModel implements ClusModel {
@@ -93,6 +94,21 @@ public class HMCAverageTreeModel implements ClusModel {
 
 
     public void printModelToPythonScript(PrintWriter wrt) {
+    }
+
+    @Override
+    public JsonObject getModelJSON() {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
     }
 
 

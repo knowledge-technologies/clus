@@ -34,6 +34,7 @@ import clus.main.ClusRun;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import com.google.gson.JsonObject;
 
 
 public interface ClusModel {
@@ -82,6 +83,15 @@ public interface ClusModel {
 
 
     public void printModelToPythonScript(PrintWriter wrt);
+
+
+    public JsonObject getModelJSON();
+
+
+    public JsonObject getModelJSON(StatisticPrintInfo info);
+
+
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples);
 
 
     public void attachModel(HashMap table) throws ClusException;
