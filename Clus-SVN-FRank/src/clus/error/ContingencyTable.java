@@ -365,4 +365,9 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
     public double get_auc() {
         return 0.0;
     }
+
+
+	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+		return false;
+	}
 }

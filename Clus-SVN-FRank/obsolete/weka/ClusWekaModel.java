@@ -31,6 +31,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.gson.JsonObject;
+
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.jeans.io.ObjectSaveStream;
@@ -108,7 +110,21 @@ public class ClusWekaModel implements ClusModel {
     public void printModelToPythonScript(PrintWriter wrt) {
     }
 
+    @Override
+    public JsonObject getModelJSON() {
+        return null;
+    }
 
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
+    }
+    
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean ex) {
     }
 

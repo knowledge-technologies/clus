@@ -135,4 +135,9 @@ public class AbsoluteError extends ClusNumericError {
     public ClusError getErrorClone(ClusErrorList par) {
         return new AbsoluteError(par, m_Attrs);
     }
+
+
+	public boolean shouldBeLow() {
+		return true;
+	}
 }

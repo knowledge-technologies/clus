@@ -96,4 +96,10 @@ public class WAHNDError extends ClusError {
     public ClusError getErrorClone(ClusErrorList par) {
         return new WAHNDError(par, m_Weight);
     }
+
+
+	@Override
+	public boolean shouldBeLow() {
+		throw new RuntimeException("should WAHNDError be high or low?");
+	}
 }

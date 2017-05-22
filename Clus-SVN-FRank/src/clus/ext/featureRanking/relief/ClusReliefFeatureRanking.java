@@ -160,18 +160,14 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_WeightNeighbours = weightNeighbours;
         m_Sigma = m_WeightNeighbours ? sigma : 0.0;
         m_NeighbourWeights = new double[m_MaxNbNeighbours];
-        if (m_WeightNeighbours) {
-            for (int neigh = 0; neigh < m_MaxNbNeighbours; neigh++) {
-                m_NeighbourWeights[neigh] = Math.exp(-(m_Sigma * neigh) * (m_Sigma * neigh));
-            }
-        }
-        else {
-            Arrays.fill(m_NeighbourWeights, 1.0);
-        }
+
         m_rnd = new Random(seed);
         initialize(data);
     }
     
+    /**
+     * Computes and sets the number of feature rankings to be performed.
+     */
     private void setNbFeatureRankings(){
     	ArrayList<String> rankings = new ArrayList<String>();
     	ArrayList<String> prefixes = new ArrayList<String>();
@@ -193,19 +189,18 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     }
     
     /**
-     * Returns the index of the (per-target) ranking, computed with specified number of iterations and neighbours.
+     * Returns the index of the (per-target) ranking, computed with specified number of iterations, neighbours and target index.
      * Greater or equal to zero.
      * @param iterationsIndex The index of the number of iterations in {@link #m_NbIterations}
      * @param neighboursIndex The index of the number of neighbours in {@link #m_NbNeighnours}
      * @param targetIndex If non-negative, then this is the index of the target and we are looking for a index of a per-target ranking.
-     * If -1, then we are looking for the index of a overall ranking.
+     * If -1, then we are looking for the index of the overall ranking.
      * @return
      */
     private int rankingIndex(int iterationsIndex, int neighboursIndex, int targetIndex){
     	int perTargetShift = (targetIndex + 1) * m_NbIterations.length * m_NbNeighbours.length;
     	return perTargetShift + iterationsIndex * m_NbNeighbours.length + neighboursIndex;
     }
-
 
     /**
      * Calculates the feature importances for a given dataset.
@@ -259,12 +254,15 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             	updateImportances(data, numIterInd, successfulIterations, shouldUpdate);
             	numIterInd++;
             	shouldUpdate = new boolean[nbTargets];
+            	if(Settings.VERBOSE >= 1){
+            		System.out.println(String.format("%d/%d iterations", iteration + 1, m_MaxNbIterations));
+            	}
             }
         }
 
         if(insufficientNbNeighbours > 0){
         	System.err.println("Maximal number of neighbours: " + m_MaxNbNeighbours);
-        	System.err.println("Number of cases when we could not find that many neighbours:" + insufficientNbNeighbours);
+        	System.err.println("Number of cases when we could not find that many neighbours: " + insufficientNbNeighbours);
         }
     }
     
@@ -428,7 +426,16 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * Initialises some fields etc.
      * @param data
      */
-    private void initialize(RowData data){    	
+    private void initialize(RowData data){
+        if (m_WeightNeighbours) {
+            for (int neigh = 0; neigh < m_MaxNbNeighbours; neigh++) {
+                m_NeighbourWeights[neigh] = Math.exp(-(m_Sigma * neigh) * (m_Sigma * neigh));
+            }
+        }
+        else {
+            Arrays.fill(m_NeighbourWeights, 1.0);
+        }
+    	
     	m_TimeSeriesDistance = data.m_Schema.getSettings().m_TimeSeriesDistance.getValue();
         setReliefDescription(m_NbNeighbours, m_NbIterations);
         m_NbExamples = data.getNbRows();
@@ -847,11 +854,11 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
     
     /**
-     * Computes the index of the chosen example in the iteration {@code iteration}.
+     * Computes a random permutation with Fisher–Yates algorithm.
      * 
-     * @param iteration
-     *        Index of the iteration.
-     * @return The index of the chosen example in the given iteration.
+     * @param examples The number of examples that we will place in a random order.     * 
+     * @return A permutation given as a list whose i-th element is the index of the example
+     * that is processed in i-th iteration. 
      */
     private int[] randomPermutation(int examples) {
     	int[] permuted = new int[examples];

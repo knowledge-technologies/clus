@@ -37,8 +37,6 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 
 
-// import clus.jeans.util.array.*;
-
 public class MSError extends ClusNumericError implements ComponentError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
@@ -48,7 +46,9 @@ public class MSError extends ClusNumericError implements ComponentError {
     protected double[] m_SumSqErr;
     protected ClusAttributeWeights m_Weights;
     protected boolean m_PrintAllComps;
-
+    
+    protected double[] m_SumTrueValues;			// these two fields used for
+    protected double[] m_SumSquaredTrueValues;  // relative errors
 
     public MSError(ClusErrorList par, NumericAttrType[] num) {
         this(par, num, null, true);
@@ -67,14 +67,20 @@ public class MSError extends ClusNumericError implements ComponentError {
         m_SumSqErr = new double[m_Dim];
         m_Weights = weights;
         m_PrintAllComps = printall;
+        
+        m_SumTrueValues = new double[m_Dim];
+        m_SumSquaredTrueValues = new double[m_Dim];
     }
 
-
+    
     public void reset() {
         for (int i = 0; i < m_Dim; i++) {
             m_SumErr[i] = 0.0;
             m_SumSqErr[i] = 0.0;
             m_nbEx[i] = 0;
+            
+	        m_SumTrueValues[i] = 0.0;
+	        m_SumSquaredTrueValues[i] = 0.0;
         }
     }
 
@@ -152,8 +158,8 @@ public class MSError extends ClusNumericError implements ComponentError {
         return value * value;
     }
 
-
-    public void addExample(double[] real, double[] predicted) {
+    
+    public void addExample(double[] real, double[] predicted, boolean isRelative){
         for (int i = 0; i < m_Dim; i++) {
             double err = sqr(real[i] - predicted[i]);
             System.out.println(err);
@@ -161,12 +167,20 @@ public class MSError extends ClusNumericError implements ComponentError {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);
                 m_nbEx[i]++;
+                if (isRelative){
+            		m_SumTrueValues[i] += real[i];
+            		m_SumSquaredTrueValues[i] += real[i] * real[i];
+                }
             }
         }
     }
 
+    public void addExample(double[] real, double[] predicted) {
+    	addExample(real, predicted, false);
+    }
 
-    public void addExample(double[] real, boolean[] predicted) {
+    
+    public void addExample(double[] real, boolean[] predicted, boolean isRelative) {
         for (int i = 0; i < m_Dim; i++) {
             double predicted_i = predicted[i] ? 1.0 : 0.0;
             double err = sqr(real[i] - predicted_i);
@@ -175,25 +189,41 @@ public class MSError extends ClusNumericError implements ComponentError {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);
                 m_nbEx[i]++;
+                if(isRelative){
+            		m_SumTrueValues[i] += real[i];
+            		m_SumSquaredTrueValues[i] += real[i] * real[i];
+                }
             }
         }
     }
+    public void addExample(double[] real, boolean[] predicted) {
+    	addExample(real, predicted, false);
+    }
 
-
-    public void addExample(DataTuple tuple, ClusStatistic pred) {
+    
+    public void addExample(DataTuple tuple, ClusStatistic pred, boolean isRelative) {
         double[] predicted = pred.getNumericPred();
         for (int i = 0; i < m_Dim; i++) {
-            double err = sqr(getAttr(i).getNumeric(tuple) - predicted[i]);
+        	double real_i = getAttr(i).getNumeric(tuple);
+            double err = sqr(real_i - predicted[i]);
             if (!Double.isInfinite(err) && !Double.isNaN(err)) {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);
                 m_nbEx[i]++;
+                if(isRelative){
+            		m_SumTrueValues[i] += real_i;
+            		m_SumSquaredTrueValues[i] += real_i * real_i;
+                }
             }
         }
     }
+    
+    public void addExample(DataTuple tuple, ClusStatistic pred) {
+    	addExample(tuple, pred, false);
+    }
 
 
-    public void addExample(DataTuple real, DataTuple pred) {
+    public void addExample(DataTuple real, DataTuple pred, boolean isRelative) {
         for (int i = 0; i < m_Dim; i++) {
             double real_i = getAttr(i).getNumeric(real);
             double predicted_i = getAttr(i).getNumeric(pred);
@@ -202,8 +232,16 @@ public class MSError extends ClusNumericError implements ComponentError {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);
                 m_nbEx[i]++;
+                if(isRelative){
+            		m_SumTrueValues[i] += real_i;
+            		m_SumSquaredTrueValues[i] += real_i * real_i;
+                }
             }
         }
+    }
+    
+    public void addExample(DataTuple real, DataTuple pred) {
+        addExample(real, pred, false);
     }
 
 
@@ -266,4 +304,9 @@ public class MSError extends ClusNumericError implements ComponentError {
         RegressionStat rstat = (RegressionStat) stat;
         return rstat.getSVarS(m_Weights) * rstat.getNbAttributes();
     }
+
+
+	public boolean shouldBeLow() {
+		return true;
+	}
 }

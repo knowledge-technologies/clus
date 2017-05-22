@@ -86,4 +86,10 @@ public class RelativeError extends ClusNumericError implements ComponentError {
         return "Relative Error";
     }
 
+
+	@Override
+	public boolean shouldBeLow() {
+		return true;
+	}
+
 }

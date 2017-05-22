@@ -144,4 +144,9 @@ public class ILevelCRandIndex extends ClusError {
     public String getName() {
         return "Rand index";
     }
+
+
+	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+		return true;
+	}
 }

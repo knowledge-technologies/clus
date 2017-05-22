@@ -2,6 +2,8 @@
 package clus.error;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NumericAttrType;
@@ -15,17 +17,16 @@ import clus.data.type.NumericAttrType;
  * The spearman rank correlation is a measure for how well the rankings of the real values
  * correspond to the rankings of the predicted values.
  *
- * @author beau
+ * @author beau, matejp
  *
  */
 public class SpearmanRankCorrelation extends ClusNumericError {
 
-    protected ArrayList<Double> RankCorrelations = new ArrayList<Double>();;
+    protected ArrayList<Double> RankCorrelations = new ArrayList<Double>();
 
 
     public SpearmanRankCorrelation(final ClusErrorList par, final NumericAttrType[] num) {
         super(par, num);
-        // TODO Auto-generated constructor stub
     }
 
 
@@ -53,7 +54,6 @@ public class SpearmanRankCorrelation extends ClusNumericError {
     @Override
     public double getModelErrorComponent(int i) {
         throw new RuntimeException("SpearmanRankCorrelation does not have multiple components (it's a measure over all dimensions)");
-        // return 0.0;
     }
 
 
@@ -123,27 +123,48 @@ public class SpearmanRankCorrelation extends ClusNumericError {
 
     /**
      * Computes the rank of each value in the given array
-     * Current implementation is O(n^2) with n = values.length.
-     * I think an optimal implementation would be O(log n) using quicksort
-     *
      * @param values
      * @return an array with the corresponding ranking
      */
     private double[] getRanks(double[] values) {
         double[] result = new double[values.length];
         // brute force! O(n*n) should be re-implemented
-        int rank = values.length;
-
-        for (int v = 0; v < values.length; v++) {
-            for (int i = 0; i < values.length; i++) {
-                if (values[i] < values[v]) {
-                    rank--;
-                }
-            }
-            result[v] = rank;
-            rank = values.length;
+        //int rank = values.length;
+        //for (int v = 0; v < values.length; v++) {
+        //    for (int i = 0; i < values.length; i++) {
+        //        if (values[i] < values[v]) {
+        //            rank--;
+        //        }
+        //    }
+        //    result[v] = rank;
+        //    rank = values.length;
+        //}
+        
+        // new implementation: we assume that the previous was OK:
+        // the new was tested vs. the old-one and it gives the same results on the tests from 
+        // double[][] tests = new double[][]{new double[]{1.0, 1.0, 1.0, 1.00}, new double[]{1.0, 2.0, 4.0, 2.0, 4.0, 3.0,1.3,3.7}, new double[]{1.0, 1.0, 2.0, 2.0, 3.0, 3.0}, new double[]{1, 2, 3, 4, 5, 4, 3,2,1}};
+        final double[] scores = values;
+        Integer[] indices = new Integer[values.length];
+        for(int i = 0; i < values.length; i++){
+        	indices[i] = i;
         }
-
+        Arrays.sort(indices, new Comparator<Integer>() {
+			@Override
+			public int compare(Integer ind1, Integer ind2) {
+				return Double.compare(scores[ind1], scores[ind2]);
+			}
+		});
+        
+        result[indices[0]] =  values.length;
+        for(int i = 1; i < values.length; i++){
+        	int index = indices[i];
+        	int previous = indices[i - 1];        	
+        	if(scores[previous] < scores[index]){	// precisely all previous elements are strictly smaller
+        		result[index] = values.length - i;
+        	} else{									// i.e. >= hence == hence the same result 
+        		result[index] = result[previous];
+        	}
+        }
         return result;
 
     }
@@ -178,5 +199,10 @@ public class SpearmanRankCorrelation extends ClusNumericError {
         // TODO Auto-generated method stub
         return null;
     }
+
+
+	public boolean shouldBeLow() {//previously, this method was in ClusError and returned true
+		return false;
+	}
 
 }

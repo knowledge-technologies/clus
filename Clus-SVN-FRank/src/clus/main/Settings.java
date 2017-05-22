@@ -47,6 +47,7 @@ import clus.jeans.io.ini.INIFileString;
 import clus.jeans.io.ini.INIFileStringOrDouble;
 import clus.jeans.io.ini.INIFileStringOrInt;
 import clus.jeans.io.range.IntRangeCheck;
+import clus.jeans.math.MathUtil;
 import clus.jeans.resource.ResourceInfo;
 import clus.jeans.util.FileUtil;
 import clus.jeans.util.StringUtils;
@@ -641,6 +642,7 @@ public class Settings implements Serializable {
     protected INIFileBool m_OutputJSONModel;
     protected INIFileBool m_OutputDatabaseQueries;
     protected INIFileBool m_WriteCurves;
+    protected INIFileBool m_OutputClowdFlowsJSON;
 
 
     public boolean isOutTrainError() {
@@ -735,6 +737,10 @@ public class Settings implements Serializable {
 
     public boolean isOutputJSONModel() {
         return m_OutputJSONModel.getValue();
+    }
+
+    public boolean isOutputClowdFlowsJSON() {
+        return m_OutputClowdFlowsJSON.getValue();
     }
 
 
@@ -2407,7 +2413,7 @@ public class Settings implements Serializable {
     public static final int RELIEF_NEIGHBOUR_DEFAULT = 10;
     public static final int RELIEF_ITERATIONS_DEFAULT = -1;
     private INIFileNominalOrIntOrVector m_ReliefNbNeighbours;
-    private INIFileNominalOrIntOrVector m_ReliefNbIterations;
+    private INIFileNominalOrDoubleOrVector m_ReliefNbIterations;
     private INIFileBool m_ReliefShouldHaveNeighbourWeighting;
     private INIFileDouble m_ReliefWeightingSigma;
 
@@ -2426,9 +2432,55 @@ public class Settings implements Serializable {
         return m_ReliefNbNeighbours.getIntVector();
     }
 
-
-    public int[] getReliefNbIterationsValue() {
-        return m_ReliefNbIterations.getIntVector();
+    /**
+     * Returns a list, containing the numbers of the iterations.
+     * If this setting is given as a (list of) proportion(s) of the instances
+     * in the training set, we convert it into absolute values.<p>
+     * If the only value is 1, i.e., 1.0, we assume that this means
+     * all (100%) instances. 
+     * @param nbInstances The number of instances in the training set.
+     * @return
+     */
+    public int[] getReliefNbIterationsValue(int nbInstances) {
+    	double[] values;
+    	if (m_ReliefNbIterations.isVector()) {
+    		values = m_ReliefNbIterations.getDoubleVector();
+    	} else{
+    		values = new double[]{m_ReliefNbIterations.getDouble()};
+    	}
+    	boolean[] types = new boolean[]{true, true}; // {is double, is integer}
+    	boolean containsOne = false;
+    	for(double value : values){
+    		if (Math.abs(1.0 - value) >= MathUtil.C1E_9){ // value != 1
+    			int roundedValue = (int) Math.round(value);
+    			int wrong_type = Math.abs(roundedValue - value) >= MathUtil.C1E_9 ? 1 : 0;
+    			types[wrong_type] = false;
+    		} else{
+    			containsOne = true;
+    		}
+    	}
+    	int[] iterations = new int[values.length];
+    	if(values.length == 1 && containsOne){
+    		System.err.print(String.format("Warning! Ambiguous setting: %s = 1.0", m_ReliefNbIterations.getName()));
+    		System.err.println(" Assuming 1.0 means 100%.");
+    	}
+    	if (!(types[0] || types[1])){
+    		throw new RuntimeException(String.format("The values for the setting %s must be of the same type!", m_ReliefNbIterations.getName()));
+    	}else if(types[0]){
+			for(int i = 0; i < values.length; i++){
+				double value = values[i];
+				if (0.0 <= value && value <= 1.0){
+					iterations[i] = (int) Math.round(value * nbInstances);
+				} else{
+					throw new RuntimeException("The value is not in the interval [0, 1]!");
+				}
+			} 
+		}else{
+			for(int i = 0; i < values.length; i++){
+				iterations[i] = (int) Math.round(values[i]);
+			} 
+		}
+    	return iterations;
     }
 
 
@@ -3074,6 +3126,7 @@ public class Settings implements Serializable {
         output.addNode(m_OutputPythonModel = new INIFileBool("OutputPythonModel", false));
         output.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
         output.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));
+        output.addNode(m_OutputClowdFlowsJSON = new INIFileBool("OutputClowdFlowsJSON", false));
 
         INIFileSection nominal = new INIFileSection("Nominal");
         nominal.addNode(m_MEstimate = new INIFileDouble("MEstimate", 1.0));
@@ -3245,8 +3298,8 @@ public class Settings implements Serializable {
         m_SectionRelief = new INIFileSection("Relief");
         m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("neighbours", NONELIST));
         m_ReliefNbNeighbours.setInt(RELIEF_NEIGHBOUR_DEFAULT);
-        m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrIntOrVector("iterations", NONELIST));
-        m_ReliefNbIterations.setInt(RELIEF_ITERATIONS_DEFAULT);        
+        m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("iterations", NONELIST));
+        m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);        
         m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("weightNeighbours", false));
         m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 2.0)); // following Weka,
                                                                                                     // the authors do
@@ -3485,4 +3538,7 @@ public class Settings implements Serializable {
     }
 
 
+    public void setOutputClowdFlows(boolean value) {
+        m_OutputClowdFlowsJSON.setValue(value);
+    }
 }

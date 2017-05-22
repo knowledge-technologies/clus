@@ -131,4 +131,9 @@ public class NominalCorrelation extends ClusNominalError {
         return "Cramer's V coefficient or Mutual information";
     }
 
+
+	public boolean shouldBeLow() { //previously, this method was in ClusError and returned true
+		throw new RuntimeException("should NominalCorrelation be high or low?");
+	}
+
 }

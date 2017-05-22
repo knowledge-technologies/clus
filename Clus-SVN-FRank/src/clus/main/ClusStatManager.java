@@ -77,6 +77,7 @@ import clus.error.MisclassificationError;
 import clus.error.OneError;
 import clus.error.PearsonCorrelation;
 import clus.error.RMSError;
+import clus.error.RRMSError;
 import clus.error.RankingLoss;
 import clus.error.SubsetAccuracy;
 import clus.error.multiscore.MultiScore;
@@ -437,7 +438,6 @@ public class ClusStatManager implements Serializable {
             m_Mode = MODE_REGRESSION;
             nb_types++;
         }
-        // check if this is multi-label classification: TODO: se da lepse?
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
         TimeSeriesAttrType[] ts = m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
@@ -480,7 +480,11 @@ public class ClusStatManager implements Serializable {
         if (nb_types == 0) {
             System.err.println("No target value defined");
         }
-        if (nb_types > 1) { throw new ClusException("Incompatible combination of clustering attribute types"); }
+        if (nb_types > 1) {
+        	if(!getSettings().isRelief()){
+        		throw new ClusException("Incompatible combination of clustering attribute types");
+        	}
+        }
     }
 
 
@@ -907,6 +911,7 @@ public class ClusStatManager implements Serializable {
             if (getSettings().hasNonTrivialWeights()) {
                 parent.addError(new RMSError(parent, num, m_NormalizationWeights));
             }
+            parent.addError(new RRMSError(parent, num));
             parent.addError(new PearsonCorrelation(parent, num));
         }
         if (ts.length != 0) {
@@ -1245,10 +1250,10 @@ public class ClusStatManager implements Serializable {
 
     public void updateStatistics(ClusModel model) throws ClusException {
         if (m_Hier != null) {
-            ArrayList stats = new ArrayList();
+            ArrayList<WHTDStatistic> stats = new ArrayList<WHTDStatistic>();
             model.retrieveStatistics(stats);
             for (int i = 0; i < stats.size(); i++) {
-                WHTDStatistic stat = (WHTDStatistic) stats.get(i);
+                WHTDStatistic stat = stats.get(i);
                 stat.setHier(m_Hier);
             }
         }
@@ -1256,14 +1261,14 @@ public class ClusStatManager implements Serializable {
 
 
     private void createHierarchy() {
-        int idx = 0;
+        // int idx = 0;
         for (int i = 0; i < m_Schema.getNbAttributes(); i++) {
             ClusAttrType type = m_Schema.getAttrType(i);
             if (!type.isDisabled() && type instanceof ClassesAttrType) {
                 ClassesAttrType cltype = (ClassesAttrType) type;
                 System.out.println("Classes type: " + type.getName());
                 m_Hier = cltype.getHier();
-                idx++;
+                // idx++;
             }
         }
     }

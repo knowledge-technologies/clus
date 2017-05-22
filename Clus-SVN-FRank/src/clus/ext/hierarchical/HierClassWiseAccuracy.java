@@ -293,4 +293,9 @@ public class HierClassWiseAccuracy extends ClusError {
         if (actually_has_class)
             m_NbPosActual[cls] += 1.0;
     }
+
+
+	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+		return false;
+	}
 }

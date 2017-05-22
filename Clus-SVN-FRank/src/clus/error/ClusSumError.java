@@ -109,4 +109,9 @@ public class ClusSumError extends ClusError {
     public ClusError getComponent(int i) {
         return (ClusError) m_Errors.get(i);
     }
+
+
+	public boolean shouldBeLow() {
+		return true;
+	}
 }
