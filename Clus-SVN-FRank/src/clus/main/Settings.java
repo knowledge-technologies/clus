@@ -3295,7 +3295,7 @@ public class Settings implements Serializable {
         m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("iterations", NONELIST));
         m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);        
         m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("weightNeighbours", false));
-        m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 2.0)); // following Weka,
+        m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 0.5)); // following Weka,
                                                                                                     // the authors do
                                                                                                     // not give any
                                                                                                     // suggestions

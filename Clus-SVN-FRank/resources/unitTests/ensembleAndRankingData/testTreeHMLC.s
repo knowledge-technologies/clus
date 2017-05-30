@@ -1,6 +1,7 @@
 [General]
 ResourceInfoLoaded = No
 Verbose = 1
+RandomSeed = 0
 
 [Data]
 File = C:/Users/matejp/git/clusfr/Clus-SVN-FRank/resources/unitTests/ensembleAndRankingData/testTreeHMLC.arff

@@ -272,7 +272,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param data The dataset under consideration.
      * @param numIterInd {@link #m_NbIterations}[numIterInd] equals the current number of iterations
      * @param successfulItearions {@code successfulItearions}[target + 1] equals the number of successful overall (if target = -1)
-     * or per-target (for the target with index target + 1) iterations.<p> Due to the missing values, some of these may not equal {@link #m_NbIterations}[numIterInd].
+     * or per-target (for the target with index target) iterations.<p> Due to the missing values, some of these may not equal {@link #m_NbIterations}[numIterInd].
      * @param shouldUpdate Tells, whether the given overall/per-target ranking statistics should be updated. Has the same structure as {@code successfulItearions}.
      * @throws InterruptedException
      */

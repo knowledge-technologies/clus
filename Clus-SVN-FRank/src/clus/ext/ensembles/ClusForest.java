@@ -211,10 +211,24 @@ public class ClusForest implements ClusModel, Serializable {
     }
     
     
-    public void updateCounts(ClusNode model){
-    	increaseNbModels(1);
-    	increaseNbNodes(model.getNbNodes());
-    	increaseNbLeaves(model.getNbLeaves());    	
+    public int[] updateCounts(ClusNode model){
+    	int models = 1;
+    	int nodes = model.getNbNodes();
+    	int leaves = model.getNbLeaves();
+    	updateCounts(models, nodes, leaves);
+    	return new int[]{models, nodes, leaves};
+    }
+    
+    /**
+     * Used for more efficient updating if the corresponding tree is a part of more than one forest.
+     * @param nbModels Should equal 1, i.e., a tree is one model
+     * @param nbNodes number of nodes in the tree
+     * @param nbLeaves number of leaves in the tree
+     */
+    public void updateCounts(int nbModels, int nbNodes, int nbLeaves){
+    	increaseNbModels(nbModels);
+    	increaseNbNodes(nbNodes);
+    	increaseNbLeaves(nbLeaves);    	
     }
 
     public String getModelInfo() {

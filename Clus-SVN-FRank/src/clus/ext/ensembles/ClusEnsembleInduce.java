@@ -79,6 +79,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     Clus m_BagClus;
     static ClusAttrType[] m_RandomSubspaces; // this field should be removed in the future
     ClusForest m_OForest;// Forest with the original models
+    
+    ClusForest[] m_OForests;
+    
     ClusForest m_DForest;
     static int m_Mode;
 
@@ -299,11 +302,22 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         m_FeatureRanking.initializeAttributes(schema.getDescriptiveAttributes(), nbRankings);
         
         m_OForest = new ClusForest(getStatManager(), m_Optimization);
+        
+        m_OForests = new ClusForest[m_OutEnsembleAt.length];
+        for(int i = 0; i < m_OForests.length; i++){
+        	m_OForests[i] = new ClusForest(getStatManager(), m_Optimization);
+        }
+        
+        
         m_DForest = new ClusForest(getStatManager(), m_Optimization);
         TupleIterator train_iterator = null; // = train set iterator
         TupleIterator test_iterator = null; // = test set iterator
 
         m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+        for(int i = 0; i < m_OForests.length; i++){
+        	m_OForests[i].addTargetSubspaceInfo(m_TargetSubspaceInfo);
+        }
+        
 
         if (m_OptMode) {
             train_iterator = cr.getTrainIter();
@@ -521,6 +535,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         OOBSelection oob_sel = null; // = current OOB selection
 
         m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+        for(int i = 0; i < m_OForests.length; i++){
+        	m_OForests[i].addTargetSubspaceInfo(m_TargetSubspaceInfo);
+        }
 
 
         // We store the old maxDepth to this if needed. Thus we get the right depth to .out files etc.
@@ -606,6 +623,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 OneBagResults results = future.get();
                 if(!m_OptMode){
                 	m_OForest.addModelToForest(results.getModel());
+                	for(int forest = m_OForests.length - 1; forest >= 0; forest--){
+                		if (m_OutEnsembleAt[forest] >= i){
+                			m_OForests[forest].addModelToForest(results.getModel());
+                		} else{
+                			break;
+                		}
+                	}
                 }
                 if (getSettings().shouldPerformRanking()) {
                     m_FeatureRanking.putAttributesInfos(results.getFimportances());
@@ -834,7 +858,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         //m_SummTime += ResourceInfo.getTime() - one_bag_time;
         one_bag_time = ResourceInfo.getTime() - one_bag_time;
         
-        m_OForest.updateCounts((ClusNode) model);
+        int[] additionalModelsNodesLeaves = m_OForest.updateCounts((ClusNode) model);
+        for(int ii = m_OForests.length - 1; ii >= 0; ii--){
+        	if (m_OutEnsembleAt[ii] >= i){
+        		m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);
+        	} else{
+        		break;        		
+        	}
+        }
 
         // OOB estimate for the parallel implementation is done in makeForestFromBags method <--- matejp: This is some
         // old parallelisation
@@ -1249,6 +1280,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         ClusModelInfo orig_info = cr.addModelInfo("Original");
         orig_info.setModel(m_OForest);
+        
+        for(int i = 0; i < m_OForests.length; i++){
+        	int nbTrees = m_OForests[i].getNbModels();
+        	ClusModelInfo moj_info = cr.addModelInfo(String.format("Forest with %d tree%s", nbTrees, nbTrees == 1 ? "" : "s"));
+        	moj_info.setModel(m_OForests[i]);
+        }
 
         // Application of Thresholds for HMC
         if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
