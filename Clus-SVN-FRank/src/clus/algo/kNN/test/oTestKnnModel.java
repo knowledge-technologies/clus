@@ -48,6 +48,7 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import com.google.gson.JsonObject;
 
 
 /**
@@ -192,6 +193,21 @@ public class oTestKnnModel implements ClusModel, Serializable {
 
     public void printModelToPythonScript(PrintWriter wrt) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToPythonScript() - Not supported yet for kNN.");
+    }
+
+    @Override
+    public JsonObject getModelJSON() {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
     }
 
 

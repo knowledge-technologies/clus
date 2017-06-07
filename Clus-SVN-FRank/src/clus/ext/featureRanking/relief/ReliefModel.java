@@ -17,6 +17,7 @@ import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import com.google.gson.JsonObject;
 
 
 public class ReliefModel implements ClusModel {
@@ -132,6 +133,21 @@ public class ReliefModel implements ClusModel {
     public void printModelToPythonScript(PrintWriter wrt) {
         // TODO Auto-generated method stub
 
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON() {
+        return null;
     }
 
 

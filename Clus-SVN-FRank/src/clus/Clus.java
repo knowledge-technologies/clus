@@ -138,9 +138,9 @@ public class Clus implements CMDLineArgsProvider {
 
     // exhaustive was added the 1/08/2006
     // relief was added 29/08/2016
-    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc" };
+    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc", "clowdflows" };
 
-    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0 };
+    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
 
     protected Settings m_Sett = new Settings();
     protected ClusSummary m_Summary = new ClusSummary();
@@ -1830,6 +1830,10 @@ public class Clus implements CMDLineArgsProvider {
                         clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
                 }
 
+                if (cargs.hasOption("clowdflows")) {
+                    clus.getSettings().setOutputClowdFlows(true);
+                }
+
                 /**
                  * The second group of command line parameters is for
                  * miscellaneous action. The options are corrmatrix, info,
@@ -1907,26 +1911,32 @@ public class Clus implements CMDLineArgsProvider {
         catch (ClusException e) {
             System.err.println();
             System.err.println("Error: " + e);
+            System.exit(-1);
         }
         catch (IllegalArgumentException e) {
             System.err.println();
             System.err.println("Error: " + e.getMessage());
+            System.exit(-1);
         }
         catch (FileNotFoundException e) {
             System.err.println();
             System.err.println("File not found: " + e);
+            System.exit(-1);
         }
         catch (IOException e) {
             System.err.println();
             System.err.println("IO Error: " + e);
+            System.exit(-1);
         }
         catch (ClassNotFoundException e) {
             System.err.println();
             System.err.println("Class not found" + e);
+            System.exit(-1);
         }
         catch (InterruptedException e) {
             System.err.println();
             System.err.println("Error: " + e);
+            System.exit(-1);
         }
     }
 }
