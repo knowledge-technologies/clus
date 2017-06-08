@@ -19,7 +19,9 @@ public class ClusEnsembleROSInfo implements Serializable {
     private static final long serialVersionUID = -8192393874827673204L;
     ArrayList<int[]> m_AllSubspaces;
     double[] m_Coverage; // how many times a target was used (per-target)
+    int[] m_CoverageOpt; // used when running ROS ensembles are running in optimized mode (this is a per-target counter)
     double m_AverageTargetsUsed; // average number of targets used in the ensemble
+    
     ClusSchema m_Schema;
 
 
@@ -27,6 +29,9 @@ public class ClusEnsembleROSInfo implements Serializable {
         m_AllSubspaces = info;
         m_Schema = schema;
         calculateCoverage();
+        
+        m_CoverageOpt = new int[m_Schema.getNbTargetAttributes()];
+        for (int i = 0; i < m_CoverageOpt.length; i++) m_CoverageOpt[i] = 0;
     }
 
 
@@ -148,5 +153,17 @@ public class ClusEnsembleROSInfo implements Serializable {
             }
         }
         return cnt;
+    }
+    
+    /** Used when ensembles run in optimized mode */
+    public void incrementCoverageOpt(int[] enabled) {
+        for (int b = 0; b < enabled.length; b++) {
+            if (enabled[b] == 1) m_CoverageOpt[b]++;
+        }
+    }
+    
+    /** Used when ensembles run in optimized mode */
+    public int getCoverageOpt(int target) {
+        return m_CoverageOpt[target];
     }
 }

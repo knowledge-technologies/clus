@@ -1121,10 +1121,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     public void vote(ArrayList<ClusStatistic> votes) {
         switch (Settings.m_ClassificationVoteType.getValue()) {
-            case 0:
+            case Settings.VOTING_TYPE_MAJORITY:
                 voteMajority(votes);
                 break;
-            case 1:
+            case Settings.VOTING_TYPE_PROBAB_DISTR: 
                 voteProbDistr(votes);
                 break;
             default:
@@ -1135,10 +1135,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         switch (Settings.m_ClassificationVoteType.getValue()) {
-            case 0:
+            case Settings.VOTING_TYPE_MAJORITY:
                 voteMajority(votes, targetSubspaceInfo);
                 break;
-            case 1:
+            case Settings.VOTING_TYPE_PROBAB_DISTR:
                 voteProbDistr(votes, targetSubspaceInfo);
                 break;
             default:

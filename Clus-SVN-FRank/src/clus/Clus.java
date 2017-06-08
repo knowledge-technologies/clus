@@ -829,7 +829,12 @@ public class Clus implements CMDLineArgsProvider {
 
         ModelProcessorCollection allcoll = cr.getAllModelsMI().getAddModelProcessors(type);
         DataTuple tuple = iter.readTuple();
+        
+        int cnt = 0;
+        
         while (tuple != null) {
+            cnt++;
+            
             allcoll.exampleUpdate(tuple);
             for (int i = 0; i < cr.getNbModels(); i++) {
                 ClusModelInfo mi = cr.getModelInfo(i);
@@ -856,6 +861,11 @@ public class Clus implements CMDLineArgsProvider {
             }
             allcoll.exampleDone();
             tuple = iter.readTuple();
+            
+            if (cnt % 1000 == 0) {
+                allcoll.flushWriter();
+                cnt = 0;
+            }
         }
         iter.close();
         cr.termModelProcessors(type);

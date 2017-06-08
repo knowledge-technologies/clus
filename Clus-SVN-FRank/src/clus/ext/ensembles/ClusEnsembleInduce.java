@@ -320,7 +320,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 if (m_Mode == ClusStatManager.MODE_CLASSIFY)
                     m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator);//, cr.getTrainingSet().getNbRows());
             }
-            m_Optimization.initPredictions(m_OForest.getStat());
+            m_Optimization.initPredictions(m_OForest.getStat(), m_EnsembleROSInfo);
             
             m_OForest.setOptimization(m_Optimization);
             m_DForest.setOptimization(m_Optimization);

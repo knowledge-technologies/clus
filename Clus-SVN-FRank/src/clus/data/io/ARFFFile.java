@@ -201,6 +201,8 @@ public class ARFFFile {
         }
         if (!schema.getSettings().shouldWritePredictionsFromEnsemble())
             wrt.println();
+        
+        wrt.flush();
     }
 
 
