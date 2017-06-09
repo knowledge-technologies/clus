@@ -20,41 +20,37 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.mlc;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
 import clus.main.Settings;
-import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 
 /**
  * @author matejp
- *
- *         Ranking loss is used in multi-label classification scenario.
+ * 
+ *         Hamming loss is used in multi-label classification scenario.
  */
-public class RankingLoss extends ClusNominalError {
+public class HammingLoss extends ClusNominalError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    protected double m_NonnormalisedLoss;// sum over samples sample_i of the terms t_i = |D_i| / (|Y_i| |L \ Y_i|),
-                                         // where L is the set of labels, Y_i is the predicted set of labels,
-                                         // and D_i is the set of pairs (l1, l2), such that l1 is falsely positive and
-                                         // l2 is falsely negative.
-                                         // If Y_i is either empty set or it equals L, then t_i = 0
+    protected int m_NbWrong;// sum of |prediction(sample_i) SYMMETRIC DIFFERENCE target(sample_i)|, where prediction
+                            // (target) of a sample_i is the predicted (true) label set.
     protected int m_NbKnown;// number of the examples seen
 
 
-    public RankingLoss(ClusErrorList par, NominalAttrType[] nom) {
+    public HammingLoss(ClusErrorList par, NominalAttrType[] nom) {
         super(par, nom);
-        m_NonnormalisedLoss = 0.0;
+        m_NbWrong = 0;
         m_NbKnown = 0;
     }
 
@@ -65,15 +61,15 @@ public class RankingLoss extends ClusNominalError {
 
 
     public void reset() {
-        m_NonnormalisedLoss = 0.0;
+        m_NbWrong = 0;
         m_NbKnown = 0;
     }
 
 
     public void add(ClusError other) {
-        RankingLoss rl = (RankingLoss) other;
-        m_NonnormalisedLoss += rl.m_NonnormalisedLoss;
-        m_NbKnown += rl.m_NbKnown;
+        HammingLoss ham = (HammingLoss) other;
+        m_NbWrong += ham.m_NbWrong;
+        m_NbKnown += ham.m_NbKnown;
     }
 
 
@@ -82,13 +78,13 @@ public class RankingLoss extends ClusNominalError {
         showModelError(out, detail ? 1 : 0);
     }
     // // A MA TO SPLOH SMISU?
-    // public double getRankingLoss(int i) {
+    // public double getHammingLoss(int i) {
     // return getModelErrorComponent(i);
     // }
 
 
     public double getModelError() {
-        return m_NonnormalisedLoss / m_NbKnown;
+        return ((double) m_NbWrong) / m_Dim / m_NbKnown;
     }
 
 
@@ -98,61 +94,48 @@ public class RankingLoss extends ClusNominalError {
 
 
     public String getName() {
-        return "RankingLoss";
+        return "HammingLoss";
     }
 
 
     public ClusError getErrorClone(ClusErrorList par) {
-        return new RankingLoss(par, m_Attrs);
+        return new HammingLoss(par, m_Attrs);
     }
 
 
     public void addExample(DataTuple tuple, ClusStatistic pred) {
-        final double[] scores = ((ClassificationStat) pred).calcScores();
-        int wrongPairs = 0;
-        int nbIrrelevant = 0, nbRelevant = 0;
-        ArrayList<Integer> indicesOfKnownValues = new ArrayList<Integer>();
+        int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
+        boolean atLeastOneKnown = false;
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
-                indicesOfKnownValues.add(i);
+                atLeastOneKnown = true;
+                if (attr.getNominal(tuple) != predicted[i]) {
+                    m_NbWrong++;
+                }
             }
         }
-
-        Collections.sort(indicesOfKnownValues, new Comparator<Integer>() {
-
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return -Double.compare(scores[o1], scores[o2]);
-            }
-        });
-
-        for (int i = 0; i < indicesOfKnownValues.size(); i++) { // possible improvement: break, when you reach the
-                                                                // relevant label with the lowest score
-            attr = getAttr(indicesOfKnownValues.get(i));
-            if (attr.getNominal(tuple) == 0) {
-                wrongPairs += nbIrrelevant;
-                nbRelevant++;
-            }
-            else {
-                nbIrrelevant++;
-            }
+        if (atLeastOneKnown) {
+            m_NbKnown++;
         }
-        if (nbRelevant > 0 && nbIrrelevant > 0) {
-            m_NonnormalisedLoss += ((double) wrongPairs) / (nbRelevant * nbIrrelevant);
-        }
-        m_NbKnown++;
     }
 
 
     public void addExample(DataTuple tuple, DataTuple pred) {
-        try {
-            throw new Exception("RankingLoss.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
+        boolean atLeastOneKnown = false;
+        NominalAttrType attr;
+        for (int i = 0; i < m_Dim; i++) {
+            attr = getAttr(i);
+            if (!attr.isMissing(tuple)) {
+                atLeastOneKnown = true;
+                if (attr.getNominal(tuple) != attr.getNominal(pred)) {
+                    m_NbWrong++;
+                }
+            }
         }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        if (atLeastOneKnown) {
+            m_NbKnown++;
         }
     }
 

@@ -20,13 +20,16 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.mlc;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
@@ -36,14 +39,14 @@ import clus.util.ClusFormat;
  * @author matejp
  * 
  */
-public class MacroFOne extends ClusNominalError implements ComponentError {
+public class MicroFOne extends ClusNominalError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected int[] m_NbTruePositives, m_NbFalsePositives, m_NbFalseNegatives;
 
 
-    public MacroFOne(ClusErrorList par, NominalAttrType[] nom) {
+    public MicroFOne(ClusErrorList par, NominalAttrType[] nom) {
         super(par, nom);
         m_NbTruePositives = new int[m_Dim];
         m_NbFalsePositives = new int[m_Dim];
@@ -64,7 +67,7 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
 
 
     public void add(ClusError other) {
-        MacroFOne mF1 = (MacroFOne) other;
+        MicroFOne mF1 = (MicroFOne) other;
         for (int i = 0; i < m_Dim; i++) {
             m_NbTruePositives[i] += mF1.m_NbTruePositives[i];
             m_NbFalsePositives[i] += mF1.m_NbFalsePositives[i];
@@ -78,43 +81,36 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
-    public double getMacroFOne(int i) {
-        return getModelErrorComponent(i);
+    public double getMicroFOne(int i) {
+        throw new RuntimeException("Not implemented.");
+        // return getModelErrorComponent(i);
     }
-
-
-    public double getModelErrorComponent(int i) {
-        double prec = ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
-        double recall = ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalseNegatives[i]);
-        return 2.0 * prec * recall / (prec + recall);
-    }
-
 
     public double getModelError() {
-        double avg = 0.0;
+        int truePositives = 0, falsePositives = 0, falseNegatives = 0;
         for (int i = 0; i < m_Dim; i++) {
-            avg += getModelErrorComponent(i);
+            truePositives += m_NbTruePositives[i];
+            falsePositives += m_NbFalsePositives[i];
+            falseNegatives += m_NbFalseNegatives[i];
         }
-        return avg / m_Dim;
+        double precision = ((double) truePositives) / (truePositives + falsePositives);
+        double recall = ((double) truePositives) / (truePositives + falseNegatives);
+        return 2.0 * precision * recall / (precision + recall);
     }
 
 
     public void showModelError(PrintWriter out, int detail) {
-        String[] componentErrors = new String[m_Dim];
-        for (int i = 0; i < m_Dim; i++) {
-            componentErrors[i] = ClusFormat.FOUR_AFTER_DOT.format(getModelErrorComponent(i));
-        }
-        out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()) + " (" + Arrays.toString(componentErrors) + ")");
+        out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
     public String getName() {
-        return "MacroFOne";
+        return "MicroFOne";
     }
 
 
     public ClusError getErrorClone(ClusErrorList par) {
-        return new MacroFOne(par, m_Attrs);
+        return new MicroFOne(par, m_Attrs);
     }
 
 

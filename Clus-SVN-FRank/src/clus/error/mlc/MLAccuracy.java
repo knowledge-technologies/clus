@@ -20,12 +20,15 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.mlc;
 
 import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
@@ -34,22 +37,21 @@ import clus.util.ClusFormat;
 /**
  * @author matejp
  * 
- *         MLPrecision is used in multi-label classification scenario.
+ *         MLAccuracy is used in multi-label classification scenario.
  */
-public class MLPrecision extends ClusNominalError {
+public class MLAccuracy extends ClusNominalError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    protected double m_PrecisionSum; // sum of |prediction(sample_i) INTERSECTION target(sample_i)| /
-                                     // |prediction(sample_i)|,
-                                     // where prediction (target) of a sample_i is the predicted (true) label set.
-
+    protected double m_JaccardSum; // sum of |prediction(sample_i) INTERSECTION target(sample_i)| /
+                                   // |prediction(sample_i) UNION target(sample_i)|,
+                                   // where prediction (target) of a sample_i is the predicted (true) label set.
     protected int m_NbKnown; // number of the examples seen with at least one known target value
 
 
-    public MLPrecision(ClusErrorList par, NominalAttrType[] nom) {
+    public MLAccuracy(ClusErrorList par, NominalAttrType[] nom) {
         super(par, nom);
-        m_PrecisionSum = 0.0;
+        m_JaccardSum = 0.0;
         m_NbKnown = 0;
     }
 
@@ -60,15 +62,15 @@ public class MLPrecision extends ClusNominalError {
 
 
     public void reset() {
-        m_PrecisionSum = 0.0;
+        m_JaccardSum = 0.0;
         m_NbKnown = 0;
     }
 
 
     public void add(ClusError other) {
-        MLPrecision mlcr = (MLPrecision) other;
-        m_PrecisionSum += mlcr.m_PrecisionSum;
-        m_NbKnown += mlcr.m_NbKnown;
+        MLAccuracy mlca = (MLAccuracy) other;
+        m_JaccardSum += mlca.m_JaccardSum;
+        m_NbKnown += mlca.m_NbKnown;
     }
 
 
@@ -77,13 +79,13 @@ public class MLPrecision extends ClusNominalError {
         showModelError(out, detail ? 1 : 0);
     }
     // // A MA TO SPLOH SMISU?
-    // public double getMLPrecision(int i) {
+    // public double getMLAccuracy(int i) {
     // return getModelErrorComponent(i);
     // }
 
 
     public double getModelError() {
-        return m_PrecisionSum / m_NbKnown;
+        return m_JaccardSum / m_NbKnown;
     }
 
 
@@ -93,12 +95,12 @@ public class MLPrecision extends ClusNominalError {
 
 
     public String getName() {
-        return "MLPrecision";
+        return "MLAccuracy";
     }
 
 
     public ClusError getErrorClone(ClusErrorList par) {
-        return new MLPrecision(par, m_Attrs);
+        return new MLAccuracy(par, m_Attrs);
     }
 
 
@@ -106,29 +108,23 @@ public class MLPrecision extends ClusNominalError {
         int[] predicted = pred.getNominalPred(); // predicted[i] == 0 IFF label_i is predicted to be relevant for the
                                                  // example
         NominalAttrType attr;
-        int intersection = 0, nbRelevant = 0, nbRelevantPredicted = 0;
+        int intersection = 0, union = 0;
         boolean atLeastOneKnown = false;
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
                 atLeastOneKnown = true;
-                if (predicted[i] == 0) {
-                    nbRelevantPredicted++;
-                    if (attr.getNominal(tuple) == 0) {
-                        intersection++;
-                    }
+                if (attr.getNominal(tuple) == 0 && predicted[i] == 0) { // both relevant
+                    union++;
+                    intersection++;
                 }
-                if (attr.getNominal(tuple) == 0) {
-                    nbRelevant++;
+                else if (!(attr.getNominal(tuple) == 1 && predicted[i] == 1)) { // precisely one relevant
+                    union++;
                 }
             }
         }
         if (atLeastOneKnown) {
-            m_PrecisionSum += nbRelevantPredicted != 0 ? ((double) intersection) / nbRelevantPredicted : (nbRelevant == 0 ? 1.0 : 0.0); // take
-                                                                                                                                        // care
-                                                                                                                                        // of
-                                                                                                                                        // degenerated
-                                                                                                                                        // cases
+            m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of the degenerated case
             m_NbKnown++;
         }
     }
@@ -136,29 +132,23 @@ public class MLPrecision extends ClusNominalError {
 
     public void addExample(DataTuple tuple, DataTuple pred) {
         NominalAttrType attr;
-        int intersection = 0, nbRelevant = 0, nbRelevantPredicted = 0;
+        int intersection = 0, union = 0;
         boolean atLeastOneKnown = false;
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
                 atLeastOneKnown = true;
-                if (attr.getNominal(pred) == 0) {
-                    nbRelevantPredicted++;
-                    if (attr.getNominal(tuple) == 0) {
-                        intersection++;
-                    }
+                if (attr.getNominal(tuple) == 0 && attr.getNominal(pred) == 0) { // both relevant
+                    union++;
+                    intersection++;
                 }
-                if (attr.getNominal(tuple) == 0) {
-                    nbRelevant++;
+                else if (!(attr.getNominal(tuple) == 1 && attr.getNominal(pred) == 1)) { // precisely one relevant
+                    union++;
                 }
             }
         }
         if (atLeastOneKnown) {
-            m_PrecisionSum += nbRelevantPredicted != 0 ? ((double) intersection) / nbRelevantPredicted : (nbRelevant == 0 ? 1.0 : 0.0); // take
-                                                                                                                                        // care
-                                                                                                                                        // of
-                                                                                                                                        // degenerated
-                                                                                                                                        // cases
+            m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of the degenerated case
             m_NbKnown++;
         }
     }

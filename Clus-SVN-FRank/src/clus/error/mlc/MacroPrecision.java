@@ -20,13 +20,17 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.mlc;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
+import clus.error.ComponentError;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
@@ -36,14 +40,14 @@ import clus.util.ClusFormat;
  * @author matejp
  * 
  */
-public class MicroPrecision extends ClusNominalError {
+public class MacroPrecision extends ClusNominalError implements ComponentError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected int[] m_NbTruePositives, m_NbFalsePositives;
 
 
-    public MicroPrecision(ClusErrorList par, NominalAttrType[] nom) {
+    public MacroPrecision(ClusErrorList par, NominalAttrType[] nom) {
         super(par, nom);
         m_NbTruePositives = new int[m_Dim];
         m_NbFalsePositives = new int[m_Dim];
@@ -62,7 +66,7 @@ public class MicroPrecision extends ClusNominalError {
 
 
     public void add(ClusError other) {
-        MicroPrecision mp = (MicroPrecision) other;
+        MacroPrecision mp = (MacroPrecision) other;
         for (int i = 0; i < m_Dim; i++) {
             m_NbTruePositives[i] += mp.m_NbTruePositives[i];
             m_NbFalsePositives[i] += mp.m_NbFalsePositives[i];
@@ -75,38 +79,41 @@ public class MicroPrecision extends ClusNominalError {
     }
 
 
-    public double getMicroPrecision(int i) {
+    public double getMacroPrecision(int i) {
         return getModelErrorComponent(i);
     }
 
 
-    // Nima smisla ...
-    // public double getModelErrorComponent(int i) {
-    // return ((double)m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
-    // }
+    public double getModelErrorComponent(int i) {
+        return ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
+    }
+
 
     public double getModelError() {
-        int truePositives = 0, falsePositives = 0;
+        double avg = 0.0;
         for (int i = 0; i < m_Dim; i++) {
-            truePositives += m_NbTruePositives[i];
-            falsePositives += m_NbFalsePositives[i];
+            avg += getModelErrorComponent(i);
         }
-        return ((double) truePositives) / (truePositives + falsePositives);
+        return avg / m_Dim;
     }
 
 
     public void showModelError(PrintWriter out, int detail) {
-        out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
+        String[] componentErrors = new String[m_Dim];
+        for (int i = 0; i < m_Dim; i++) {
+            componentErrors[i] = ClusFormat.FOUR_AFTER_DOT.format(getModelErrorComponent(i));
+        }
+        out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()) + " (" + Arrays.toString(componentErrors) + ")");
     }
 
 
     public String getName() {
-        return "MicroPrecision";
+        return "MacroPrecision";
     }
 
 
     public ClusError getErrorClone(ClusErrorList par) {
-        return new MicroPrecision(par, m_Attrs);
+        return new MacroPrecision(par, m_Attrs);
     }
 
 

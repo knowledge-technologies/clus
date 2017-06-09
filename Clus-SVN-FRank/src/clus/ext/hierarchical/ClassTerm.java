@@ -79,7 +79,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
     public ClassTerm getParent(int i) {
         return (ClassTerm) m_Parents.get(i);
     }
-
+    
 
     public boolean isNumeric() {
         for (int i = 0; i < m_ID.length(); i++) {

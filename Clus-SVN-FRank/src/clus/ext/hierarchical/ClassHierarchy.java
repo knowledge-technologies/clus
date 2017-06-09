@@ -745,4 +745,16 @@ public class ClassHierarchy implements Serializable {
         val.setClassTerm(term);
         return val;
     }
+    
+    /**
+     * Computes whether a given class term index corresponds to a leaf in the hierarchy or not.
+     * @return list, whose i-th element equals i-th term is leaf.
+     */
+    public boolean[] getIsLeafVector(){
+    	boolean[] answer = new boolean[m_ClassList.size()];
+    	for(int classInd = 0; classInd < answer.length; classInd++){
+    		answer[classInd] = getTermAt(classInd).atBottomLevel();
+    	}
+    	return answer;
+    }
 }

@@ -20,12 +20,16 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.mlc;
 
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
@@ -34,22 +38,18 @@ import clus.util.ClusFormat;
 /**
  * @author matejp
  * 
- *         MLAccuracy is used in multi-label classification scenario.
  */
-public class MLAccuracy extends ClusNominalError {
+public class MicroRecall extends ClusNominalError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    protected double m_JaccardSum; // sum of |prediction(sample_i) INTERSECTION target(sample_i)| /
-                                   // |prediction(sample_i) UNION target(sample_i)|,
-                                   // where prediction (target) of a sample_i is the predicted (true) label set.
-    protected int m_NbKnown; // number of the examples seen with at least one known target value
+    protected int[] m_NbTruePositives, m_NbFalseNegatives;
 
 
-    public MLAccuracy(ClusErrorList par, NominalAttrType[] nom) {
+    public MicroRecall(ClusErrorList par, NominalAttrType[] nom) {
         super(par, nom);
-        m_JaccardSum = 0.0;
-        m_NbKnown = 0;
+        m_NbTruePositives = new int[m_Dim];
+        m_NbFalseNegatives = new int[m_Dim];
     }
 
 
@@ -59,30 +59,41 @@ public class MLAccuracy extends ClusNominalError {
 
 
     public void reset() {
-        m_JaccardSum = 0.0;
-        m_NbKnown = 0;
+        Arrays.fill(m_NbTruePositives, 0);
+        Arrays.fill(m_NbFalseNegatives, 0);
     }
 
 
     public void add(ClusError other) {
-        MLAccuracy mlca = (MLAccuracy) other;
-        m_JaccardSum += mlca.m_JaccardSum;
-        m_NbKnown += mlca.m_NbKnown;
+        MicroRecall mr = (MicroRecall) other;
+        for (int i = 0; i < m_Dim; i++) {
+            m_NbTruePositives[i] += mr.m_NbTruePositives[i];
+            m_NbFalseNegatives[i] += mr.m_NbFalseNegatives[i];
+        }
     }
 
 
-    // NEDOTAKNJENO
     public void showSummaryError(PrintWriter out, boolean detail) {
         showModelError(out, detail ? 1 : 0);
     }
-    // // A MA TO SPLOH SMISU?
-    // public double getMLAccuracy(int i) {
-    // return getModelErrorComponent(i);
+
+
+    public double getMicroRecall(int i) {
+        return getModelErrorComponent(i);
+    }
+    // Nima smisla ...
+    // public double getModelErrorComponent(int i) {
+    // return ((double)m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalseNegatives[i]);
     // }
 
 
     public double getModelError() {
-        return m_JaccardSum / m_NbKnown;
+        int truePositives = 0, falseNegatives = 0;
+        for (int i = 0; i < m_Dim; i++) {
+            truePositives += m_NbTruePositives[i];
+            falseNegatives += m_NbFalseNegatives[i];
+        }
+        return ((double) truePositives) / (truePositives + falseNegatives);
     }
 
 
@@ -92,67 +103,52 @@ public class MLAccuracy extends ClusNominalError {
 
 
     public String getName() {
-        return "MLAccuracy";
+        return "MicroRecall";
     }
 
 
     public ClusError getErrorClone(ClusErrorList par) {
-        return new MLAccuracy(par, m_Attrs);
+        return new MicroRecall(par, m_Attrs);
     }
 
 
     public void addExample(DataTuple tuple, ClusStatistic pred) {
-        int[] predicted = pred.getNominalPred(); // predicted[i] == 0 IFF label_i is predicted to be relevant for the
-                                                 // example
+        int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
-        int intersection = 0, union = 0;
-        boolean atLeastOneKnown = false;
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
-                atLeastOneKnown = true;
-                if (attr.getNominal(tuple) == 0 && predicted[i] == 0) { // both relevant
-                    union++;
-                    intersection++;
-                }
-                else if (!(attr.getNominal(tuple) == 1 && predicted[i] == 1)) { // precisely one relevant
-                    union++;
+                if (attr.getNominal(tuple) == 0) { // label relevant
+                    if (predicted[i] == 0) {
+                        m_NbTruePositives[i]++;
+                    }
+                    else {
+                        m_NbFalseNegatives[i]++;
+                    }
                 }
             }
-        }
-        if (atLeastOneKnown) {
-            m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of the degenerated case
-            m_NbKnown++;
         }
     }
 
 
     public void addExample(DataTuple tuple, DataTuple pred) {
         NominalAttrType attr;
-        int intersection = 0, union = 0;
-        boolean atLeastOneKnown = false;
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
-                atLeastOneKnown = true;
-                if (attr.getNominal(tuple) == 0 && attr.getNominal(pred) == 0) { // both relevant
-                    union++;
-                    intersection++;
-                }
-                else if (!(attr.getNominal(tuple) == 1 && attr.getNominal(pred) == 1)) { // precisely one relevant
-                    union++;
+                if (attr.getNominal(tuple) == 0) { // label relevant
+                    if (attr.getNominal(pred) == 0) {
+                        m_NbTruePositives[i]++;
+                    }
+                    else {
+                        m_NbFalseNegatives[i]++;
+                    }
                 }
             }
         }
-        if (atLeastOneKnown) {
-            m_JaccardSum += union != 0 ? ((double) intersection) / union : 1.0; // take care of the degenerated case
-            m_NbKnown++;
-        }
     }
 
 
-    // NEDOTAKNJENO
     public void addInvalid(DataTuple tuple) {
     }
-
 }
