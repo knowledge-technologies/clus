@@ -1,83 +1,0 @@
-10
-
-dir
-794
-https://clus.svn.sourceforge.net/svnroot/clus/trunk/jeans
-https://clus.svn.sourceforge.net/svnroot/clus
-
-
-
-2011-07-07T13:01:10.201672Z
-736
-dennyverbeeck
-has-props
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-1ed6275f-fa47-4a32-9272-b133f8fb113e
-
-graph
-dir
-
-io
-dir
-
-list
-dir
-
-makejar.bat
-file
-
-
-
-
-2013-02-07T13:55:47.000000Z
-ec105777358112bf212faacc7b3f893a
-2008-10-14T07:33:58.000000Z
-374
-jan
-has-props
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-181
-
-math
-dir
-
-resource
-dir
-
-tree
-dir
-
-util
-dir
-

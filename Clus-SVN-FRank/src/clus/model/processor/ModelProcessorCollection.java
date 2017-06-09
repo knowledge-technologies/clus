@@ -114,6 +114,12 @@ public class ModelProcessorCollection extends MyArray {
         }
     }
 
+    public final void flushWriter() {
+        for (int j = 0; j < size(); j++) {
+            ClusModelProcessor proc = (ClusModelProcessor) elementAt(j);
+            proc.flushWriter();
+        }
+    }
 
     public final void exampleUpdate(DataTuple tuple, ClusStatistic distr) throws IOException {
         for (int j = 0; j < size(); j++) {

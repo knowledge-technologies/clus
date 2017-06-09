@@ -37,7 +37,7 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
-import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
+import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.jeans.util.StringUtils;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
@@ -376,7 +376,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
-    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         reset();
         m_Means = new double[m_NbAttrs];
         double[] coverage = targetSubspaceInfo.getCoverage();

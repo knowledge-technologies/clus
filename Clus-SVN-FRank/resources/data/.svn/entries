@@ -1,159 +1,0 @@
-10
-
-dir
-794
-https://clus.svn.sourceforge.net/svnroot/clus/trunk/data
-https://clus.svn.sourceforge.net/svnroot/clus
-
-
-
-2012-11-29T13:38:21.980401Z
-772
-celinevens
-has-props
-
-svn:special svn:externals svn:needs-lock
-
-
-
-
-
-
-
-
-
-
-
-1ed6275f-fa47-4a32-9272-b133f8fb113e
-
-benchmark
-dir
-
-bridges
-dir
-
-church_FUN
-dir
-
-cleanall
-file
-
-
-
-
-2013-02-07T13:56:41.000000Z
-7771038d049f81d94c2ca8e9078186d9
-2008-07-28T16:20:59.000000Z
-355
-jan
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-297
-
-cpu
-dir
-
-hierdist
-dir
-
-ilevelc
-dir
-
-iris
-dir
-
-iris-semisup
-dir
-
-multitest
-dir
-
-numerictest
-dir
-
-phylo
-dir
-
-release
-dir
-
-release-s-files.txt
-file
-
-
-
-
-2013-02-07T13:56:40.000000Z
-cde8c6a8a71fffd708562e58de26e068
-2010-01-17T14:37:38.000000Z
-650
-jan
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-3502
-
-rfbfi
-dir
-
-solar-flare-1-num
-dir
-
-soybean
-dir
-
-sparse
-dir
-
-sspd
-dir
-
-test_m5_prune
-dir
-
-toyHMC
-dir
-
-weather
-dir
-
-wine
-dir
-

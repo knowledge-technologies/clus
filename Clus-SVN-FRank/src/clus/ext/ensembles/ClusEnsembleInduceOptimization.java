@@ -8,12 +8,14 @@ import java.util.HashMap;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.TupleIterator;
+import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 
 
 public abstract class ClusEnsembleInduceOptimization implements Serializable{
+
 
     // protected int[] m_HashCodeTuple; // train + test tuples: m_HashCodeTuple[i] = hash of the i-th tuple
 	/** The keys are (hashes of) DataTuples, which are mapped to the position of the tuple in the predictions */
@@ -26,6 +28,8 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable{
     protected ClusReadWriteLock m_NbUpdatesLock = new ClusReadWriteLock();
     protected ClusReadWriteLock m_AvgPredictionsLock = new ClusReadWriteLock();
     
+    /** For ROS ensembles */
+    protected ClusEnsembleROSInfo m_EnsembleROSInfo = null;
 
     public ClusEnsembleInduceOptimization(TupleIterator train, TupleIterator test) throws IOException, ClusException {
         // m_HashCodeTuple = new int[nb_tuples];
@@ -98,13 +102,13 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable{
     }
     
     
-    public abstract void initPredictions(ClusStatistic stat);
+    public abstract void initPredictions(ClusStatistic stat, ClusEnsembleROSInfo ensembleROSInfo);
 
     public abstract void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException;
-    @Deprecated
-    public abstract void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException;
-    @Deprecated
-    public abstract void addModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test, int nb_models) throws IOException, ClusException;
+    //@Deprecated
+    //public abstract void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException;
+    //@Deprecated
+    //public abstract void addModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test, int nb_models) throws IOException, ClusException;
     
     
 
@@ -125,16 +129,35 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable{
         return result;
     }
 
-
     public double[][] incrementPredictions(double[][] sum_predictions, double[][] predictions, int nb_models) {
         // the current sums are stored in sum_predictions
         double[][] result = new double[sum_predictions.length][];
-        for (int i = 0; i < sum_predictions.length; i++) {
-            result[i] = new double[sum_predictions[i].length];
-            for (int j = 0; j < sum_predictions[i].length; j++) {
-                result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) / nb_models;
+        
+        if (Settings.isEnsembleROSEnabled() && Settings.getEnsembleROSScope() == Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING) {
+            int[] enabled = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(nb_models-1)); // get enabled targets for the model
+            
+            for (int i = 0; i < sum_predictions.length; i++) {
+                if (enabled[i] == 1) {
+                    result[i] = new double[sum_predictions[i].length];
+                    // if target is enables, then update results[i][j]
+                    for (int j = 0; j < sum_predictions[i].length; j++) {
+                        result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) / m_EnsembleROSInfo.getCoverageOpt(i);
+                    }
+                }
+                else { // target not enabled for this model; retain what we have until now
+                    result[i] = sum_predictions[i]; 
+                }
             }
         }
+        else {
+            for (int i = 0; i < sum_predictions.length; i++) {
+                result[i] = new double[sum_predictions[i].length];
+                for (int j = 0; j < sum_predictions[i].length; j++) {
+                    result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) / nb_models;
+                }
+            }
+        }
+
         return result;
     }
 

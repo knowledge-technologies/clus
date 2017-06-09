@@ -270,7 +270,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
 
     public double getSVarS(ClusAttributeWeights scale) {
-        if (Settings.isEnsembleTargetSubspacingEnabled())
+        if (Settings.isEnsembleROSEnabled())
             return getSVarSTargetSubspace(scale);
 
         double result = 0.0;
@@ -326,7 +326,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
 
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (Settings.isEnsembleTargetSubspacingEnabled())
+        if (Settings.isEnsembleROSEnabled())
             return getSVarSDiffTargetSubspace(scale, other);
 
         double result = 0.0;

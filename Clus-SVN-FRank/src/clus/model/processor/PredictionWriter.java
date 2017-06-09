@@ -160,6 +160,10 @@ public class PredictionWriter extends ClusModelProcessor {
         m_Writer.println();
         m_ModelParts.setLength(0);
     }
+    
+    public void flushWriter() {
+        m_Writer.flush();
+    }
 
 
     public void exampleUpdate(DataTuple tuple, ClusStatistic distr) {

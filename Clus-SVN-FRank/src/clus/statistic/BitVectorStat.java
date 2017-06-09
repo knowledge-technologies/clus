@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 import clus.data.cols.ColTarget;
 import clus.data.rows.DataTuple;
-import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
+import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.jeans.list.BitList;
 import clus.main.Settings;
 
@@ -158,7 +158,7 @@ public class BitVectorStat extends ClusStatistic {
     }
 
 
-    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         System.err.println(getClass().getName() + "BitVectorStat: vote not implemented");
     }
 

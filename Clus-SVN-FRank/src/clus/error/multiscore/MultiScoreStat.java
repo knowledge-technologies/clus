@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import clus.data.cols.ColTarget;
 import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
-import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
+import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
@@ -152,7 +152,7 @@ public class MultiScoreStat extends ClusStatistic {
     }
 
 
-    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         System.err.println(getClass().getName() + "vote (): Not implemented");
     }
 

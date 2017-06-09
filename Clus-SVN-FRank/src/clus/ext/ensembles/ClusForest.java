@@ -72,7 +72,7 @@ public class ClusForest implements ClusModel, Serializable {
     private int m_NbNodes = 0;
     /** The sum of leaves over the trees in the forest */
     private int m_NbLeaves = 0;
-    ClusEnsembleTargetSubspaceInfo m_TargetSubspaceInfo; // Info about target subspacing method
+    ClusEnsembleROSInfo m_TargetSubspaceInfo; // Info about target subspacing method
     
     private ClusReadWriteLock m_NbModelsLock = new ClusReadWriteLock();
     private ClusReadWriteLock m_NbNodesLock = new ClusReadWriteLock();
@@ -136,7 +136,7 @@ public class ClusForest implements ClusModel, Serializable {
     	m_Optimization = opt;
     }
     
-    public void addTargetSubspaceInfo(ClusEnsembleTargetSubspaceInfo tinfo) {
+    public void addEnsembleROSInfo(ClusEnsembleROSInfo tinfo) {
         m_TargetSubspaceInfo = tinfo;
     }
 
@@ -255,17 +255,16 @@ public class ClusForest implements ClusModel, Serializable {
 
 
     public ClusStatistic predictWeighted(DataTuple tuple) {
-        if (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod != Settings.ENSEMBLE_TARGET_SUBSPACING_NONE) {
+        if (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod != Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) {
             switch (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod) {
-                case Settings.ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_SUBSET: // only use predictions for
-                                                                                     // subspaces
-                    return predictWeightedStandardTargetSubspace(tuple);
+                case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING: // only use subspaces for prediction averaging
+                    return ClusEnsembleInduce.isOptimized() ? predictWeightedStandardSubspaceAveragingOpt(tuple) : predictWeightedStandardSubspaceAveraging(tuple);
 
-                case Settings.ENSEMBLE_TARGET_SUBSPACING_SMARTERWAY:
+                case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SMARTERWAY:
                     throw new RuntimeException("NOT YET IMPLEMENTED!");
 
-                default: // case Settings.ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_ALL: // just use all predictions
-                    return predictWeightedStandard(tuple);
+                default: // case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_TOTAL_AVERAGING: // just use all predictions
+                    return ClusEnsembleInduce.isOptimized() ? predictWeightedOpt(tuple) : predictWeightedStandard(tuple);
             }
         }
         if (ClusOOBErrorEstimate.isOOBCalculation())
@@ -299,18 +298,6 @@ public class ClusForest implements ClusModel, Serializable {
         ClusEnsemblePredictionWriter.setVotes(votes);
         return m_Stat;
     }
-
-
-    public ClusStatistic predictWeightedStandardTargetSubspace(DataTuple tuple) {
-        ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
-        for (int i = 0; i < m_Forest.size(); i++) {
-            votes.add(m_Forest.get(i).predictWeighted(tuple));
-        }
-        m_Stat.vote(votes, m_TargetSubspaceInfo);
-        ClusEnsemblePredictionWriter.setVotes(votes);
-        return m_Stat;
-    }
-
 
     public ClusStatistic predictWeightedOOB(DataTuple tuple) {
 
@@ -388,15 +375,32 @@ public class ClusForest implements ClusModel, Serializable {
                 ((ClassificationStat) m_Stat).m_ClassCounts[j] = ((ClusEnsembleInduceOptClassification) m_Optimization).getPredictionValueClassification(position, j);
             }
             m_Stat.computePrediction();
-            for (int k = 0; k < m_Stat.getNbAttributes(); k++)
-                ((ClassificationStat) m_Stat).m_SumWeights[k] = 1.0;// the m_SumWeights variable is not used in mode
-                                                                    // optimize
-                                                                    // m_Stat.setTrainingStat(ClusEnsembleInduceOptClassification.getTrainingStat());
+            for (int k = 0; k < m_Stat.getNbAttributes(); k++) {
+                ((ClassificationStat) m_Stat).m_SumWeights[k] = 1.0;// the m_SumWeights variable is not used in mode optimize m_Stat.setTrainingStat(ClusEnsembleInduceOptClassification.getTrainingStat());
+            }
             return m_Stat;
         }
-        return null;
+        
+        throw new RuntimeException("clus.ext.ensembles.ClusForest.predictWeightedOpt(DataTuple): unhandled ClusStatManager.getMode() case!");
     }
 
+    /** used for ROS ensembles */
+    public ClusStatistic predictWeightedStandardSubspaceAveraging(DataTuple tuple) {
+        ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
+        for (int i = 0; i < m_Forest.size(); i++) {
+            votes.add(m_Forest.get(i).predictWeighted(tuple));
+        }
+        m_Stat.vote(votes, m_TargetSubspaceInfo);
+        ClusEnsemblePredictionWriter.setVotes(votes);
+        return m_Stat;
+    }
+
+    /** used for OPTIMIZED ROS ensembles */
+    public ClusStatistic predictWeightedStandardSubspaceAveragingOpt(DataTuple tuple) {
+        // when ensembles are optimized, the running average takes into account the subspaces, so predictWeightedOpt() should return correct results
+        
+        return predictWeightedOpt(tuple);
+    }
 
     public void printModel(PrintWriter wrt) {
         // This could be better organized

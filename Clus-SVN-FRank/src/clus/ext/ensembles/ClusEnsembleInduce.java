@@ -92,7 +92,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     // members for target subspacing
     static int m_EnsembleTargetSubspaceMethod;
-    ClusEnsembleTargetSubspaceInfo m_TargetSubspaceInfo;
+    ClusEnsembleROSInfo m_EnsembleROSInfo;
 
     // Out-Of-Bag Error Estimate
     ClusOOBErrorEstimate m_OOBEstimation;
@@ -139,7 +139,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         m_Mode = ClusStatManager.getMode();
         // optimize if not XVAL and HMC
         m_OptMode = (Settings.shouldOptimizeEnsemble() && ((m_Mode == ClusStatManager.MODE_HIERARCHICAL) || (m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode == ClusStatManager.MODE_CLASSIFY)));
-        m_EnsembleTargetSubspaceMethod = Settings.getEnsembleTargetSubspacingMethod();
+        m_EnsembleTargetSubspaceMethod = Settings.getEnsembleROSScope();
 
         // m_OptMode = (Settings.shouldOptimizeEnsemble() && !Settings.IS_XVAL && ((m_Mode ==
         // ClusStatManager.MODE_HIERARCHICAL)||(m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode ==
@@ -285,7 +285,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         System.out.println("Out-Of-Bag Estimate of the error = " + Settings.shouldEstimateOOB());
         System.out.println("Perform Feature Ranking = " + m_FeatRank);
 
-        prepareEnsembleTargetSubspaces();
+        prepareROSEnsemble();
         
         // initialise ranking stuff here: we need stat manager with clustering statistics != null
         m_FeatureRanking = new ClusEnsembleFeatureRanking();
@@ -303,7 +303,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         TupleIterator train_iterator = null; // = train set iterator
         TupleIterator test_iterator = null; // = test set iterator
 
-        m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+        m_OForest.addEnsembleROSInfo(m_EnsembleROSInfo);
 
         if (m_OptMode) {
             train_iterator = cr.getTrainIter();
@@ -320,7 +320,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 if (m_Mode == ClusStatManager.MODE_CLASSIFY)
                     m_Optimization = new ClusEnsembleInduceOptClassification(train_iterator, test_iterator);//, cr.getTrainingSet().getNbRows());
             }
-            m_Optimization.initPredictions(m_OForest.getStat());
+            m_Optimization.initPredictions(m_OForest.getStat(), m_EnsembleROSInfo);
             
             m_OForest.setOptimization(m_Optimization);
             m_DForest.setOptimization(m_Optimization);
@@ -451,7 +451,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
         TupleIterator test_iterator = m_OptMode ? cr.getTestIter() :null; // = test set iterator
 
-        m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+        m_OForest.addEnsembleROSInfo(m_EnsembleROSInfo);
 
         Random bagSeedGenerator = new Random(getSettings().getRandomSeed());
         int[] seeds = new int[m_NbMaxBags];
@@ -478,7 +478,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             ind.initialize();
             crSingle.getStatManager().initClusteringWeights();
 
-            initializeBagTargetSubspacing(crSingle.getStatManager(), i); // this needs to be changed for parallel
+            initializeBagROS(crSingle.getStatManager(), i); // this needs to be changed for parallel
                                                                          // implementation
 
             ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
@@ -520,7 +520,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         OOBSelection oob_total = null; // = total OOB selection
         OOBSelection oob_sel = null; // = current OOB selection
 
-        m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+        m_OForest.addEnsembleROSInfo(m_EnsembleROSInfo);
 
 
         // We store the old maxDepth to this if needed. Thus we get the right depth to .out files etc.
@@ -653,21 +653,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     /**
-     * Method for preparing target subspaces for the Ensemble.TargetSubspacing option
-     * Target subspaces are created according to settings
+     * Method for generating ROS ensemble subspaces
      * 
      * @param ClusSchema
      *        schema
      * @param sizeOfSubspace
      *        size of subspace
-     * @return ClusEnsembleTargetSubspaceInfo object with created subspaces
+     * @return ClusEnsembleROSInfo object with created subspaces
      */
-    static ClusEnsembleTargetSubspaceInfo prepareEnsembleTargetSubspaces(ClusSchema schema, int sizeOfSubspace) {
-        // // check for dragons
-        // if (m_NbMaxBags < 2) {
-        // throw new RuntimeException("Ensemble size is too small! Minimum ensemble size is 2.");
-        // }
-
+    static ClusEnsembleROSInfo generateROSEnsembleSubspaces(ClusSchema schema, int sizeOfSubspace) {
         int cnt = m_NbMaxBags;
         int[] enabled;
         ArrayList<int[]> subspaces = new ArrayList<int[]>();
@@ -700,10 +694,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
             // if number of randomly selected targets should also be randomized
             if (isRandom)
-                subspaceCount = ClusRandom.nextInt(ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING_SUBSPACE_SIZE_SELECTION, 1, targets.length); // use a separate randomizer for randomized target subspace size selection
+                subspaceCount = ClusRandom.nextInt(ClusRandom.RANDOM_ENSEMBLE_ROS_SUBSPACE_SIZE_SELECTION, 1, targets.length); // use a separate randomizer for randomized target subspace size selection
 
             // randomly select targets
-            ClusAttrType[] selected = selectRandomSubspaces(targets, subspaceCount, ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING, null); // inject ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING randomizer
+            ClusAttrType[] selected = selectRandomSubspaces(targets, subspaceCount, ClusRandom.RANDOM_ENSEMBLE_ROS, null); // inject ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING randomizer
 
             // enable selected targets
             for (int i = 0; i < selected.length; i++)
@@ -730,66 +724,51 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         Arrays.fill(enabled, 1); // enable all attributes
         subspaces.add(enabled);
 
-        return new ClusEnsembleTargetSubspaceInfo(schema, subspaces);
-    }
-
-
-    public static int getPoisson(double lambda, java.util.Random rnd) {
-        double L = Math.exp(-lambda);
-        double p = 1.0;
-        int k = 0;
-
-        do {
-            k++;
-            p *= rnd.nextDouble(); // Math.random();
-        }
-        while (p > L);
-
-        return k - 1;
-    }
-
+        return new ClusEnsembleROSInfo(schema, subspaces);
+    } 
+     
 
     /**
-     * Preparation for target subspacing scenario.
+     * Preparation for ROS ensembles
      */
-    void prepareEnsembleTargetSubspaces() {
-        if (Settings.isEnsembleTargetSubspacingEnabled()) {
+    void prepareROSEnsemble() {
+        if (Settings.isEnsembleROSEnabled()) {
             if (getSettings().getEnsembleMethod() != Settings.ENSEMBLE_BAGGING && getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RFOREST && getSettings().getEnsembleMethod() != Settings.ENSEMBLE_RSUBSPACES && getSettings().getEnsembleMethod() != Settings.ENSEMBLE_EXTRA_TREES)
 
-                throw new RuntimeException("Target subspacing is not implemented for the selected ensemble method!");
+                throw new RuntimeException("ROS extension is not implemented for the selected ensemble method!");
 
             if (Settings.VERBOSE > 1)
-                System.out.println("Target subspacing: creating target subspaces.");
+                System.out.println("ROS: creating target subspaces.");
 
             int subspaceSize = getSettings().calculateNbRandomAttrSelected(getSchema(), 2);
 
-            m_TargetSubspaceInfo = prepareEnsembleTargetSubspaces(getSchema(), subspaceSize);
+            m_EnsembleROSInfo = generateROSEnsembleSubspaces(getSchema(), subspaceSize);
         }
     }
 
 
-    void initializeBagTargetSubspacing(ClusStatManager mgr, int bagNo) throws ClusException {
-        if (Settings.isEnsembleTargetSubspacingEnabled()) {
+    void initializeBagROS(ClusStatManager mgr, int bagNo) throws ClusException {
+        if (Settings.isEnsembleROSEnabled()) {
 
             // get heuristic in use
             ClusHeuristic h = mgr.getHeuristic();
 
             // check if the attribute weights are set
             if (h.getClusteringAttributeWeights() == null)
-                throw new RuntimeException("Heuristic does not support target subspacing!");
+                throw new RuntimeException("Heuristic does not support ROS!");
 
             // get subspace of targets that we have previously prepared
-            boolean[] enabled = m_TargetSubspaceInfo.getModelSubspaceBoolean(bagNo - 1);
+            boolean[] enabled = m_EnsembleROSInfo.getModelSubspaceBoolean(bagNo - 1);
 
             // push to already initialized heuristic
             h.setClusteringWeightsEnabledAttributes(enabled);
 
             // display info of the targets, that are being used
             if (getSettings().getVerbose() >= 1) {
-                int[] trgts = m_TargetSubspaceInfo.getOnlyTargets(m_TargetSubspaceInfo.getModelSubspace(bagNo - 1));
+                int[] trgts = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(bagNo - 1));
 
                 if (trgts.length > 15) {
-                    System.err.println("Enabled targets: " + ClusEnsembleTargetSubspaceInfo.getEnabledCount(trgts) + " of " + trgts.length);
+                    System.err.println("Enabled targets: " + ClusEnsembleROSInfo.getEnabledCount(trgts) + " of " + trgts.length);
                 }
                 else {
                     System.err.println("Enabled targets: " + Arrays.toString(trgts));
@@ -828,7 +807,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         crSingle.getStatManager().initClusteringWeights(); // TODO: when using rules: if (checkToOutEnsemble(i) && (getSettings().getBagSelection().getIntVectorSorted()[0] == -1)) ----> postprocess... To we need more than one stat manager?
         ind.getStatManager().initClusteringWeights(); // equivalent to mgr.initClusteringWeights();
 
-        initializeBagTargetSubspacing(ind.getStatManager(), i);
+        initializeBagROS(ind.getStatManager(), i);
 
         ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
         //m_SummTime += ResourceInfo.getTime() - one_bag_time;
@@ -1089,7 +1068,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
         TupleIterator test_iterator = m_OptMode ? cr.getTestIter() : null; // = test set iterator
 
-        m_OForest.addTargetSubspaceInfo(m_TargetSubspaceInfo);
+        m_OForest.addEnsembleROSInfo(m_EnsembleROSInfo);
 
         Random bagSeedGenerator = new Random(getSettings().getRandomSeed());
         int[] seeds = new int[m_NbMaxBags];
@@ -1165,7 +1144,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         crSingle.getStatManager().initClusteringWeights();
         ind.getStatManager().initClusteringWeights();
 
-        initializeBagTargetSubspacing(ind.getStatManager(), i);
+        initializeBagROS(ind.getStatManager(), i);
        
         
         ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
