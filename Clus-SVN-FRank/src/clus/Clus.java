@@ -833,10 +833,8 @@ public class Clus implements CMDLineArgsProvider {
             allcoll.exampleUpdate(tuple);
             for (int i = 0; i < cr.getNbModels(); i++) {
                 ClusModelInfo mi = cr.getModelInfo(i);
-                System.out.println(mi.getModelInfo());
                 if (mi != null && mi.getModel() != null) {
                     ClusModel model = mi.getModel();
-                    System.out.println(model);
                     ClusStatistic pred = model.predictWeighted(tuple);
 
                     ClusErrorList err = mi.getError(type);

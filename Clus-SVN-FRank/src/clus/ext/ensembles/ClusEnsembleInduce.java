@@ -149,7 +149,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         // ClusStatManager.MODE_HIERARCHICAL)||(m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode ==
         // ClusStatManager.MODE_CLASSIFY)));
         m_OutEnsembleAt = sett.getNbBaggingSets().getIntVectorSorted();
-        m_NbMaxBags = m_OutEnsembleAt[m_OutEnsembleAt.length - 1];
+        m_NbMaxBags = getNbTrees(m_OutEnsembleAt.length - 1);
         m_FeatRank = sett.shouldPerformRanking() && !Settings.IS_XVAL;
         if (m_FeatRank && !Settings.shouldEstimateOOB() && sett.getRankingMethod() == Settings.RANKING_RFOREST) {
             System.err.println("For Feature Ranking RForest, OOB estimate of error should also be performed.");
@@ -207,7 +207,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     
     public void setNbFeatureRankings(ClusSchema schema, ClusStatManager mgr){
         for(int forest = 0; forest < m_FeatureRankings.length; forest++){
-        	int nbTrees = m_OutEnsembleAt[forest];
+        	int nbTrees = getNbTrees(forest);
         	setNbFeatureRankings(m_FeatureRankings[forest], schema, mgr, nbTrees);
         }
     	
@@ -653,14 +653,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             try {
                 OneBagResults results = future.get();
                 if(!m_OptMode){
-                	m_OForest.addModelToForest(results.getModel());
-                	for(int forest = m_OForests.length - 1; forest >= 0; forest--){
-                		if (m_OutEnsembleAt[forest] >= i){
-                			m_OForests[forest].addModelToForest(results.getModel());
-                		} else{
-                			break;
-                		}
-                	}
+                	updateForests(results.getModel(), i);
                 }
                 if (getSettings().shouldPerformRanking()) {
                     updateFeatureRankings(i, results.getFimportances());
@@ -707,7 +700,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    /**
+	/**
      * Method for preparing target subspaces for the Ensemble.TargetSubspacing option
      * Target subspaces are created according to settings
      * 
@@ -889,14 +882,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         //m_SummTime += ResourceInfo.getTime() - one_bag_time;
         one_bag_time = ResourceInfo.getTime() - one_bag_time;
         
-        int[] additionalModelsNodesLeaves = m_OForest.updateCounts((ClusNode) model);
-        for(int ii = m_OForests.length - 1; ii >= 0; ii--){
-        	if (m_OutEnsembleAt[ii] >= i){
-        		m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);
-        	} else{
-        		break;        		
-        	}
-        }
+//        int[] additionalModelsNodesLeaves = m_OForest.updateCounts((ClusNode) model);
+//        for(int ii = m_OForests.length - 1; ii >= 0; ii--){
+//        	if (getNbTrees(ii) >= i){
+//        		m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);
+//        	} else{
+//        		break;        		
+//        	}
+//        }
+        updateCounts((ClusNode) model, i);
 
         // OOB estimate for the parallel implementation is done in makeForestFromBags method <--- matejp: This is some
         // old parallelisation
@@ -1188,7 +1182,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 OneBagResults results = future.get();
                 
                 if (!m_OptMode){
-                	m_OForest.addModelToForest(results.getModel());
+                	updateForests(results.getModel(), i);
                 } 
                 if (getSettings().shouldPerformRanking()) {
                 	// m_FeatureRanking.putAttributesInfos(results.getFimportances());
@@ -1211,20 +1205,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         cr.setInductionTimeSequential(indTimeSequential);
 
     }
-
-
-    private void updateFeatureRankings(int treeIndex, HashMap<String, double[][]> fimportances) throws InterruptedException {
-//    	m_FeatureRanking.putAttributesInfos(fimportances);
-    	for(int forest = m_OForests.length - 1; forest >= 0; forest--){
-    		if (m_OutEnsembleAt[forest] >= treeIndex){
-    			m_FeatureRankings[forest].putAttributesInfos(fimportances);
-    		} else{
-    			break;
-    		}
-    	}
-		
-	}
-
 
 	public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
         long one_bag_time = ResourceInfo.getTime();
@@ -1253,14 +1233,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
       
         one_bag_time = ResourceInfo.getTime() - one_bag_time;
 
-        int[] additionalModelsNodesLeaves = m_OForest.updateCounts((ClusNode) model);
-        for(int ii = m_OForests.length - 1; ii >= 0; ii--){
-        	if (m_OutEnsembleAt[ii] >= i){
-        		m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);
-        	} else{
-        		break;        		
-        	}
-        }
+//        int[] additionalModelsNodesLeaves = m_OForest.updateCounts((ClusNode) model);
+//        for(int ii = m_OForests.length - 1; ii >= 0; ii--){
+//        	if (getNbTrees(ii) >= i){
+//        		m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);
+//        	} else{
+//        		break;        		
+//        	}
+//        }
+        updateCounts((ClusNode) model, i);
 
         HashMap<String, double[][]> fimportances = new HashMap<String, double[][]>();
         if (m_FeatRank) {// franking genie3
@@ -1508,4 +1489,54 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     		
     	}
     }
+    
+    /**
+     * Updates the counts of nodes, leaves and trees in the forests, by adding the corresponding statistics
+     * of a new tree to the current statistics in forest.
+     * @param model
+     * @param treeNumber
+     */
+    private void updateCounts(ClusNode model, int treeNumber){
+        int[] additionalModelsNodesLeaves = m_OForest.updateCounts((ClusNode) model);
+        for(int ii = m_OForests.length - 1; ii >= 0; ii--){
+        	if (getNbTrees(ii) >= treeNumber){
+        		m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);
+        	} else{
+        		break;        		
+        	}
+        }
+    }
+    
+    /**
+     * Updated the feature ranking importances for all rankings, by adding the importances from a new tree.
+     * @param treeIndex
+     * @param fimportances
+     * @throws InterruptedException
+     */
+    private void updateFeatureRankings(int treeIndex, HashMap<String, double[][]> fimportances) throws InterruptedException {
+//    	m_FeatureRanking.putAttributesInfos(fimportances);
+    	for(int forest = m_OForests.length - 1; forest >= 0; forest--){
+    		if (getNbTrees(forest) >= treeIndex){
+    			m_FeatureRankings[forest].putAttributesInfos(fimportances);
+    		} else{
+    			break;
+    		}
+    	}
+	}
+    
+    /**
+     * Updates the forests by adding a new tree.
+     * @param model
+     * @param treeNumber
+     */
+    private void updateForests(ClusModel model, int treeNumber) {
+    	m_OForest.addModelToForest(model);
+    	for(int forest = m_OForests.length - 1; forest >= 0; forest--){
+    		if (getNbTrees(forest) >= treeNumber){
+    			m_OForests[forest].addModelToForest(model);
+    		} else{
+    			break;
+    		}
+    	}
+	}
 }

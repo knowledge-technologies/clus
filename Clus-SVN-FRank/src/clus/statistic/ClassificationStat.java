@@ -761,14 +761,9 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public double getProportion(int attr, int cls) {
-    	if (m_Training != null){
-    		System.out.println("sysysys");
-    	} else{
-    		System.out.println("buuu");
-    	}
         double total = m_SumWeights[attr];
         if (total <= MathUtil.C1E_9) {
-            // no examples -> assume training set distribution
+            // no examples -> assume training set distribution | matejp: there is a bug here ... Pray that the program does not visit this branch:)
             return m_Training.getProportion(attr, cls);
         }
         else {

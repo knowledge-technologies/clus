@@ -442,7 +442,7 @@ public class FindBestTest {
     	}
     	else{
     		String message = String.format("The value of SplitSampling = %d will result in wrong results.\n"
-    				+ "Use SplitSampling = 0 or correct the code. Exiting now.", N);
+    				+ "Use SplitSampling = 0 or correct the code.", N);
     		throw new RuntimeException(message);
     	}
     }
