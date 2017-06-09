@@ -32,9 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Stack;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
@@ -62,12 +60,12 @@ public class ClassHierarchy implements Serializable {
     protected int m_HierType = TREE;
     protected ClassesTuple m_Eval;
     protected ArrayList<ClassTerm> m_ClassList = new ArrayList<ClassTerm>();
-    protected HashMap m_ClassMap = new HashMap();
+    protected HashMap<String,ClassTerm> m_ClassMap = new HashMap<String,ClassTerm>();
     protected ClassTerm m_Root;
     protected NumericAttrType[] m_DummyTypes;
     protected boolean m_IsLocked;
     protected transient double[] m_Weights;
-    protected transient Hashtable m_ErrorWeights = new Hashtable();
+    // protected transient Hashtable m_ErrorWeights = new Hashtable(); matejp: this was not used anywhere ...
     protected transient ClassesAttrType m_Type;
 
 
@@ -141,7 +139,7 @@ public class ClassHierarchy implements Serializable {
     }
 
 
-    public final void initClassListRecursiveDAG(ClassTerm term, HashSet set) {
+    public final void initClassListRecursiveDAG(ClassTerm term, HashSet<String> set) {
         if (!set.contains(term.getID())) {
             // This is the first time we see this term
             m_ClassList.add(term);
@@ -160,7 +158,7 @@ public class ClassHierarchy implements Serializable {
         m_ClassList.clear();
         if (isDAG()) {
             // make sure each ID only appears once!
-            HashSet set = new HashSet();
+            HashSet<String> set = new HashSet<String>();
             for (int i = 0; i < m_Root.getNbChildren(); i++) {
                 initClassListRecursiveDAG((ClassTerm) m_Root.getChild(i), set);
             }
@@ -180,7 +178,7 @@ public class ClassHierarchy implements Serializable {
     }
 
 
-    void getAllParentChildTuplesRecursive(ClassTerm node, boolean[] visited, ArrayList parentchilds) {
+    void getAllParentChildTuplesRecursive(ClassTerm node, boolean[] visited, ArrayList<String> parentchilds) {
         for (int i = 0; i < node.getNbChildren(); i++) {
             ClassTerm child = (ClassTerm) node.getChild(i);
             parentchilds.add(node.getID() + "/" + child.getID());
@@ -193,15 +191,15 @@ public class ClassHierarchy implements Serializable {
     }
 
 
-    public ArrayList getAllParentChildTuples() {
-        ArrayList parentchilds = new ArrayList();
+    public ArrayList<String> getAllParentChildTuples() {
+        ArrayList<String> parentchilds = new ArrayList<String>();
         boolean[] visited = new boolean[getTotal()];
         getAllParentChildTuplesRecursive(m_Root, visited, parentchilds);
         return parentchilds;
     }
 
 
-    void getAllPathsRecursive(ClassTerm node, String crpath, boolean[] visited, ArrayList paths) {
+    void getAllPathsRecursive(ClassTerm node, String crpath, boolean[] visited, ArrayList<String> paths) {
         for (int i = 0; i < node.getNbChildren(); i++) {
             ClassTerm child = (ClassTerm) node.getChild(i);
             String new_path = node.getIndex() == -1 ? "" : crpath + "/";
@@ -215,8 +213,8 @@ public class ClassHierarchy implements Serializable {
         }
     }
     
-    public ArrayList getAllPaths() {
-        ArrayList paths = new ArrayList();
+    public ArrayList<String> getAllPaths() {
+        ArrayList<String> paths = new ArrayList<String>();
         boolean[] visited = new boolean[getTotal()];
         getAllPathsRecursive(m_Root, "", visited, paths);
         return paths;
@@ -412,7 +410,7 @@ public class ClassHierarchy implements Serializable {
 
     public boolean[] removeInfrequentClasses(WHTDStatistic stat, double minfreq) {
         boolean[] removed = new boolean[getTotal()];
-        ArrayList new_cls = new ArrayList();
+        ArrayList<ClassTerm> new_cls = new ArrayList<ClassTerm>();
         for (int i = 0; i < getTotal(); i++) {
             double mean = stat.getMean(i);
             if (mean == 0.0 || mean < minfreq) {
@@ -536,9 +534,9 @@ public class ClassHierarchy implements Serializable {
 
     public void addChildrenToRoot() {
         // terms without parents are children of the root
-        Iterator iter = m_ClassMap.values().iterator();
+        Iterator<ClassTerm> iter = m_ClassMap.values().iterator();
         while (iter.hasNext()) {
-            ClassTerm term = (ClassTerm) iter.next();
+            ClassTerm term = iter.next();
             if (term != m_Root && term.atTopLevel()) {
                 m_Root.addChildCheckAndParent(term);
             }
