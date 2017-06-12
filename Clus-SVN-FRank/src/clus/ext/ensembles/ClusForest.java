@@ -255,8 +255,8 @@ public class ClusForest implements ClusModel, Serializable {
 
 
     public ClusStatistic predictWeighted(DataTuple tuple) {
-        if (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod != Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) {
-            switch (ClusEnsembleInduce.m_EnsembleTargetSubspaceMethod) {
+        if (ClusEnsembleInduce.m_EnsembleROSScope != Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) {
+            switch (ClusEnsembleInduce.m_EnsembleROSScope) {
                 case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING: // only use subspaces for prediction averaging
                     return ClusEnsembleInduce.isOptimized() ? predictWeightedStandardSubspaceAveragingOpt(tuple) : predictWeightedStandardSubspaceAveraging(tuple);
 
