@@ -122,11 +122,11 @@ import clus.selection.XValSelection;
 import clus.statistic.ClusStatistic;
 import clus.statistic.CombStat;
 import clus.statistic.RegressionStat;
-import clus.tools.debug.Debug;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.ClusRandom;
 import clus.util.DebugFile;
+import clus.util.tools.debug.Debug;
 
 
 // import clus.weka.*;

@@ -45,8 +45,8 @@ import clus.main.ClusStat;
 import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
-import clus.tools.debug.Debug;
 import clus.util.ClusException;
+import clus.util.tools.debug.Debug;
 
 
 public abstract class OptXValInduce extends ClusInductionAlgorithm {
