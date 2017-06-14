@@ -58,7 +58,7 @@ public class ClassHMTRHierarchy implements Serializable{
 
     public void calculateDepth(){
 
-        this.nodeDepth = new HashMap<>();
+        this.nodeDepth = new HashMap<String, Integer>();
 
         for (ClassHMTRNode node : this.nodes){
             this.nodeDepth.put(node.getName(),getNodeDepth(node.getName()));
@@ -125,7 +125,7 @@ public class ClassHMTRHierarchy implements Serializable{
 
         if (weight > 1 || weight  < 0.1) System.err.println("Weird initialisation of HMTR weight! Weight = "+weight+"\nTypical weights: 0.75, 0.8333 etc.\nWeight 1 = pure MTR (not taking the hierarchy into account)\nSmaller values = more influence on the upper levels of the hierarchy\nProgram will continue anyways...");
 
-        this.nodeWeights = new HashMap<>();
+        this.nodeWeights = new HashMap<String, Double>();
 
         for (Map.Entry<String, Integer> entry : this.nodeDepth.entrySet()){
 
@@ -142,7 +142,7 @@ public class ClassHMTRHierarchy implements Serializable{
 
     public List<ClassHMTRNode> getParents(ClassHMTRNode node){
 
-        List<ClassHMTRNode>  parents = new ArrayList<>();
+        List<ClassHMTRNode>  parents = new ArrayList<ClassHMTRNode>();
 
         for (ClassHMTRNode aNode: this.nodes ) {
 

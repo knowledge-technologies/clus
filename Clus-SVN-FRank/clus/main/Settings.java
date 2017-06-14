@@ -3084,7 +3084,7 @@ public class Settings implements Serializable {
 
             ArrayList<ClusAttrType> attributes = schema.getM_Attr();
 
-            ArrayList<String> attrNames = new ArrayList<>();
+            ArrayList<String> attrNames = new ArrayList<String>();
 
                 for (ClusAttrType attribute : attributes){
 
