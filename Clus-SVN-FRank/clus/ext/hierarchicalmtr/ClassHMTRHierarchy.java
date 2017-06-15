@@ -20,16 +20,17 @@ public class ClassHMTRHierarchy implements Serializable{
     private Map<String, Integer> m_NodeDepth;
     private Map<String, Double> m_NodeWeights;
 
-	private String getHorizontalLineText() {
-	    String corner="└";
-	    String dash="─";
-	    return corner+dash+dash;
-	}
-
 	private String getVerticalLineText() {
-		return "·" + getSpaces();
+		//return "·" + getSpaces();
+		return "\u00B7" + getSpaces();
 	}
 	
+	private String getHorizontalLineText() {
+	    String corner="\u2514";
+	    String dash="\u2500";
+	    return corner+dash+dash + " ";
+	}
+
     public static boolean isUsingDump() {
         return IS_USING_DUMP;
     }
