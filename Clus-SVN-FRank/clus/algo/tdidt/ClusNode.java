@@ -28,6 +28,7 @@ import jeans.util.compound.*;
 
 import java.util.*;
 import java.io.*;
+import java.nio.charset.Charset;
 
 // import weka.classifiers.trees.j48.NoSplit;
 // import weka.core.Utils;
@@ -80,14 +81,44 @@ public class ClusNode extends MyNode implements ClusModel {
 			clone.m_TargetStat.calcMean();
 		}
 
-		
-
 		clone.m_Alternatives = m_Alternatives;
 		clone.m_OppositeAlternatives = m_OppositeAlternatives;
 		clone.m_AlternativesString = m_AlternativesString;
 		return clone;
 	}
 
+	private String getHorizontalLineText() {
+//	    String corner="\u2514";//"â””";
+//	    String dash="\u2500";//"â”€";
+	    String corner="â””";
+	    String dash="â”€";
+	    return corner+dash+dash + " ";
+	}
+
+	private String getVerticalLineText() {
+		return "Â·";
+		//return "\u2506";//"Â·";
+	}
+	
+	private String getSpaces(int howmany) {
+		StringBuilder sb = new StringBuilder(howmany);
+		for(int i=0;i<howmany;i++){
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
+	private String getSpacesNo() {
+		return getSpaces(7);
+	}
+	
+	public String getSpacesYes() {
+		return getSpaces(6);
+	}
+	
+	public String getSpacesUnk() {
+		return getSpacesNo();
+	}
+	
 	public ClusNode cloneNodeWithVisitor() {
 		ClusNode clone = (ClusNode)cloneNode();
 		clone.setVisitor(getVisitor());
@@ -930,15 +961,21 @@ public class ClusNode extends MyNode implements ClusModel {
 				}			
 				
 				writeDistributionForInternalNode(writer, info);
-				writer.print(prefix + "+--yes: ");
-				((ClusNode)getChild(YES)).printTree(writer, info, prefix+"|       ",examples0, false);
-				writer.print(prefix + "+--no:  ");
+				//writer.print(prefix + "+--yes: ");
+				writer.print(prefix + getHorizontalLineText() + "yes: ");
+				//((ClusNode)getChild(YES)).printTree(writer, info, prefix+"|       ",examples0, false);
+				((ClusNode)getChild(YES)).printTree(writer, info, prefix + getVerticalLineText() + getSpacesYes(),examples0, false);
+				//writer.print(prefix + "+--no:  ");
+				writer.print(prefix + getHorizontalLineText() + " no: ");
 				if (hasUnknownBranch()) {
-					((ClusNode)getChild(NO)).printTree(writer, info, prefix+"|       ",examples1, false);
-					writer.print(prefix + "+--unk: ");
-					((ClusNode)getChild(UNK)).printTree(writer, info, prefix+"        ",examples0, false);
+					//((ClusNode)getChild(NO)).printTree(writer, info, prefix+"|       ",examples1, false);
+					((ClusNode)getChild(NO)).printTree(writer, info, prefix + getVerticalLineText() + getSpacesUnk(),examples1, false);
+					
+					//writer.print(prefix + "+--unk: ");
+					writer.print(prefix + getHorizontalLineText() + "unk: ");
+					((ClusNode)getChild(UNK)).printTree(writer, info, prefix+getSpacesUnk(),examples0, false);
 				} else {
-					((ClusNode)getChild(NO)).printTree(writer, info, prefix+"        ",examples1, false);
+					((ClusNode)getChild(NO)).printTree(writer, info, prefix+getSpacesNo(),examples1, false);
 				}
 			} else {
 				writer.println(m_Test.getTestString());
@@ -949,10 +986,12 @@ public class ClusNode extends MyNode implements ClusModel {
 					if (examples!=null){
 						examples.apply(m_Test, i);
 					}
-					writer.print(prefix + "+--" + branchlabel + ": ");
+					//writer.print(prefix + "+--" + branchlabel + ": ");
+					writer.print(prefix + getVerticalLineText() + branchlabel + ": ");
 					String suffix = StringUtils.makeString(' ', branchlabel.length()+4);
 					if (i != arity-1) {
-						child.printTree(writer, info, prefix+"|"+suffix,examplesi, false);
+						//child.printTree(writer, info, prefix+"|"+suffix,examplesi, false);
+						child.printTree(writer, info, prefix+getVerticalLineText()+suffix,examplesi, false);
 					} else {
 						child.printTree(writer, info, prefix+" "+suffix,examplesi, false);
 					}

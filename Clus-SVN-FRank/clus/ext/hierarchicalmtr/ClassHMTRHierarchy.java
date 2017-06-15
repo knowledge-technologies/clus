@@ -15,16 +15,35 @@ public class ClassHMTRHierarchy implements Serializable{
 
     private static boolean IS_HMTR_HIER_CREATED = false;
     private static boolean IS_USING_DUMP = false;
-    private String hierarchyName;
-    private List<ClassHMTRNode> nodes;
-    private Map<String, Integer> nodeDepth;
-    private Map<String, Double> nodeWeights;
+    private String m_HierarchyName;
+    private List<ClassHMTRNode> m_Nodes;
+    private Map<String, Integer> m_NodeDepth;
+    private Map<String, Double> m_NodeWeights;
 
+	private String getHorizontalLineText() {
+	    String corner="└";
+	    String dash="─";
+	    return corner+dash+dash;
+	}
 
-
+	private String getVerticalLineText() {
+		return "·" + getSpaces();
+	}
+	
     public static boolean isUsingDump() {
         return IS_USING_DUMP;
     }
+    
+    private String getSpaces(int howmany) {
+		StringBuilder sb = new StringBuilder(howmany);
+		for(int i=0;i<howmany;i++){
+			sb.append(" ");
+		}
+		return sb.toString();
+	}
+	private String getSpaces() {
+		return getSpaces(5);
+	}
 
     public static boolean isHmtrHierCreated() {
         return IS_HMTR_HIER_CREATED;
@@ -40,11 +59,11 @@ public class ClassHMTRHierarchy implements Serializable{
     }
 
     public List<ClassHMTRNode> getNodes() {
-        return nodes;
+        return m_Nodes;
     }
 
     private void addNode(ClassHMTRNode node){
-        nodes.add(node);
+        m_Nodes.add(node);
     }
 
     private ClassHMTRNode getNode(String nodeName){
@@ -58,16 +77,16 @@ public class ClassHMTRHierarchy implements Serializable{
 
     public void calculateDepth(){
 
-        this.nodeDepth = new HashMap<String, Integer>();
+        this.m_NodeDepth = new HashMap<String, Integer>();
 
-        for (ClassHMTRNode node : this.nodes){
-            this.nodeDepth.put(node.getName(),getNodeDepth(node.getName()));
+        for (ClassHMTRNode node : this.m_Nodes){
+            this.m_NodeDepth.put(node.getName(),getNodeDepth(node.getName()));
         }
     }
 
     public void printDepth(){
 
-        for (Map.Entry<String, Integer> entry : this.nodeDepth.entrySet()){
+        for (Map.Entry<String, Integer> entry : this.m_NodeDepth.entrySet()){
 
             System.out.println("Attribute: " + entry.getKey() + ", depth: " + entry.getValue());
 
@@ -77,7 +96,7 @@ public class ClassHMTRHierarchy implements Serializable{
 
     public void printWeights(){
 
-        for (Map.Entry<String, Double> entry : this.nodeWeights.entrySet()){
+        for (Map.Entry<String, Double> entry : this.m_NodeWeights.entrySet()){
 
             System.out.println("Attribute: " + entry.getKey() + ", weight: " + entry.getValue());
 
@@ -106,12 +125,12 @@ public class ClassHMTRHierarchy implements Serializable{
         for (String relationship : relationships) {
             String[] pcr = relationship.split("-");
 
-            if(root == true) this.nodes.add(new ClassHMTRNode(true, pcr[0]));
+            if(root == true) this.m_Nodes.add(new ClassHMTRNode(true, pcr[0]));
             root = false;
 
 
-            if (!nodeExists(pcr[0])) this.nodes.add(new ClassHMTRNode(pcr[0]));
-            if (!nodeExists(pcr[1])) this.nodes.add(new ClassHMTRNode(pcr[1]));
+            if (!nodeExists(pcr[0])) this.m_Nodes.add(new ClassHMTRNode(pcr[0]));
+            if (!nodeExists(pcr[1])) this.m_Nodes.add(new ClassHMTRNode(pcr[1]));
 
             getNode(pcr[0]).addChild(getNode(pcr[1]));
 
@@ -125,18 +144,18 @@ public class ClassHMTRHierarchy implements Serializable{
 
         if (weight > 1 || weight  < 0.1) System.err.println("Weird initialisation of HMTR weight! Weight = "+weight+"\nTypical weights: 0.75, 0.8333 etc.\nWeight 1 = pure MTR (not taking the hierarchy into account)\nSmaller values = more influence on the upper levels of the hierarchy\nProgram will continue anyways...");
 
-        this.nodeWeights = new HashMap<String, Double>();
+        this.m_NodeWeights = new HashMap<String, Double>();
 
-        for (Map.Entry<String, Integer> entry : this.nodeDepth.entrySet()){
+        for (Map.Entry<String, Integer> entry : this.m_NodeDepth.entrySet()){
 
-            this.nodeWeights.put(entry.getKey(),Math.pow(weight, entry.getValue()));
+            this.m_NodeWeights.put(entry.getKey(),Math.pow(weight, entry.getValue()));
 
         }
 
     }
 
     public double getWeight(String name) {
-        return nodeWeights.get(name).doubleValue();
+        return m_NodeWeights.get(name).doubleValue();
     }
 
 
@@ -144,7 +163,7 @@ public class ClassHMTRHierarchy implements Serializable{
 
         List<ClassHMTRNode>  parents = new ArrayList<ClassHMTRNode>();
 
-        for (ClassHMTRNode aNode: this.nodes ) {
+        for (ClassHMTRNode aNode: this.m_Nodes ) {
 
             if (aNode.getChildren().contains(node))
                 parents.add(aNode);
@@ -162,7 +181,7 @@ public class ClassHMTRHierarchy implements Serializable{
 
         System.out.println("Hiearchy: ");
 
-        for (ClassHMTRNode node : nodes) {
+        for (ClassHMTRNode node : m_Nodes) {
             System.out.println(node.printNodeAndChildren());
 
             List<ClassHMTRNode> parents = getParents(node);
@@ -198,10 +217,11 @@ public class ClassHMTRHierarchy implements Serializable{
 
     }
 
+
     private void printHierarchyTree(ClassHMTRNode node, int indent, StringBuilder sb) {
 
         sb.append(getIndentString(indent));
-        if (hasParents(node)) sb.append("└──");
+        if (hasParents(node)) sb.append(getHorizontalLineText());
         sb.append(node.getName());
         sb.append("\n");
         for (ClassHMTRNode n : node.getChildren()) {
@@ -215,7 +235,8 @@ public class ClassHMTRHierarchy implements Serializable{
     private String getIndentString(int indent) {
         StringBuilder sb = new StringBuilder();
         for (int i = 1; i < indent; i++) {
-            sb.append("·     ");
+            //sb.append("·     ");
+        	sb.append(getVerticalLineText());
         }
         return sb.toString();
     }
@@ -249,7 +270,7 @@ public class ClassHMTRHierarchy implements Serializable{
 
 
     public ClassHMTRHierarchy(String hierarchyName) {
-        this.hierarchyName = hierarchyName;
-        this.nodes = new ArrayList<ClassHMTRNode>();
+        this.m_HierarchyName = hierarchyName;
+        this.m_Nodes = new ArrayList<ClassHMTRNode>();
     }
 }
