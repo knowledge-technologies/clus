@@ -49,6 +49,7 @@ import clus.data.type.ClusSchema;
 import clus.error.ClusErrorList;
 import clus.error.ComponentError;
 import clus.util.cloner.Cloner;
+import clus.util.tools.optimization.GDProbl;
 import clus.ext.ensembles.containters.OneBagResults;
 import clus.ext.ensembles.induceCallables.InduceExtraTreeCallable;
 import clus.ext.ensembles.induceCallables.InduceOneBagCallable;
@@ -68,7 +69,6 @@ import clus.selection.BaggingSelection;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
 import clus.statistic.ComponentStatistic;
-import clus.tools.optimization.GDProbl;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
 import clus.util.ClusRandomNonstatic;
@@ -77,7 +77,7 @@ import clus.util.ClusRandomNonstatic;
 public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     Clus m_BagClus;
-    static ClusAttrType[] m_RandomSubspaces; // this field should be removed in the future
+    static ClusAttrType[] m_RandomSubspaces; // TODO: this field should be removed in the future
     ClusForest m_OForest;// Forest with the original models
     ClusForest m_DForest;
     static int m_Mode;
@@ -91,7 +91,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     static int m_NbMaxBags;
 
     // members for target subspacing
-    static int m_EnsembleTargetSubspaceMethod;
+    static int m_EnsembleROSScope;
     ClusEnsembleROSInfo m_EnsembleROSInfo;
 
     // Out-Of-Bag Error Estimate
@@ -139,7 +139,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         m_Mode = ClusStatManager.getMode();
         // optimize if not XVAL and HMC
         m_OptMode = (Settings.shouldOptimizeEnsemble() && ((m_Mode == ClusStatManager.MODE_HIERARCHICAL) || (m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode == ClusStatManager.MODE_CLASSIFY)));
-        m_EnsembleTargetSubspaceMethod = Settings.getEnsembleROSScope();
+        m_EnsembleROSScope = Settings.getEnsembleROSScope();
 
         // m_OptMode = (Settings.shouldOptimizeEnsemble() && !Settings.IS_XVAL && ((m_Mode ==
         // ClusStatManager.MODE_HIERARCHICAL)||(m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode ==

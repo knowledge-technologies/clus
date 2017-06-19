@@ -61,12 +61,12 @@ import clus.model.test.ClusRuleConstraintInduceTest;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
-import clus.tools.optimization.GDAlg;
-import clus.tools.optimization.OptAlg;
-import clus.tools.optimization.OptProbl;
-import clus.tools.optimization.de.DeAlg;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
+import clus.util.tools.optimization.GDAlg;
+import clus.util.tools.optimization.OptAlg;
+import clus.util.tools.optimization.OptProbl;
+import clus.util.tools.optimization.de.DeAlg;
 
 
 public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {

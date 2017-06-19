@@ -38,8 +38,8 @@ import clus.main.Settings;
 import clus.model.test.NodeTest;
 import clus.model.test.SoftTest;
 import clus.statistic.ClusStatistic;
-import clus.tools.debug.Debug;
 import clus.util.ClusException;
+import clus.util.tools.debug.Debug;
 
 
 public class OptXValIndOV extends OptXValInduce {

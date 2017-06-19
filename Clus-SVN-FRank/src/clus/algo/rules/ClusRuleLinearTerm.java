@@ -37,7 +37,7 @@ import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
-import clus.tools.optimization.ImplicitLinearTerms;
+import clus.util.tools.optimization.ImplicitLinearTerms;
 
 
 /**
