@@ -33,7 +33,7 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
 import clus.ext.beamsearch.ClusBeam;
-import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
+import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.ext.timeseries.TimeSeries;
 import clus.main.Settings;
 import clus.util.ClusFormat;
@@ -415,7 +415,7 @@ public abstract class ClusStatistic implements Serializable {
     public abstract void vote(ArrayList<ClusStatistic> votes);
 
 
-    public abstract void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo);
+    public abstract void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo);
 
 
     public ClusStatistic normalizedCopy() {

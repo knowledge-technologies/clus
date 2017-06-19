@@ -66,7 +66,8 @@ public abstract class ClusModelProcessor {
     public void exampleDone() throws IOException {
     }
 
-
+    public void flushWriter() {}
+    
     public void exampleUpdate(DataTuple tuple, ClusStatistic distr) throws IOException {
     }
 

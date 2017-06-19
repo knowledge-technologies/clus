@@ -59,6 +59,7 @@ import clus.tools.optimization.OptProbl;
 // import clus.tools.optimization.de.DeProbl; // Optimization information (data, predictions)
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import com.google.gson.JsonObject;
 
 
 /**
@@ -577,6 +578,21 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
 
     public void printModelToPythonScript(PrintWriter wrt) {
+    }
+
+    @Override
+    public JsonObject getModelJSON() {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info) {
+        return null;
+    }
+
+    @Override
+    public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
+        return null;
     }
 
 

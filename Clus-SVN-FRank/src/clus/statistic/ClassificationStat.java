@@ -39,7 +39,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.ext.ensembles.ClusEnsembleTargetSubspaceInfo;
+import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import clus.jeans.math.MathUtil;
 import clus.jeans.util.StringUtils;
@@ -481,7 +481,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public double entropyDifference(ClassificationStat other, ClusAttributeWeights scale) {
-        if (Settings.isEnsembleTargetSubspacingEnabled())
+        if (Settings.isEnsembleROSEnabled())
             return entropyDifferenceTargetSubspace(other, scale);
 
         double sum = 0.0;
@@ -516,7 +516,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public double entropy(ClusAttributeWeights scale) {
-        if (Settings.isEnsembleTargetSubspacingEnabled())
+        if (Settings.isEnsembleROSEnabled())
             return entropyTargetSubspace(scale);
 
         double sum = 0.0;
@@ -620,7 +620,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     // ERROR
     public double getError(ClusAttributeWeights scale) {
-        if (Settings.isEnsembleTargetSubspacingEnabled())
+        if (Settings.isEnsembleROSEnabled())
             return getErrorTargetSubspace(scale);
 
         double result = 0.0;
@@ -655,7 +655,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public double getErrorDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (Settings.isEnsembleTargetSubspacingEnabled())
+        if (Settings.isEnsembleROSEnabled())
             return getErrorDiffTargetSubspace(scale, other);
 
         double result = 0.0;
@@ -690,7 +690,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     // VARIANCE REDUCTION
     public double getSVarS(ClusAttributeWeights scale) {
-        if (Settings.isEnsembleTargetSubspacingEnabled())
+        if (Settings.isEnsembleROSEnabled())
             return getSVarSTargetSubspace(scale);
 
         // System.err.println(": here");
@@ -726,7 +726,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (Settings.isEnsembleTargetSubspacingEnabled())
+        if (Settings.isEnsembleROSEnabled())
             return getSVarSDiffTargetSubspace(scale, other);
 
         double result = 0.0;
@@ -1121,10 +1121,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     public void vote(ArrayList<ClusStatistic> votes) {
         switch (Settings.m_ClassificationVoteType.getValue()) {
-            case 0:
+            case Settings.VOTING_TYPE_MAJORITY:
                 voteMajority(votes);
                 break;
-            case 1:
+            case Settings.VOTING_TYPE_PROBAB_DISTR: 
                 voteProbDistr(votes);
                 break;
             default:
@@ -1133,12 +1133,12 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
-    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         switch (Settings.m_ClassificationVoteType.getValue()) {
-            case 0:
+            case Settings.VOTING_TYPE_MAJORITY:
                 voteMajority(votes, targetSubspaceInfo);
                 break;
-            case 1:
+            case Settings.VOTING_TYPE_PROBAB_DISTR:
                 voteProbDistr(votes, targetSubspaceInfo);
                 break;
             default:
@@ -1162,7 +1162,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
-    public void voteMajority(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+    public void voteMajority(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         reset();
         int nb_votes = votes.size();
         m_SumWeight = nb_votes;
@@ -1200,7 +1200,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
-    public void voteProbDistr(ArrayList<ClusStatistic> votes, ClusEnsembleTargetSubspaceInfo targetSubspaceInfo) {
+    public void voteProbDistr(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         reset();
         int nb_votes = votes.size();
         for (int j = 0; j < nb_votes; j++) {

@@ -48,9 +48,9 @@ public class ClusRandom {
     /** Used for random split-point selection for Extra-Trees Ensembles */
     public final static int RANDOM_EXTRATREE = 7;
     /** Used for ensemble target subspacing */
-    public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING = 8;
+    public final static int RANDOM_ENSEMBLE_ROS = 8;
     /** Used for ensemble target subspacing - poisson sampling of the mean */
-    public final static int RANDOM_ENSEMBLE_TARGET_SUBSPACING_SUBSPACE_SIZE_SELECTION = 9;
+    public final static int RANDOM_ENSEMBLE_ROS_SUBSPACE_SIZE_SELECTION = 9;
 
     public static Random[] m_Random;
 

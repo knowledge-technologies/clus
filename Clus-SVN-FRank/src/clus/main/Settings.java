@@ -642,6 +642,7 @@ public class Settings implements Serializable {
     protected INIFileBool m_OutputJSONModel;
     protected INIFileBool m_OutputDatabaseQueries;
     protected INIFileBool m_WriteCurves;
+    protected INIFileBool m_OutputClowdFlowsJSON;
 
 
     public boolean isOutTrainError() {
@@ -736,6 +737,10 @@ public class Settings implements Serializable {
 
     public boolean isOutputJSONModel() {
         return m_OutputJSONModel.getValue();
+    }
+
+    public boolean isOutputClowdFlowsJSON() {
+        return m_OutputClowdFlowsJSON.getValue();
     }
 
 
@@ -2531,11 +2536,11 @@ public class Settings implements Serializable {
     public final static int RANKING_GENIE3 = 2;
     public final static int RANKING_SYMBOLIC = 3;
     
-    public final static String[] ENSEMBLE_TARGET_SUBSPACING_TYPE = { "None", "RandomPredictWithAll", "RandomPredictWithSubset", "SMARTERWAY" };
-    public final static int ENSEMBLE_TARGET_SUBSPACING_NONE = 0;
-    public final static int ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_ALL = 1;
-    public final static int ENSEMBLE_TARGET_SUBSPACING_RANDOM_PREDICT_WITH_SUBSET = 2;
-    public final static int ENSEMBLE_TARGET_SUBSPACING_SMARTERWAY = 3;
+    public final static String[] ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE = { "None", "TotalAveraging", "SubspaceAveraging", "SMARTERWAY" };
+    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE = 0; /* IF THIS IS SELECTED, ROS IS NOT ACTIVATED */
+    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_TOTAL_AVERAGING = 1;
+    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING = 2;
+    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SMARTERWAY = 3; /* TBD */
 
     INIFileSection m_SectionEnsembles;
     protected INIFileNominalOrIntOrVector m_NbBags;
@@ -2552,7 +2557,7 @@ public class Settings implements Serializable {
     protected INIFileString m_RandomTargetAttrSelected;
 
     /** Used for target subspacing */
-    public static INIFileNominal m_EnsembleTargetSubspacingMethod;
+    public static INIFileNominal m_EnsembleROSScope;
 
     protected int m_SubsetSize;
     public static INIFileBool m_PrintAllModels;
@@ -2629,18 +2634,18 @@ public class Settings implements Serializable {
     }
 
 
-    public static int getEnsembleTargetSubspacingMethod() {
-        return m_EnsembleTargetSubspacingMethod.getValue();
+    public static int getEnsembleROSScope() {
+        return m_EnsembleROSScope.getValue();
     }
 
 
-    public void setEnsembleTargetSubspacingMethod(int value) {
-        m_EnsembleTargetSubspacingMethod.setSingleValue(value);
+    public void setEnsembleROSScope(int value) {
+        m_EnsembleROSScope.setSingleValue(value);
     }
 
 
-    public static boolean isEnsembleTargetSubspacingEnabled() {
-        return Settings.getEnsembleTargetSubspacingMethod() != Settings.ENSEMBLE_TARGET_SUBSPACING_NONE;
+    public static boolean isEnsembleROSEnabled() {
+        return Settings.getEnsembleROSScope() != Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE;
     }
 
 
@@ -2721,7 +2726,7 @@ public class Settings implements Serializable {
             ubound = schema.getNbDescriptiveAttributes();
             s = "descriptive";
         }
-        else { // for target subspacing
+        else { // for ROS
             value = getNbRandomTargetAttrString();
             ubound = schema.getNbTargetAttributes();
             s = "target";
@@ -3121,6 +3126,7 @@ public class Settings implements Serializable {
         output.addNode(m_OutputPythonModel = new INIFileBool("OutputPythonModel", false));
         output.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
         output.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));
+        output.addNode(m_OutputClowdFlowsJSON = new INIFileBool("OutputClowdFlowsJSON", false));
 
         INIFileSection nominal = new INIFileSection("Nominal");
         nominal.addNode(m_MEstimate = new INIFileDouble("MEstimate", 1.0));
@@ -3310,7 +3316,7 @@ public class Settings implements Serializable {
         m_SectionEnsembles.addNode(m_ClassificationVoteType = new INIFileNominal("VotingType", VOTING_TYPE, VOTING_TYPE_PROBAB_DISTR));
         m_SectionEnsembles.addNode(m_RandomAttrSelected = new INIFileString("SelectRandomSubspaces", "0"));
         m_SectionEnsembles.addNode(m_RandomTargetAttrSelected = new INIFileString("SelectRandomTargetSubspaces", "SQRT"));
-        m_SectionEnsembles.addNode(m_EnsembleTargetSubspacingMethod = new INIFileNominal("TargetSubspacing", ENSEMBLE_TARGET_SUBSPACING_TYPE, ENSEMBLE_TARGET_SUBSPACING_NONE));
+        m_SectionEnsembles.addNode(m_EnsembleROSScope = new INIFileNominal("RandomOutputSelection", ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE, ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE));
         m_SectionEnsembles.addNode(m_PrintAllModels = new INIFileBool("PrintAllModels", false));
         m_SectionEnsembles.addNode(m_PrintAllModelFiles = new INIFileBool("PrintAllModelFiles", false));
         m_SectionEnsembles.addNode(m_PrintAllModelInfo = new INIFileBool("PrintAllModelInfo", false));
@@ -3532,4 +3538,7 @@ public class Settings implements Serializable {
     }
 
 
+    public void setOutputClowdFlows(boolean value) {
+        m_OutputClowdFlowsJSON.setValue(value);
+    }
 }
