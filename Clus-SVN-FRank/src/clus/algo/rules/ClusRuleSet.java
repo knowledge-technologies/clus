@@ -54,11 +54,12 @@ import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
-import clus.tools.optimization.OptProbl;
 // import clus.tools.optimization.de.DeAlg;
 // import clus.tools.optimization.de.DeProbl; // Optimization information (data, predictions)
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.tools.optimization.OptProbl;
+
 import com.google.gson.JsonObject;
 
 

@@ -45,8 +45,8 @@ import clus.main.Settings;
 import clus.selection.BaggingSelection;
 import clus.selection.XValMainSelection;
 import clus.selection.XValSelection;
-import clus.tools.debug.Debug;
 import clus.util.ClusException;
+import clus.util.tools.debug.Debug;
 
 
 @Deprecated

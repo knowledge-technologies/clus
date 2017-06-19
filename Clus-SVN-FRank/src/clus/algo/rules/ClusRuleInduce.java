@@ -51,12 +51,12 @@ import clus.model.test.NodeTest;
 import clus.selection.BaggingSelection;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
-import clus.tools.optimization.CallExternGD;
-import clus.tools.optimization.GDAlg;
-import clus.tools.optimization.OptAlg;
-import clus.tools.optimization.OptProbl;
-import clus.tools.optimization.de.DeAlg;
 import clus.util.ClusException;
+import clus.util.tools.optimization.CallExternGD;
+import clus.util.tools.optimization.GDAlg;
+import clus.util.tools.optimization.OptAlg;
+import clus.util.tools.optimization.OptProbl;
+import clus.util.tools.optimization.de.DeAlg;
 
 
 public class ClusRuleInduce extends ClusInductionAlgorithm {

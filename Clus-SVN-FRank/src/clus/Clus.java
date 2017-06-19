@@ -85,6 +85,7 @@ import clus.ext.exhaustivesearch.ClusExhaustiveDFSearch;
 import clus.ext.featureRanking.relief.Relief;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.HierMatrixOutput;
+import clus.ext.optiontree.ClusOptionTree;
 import clus.gui.TreeFrame;
 import clus.jeans.io.MyFile;
 import clus.jeans.io.ObjectLoadStream;
@@ -121,11 +122,11 @@ import clus.selection.XValSelection;
 import clus.statistic.ClusStatistic;
 import clus.statistic.CombStat;
 import clus.statistic.RegressionStat;
-import clus.tools.debug.Debug;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.ClusRandom;
 import clus.util.DebugFile;
+import clus.util.tools.debug.Debug;
 
 
 // import clus.weka.*;
@@ -138,9 +139,9 @@ public class Clus implements CMDLineArgsProvider {
 
     // exhaustive was added the 1/08/2006
     // relief was added 29/08/2016
-    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc", "clowdflows" };
+    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc", "clowdflows", "option" };
 
-    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0 };
+    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
 
     protected Settings m_Sett = new Settings();
     protected ClusSummary m_Summary = new ClusSummary();
@@ -1834,6 +1835,13 @@ public class Clus implements CMDLineArgsProvider {
                         clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
                     }
                 }
+                else if (cargs.hasOption("option")) {
+                    clus.getSettings().setSectionOptionEnabled(true);
+                    clss = new ClusOptionTree(clus);
+                    if (sett.getFTestArray().isVector())
+                        clss = new CDTTuneFTest(clss, sett.getFTestArray()
+                                .getDoubleVector());
+                } 
                 else {
                     clss = new ClusDecisionTree(clus);
                     if (sett.getFTestArray().isVector())
