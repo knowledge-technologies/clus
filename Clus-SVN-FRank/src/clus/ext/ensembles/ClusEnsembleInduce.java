@@ -330,10 +330,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         
         
-        m_OForest = new ClusForest(getStatManager(), m_Optimization);        
+        m_OForest = new ClusForest(getStatManager(), m_Optimization);  
+        m_OForest.addEnsembleROSInfo(m_EnsembleROSInfo);
         m_OForests = new ClusForest[m_OutEnsembleAt.length];
         for(int i = 0; i < m_OForests.length; i++){
         	m_OForests[i] = new ClusForest(getStatManager(), m_Optimization);
+        	m_OForests[i].addEnsembleROSInfo(m_EnsembleROSInfo);
         }
         
         
@@ -341,7 +343,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         TupleIterator train_iterator = null; // = train set iterator
         TupleIterator test_iterator = null; // = test set iterator      
 
-        m_OForest.addEnsembleROSInfo(m_EnsembleROSInfo);
+        
 
         if (m_OptMode) {
             train_iterator = cr.getTrainIter();
@@ -492,7 +494,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
         TupleIterator test_iterator = m_OptMode ? cr.getTestIter() :null; // = test set iterator
 
-        m_OForest.addEnsembleROSInfo(m_EnsembleROSInfo);
+        m_OForest.addEnsembleROSInfo(m_EnsembleROSInfo); // TODO: is this (together with the following lines) necessary? see the same lines in induceAll ...
+        for(int i = 0; i < m_OForests.length; i++){
+        	m_OForests[i].addEnsembleROSInfo(m_EnsembleROSInfo);
+        }
 
         Random bagSeedGenerator = new Random(getSettings().getRandomSeed());
         int[] seeds = new int[m_NbMaxBags];
