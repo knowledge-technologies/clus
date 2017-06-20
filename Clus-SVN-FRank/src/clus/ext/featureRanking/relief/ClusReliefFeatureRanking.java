@@ -213,6 +213,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @throws InterruptedException
      */
     public void calculateReliefImportance(RowData data) throws ClusException, InterruptedException {
+        if(Settings.VERBOSE > 0){
+        	System.out.println("Calculating importances ...");
+        }
         DataTuple tuple;
         int tupleInd;
         int nbTargets = m_performPerTargetRanking ? 1 + m_NbTargetAttrs : 1;
@@ -439,6 +442,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param data
      */
     private void initialize(RowData data){
+    	if(Settings.VERBOSE > 0){
+    		System.out.println("Preprocessing steps ...");
+    	}
         if (m_WeightNeighbours) {
             for (int neigh = 0; neigh < m_MaxNbNeighbours; neigh++) {
                 m_NeighbourWeights[neigh] = Math.exp(-(m_Sigma * neigh) * (m_Sigma * neigh));
