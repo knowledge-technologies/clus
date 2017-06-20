@@ -132,6 +132,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     
     private HierarchicalMultiLabelDistance m_HierarDist = new HierarchicalMultiLabelDistance();
     
+    private int m_Percents = 0;
+    
 
 
     /**
@@ -222,6 +224,19 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         int numIterInd = 0;
         boolean[] shouldUpdate = new boolean[nbTargets]; // [overall] or [overall, target1, target2, ...]
         for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
+        	double proportion = 100 * (double)(iteration + 1) / ((double) m_MaxNbIterations); 
+        	if(Settings.VERBOSE > 0 && Settings.VERBOSE < 3){
+        		while(m_Percents < proportion && m_Percents < 100){
+        			System.out.print(".");
+        			m_Percents++;
+        			if(m_Percents / 10 * 10 == m_Percents){
+        				System.out.println(String.format(" %3d percents", m_Percents));
+        			}
+        		}
+        	} else if (Settings.VERBOSE > 4){
+        		System.out.println("iteration " + iteration);
+        	}
+        	
             // CHOOSE TUPLE AND COMPUTE NEAREST NEIGHBOURS
             tupleInd = theOrder[iteration];
             tuple = data.getTuple(tupleInd);
@@ -254,9 +269,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             	updateImportances(data, numIterInd, successfulIterations, shouldUpdate);
             	numIterInd++;
             	shouldUpdate = new boolean[nbTargets];
-            	if(Settings.VERBOSE >= 1){
-            		System.out.println(String.format("%d/%d iterations", iteration + 1, m_MaxNbIterations));
-            	}
             }
         }
 

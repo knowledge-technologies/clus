@@ -152,7 +152,9 @@ public class FTest {
             df++;
         }
         while ((value - limit) / limit > 0.05);
-        System.out.println("F-Test = " + sig + " limit = " + ClusFormat.TWO_AFTER_DOT.format(limit) + " values = " + values.size());
+        if(Settings.VERBOSE > 0){
+        	System.out.println("F-Test = " + sig + " limit = " + ClusFormat.TWO_AFTER_DOT.format(limit) + " values = " + values.size());
+        }
         FTEST_LIMIT = limit;
         FTEST_VALUE = new double[values.size() + 3];
         for (int i = 0; i < values.size(); i++) {

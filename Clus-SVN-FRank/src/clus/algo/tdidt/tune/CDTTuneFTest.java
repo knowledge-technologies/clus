@@ -90,10 +90,12 @@ public class CDTTuneFTest extends ClusDecisionTree {
 
 
     private final void showFold(int i) {
-        if (i != 0)
-            System.out.print(" ");
-        System.out.print(String.valueOf(i + 1));
-        System.out.flush();
+    	if(Settings.VERBOSE > 1){
+	        if (i != 0)
+	            System.out.print(" ");
+	        System.out.print(String.valueOf(i + 1));
+	        System.out.flush();
+    	}
     }
 
 
@@ -169,16 +171,18 @@ public class CDTTuneFTest extends ClusDecisionTree {
                 summ.addSummary(cr);
             }
             avgSize /= nbfolds;
-            System.out.println();
+            if(Settings.VERBOSE > 1) System.out.println();
         }
         ClusModelInfo mi = summ.getModelInfo(ClusModel.ORIGINAL);
         Settings.enableVerbose(prevVerb);
         ClusError err = mi.getTestError().getFirstError();
-        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(System.out));
-        wrt.print("Size: " + avgSize + ", ");
-        wrt.print("Error: ");
-        err.showModelError(wrt, ClusError.DETAIL_VERY_SMALL);
-        wrt.flush();
+        if(Settings.VERBOSE > 1){
+	        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(System.out));
+	        wrt.print("Size: " + avgSize + ", ");
+	        wrt.print("Error: ");
+	        err.showModelError(wrt, ClusError.DETAIL_VERY_SMALL);
+	        wrt.flush();
+        }
         return err.getModelError();
     }
 
@@ -189,33 +193,33 @@ public class CDTTuneFTest extends ClusDecisionTree {
         double best_error = low ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
         for (int i = 0; i < m_FTests.length; i++) {
             getSettings().setFTest(m_FTests[i]);
-            System.out.println("Try for F-test value = " + m_FTests[i]);
+            if(Settings.VERBOSE > 0) System.out.println("Try for F-test value = " + m_FTests[i]);
             double err = doParamXVal(trset, pruneset);
-            System.out.print("-> " + err);
+            if(Settings.VERBOSE > 1) System.out.print("-> " + err);
             if (low) {
                 if (err < best_error - 1e-16) {
                     best_error = err;
                     best_value = i;
-                    System.out.println(" *");
+                    if(Settings.VERBOSE > 1) System.out.println(" *");
                 }
                 else {
-                    System.out.println();
+                	if(Settings.VERBOSE > 1) System.out.println();
                 }
             }
             else {
                 if (err > best_error + 1e-16) {
                     best_error = err;
                     best_value = i;
-                    System.out.println(" *");
+                    if(Settings.VERBOSE > 1) System.out.println(" *");
                 }
                 else {
-                    System.out.println();
+                	if(Settings.VERBOSE > 1) System.out.println();
                 }
             }
-            System.out.println();
+            if(Settings.VERBOSE > 0) System.out.println();
         }
         getSettings().setFTest(m_FTests[best_value]);
-        System.out.println("Best F-test value is: " + m_FTests[best_value]);
+        if(Settings.VERBOSE > 0) System.out.println("Best F-test value is: " + m_FTests[best_value]);
     }
 
 
