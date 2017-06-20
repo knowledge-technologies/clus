@@ -1,4 +1,0 @@
-
-[Rules]
-ConstrainedToFirstAttVal = Yes
-
