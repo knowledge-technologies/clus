@@ -105,14 +105,15 @@ public class RandomForestWeighting extends AttributeWeighting {
                                    // new_clus.singleRun(new_clus.getClassifier());
 
             ensemble.induceBagging(run);
-            ensemble.getEnsembleFeatureRanking().sortFeatureRanks();
-            ensemble.getEnsembleFeatureRanking().convertRanksByName();
+            int forestIndex = 0;
+            ensemble.getEnsembleFeatureRanking(forestIndex).sortFeatureRanks(ensemble.getNbTrees(forestIndex));  // matejp changed this
+            ensemble.getEnsembleFeatureRanking(forestIndex).convertRanksByName();
             System.setOut(oldOut);
 
             // The feature ranks can be retrieved using one of the following statements
             // check what you need and how you wish the ranks to be organized...
             // TreeMap ranks_sorted = ensemble.getFeatureRanks(); //sorted by the rank
-            HashMap ranks_by_name = ensemble.getEnsembleFeatureRanking().getFeatureRanksByName();// key is the
+            HashMap ranks_by_name = ensemble.getEnsembleFeatureRanking(0).getFeatureRanksByName();// key is the
                                                                                                  // AttributeName, and
                                                                                                  // the value is array
                                                                                                  // with the order in

@@ -44,7 +44,7 @@ public class ReliefInduce extends ClusInductionAlgorithm {
         m_FeatureRanking.initializeAttributes(cr.getStatManager().getSchema().getDescriptiveAttributes(), m_FeatureRanking.getNbFeatureRankings());
         m_FeatureRanking.calculateReliefImportance(reliefModel.getData());
 
-        m_FeatureRanking.createFimp(cr);
+        m_FeatureRanking.createFimp(cr, 0);
         
         return reliefModel;
     }

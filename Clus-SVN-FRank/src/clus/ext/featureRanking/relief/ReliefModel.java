@@ -57,7 +57,7 @@ public class ReliefModel implements ClusModel {
 	        	ok.add(nbExamples);
 	        }
 	        else {
-	        	System.err.println(String.format("Oops. Condition is brorekn: %d < %d = %s number of examples (= %d).", lowerBound, candidateValues[i], parameter, upperBound));
+	        	System.err.println(String.format("Oops. Condition is broken: %d < %d = %s number of examples (= %d).", lowerBound, candidateValues[i], parameter, upperBound));
 	            System.err.println(String.format("Changed the value to the min(default value, upperBound): %d.", defaultValue));
 	            ok.add(defaultValue);
 	        }

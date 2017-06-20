@@ -1388,12 +1388,12 @@ public class Clus implements CMDLineArgsProvider {
         // ClusOutput output = new ClusOutput(m_Sett.getAppName() + ".out",
         // m_Schema, m_Sett);
         ClusOutput output;
-        if (ClusEnsembleInduce.isOptimized() && (m_Sett.getNbBaggingSets().getVectorLength() > 1) && (m_Sett.getBagSelection().getIntVectorSorted()[0] < 1)) {
-            output = new ClusOutput(m_Sett.getAppName() + "_" + ClusEnsembleInduce.getMaxNbBags() + "_.out", m_Schema, m_Sett);
-        }
-        else {
+//        if (ClusEnsembleInduce.isOptimized() && (m_Sett.getNbBaggingSets().getVectorLength() > 1) && (m_Sett.getBagSelection().getIntVectorSorted()[0] < 1)) {
+//            output = new ClusOutput(m_Sett.getAppName() + "_" + ClusEnsembleInduce.getMaxNbBags() + "_.out", m_Schema, m_Sett);
+//        }
+//        else {
             output = new ClusOutput(m_Sett.getAppName() + ".out", m_Schema, m_Sett);
-        }
+//        }
 
         ClusRun cr = partitionData();
         // Compute statistic on training data

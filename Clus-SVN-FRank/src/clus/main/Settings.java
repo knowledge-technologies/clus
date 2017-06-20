@@ -1967,7 +1967,7 @@ public class Settings implements Serializable {
 
 
     public int[] getMultiLabelRankingMeasures() {
-        return m_MultiLabelRankingMeasure.getNominalVector();
+    	return m_MultiLabelRankingMeasure.getNominalVector();
     }
 
 
@@ -3330,7 +3330,7 @@ public class Settings implements Serializable {
         m_MultiLabelThreshold.setDouble(0.5);
         m_SectionMultiLabel.addNode(m_MultiLabelOptimizeThreshold = new INIFileNominal("OptimizeThresholds", MULTILABEL_THRESHOLD_OPTIMIZATION, MULTILABEL_THRESHOLD_OPTIMIZATION_YES));
         m_SectionMultiLabel.addNode(m_MultiLabelRankingMeasure = new INIFileNominalOrIntOrVector("MultiLabelRankingMeasure", MULTILABEL_MEASURES));
-        m_MultiLabelRankingMeasure.setInt(MULTILABEL_MEASURES_HAMMINGLOSS);
+        m_MultiLabelRankingMeasure.setNominal(MULTILABEL_MEASURES_HAMMINGLOSS);
 
         m_SectionHierarchical = new INIFileSection("Hierarchical");
         m_SectionHierarchical.addNode(m_HierType = new INIFileNominal("Type", HIERTYPES, 0));
@@ -3414,7 +3414,7 @@ public class Settings implements Serializable {
         m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("iterations", NONELIST));
         m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);
         m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("weightNeighbours", false));
-        m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 2.0)); // following Weka,
+        m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 0.5)); // following Weka,
                                                                                                     // the authors do
                                                                                                     // not give any
                                                                                                     // suggestions

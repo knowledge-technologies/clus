@@ -20,13 +20,17 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.mlc;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
+import clus.error.ComponentError;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
@@ -36,17 +40,17 @@ import clus.util.ClusFormat;
  * @author matejp
  * 
  */
-public class MicroRecall extends ClusNominalError {
+public class MacroPrecision extends ClusNominalError implements ComponentError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    protected int[] m_NbTruePositives, m_NbFalseNegatives;
+    protected int[] m_NbTruePositives, m_NbFalsePositives;
 
 
-    public MicroRecall(ClusErrorList par, NominalAttrType[] nom) {
+    public MacroPrecision(ClusErrorList par, NominalAttrType[] nom) {
         super(par, nom);
         m_NbTruePositives = new int[m_Dim];
-        m_NbFalseNegatives = new int[m_Dim];
+        m_NbFalsePositives = new int[m_Dim];
     }
 
 
@@ -57,15 +61,15 @@ public class MicroRecall extends ClusNominalError {
 
     public void reset() {
         Arrays.fill(m_NbTruePositives, 0);
-        Arrays.fill(m_NbFalseNegatives, 0);
+        Arrays.fill(m_NbFalsePositives, 0);
     }
 
 
     public void add(ClusError other) {
-        MicroRecall mr = (MicroRecall) other;
+        MacroPrecision mp = (MacroPrecision) other;
         for (int i = 0; i < m_Dim; i++) {
-            m_NbTruePositives[i] += mr.m_NbTruePositives[i];
-            m_NbFalseNegatives[i] += mr.m_NbFalseNegatives[i];
+            m_NbTruePositives[i] += mp.m_NbTruePositives[i];
+            m_NbFalsePositives[i] += mp.m_NbFalsePositives[i];
         }
     }
 
@@ -75,37 +79,41 @@ public class MicroRecall extends ClusNominalError {
     }
 
 
-    public double getMicroRecall(int i) {
+    public double getMacroPrecision(int i) {
         return getModelErrorComponent(i);
     }
-    // Nima smisla ...
-    // public double getModelErrorComponent(int i) {
-    // return ((double)m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalseNegatives[i]);
-    // }
+
+
+    public double getModelErrorComponent(int i) {
+        return ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
+    }
 
 
     public double getModelError() {
-        int truePositives = 0, falseNegatives = 0;
+        double avg = 0.0;
         for (int i = 0; i < m_Dim; i++) {
-            truePositives += m_NbTruePositives[i];
-            falseNegatives += m_NbFalseNegatives[i];
+            avg += getModelErrorComponent(i);
         }
-        return ((double) truePositives) / (truePositives + falseNegatives);
+        return avg / m_Dim;
     }
 
 
     public void showModelError(PrintWriter out, int detail) {
-        out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
+        String[] componentErrors = new String[m_Dim];
+        for (int i = 0; i < m_Dim; i++) {
+            componentErrors[i] = ClusFormat.FOUR_AFTER_DOT.format(getModelErrorComponent(i));
+        }
+        out.println(String.format("%s: %s", Arrays.toString(componentErrors), ClusFormat.FOUR_AFTER_DOT.format(getModelError())));
     }
 
 
     public String getName() {
-        return "MicroRecall";
+        return "MacroPrecision";
     }
 
 
     public ClusError getErrorClone(ClusErrorList par) {
-        return new MicroRecall(par, m_Attrs);
+        return new MacroPrecision(par, m_Attrs);
     }
 
 
@@ -115,12 +123,12 @@ public class MicroRecall extends ClusNominalError {
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
-                if (attr.getNominal(tuple) == 0) { // label relevant
-                    if (predicted[i] == 0) {
+                if (predicted[i] == 0) { // predicted positive
+                    if (attr.getNominal(tuple) == 0) {
                         m_NbTruePositives[i]++;
                     }
                     else {
-                        m_NbFalseNegatives[i]++;
+                        m_NbFalsePositives[i]++;
                     }
                 }
             }
@@ -133,12 +141,12 @@ public class MicroRecall extends ClusNominalError {
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
-                if (attr.getNominal(tuple) == 0) { // label relevant
-                    if (attr.getNominal(pred) == 0) {
+                if (attr.getNominal(pred) == 0) { // predicted positive
+                    if (attr.getNominal(tuple) == 0) {
                         m_NbTruePositives[i]++;
                     }
                     else {
-                        m_NbFalseNegatives[i]++;
+                        m_NbFalsePositives[i]++;
                     }
                 }
             }

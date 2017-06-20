@@ -29,30 +29,30 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.error.Accuracy;
-import clus.error.AveragePrecision;
 import clus.error.ClusError;
 import clus.error.ClusErrorList;
 import clus.error.ComponentError;
-import clus.error.Coverage;
-import clus.error.HammingLoss;
-import clus.error.MLAccuracy;
-import clus.error.MLFOneMeasure;
-import clus.error.MLPrecision;
-import clus.error.MLRecall;
-import clus.error.MLaverageAUPRC;
-import clus.error.MLaverageAUROC;
-import clus.error.MLpooledAUPRC;
-import clus.error.MLweightedAUPRC;
-import clus.error.MacroFOne;
-import clus.error.MacroPrecision;
-import clus.error.MacroRecall;
-import clus.error.MicroPrecision;
-import clus.error.MicroRecall;
 import clus.error.MisclassificationError;
-import clus.error.OneError;
 import clus.error.RMSError;
-import clus.error.RankingLoss;
-import clus.error.SubsetAccuracy;
+import clus.error.mlc.AveragePrecision;
+import clus.error.mlc.Coverage;
+import clus.error.mlc.HammingLoss;
+import clus.error.mlc.MLAccuracy;
+import clus.error.mlc.MLFOneMeasure;
+import clus.error.mlc.MLPrecision;
+import clus.error.mlc.MLRecall;
+import clus.error.mlc.MLaverageAUPRC;
+import clus.error.mlc.MLaverageAUROC;
+import clus.error.mlc.MLpooledAUPRC;
+import clus.error.mlc.MLweightedAUPRC;
+import clus.error.mlc.MacroFOne;
+import clus.error.mlc.MacroPrecision;
+import clus.error.mlc.MacroRecall;
+import clus.error.mlc.MicroPrecision;
+import clus.error.mlc.MicroRecall;
+import clus.error.mlc.OneError;
+import clus.error.mlc.RankingLoss;
+import clus.error.mlc.SubsetAccuracy;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.ext.ensembles.ClusReadWriteLock;
 import clus.ext.hierarchical.HierErrorMeasures;
@@ -124,11 +124,11 @@ public class ClusFeatureRanking {
     }
 
 
-    public void sortFeatureRanks() {
+    public void sortFeatureRanks(int numberOfTrees) {
         Iterator<String> iter = m_AllAttributes.keySet().iterator();
         while (iter.hasNext()) {
             String attr = iter.next();
-            double score = m_AllAttributes.get(attr)[2] / Math.max(1.0, ClusEnsembleInduce.getMaxNbBags());
+            double score = m_AllAttributes.get(attr)[2] / Math.max(1.0, numberOfTrees);
             // double score = ((double[])m_AllAttributes.get(attr))[2];
             ArrayList<String> attrs = new ArrayList<String>();
             if (m_FeatureRanks.containsKey(score))
@@ -623,17 +623,22 @@ public class ClusFeatureRanking {
     	m_NbFeatureRankings = nbRankings;
     }
     
-    public void createFimp(ClusRun cr) throws IOException{
+    
+    public void createFimp(ClusRun cr, int numberOfTrees) throws IOException{
+    	createFimp(cr, "", numberOfTrees);
+    }
+    
+    public void createFimp(ClusRun cr, String appendixToFimpName, int numberOfTrees) throws IOException{
         boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
         if (sorted && getNbFeatureRankings() > 1) {
             System.err.println("More than one feature ranking will be output. " + "The attributes will appear as in ARFF\nand will not be sorted " + "by relevance, although SortRankingByRelevance = Yes.");
             sorted = false;
         }
         if (sorted) {
-            sortFeatureRanks();
+            sortFeatureRanks(numberOfTrees);
         }
         convertRanksByName();
-        String appName = cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName());
+        String appName = cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()) + appendixToFimpName;
         if (sorted){
         	writeRanking(appName, cr.getStatManager().getSettings().getRankingMethod());
         } else{

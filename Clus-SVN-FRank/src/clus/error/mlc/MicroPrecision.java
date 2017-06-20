@@ -20,72 +20,81 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.mlc;
 
 import java.io.PrintWriter;
+import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
 import clus.main.Settings;
-import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 
 /**
  * @author matejp
- *
- *         One_error is used in multi-label classification scenario.
+ * 
  */
-public class OneError extends ClusNominalError {
+public class MicroPrecision extends ClusNominalError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    protected int m_NbWrong; // sum over samples sample_i of the terms INDICATOR[(arg max_j proportion of samples with
-                             // label_j in the leaf which sample_i belongs to) is not an element of Y_i],
-                             // where Y_i is the true set of relevant labels for sample_i,
-                             // i.e., the proportion of misclassified top label.
-
-    protected int m_NbKnown; // number of the examples seen
+    protected int[] m_NbTruePositives, m_NbFalsePositives;
 
 
-    public OneError(ClusErrorList par, NominalAttrType[] nom) {
+    public MicroPrecision(ClusErrorList par, NominalAttrType[] nom) {
         super(par, nom);
-        m_NbWrong = 0;
-        m_NbKnown = 0;
+        m_NbTruePositives = new int[m_Dim];
+        m_NbFalsePositives = new int[m_Dim];
     }
 
 
     public boolean shouldBeLow() {
-        return true;
+        return false;
     }
 
 
     public void reset() {
-        m_NbWrong = 0;
-        m_NbKnown = 0;
+        Arrays.fill(m_NbTruePositives, 0);
+        Arrays.fill(m_NbFalsePositives, 0);
     }
 
 
     public void add(ClusError other) {
-        OneError oe = (OneError) other;
-        m_NbWrong += oe.m_NbWrong;
-        m_NbKnown += oe.m_NbKnown;
+        MicroPrecision mp = (MicroPrecision) other;
+        for (int i = 0; i < m_Dim; i++) {
+            m_NbTruePositives[i] += mp.m_NbTruePositives[i];
+            m_NbFalsePositives[i] += mp.m_NbFalsePositives[i];
+        }
     }
 
 
-    // NEDOTAKNJENO
     public void showSummaryError(PrintWriter out, boolean detail) {
         showModelError(out, detail ? 1 : 0);
     }
-    // // A MA TO SPLOH SMISU?
-    // public double getOneError(int i) {
-    // return getModelErrorComponent(i);
+
+
+    public double getMicroPrecision(int i) {
+        return getModelErrorComponent(i);
+    }
+
+
+    // Nima smisla ...
+    // public double getModelErrorComponent(int i) {
+    // return ((double)m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
     // }
 
-
     public double getModelError() {
-        return ((double) m_NbWrong) / m_NbKnown;
+        int truePositives = 0, falsePositives = 0;
+        for (int i = 0; i < m_Dim; i++) {
+            truePositives += m_NbTruePositives[i];
+            falsePositives += m_NbFalsePositives[i];
+        }
+        return ((double) truePositives) / (truePositives + falsePositives);
     }
 
 
@@ -95,54 +104,52 @@ public class OneError extends ClusNominalError {
 
 
     public String getName() {
-        return "OneError";
+        return "MicroPrecision";
     }
 
 
     public ClusError getErrorClone(ClusErrorList par) {
-        return new OneError(par, m_Attrs);
+        return new MicroPrecision(par, m_Attrs);
     }
 
 
     public void addExample(DataTuple tuple, ClusStatistic pred) {
-        int[] predicted = pred.getNominalPred(); // Codomain is {"1", "0"} - see clus.data.type.NominalAtterType
-                                                 // constructor
-        double[] scores = ((ClassificationStat) pred).calcScores();
-        int maxScoreLabel = -1;
-        double maxScore = -1.0; // something < 0
+        int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
-                if (scores[i] > maxScore) {
-                    maxScoreLabel = i;
-                    maxScore = scores[i];
+                if (predicted[i] == 0) { // predicted positive
+                    if (attr.getNominal(tuple) == 0) {
+                        m_NbTruePositives[i]++;
+                    }
+                    else {
+                        m_NbFalsePositives[i]++;
+                    }
                 }
             }
-        }
-        if (maxScoreLabel >= 0) { // at least one label value is non-missing
-            attr = getAttr(maxScoreLabel);
-            if (attr.getNominal(tuple) != predicted[maxScoreLabel]) {
-                m_NbWrong++;
-            }
-            m_NbKnown++;
         }
     }
 
 
     public void addExample(DataTuple tuple, DataTuple pred) {
-        try {
-            throw new Exception("OneError.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
-        }
-        catch (Exception e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+        NominalAttrType attr;
+        for (int i = 0; i < m_Dim; i++) {
+            attr = getAttr(i);
+            if (!attr.isMissing(tuple)) {
+                if (attr.getNominal(pred) == 0) { // predicted positive
+                    if (attr.getNominal(tuple) == 0) {
+                        m_NbTruePositives[i]++;
+                    }
+                    else {
+                        m_NbFalsePositives[i]++;
+                    }
+                }
+            }
         }
     }
 
 
-    // NEDOTAKNJENO
     public void addInvalid(DataTuple tuple) {
     }
-
 }

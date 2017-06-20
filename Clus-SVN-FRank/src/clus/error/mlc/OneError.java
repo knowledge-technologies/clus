@@ -20,32 +20,39 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.mlc;
 
 import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
 import clus.main.Settings;
+import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 
 /**
  * @author matejp
- * 
- *         Hamming loss is used in multi-label classification scenario.
+ *
+ *         One_error is used in multi-label classification scenario.
  */
-public class HammingLoss extends ClusNominalError {
+public class OneError extends ClusNominalError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    protected int m_NbWrong;// sum of |prediction(sample_i) SYMMETRIC DIFFERENCE target(sample_i)|, where prediction
-                            // (target) of a sample_i is the predicted (true) label set.
-    protected int m_NbKnown;// number of the examples seen
+    protected int m_NbWrong; // sum over samples sample_i of the terms INDICATOR[(arg max_j proportion of samples with
+                             // label_j in the leaf which sample_i belongs to) is not an element of Y_i],
+                             // where Y_i is the true set of relevant labels for sample_i,
+                             // i.e., the proportion of misclassified top label.
+
+    protected int m_NbKnown; // number of the examples seen
 
 
-    public HammingLoss(ClusErrorList par, NominalAttrType[] nom) {
+    public OneError(ClusErrorList par, NominalAttrType[] nom) {
         super(par, nom);
         m_NbWrong = 0;
         m_NbKnown = 0;
@@ -64,9 +71,9 @@ public class HammingLoss extends ClusNominalError {
 
 
     public void add(ClusError other) {
-        HammingLoss ham = (HammingLoss) other;
-        m_NbWrong += ham.m_NbWrong;
-        m_NbKnown += ham.m_NbKnown;
+        OneError oe = (OneError) other;
+        m_NbWrong += oe.m_NbWrong;
+        m_NbKnown += oe.m_NbKnown;
     }
 
 
@@ -75,13 +82,13 @@ public class HammingLoss extends ClusNominalError {
         showModelError(out, detail ? 1 : 0);
     }
     // // A MA TO SPLOH SMISU?
-    // public double getHammingLoss(int i) {
+    // public double getOneError(int i) {
     // return getModelErrorComponent(i);
     // }
 
 
     public double getModelError() {
-        return ((double) m_NbWrong) / m_Dim / m_NbKnown;
+        return ((double) m_NbWrong) / m_NbKnown;
     }
 
 
@@ -91,48 +98,48 @@ public class HammingLoss extends ClusNominalError {
 
 
     public String getName() {
-        return "HammingLoss";
+        return "OneError";
     }
 
 
     public ClusError getErrorClone(ClusErrorList par) {
-        return new HammingLoss(par, m_Attrs);
+        return new OneError(par, m_Attrs);
     }
 
 
     public void addExample(DataTuple tuple, ClusStatistic pred) {
-        int[] predicted = pred.getNominalPred();
+        int[] predicted = pred.getNominalPred(); // Codomain is {"1", "0"} - see clus.data.type.NominalAtterType
+                                                 // constructor
+        double[] scores = ((ClassificationStat) pred).calcScores();
+        int maxScoreLabel = -1;
+        double maxScore = -1.0; // something < 0
         NominalAttrType attr;
-        boolean atLeastOneKnown = false;
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
-                atLeastOneKnown = true;
-                if (attr.getNominal(tuple) != predicted[i]) {
-                    m_NbWrong++;
+                if (scores[i] > maxScore) {
+                    maxScoreLabel = i;
+                    maxScore = scores[i];
                 }
             }
         }
-        if (atLeastOneKnown) {
+        if (maxScoreLabel >= 0) { // at least one label value is non-missing
+            attr = getAttr(maxScoreLabel);
+            if (attr.getNominal(tuple) != predicted[maxScoreLabel]) {
+                m_NbWrong++;
+            }
             m_NbKnown++;
         }
     }
 
 
     public void addExample(DataTuple tuple, DataTuple pred) {
-        boolean atLeastOneKnown = false;
-        NominalAttrType attr;
-        for (int i = 0; i < m_Dim; i++) {
-            attr = getAttr(i);
-            if (!attr.isMissing(tuple)) {
-                atLeastOneKnown = true;
-                if (attr.getNominal(tuple) != attr.getNominal(pred)) {
-                    m_NbWrong++;
-                }
-            }
+        try {
+            throw new Exception("OneError.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
         }
-        if (atLeastOneKnown) {
-            m_NbKnown++;
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 

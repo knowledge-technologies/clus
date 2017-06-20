@@ -181,24 +181,24 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable{
 
     /**
      * Transform the class counts to majority vote (the one with max votes gets 1)
-     * @param m_Counts
+     * @param counts
      * @return
      */
-    public static double[][] transformToMajority(double[][] m_Counts) {
-        int[] maxPerTarget = new int[m_Counts.length];
-        for (int i = 0; i < m_Counts.length; i++) {
+    public static double[][] transformToMajority(double[][] counts) {
+        int[] maxPerTarget = new int[counts.length];
+        for (int i = 0; i < counts.length; i++) {
             maxPerTarget[i] = -1;
             double m_max = Double.NEGATIVE_INFINITY;
-            for (int j = 0; j < m_Counts[i].length; j++) {
-                if (m_Counts[i][j] > m_max) {
+            for (int j = 0; j < counts[i].length; j++) {
+                if (counts[i][j] > m_max) {
                     maxPerTarget[i] = j;
-                    m_max = m_Counts[i][j];
+                    m_max = counts[i][j];
                 }
             }
         }
-        double[][] result = new double[m_Counts.length][];// all values set to zero
-        for (int m = 0; m < m_Counts.length; m++) {
-            result[m] = new double[m_Counts[m].length];
+        double[][] result = new double[counts.length][];// all values set to zero
+        for (int m = 0; m < counts.length; m++) {
+            result[m] = new double[counts[m].length];
             result[m][maxPerTarget[m]]++; // the positions of max class will be 1
         }
         return result;
@@ -207,20 +207,20 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable{
 
     /**
      * Transform the class counts to probability distributions.
-     * @param m_Counts
+     * @param counts
      * @return
      */
-    public static double[][] transformToProbabilityDistribution(double[][] m_Counts) {
-        double[] sumPerTarget = new double[m_Counts.length];
-        for (int i = 0; i < m_Counts.length; i++)
-            for (int j = 0; j < m_Counts[i].length; j++)
-                sumPerTarget[i] += m_Counts[i][j];
-        double[][] result = new double[m_Counts.length][];
+    public static double[][] transformToProbabilityDistribution(double[][] counts) {
+        double[] sumPerTarget = new double[counts.length];
+        for (int i = 0; i < counts.length; i++)
+            for (int j = 0; j < counts[i].length; j++)
+                sumPerTarget[i] += counts[i][j];
+        double[][] result = new double[counts.length][];
 
-        for (int m = 0; m < m_Counts.length; m++) {
-            result[m] = new double[m_Counts[m].length];
-            for (int n = 0; n < m_Counts[m].length; n++) {
-                result[m][n] = m_Counts[m][n] / sumPerTarget[m];
+        for (int m = 0; m < counts.length; m++) {
+            result[m] = new double[counts[m].length];
+            for (int n = 0; n < counts[m].length; n++) {
+                result[m][n] = counts[m][n] / sumPerTarget[m];
             }
         }
         return result;

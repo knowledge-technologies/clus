@@ -40,7 +40,7 @@ public abstract class ClusModelInfoList implements Serializable {
     public final static int VALIDATIONSET = 2;
 
     protected ClusModelInfo m_AllModelsMI = new ClusModelInfo("AllModels");
-    protected ArrayList m_Models = new ArrayList();
+    protected ArrayList<ClusModelInfo> m_Models = new ArrayList<ClusModelInfo>();
     protected long m_IndTime, m_PrepTime, m_PruneTime;
     protected long m_IndTimeSequential = 0; // to be used with ensemble parallel execution
 
@@ -121,7 +121,7 @@ public abstract class ClusModelInfoList implements Serializable {
     }
 
 
-    public void setModels(ArrayList models) {
+    public void setModels(ArrayList<ClusModelInfo> models) {
         m_Models = models;
     }
 
@@ -234,9 +234,9 @@ public abstract class ClusModelInfoList implements Serializable {
      * Functions for all models
      ***************************************************************************/
 
-    public ArrayList cloneModels() {
+    public ArrayList<ClusModelInfo> cloneModels() {
         int nb_models = getNbModels();
-        ArrayList clones = new ArrayList();
+        ArrayList<ClusModelInfo> clones = new ArrayList<ClusModelInfo>();
         for (int i = 0; i < nb_models; i++) {
             ClusModelInfo my = getModelInfo(i);
             if (my != null)

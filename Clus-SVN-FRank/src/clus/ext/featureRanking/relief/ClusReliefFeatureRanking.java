@@ -132,6 +132,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     
     private HierarchicalMultiLabelDistance m_HierarDist = new HierarchicalMultiLabelDistance();
     
+    private int m_Percents = 0;
+    
 
 
     /**
@@ -211,6 +213,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @throws InterruptedException
      */
     public void calculateReliefImportance(RowData data) throws ClusException, InterruptedException {
+        if(Settings.VERBOSE > 0){
+        	System.out.println("Calculating importances ...");
+        }
         DataTuple tuple;
         int tupleInd;
         int nbTargets = m_performPerTargetRanking ? 1 + m_NbTargetAttrs : 1;
@@ -222,6 +227,19 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         int numIterInd = 0;
         boolean[] shouldUpdate = new boolean[nbTargets]; // [overall] or [overall, target1, target2, ...]
         for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
+        	double proportion = 100 * (double)(iteration + 1) / ((double) m_MaxNbIterations); 
+        	if(Settings.VERBOSE > 0 && Settings.VERBOSE < 3){
+        		while(m_Percents < proportion && m_Percents < 100){
+        			System.out.print(".");
+        			m_Percents++;
+        			if(m_Percents / 10 * 10 == m_Percents){
+        				System.out.println(String.format(" %3d percents", m_Percents));
+        			}
+        		}
+        	} else if (Settings.VERBOSE > 4){
+        		System.out.println("iteration " + iteration);
+        	}
+        	
             // CHOOSE TUPLE AND COMPUTE NEAREST NEIGHBOURS
             tupleInd = theOrder[iteration];
             tuple = data.getTuple(tupleInd);
@@ -254,9 +272,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             	updateImportances(data, numIterInd, successfulIterations, shouldUpdate);
             	numIterInd++;
             	shouldUpdate = new boolean[nbTargets];
-            	if(Settings.VERBOSE >= 1){
-            		System.out.println(String.format("%d/%d iterations", iteration + 1, m_MaxNbIterations));
-            	}
             }
         }
 
@@ -272,7 +287,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param data The dataset under consideration.
      * @param numIterInd {@link #m_NbIterations}[numIterInd] equals the current number of iterations
      * @param successfulItearions {@code successfulItearions}[target + 1] equals the number of successful overall (if target = -1)
-     * or per-target (for the target with index target + 1) iterations.<p> Due to the missing values, some of these may not equal {@link #m_NbIterations}[numIterInd].
+     * or per-target (for the target with index target) iterations.<p> Due to the missing values, some of these may not equal {@link #m_NbIterations}[numIterInd].
      * @param shouldUpdate Tells, whether the given overall/per-target ranking statistics should be updated. Has the same structure as {@code successfulItearions}.
      * @throws InterruptedException
      */
@@ -427,6 +442,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param data
      */
     private void initialize(RowData data){
+    	if(Settings.VERBOSE > 0){
+    		System.out.println("Preprocessing steps ...");
+    	}
         if (m_WeightNeighbours) {
             for (int neigh = 0; neigh < m_MaxNbNeighbours; neigh++) {
                 m_NeighbourWeights[neigh] = Math.exp(-(m_Sigma * neigh) * (m_Sigma * neigh));

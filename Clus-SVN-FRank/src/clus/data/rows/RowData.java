@@ -1190,7 +1190,10 @@ public class RowData extends ClusData implements MSortable, Serializable {
         return new RowData(res, getSchema().cloneSchema());
     }
 
-    // Be careful when using this method! Current use in FindBestTest is wrong in the case when N != 0
+    // Be careful when using this method! Current use in FindBestTest is wrong in the case when N != 0:
+    // this is used for finding the best test. However, if N != 0 (otherwise we simply return all the data),
+    // this can lead to problems (duplicates of tuples --> wrong statistics --> ...)
+    // This is considered a small bug since usually N = 0, because the option SplitSampling in section [Tree] is usually not used.
     public RowData sample(int N, ClusRandomNonstatic rnd) {
         if (N < 0)
             throw new IllegalArgumentException("N should be larger than or equal to zero");

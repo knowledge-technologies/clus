@@ -20,15 +20,15 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.mlc;
 
 import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.ClusError;
+import clus.error.ClusErrorList;
+import clus.error.ClusNominalError;
 import clus.main.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
@@ -38,43 +38,46 @@ import clus.util.ClusFormat;
 /**
  * @author matejp
  *
- *         Average precision is used in multi-label classification scenario.
+ *         Coverage is used in multi-label classification scenario.
  */
-public class AveragePrecision extends ClusNominalError {
+public class Coverage extends ClusNominalError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    protected double m_NonnormalisedPrec; // sum over samples sample_i of the terms t_i = 1 / |Y_i| * sum_(lambda_j in
-                                          // Y_i) u_ij, where u_ij = |L_ij| / rank(lambda_j),
-                                          // where Y_i is the true set of labels that are relevant for sample_i and L_ij
-                                          // is the set of labels that have lower or equal
-                                          // rank than lambda_ij.
+    protected int m_RankSum; // sum over samples sample_i of the terms rank(label_i), where label_i is that element from
+                             // the set of relevant labels for sample_i,
+                             // which has the lowest score. The rank is the number of labels with higher or equal score
+                             // than label_i.
 
-    protected int m_NbKnown; // number of the examples seen with at least one known target value
+    protected int m_NbKnown; // number of the examples seen
+    protected int m_NbRelevantLabels; // sum over samples sample_i of the terms |{j | label_j is relevant for sample_i}|
 
 
-    public AveragePrecision(ClusErrorList par, NominalAttrType[] nom) {
+    public Coverage(ClusErrorList par, NominalAttrType[] nom) {
         super(par, nom);
-        m_NonnormalisedPrec = 0.0;
+        m_RankSum = 0;
         m_NbKnown = 0;
+        m_NbRelevantLabels = 0;
     }
 
 
     public boolean shouldBeLow() {
-        return false;
+        return true;
     }
 
 
     public void reset() {
-        m_NonnormalisedPrec = 0.0;
+        m_RankSum = 0;
         m_NbKnown = 0;
+        m_NbRelevantLabels = 0;
     }
 
 
     public void add(ClusError other) {
-        AveragePrecision ap = (AveragePrecision) other;
-        m_NonnormalisedPrec += ap.m_NonnormalisedPrec;
-        m_NbKnown += ap.m_NbKnown;
+        Coverage cv = (Coverage) other;
+        m_RankSum += cv.m_RankSum;
+        m_NbKnown += cv.m_NbKnown;
+        m_NbRelevantLabels += cv.m_NbRelevantLabels;
     }
 
 
@@ -83,65 +86,65 @@ public class AveragePrecision extends ClusNominalError {
         showModelError(out, detail ? 1 : 0);
     }
     // // A MA TO SPLOH SMISU?
-    // public double getAveragePrecision(int i) {
+    // public double getCoverage(int i) {
     // return getModelErrorComponent(i);
     // }
 
 
     public double getModelError() {
-        return m_NonnormalisedPrec / m_NbKnown;
+        return ((double) m_RankSum) / m_NbKnown;
+    }
+
+
+    public double getLabelCardinality() {
+        return ((double) m_NbRelevantLabels) / m_NbKnown;
     }
 
 
     public void showModelError(PrintWriter out, int detail) {
-        out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
+        out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()) + "(label cardinality: " + ClusFormat.FOUR_AFTER_DOT.format(getLabelCardinality()) + ")");
     }
 
 
     public String getName() {
-        return "AveragePrecision";
+        return "Coverage";
     }
 
 
     public ClusError getErrorClone(ClusErrorList par) {
-        return new AveragePrecision(par, m_Attrs);
+        return new Coverage(par, m_Attrs);
     }
 
 
     public void addExample(DataTuple tuple, ClusStatistic pred) {
-        final double[] scores = ((ClassificationStat) pred).calcScores();
-        ArrayList<Integer> indicesOfKnownValues = new ArrayList<Integer>();
-        boolean[] isRelevant = new boolean[m_Dim];
+        double[] scores = ((ClassificationStat) pred).calcScores();
+        double minScore = Double.POSITIVE_INFINITY;
+        int minScoreLabel = -1;
+        int relevantLabels = 0;
         NominalAttrType attr;
-        // find (indices of) known values and relevant labels
         for (int i = 0; i < m_Dim; i++) {
             attr = getAttr(i);
             if (!attr.isMissing(tuple)) {
-                indicesOfKnownValues.add(i);
-                if (attr.getNominal(tuple) == 0) {
-                    isRelevant[i] = true;
+                if (attr.getNominal(tuple) == 0) { // label is relevant
+                    relevantLabels++;
+                    if (minScore > scores[i]) {
+                        minScore = scores[i];
+                        minScoreLabel = i;
+                    }
                 }
             }
         }
-        // sort with respect to the scores
-        Collections.sort(indicesOfKnownValues, new Comparator<Integer>() {
-
-            @Override
-            public int compare(Integer o1, Integer o2) {
-                return -Double.compare(scores[o1], scores[o2]);
-            }
-        });
-        int nbOfRelevant = 0;
-        double u = 0.0;
-        if (indicesOfKnownValues.size() > 0) {
-            for (int i = 0; i < indicesOfKnownValues.size(); i++) {
-                if (isRelevant[indicesOfKnownValues.get(i)]) {
-                    nbOfRelevant++;
-                    u += ((double) nbOfRelevant) / (i + 1);
+        if (minScoreLabel >= 0) { // at least one relevant
+            int rank = 0; // should be 1, but we will add this 1 when i == minScoreLabel
+            for (int i = 0; i < m_Dim; i++) {
+                attr = getAttr(i);
+                if (!attr.isMissing(tuple) && scores[i] >= scores[minScoreLabel]) { // ignore missing values
+                    rank++;
                 }
             }
-            m_NonnormalisedPrec += u / nbOfRelevant;
+            m_RankSum += rank;
             m_NbKnown++;
+            m_NbRelevantLabels += relevantLabels;
         }
 
     }
@@ -149,7 +152,7 @@ public class AveragePrecision extends ClusNominalError {
 
     public void addExample(DataTuple tuple, DataTuple pred) {
         try {
-            throw new Exception("AveragePrecision.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
+            throw new Exception("Coverage.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
         }
         catch (Exception e) {
             // TODO Auto-generated catch block

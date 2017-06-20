@@ -65,9 +65,10 @@ public class ClusForest implements ClusModel, Serializable {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    ArrayList<ClusModel> m_Forest; // List of decision trees
-    /** Number of threes in the forest */
-    private int m_NbModels = 0; // may not be equal to m_Forest.size() because of memory optimisation
+    /** A list of decision trees in the forest (or empty if memory optimisation is used). */
+    ArrayList<ClusModel> m_Forest;
+    /** Number of threes in the forest, may not be equal to {@code m_Forest.size()} because of memory optimisation. */
+    private int m_NbModels = 0;
     /** The sum of nodes over the trees in the forest */
     private int m_NbNodes = 0;
     /** The sum of leaves over the trees in the forest */
@@ -211,10 +212,24 @@ public class ClusForest implements ClusModel, Serializable {
     }
     
     
-    public void updateCounts(ClusNode model){
-    	increaseNbModels(1);
-    	increaseNbNodes(model.getNbNodes());
-    	increaseNbLeaves(model.getNbLeaves());    	
+    public int[] updateCounts(ClusNode model){
+    	int models = 1;
+    	int nodes = model.getNbNodes();
+    	int leaves = model.getNbLeaves();
+    	updateCounts(models, nodes, leaves);
+    	return new int[]{models, nodes, leaves};
+    }
+    
+    /**
+     * Used for more efficient updating if the corresponding tree is a part of more than one forest.
+     * @param nbModels Should equal 1, i.e., a tree is one model
+     * @param nbNodes number of nodes in the tree
+     * @param nbLeaves number of leaves in the tree
+     */
+    public void updateCounts(int nbModels, int nbNodes, int nbLeaves){
+    	increaseNbModels(nbModels);
+    	increaseNbNodes(nbNodes);
+    	increaseNbLeaves(nbLeaves);    	
     }
 
     public String getModelInfo() {
