@@ -65,9 +65,10 @@ public class ClusForest implements ClusModel, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    ArrayList<ClusModel> m_Forest; // List of decision trees
-    /** Number of threes in the forest */
-    private int m_NbModels = 0; // may not be equal to m_Forest.size() because of memory optimisation
+    /** A list of decision trees in the forest (or empty if memory optimisation is used). */
+    ArrayList<ClusModel> m_Forest;
+    /** Number of threes in the forest, may not be equal to {@code m_Forest.size()} because of memory optimisation. */
+    private int m_NbModels = 0;
     /** The sum of nodes over the trees in the forest */
     private int m_NbNodes = 0;
     /** The sum of leaves over the trees in the forest */

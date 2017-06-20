@@ -22,9 +22,7 @@
 
 package clus.algo.split;
 
-import java.sql.Time;
 import java.util.ArrayList;
-
 
 import clus.algo.tdidt.ClusDecisionTree;
 import clus.data.attweights.ClusAttributeWeights;
