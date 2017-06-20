@@ -108,7 +108,7 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
         for (int i = 0; i < m_Dim; i++) {
             componentErrors[i] = ClusFormat.FOUR_AFTER_DOT.format(getModelErrorComponent(i));
         }
-        out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()) + " (" + Arrays.toString(componentErrors) + ")");
+        out.println(String.format("%s: %s", Arrays.toString(componentErrors), ClusFormat.FOUR_AFTER_DOT.format(getModelError())));
     }
 
 
