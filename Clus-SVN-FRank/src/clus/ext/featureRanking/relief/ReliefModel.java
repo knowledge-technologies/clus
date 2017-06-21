@@ -10,6 +10,7 @@ import java.util.HashSet;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.data.type.ClusAttrType;
 import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.Settings;
