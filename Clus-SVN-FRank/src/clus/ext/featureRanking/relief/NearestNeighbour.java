@@ -3,7 +3,7 @@ package clus.ext.featureRanking.relief;
 
 public class NearestNeighbour {
 
-    private int m_indexInDataSet = -1;
+    private final int m_indexInDataSet;
     private double m_descriptiveDistance = Double.NaN;
     private double m_targetDistance = Double.NaN;
 
@@ -14,7 +14,8 @@ public class NearestNeighbour {
     }
     
     public String toString() {
-        return String.format("(ind: %d; descr. dist: %.4f; tar. dist: %.4f)", m_indexInDataSet, m_descriptiveDistance, m_targetDistance);
+        //return String.format("(ind: %d; descr. dist: %.4f; tar. dist: %.4f)", m_indexInDataSet, m_descriptiveDistance, m_targetDistance);
+    	return String.format("NN(%d)", m_indexInDataSet);
     }
     
     public int getIndexInDataset(){
@@ -23,6 +24,13 @@ public class NearestNeighbour {
     
     public double getTargetDistance(){
     	return m_targetDistance;
+    }
+    
+    public boolean equals(Object other){
+    	if(other instanceof NearestNeighbour){
+    		return this.m_indexInDataSet == ((NearestNeighbour) other).m_indexInDataSet;
+    	}
+    	return false;
     }
 
 }
