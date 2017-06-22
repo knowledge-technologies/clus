@@ -3355,7 +3355,7 @@ public class Settings implements Serializable {
         m_SectionHierarchical.setEnabled(false);
 
         m_SectionHMTR = new INIFileSection("HMTR");
-        m_SectionHMTR.addNode(m_HMTRType = new INIFileNominal("Type", HMTR_HIERTYPES, HMTR_HIERTYPE_TREE));
+        m_SectionHMTR.addNode(m_HMTRType = new INIFileNominal("Type", HMTR_HIERTYPES, HMTR_HIERTYPE_NONE));
         m_SectionHMTR.addNode(m_HMTRDistance = new INIFileNominal("Distance", HMTR_HIERDIST, HMTR_HIERDIST_WEIGHTED_EUCLIDEAN));
         m_SectionHMTR.addNode(m_HMTRAggregation = new INIFileNominal("Aggregation", HMTR_AGGS, HMTR_AGG_SUM));
         m_SectionHMTR.addNode(m_HMTRHierarchyString = new INIFileString("Hierarchy"));
