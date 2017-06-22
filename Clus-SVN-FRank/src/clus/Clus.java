@@ -216,7 +216,7 @@ public class Clus implements CMDLineArgsProvider {
             ClusStat.m_InitialMemory = ResourceInfo.getMemory();
         }
         ClusView view = m_Schema.createNormalView();
-        if (m_Sett.isHMTREnabled()) {
+        if (Settings.isHMTREnabled()) {
             m_Data = view.readDataHMTR(reader, m_Schema, m_HMTRHierarchy, m_Sett);
         }
         else {
