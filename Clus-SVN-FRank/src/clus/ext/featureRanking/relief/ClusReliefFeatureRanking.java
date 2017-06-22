@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
@@ -208,6 +209,11 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_NbDescriptiveAttrs = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE].length;
         m_NbTargetAttrs = m_DescriptiveTargetAttr[1].length;
         m_PerformPerTargetRanking = m_Data.m_Schema.getSettings().shouldPerformRankingPerTarget();
+        if(m_PerformPerTargetRanking && m_NbTargetAttrs == 1){
+        	System.err.println("The per-target rankings were desired but number of targets = 1, hence per-target == overall.");
+        	System.err.println("m_PerformPerTargetRanking set to: false");
+        	m_PerformPerTargetRanking = false;
+        }
         m_NbGeneralisedTargetAttrs = 1 + (m_PerformPerTargetRanking ? m_NbTargetAttrs : 0);
         setNbFeatureRankings();
         
@@ -496,8 +502,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     
     private int[] nbTargetValues(){
     	int[] nbValues = new int[m_IsStandardClassification.length];
-    	for(int targetIndex = 0; targetIndex < nbValues.length; targetIndex++){
-    		nbValues[targetIndex] = m_IsStandardClassification[targetIndex] ? ((NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][targetIndex - 1]).getNbValues() : 1;
+    	for(int targetIndex = -1; targetIndex < m_NbGeneralisedTargetAttrs - 1; targetIndex++){
+    		int trueIndex = getTrueTargetIndex(targetIndex);
+    		nbValues[targetIndex + 1] = m_IsStandardClassification[targetIndex + 1] ? ((NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]).getNbValues() : 1;
     	}
     	return nbValues;
     }
@@ -926,6 +933,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 				}
         	}
         }
+        executor.shutdown();
+        executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
     }
     
     /**

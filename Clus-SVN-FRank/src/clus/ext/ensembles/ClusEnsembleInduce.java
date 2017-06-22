@@ -231,7 +231,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         	System.err.println("- there is only one clustering attribute");
         	System.err.println("- per target ranking is set to Yes");
         	System.err.println("Consequences:");
-        	System.err.println("- per target ranking == overAll ranking");
+        	System.err.println("- per target ranking == overall ranking");
         	System.err.println("- per target ranking will be set to No");
         	sett.setPerformRankingPerTarget(false);
         }
