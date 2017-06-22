@@ -438,8 +438,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             	double neighWeightNonnormalized = m_NeighbourWeights[neighbour];
             	NearestNeighbour neigh = nearestNeighbours[targetValue][neighbour];
             	double targetDistance = 0.0;
-            	// TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            	if (targetIndex >= 0 && !isStdClassification){ // <---> regression case, when we took the neighbours from overall ranking.
+            	if (targetIndex >= 0 && !isStdClassification){
+            		// regression per-target case: we took the neighbours from overall ranking, but need only d_target(tuple, neigh).
             		targetDistance = calcDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]);
             	} else{
             		targetDistance = neigh.getTargetDistance();
@@ -867,10 +867,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     
     private void printProgress(int iteration){
     	double proportion = 100 * (double)(iteration + 1) / ((double) m_MaxNbIterations);
-    	if(true){
-    		
-    	}
-    	else if(Settings.VERBOSE > 0 && Settings.VERBOSE < 3){
+        if(Settings.VERBOSE > 0 && Settings.VERBOSE < 3){
     		while(m_Percents < proportion && m_Percents < 100){
     			System.out.print(".");
     			m_Percents++;
@@ -925,7 +922,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         		if(shouldUseTuple(targetIndex, tuple)){
 	        		FindNeighboursCallable task = new FindNeighboursCallable(this, tupleIndex, targetIndex);
 	        		Future<NearestNeighbour[][]> result = executor.submit(task);
-					m_NearestNeighbours.get(targetIndex).put(tupleIndex, result.get());
+					m_NearestNeighbours.get(targetIndex).put(tupleIndex, result.get()); // here, we are in the main thread, no concurrency issues
 				}
         	}
         }
