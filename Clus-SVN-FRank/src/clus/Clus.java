@@ -154,7 +154,6 @@ public class Clus implements CMDLineArgsProvider {
     protected boolean isxval = false;
     protected CMDLineArgs m_CmdLine;
 
-
     private static String getRelativePath(File file, File folder) {
         String filePath = file.getAbsolutePath();
         String folderPath = folder.getAbsolutePath();
@@ -453,7 +452,7 @@ public class Clus implements CMDLineArgsProvider {
      */
     public final void induce(ClusRun cr, ClusInductionAlgorithmType clss) throws ClusException, IOException, InterruptedException {
         if (Settings.VERBOSE > 0) {
-        	System.out.println("Time: " + (new SimpleDateFormat("HH:mm:ss")).format(Calendar.getInstance().getTime()));
+            System.out.println("Time: " + (new SimpleDateFormat("HH:mm:ss")).format(Calendar.getInstance().getTime()));
             System.out.println("Run: " + cr.getIndexString());
             System.out.println("Verbose: " + Settings.VERBOSE);
             clss.printInfo();
@@ -1925,6 +1924,22 @@ public class Clus implements CMDLineArgsProvider {
             if (Debug.debug == 1)
                 ClusStat.show();
             DebugFile.close();
+          //daniela only form 1 target
+			int ts_size=clus.getNbRows();
+			double b=clus.getSettings().getBandwidth();
+			String ts_name = sett.getAppNameWithSuffix()
+			+ ".test.pred.arff";
+				try{
+					//NumericAttrType[] t = clus.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+					NominalAttrType[] t = clus.m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+					System.out.println(t.length);
+					if (t.length == 1) 
+						PredictionAnalyzer.calculateI(ts_name,ts_size,b);
+						else PredictionAnalyzer.calculateBI(ts_name,ts_size,b);
+				}catch (Exception e){
+					e.printStackTrace();
+				}
+			//end daniela
         }
         catch (ClusException e) {
             System.err.println();
