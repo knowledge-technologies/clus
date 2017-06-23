@@ -393,6 +393,12 @@ public class ClusStatManager implements Serializable {
             }
         }
         if (hasBitEqualToOne(shouldNormalize)) {
+//            //daniela
+//            if (m_Mode == MODE_HIERARCHICAL) {
+//                WHTDStatistic tstat = (WHTDStatistic)createStatistic(ClusAttrType.ATTR_USE_TARGET);
+//                tstat.initNormalizationWeights(m_NormalizationWeights, shouldNormalize);
+//            }
+//            //end daniela
             data.calcTotalStat(stat);
             CombStat cmb = (CombStat) stat;
             // data.calcTotalStat(stat); // why is this here? this duplicates weights etc for no apparent reason
@@ -481,9 +487,9 @@ public class ClusStatManager implements Serializable {
             System.err.println("No target value defined");
         }
         if (nb_types > 1) {
-        	if(!getSettings().isRelief()){
-        		throw new ClusException("Incompatible combination of clustering attribute types");
-        	}
+            if(!getSettings().isRelief()){
+                throw new ClusException("Incompatible combination of clustering attribute types");
+            }
         }
     }
 
@@ -510,13 +516,13 @@ public class ClusStatManager implements Serializable {
                 // return new ClassificationStat(nom);
                 // }
             }
+            // return new GeneticDistanceStat(nom); matejp: daniela has this line
             if (m_Settings.getSectionMultiLabel().isEnabled()) {
                 return new ClassificationStat(nom, m_Settings.getMultiLabelTrheshold());
             }
             else {
                 return new ClassificationStat(nom);
             }
-
         }
         else if (nom.length == 0) {
             return new RegressionStat(num);
@@ -638,7 +644,7 @@ public class ClusStatManager implements Serializable {
     public ClusHeuristic createHeuristic(int type) {
         switch (type) {
             case Settings.HEURISTIC_GAIN:
-                return new GainHeuristic(false, getClusteringWeights());
+                return new GainHeuristic(false, getClusteringWeights()); // matejp: daniela without the second argument
             default:
                 return null;
         }
