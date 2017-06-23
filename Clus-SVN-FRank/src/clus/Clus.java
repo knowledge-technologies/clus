@@ -1925,21 +1925,22 @@ public class Clus implements CMDLineArgsProvider {
                 ClusStat.show();
             DebugFile.close();
           //daniela only form 1 target
-			int ts_size=clus.getNbRows();
-			double b=clus.getSettings().getBandwidth();
-			String ts_name = sett.getAppNameWithSuffix()
-			+ ".test.pred.arff";
-				try{
-					//NumericAttrType[] t = clus.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-					NominalAttrType[] t = clus.m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
-					System.out.println(t.length);
-					if (t.length == 1) 
-						PredictionAnalyzer.calculateI(ts_name,ts_size,b);
-						else PredictionAnalyzer.calculateBI(ts_name,ts_size,b);
-				}catch (Exception e){
-					e.printStackTrace();
-				}
-			//end daniela
+            int ts_size = clus.getNbRows();
+            double b = clus.getSettings().getBandwidth();
+            String ts_name = sett.getAppNameWithSuffix() + ".test.pred.arff";
+            try{
+                // NumericAttrType[] t = clus.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+                NominalAttrType[] t = clus.m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+                // System.out.println(t.length); // matejp commented this out
+                if (t.length == 1) {
+                	PredictionAnalyzer.calculateI(ts_name,ts_size,b);
+                } else{
+                	PredictionAnalyzer.calculateBI(ts_name,ts_size,b);
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            //end daniela
         }
         catch (ClusException e) {
             System.err.println();
