@@ -3076,10 +3076,12 @@ public class Settings implements Serializable {
     }
     
     
+    //daniela matej: this is not a seaction really
     /***********************************************************************
-    * Section: Spatial                                                 *
+    * Section: Spatial *
     ***********************************************************************/
     public static double ALPHA;
+    //end daniela
     
     /***********************************************************************
      * Cross-validation *
@@ -3158,7 +3160,9 @@ public class Settings implements Serializable {
         m_ClusteringWeights.setDouble(1.0);
         m_ClusteringWeights.setArrayIndexNames(NUM_NOM_TAR_NTAR_WEIGHTS);
         attrs.addNode(m_ReduceMemoryNominal = new INIFileBool("ReduceMemoryNominalAttrs", false));
+        //daniela
         attrs.addNode(m_GIS = new INIFileString("GIS", NONE));
+        //end daniela
 
         m_SectionSIT = new INIFileSection("SIT");
         m_SectionSIT.addNode(m_MainTarget = new INIFileString("Main_target", DEFAULT));

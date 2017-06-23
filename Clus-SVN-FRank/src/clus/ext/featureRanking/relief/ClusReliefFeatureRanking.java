@@ -139,8 +139,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private int m_Percents = 0;
     
     /** {@code m_NearestNeighbours[target index][tuple index]}: the nearest neighbours for a given tuple as returned by {@link #findNearestNeighbours(int, RowData, int, boolean)}.
-     * If  {@code target index = 0}, these are the neighbours used in the computation of the overall ranking(s). Otherwise, these are the neighbours used in the computations of the ranking(s)
-     * for target with the index {@code target index - 1}.
+     * <p>If  {@code target index = -1}, these are the neighbours used in the computation of the overall ranking(s). Otherwise, these are the neighbours used in the computations of the ranking(s)
+     * for target with the index {@code target index}.
      */
     private HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> m_NearestNeighbours;
     
@@ -520,7 +520,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private double[] nominalClassCounts(int nominalTargetIndex){
     	int nbValues = m_NbTargetValues[nominalTargetIndex + 1];
         double[] targetProbabilities = new double[nbValues + 1]; // one additional place for missing values
-        int trueIndex = m_IsStandardClassification[0] ? nominalTargetIndex + 1 : nominalTargetIndex;
+        int trueIndex = getTrueTargetIndex(nominalTargetIndex);
         NominalAttrType attr = (NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex];
         for (int example = 0; example < m_NbExamples; example++) {
             targetProbabilities[attr.getNominal(m_Data.getTuple(example))] += 1.0;
@@ -551,7 +551,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         DataTuple tuple = m_Data.getTuple(tupleInd);
         boolean isStdClassification = m_IsStandardClassification[targetIndex + 1];
         int nbTargetValues = m_NbTargetValues[targetIndex + 1];
-        int trueIndex = m_IsStandardClassification[0] ? targetIndex + 1 : targetIndex;  // -1 ---> 0 in the case of STC
+        int trueIndex = getTrueTargetIndex(targetIndex);  // -1 ---> 0 in the case of STC
         
         int[][] neighbours = new int[nbTargetValues][m_MaxNbNeighbours]; // current candidates
         double[] distances = new double[m_NbExamples]; // distances[i] = distance(tuple, data.getTuple(i))
@@ -901,6 +901,14 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     	}
     }
     
+    /**
+     * Returns the indices of the target attributes that correspond to
+     * <ul>
+     *  <li> the overall ranking ({@code = -1}) - always present, or</li>
+     *  <li> the standard classification case ({@code >= 0}) - at least 0 such indices.</li>
+     * </ul>
+     * @return
+     */
     private ArrayList<Integer> computeTargetIndicesThatNeedNeigbhours(){
     	ArrayList<Integer> answer = new ArrayList<Integer>();
     	answer.add(-1);  // need overall ranking in every case
