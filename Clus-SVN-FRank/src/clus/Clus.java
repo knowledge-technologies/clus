@@ -1735,7 +1735,27 @@ public class Clus implements CMDLineArgsProvider {
         return m_Sett.getAppName();
     }
 
-
+    private static void tryAnalyzePredictions(Clus clus, Settings sett){
+    	//daniela  only form 1 target
+        int ts_size = clus.getNbRows();
+        double b = clus.getSettings().getBandwidth();
+        String ts_name = sett.getAppNameWithSuffix() + ".test.pred.arff";
+        try{
+            // NumericAttrType[] t = clus.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            NominalAttrType[] t = clus.m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            // System.out.println(t.length); // matejp commented this out
+            if (t.length == 1) {
+            	PredictionAnalyzer.calculateI(ts_name, ts_size, b);
+            } else{
+            	PredictionAnalyzer.calculateBI(ts_name, ts_size, b);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+        }
+        //end daniela
+    }
+    
+    
     public static void main(String[] args) {
         try {
             ClusOutput.printHeader();
@@ -1924,22 +1944,8 @@ public class Clus implements CMDLineArgsProvider {
             if (Debug.debug == 1)
                 ClusStat.show();
             DebugFile.close();
-          //daniela only form 1 target
-            int ts_size = clus.getNbRows();
-            double b = clus.getSettings().getBandwidth();
-            String ts_name = sett.getAppNameWithSuffix() + ".test.pred.arff";
-            try{
-                // NumericAttrType[] t = clus.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-                NominalAttrType[] t = clus.m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
-                // System.out.println(t.length); // matejp commented this out
-                if (t.length == 1) {
-                	PredictionAnalyzer.calculateI(ts_name,ts_size,b);
-                } else{
-                	PredictionAnalyzer.calculateBI(ts_name,ts_size,b);
-                }
-            }catch (Exception e){
-                e.printStackTrace();
-            }
+            //daniela matejp moved this to a method
+            tryAnalyzePredictions(clus, sett);
             //end daniela
         }
         catch (ClusException e) {

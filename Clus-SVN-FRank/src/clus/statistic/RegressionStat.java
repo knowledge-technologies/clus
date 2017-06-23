@@ -214,7 +214,10 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     public double getSumValues(int i) {
         return m_SumValues[i];
     }
-
+    
+    public double getSumSqValues(int i){
+        return m_SumSqValues[i];
+    }
 
     public double getSumWeights(int i) {
         return m_SumWeights[i];

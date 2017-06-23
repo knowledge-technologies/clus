@@ -445,4 +445,273 @@ public abstract class ClusStatistic implements Serializable {
     public double getSumWeight(){
     	return m_SumWeight;
     }
+    
+    
+    //daniela
+    public double calcItotal() {
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+    public double calcEquvalentIDistance() {
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+    public double calcGtotal() {
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+    
+    public double calcGetisTotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcLISAtotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcGLocalTotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcLocalGetisTotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcGETIStotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcEquvalentItotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcIwithNeighbourstotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcEquvalentIwithNeighbourstotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcEquvalentGDistance() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+    
+    public double calcEquvalentPDistance() {
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+    
+    public double calcEquvalentGtotal() {
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+    
+    public double calcItotalD() {
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+    
+    public double calcPDistance() {
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+    public double calcGtotalD() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcCItotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcMutivariateItotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcCwithNeighbourstotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcBivariateLee() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcMultiIwithNeighbours() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcCIwithNeighbours() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcLeewithNeighbours() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcPtotal() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+        
+    public double calcCItotalD() {
+            try{
+                throw new Exception("This method shoud be implemented. Exiting...");
+            }catch(Exception e){
+                e.printStackTrace();
+                System.exit(1);
+            }
+            return 0;
+        }
+    public double calcDHtotalD() {
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }    
+    //end daniela
 }

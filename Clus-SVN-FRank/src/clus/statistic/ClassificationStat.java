@@ -433,7 +433,16 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     // return freqs;
     // }
 
-
+    //daniela
+    public double entropy() {
+        double sum = 0.0;
+        for (int i = 0; i < m_NbTarget; i++) {
+            sum += entropy(i);
+        }
+        return sum;
+    }
+    //end daniela
+    
     // ENTROPY
     public double entropy(int attr) {
         double total = m_SumWeights[attr];
@@ -479,6 +488,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
     }
 
+    //daniela
+    public double entropyDifference(ClassificationStat other) {
+        double sum = 0.0;
+        for (int i = 0; i < m_NbTarget; i++) {
+            sum += entropyDifference(i, other);
+        }
+        return sum;
+    }
+    //end daniela
 
     public double entropyDifference(ClassificationStat other, ClusAttributeWeights scale) {
         if (Settings.isEnsembleROSEnabled())

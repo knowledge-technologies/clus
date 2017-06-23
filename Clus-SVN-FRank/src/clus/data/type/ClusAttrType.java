@@ -48,6 +48,7 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     public final static int STATUS_NORMAL = 3;
     public final static int STATUS_KEY = 4;
     public final static int NB_STATUS = 5;
+    public final static int ATTR_USE_GIS = 6; //daniela
 
     // Attribute use types
     public final static int ATTR_USE_ALL = 0;
