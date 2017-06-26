@@ -56,7 +56,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
 
 
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
-
+ 
     }
 
 
