@@ -34,10 +34,8 @@ import clus.data.type.*;
 import clus.error.ClusError;
 import clus.error.ClusErrorList;
 import clus.ext.sets.Set;
-import clus.ext.sets.SetOperations;
 import clus.ext.sets.SetStatistic;
-import clus.ext.sets.distances.HammingLossDistance;
-import clus.ext.sets.distances.JaccardDistance;
+import clus.ext.sets.distances.seemsRedundantRemoveAfterMerge.SetOperations;
 import clus.main.*;
 import clus.statistic.*;
 

@@ -37,13 +37,13 @@ public abstract class SetDistance extends ClusStructuredDistance {
 
 	public SetDistance(SetAttrType attr, ClusDistance childDistance) {
 		m_Attr = attr;
-		childDistances = new ClusDistance[1];
-		childDistances[0]=childDistance;
+		m_ChildDistances = new ClusDistance[1];
+		m_ChildDistances[0]=childDistance;
 	}
 	
 	public SetDistance(ClusDistance childDistance){
-		childDistances = new ClusDistance[1];
-		childDistances[0]=childDistance;
+		m_ChildDistances = new ClusDistance[1];
+		m_ChildDistances[0]=childDistance;
 	}
 
 	public abstract double calcDistance(Set t1, Set t2);

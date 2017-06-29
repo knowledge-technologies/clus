@@ -1,4 +1,4 @@
-package clus.ext.sets.distances;
+package clus.ext.sets.distances.seemsRedundantRemoveAfterMerge;
 import java.util.Arrays;
 
 import clus.data.type.SetAttrType;
@@ -21,7 +21,7 @@ public class GSMDistanceBitVector extends SetDistance{
 	
 	@Override
 	public double calcDistance(Set set1, Set set2) {
-		 ClusDistance clusDistance = childDistances[0];
+		 ClusDistance clusDistance = m_ChildDistances[0];
 		long timeStart = System.currentTimeMillis();
 		
 		double distance=0;

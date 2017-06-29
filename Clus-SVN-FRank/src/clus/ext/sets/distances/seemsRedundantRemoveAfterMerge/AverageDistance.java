@@ -1,4 +1,4 @@
-package clus.ext.sets.distances;
+package clus.ext.sets.distances.seemsRedundantRemoveAfterMerge;
 
 import clus.data.type.SetAttrType;
 import clus.ext.sets.Set;
@@ -20,7 +20,7 @@ public class AverageDistance extends SetDistance {
 	
 	@Override
 	public double calcDistance(Set s1, Set s2) {
-		ClusDistance clusDistance  = childDistances[0];
+		ClusDistance clusDistance  = m_ChildDistances[0];
 		double distance=0;
 		s1.getValues();
 		s2.getValues();

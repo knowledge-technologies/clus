@@ -28,7 +28,6 @@ import java.util.*;
 import clus.data.attweights.*;
 import clus.data.rows.*;
 import clus.data.type.*;
-import clus.ext.sspd.*;
 import clus.main.*;
 import clus.statistic.*;
 import clus.util.*;

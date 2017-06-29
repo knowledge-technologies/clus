@@ -25,7 +25,7 @@ public class EuclideanDistance extends SetDistance{
 	public double calcDistance(Set set1, Set set2) {
 		//return square root of hamming if sets of nominal ... or ... 
 		
-		 ClusDistance clusDistance = childDistances[0];
+		 ClusDistance clusDistance = m_ChildDistances[0];
 		double distance=set1.getValues().length+set2.getValues().length;
 		for (Object element1 : set1.getValues()) {			
 			double dist=1;

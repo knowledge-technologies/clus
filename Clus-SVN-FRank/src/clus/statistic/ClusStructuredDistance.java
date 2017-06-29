@@ -27,5 +27,5 @@ import clus.main.Settings;
 public class ClusStructuredDistance extends ClusDistance {
 
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
-	protected ClusDistance[] childDistances;
+	protected ClusDistance[] m_ChildDistances;
 }

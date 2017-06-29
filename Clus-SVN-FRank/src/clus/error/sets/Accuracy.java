@@ -40,8 +40,6 @@ import clus.main.*;
 import clus.statistic.*;
 
 
-// import jeans.util.array.*;
-
 public class Accuracy extends ClusSetError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
@@ -74,9 +72,11 @@ public class Accuracy extends ClusSetError {
         this.innerDistance = innerDistance;
     }
 
+
     public boolean shouldBeLow() {
         return false;
     }
+
 
     public void reset() {
         for (int i = 0; i < m_Dim; i++) {
