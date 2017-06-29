@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
-import clus.ext.ensembles.containters.NodeDepthPair;
+import clus.ext.ensembles.containers.NodeDepthPair;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.Settings;

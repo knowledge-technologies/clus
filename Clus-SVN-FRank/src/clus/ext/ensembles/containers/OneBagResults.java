@@ -1,5 +1,5 @@
 
-package clus.ext.ensembles.containters;
+package clus.ext.ensembles.containers;
 
 import java.util.HashMap;
 

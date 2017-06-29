@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import clus.algo.kNN.distance.valentin.NumericStatistic;
 import clus.data.cols.ColTarget;
 import clus.data.cols.attribute.ClusAttribute;
 import clus.data.cols.attribute.NumericTarget;
@@ -48,18 +49,29 @@ public class NumericAttrType extends ClusAttrType {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static int THIS_TYPE = NUMERIC_ATR_TYPE;
-    public final static String THIS_TYPE_NAME = "Numeric";
+    private final static String THIS_TYPE_NAME = "Numeric";
 
     public final static double MISSING = Double.POSITIVE_INFINITY;
 
     protected boolean m_Sparse;
-
+    private NumericStatistic m_StatNumeric;
 
     public NumericAttrType(String name) {
         super(name);
     }
 
+    //new for knn
+    public void setStatistic(NumericStatistic stat){
+        m_StatNumeric = stat;
+    }
+    public NumericStatistic getStatistic(){
+        return m_StatNumeric;
+    }
 
+    
+    
+    
+    
     public ClusAttrType cloneType() {
         NumericAttrType at = new NumericAttrType(m_Name);
         cloneType(at);

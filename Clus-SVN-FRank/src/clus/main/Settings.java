@@ -853,6 +853,9 @@ public class Settings implements Serializable {
     public final static int TREE_OPTIMIZE_NO_CLUSTERING_STATS = 0;
     public final static int TREE_OPTIMIZE_NO_INODE_STATS = 1;
 
+	//@!TODO
+	/*consider creating new section Structured Data for heuristic and structured data distance measures */
+	public final static String[] HEURISTIC_COMPLEXITY={"N2", "LOG", "LINEAR", "NPAIRS", "TEST"};
     // Added by Eduardo Costa - 06/06/2011
 
     public final static String[] INDUCTION_ORDER = { "DepthFirst", "BestFirst" };
@@ -877,6 +880,9 @@ public class Settings implements Serializable {
 
     protected INIFileSection m_SectionTree;
     protected INIFileNominal m_Heuristic;
+	protected INIFileNominal m_SetDistance;
+	protected INIFileNominal m_TupleDistance;
+	protected INIFileNominal m_HeuristicComplexity;
     protected INIFileInt m_TreeMaxDepth;
     protected INIFileBool m_BinarySplit;
     protected INIFileBool m_AlternativeSplits;
@@ -899,6 +905,13 @@ public class Settings implements Serializable {
         m_SectionTree.setEnabled(enable);
     }
 
+	public boolean isHeuristicComlexityExact() {
+		return m_HeuristicComplexity.getValue() == 0;
+	}
+	
+	public int getHeuristicComplexity() {
+		return m_HeuristicComplexity.getValue();
+	}
 
     public int getHeuristic() {
         return m_Heuristic.getValue();
@@ -914,11 +927,46 @@ public class Settings implements Serializable {
         return m_Heuristic.getStringSingle().equals(value);
     }
 
+	public int getSetDistance() {
+		return m_SetDistance.getValue();
+	}
 
+	public void setSetDistance(int value) {
+		m_SetDistance.setSingleValue(value);
+	}
+
+	public boolean checkSetDistance(String value) {
+		return m_SetDistance.getStringSingle().equals(value);
+	}
+
+	public int getTupleDistance() {
+		return m_TupleDistance.getValue();
+	}
+
+	public void setTupleDistance(int value) {
+		m_TupleDistance.setSingleValue(value);
+	}
+
+	public boolean checkTupleDistance(String value) {
+		return m_TupleDistance.getStringSingle().equals(value);
+	}
+	public void setTimeSeriesDistance(int value) {
+		m_TimeSeriesDistance.setSingleValue(value);
+	}
+
+
+	public void setTSDistance(int value) {
+		m_TSDistance.setSingleValue(value);
+	}
+
+	public boolean checkTimeSeriesDistance(String value) {
+		return m_TimeSeriesDistance.getStringSingle().equals(value);
+	}
     // added by Eduardo
     public int getInductionOrder() {
         return m_InductionOrder.getValue();
     }
+
 
 
     public void setInductionOrder(int value) {
@@ -1065,7 +1113,10 @@ public class Settings implements Serializable {
      * Section: Tree - Heuristic *
      ***********************************************************************/
 
-    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing" };
+    public final static String[] HEURISTICS = { "Default", "ReducedError", 
+	"Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", 
+	"DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", 
+	"GeneticDistance", "SemiSupervised", "VarianceReductionMissing", "StructuredData" }; // TODO: "StructuredData" does not have a final static declaration in valentinGj implementation??  martinb
 
     public final static int HEURISTIC_DEFAULT = 0;
     public final static int HEURISTIC_REDUCED_ERROR = 1;
@@ -1090,11 +1141,36 @@ public class Settings implements Serializable {
     public static double MINIMAL_WEIGHT;
     public static boolean ONE_NOMINAL = true;
 
+/***********************************************************************
+ * Section: Tree - SetDistance                                           *
+ ***********************************************************************/
+
+	public final static String[] SETDISTANCES = { "GSMDistance", "HammingLoss", "Jaccard", "Matching", "Euclidean"};
+
+	public final static int SETDISTANCES_GSM = 0;
+	public final static int SETDISTANCES_HAMMING = 1;
+	public final static int SETDISTANCES_JACCARD = 2;
+	public final static int SETDISTANCES_MATCHING = 3;
+	public final static int SETDISTANCES_EUCLIDEAN = 4;
+
+	
+	
+/***********************************************************************
+ * Section: Tree - TupleDistance                                           *
+ ***********************************************************************/
+
+	public final static String[] TUPLEDISTANCES = { "Euclidean", "Minkowski"};
+	public final static int TUPLEDISTANCES_EUCLIDEAN = 0;
+	public final static int TUPLEDISTANCES_MINKOWSKI = 1;
+	
+	
     /***********************************************************************
      * Section: Tree - Pruning method *
      ***********************************************************************/
 
-    public final static String[] PRUNING_METHODS = { "Default", "None", "C4.5", "M5", "M5Multi", "ReducedErrorVSB", "Garofalakis", "GarofalakisVSB", "CartVSB", "CartMaxSize", "EncodingCost", "CategoryUtility" };
+    public final static String[] PRUNING_METHODS = { "Default", "None", "C4.5", 
+	"M5", "M5Multi", "ReducedErrorVSB", "Garofalakis", "GarofalakisVSB", 
+	"CartVSB", "CartMaxSize", "EncodingCost", "CategoryUtility" };
 
     public final static int PRUNING_METHOD_DEFAULT = 0;
     public final static int PRUNING_METHOD_NONE = 1;
@@ -1126,7 +1202,9 @@ public class Settings implements Serializable {
         return m_PrintAllRules.getValue();
     }
 
-    public final static String[] COVERING_METHODS = { "Standard", "WeightedMultiplicative", "WeightedAdditive", "WeightedError", "Union", "BeamRuleDefSet", "RandomRuleSet", "StandardBootstrap", "HeurOnly", "RulesFromTree" };
+    public final static String[] COVERING_METHODS = { "Standard", "WeightedMultiplicative", 
+	"WeightedAdditive", "WeightedError", "Union", "BeamRuleDefSet", 
+	"RandomRuleSet", "StandardBootstrap", "HeurOnly", "RulesFromTree" };
 
     // Standard covering: ordered rules (decision list)
     public final static int COVERING_METHOD_STANDARD = 0;
@@ -1178,7 +1256,9 @@ public class Settings implements Serializable {
      */
     public final static int COVERING_METHOD_RULES_FROM_TREE = 9;
 
-    public final static String[] RULE_PREDICTION_METHODS = { "DecisionList", "TotCoverageWeighted", "CoverageWeighted", "AccuracyWeighted", "AccCovWeighted", "EquallyWeighted", "Optimized", "Union", "GDOptimized", "GDOptimizedBinary" };
+    public final static String[] RULE_PREDICTION_METHODS = 
+	{ "DecisionList", "TotCoverageWeighted", "CoverageWeighted", "AccuracyWeighted", 
+		"AccCovWeighted", "EquallyWeighted", "Optimized", "Union", "GDOptimized", "GDOptimizedBinary" };
 
     public final static int RULE_PREDICTION_METHOD_DECISION_LIST = 0;
 
@@ -2389,6 +2469,7 @@ public class Settings implements Serializable {
 
     INIFileSection m_SectionTimeSeries;
     public INIFileNominal m_TimeSeriesDistance;
+	public INIFileNominal m_TSDistance; // TODO: is this a duplication of m_TimeSeriesDistance or just an ugly hack? code from valentinGj; martinb
     public INIFileNominal m_TimeSeriesHeuristicSampling;
 
 
@@ -2403,20 +2484,16 @@ public class Settings implements Serializable {
 
 
     public boolean isTimeSeriesProtoComlexityExact() {
-        if (m_TimeSeriesHeuristicSampling.getValue() == 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return m_TimeSeriesHeuristicSampling.getValue() == 0;
     }
 
 
     public int getTimeSeriesDistance() {
         return m_TimeSeriesDistance.getValue();
     }
-
-
+	public int getTSDistance() {
+		return m_TSDistance.getValue();
+	}
     public int getTimeSeriesHeuristicSampling() {
         return m_TimeSeriesHeuristicSampling.getValue();
     }
@@ -3245,7 +3322,12 @@ public class Settings implements Serializable {
         model.addNode(m_NominalSubsetTests = new INIFileBool("NominalSubsetTests", true));
 
         m_SectionTree = new INIFileSection("Tree");
-        m_SectionTree.addNode(m_Heuristic = new INIFileNominal("Heuristic", HEURISTICS, 0));
+        m_SectionTree.addNode(m_Heuristic = new INIFileNominal("Heuristic", HEURISTICS, 0)); // TODO: correct the initialization to use final static fields martinb
+		m_SectionTree.addNode(m_HeuristicComplexity=new INIFileNominal("HeuristicComlexity", HEURISTIC_COMPLEXITY,0));
+		m_SectionTree.addNode(m_SetDistance = new INIFileNominal("SetDistance", SETDISTANCES, 0));
+		m_SectionTree.addNode(m_TupleDistance = new INIFileNominal("TupleDistance", TUPLEDISTANCES, 0));
+		m_SectionTree.addNode(m_TSDistance=new INIFileNominal("TSDistance", TIME_SERIES_DISTANCE_MEASURE,0));
+		
         m_SectionTree.addNode(m_PruningMethod = new INIFileNominal("PruningMethod", PRUNING_METHODS, 0));
         m_SectionTree.addNode(m_M5PruningMult = new INIFileDouble("M5PruningMult", 2.0));
         m_SectionTree.addNode(m_1SERule = new INIFileBool("1-SE-Rule", false));
@@ -3460,7 +3542,7 @@ public class Settings implements Serializable {
         // m_SectionKNN.addNode(kNN_attrWeighted = new INIFileBool("AttributeWeighted", false));
         // m_SectionKNN.setEnabled(false);
 
-        m_SectionKNN = new INIFileSection("kNN");
+        m_SectionKNN = new INIFileSection("kNN"); // TODO: this section does not follow Settings.java naming conventions; martinb
         m_SectionKNN.addNode(kNN_k = new INIFileString("k", "1,3"));
         m_SectionKNN.addNode(kNN_method = new INIFileString("method", "kd-tree"));
         m_SectionKNN.addNode(kNN_distance = new INIFileString("distance", "euclidean"));

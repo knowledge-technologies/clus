@@ -25,15 +25,22 @@ package clus.data.type;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import com.google.gson.JsonObject;
 
+import clus.algo.kNN.distance.valentin.BasicDistance;
 import clus.data.cols.ColTarget;
 import clus.data.cols.attribute.ClusAttribute;
 import clus.data.rows.DataPreprocs;
 import clus.data.rows.DataTuple;
+import clus.ext.timeseries.TimeSeries;
+import clus.ext.timeseries.TimeSeriesDist;
+import clus.ext.tuples.Tuple;
+import clus.ext.tuples.TupleDistance;
 import clus.io.ClusSerializable;
 import clus.main.Settings;
+import clus.statistic.ClusDistance;
 import clus.util.ClusException;
 
 
@@ -66,14 +73,14 @@ public abstract class ClusAttrType implements Serializable, Comparable {
 
     public final static int NB_TYPES = 5;
     public final static int THIS_TYPE = -1;
-    
+
     public final static int NOMINAL_ATR_TYPE = 0;
     public final static int NUMERIC_ATR_TYPE = 1;
     public final static int CLASSES_ATR_TYPE = 2;
-    public final static int INDEX_ATR_TYPE = 2;  // INDEX and CLASSES have the same value because THIS_TYPE of these two classes had the hard-coded value 2
+    public final static int INDEX_ATR_TYPE = 2; // INDEX and CLASSES have the same value because THIS_TYPE of these two classes had the hard-coded value 2
     public final static int STRING_ATR_TYPE = 3;
     public final static int INTEGER_ATR_TYPE = 4;
-    public final static int TIME_SERIES_ATR_TYPE = 5; 
+    public final static int TIME_SERIES_ATR_TYPE = 5;
 
     protected String m_Name;
     protected int m_Index, m_ArrayIndex;
@@ -82,12 +89,21 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     protected int m_Status = STATUS_NORMAL;
     protected boolean m_IsDescriptive;
     protected boolean m_IsClustering;
+    private BasicDistance dist;
+    private String typeDefinition;
+    private ClusAttrType[] innerTypes;
 
 
     public ClusAttrType(String name) {
         m_Name = name;
         m_Index = -1;
         m_ArrayIndex = -1;
+    }
+
+
+    public ClusAttrType(String name, String typeDefinition) {
+        this(name);
+        this.setTypeDefinition(typeDefinition);
     }
 
 
@@ -319,6 +335,24 @@ public abstract class ClusAttrType implements Serializable, Comparable {
         throw new ClusException("Type: " + getClass().getName() + " can't be written to a .arff file");
     }
 
+    //--------------------------------New-------------------------------------
+
+
+    /**
+     * Returns the distance between the 2 given tuples for this attribute.
+     */
+    public double getBasicDistance(DataTuple t1, DataTuple t2) {
+        return dist.getDistance(this, t1, t2);
+    }
+
+
+    /**
+     * Sets the BasicDistance for this AttributeType
+     */
+    public void setBasicDistance(BasicDistance bdist) {
+        dist = bdist;
+    }
+
 
     /**
      * Compares to ClusAttrTypes based on index, allowing them to be sorted.
@@ -337,26 +371,211 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     public boolean isSparse() {
         return false;
     }
-    
-    public boolean isNumeric(){
-    	return false;
+
+
+    public boolean isNumeric() {
+        return false;
     }
-    
-    public boolean isNominal(){
-    	return false;
+
+
+    public boolean isNominal() {
+        return false;
     }
-    
-    public boolean isClasses(){
-    	return false;
+
+
+    public boolean isClasses() {
+        return false;
     }
-    
-	public boolean isTimeSeries() {
-		return false;
-	}
-	
-	public boolean isString(){
-		return false;
-	}
+
+
+    public boolean isTimeSeries() {
+        return false;
+    }
+
+
+    public boolean isString() {
+        return false;
+    }
+
+
+    public static Object createDataObject(String object, ClusAttrType attrType) {
+
+        if (attrType instanceof TupleAttrType) {
+
+            object = object.substring(1);
+
+            object = object.substring(0, object.length() - 1);
+            char[] td = object.toCharArray();
+            int cnt = 0;
+            StringBuilder innerObject = new StringBuilder();
+            ArrayList<String> innerObjects = new ArrayList<String>();
+            for (int i = 0; i < td.length; i++) {
+                if (td[i] == '[') {
+                    cnt++;
+                    innerObject.append(td[i]);
+                }
+                else if (td[i] == ']') {
+                    cnt--;
+                    innerObject.append(td[i]);
+                }
+                else if (td[i] == ',') {
+                    if (cnt == 0) {
+                        innerObjects.add(innerObject.toString());
+                        innerObject = new StringBuilder();
+                    }
+                    else {
+                        innerObject.append(td[i]);
+                    }
+                }
+                else if (td[i] == ' ') {
+
+                }
+                else {
+                    innerObject.append(td[i]);
+                }
+
+            }
+            innerObjects.add(innerObject.toString());
+            Object[] innerTupleObjects = new Object[innerObjects.size()];
+            ClusAttrType[] innerTypes = attrType.getInnerTypes();
+            int i = 0;
+            for (String iType : innerObjects) {
+                innerTupleObjects[i] = createDataObject(iType, innerTypes[i]);
+                i++;
+            }
+            return new Tuple(innerTupleObjects);
+
+        }
+        else if (attrType instanceof TimeSeriesAttrType) {
+            if (object.trim().equalsIgnoreCase("?"))
+                return null;
+            else
+                return new TimeSeries(object);
+        }
+        else if (attrType instanceof NumericAttrType) { return new Double(object); }
+        return null;
+    }
+
+
+    public static ClusAttrType createClusAttrType(String typeDef, String name) {
+
+        String typeDefinition = typeDef.toUpperCase();
+        typeDefinition = typeDefinition.trim();
+
+        if (typeDefinition.startsWith("TUPLE[")) {
+
+            typeDefinition = typeDefinition.substring(6);
+
+            typeDefinition = typeDefinition.substring(0, typeDefinition.length() - 1);
+            char[] td = typeDefinition.toCharArray();
+            int cnt = 0;
+            StringBuffer innerType = new StringBuffer();
+            ArrayList<String> innerTypes = new ArrayList<String>();
+            for (int i = 0; i < td.length; i++) {
+                if (td[i] == '[') {
+                    cnt++;
+                    innerType.append(td[i]);
+                }
+                else if (td[i] == ']') {
+                    cnt--;
+                    innerType.append(td[i]);
+                }
+                else if (td[i] == ',') {
+                    if (cnt == 0) {
+                        innerTypes.add(innerType.toString());
+                        innerType = new StringBuffer();
+                    }
+                    else {
+                        innerType.append(td[i]);
+                    }
+                }
+                else if (td[i] == ' ') {
+
+                }
+                else {
+                    innerType.append(td[i]);
+                }
+
+            }
+            innerTypes.add(innerType.toString());
+            ClusAttrType[] innerClussAttrTypes = new ClusAttrType[innerTypes.size()];
+            int i = 0;
+            for (String iType : innerTypes) {
+                innerClussAttrTypes[i++] = createClusAttrType(iType, "inner");
+            }
+            return new TupleAttrType(name, typeDef, innerClussAttrTypes);
+
+        }
+        else if (typeDefinition.startsWith("TIMESERIES")) {
+            return new TimeSeriesAttrType(name, "TIMESERIES");
+        }
+        else if (typeDefinition.equalsIgnoreCase("NUMERIC")) { return new NumericAttrType(name); }
+
+        return null;
+    }
+
+
+    public static ClusDistance createDistance(ClusAttrType type, Settings settings) {
+        if (type instanceof TupleAttrType) {
+            TupleAttrType tupleType = (TupleAttrType) type;
+            ClusAttrType[] innertypes = tupleType.getInnerTypes();
+
+            ClusDistance[] innerDistances = new ClusDistance[innertypes.length];
+            int i = 0;
+            for (ClusAttrType iType : innertypes) {
+                innerDistances[i++] = createDistance(iType, settings);
+            }
+
+            TupleDistance tupleDist = null;
+            switch (settings.getTupleDistance()) {
+                case Settings.TUPLEDISTANCES_EUCLIDEAN:
+                    tupleDist = new clus.ext.tuples.distances.EuclideanDistance((TupleAttrType) type, innerDistances);
+                    break;
+                case Settings.TUPLEDISTANCES_MINKOWSKI:
+                    tupleDist = new clus.ext.tuples.distances.MinkowskiDistance(3, innerDistances);
+                    break;
+            }
+            return tupleDist;
+        }
+        else if (type instanceof TimeSeriesAttrType) {
+
+            TimeSeriesDist tsDistance = null;
+            switch (settings.getTSDistance()) {
+                case Settings.TIME_SERIES_DISTANCE_MEASURE_DTW:
+                    tsDistance = new clus.ext.timeseries.DTWTimeSeriesDist((TimeSeriesAttrType) type);
+                    break;
+                case Settings.TIME_SERIES_DISTANCE_MEASURE_QDM:
+                    tsDistance = new clus.ext.timeseries.QDMTimeSeriesDist((TimeSeriesAttrType) type);
+                    break;
+
+                case Settings.TIME_SERIES_DISTANCE_MEASURE_TSC:
+                    tsDistance = new clus.ext.timeseries.TSCTimeSeriesDist((TimeSeriesAttrType) type);
+                    break;
+            }
+            return tsDistance;
+        }
+        return null;
+    }
+
+
+    public ClusAttrType[] getInnerTypes() {
+        return innerTypes;
+    }
+
+
+    public void setInnerTypes(ClusAttrType[] innerTypes) {
+        this.innerTypes = innerTypes;
+    }
+
+
+    public String getTypeDefinition() {
+        return typeDefinition;
+    }
+
+
+    public void setTypeDefinition(String typeDefinition) {
+        this.typeDefinition = typeDefinition;
+    }
 
 
     public JsonObject getAttributeJSON() {

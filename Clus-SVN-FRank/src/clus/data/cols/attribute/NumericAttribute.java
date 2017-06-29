@@ -38,7 +38,7 @@ import clus.selection.ClusSelection;
 
 public class NumericAttribute extends NumericAttrBase {
 
-    public int DEBUG = 0;
+    public int DEBUG = 0; // TODO: this should be handled outside martinb
 
     public double[] m_Data;
     public int[] m_Index;

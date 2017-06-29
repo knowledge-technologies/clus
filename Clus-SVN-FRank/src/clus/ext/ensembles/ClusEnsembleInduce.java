@@ -48,7 +48,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.error.ClusErrorList;
 import clus.error.ComponentError;
-import clus.ext.ensembles.containters.OneBagResults;
+import clus.ext.ensembles.containers.OneBagResults;
 import clus.ext.ensembles.induceCallables.InduceExtraTreeCallable;
 import clus.ext.ensembles.induceCallables.InduceOneBagCallable;
 import clus.ext.featureRanking.ClusEnsembleFeatureRanking;

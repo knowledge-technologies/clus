@@ -28,12 +28,14 @@ import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import clus.algo.kNN.distance.valentin.NominalStatistic;
 import clus.data.cols.ColTarget;
 import clus.data.cols.attribute.ClusAttribute;
 import clus.data.cols.attribute.NominalTarget;
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
 import clus.io.ClusSerializable;
+import clus.main.Settings;
 import clus.util.ClusException;
 
 
@@ -42,12 +44,13 @@ import clus.util.ClusException;
  */
 public class NominalAttrType extends ClusAttrType {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static String[] BINARY_NAMES = { "1", "0" };
     public final static int THIS_TYPE = NOMINAL_ATR_TYPE;
     public final static String THIS_TYPE_NAME = "Nominal";
-
+    private NominalStatistic m_StatNominal;
+    
     /**
      * Number of possible values for nominal type.
      */
@@ -79,7 +82,18 @@ public class NominalAttrType extends ClusAttrType {
         createHash();
     }
 
+ // new for knn
 
+    public void setStatistic(NominalStatistic stat){
+        m_StatNominal = stat;
+    }
+    public NominalStatistic getStatistic(){
+        return m_StatNominal;
+    }
+
+
+    
+    
     public String[] getValues() {
         return m_Values;
     }
@@ -267,8 +281,9 @@ public class NominalAttrType extends ClusAttrType {
             return true;
         }
     }
-    
-    public boolean isNominal(){
-    	return true;
+
+
+    public boolean isNominal() {
+        return true;
     }
 }

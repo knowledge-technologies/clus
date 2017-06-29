@@ -408,7 +408,89 @@ public class ClusReader {
             return null;
         }
     }
-
+	
+	public String readSet() throws IOException {
+        Reader reader = m_Token.getReader();
+        m_Scratch.setLength(0);
+        int open=0;
+        int ch = getNextChar(reader);
+        while ((ch == ' ' || ch == '\t' || ch==10 || ch==13) && ch != -1) {
+            ch = getNextChar(reader);
+        }
+        if (ch != '{') {
+            throw new IOException("Error parsing set attribute "+m_Attr+" at row "+(m_Row+1)+": '{' not found");
+        } else {
+            open++;
+            m_Scratch.append((char)ch);
+        }
+        ch = getNextChar(reader);
+        while (ch != -1) {
+            if (ch != '\t') {
+                m_Scratch.append((char)ch);
+            }
+            if (ch == '{'){
+                open++;
+            }
+            if (ch == '}'){
+                open--;
+            }
+            if (ch == '}' && open==0){
+                ch = getNextChar(reader); //eat the ,
+                if (ch == 10 || ch == 13) setLastChar(13);
+                break;
+            }
+            ch = getNextChar(reader);
+        }
+        String result = m_Scratch.toString().trim();
+        if (result.length() > 0) {
+            m_Attr++;
+            return result;
+        } else {
+            return null;
+        }
+    }
+    
+    public String readTuple() throws IOException {
+        Reader reader = m_Token.getReader();
+        m_Scratch.setLength(0);
+        int open=0;
+        int ch = getNextChar(reader);
+        while ((ch == ' ' || ch == '\t' || ch==10 || ch==13) && ch != -1) {
+            ch = getNextChar(reader);
+        }
+        if (ch != '[') {
+            throw new IOException("Error parsing tuple attribute "+m_Attr+" at row "+(m_Row+1)+": '[' not found");
+        } else {
+            open++;
+            m_Scratch.append((char)ch);
+        }
+        ch = getNextChar(reader);
+        while (ch != -1) {
+            if (ch != '\t') {
+                m_Scratch.append((char)ch);
+            }
+            if (ch == '['){
+                open++;
+            }
+            if (ch == ']'){
+                open--;
+            }
+            if (ch == ']' && open==0){
+                ch = getNextChar(reader); //eat the ,
+                if (ch == 10 || ch == 13) setLastChar(13);
+                break;
+            }
+            ch = getNextChar(reader);
+        }
+        String result = m_Scratch.toString().trim();
+        if (result.length() > 0) {
+            m_Attr++;
+            return result;
+        } else {
+            return null;
+        }
+    }
+    
 
     // --This is the new method which skips the whole time serie(when TimeSeries attribute is disabled) and the
     // reference character is '['
@@ -458,6 +540,68 @@ public class ClusReader {
         return ch != -1;
     }
 
+	
+	
+	
+	/* FROM VALENTINg
+	public boolean skipTillComma() throws IOException {
+
+
+			Reader reader = m_Token.getReader();
+			int ch = getNextChar(reader);
+
+
+
+
+			int open=0;
+			int nb=0;
+			while (ch != -1) {				
+				if (open==0){
+					if (ch==','){
+						break;
+					}
+
+
+
+					if (ch == 10 || ch == 13){						
+						setLastChar(13);
+						if (nb>0)
+							break;
+					}
+
+				}
+
+
+
+
+				if (ch=='[' || ch=='{'){
+					open++;
+				}
+
+
+
+
+
+				if (ch==']' || ch=='}'){
+					open--;
+				}
+
+				nb++;
+				ch = reader.read();
+			}
+
+
+
+
+
+
+
+			return ch != -1;
+	}
+	*/
+	
+	
+	
 
     public int countRows2() throws IOException {
         int nbrows = 0;

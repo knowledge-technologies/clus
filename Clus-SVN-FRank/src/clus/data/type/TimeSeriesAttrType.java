@@ -45,14 +45,16 @@ public class TimeSeriesAttrType extends ClusAttrType {
 
 
     public TimeSeriesAttrType(String name) {
-        super(name);
+        super(name, null);
     }
 
-
+	public TimeSeriesAttrType(String name, String typeDefinition) {
+		super(name, typeDefinition);		
+	}
     public ClusAttrType cloneType() {
-        TimeSeriesAttrType tsat = new TimeSeriesAttrType(m_Name);
-        return tsat;
-    }
+		TimeSeriesAttrType tsat = new TimeSeriesAttrType(m_Name,this.getTypeDefinition());
+		return tsat;
+	}
 
 
     public int getTypeIndex() {
