@@ -27,6 +27,7 @@ import java.util.Arrays;
 
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.type.NumericAttrType;
+import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.Settings;
 import clus.util.ClusFormat;
 
@@ -37,6 +38,8 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
 
     public double[] m_SumValues;
 
+    public WHTDStatistic m_ParentStat; //statistic of the parent node
+    public WHTDStatistic m_Training;
 
     public RegressionStatBinaryNomiss(NumericAttrType[] attrs) {
         this(attrs, false);
@@ -163,10 +166,14 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
 
 
     public double getSVarS(ClusAttributeWeights scale) {
-        double result = 0.0;
+        double result = 0.0, sv_tot;
+        double n_tot = m_SumWeight;
+        
+        if(n_tot == 0.0)
+            return getEstimatedSVarS(scale) / m_NbAttrs;
+        
         for (int i = 0; i < m_NbAttrs; i++) {
-            double n_tot = m_SumWeight;
-            double sv_tot = m_SumValues[i];
+            sv_tot = m_SumValues[i];
             result += (sv_tot - sv_tot * sv_tot / n_tot) * scale.getWeight(m_Attrs[i]);
         }
         return result / m_NbAttrs;
@@ -174,17 +181,43 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
 
 
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        double result = 0.0;
-        RegressionStatBinaryNomiss or = (RegressionStatBinaryNomiss) other;
-        for (int i = 0; i < m_NbAttrs; i++) {
-            double n_tot = m_SumWeight - or.m_SumWeight;
-            double sv_tot = m_SumValues[i] - or.m_SumValues[i];
-            result += (sv_tot - sv_tot * sv_tot / n_tot) * scale.getWeight(m_Attrs[i]);
-        }
-        return result / m_NbAttrs;
+		double result = 0.0, sv_tot;
+		RegressionStatBinaryNomiss or = (RegressionStatBinaryNomiss) other;
+		double n_tot = m_SumWeight - or.m_SumWeight;
+
+		if (n_tot == 0.0)
+			return or.getEstimatedSVarS(scale) / m_NbAttrs;
+
+		for (int i = 0; i < m_NbAttrs; i++) {
+			sv_tot = m_SumValues[i] - or.m_SumValues[i];
+			result += (sv_tot - sv_tot * sv_tot / n_tot) * scale.getWeight(m_Attrs[i]);
+		}
+		return result / m_NbAttrs;
     }
 
-
+    /** The case where are examples have missing value for the i-th attribute, i.e., variance can not be calculated, so it is estimated */
+	public double getEstimatedSVarS(ClusAttributeWeights scale) {
+		switch (Settings.getMissingClusteringAttrHandling()) {
+		case Settings.MISSING_ATTRIBUTE_HANDLING_TRAINING:
+			if (m_Training == null)
+				return Double.NaN;
+			return m_Training.getSVarS(scale);
+		case Settings.MISSING_ATTRIBUTE_HANDLING_PARENT:
+			if (m_ParentStat == null)
+				return Double.NaN; // the case if for attribute i all examples
+									// gave missing values (if there is no
+									// parent stat, it means we reached the root
+									// node)
+			return m_ParentStat.getSVarS(scale);
+		case Settings.MISSING_ATTRIBUTE_HANDLING_NONE:
+			return Double.NaN;
+		default:
+			if (m_Training == null)
+				return Double.NaN;
+			return m_Training.getSVarS(scale);
+		}
+	}
+    
     public String getString(StatisticPrintInfo info) {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
@@ -206,5 +239,15 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     @Override
     public int getNbStatisticComponents() {
         return m_SumValues.length;
+    }
+    
+    @Override
+    public void setParentStat(ClusStatistic parent) {
+        m_ParentStat = (WHTDStatistic) parent;
+    }
+
+    @Override
+    public ClusStatistic getParentStat() {
+        return m_ParentStat;
     }
 }

@@ -26,6 +26,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import clus.data.ClusData;
+import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
 import clus.data.rows.TupleIterator;
 import clus.error.ClusErrorList;
@@ -44,6 +45,7 @@ public class ClusRun extends ClusModelInfoList {
     protected ClusData m_Train, m_Prune, m_Orig;
     protected ClusSelection m_TestSel, m_PruneSel;
     protected TupleIterator m_Test;
+    protected TupleIterator m_UnlabeledData;
     protected ClusSummary m_Summary;
 
     ClusReadWriteLock m_Lock = new ClusReadWriteLock();
@@ -64,6 +66,7 @@ public class ClusRun extends ClusModelInfoList {
         m_TestSel = other.m_TestSel;
         m_PruneSel = other.m_PruneSel;
         m_Test = other.m_Test;
+        m_UnlabeledData = other.m_UnlabeledData;
         m_Summary = other.m_Summary.getSummaryClone();
         setModels(other.cloneModels());
     }
@@ -72,6 +75,10 @@ public class ClusRun extends ClusModelInfoList {
     public ClusStatManager getStatManager() {
         return m_Summary.getStatManager();
     }
+    
+	public void setClusteringWeights(ClusAttributeWeights weights){
+	    m_Summary.m_StatMgr.m_ClusteringWeights.m_Weights = weights.m_Weights;
+	}
 
 
     /***************************************************************************
@@ -246,6 +253,30 @@ public class ClusRun extends ClusModelInfoList {
             copyTrainingData();
         }
     }
+
+    /***************************************************************************
+    * Unlabeled set
+    ****************************************************************************/
+
+    	public final void setUnlabeledSet(TupleIterator iter) {
+    		m_UnlabeledData = iter;
+    	}
+
+    	public final TupleIterator getUnlabeledIter() {
+    		return m_UnlabeledData;
+    	}
+
+    	// If the unlabeled set is specified as a separate file, this method first reads the entire
+    	// file into memory, while the above method provides an interator that reads tuples one by one
+    	public final RowData getUnlabeledSet() throws IOException, ClusException {
+    		if (m_UnlabeledData == null) return null;
+    		RowData data = (RowData)m_UnlabeledData.getData();
+    		if (data == null) {
+    			data = (RowData)m_UnlabeledData.createInMemoryData();
+    			m_UnlabeledData = data.getIterator();
+    		}
+    		return data;
+    	}	
 
 
     /***************************************************************************

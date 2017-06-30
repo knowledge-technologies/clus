@@ -33,6 +33,9 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
@@ -643,6 +646,7 @@ public class Settings implements Serializable {
     protected INIFileBool m_PrintModelAndExamples;
     /** Write test/train predictions to files */
     protected INIFileNominal m_WritePredictions;
+    protected static INIFileBool m_GzipOutput; // added by Jurica Levatic JSI, July 2014
     protected INIFileBool m_WriteErrorFile;
     protected INIFileBool m_WriteModelFile;
     protected INIFileBool m_ModelIDFiles;
@@ -727,7 +731,14 @@ public class Settings implements Serializable {
         return m_WritePredictions.contains(WRITE_PRED_TRAIN);
     }
 
-
+    /**
+     * If set to Yes, the output files will be GZiped (including .out and .pred.arff files)  
+     * @return
+     */
+    public static boolean isGzipOutput() {
+        return m_GzipOutput.getValue();
+    }
+    
     public boolean isWriteErrorFile() {
         return m_WriteErrorFile.getValue();
     }
@@ -895,6 +906,25 @@ public class Settings implements Serializable {
     protected INIFileInt m_TreeSplitSampling;
 
 
+    //added by Jurica Levatic, JSI
+    protected static INIFileNominal m_MissingClusteringAttrHandling; //determines how we handle the case where when searching evaluating candidate split all examples have only missing values for a clustering attriute, in one of the branches 
+    public final static String[] MISSING_CLUSTERING_ATTR_HANDLING_TYPE = {"Ignore", "EstimateFromTrainingSet", "EstimateFromParentNode"};
+    protected static INIFileNominal m_MissingTargetAttrHandling; //determines how we calculate prototype (i.e., prediction) if all the tuple in leaf node have only missing values for target attriute 
+    public final static String[] MISSING_TARGET_ATTR_HANDLING_TYPE = {"Zero", "DefaultModel", "ParentNode"};
+    public static final int MISSING_ATTRIBUTE_HANDLING_PARENT = 2; //variance and mean (i.e., prediction) will be estimated on the basis of the node's parent
+    public static final int MISSING_ATTRIBUTE_HANDLING_TRAINING = 1; //variance and mean (i.e., prediction) will be estimated on the basis of the root node (i.e., default model)
+    public static final int MISSING_ATTRIBUTE_HANDLING_NONE = 0; //variance will not be estimated, while mean (i.e., prediction) will be equal to zero
+    
+    public static int getMissingClusteringAttrHandling() {
+        return m_MissingClusteringAttrHandling.getValue();
+    }
+
+    public static int getMissingTargetAttrHandling() {
+        return m_MissingTargetAttrHandling.getValue();
+    }
+    
+    //end added by Jurica
+    
     public void setSectionTreeEnabled(boolean enable) {
         m_SectionTree.setEnabled(enable);
     }
@@ -1071,8 +1101,8 @@ public class Settings implements Serializable {
     public final static int HEURISTIC_REDUCED_ERROR = 1;
     public final static int HEURISTIC_GAIN = 2;
     public final static int HEURISTIC_GAIN_RATIO = 3;
-
     public final static int HEURISTIC_SSPD = 4;
+    
     /** Sum of Squared Distances, the default for ensemble tree regression learning */
     public final static int HEURISTIC_VARIANCE_REDUCTION = 5;
     public final static int HEURISTIC_MESTIMATE = 6;
@@ -2033,7 +2063,21 @@ public class Settings implements Serializable {
     protected INIFileNominalOrDoubleOrVector m_RecallValues;
     protected INIFileString m_HierEvalClasses;
     protected static INIFileBool m_HierUseMEstimate;
-
+    
+    /** Denotes if Clustering attributes contain Hierarchy as well as numeric or nominal attributes */
+    protected boolean isHierAndClassAndReg = false; 
+   
+    public void setIsHierAndClassAndReg(boolean value) {
+        isHierAndClassAndReg = value;
+    }
+    
+    /**
+     * Do Clustering attributes contain Hierarchy as well as numeric or nominal attributes?
+     * @return
+     */
+    public boolean isHierAndClassAndReg() {
+        return isHierAndClassAndReg;
+    }
 
     public void setSectionHierarchicalEnabled(boolean enable) {
         m_SectionHierarchical.setEnabled(enable);
@@ -2682,8 +2726,7 @@ public class Settings implements Serializable {
     protected INIFileInt m_EnsembleBagSize;
 
     private INIFileBool m_FeatureRankingPerTarget;
-
-
+       
     public boolean shouldPerformRankingPerTarget() {
         return m_FeatureRankingPerTarget.getValue();
     }
@@ -3109,6 +3152,215 @@ public class Settings implements Serializable {
         m_SectionKNNT.setEnabled(enable);
     }
 
+    /**
+     * *********************************************************************
+     * Section: Semi Supervised Learning *
+     * *********************************************************************
+     */
+    INIFileSection m_SectionSSL;
+    public static boolean m_SemiSupervisedMode = false;
+    
+    public static INIFileNominal m_SSL_SemiSupervisedMethod;
+    public final static String[] SSL_METHOD = {"SelfTraining", "SelfTrainingFTF", "PCT"};
+    public final static int SSL_METHOD_SELF_TRAINING = 0;
+    public final static int SSL_METHOD_SELF_TRAINING_FTF = 1;
+    public final static int SSL_METHOD_PCT = 2;
+    
+    /** unlabeled criteria is the criteria by which the unlabeled data will be added to the training set (used by the Self Training algorithm) */
+    public final static String[] SSL_UNLABELED_CRITERIA = {"Threshold", "KMostConfident", "KPercentageMostConfident", "AutomaticOOB", "ExhaustiveSearch", "KPercentageMostAverage", "AutomaticOOBInitial"};
+    public static INIFileNominal m_SSL_UnlabeledCriteria;
+    public final static int SSL_UNLABELED_CRITERIA_THRESHOLD = 0; // Threshold - all of the unlabeled instances with confidence of prediction greater than Threshold will be added to the training set
+    public final static int SSL_UNLABELED_CRITERIA_KMOSTCONFIDENT = 1; // KMostConfident - K unlabeled instances with the most confident predictions will be added to the training set, K is a parameter
+    public final static int SSL_UNLABELED_CRITERIA_KPERCENTAGEMOSTCONFIDENT = 2; // KPercentageMostConfident - K percentage of unlabeled instances with the most confident predictions will be added to the training set
+    public final static int SSL_UNLABELED_CRITERIA_AUTOMATICOOB = 3; // AutomaticOOB - the optimal threshold will be selected on the basis of OOB error of the labeled examples
+    public final static int SSL_UNLABELED_CRITERIA_EXHAUSTIVESEARCH = 4; // ExhaustiveSearch - the optimal threshold will be selected from the specified list at each iteration
+    public final static int SSL_UNLABELED_CRITERIA_KPERCENTAGEMOSTAVERAGE = 5; // KPercentageMostAverage - the threshold is set to average confidence score of the K percentage most confident examples (set initially, and then this threshold is used throughout iterations)
+    public final static int SSL_UNLABELED_CRITERIA_AUTOMATICOOBINITIAL = 6; // AutomaticOOBInitial - the threshold will be selected according to AutomaticOOB at initial iteration, this threshold is in next iterations 
+    
+    /** Stopping criteria for self training */ 
+    public final static String[] SSL_STOPPING_CRITERIA = {"NoneAdded", "Iterations", "Airbag"};
+    public static INIFileNominal m_SSL_StoppingCriteria;
+    public final static int SSL_STOPPING_CRITERIA_NONEADDED = 0; /** If no instance met the UnlabeledCriteria, i.e., no instance was added to the training set */
+    public final static int SSL_STOPPING_CRITERIA_ITERATIONS = 1; /** Iterations - stop after specified number of iterations */
+    public final static int SSL_STOPPING_CRITERIA_AIRBAG = 2; /** (Leistner et al., 2009), based on Out of Bag Error estimate of Random Forest (applicable only if the base method for the Self Training is Random Forest) */
+    
+    /** Confidence (i.e., reliability) score for Self-Training */
+    public final static String[] SSL_CONFIDENCE_MEASURE = {"Variance", "RandomUniform", "RandomGaussian", "Oracle", "RForestProximities", "RForestProximitiesV2", "Precision"};
+    public static INIFileNominal m_SSL_ConfidenceMeasure;
+    public final static int SSL_CONFIDENCE_MEASURE_VARIANCE = 0; /** Variance - standard deviation of votes of ensemble */
+    public final static int SSL_CONFIDENCE_MEASURE_RANDOMUNIFORM = 1; /** RandomUniform - uniformly distribuited random scores */
+    public final static int SSL_CONFIDENCE_MEASURE_RANDOMGAUSSIAN = 2; /** RandomGaussian - normally distribuited random scores */
+    public final static int SSL_CONFIDENCE_MEASURE_ORACLE = 3; /** Oracle - real score, just for testing purposes, actual error on unlabeled examples is calculated to establish reliability scores */
+    public final static int SSL_CONFIDENCE_MEASURE_RFPROXIMITIES = 4; /** RForestProximities - extrapolation of error of unlabeled examples via OOB error of labeled examples in their Random Forest proximity */
+    public final static int SSL_CONFIDENCE_MEASURE_RFPROXIMITIES_V2 = 5; /** RForestProximitiesV2 - ?? */
+    public final static int SSL_CONFIDENCE_MEASURE_PRECISION = 6; /** "Precision" - used for HMC, on the basis of OOB examples, classification threshold is found such that precision of predicsions is larger that the specified threshold */
+    
+    public static INIFileInt m_SSL_Iterations; /** number of iterations for Self Training method, applies if StoppingCriteria = Iterations */
+    public static INIFileDouble m_SSL_ConfidenceThreshold; /** Threshold for the confidence of predictions of unlabeled instances to be added to the training set */
+    public static INIFileInt m_SSL_K; /** K parameter for "KMostConfident" unlabeled criteria */
+    public static INIFileStringOrDouble m_SSL_UnlabeledData; /** (Optional) File containing unlabeled data. If unlabeled data is not provided, and SSL is initialized, unlabeled examples will be randomly selected from the training set according to m_SSL_PercentageLabeled setting */
+    public static INIFileInt m_SSL_PercentageLabeled; /** From the training data, specified percentage will be used as labeled data, other will be used as unlabeled. This is used when UnlabeledData parameter is not set. */
+    public static INIFileBool m_SSL_useWeights; /** whether to add weights to unlabeled examples when adding them to the labeled set. Weights correspond to the confidence score */ 
+    public static INIFileInt m_SSL_airbagTrials; /** number of times it is allowed for the trained model's OOBError to be worse than of the model in previous iteration. */
+    public static INIFileNominalOrDoubleOrVector m_SSL_ExhaustiveSearchThresholds; /** a set of thresholds which will be tested when searching for the optimal threshold, if UnlabeledCriteria = ExhaustiveSearch */ 
+    public static INIFileNominal m_SSL_OOBErrorCalculation; /** Specifies which data will be used for calculation of OOB error, only originally labeled data or all examples (including the ones with predicted labeles with Self-training */
+    public final static String[] SSL_OOB_ERROR_CALCULATION = {"LabeledOnly", "AllData"};
+    public final static int SSL_OOB_ERROR_CALCULATION_LABELED_ONLY = 0;
+    public final static int SSL_OOB_ERROR_CALCULATION_ALL_DATA = 1;
+    
+    public static INIFileNominal m_SSL_normalization; /** Normalization of per target reliability scores */
+    public final static String[] SSL_NORMALIZATION = {"MinMaxNormalization", "Ranking", "Standardization", "NoNormalization"};
+    public final static int SSL_NORMALIZATION_MINMAXNORM = 0; //normalization to [0,1] interval
+    public final static int SSL_NORMALIZATION_RANKING = 1; //ranks per target scores according to their reliability
+    public final static int SSL_NORMALIZATION_STANDARDIZATION = 2; //standardization to 0.5 mean and 0.125 standard deviation (ensures that 99.98% of the scores are in [0,1] interval)
+    public final static int SSL_NORMALIZATION_NONORMALIZATION = 3; //does nothing, leaves per-target scores as they are
+    
+    public static INIFileNominal m_SSL_aggregation; /** Aggregation of per target reliability scores */
+    public final static String[] SSL_AGGREGATION = {"Average", "Minimum", "Maximum"};
+    public final static int SSL_AGGREGATION_AVERAGE = 0; 
+    public final static int SSL_AGGREGATION_MINIMUM = 1;
+    public final static int SSL_AGGREGATION_MAXIMUM = 2;
+    public final static int SSL_AGGREGATION_AVERAGEIGNOREZEROS = 3; //can be used for HMC, averages all values but zeros 
+    
+    protected INIFileBool m_CalibrateHmcThreshold; /** if set to yes, HMC threshold is calibrated such that the difference between label cardinality of labeled examples and predicted unlabeled examples is minimal */
+    
+    public static INIFileNominalOrDoubleOrVector m_SSL_PossibleWeights; /** Candidate weights for automatic w optimization */
+    public static INIFileBool m_SSL_PruningWhenTuning; /** Should the trees be pruned when optimizing w parameter */
+    public static INIFileInt m_SSL_InternalFolds; /** How many folds for internal cross validation for optimizing w */
+    public static INIFileString m_SSL_WeightScoresFile; /** File where results for each candidate w will be written during optimization */
+    
+    
+     /**
+     * Should calibrate HMC threshold so that the difference between label cardinality of labeled examples and predicted unlabeled examples is minimal
+     * @return 
+     */
+    public boolean shouldCalibrateHmcThreshold() {
+        return m_CalibrateHmcThreshold.getValue();
+    }
+       
+    public boolean isSemiSupervisedMode() {
+        return m_SemiSupervisedMode;
+    }
+
+    public void setSemiSupervisedMode(boolean value) {
+        m_SemiSupervisedMode = value;
+    }
+
+    public int getSemiSupervisedMethod() {
+        return m_SSL_SemiSupervisedMethod.getValue();
+    }
+    
+    public String getSSLWeightScoresFile(){
+    	return m_SSL_WeightScoresFile.getValue();
+    }
+      
+    public boolean getSSLPruningWhenTuning() {
+    	return m_SSL_PruningWhenTuning.getValue();
+    }
+    
+    public int getSSLInternalFolds(){
+    	return m_SSL_InternalFolds.getValue();
+    }
+    
+    public double[] getSSLPossibleWeights(){
+    	if(m_SSL_PossibleWeights.isVector())
+    		return m_SSL_PossibleWeights.getDoubleVector();
+    	
+    	return new double[] {m_SSL_PossibleWeights.getDouble()};
+    }
+
+    public void setSemiSupervisedMethod(String value) {
+        m_SSL_SemiSupervisedMethod.setValue(value);
+    }
+    
+    public void setSSLPruningWhenTuning(String value){
+    	m_SSL_PruningWhenTuning.setValue(value);
+    }
+    
+    public void setSSLInternalFolds(String value){
+    	m_SSL_InternalFolds.setValue(value);
+    }
+
+    public void setStoppingCriteria(String value) {
+        m_SSL_StoppingCriteria.setValue(value);
+    }
+
+    public int getStoppingCriteria() {
+        return m_SSL_StoppingCriteria.getValue();
+    }
+
+    public void setUnlabeledCriteria(String value) {
+        m_SSL_UnlabeledCriteria.setValue(value);
+    }
+
+    public static int getUnlabeledCriteria() {
+        return m_SSL_UnlabeledCriteria.getValue();
+    }
+
+    public void setIterations(int it) {
+        m_SSL_Iterations.setValue(it);
+    }
+
+    public int getIterations() {
+        return m_SSL_Iterations.getValue();
+    }
+
+    public void setConfidenceThreshold(double d) {
+        m_SSL_ConfidenceThreshold.setValue(d);
+    }
+
+    public double getConfidenceThreshold() {
+        return m_SSL_ConfidenceThreshold.getValue();
+    }
+
+    public void setK(int K) {
+        m_SSL_K.setValue(K);
+    }
+
+    public int getK() {
+        return m_SSL_K.getValue();
+    }
+
+    public String getUnlabeledFile() {
+        return m_SSL_UnlabeledData.getValue();
+    }
+
+    public boolean isNullUnlabeledFile() {
+        return m_SSL_UnlabeledData.getValue() == null || m_SSL_UnlabeledData.getValue() == "";
+    }
+
+    public int getPercentageLabeled() {
+        return m_SSL_PercentageLabeled.getValue();
+    }
+
+    public int getConfidenceMeasure() {
+        return m_SSL_ConfidenceMeasure.getValue();
+    }
+
+    public boolean getUseWeights() {
+        return m_SSL_useWeights.getValue();
+    }
+
+    public int getAirbagTrails() {
+        return m_SSL_airbagTrials.getValue();
+    }
+
+    public double[] getExhaustiveSearchThresholds() {
+        return m_SSL_ExhaustiveSearchThresholds.getDoubleVector();
+    }
+    
+    public int getOOBErrorCalculation() {
+        return m_SSL_OOBErrorCalculation.getValue();
+    }
+    
+    public int getSSLNormalization() {
+        return m_SSL_normalization.getValue();
+    }
+    
+    public int getSSLAggregation() {
+        return m_SSL_aggregation.getValue();
+    }
+    
     /***********************************************************************
      * Cross-validaiton *
      ***********************************************************************/
@@ -3224,6 +3476,7 @@ public class Settings implements Serializable {
         output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false));
         output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
         output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
+        output.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));
         // If this option name is to be changed, it must also be changed in testsets/iris-classify.s
         // output.addNode(m_ModelIDFiles = new INIFileBool("WriteModelIDFiles", false));
         output.addNode(m_ModelIDFiles = new INIFileBool("ModelIDFiles", false));
@@ -3259,6 +3512,10 @@ public class Settings implements Serializable {
         m_SectionTree.addNode(m_TreeSplitSampling = new INIFileInt("SplitSampling", 0));
         m_TreeSplitSampling.setValueCheck(new IntRangeCheck(0, Integer.MAX_VALUE));
 
+        //added by Jurica Levatic, JSI
+        m_SectionTree.addNode(m_MissingClusteringAttrHandling = new INIFileNominal("MissingClusteringAttrHandling", MISSING_CLUSTERING_ATTR_HANDLING_TYPE, MISSING_ATTRIBUTE_HANDLING_PARENT));
+        m_SectionTree.addNode(m_MissingTargetAttrHandling = new INIFileNominal("MissingTargetAttrHandling", MISSING_TARGET_ATTR_HANDLING_TYPE, MISSING_ATTRIBUTE_HANDLING_PARENT));
+        
         // added by Eduardo Costa 06/06/2011
         m_SectionTree.addNode(m_InductionOrder = new INIFileNominal("InductionOrder", INDUCTION_ORDER, 0));
 
@@ -3483,6 +3740,37 @@ public class Settings implements Serializable {
         m_SectionKNNT.addNode(kNNT_attrWeighted = new INIFileBool("AttributeWeighted", false));
         m_SectionKNNT.setEnabled(false);
 
+        
+        // added 10/12/2013, Jurica Levatic (JSI) 
+        m_SectionSSL = new INIFileSection("SemiSupervised");
+        m_SectionSSL.addNode(m_SSL_SemiSupervisedMethod = new INIFileNominal("SemiSupervisedMethod", SSL_METHOD, SSL_METHOD_PCT));
+        m_SectionSSL.addNode(m_SSL_StoppingCriteria = new INIFileNominal("StoppingCriteria", SSL_STOPPING_CRITERIA, SSL_STOPPING_CRITERIA_NONEADDED));
+        m_SectionSSL.addNode(m_SSL_UnlabeledCriteria = new INIFileNominal("UnlabeledCriteria", SSL_UNLABELED_CRITERIA, SSL_UNLABELED_CRITERIA_THRESHOLD));
+        m_SectionSSL.addNode(m_SSL_ConfidenceThreshold = new INIFileDouble("ConfidenceThreshold", 0.8));
+        m_SectionSSL.addNode(m_SSL_ConfidenceMeasure = new INIFileNominal("ConfidenceMeasure", SSL_CONFIDENCE_MEASURE, SSL_CONFIDENCE_MEASURE_VARIANCE));
+        m_SectionSSL.addNode(m_SSL_Iterations = new INIFileInt("Iterations", 10));
+        m_SectionSSL.addNode(m_SSL_K = new INIFileInt("K", 5));
+        m_SectionSSL.addNode(m_SSL_UnlabeledData = new INIFileStringOrDouble("UnlabeledData"));
+        m_SectionSSL.addNode(m_SSL_PercentageLabeled = new INIFileInt("PercentageLabeled", 5));
+        m_SectionSSL.addNode(m_SSL_useWeights = new INIFileBool("UseWeights", false));
+        m_SectionSSL.addNode(m_SSL_airbagTrials = new INIFileInt("AirbagTrials", 0));
+        m_SectionSSL.addNode(m_SSL_ExhaustiveSearchThresholds = new INIFileNominalOrDoubleOrVector("ExhaustiveSearchThresholds", NONELIST));
+        m_SSL_ExhaustiveSearchThresholds.setDoubleArray(new double[]{0.5, 0.6, 0.7, 0.8, 0.9, 0.99});
+        m_SectionSSL.addNode(m_SSL_OOBErrorCalculation = new INIFileNominal("OOBErrorCalculation", SSL_OOB_ERROR_CALCULATION, SSL_OOB_ERROR_CALCULATION_LABELED_ONLY));
+        m_SectionSSL.addNode(m_SSL_normalization = new INIFileNominal("Normalization", SSL_NORMALIZATION, SSL_NORMALIZATION_MINMAXNORM));
+        m_SectionSSL.addNode(m_SSL_aggregation = new INIFileNominal("Aggregation", SSL_AGGREGATION, SSL_AGGREGATION_AVERAGE));
+        m_SectionSSL.addNode(m_CalibrateHmcThreshold = new INIFileBool("CalibrateHmcThreshold", false));
+        // end added section by Jurica 
+        // added 25/1/2017, Tomaž Stepišnik Perdih (JSI)
+        m_SectionSSL.addNode(m_SSL_PruningWhenTuning = new INIFileBool("PruningWhenTuning", false));
+        m_SectionSSL.addNode(m_SSL_InternalFolds = new INIFileInt("InternalFolds", 5));
+        m_SectionSSL.addNode(m_SSL_WeightScoresFile = new INIFileString("WeightScoresFile", "NO")); 
+        INIFileNominalOrDoubleOrVector temp = new INIFileNominalOrDoubleOrVector("PossibleWeights", new String[]{});
+        temp.setDoubleArray(new double[] {0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1});
+        m_SectionSSL.addNode(m_SSL_PossibleWeights = temp);  
+        // end added by Tomaž
+        
+        
         m_SectionOptionTree = new INIFileSection("OptionTree");
         m_SectionOptionTree.addNode(m_optionDecayFactor = new INIFileDouble("DecayFactor", 0.9));
         m_SectionOptionTree.addNode(m_optionEpsilon = new INIFileDouble("Epsilon", 0.1));
@@ -3524,6 +3812,7 @@ public class Settings implements Serializable {
         m_Ini.addNode(m_SectionRelief);
         m_Ini.addNode(m_SectionDistances);
         m_Ini.addNode(m_SectionEnsembles);
+        m_Ini.addNode(m_SectionSSL);
         m_Ini.addNode(m_SectionKNN);
         m_Ini.addNode(m_SectionKNNT);
         m_Ini.addNode(m_SectionOptionTree);
@@ -3659,6 +3948,21 @@ public class Settings implements Serializable {
 
     public PrintWriter getFileAbsoluteWriter(String fname) throws FileNotFoundException {
         String path = getFileAbsolute(fname);
+        
+        /* added July, 2014, Jurica Levatic, JSI
+         * option to gzip prediction files: [Output] GzipPredictions = Yes
+         */
+        if (isGzipOutput()) {
+            path += ".gz";
+            try {
+                return new PrintWriter(new OutputStreamWriter(
+                        new GZIPOutputStream(new FileOutputStream(path))));
+            } catch (IOException ex) {
+                Logger.getLogger(Settings.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        /* End added by Jurica */
+        
         return new PrintWriter(new OutputStreamWriter(new FileOutputStream(path), CHARSET));
     }
 

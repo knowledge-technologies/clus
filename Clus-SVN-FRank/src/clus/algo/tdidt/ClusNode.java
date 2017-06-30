@@ -28,6 +28,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import clus.algo.split.CurrentBestTestAndHeuristic;
@@ -81,7 +83,9 @@ public class ClusNode extends MyNode implements ClusModel {
     public NodeTest[] m_OppositeAlternatives; // contains all alternatives to m_Test that give the opposite split
     public String m_AlternativesString; // contains a string of true and opposite alternatives, sorted according to
                                         // attribute number
-
+    // - adde by Jurica Levatic (E8_IJS), March 2014
+    public List<Integer> m_LeafTuples; //contains hash codes of tuples which ended in a leaf
+    // - end added by Jurica
 
     public MyNode cloneNode() {
         ClusNode clone = new ClusNode();
@@ -690,7 +694,6 @@ public class ClusNode extends MyNode implements ClusModel {
         }
     }
 
-
     public ClusStatistic clusterWeighted(DataTuple tuple) {
         if (atBottomLevel()) {
             return getClusteringStat();
@@ -715,6 +718,72 @@ public class ClusNode extends MyNode implements ClusModel {
         }
     }
 
+    /**
+     * Store indices of tuples in leaf nodes. Used to 
+     * calculate RForest proximities (https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm#prox).
+     * @param tuple 
+     */
+    public void incrementProximities(DataTuple tuple) {
+        if (atBottomLevel()) { //leaf
+            if (m_LeafTuples == null) {
+                m_LeafTuples = new LinkedList<Integer>();
+            }
+            if (!m_LeafTuples.contains(tuple.getIndex())) {
+                m_LeafTuples.add(tuple.getIndex());
+            }
+        } else {
+            int n_idx = m_Test.predictWeighted(tuple);
+            if (n_idx != -1) { // normal
+                ClusNode info = (ClusNode) getChild(n_idx);
+                info.incrementProximities(tuple);
+            } else { // has missing
+                int nb_c = getNbChildren();
+                for (int i = 0; i < nb_c; i++) {
+                    ClusNode ch_i = (ClusNode) getChild(i);
+                    ch_i.incrementProximities(tuple);
+                }
+            }
+        }
+    }
+    
+    /**
+     * Make prediction and store indices of tuples which ended in
+     * the same leaf as the given tuple in the leafTuples variable.
+     * This is used to calculate RForest proximities 
+     * https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm#prox
+     * @param tuple Tuple to predict
+     * @param leafTuples hash codes of tuples which are in the same leaf where
+     * the tuple ended will be stored in this variable.
+     * @return
+     */
+    public ClusStatistic predictWeightedAndGetLeafTuples(DataTuple tuple, List<Integer> leafTuples) {
+        if (atBottomLevel()) {
+            if(this.m_LeafTuples != null) {
+                leafTuples.addAll(this.m_LeafTuples);
+            }
+            
+            return getTargetStat();
+        } else {
+            int n_idx = m_Test.predictWeighted(tuple);
+            if (n_idx != -1) {
+                ClusNode info = (ClusNode) getChild(n_idx);
+                return info.predictWeightedAndGetLeafTuples(tuple, leafTuples);
+            } else {
+                int nb_c = getNbChildren();
+                ClusNode ch_0 = (ClusNode) getChild(0);
+                ClusStatistic ch_0s = ch_0.predictWeightedAndGetLeafTuples(tuple, leafTuples);
+                ClusStatistic stat = ch_0s.cloneSimple();
+                stat.addPrediction(ch_0s, m_Test.getProportion(0));
+                for (int i = 1; i < nb_c; i++) {
+                    ClusNode ch_i = (ClusNode) getChild(i);
+                    ClusStatistic ch_is = ch_i.predictWeightedAndGetLeafTuples(tuple, leafTuples);
+                    stat.addPrediction(ch_is, m_Test.getProportion(i));
+                }
+                stat.computePrediction();
+                return stat;
+            }
+        }
+    }
 
     public final void applyModelProcessor(DataTuple tuple, ClusModelProcessor proc) throws IOException {
         int nb_c = getNbChildren();
@@ -912,7 +981,10 @@ public class ClusNode extends MyNode implements ClusModel {
         return estimateClusteringSSRecursive(this, scale);
     }
 
-
+    public double estimateTargetSS(ClusAttributeWeights scale) {
+        return estimateTargetSSRecursive(this, scale);
+    }
+    
     public double estimateClusteringVariance(ClusAttributeWeights scale) {
         return estimateClusteringSSRecursive(this, scale) / getClusteringStat().getTotalWeight();
     }
@@ -932,7 +1004,20 @@ public class ClusNode extends MyNode implements ClusModel {
             return result;
         }
     }
-
+    
+    public static double estimateTargetSSRecursive(ClusNode tree, ClusAttributeWeights scale) {
+        if (tree.atBottomLevel()) {
+            ClusStatistic total = tree.getTargetStat();
+            return total.getSVarS(scale);
+        } else {
+            double result = 0.0;
+            for (int i = 0; i < tree.getNbChildren(); i++) {
+                ClusNode child = (ClusNode) tree.getChild(i);
+                result += estimateTargetSSRecursive(child, scale);
+            }
+            return result;
+        }
+    }
 
     public static double estimateErrorRecursive(ClusNode tree, ClusAttributeWeights scale) {
         if (tree.atBottomLevel()) {

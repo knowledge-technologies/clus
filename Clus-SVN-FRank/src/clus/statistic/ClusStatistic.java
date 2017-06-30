@@ -48,7 +48,7 @@ public abstract class ClusStatistic implements Serializable {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     /** The weighted sum of all examples */
-    public double m_SumWeight;
+    public double m_SumWeight, m_SumWeightLabeled;;
     public int m_NbExamples;
 
 
@@ -109,6 +109,9 @@ public abstract class ClusStatistic implements Serializable {
     public void setTrainingStat(ClusStatistic train) {
     }
 
+    public abstract void setParentStat(ClusStatistic parent);
+    
+    public abstract ClusStatistic getParentStat();
 
     public void optimizePreCalc(RowData data) { // only clus.statistic.SumPairwiseDistancesStat actually has its own implementation of the method
     }
@@ -235,6 +238,14 @@ public abstract class ClusStatistic implements Serializable {
         return m_SumWeight;
     }
 
+    /**
+     * Provides sum of weights of target attributes
+     * @return sum of weights of target attributes, or NaN if statistic doesn't contain target attributes (i.e., unsupervised learning is performed)
+     */
+    public double getTargetSumWeights() {
+    	System.err.println(getClass().getName()+": getTargetSumWeights(): Not yet implemented");
+        return getTotalWeight();
+    }
 
     public int getNbExamples() {
         return m_NbExamples;
@@ -247,6 +258,7 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public boolean samePrediction(ClusStatistic other) {
+    	System.err.println(getClass().getName()+": samePrediction(ClusStatistic other): Not yet implemented");
         return false;
     }
 

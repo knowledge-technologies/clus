@@ -133,6 +133,10 @@ public class NumericAttrType extends ClusAttrType {
         tuple.setDoubleVal(value, m_ArrayIndex);
     }
 
+	@Override
+	public void setToMissing(DataTuple tuple) {
+		setNumeric(tuple, MISSING);
+	}
 
     public int compareValue(DataTuple t1, DataTuple t2) {
         double v1 = t1.m_Doubles[m_ArrayIndex];

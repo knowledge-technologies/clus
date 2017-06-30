@@ -167,4 +167,14 @@ public class BitVectorStat extends ClusStatistic {
 	public int getNbStatisticComponents() {
 		throw new RuntimeException("BitVectorStat: getNbStatisticComponents() not implemented.");
 	}
+	
+	@Override
+	public void setParentStat(ClusStatistic parent) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	@Override
+	public ClusStatistic getParentStat() {
+		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+	}
 }

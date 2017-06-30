@@ -78,6 +78,9 @@ public class ClusNormalizedAttributeWeights extends ClusAttributeWeights {
 
 
     public String getName(ClusAttrType[] type) {
+        if (type == null) {
+        	return getName();
+        }
         if (type.length > 50) {
             return "Weights (" + type.length + ")";
         }

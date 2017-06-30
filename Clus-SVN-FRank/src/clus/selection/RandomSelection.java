@@ -29,20 +29,38 @@ public class RandomSelection extends ClusSelection {
 
     protected int m_NbSelected;
     protected boolean[] m_Selection;
+    int m_Seed;
 
 
     public RandomSelection(int nbrows, double sel) {
         super(nbrows);
+        m_Seed = 0; // default seed is 0
         makeSelection(nbrows, (int) Math.round((double) sel * nbrows));
     }
 
 
     public RandomSelection(int nbrows, int nbsel) {
         super(nbrows);
+        m_Seed = 0; // default seed is 0
         makeSelection(nbrows, nbsel);
     }
 
+    public RandomSelection(int nbrows, double sel, int randomSeed) {
+		super(nbrows);
+		m_Seed = randomSeed;
+		makeSelection(nbrows, (int)Math.round((double)sel*nbrows));
+	}
+        
+        public RandomSelection(int nbrows, int nbsel, int randomSeed) {
+		super(nbrows);
+		m_Seed = randomSeed;
+		makeSelection(nbrows, nbsel);
+	}
 
+    public void setRandomSeed(int seed){
+    	m_Seed = seed;
+    }
+        
     public int getNbSelected() {
         return m_NbSelected;
     }
@@ -56,7 +74,8 @@ public class RandomSelection extends ClusSelection {
     private final void makeSelection(int nbrows, int nbsel) {
         m_NbSelected = nbsel;
         m_Selection = new boolean[nbrows];
-        Random rnd = new Random(0);
+        //Random rnd = new Random(0);
+        Random rnd = new Random(m_Seed);
         for (int i = 0; i < m_NbSelected; i++) {
             int j = 0;
             int p = rnd.nextInt(nbrows - i) + 1; // Select one of the remaining positions

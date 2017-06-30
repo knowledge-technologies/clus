@@ -7,7 +7,7 @@ import clus.main.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 
-
+//TODO: Jurica: This was implemented in Clus by somebody else, I don't know where it is used, or what it does  
 public class ModifiedGainHeuristic extends ClusHeuristicImpl {
 
     public ModifiedGainHeuristic(ClusStatistic stat) {

@@ -99,4 +99,10 @@ public class IntegerAttrType extends ClusAttrType {
             return true;
         }
     }
+
+	@Override
+	public void setToMissing(DataTuple t) {
+		// TODO Auto-generated method stub
+		
+	}
 }

@@ -105,6 +105,11 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public boolean initSelectorAndStopCrit(ClusNode node, RowData data) {
         int max = getSettings().getTreeMaxDepth();
         if (max != -1 && node.getLevel() >= max) { return true; }
+        
+        if (node.getTargetStat().getTargetSumWeights() <= getSettings().getMinimalWeight()) { // FIXME: not sure how to deal with partially labeled data, should we allow split if, for example, only one target has labels?  
+            return true;
+        }
+        
         return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
     }
 
@@ -261,7 +266,12 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         // Find best test
 
         // long start_time = System.currentTimeMillis();
-                
+        //if all values are missing for some attribute, statistic of parent node are used for estimation of heuristic score and prototype calculation. Needed for SSL-PCTs
+        if (getSettings().getMissingClusteringAttrHandling() == Settings.MISSING_ATTRIBUTE_HANDLING_PARENT) {
+            m_FindBestTest.setParentStatsToChildren();   
+        }
+     
+        
         ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
@@ -291,7 +301,12 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         CurrentBestTestAndHeuristic best = m_FindBestTest.getBestTest();
         if (best.hasBestTest()) {
             // start_time = System.currentTimeMillis();
-
+        	
+            //if all values are missing for some attribute, statistic of parent node are used for estimation of heuristic score and prototype calculation. Needed for SSL-PCTs
+	        if (getSettings().getMissingClusteringAttrHandling() == Settings.MISSING_ATTRIBUTE_HANDLING_PARENT) {
+	            m_FindBestTest.setParentStatsToThis(node.getClusteringStat());
+	        }
+        	
             node.testToNode(best);
             // Output best test
             if (Settings.VERBOSE > 1)
@@ -317,6 +332,13 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 node.setChild(child, j);
                 child.initClusteringStat(m_StatManager, m_Root.getClusteringStat(), subsets[j]);
                 child.initTargetStat(m_StatManager, m_Root.getTargetStat(), subsets[j]);
+                
+                //added by Jurica Levatic, JSI. Needed for SSL-PCTs
+                if (getSettings().getMissingClusteringAttrHandling() == Settings.MISSING_ATTRIBUTE_HANDLING_PARENT || getSettings().getMissingTargetAttrHandling() == Settings.MISSING_ATTRIBUTE_HANDLING_PARENT) {
+                    child.getClusteringStat().setParentStat(node.getClusteringStat());
+                    child.getTargetStat().setParentStat(node.getTargetStat());
+                }
+                
                 induce(child, subsets[j], rnd);
             }
         }
@@ -441,7 +463,14 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             m_Root = new ClusNode();
             m_Root.initClusteringStat(m_StatManager, data);
             m_Root.initTargetStat(m_StatManager, data);
-            m_Root.getClusteringStat().showRootInfo();
+            /* if ensembles mode is used we don't write root info (i.e., hierarchy.txt file),
+             * otherwise this file is written for every tree, which is not conveniet because the file can be huge,
+             * root info is instead written only once in <code>ClusEnsembleInduce</code> 
+             * added by Jurica Levatic, June, 2014
+             */
+            if (!m_Schema.getSettings().isEnsembleMode()) {
+                m_Root.getClusteringStat().showRootInfo();
+            }
             initSelectorAndSplit(m_Root.getClusteringStat());
             setInitialData(m_Root.getClusteringStat(), data);
             // Induce the tree

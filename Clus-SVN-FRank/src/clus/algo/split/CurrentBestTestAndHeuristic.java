@@ -173,6 +173,15 @@ public class CurrentBestTestAndHeuristic {
         m_PosStat.reset();
     }
 
+    public void setParentStatsToTests() {
+        for(int i = 0; i < m_TestStat.length; i++) {
+            m_TestStat[i].setParentStat(m_TotStat); 
+        }    
+    }
+    
+    public void setParentStatsToTotal(ClusStatistic stat) {
+        m_TotCorrStat.setParentStat(stat);
+    }
 
     /***************************************************************************
      * Create statistics
@@ -372,6 +381,11 @@ public class CurrentBestTestAndHeuristic {
 
 
     public final double calcHeuristic(ClusStatistic tot, ClusStatistic pos) {
+        if(Settings.getMissingClusteringAttrHandling() == Settings.MISSING_ATTRIBUTE_HANDLING_PARENT) {
+            tot.setParentStat(m_TotStat.getParentStat());
+            pos.setParentStat(m_PosStat.getParentStat());
+        }
+    	
         return m_Heuristic.calcHeuristic(tot, pos, m_MissingStat);
     }
 

@@ -223,6 +223,10 @@ public class NominalAttrType extends ClusAttrType {
         tuple.setIntVal(intvalue, getArrayIndex());
     }
 
+	@Override
+	public void setToMissing(DataTuple tuple) {
+		setNominal(tuple, m_NbValues + 1);
+	}
 
     public int compareValue(DataTuple t1, DataTuple t2) {
         int i1 = this.getNominal(t1);

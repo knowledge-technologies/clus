@@ -155,6 +155,7 @@ public abstract class ClusAttrType implements Serializable, Comparable {
         m_NbMissing = nb;
     }
 
+    public abstract void setToMissing(DataTuple t);
 
     public String getName() {
         return m_Name;
