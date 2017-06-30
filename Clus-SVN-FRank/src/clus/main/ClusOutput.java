@@ -34,7 +34,7 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.ext.ensembles.ClusForest;
 import clus.ext.ensembles.ClusOOBErrorEstimate;
 import clus.jeans.resource.ResourceInfo;

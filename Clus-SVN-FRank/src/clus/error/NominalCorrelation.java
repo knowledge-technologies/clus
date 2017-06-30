@@ -5,6 +5,9 @@
 package clus.error;
 
 import clus.data.type.NominalAttrType;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusNominalError;
 import clus.main.Settings;
 
 

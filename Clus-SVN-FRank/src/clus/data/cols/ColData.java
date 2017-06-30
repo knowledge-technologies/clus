@@ -31,7 +31,7 @@ import clus.data.io.ClusView;
 import clus.data.rows.DataPreprocs;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.io.DummySerializable;
 import clus.main.ClusRun;
 import clus.main.ClusSummary;

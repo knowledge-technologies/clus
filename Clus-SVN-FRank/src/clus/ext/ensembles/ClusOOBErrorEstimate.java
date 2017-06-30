@@ -9,7 +9,7 @@ import clus.Clus;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;

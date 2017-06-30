@@ -1,5 +1,5 @@
 
-package clus.error;
+package clus.error.common;
 
 import java.io.IOException;
 

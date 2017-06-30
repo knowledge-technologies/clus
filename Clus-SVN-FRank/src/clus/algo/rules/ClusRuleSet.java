@@ -42,7 +42,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.WHTDStatistic;
 import clus.jeans.util.MyArray;
 import clus.main.ClusRun;

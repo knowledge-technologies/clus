@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.common;
 
 import java.io.IOException;
 import java.io.PrintWriter;

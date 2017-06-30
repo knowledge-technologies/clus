@@ -26,6 +26,8 @@ import java.io.PrintWriter;
 
 import clus.data.ClusData;
 import clus.data.rows.DataTuple;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 

@@ -36,7 +36,7 @@ import clus.data.io.ClusReader;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.jeans.util.compound.DoubleObject;
 import clus.jeans.util.sort.MSortable;

@@ -32,7 +32,7 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
-import clus.error.multiscore.MultiScore;
+import clus.error.common.multiscore.MultiScore;
 import clus.jeans.resource.ResourceInfo;
 import clus.jeans.util.array.MDoubleArray;
 import clus.jeans.util.cmdline.CMDLineArgs;

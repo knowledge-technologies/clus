@@ -41,7 +41,7 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 // import clus.ext.ilevelc.ILevelCStatistic;
 import clus.ext.ilevelc.ILevelConstraint;
 import clus.jeans.util.MyArray;

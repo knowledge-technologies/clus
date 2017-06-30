@@ -20,16 +20,16 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error.multiscore;
+package clus.error.common.multiscore;
 
 import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NumericAttrType;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
-import clus.error.ClusNominalError;
-import clus.error.ClusNumericError;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusNominalError;
+import clus.error.common.ClusNumericError;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 

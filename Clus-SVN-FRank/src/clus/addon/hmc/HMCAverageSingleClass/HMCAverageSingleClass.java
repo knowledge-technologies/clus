@@ -39,7 +39,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.data.type.StringAttrType;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesTuple;

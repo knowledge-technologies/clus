@@ -27,10 +27,10 @@ import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
-import clus.error.ClusNominalError;
-import clus.error.ComponentError;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusNominalError;
+import clus.error.common.ComponentError;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;

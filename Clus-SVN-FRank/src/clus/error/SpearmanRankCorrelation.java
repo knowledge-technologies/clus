@@ -7,6 +7,10 @@ import java.util.Comparator;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NumericAttrType;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusNumericError;
+import clus.main.Settings;
 
 
 /**
@@ -22,6 +26,8 @@ import clus.data.type.NumericAttrType;
  */
 public class SpearmanRankCorrelation extends ClusNumericError {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+    
     protected ArrayList<Double> RankCorrelations = new ArrayList<Double>();
 
 

@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.common;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -51,8 +51,8 @@ public class ClusErrorList implements Serializable {
     protected int m_NbTotal;
     protected int m_NbExamples;
     protected int m_NbCover;
-    protected ArrayList m_Error = new ArrayList();
-    protected ArrayList m_ErrorWithNulls = new ArrayList();
+    protected ArrayList<ClusError> m_Error = new ArrayList<ClusError>();
+    protected ArrayList<ClusError> m_ErrorWithNulls = new ArrayList<ClusError>();
 
 
     public ClusErrorList() {

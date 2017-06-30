@@ -29,8 +29,8 @@ package clus.util.tools;
 import java.io.IOException;
 import java.io.PrintWriter;
 
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;

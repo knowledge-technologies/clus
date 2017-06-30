@@ -25,7 +25,7 @@ package clus.pruning;
 import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
 

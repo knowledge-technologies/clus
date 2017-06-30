@@ -20,15 +20,17 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error;
+package clus.error.common;
 
 import clus.data.type.NominalAttrType;
+import clus.main.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 
 
 public abstract class ClusNominalError extends ClusError {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     protected int[] m_Default;
     protected NominalAttrType[] m_Attrs;
 

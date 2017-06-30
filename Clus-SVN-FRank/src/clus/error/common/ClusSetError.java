@@ -20,11 +20,9 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error.sets;
+package clus.error.common;
 
 import clus.data.type.*;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
 import clus.main.Settings;
 
 

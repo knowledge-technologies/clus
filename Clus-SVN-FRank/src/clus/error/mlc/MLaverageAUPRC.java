@@ -5,8 +5,8 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 
 import clus.data.type.NominalAttrType;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.util.ClusFormat;
 
 

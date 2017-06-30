@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.error.multiscore;
+package clus.error.common.multiscore;
 
 import java.text.NumberFormat;
 import java.util.ArrayList;

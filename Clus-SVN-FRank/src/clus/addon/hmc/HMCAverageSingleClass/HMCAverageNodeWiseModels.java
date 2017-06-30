@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import clus.Clus;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesTuple;

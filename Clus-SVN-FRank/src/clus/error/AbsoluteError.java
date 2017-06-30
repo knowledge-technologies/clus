@@ -27,6 +27,9 @@ import java.text.NumberFormat;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NumericAttrType;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusNumericError;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 

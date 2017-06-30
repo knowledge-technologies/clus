@@ -31,7 +31,7 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
-import clus.error.multiscore.MultiScore;
+import clus.error.common.multiscore.MultiScore;
 import clus.ext.optxval.OptXVal;
 import clus.ext.optxval.OptXValNode;
 import clus.jeans.resource.ResourceInfo;
