@@ -813,7 +813,7 @@ Settings for running \clus{} in semi-supervised learning mode, relevant when com
 \item {\tt ConfidenceMeasure = $o$} : Confidence (i.e., reliability) score used in {\tt SelfTraining}. Default is {\tt Variance} if the task is (multi-target) regression or {\tt ClassesProbabilities} if the task is (hierarchical multi-label) classification.
 \begin{itemize}
 \item {\tt Variance}: Reliability is inversely proportional to the standard deviation of the votes of an ensemble, i.e., smaller deviation, greater reliability.
-\item {\color{red}{\tt ClassesProbabilities}: }
+\item {\tt ClassesProbabilities}: Used for (hierarchical) multi-label classification. Reliability is proportional to empirical probabilites, i.e., proportion of trees in ensemble that voted for a given class.
 \item {\tt RForestProximities}: Reliability scores are calculated by using estimation of an error of unlabeled examples via out-of-bag error of labeled examples in their random Forest proximity (see \cite{levatic2017_self-training}).
 \item {\tt RandomUniform}: Unlabeled examples to be added to the training set are randomly selected, where reliability scores are random numbers uniformly distributed in $[0,1]$.
 \item {\tt RandomGaussian}: Unlabeled examples to be added to the training set are randomly selected, where reliability scores are random numbers normally distributed in $[0,1]$.

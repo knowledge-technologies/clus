@@ -261,6 +261,7 @@ public abstract class ClusAttrType implements Serializable, Comparable {
 
 
     public boolean isMissing(DataTuple tuple) {
+        System.err.println("Calling clus.data.type.ClusAttrType.isMissing(DataTuple) which is not implemented.");
         return true;
     }
 

@@ -110,7 +110,10 @@ public class VarianceScore extends PredictionConfidence {
         double[] result = new double[values.length];
         for (int i = 0; i < result.length; i++) {
             //result[i] = Helper.stDevOpt(values[i]); <- this implementation of stdDev is buggy
-            result[i] = Helper.getStdDev(values[i]);
+        	if(values[i].length <= 1)
+        		result[i] = 0; //if we have only one vote, we set std dev to 0 (it can happen for OOB predictions if we have ensemble with very few trees.
+        	else
+        		result[i] = Helper.getStdDev(values[i]);
         }
         return result;
     }

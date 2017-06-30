@@ -102,24 +102,24 @@ public abstract class PredictionConfidence {
 
                         //calculate OOB per-target scores
                         instancePerTargetScores = calculatePerTargetOOBScores((ClusForest) model, tuple);
-
+                        m_perTargetScores.put(i, instancePerTargetScores);
+                        
                         m_counter++;
                     } else {
                         m_ConfidenceScores[i] = Double.NaN;
                     }
                 } else {
                     instancePerTargetScores = calculatePerTargetScores(model, tuple);
+                    m_perTargetScores.put(i, instancePerTargetScores);
+                    m_counter++;
                 }
-
-                m_perTargetScores.put(i, instancePerTargetScores);
-
-                m_counter++;
             } else {
                 m_ConfidenceScores[i] = Double.NaN;
-            }
+            }          
         }
 
-
+        
+        
         //normalize per-target scores
         m_Normalization.normalize(m_perTargetScores);
 
@@ -127,6 +127,9 @@ public abstract class PredictionConfidence {
         for (Integer key : m_perTargetScores.keySet()) {
             m_ConfidenceScores[key] = m_Aggregation.aggregate(m_perTargetScores.get(key));
         }
+        
+        System.out.println();
+        
     }
 
     public void calculateConfidenceScores(ClusModel model, RowData unlabeledData) throws ClusException {

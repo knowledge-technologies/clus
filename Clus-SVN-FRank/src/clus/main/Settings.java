@@ -3185,7 +3185,7 @@ public class Settings implements Serializable {
     public final static int SSL_STOPPING_CRITERIA_AIRBAG = 2; /** (Leistner et al., 2009), based on Out of Bag Error estimate of Random Forest (applicable only if the base method for the Self Training is Random Forest) */
     
     /** Confidence (i.e., reliability) score for Self-Training */
-    public final static String[] SSL_CONFIDENCE_MEASURE = {"Variance", "RandomUniform", "RandomGaussian", "Oracle", "RForestProximities", "RForestProximitiesV2", "Precision"};
+    public final static String[] SSL_CONFIDENCE_MEASURE = {"Variance", "RandomUniform", "RandomGaussian", "Oracle", "RForestProximities", "RForestProximitiesV2", "Precision", "ClassesProbabilities"};
     public static INIFileNominal m_SSL_ConfidenceMeasure;
     public final static int SSL_CONFIDENCE_MEASURE_VARIANCE = 0; /** Variance - standard deviation of votes of ensemble */
     public final static int SSL_CONFIDENCE_MEASURE_RANDOMUNIFORM = 1; /** RandomUniform - uniformly distribuited random scores */
@@ -3193,7 +3193,8 @@ public class Settings implements Serializable {
     public final static int SSL_CONFIDENCE_MEASURE_ORACLE = 3; /** Oracle - real score, just for testing purposes, actual error on unlabeled examples is calculated to establish reliability scores */
     public final static int SSL_CONFIDENCE_MEASURE_RFPROXIMITIES = 4; /** RForestProximities - extrapolation of error of unlabeled examples via OOB error of labeled examples in their Random Forest proximity */
     public final static int SSL_CONFIDENCE_MEASURE_RFPROXIMITIES_V2 = 5; /** RForestProximitiesV2 - ?? */
-    public final static int SSL_CONFIDENCE_MEASURE_PRECISION = 6; /** "Precision" - used for HMC, on the basis of OOB examples, classification threshold is found such that precision of predicsions is larger that the specified threshold */
+    public final static int SSL_CONFIDENCE_MEASURE_PRECISION = 6; /** "Precision" - used for HMC, on the basis of OOB examples, classification threshold is found such that precision of precision is larger that the specified threshold */
+    public final static int SSL_CONFIDENCE_MEASURE_CLASSESPROBABILITIES = 7; /** Reliability score for MLC and HMLC, based on empirical probabilities of classes */
     
     public static INIFileInt m_SSL_Iterations; /** number of iterations for Self Training method, applies if StoppingCriteria = Iterations */
     public static INIFileDouble m_SSL_ConfidenceThreshold; /** Threshold for the confidence of predictions of unlabeled instances to be added to the training set */

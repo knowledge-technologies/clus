@@ -80,7 +80,11 @@ public class ClassesAttrType extends ClusAttrType {
         return m_Hier;
     }
 
-
+    @Override
+    public boolean isMissing(DataTuple tuple) {
+        return this.getValue(tuple).getNbClasses() == 0;
+    }
+    
     public ClusAttrType cloneType() {
         ClassesAttrType at = new ClassesAttrType(m_Name, m_Hier);
         cloneType(at);

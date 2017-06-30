@@ -427,6 +427,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         postProcessForest(cr);
+        
+        /* added July 2014, Jurica Levatiæ JSI
+         * output hierarchy.txt file (for HMC)
+         * disabled this at DepthFirstInduce if ensemble mode is on, otherwise 
+         * this, potentially huge, file is re-written for every tree */
+        ClusStatistic stat = cr.getStatManager().createClusteringStat();
+        ((RowData) cr.getTrainingSet()).calcTotalStatBitVector(stat);
+        stat.showRootInfo(); // clus.ext.hierarchical.WHTDStatistic will write hierarchy.txt here
+        /* end added by Jurica */
 
         // This section is for calculation of the similarity in the ensemble
         // ClusBeamSimilarityOutput bsimout = new ClusBeamSimilarityOutput(cr.getStatManager().getSettings());
@@ -572,7 +581,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
-        TupleIterator test_iterator = m_OptMode ? cr.getTestIter() :null; // = test set iterator
+        TupleIterator test_iterator = m_OptMode ? cr.getTestIter() : null; // = test set iterator
 
         OOBSelection oob_total = null; // = total OOB selection
         OOBSelection oob_sel = null; // = current OOB selection
@@ -620,7 +629,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             // normal bagging procedure
             for (int i = 1; i <= m_NbMaxBags; i++) {
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-
+                
                 if(nbUnlabeled > 0) {
                     msel = new BaggingSelectionSemiSupervised(nbrows, cr.getTrainingSet().getNbRows() - nbUnlabeled, nbUnlabeled, rnd);
                 } else {
@@ -658,7 +667,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             }
             for (int i = bagSelections[0]; i <= bagSelections[1]; i++) {
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-                msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);
+                
+                if(nbUnlabeled > 0) {
+                    msel = new BaggingSelectionSemiSupervised(nbrows, cr.getTrainingSet().getNbRows() - nbUnlabeled, nbUnlabeled, rnd);
+                } else {
+                 msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);
+                }
+                
                 if (Settings.shouldEstimateOOB()) { // OOB estimate is on
                     oob_sel = new OOBSelection(msel);
                 }

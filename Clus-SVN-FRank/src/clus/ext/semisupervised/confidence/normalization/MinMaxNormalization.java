@@ -33,6 +33,7 @@ public class MinMaxNormalization implements Normalization {
 
         for (Integer key : perTargetScores.keySet()) {
             instancePerTargetScores = perTargetScores.get(key);
+            
             //store min and max for each target, we need this for normalization
             for (int j = 0; j < instancePerTargetScores.length; j++) {
                 //maybe if else

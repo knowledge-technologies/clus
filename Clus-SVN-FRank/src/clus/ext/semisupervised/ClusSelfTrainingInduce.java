@@ -62,7 +62,6 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
         initialize(getSchema(), getSettings());
 
         switch (m_Mode) {
-            case ClusStatManager.MODE_HIERARCHICAL:
             case ClusStatManager.MODE_REGRESSION:
                 switch (sett.getConfidenceMeasure()) {
                     case Settings.SSL_CONFIDENCE_MEASURE_RANDOMUNIFORM:
@@ -75,9 +74,6 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                         m_PredConfidence = new OracleScore(m_StatManager, m_Normalization, m_Aggregation);
                         break;
                     case Settings.SSL_CONFIDENCE_MEASURE_VARIANCE:
-                        if (m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL && m_Aggregation == Settings.SSL_AGGREGATION_AVERAGE) {
-                            m_Aggregation = Settings.SSL_AGGREGATION_AVERAGEIGNOREZEROS; //in HMC it probably makes sense to use average which ignores zeros, because usually there are a lot of zeros
-                        }
                         m_PredConfidence = new VarianceScore(m_StatManager, m_Normalization, m_Aggregation);
                         break;
                     case Settings.SSL_CONFIDENCE_MEASURE_RFPROXIMITIES:
@@ -89,9 +85,32 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                         break;
                 }
                 break;
+            case ClusStatManager.MODE_HIERARCHICAL:
+            	switch (sett.getConfidenceMeasure()) {
+                case Settings.SSL_CONFIDENCE_MEASURE_CLASSESPROBABILITIES:
+                	if (m_Aggregation == Settings.SSL_AGGREGATION_AVERAGE) {
+                        m_Aggregation = Settings.SSL_AGGREGATION_AVERAGEIGNOREZEROS; //in HMC it probably makes sense to use average which ignores zeros, because usually there are a lot of zeros
+                    }
+                	m_PredConfidence = new VarianceScore(m_StatManager, m_Normalization, m_Aggregation);
+                    break;
+                case Settings.SSL_CONFIDENCE_MEASURE_ORACLE:
+                    m_PredConfidence = new OracleScore(m_StatManager, m_Normalization, m_Aggregation);
+                    break;
+                case Settings.SSL_CONFIDENCE_MEASURE_RANDOMUNIFORM:
+                    m_PredConfidence = new RandomScore(m_StatManager, RandomScore.RANDOM_UNIFORM);
+                    break;
+                case Settings.SSL_CONFIDENCE_MEASURE_RANDOMGAUSSIAN:
+                    m_PredConfidence = new RandomScore(m_StatManager, RandomScore.RANDOM_GAUSSIAN);
+                    break;
+                default:
+                    //default
+                	m_PredConfidence = new VarianceScore(m_StatManager, m_Normalization, Settings.SSL_AGGREGATION_AVERAGEIGNOREZEROS);
+                    break;
+            	}
+            	break;
             case ClusStatManager.MODE_CLASSIFY:
                 switch (sett.getConfidenceMeasure()) {
-                    case Settings.SSL_CONFIDENCE_MEASURE_VARIANCE:
+                    case Settings.SSL_CONFIDENCE_MEASURE_CLASSESPROBABILITIES:
                         m_PredConfidence = new ClassesProbabilities(m_StatManager, m_Normalization, m_Aggregation);
                         break;
                     case Settings.SSL_CONFIDENCE_MEASURE_ORACLE:
@@ -292,11 +311,12 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
                     errListOOB.addError(error);
 
-                    //FIXME: now instance is predicted once here and once in m_PredictionConfidence, it should be predicted only once
-                    errListOOB.addExample(m_TrainingSet.getTuple(i), ((ClusForest) m_Model).predictWeightedOOB(m_TrainingSet.getTuple(i)));
 
                     //careful, it can happen that RF do not contain OOB estimates for all tuples (theoretically, it can happen that tuple is not OOB)
                     if (!Double.isNaN(m_PredConfidence.getConfidence(i))) {
+                    	//FIXME: now instance is predicted once here and once in m_PredictionConfidence, it should be predicted only once
+                    	errListOOB.addExample(m_TrainingSet.getTuple(i), ((ClusForest) m_Model).predictWeightedOOB(m_TrainingSet.getTuple(i)));
+                    	
                         DoublesPair dPair = new DoublesPair(m_PredConfidence.getConfidence(i), error.getModelError());
 
                         confidencesOOBErrors[j] = dPair;
@@ -304,6 +324,8 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     }
                 }
 
+                System.out.println(m_PredConfidence.getCounter());
+                
                 Arrays.sort(confidencesOOBErrors); //sort confidence scores
 
                 OOBErrors = Helper.getArrayOfSecond(confidencesOOBErrors);

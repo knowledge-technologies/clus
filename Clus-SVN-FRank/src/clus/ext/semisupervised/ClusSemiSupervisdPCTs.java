@@ -73,7 +73,7 @@ public class ClusSemiSupervisdPCTs extends ClusSemiSupervisedInduce {
         ClusRun foldRun;
         boolean lowerIsBetter = false;
         double bestError = 0;
-        ClusRun myClusRun = new ClusRun(cr);
+        //ClusRun myClusRun = new ClusRun(cr);
 
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
