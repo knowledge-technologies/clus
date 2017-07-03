@@ -88,6 +88,8 @@ public class HierErrorMeasures extends ClusError {
         else if (name.startsWith("Original ") && name.contains("-nn model with ") || name.equals("Default 1-nn model with no weighting")) {
             // this is kNN hackish solution
             return true;
+        } else if(name.startsWith("Forest with ") && !name.contains("T = ")){  // added because of the option Iterations  = [10, 20, 30, ...]
+            return true;
         }
         return false;
     }

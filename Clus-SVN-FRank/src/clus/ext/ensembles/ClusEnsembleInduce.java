@@ -29,6 +29,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
@@ -1296,11 +1297,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         ClusModelInfo orig_info = cr.addModelInfo("Original");
         orig_info.setModel(m_OForest);
+        String partialForestName = "Forest with %d trees";
         
         for(int i = 0; i < m_OForests.length; i++){
         	int nbTrees = m_OForests[i].getNbModels();
-        	ClusModelInfo moj_info = cr.addModelInfo(String.format("Forest with %d tree%s", nbTrees, nbTrees == 1 ? "" : "s"));
-        	moj_info.setModel(m_OForests[i]);
+        	ClusModelInfo modelInfo = cr.addModelInfo(String.format(partialForestName, nbTrees));
+        	modelInfo.setModel(m_OForests[i]);
         }
 
         // Application of Thresholds for HMC
@@ -1308,15 +1310,22 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             double[] thresholds = cr.getStatManager().getSettings().getClassificationThresholds().getDoubleVector();
             // setting the printing preferences in the HMC mode
             m_OForest.setPrintModels(Settings.isPrintEnsembleModels());
+            for(int i = 0; i < m_OForests.length; i++){
+                m_OForests[i].setPrintModels(Settings.isPrintEnsembleModels());
+            }
             if (!m_OptMode)
                 m_DForest.setPrintModels(Settings.isPrintEnsembleModels());
             if (thresholds != null) {
-                for (int i = 0; i < thresholds.length; i++) {
-                    ClusModelInfo pruned_info = cr.addModelInfo("T(" + thresholds[i] + ")");
-                    ClusForest new_forest = m_OForest.cloneForestWithThreshold(thresholds[i]);
-                    new_forest.setPrintModels(Settings.isPrintEnsembleModels());
-                    pruned_info.setShouldWritePredictions(false);
-                    pruned_info.setModel(new_forest);
+                for(int forest = 0; forest < m_OForests.length; forest++){
+                    for (int i = 0; i < thresholds.length; i++) {
+                        String basicName = String.format(partialForestName, m_OForests[forest].getNbModels());
+                        String thresholdedName = String.format(Locale.ENGLISH, "%s(T = %.1f)", basicName, thresholds[i]);
+                        ClusModelInfo pruned_info = cr.addModelInfo(thresholdedName);  //("T(" + thresholds[i] + ")");
+                        ClusForest new_forest = m_OForests[forest].cloneForestWithThreshold(thresholds[i]);
+                        new_forest.setPrintModels(Settings.isPrintEnsembleModels());
+                        pruned_info.setShouldWritePredictions(false);
+                        pruned_info.setModel(new_forest);
+                    }
                 }
             }
         }

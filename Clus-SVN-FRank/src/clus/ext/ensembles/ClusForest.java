@@ -84,7 +84,7 @@ public class ClusForest implements ClusModel, Serializable {
     String m_AttributeList;
     String m_AppName;
     
-    ClusEnsembleInduceOptimization m_Optimization;
+    private ClusEnsembleInduceOptimization m_Optimization;
 
 
     public ClusForest() {
@@ -132,6 +132,7 @@ public class ClusForest implements ClusModel, Serializable {
         m_Optimization = opt;
 
     }
+
 
     public void setOptimization(ClusEnsembleInduceOptimization opt){
     	m_Optimization = opt;
@@ -606,7 +607,9 @@ public class ClusForest implements ClusModel, Serializable {
         stat.copyAll(getStat());
         stat.setThreshold(threshold);
         clone.setStat(stat);
-        clone.setOptimization(m_Optimization); // // m_Optimization must be 'cloned'! TODO: m_Optimizations ...
+        // some additional work has to be done in the case of optimization
+        clone.updateCounts(m_NbModels, m_NbNodes, m_NbLeaves);
+        clone.setOptimization(m_Optimization);
         return clone;
     }
 
