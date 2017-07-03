@@ -606,6 +606,7 @@ public class ClusForest implements ClusModel, Serializable {
         stat.copyAll(getStat());
         stat.setThreshold(threshold);
         clone.setStat(stat);
+        clone.setOptimization(m_Optimization); // // m_Optimization must be 'cloned'! TODO: m_Optimizations ...
         return clone;
     }
 
