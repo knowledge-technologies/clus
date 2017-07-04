@@ -33,7 +33,7 @@ import clus.data.type.NominalAttrType;
 import clus.jeans.util.MStreamTokenizer;
 import clus.jeans.util.MyArray;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 

@@ -4,7 +4,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.jeans.math.MathUtil;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 public class MultiLabelDistance {
 	// If new types are introduced use the same values as in Settings.java

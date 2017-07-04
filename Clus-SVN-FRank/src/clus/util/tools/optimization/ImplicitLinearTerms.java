@@ -31,7 +31,7 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 /**
@@ -74,7 +74,7 @@ public class ImplicitLinearTerms {
         // m_maxValues = values[0];
         // m_minValues = values[1];
 
-        if (Settings.VERBOSE > 0) {
+        if (getSettings().getGeneric().getVerbose() > 0) {
             int nbTargets = (m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET)).getNbAttributes();
             int nbDescrAttr = statMgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE).length;
 

@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import clus.jeans.util.array.StringTable;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 

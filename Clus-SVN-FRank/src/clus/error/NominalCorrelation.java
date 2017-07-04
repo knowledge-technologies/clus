@@ -5,7 +5,7 @@
 package clus.error;
 
 import clus.data.type.NominalAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class NominalCorrelation extends ClusNominalError {

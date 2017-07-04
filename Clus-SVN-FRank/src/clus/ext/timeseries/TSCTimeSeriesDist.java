@@ -23,7 +23,7 @@
 package clus.ext.timeseries;
 
 import clus.data.type.TimeSeriesAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class TSCTimeSeriesDist extends TimeSeriesDist {

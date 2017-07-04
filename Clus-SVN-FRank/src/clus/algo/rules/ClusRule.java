@@ -47,7 +47,8 @@ import clus.ext.ilevelc.ILevelConstraint;
 import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsRules;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
 import clus.statistic.ClassificationStat;
@@ -280,7 +281,7 @@ public class ClusRule implements ClusModel, Serializable {
      * i.e., rules that have weights below the threshold.
      */
     public RowData removeCoveredEnough(RowData data) {
-        double threshold = getSettings().getInstCoveringWeightThreshold();
+        double threshold = getSettings().getRules().getInstCoveringWeightThreshold();
         // if (!getSettings().isCompHeurRuleDist()) { // TODO: check if this is ok!
         if (true) {
             double covered = 0;
@@ -318,8 +319,8 @@ public class ClusRule implements ClusModel, Serializable {
      * Re-weighs examples covered by this rule.
      */
     public RowData reweighCovered(RowData data) throws ClusException {
-        int cov_method = getSettings().getCoveringMethod();
-        double cov_w_par = getSettings().getCoveringWeight();
+        int cov_method = getSettings().getRules().getCoveringMethod();
+        double cov_w_par = getSettings().getRules().getCoveringWeight();
         int nb_rows = data.getNbRows();
         RowData result = new RowData(data.getSchema(), nb_rows);
         double old_weight, new_weight;
@@ -327,10 +328,10 @@ public class ClusRule implements ClusModel, Serializable {
         for (int i = 0; i < data.getNbRows(); i++) {
             DataTuple tuple = data.getTuple(i);
             old_weight = tuple.getWeight();
-            if (cov_method == Settings.COVERING_METHOD_WEIGHTED_ADDITIVE) {
+            if (cov_method == SettingsRules.COVERING_METHOD_WEIGHTED_ADDITIVE) {
                 new_weight = cov_w_par * old_weight / (old_weight + 1);
             }
-            else if (cov_method == Settings.COVERING_METHOD_WEIGHTED_MULTIPLICATIVE) {
+            else if (cov_method == SettingsRules.COVERING_METHOD_WEIGHTED_MULTIPLICATIVE) {
                 if (cov_w_par == 1) { throw new ClusException("Multiplicative weighted covering: covering weight should not be 1!"); }
                 new_weight = old_weight * cov_w_par;
             }
@@ -363,7 +364,7 @@ public class ClusRule implements ClusModel, Serializable {
                         }
                     }
                 }
-                else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+                else if (m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
                     ClusStatistic prediction = predictWeighted(tuple);
                     ClusAttributeWeights weights = m_StatManager.getClusteringWeights();
                     double coef = cov_w_par * prediction.getAbsoluteDistance(tuple, weights);
@@ -413,7 +414,7 @@ public class ClusRule implements ClusModel, Serializable {
                         new_weight = old_weight * coef;
                     }
                 }
-                else if (ClusStatManager.getMode() == ClusStatManager.MODE_TIME_SERIES) {
+                else if (m_StatManager.getMode() == ClusStatManager.MODE_TIME_SERIES) {
                     ClusStatistic prediction = predictWeighted(tuple);
                     ClusAttributeWeights weights = m_StatManager.getClusteringWeights();
                     double coef = cov_w_par * prediction.getAbsoluteDistance(tuple, weights);
@@ -585,10 +586,10 @@ public class ClusRule implements ClusModel, Serializable {
     /** Print for also nonregular rules */
     protected void commonPrintForRuleTypes(PrintWriter wrt, StatisticPrintInfo info) {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
-        if (getSettings().isRulePredictionOptimized()) {
+        if (getSettings().getRules().isRulePredictionOptimized()) {
             wrt.println("\n   Rule weight        : " + fr.format(getOptWeight()));
         }
-        if (getSettings().computeDispersion() && (m_CombStat[ClusModel.TRAIN] != null)) {
+        if (getSettings().getRules().computeDispersion() && (m_CombStat[ClusModel.TRAIN] != null)) {
             // if (getSettings().getRulePredictionMethod() == Settings.RULE_PREDICTION_METHOD_OPTIMIZED) {
             wrt.println("   Dispersion (train): " + m_CombStat[ClusModel.TRAIN].getDispersionString());
             wrt.println("   Coverage   (train): " + fr.format(m_Coverage[ClusModel.TRAIN]));
@@ -777,7 +778,7 @@ public class ClusRule implements ClusModel, Serializable {
             }
             m_TrainErrorScore = sum_err / nb_tar;
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        else if (m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             // This is the same as for time-series. Not sure if it correct.
             double sum_diff = 0.0;
             ClusAttributeWeights weight = m_StatManager.getClusteringWeights();
@@ -792,7 +793,7 @@ public class ClusRule implements ClusModel, Serializable {
             }
         }
         else if (m_TargetStat instanceof RegressionStat) {
-            double norm = getSettings().getVarBasedDispNormWeight(); // For RRMSE this * std dev is the normalization
+            double norm = getSettings().getRules().getVarBasedDispNormWeight(); // For RRMSE this * std dev is the normalization
             ClusStatistic stat = m_StatManager.getTrainSetStat();
             NumericAttrType[] targetAttrs = m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
             int[] target_idx = new int[nb_tar];
@@ -818,7 +819,7 @@ public class ClusRule implements ClusModel, Serializable {
                 m_TrainErrorScore = 1;
             }
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_TIME_SERIES) {
+        else if (m_StatManager.getMode() == ClusStatManager.MODE_TIME_SERIES) {
             double sum_diff = 0.0;
             ClusAttributeWeights weight = m_StatManager.getClusteringWeights();
             // TODO: Figure out how should this weight be set ... any normalization etc ...

@@ -37,7 +37,8 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsRules;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
@@ -55,18 +56,18 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
         // Compute the normalization information here if needed. We can here use the whole data set
         // instead of only the training set part. This is how trees are using it also.
         // Both default rule creation and rule omitting need the information also
-        if (sett.isRulePredictionOptimized()) {
+        if (sett.getRules().isRulePredictionOptimized()) {
             NumericAttrType[] descrNumTypes = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
             NumericAttrType[] tarNumTypes = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
             RuleNormalization.initialize(Clus.calcStdDevsForTheSet(getClus().getData(), descrNumTypes), Clus.calcStdDevsForTheSet(getClus().getData(), tarNumTypes));
         }
 
         ClusInductionAlgorithm induce;
-        if (sett.getCoveringMethod() == Settings.COVERING_METHOD_RULES_FROM_TREE) {
+        if (sett.getRules().getCoveringMethod() == SettingsRules.COVERING_METHOD_RULES_FROM_TREE) {
             induce = (ClusInductionAlgorithm) new ClusRuleFromTreeInduce(schema, sett, getClus());
         }
         else {
-            if (sett.isSectionILevelCEnabled()) {
+            if (sett.getILevelC().isSectionILevelCEnabled()) {
                 induce = (ClusInductionAlgorithm) new ClusRuleConstraintInduce(schema, sett);
             }
             else {
@@ -80,7 +81,7 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
 
 
     public void printInfo() {
-        if (!getSettings().isRandomRules()) {
+        if (!getSettings().getRules().isRandomRules()) {
             System.out.println("RuleSystem based on CN2");
             System.out.println("Heuristic: " + getStatManager().getHeuristicName());
         }
@@ -101,7 +102,7 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
 
     public void postProcess(ClusRun cr) throws ClusException, IOException {
         // For RulesFromTree the default is already an ensemble.
-        if (getSettings().getCoveringMethod() != Settings.COVERING_METHOD_RULES_FROM_TREE) {
+        if (getSettings().getRules().getCoveringMethod() != SettingsRules.COVERING_METHOD_RULES_FROM_TREE) {
             ClusModelInfo def_model = cr.addModelInfo(ClusModel.DEFAULT);
             def_model.setModel(ClusDecisionTree.induceDefault(cr));
         }

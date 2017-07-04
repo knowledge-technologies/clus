@@ -33,7 +33,7 @@ import clus.data.rows.DataTuple;
 import clus.error.ClusError;
 import clus.error.ClusErrorList;
 import clus.error.MSError;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 
 

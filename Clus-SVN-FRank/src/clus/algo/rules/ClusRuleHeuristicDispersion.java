@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public abstract class ClusRuleHeuristicDispersion extends ClusHeuristic {

@@ -45,7 +45,8 @@ import clus.jeans.util.compound.IntObject;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.Global;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsMLC;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.processor.ClusModelProcessor;
@@ -401,7 +402,8 @@ public class ClusNode extends MyNode implements ClusModel {
             throw new RuntimeException("ClusStatManager = null.");
         }
         else {
-            if (mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES) { // multi-label
+            if (mgr.getSettings().getMLC().getSectionMultiLabel().isEnabled() 
+                    && mgr.getSettings().getMLC().getMultiLabelThresholdOptimization() == SettingsMLC.MULTILABEL_THRESHOLD_OPTIMIZATION_YES) { // multi-label
                                                                                                                                                                                     // threshold
                                                                                                                                                                                     // optimisation
                 double lower = 0.0, upper = 1.0;
@@ -630,18 +632,18 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    /***************************************************************************
-     * Multi score code - this should be made more general!
-     ***************************************************************************/
-
-    public final void multiScore(MultiScore score) {
-        m_ClusteringStat = new MultiScoreStat(m_ClusteringStat, score);
-        int nb_c = getNbChildren();
-        for (int i = 0; i < nb_c; i++) {
-            ClusNode info = (ClusNode) getChild(i);
-            info.multiScore(score);
-        }
-    }
+//    /***************************************************************************
+//     * Multi score code - this should be made more general!
+//     ***************************************************************************/
+//
+//    public final void multiScore(MultiScore score) {
+//        m_ClusteringStat = new MultiScoreStat(m_ClusteringStat, score);
+//        int nb_c = getNbChildren();
+//        for (int i = 0; i < nb_c; i++) {
+//            ClusNode info = (ClusNode) getChild(i);
+//            info.multiScore(score);
+//        }
+//    }
 
 
     /***************************************************************************

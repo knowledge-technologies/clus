@@ -36,7 +36,7 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
 import clus.model.test.NumericTest;
@@ -194,8 +194,8 @@ public class ILevelCInduce extends DepthFirstInduce {
         /* pos statistic is values larger than current threshold */
         /* neg statistic is values smaller than current threshold */
         ILevelCStatistic cs = (ILevelCStatistic) leaf.getClusteringStat();
-        ILevelCHeurStat pos = new ILevelCHeurStat(cs, m_NbClasses);
-        ILevelCHeurStat neg = new ILevelCHeurStat(cs, m_NbClasses);
+        ILevelCHeurStat pos = new ILevelCHeurStat(getSettings(), cs, m_NbClasses);
+        ILevelCHeurStat neg = new ILevelCHeurStat(getSettings(), cs, m_NbClasses);
         /* create internal/external index */
         int[] ie = createIE(data);
         /* pass required indices to statistics */
@@ -297,7 +297,7 @@ public class ILevelCInduce extends DepthFirstInduce {
     public ILevelCHeurStat computeCHeurStat(ClusNode leaf, ClusNode par, int[] ie, int[] clusters) {
         RowData data = (RowData) leaf.getVisitor();
         ILevelCStatistic cs = (ILevelCStatistic) leaf.getClusteringStat();
-        ILevelCHeurStat lstat = new ILevelCHeurStat(cs, m_NbClasses);
+        ILevelCHeurStat lstat = new ILevelCHeurStat(getSettings(), cs, m_NbClasses);
         lstat.setIndices(m_ConstraintsIndex, m_Constraints, ie, clusters);
         for (int i = 0; i < data.getNbRows(); i++) {
             DataTuple tuple = data.getTuple(i);

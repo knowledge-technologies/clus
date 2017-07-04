@@ -48,7 +48,8 @@ import clus.jeans.util.MyArray;
 import clus.jeans.util.StringUtils;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.ISettings;
+import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
@@ -82,7 +83,7 @@ public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
     public ClusBeamModel getRootNode(ClusRun run) throws ClusException {
         ClusStatManager smanager = m_BeamInduce.getStatManager();
         Settings sett = smanager.getSettings();
-        sett.setMinimalWeight(1); // the minimal number of covered example in a leaf is 1
+        sett.getModel().setMinimalWeight(1); // the minimal number of covered example in a leaf is 1
         /* Create single leaf node */
         RowData train = (RowData) run.getTrainingSet();
         ClusStatistic stat = m_Induce.createTotalClusteringStat(train);
@@ -92,8 +93,8 @@ public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
         System.out.println("Root statistic: " + stat);
         ClusNode root = null;
         /* Has syntactic constraints? */
-        String constr_file = sett.getConstraintFile();
-        if (StringUtils.unCaseCompare(constr_file, Settings.NONE)) {// no constraint
+        String constr_file = sett.getConstraints().getConstraintFile();
+        if (StringUtils.unCaseCompare(constr_file, ISettings.NONE)) {// no constraint
             root = new ClusNode();
             root.setClusteringStat(stat);
         }
@@ -159,7 +160,7 @@ public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
                 ClusNode ref_leaf = (ClusNode) leaf.cloneNode();
                 ref_leaf.testToNode(sel);
                 // output best test
-                if (Settings.VERBOSE > 0)
+                if (getSettings().getGeneric().getVerbose() > 0)
                     System.out.println("Test: " + ref_leaf.getTestString() + " -> " + sel.m_BestHeur + " (" + ref_leaf.getTest().getPosFreq() + ")");
                 newLeaves[nbNewLeaves++] = ref_leaf;
             }

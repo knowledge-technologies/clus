@@ -34,7 +34,7 @@ import clus.data.rows.RowData;
 import clus.data.rows.TupleIterator;
 import clus.jeans.util.StringUtils;
 import clus.main.ClusModelInfoList;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;
@@ -347,7 +347,7 @@ public class ClusErrorList implements Serializable {
         ClusModelInfo definf = models.getModelInfo(ClusModel.DEFAULT);
         ClusErrorList defpar = definf.getError(type);
         out.println("Number of examples: " + defpar.getNbExamples());
-        if (sett.isSectionHMTREnabled()) out.println("HMTR weight: " + sett.getHMTRHierarchyWeight().getStringValue());
+        if (sett.getHMTR().isSectionHMTREnabled()) out.println("HMTR weight: " + sett.getHMTR().getHMTRHierarchyWeight().getStringValue());
         int nb_models = models.getNbModels();
         if (!checkCoverage(models, type, defpar.getNbExamples())) {
             out.println("Coverage:");
@@ -360,9 +360,9 @@ public class ClusErrorList implements Serializable {
             }
         }
         for (int i = 0; i < nb; i++) {
-            if(sett.isSectionHMTREnabled() &&  i==(nb/2)) {
+            if(sett.getHMTR().isSectionHMTREnabled() &&  i==(nb/2)) {
                 out.println();
-                out.println("\t***** HMTR leaves only w = " + sett.getHMTRHierarchyWeight().getStringValue()+" *****");
+                out.println("\t***** HMTR leaves only w = " + sett.getHMTR().getHMTRHierarchyWeight().getStringValue()+" *****");
                 out.println();
             }
             

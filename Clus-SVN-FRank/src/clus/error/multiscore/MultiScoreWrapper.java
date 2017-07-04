@@ -30,7 +30,7 @@ import clus.error.ClusError;
 import clus.error.ClusErrorList;
 import clus.error.ClusNominalError;
 import clus.error.ClusNumericError;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 
 

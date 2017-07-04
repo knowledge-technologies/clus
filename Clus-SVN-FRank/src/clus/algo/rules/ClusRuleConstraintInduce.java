@@ -54,7 +54,8 @@ import clus.ext.ilevelc.ILevelConstraint;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsRules;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.test.ClusRuleConstraintInduceTest;
@@ -136,7 +137,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 
     ClusBeam initializeBeam(RowData data) {
         Settings sett = getSettings();
-        ClusBeam beam = new ClusBeam(sett.getBeamWidth(), sett.getBeamRemoveEqualHeur());
+        ClusBeam beam = new ClusBeam(sett.getBeamSearch().getBeamWidth(), sett.getBeamSearch().getBeamRemoveEqualHeur());
         ClusStatistic stat = createTotalClusteringStat(data);
         ClusRule rule = new ClusRule(getStatManager());
         rule.setClusteringStat(stat);
@@ -186,7 +187,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             System.out.println("Best test: " + m_BestTest);
             if (m_BestTest != null && m_BestHeur != Double.NEGATIVE_INFINITY) {
                 ClusRuleConstraintInduceTest test = m_BestTest;
-                if (Settings.VERBOSE > 0)
+                if (getSettings().getGeneric().getVerbose() > 0)
                     System.out.println("  Test: " + test.getString() + " -> " + m_BestHeur);
                 RowData subset;
                 if (test.isSmallerThanTest())
@@ -198,7 +199,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
                 ref_rule.setVisitor(subset);
                 ref_rule.setClusteringStat(createTotalClusteringStat(subset));
                 ref_rule.setConstraints(m_BestConstraints);
-                if (getSettings().isHeurRuleDist()) {
+                if (getSettings().getRules().isHeurRuleDist()) {
                     int[] subset_idx = new int[subset.getNbRows()];
                     for (int j = 0; j < subset_idx.length; j++) {
                         subset_idx[j] = subset.getTuple(j).getIndex();
@@ -228,7 +229,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             ClusBeamModel model = (ClusBeamModel) models.get(i);
             if (!(model.isRefined() || model.isFinished())) {
                 // System.out.println("Refine "+model.toString());
-                // if (Settings.VERBOSE > 0) System.out.println(" Refine: model " + i);
+                // if (getSettings().getGeneric().getVerbose() > 0) System.out.println(" Refine: model " + i);
                 refineModel(model, beam, i);
                 model.setRefined(true);
                 model.setParentModelIndex(-1);
@@ -241,7 +242,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         ClusBeam beam = initializeBeam(data);
         int i = 0;
         while (true) {
-            if (Settings.VERBOSE > 0) {
+            if (getSettings().getGeneric().getVerbose() > 0) {
                 System.out.println("Step: " + i);
             }
             else {
@@ -292,7 +293,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         int i = 0;
         System.out.print("Step: ");
         while (true) {
-            if (Settings.VERBOSE > 0) {
+            if (getSettings().getGeneric().getVerbose() > 0) {
                 System.out.println("Step: " + i);
             }
             else {
@@ -358,7 +359,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
      * @throws ClusException
      */
     public void separateAndConquorWeighted(ClusRuleSet rset, RowData data) throws ClusException {
-        int max_rules = getSettings().getMaxRulesNb();
+        int max_rules = getSettings().getRules().getMaxRulesNb();
         int i = 0;
         RowData data_copy = data.deepCloneData(); // Probably not nice
         ArrayList<boolean[]> bit_vect_array = new ArrayList<boolean[]>();
@@ -374,7 +375,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
                 rset.add(rule);
                 data = rule.reweighCovered(data);
                 i++;
-                if (getSettings().isHeurRuleDist()) {
+                if (getSettings().getRules().isHeurRuleDist()) {
                     boolean[] bit_vect = new boolean[data_copy.getNbRows()];
                     for (int j = 0; j < bit_vect.length; j++) {
                         if (!bit_vect[j]) {
@@ -413,14 +414,14 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 
 
     public ClusModel induce(ClusRun run) throws ClusException, IOException {
-        int method = getSettings().getCoveringMethod();
-        int add_method = getSettings().getRuleAddingMethod();
+        int method = getSettings().getRules().getCoveringMethod();
+        int add_method = getSettings().getRules().getRuleAddingMethod();
         RowData data = (RowData) run.getTrainingSet();
         ClusStatistic stat = createTotalClusteringStat(data);
         m_FindBestTest.initSelectorAndSplit(stat);
         setHeuristic(m_FindBestTest.getBestTest().getHeuristic());
         ClusRuleSet rset = new ClusRuleSet(getStatManager());
-        if (method == Settings.COVERING_METHOD_STANDARD) {
+        if (method == SettingsRules.COVERING_METHOD_STANDARD) {
             separateAndConquor(rset, data);
         }
         else {
@@ -428,11 +429,11 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         }
         rset.postProc();
         // Optimizing rule set
-        if (getSettings().getRulePredictionMethod() == Settings.RULE_PREDICTION_METHOD_OPTIMIZED) {
+        if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED) {
             rset = optimizeRuleSet(rset, data);
         }
         // Computing dispersion
-        if (getSettings().computeDispersion()) {
+        if (getSettings().getRules().computeDispersion()) {
             rset.addDataToRules(data);
             rset.computeDispersion(ClusModel.TRAIN);
             rset.removeDataFromRules();
@@ -450,7 +451,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 
 
     public ClusRuleSet optimizeRuleSet(ClusRuleSet rset, RowData data) throws ClusException, IOException {
-        String fname = getSettings().getDataFile();
+        String fname = getSettings().getData().getDataFile();
         PrintWriter wrt_pred = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname + ".r-pred")));
 
         OptAlg optAlg = null;
@@ -458,7 +459,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         OptProbl.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
 
         // Find the rule weights with optimization algorithm.
-        if (getSettings().getRulePredictionMethod() == Settings.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+        if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
             optAlg = (OptAlg) new GDAlg(getStatManager(), param, rset);
         }
         else {
@@ -591,7 +592,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
      * @return RuleSet
      */
     public ClusModel induceRandomly(ClusRun run) throws ClusException, IOException {
-        int number = getSettings().nbRandomRules();
+        int number = getSettings().getRules().nbRandomRules();
         RowData data = (RowData) run.getTrainingSet();
         ClusStatistic stat = createTotalClusteringStat(data);
         m_FindBestTest.initSelectorAndSplit(stat);
@@ -613,7 +614,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         rset.setTargetStat(left_over);
         rset.postProc();
         // Computing dispersion
-        if (getSettings().computeDispersion()) {
+        if (getSettings().getRules().computeDispersion()) {
             rset.addDataToRules(data);
             rset.computeDispersion(ClusModel.TRAIN);
             rset.removeDataFromRules();
@@ -686,7 +687,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             }
             if (sel.hasBestTest()) {
                 NodeTest test = sel.updateTest();
-                if (Settings.VERBOSE > 0)
+                if (getSettings().getGeneric().getVerbose() > 0)
                     System.out.println("  Test: " + test.getString() + " -> " + sel.m_BestHeur);
                 result.addTest(test);
                 // data = data.applyWeighted(test, ClusNode.YES);
@@ -704,7 +705,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         // ClusRulesForAttrs rfa = new ClusRulesForAttrs();
         // return rfa.constructRules(cr);
         resetAll();
-        if (!getSettings().isRandomRules()) {
+        if (!getSettings().getRules().isRandomRules()) {
             return induce(cr);
         }
         else {
@@ -731,8 +732,8 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         data.addIndices();
         ArrayList points = data.toArrayList();
         /* load constraints from file */
-        if (getSettings().hasILevelCFile()) {
-            String fname = getSettings().getILevelCFile();
+        if (getSettings().getILevelC().hasILevelCFile()) {
+            String fname = getSettings().getILevelC().getILevelCFile();
             m_Constraints = ILevelConstraint.loadConstraints(fname, points);
             ClusAttrType type = getSchema().getAttrType(getSchema().getNbAttributes() - 1);
             if (type.getTypeIndex() == NominalAttrType.THIS_TYPE) {
@@ -1193,7 +1194,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         if (type.getTypeIndex() == NominalAttrType.THIS_TYPE) {
             NominalAttrType cls = (NominalAttrType) type;
             m_MaxNbClasses = cls.getNbValues();
-            int nbConstraints = getSettings().getILevelCNbRandomConstraints();
+            int nbConstraints = getSettings().getILevelC().getILevelCNbRandomConstraints();
             for (int i = 0; i < nbConstraints; i++) {
                 int t1i = 0;
                 int t2i = 0;
@@ -1238,8 +1239,8 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         // 2: initialise Dtot , Dcov , Ctot and Cviol
         m_BestHeur = Double.NEGATIVE_INFINITY;
         ILevelCStatistic cs = (ILevelCStatistic) rule.getClusteringStat();
-        RegressionStat s = new RegressionStat(cs.getAttributes());
-        RegressionStat s_I = new RegressionStat(cs.getAttributes());
+        RegressionStat s = new RegressionStat(getSettings(), cs.getAttributes());
+        RegressionStat s_I = new RegressionStat(getSettings(), cs.getAttributes());
         // s.setIndices(m_ConstraintsIndex, m_Constraints, ie, clusters);
         /* initially all data is in negative statistic */
         for (int i = 0; i < data.getNbRows(); i++) {

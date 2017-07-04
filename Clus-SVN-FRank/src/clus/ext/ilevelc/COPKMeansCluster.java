@@ -29,7 +29,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NumericAttrType;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class COPKMeansCluster implements Serializable {

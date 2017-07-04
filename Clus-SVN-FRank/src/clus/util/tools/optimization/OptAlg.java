@@ -30,7 +30,7 @@ import java.util.ArrayList;
 
 import clus.algo.rules.ClusRuleSet;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 /**

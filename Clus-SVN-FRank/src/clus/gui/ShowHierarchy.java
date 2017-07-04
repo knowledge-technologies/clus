@@ -43,7 +43,7 @@ import javax.swing.tree.TreePath;
 import clus.algo.tdidt.ClusNode;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 
 

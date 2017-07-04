@@ -33,7 +33,7 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.test.NodeTest;
@@ -115,7 +115,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
 
 			node.testToNode(best);
 			// Output best test
-			if (Settings.VERBOSE > 0) System.out.println("Test: "+node.getTestString()+" -> "+best.getHeuristicValue());
+			if (getSettings().getGeneric().getVerbose() > 0) System.out.println("Test: "+node.getTestString()+" -> "+best.getHeuristicValue());
 			// Create children
 			int arity = node.updateArity();
 			NodeTest test = node.getTest();
@@ -141,7 +141,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
 			ClusOptionNode optionNode = new ClusOptionNode();
 			optionNode.setStatManager(m_StatManager);
 			
-			if (Settings.VERBOSE > 0) System.out.println("New option node.");
+			if (getSettings().getGeneric().getVerbose() > 0) System.out.println("New option node.");
 
 			if (node != m_Root) {
 				node.getParent().setChild(node.getParent().getChildIndex(node), optionNode);
@@ -161,7 +161,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
 				optionNode.setHeuristicRatio(i, tnh.getHeuristicValue() / bestTest.getHeuristicValue());				
 				newNode.testToNode(tnh);
 
-				if (Settings.VERBOSE > 0) System.out.println("Test: "+newNode.getTestString()+" -> "+tnh.getHeuristicValue());
+				if (getSettings().getGeneric().getVerbose() > 0) System.out.println("Test: "+newNode.getTestString()+" -> "+tnh.getHeuristicValue());
 			
 
 				newNode.setTest(tnh.updateTest());

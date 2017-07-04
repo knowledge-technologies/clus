@@ -34,7 +34,7 @@ import clus.data.type.ClusSchema;
 import clus.ext.ensembles.ClusEnsembleClassifier;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusRandom;
 
 

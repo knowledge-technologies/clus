@@ -30,7 +30,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import clus.data.type.ClusAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 

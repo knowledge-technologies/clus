@@ -33,7 +33,7 @@ import clus.jeans.math.SingleStat;
 import clus.jeans.tree.Node;
 import clus.jeans.util.StringUtils;
 import clus.jeans.util.compound.IndexedItem;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 

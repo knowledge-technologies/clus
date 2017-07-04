@@ -6,7 +6,7 @@ import java.text.NumberFormat;
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.jeans.list.BitList;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 
@@ -24,7 +24,9 @@ public class GeneticDistanceStat extends BitVectorStat {
      * @param nomAtts
      *        array of nominal attributes
      */
-    public GeneticDistanceStat(NominalAttrType[] nomAtts) {
+    public GeneticDistanceStat(Settings sett, NominalAttrType[] nomAtts) {
+        super(sett);
+
         m_NbTarget = nomAtts.length;
         m_Attrs = nomAtts;
     }
@@ -71,7 +73,7 @@ public class GeneticDistanceStat extends BitVectorStat {
 
 
     public GeneticDistanceStat cloneStat() {
-        GeneticDistanceStat stat = new GeneticDistanceStat(m_Attrs);
+        GeneticDistanceStat stat = new GeneticDistanceStat(this.m_Settings, m_Attrs);
         stat.cloneFrom(this);
         return stat;
     }
@@ -178,15 +180,16 @@ public class GeneticDistanceStat extends BitVectorStat {
         return 0.0;
     }
 
+
     // FIXME: discuss this with Celine
     // getClassificationStat() should not return something that is not a ClassificationStat
     // better to disable this type of error measure in Phylo setting
     // public ClassificationStat getClassificationStat() {
     // return this;
     // }
-    
-	@Override
-	public int getNbStatisticComponents() {
-		throw new RuntimeException(getClass().getName() + "getNbStatisticComponents(): not implemented");
-	}
+
+    @Override
+    public int getNbStatisticComponents() {
+        throw new RuntimeException(getClass().getName() + "getNbStatisticComponents(): not implemented");
+    }
 }

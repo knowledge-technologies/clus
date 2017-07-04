@@ -25,7 +25,7 @@ package clus.ext.ilevelc;
 import java.util.ArrayList;
 
 import clus.data.rows.DataTuple;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ILevelCHeurStat extends ILevelCStatistic {
@@ -45,8 +45,8 @@ public class ILevelCHeurStat extends ILevelCStatistic {
     protected int[] m_ML;
 
 
-    public ILevelCHeurStat(ILevelCStatistic stat, int nbclass) {
-        super(stat.m_Numeric);
+    public ILevelCHeurStat(Settings sett, ILevelCStatistic stat, int nbclass) {
+        super(sett, stat.m_Numeric);
         m_NbClass = nbclass;
         m_CL = new int[nbclass];
         m_ML = new int[nbclass];

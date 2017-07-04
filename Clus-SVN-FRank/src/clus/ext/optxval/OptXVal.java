@@ -40,7 +40,7 @@ import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.ClusStat;
 import clus.main.ClusSummary;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.selection.XValMainSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;

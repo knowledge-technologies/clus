@@ -28,7 +28,7 @@ import clus.jeans.util.IntervalCollection;
 import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.jeans.util.cmdline.CMDLineArgsProvider;
 import clus.main.ClusStat;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;

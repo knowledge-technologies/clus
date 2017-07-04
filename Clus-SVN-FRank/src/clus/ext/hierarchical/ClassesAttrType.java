@@ -35,7 +35,8 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.StringAttrType;
 import clus.io.ClusSerializable;
 import clus.jeans.util.array.StringTable;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsHMLC;
 import clus.util.ClusException;
 
 
@@ -165,14 +166,16 @@ public class ClassesAttrType extends ClusAttrType {
             // No need to initialize class hierarchy of disabled attributes
             return;
         }
-        if (getSettings().hasDefinitionFile()) {
+
+        SettingsHMLC sett = getSettings().getHMLC();
+        if (sett.hasDefinitionFile()) {
             // Load hierarchy definition from a file
-            m_Hier.loadDAG(getSettings().getDefinitionFile());
+            m_Hier.loadDAG(sett.getDefinitionFile());
             m_Hier.initialize();
         }
         if (m_Labels != null) {
             // Load definition from labels in type specification in .arff
-            if (getSettings().getHierType() == Settings.HIERTYPE_DAG) {
+            if (sett.getHierType() == SettingsHMLC.HIERTYPE_DAG) {
                 m_Hier.loadDAG(m_Labels);
             }
             else {
@@ -197,7 +200,8 @@ public class ClassesAttrType extends ClusAttrType {
     // Some attributes initialize differently based on some user settings
     // For HMC, this is whether it uses a tree or DAG representation
     public void initSettings(Settings sett) {
-        if (sett.getHierType() == Settings.HIERTYPE_DAG) {
+
+        if (sett.getHMLC().getHierType() == SettingsHMLC.HIERTYPE_DAG) {
             getHier().setHierType(ClassHierarchy.DAG);
         }
     }
@@ -205,7 +209,7 @@ public class ClassesAttrType extends ClusAttrType {
 
     public void writeARFFType(PrintWriter wrt) throws ClusException {
         ArrayList list;
-        if (getSettings().getHierType() == Settings.HIERTYPE_DAG) {
+        if (getSettings().getHMLC().getHierType() == SettingsHMLC.HIERTYPE_DAG) {
             list = getHier().getAllParentChildTuples();
         }
         else {
@@ -237,9 +241,10 @@ public class ClassesAttrType extends ClusAttrType {
             return true;
         }
     }
-    
+
+
     @Override
-    public boolean isClasses(){
-    	return true;
+    public boolean isClasses() {
+        return true;
     }
 }

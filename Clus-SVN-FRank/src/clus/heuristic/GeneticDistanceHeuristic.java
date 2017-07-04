@@ -2,7 +2,7 @@
 package clus.heuristic;
 
 import clus.data.rows.RowData;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.GeneticDistanceStat;
 

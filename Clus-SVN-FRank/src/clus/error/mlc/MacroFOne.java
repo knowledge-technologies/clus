@@ -31,7 +31,7 @@ import clus.error.ClusError;
 import clus.error.ClusErrorList;
 import clus.error.ClusNominalError;
 import clus.error.ComponentError;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 

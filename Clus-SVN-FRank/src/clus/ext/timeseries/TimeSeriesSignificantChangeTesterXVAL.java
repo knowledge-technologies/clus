@@ -34,7 +34,7 @@ import clus.data.type.ClusSchema;
 import clus.data.type.TimeSeriesAttrType;
 import clus.error.ClusError;
 import clus.error.ClusErrorList;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;

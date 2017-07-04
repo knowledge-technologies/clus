@@ -32,7 +32,7 @@ import clus.data.type.ClusSchema;
 import clus.data.type.StringAttrType;
 import clus.jeans.tree.LeafTreeIterator;
 import clus.jeans.util.MyArray;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 
 

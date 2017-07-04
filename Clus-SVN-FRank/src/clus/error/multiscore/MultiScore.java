@@ -25,7 +25,7 @@ package clus.error.multiscore;
 import java.util.StringTokenizer;
 
 import clus.data.type.ClusSchema;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 

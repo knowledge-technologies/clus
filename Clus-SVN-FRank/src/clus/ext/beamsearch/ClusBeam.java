@@ -33,7 +33,8 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 import clus.algo.tdidt.ClusNode;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsBeamSearch;
 
 
 public class ClusBeam {
@@ -233,7 +234,7 @@ public class ClusBeam {
         // NumberFormat form = ClusFormat.makeNAfterDot(8);
         // double candidateSimilarity = Double.parseDouble(form.format(1 - candidate.getDistanceToBeam()/getCrWidth()));
         double candidateSimilarity = 1 - candidate.getDistanceToBeam() / getCrWidth();
-        double currentMin = candidate.getValue() - Settings.BEAM_SIMILARITY * candidateSimilarity;
+        double currentMin = candidate.getValue() - SettingsBeamSearch.BEAM_SIMILARITY * candidateSimilarity;
         ArrayList arr = toArray();
         double modelUpdatedHeur, modelSimilarity;
         int bsize = arr.size();
@@ -242,7 +243,7 @@ public class ClusBeam {
             modelSimilarity = 1 - ((ClusBeamModel) arr.get(i)).getDistanceToBeam() / getCrWidth();
             // modelSimilarity = Double.parseDouble(form.format(1 -
             // ((ClusBeamModel)arr.get(i)).getDistanceToBeam()/getCrWidth()));
-            modelUpdatedHeur = ((ClusBeamModel) arr.get(i)).getValue() - Settings.BEAM_SIMILARITY * modelSimilarity;
+            modelUpdatedHeur = ((ClusBeamModel) arr.get(i)).getValue() - SettingsBeamSearch.BEAM_SIMILARITY * modelSimilarity;
             if ((currentMin == modelUpdatedHeur) && m_RemoveEqualHeur) {
                 // this is for handling the case when the updated heuristic is equal
                 // with this the candidate doesn't enter the beam
@@ -293,7 +294,7 @@ public class ClusBeam {
         // NumberFormat form = ClusFormat.makeNAfterDot(10);
         // double candidateSimilarity = Double.parseDouble(form.format(1 - candidate.getDistanceToBeam()/getCrWidth()));
         double candidateSimilarity = 1 - candidate.getDistanceToBeam() / getCrWidth();
-        double currentMin = candidate.getValue() - Settings.BEAM_SIMILARITY * candidateSimilarity;
+        double currentMin = candidate.getValue() - SettingsBeamSearch.BEAM_SIMILARITY * candidateSimilarity;
         ArrayList arr = toArray();
         int bsize = arr.size();
         int min_pos = bsize;
@@ -303,7 +304,7 @@ public class ClusBeam {
             // modelDistance = Double.parseDouble(form.format(1 -
             // ((ClusBeamModel)arr.get(i)).getDistanceToBeam()/getCrWidth()));
             modelDistance = 1 - ((ClusBeamModel) arr.get(i)).getDistanceToBeam() / getCrWidth();
-            modelUpdatedHeur = ((ClusBeamModel) arr.get(i)).getValue() - Settings.BEAM_SIMILARITY * modelDistance;
+            modelUpdatedHeur = ((ClusBeamModel) arr.get(i)).getValue() - SettingsBeamSearch.BEAM_SIMILARITY * modelDistance;
 
             if ((currentMin == modelUpdatedHeur) && m_RemoveEqualHeur) {
                 // this is for handling the case when the updated heuristic is equal

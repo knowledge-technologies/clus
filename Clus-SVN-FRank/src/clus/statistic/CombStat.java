@@ -42,7 +42,7 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 
@@ -58,23 +58,32 @@ public class CombStat extends ClusStatistic {
     private ClusStatManager m_StatManager;
 
 
+    private CombStat(Settings sett) {
+        super(sett);
+    }
+
+
     /**
      * Constructor for this class.
      */
     public CombStat(ClusStatManager statManager, NumericAttrType[] num, NominalAttrType[] nom) {
+        this(statManager.getSettings());
+
         m_StatManager = statManager;
-        m_RegStat = new RegressionStat(num);
+        m_RegStat = new RegressionStat(statManager.getSettings(), num);
         if (statManager.getSettings().getSectionMultiLabel().isEnabled()) {
-            m_ClassStat = new ClassificationStat(nom, statManager.getSettings().getMultiLabelThreshold());
+            m_ClassStat = new ClassificationStat(statManager.getSettings(), nom, statManager.getSettings().getMultiLabelThreshold());
         }
         else {
-            m_ClassStat = new ClassificationStat(nom);
+            m_ClassStat = new ClassificationStat(statManager.getSettings(), nom);
         }
 
     }
 
 
     public CombStat(ClusStatManager statManager, RegressionStat reg, ClassificationStat cls) {
+        this(statManager.getSettings());
+
         m_StatManager = statManager;
         m_RegStat = reg;
         m_ClassStat = cls;
@@ -102,7 +111,7 @@ public class CombStat extends ClusStatistic {
 
 
     public void setTrainingStat(ClusStatistic train) {
-        CombStat ctrain = (CombStat) train;
+        //CombStat ctrain = (CombStat) train;
         m_RegStat.setTrainingStat(train.getRegressionStat());
         m_ClassStat.setTrainingStat(train.getClassificationStat());
     }
@@ -246,14 +255,14 @@ public class CombStat extends ClusStatistic {
         // double comp = 1.0 + dispersion(IN_HEURISTIC);
         double offset = getSettings().getHeurDispOffset();
         double disp = dispersion(IN_HEURISTIC) + offset;
-        double dis1 = disp;
+        //double dis1 = disp;
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat().getTotalWeight();
         double cov_par = getSettings().getHeurCoveragePar();
         // comp *= (1.0 + cov_par*train_sum_w/m_SumWeight);
         // comp *= cov_par*m_SumWeight/train_sum_w;
         disp *= Math.pow(m_SumWeight / train_sum_w, cov_par);
-        double dis2 = disp;
+        //double dis2 = disp;
         // Prototype distance part
         // Prefers rules that predict different class than the default rule
         if (getSettings().isHeurPrototypeDistPar()) {
@@ -300,10 +309,10 @@ public class CombStat extends ClusStatistic {
          */
         double offset = getSettings().getHeurDispOffset();
         double disp = dispersion(IN_HEURISTIC) + offset;
-        double dis1 = disp;
+        //double dis1 = disp;
         double def_disp = ((CombStat) m_StatManager.getTrainSetStat()).dispersion(IN_HEURISTIC);
         disp = disp - def_disp; // This should be < 0 most of the time
-        double dis2 = disp;
+        //double dis2 = disp;
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat().getTotalWeight();
         double cov_par = getSettings().getHeurCoveragePar();
@@ -311,7 +320,7 @@ public class CombStat extends ClusStatistic {
         // comp *= cov_par*train_sum_w/m_SumWeight;
         // comp *= cov_par*m_SumWeight/train_sum_w;
         disp *= Math.pow(m_SumWeight / train_sum_w, cov_par);
-        double dis3 = disp;
+        //double dis3 = disp;
         // Prototype distance part
         // Prefers rules that predict different class than the default rule
         if (getSettings().isHeurPrototypeDistPar()) {
@@ -876,8 +885,9 @@ public class CombStat extends ClusStatistic {
         System.err.println(getClass().getName() + "vote (): Not implemented");
     }
 
-	@Override
-	public int getNbStatisticComponents() {
-		throw new RuntimeException("CombStat: getNbStatisticComponents() not implemented.");
-	}
+
+    @Override
+    public int getNbStatisticComponents() {
+        throw new RuntimeException("CombStat: getNbStatisticComponents() not implemented.");
+    }
 }

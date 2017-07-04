@@ -32,6 +32,7 @@ import clus.data.rows.*;
 import clus.data.type.*;
 import clus.heuristic.ClusHeuristic;
 import clus.main.*;
+import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.statistic.*;
 import clus.util.*;

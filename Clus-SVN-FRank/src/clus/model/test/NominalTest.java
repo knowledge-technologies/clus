@@ -27,7 +27,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.jeans.util.sort.DoubleIndexSorter;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusRandom;
 
 

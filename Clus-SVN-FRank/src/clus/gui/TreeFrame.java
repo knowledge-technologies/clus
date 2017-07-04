@@ -75,7 +75,7 @@ import clus.jeans.graph.PercentLayout;
 import clus.jeans.graph.WindowClosingListener;
 import clus.jeans.util.FileUtil;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
 import clus.util.ClusException;

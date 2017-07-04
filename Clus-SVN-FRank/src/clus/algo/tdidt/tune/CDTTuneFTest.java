@@ -45,7 +45,7 @@ import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.ClusSummary;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.selection.ClusSelection;
@@ -90,20 +90,20 @@ public class CDTTuneFTest extends ClusDecisionTree {
 
 
     private final void showFold(int i) {
-    	if(Settings.VERBOSE > 1){
-	        if (i != 0)
-	            System.out.print(" ");
-	        System.out.print(String.valueOf(i + 1));
-	        System.out.flush();
-    	}
+        if (getSettings().getGeneric().getVerbose() > 1) {
+            if (i != 0)
+                System.out.print(" ");
+            System.out.print(String.valueOf(i + 1));
+            System.out.flush();
+        }
     }
 
 
     public ClusErrorList createTuneError(ClusStatManager mgr) {
         ClusErrorList parent = new ClusErrorList();
         if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            int optimize = getSettings().getHierOptimizeErrorMeasure();
-            parent.addError(new HierErrorMeasures(parent, mgr.getHier(), null, getSettings().getCompatibility(), optimize, false));
+            int optimize = getSettings().getHMLC().getHierOptimizeErrorMeasure();
+            parent.addError(new HierErrorMeasures(parent, mgr.getHier(), null, getSettings().getGeneral().getCompatibility(), optimize, false));
             return parent;
         }
         NumericAttrType[] num = mgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
@@ -137,7 +137,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
 
 
     public double doParamXVal(RowData trset, RowData pruneset) throws ClusException, IOException, InterruptedException {
-        int prevVerb = Settings.enableVerbose(0);
+        int prevVerb = getSettings().getGeneric().enableVerbose(0);
         ClusStatManager mgr = getStatManager();
         ClusSummary summ = new ClusSummary();
         summ.setStatManager(getStatManager());
@@ -157,7 +157,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
             // Next does not always use same partition!
             // Random random = ClusRandom.getRandom(ClusRandom.RANDOM_PARAM_TUNE);
             Random random = new Random(0);
-            int nbfolds = Integer.parseInt(getSettings().getTuneFolds());
+            int nbfolds = Integer.parseInt(getSettings().getModel().getTuneFolds());
             XValMainSelection sel = new XValRandomSelection(trset.getNbRows(), nbfolds, random);
             for (int i = 0; i < nbfolds; i++) {
                 showFold(i);
@@ -171,17 +171,18 @@ public class CDTTuneFTest extends ClusDecisionTree {
                 summ.addSummary(cr);
             }
             avgSize /= nbfolds;
-            if(Settings.VERBOSE > 1) System.out.println();
+            if (getSettings().getGeneric().getVerbose() > 1)
+                System.out.println();
         }
         ClusModelInfo mi = summ.getModelInfo(ClusModel.ORIGINAL);
-        Settings.enableVerbose(prevVerb);
+        getSettings().getGeneric().enableVerbose(prevVerb);
         ClusError err = mi.getTestError().getFirstError();
-        if(Settings.VERBOSE > 1){
-	        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(System.out));
-	        wrt.print("Size: " + avgSize + ", ");
-	        wrt.print("Error: ");
-	        err.showModelError(wrt, ClusError.DETAIL_VERY_SMALL);
-	        wrt.flush();
+        if (getSettings().getGeneric().getVerbose() > 1) {
+            PrintWriter wrt = new PrintWriter(new OutputStreamWriter(System.out));
+            wrt.print("Size: " + avgSize + ", ");
+            wrt.print("Error: ");
+            err.showModelError(wrt, ClusError.DETAIL_VERY_SMALL);
+            wrt.flush();
         }
         return err.getModelError();
     }
@@ -192,34 +193,42 @@ public class CDTTuneFTest extends ClusDecisionTree {
         boolean low = createTuneError(getStatManager()).getFirstError().shouldBeLow();
         double best_error = low ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
         for (int i = 0; i < m_FTests.length; i++) {
-            getSettings().setFTest(m_FTests[i]);
-            if(Settings.VERBOSE > 0) System.out.println("Try for F-test value = " + m_FTests[i]);
+            getSettings().getTree().setFTest(m_FTests[i]);
+            if (getSettings().getGeneric().getVerbose() > 0)
+                System.out.println("Try for F-test value = " + m_FTests[i]);
             double err = doParamXVal(trset, pruneset);
-            if(Settings.VERBOSE > 1) System.out.print("-> " + err);
+            if (getSettings().getGeneric().getVerbose() > 1)
+                System.out.print("-> " + err);
             if (low) {
                 if (err < best_error - 1e-16) {
                     best_error = err;
                     best_value = i;
-                    if(Settings.VERBOSE > 1) System.out.println(" *");
+                    if (getSettings().getGeneric().getVerbose() > 1)
+                        System.out.println(" *");
                 }
                 else {
-                	if(Settings.VERBOSE > 1) System.out.println();
+                    if (getSettings().getGeneric().getVerbose() > 1)
+                        System.out.println();
                 }
             }
             else {
                 if (err > best_error + 1e-16) {
                     best_error = err;
                     best_value = i;
-                    if(Settings.VERBOSE > 1) System.out.println(" *");
+                    if (getSettings().getGeneric().getVerbose() > 1)
+                        System.out.println(" *");
                 }
                 else {
-                	if(Settings.VERBOSE > 1) System.out.println();
+                    if (getSettings().getGeneric().getVerbose() > 1)
+                        System.out.println();
                 }
             }
-            if(Settings.VERBOSE > 0) System.out.println();
+            if (getSettings().getGeneric().getVerbose() > 0)
+                System.out.println();
         }
-        getSettings().setFTest(m_FTests[best_value]);
-        if(Settings.VERBOSE > 0) System.out.println("Best F-test value is: " + m_FTests[best_value]);
+        getSettings().getTree().setFTest(m_FTests[best_value]);
+        if (getSettings().getGeneric().getVerbose() > 0)
+            System.out.println("Best F-test value is: " + m_FTests[best_value]);
     }
 
 

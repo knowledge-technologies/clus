@@ -19,7 +19,7 @@ import clus.jeans.util.FileUtil;
 import clus.jeans.util.StringUtils;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 

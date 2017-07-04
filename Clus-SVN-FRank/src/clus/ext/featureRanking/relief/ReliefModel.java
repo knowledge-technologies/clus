@@ -12,7 +12,8 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsRelief;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
@@ -46,7 +47,7 @@ public class ReliefModel implements ClusModel {
     	int upperBound = nbExamples;
     	upperBound -= isNeighbours ? 1 : 0;
     	String parameter = isNeighbours ? "neighbours <" : "iterations <=";
-    	int defaultValue = isNeighbours ? Settings.RELIEF_NEIGHBOUR_DEFAULT : nbExamples;
+    	int defaultValue = isNeighbours ? SettingsRelief.RELIEF_NEIGHBOUR_DEFAULT : nbExamples;
     	defaultValue = Math.min(defaultValue, upperBound);
     	boolean allowMinusOne = !isNeighbours;
         for(int i = 0; i < candidateValues.length; i++){

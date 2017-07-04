@@ -43,7 +43,8 @@ import clus.ext.hierarchical.WHTDStatistic;
 import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsEnsemble;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.processor.ClusEnsemblePredictionWriter;
@@ -74,57 +75,62 @@ public class ClusForest implements ClusModel, Serializable {
     /** The sum of leaves over the trees in the forest */
     private int m_NbLeaves = 0;
     ClusEnsembleROSInfo m_TargetSubspaceInfo; // Info about target subspacing method
-    
+
     private ClusReadWriteLock m_NbModelsLock = new ClusReadWriteLock();
     private ClusReadWriteLock m_NbNodesLock = new ClusReadWriteLock();
     private ClusReadWriteLock m_NbLeavesLock = new ClusReadWriteLock();
-    
+
     ClusStatistic m_Stat;
     boolean m_PrintModels;
     String m_AttributeList;
     String m_AppName;
-    
+
     ClusEnsembleInduceOptimization m_Optimization;
 
+    protected Settings m_Settings;
+    protected ClusStatManager m_StatManager;
 
-    public ClusForest() {
+
+    public ClusForest(ClusStatManager statmgr) {
         m_Forest = new ArrayList<ClusModel>();
-        // m_PrintModels = false;
+
+        m_Settings = statmgr.getSettings();
+        m_StatManager = statmgr;
     }
 
 
     public ClusForest(ClusStatManager statmgr, ClusEnsembleInduceOptimization opt) {
-        m_Forest = new ArrayList<ClusModel>();
+        this(statmgr);
 
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
-            if (statmgr.getSettings().getSectionMultiLabel().isEnabled()) {
-                m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), statmgr.getSettings().getMultiLabelThreshold());
+        if (statmgr.getMode() == ClusStatManager.MODE_CLASSIFY) {
+            if (statmgr.getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
+                m_Stat = new ClassificationStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), statmgr.getSettings().getMLC().getMultiLabelThreshold());
             }
             else {
-                m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                m_Stat = new ClassificationStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
             }
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION) {
-            m_Stat = new RegressionStat(statmgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+        else if (statmgr.getMode() == ClusStatManager.MODE_REGRESSION) {
+            m_Stat = new RegressionStat(statmgr.getSettings(), statmgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            if (statmgr.getSettings().getHierSingleLabel()) {
-                m_Stat = new HierSingleLabelStat(statmgr.getHier(), statmgr.getCompatibility());
+        else if (statmgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+            if (statmgr.getSettings().getHMLC().getHierSingleLabel()) {
+                m_Stat = new HierSingleLabelStat(statmgr.getSettings(), statmgr.getHier(), statmgr.getCompatibility());
             }
             else {
-                m_Stat = new WHTDStatistic(statmgr.getHier(), statmgr.getCompatibility());
+                m_Stat = new WHTDStatistic(statmgr.getSettings(), statmgr.getHier(), statmgr.getCompatibility());
             }
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_PHYLO) {
-            m_Stat = new GeneticDistanceStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+        else if (statmgr.getMode() == ClusStatManager.MODE_PHYLO) {
+            m_Stat = new GeneticDistanceStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
         }
         else {
-            System.err.println(getClass().getName() + " initForest(): Error initializing the statistic " + ClusStatManager.getMode());
+            System.err.println(getClass().getName() + " initForest(): Error initializing the statistic " + statmgr.getMode());
         }
-        m_AppName = statmgr.getSettings().getFileAbsolute(statmgr.getSettings().getAppName());
+        m_AppName = statmgr.getSettings().getGeneric().getFileAbsolute(statmgr.getSettings().getGeneric().getAppName());
         m_AttributeList = "";
         ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(ClusAttrType.ATTR_USE_DESCRIPTIVE, ClusAttrType.THIS_TYPE));
-        if (statmgr.getSettings().isOutputPythonModel()) {
+        if (statmgr.getSettings().getOutput().isOutputPythonModel()) {
             for (int ii = 0; ii < cat.length - 1; ii++)
                 m_AttributeList = m_AttributeList.concat(cat[ii].getName() + ", ");
             m_AttributeList = m_AttributeList.concat(cat[cat.length - 1].getName());
@@ -133,11 +139,18 @@ public class ClusForest implements ClusModel, Serializable {
 
     }
 
-    public void setOptimization(ClusEnsembleInduceOptimization opt){
-    	m_Optimization = opt;
+
+    private Settings getSettings() {
+        return m_Settings;
     }
-    
-    public void addEnsembleROSInfo(ClusEnsembleROSInfo tinfo) {
+
+
+    public void setOptimization(ClusEnsembleInduceOptimization opt) {
+        m_Optimization = opt;
+    }
+
+
+    public void setEnsembleROSInfo(ClusEnsembleROSInfo tinfo) {
         m_TargetSubspaceInfo = tinfo;
     }
 
@@ -170,76 +183,87 @@ public class ClusForest implements ClusModel, Serializable {
         return 0;
     }
 
-    
-    public int getNbModels(){
-		m_NbModelsLock.readingLock();
-    	int ans = m_NbModels;
-    	m_NbModelsLock.readingUnlock();
-    	return ans;
+
+    public int getNbModels() {
+        m_NbModelsLock.readingLock();
+        int ans = m_NbModels;
+        m_NbModelsLock.readingUnlock();
+        return ans;
     }
-    
-    private void increaseNbModels(int n){
-		m_NbModelsLock.writingLock();
-    	m_NbModels += n;
-		m_NbModelsLock.writingUnlock();
+
+
+    private void increaseNbModels(int n) {
+        m_NbModelsLock.writingLock();
+        m_NbModels += n;
+        m_NbModelsLock.writingUnlock();
 
     }
-    
-    private int getNbNodes(){
-    	m_NbNodesLock.readingLock();
-    	int ans = m_NbNodes;
-    	m_NbNodesLock.readingUnlock();
-    	return ans;
+
+
+    private int getNbNodes() {
+        m_NbNodesLock.readingLock();
+        int ans = m_NbNodes;
+        m_NbNodesLock.readingUnlock();
+        return ans;
     }
-    
-    private void increaseNbNodes(int n){
-		m_NbNodesLock.writingLock();
-    	m_NbNodes += n;
-		m_NbNodesLock.writingUnlock();
+
+
+    private void increaseNbNodes(int n) {
+        m_NbNodesLock.writingLock();
+        m_NbNodes += n;
+        m_NbNodesLock.writingUnlock();
     }
-    
-    private int getNbLeaves(){
-		m_NbLeavesLock.readingLock();
-    	int ans = m_NbLeaves;
-    	m_NbLeavesLock.readingUnlock();
-    	return ans;
+
+
+    private int getNbLeaves() {
+        m_NbLeavesLock.readingLock();
+        int ans = m_NbLeaves;
+        m_NbLeavesLock.readingUnlock();
+        return ans;
     }
-    
-    private void increaseNbLeaves(int n){
- 		m_NbLeavesLock.writingLock();
-    	m_NbLeaves += n;
-		m_NbLeavesLock.writingUnlock();
+
+
+    private void increaseNbLeaves(int n) {
+        m_NbLeavesLock.writingLock();
+        m_NbLeaves += n;
+        m_NbLeavesLock.writingUnlock();
     }
-    
-    
-    public int[] updateCounts(ClusNode model){
-    	int models = 1;
-    	int nodes = model.getNbNodes();
-    	int leaves = model.getNbLeaves();
-    	updateCounts(models, nodes, leaves);
-    	return new int[]{models, nodes, leaves};
+
+
+    public int[] updateCounts(ClusNode model) {
+        int models = 1;
+        int nodes = model.getNbNodes();
+        int leaves = model.getNbLeaves();
+        updateCounts(models, nodes, leaves);
+        return new int[] { models, nodes, leaves };
     }
-    
+
+
     /**
      * Used for more efficient updating if the corresponding tree is a part of more than one forest.
-     * @param nbModels Should equal 1, i.e., a tree is one model
-     * @param nbNodes number of nodes in the tree
-     * @param nbLeaves number of leaves in the tree
+     * 
+     * @param nbModels
+     *        Should equal 1, i.e., a tree is one model
+     * @param nbNodes
+     *        number of nodes in the tree
+     * @param nbLeaves
+     *        number of leaves in the tree
      */
-    public void updateCounts(int nbModels, int nbNodes, int nbLeaves){
-    	increaseNbModels(nbModels);
-    	increaseNbNodes(nbNodes);
-    	increaseNbLeaves(nbLeaves);    	
+    public void updateCounts(int nbModels, int nbNodes, int nbLeaves) {
+        increaseNbModels(nbModels);
+        increaseNbNodes(nbNodes);
+        increaseNbLeaves(nbLeaves);
     }
 
+
     public String getModelInfo() {
-//        int sumOfLeaves = 0;
-//        for (int i = 0; i < getNbModels(); i++)
-//            sumOfLeaves += ((ClusNode) getModel(i)).getNbLeaves();
-//
-//        int sumOfNodes = 0;
-//        for (int i = 0; i < getNbModels(); i++)
-//            sumOfNodes += ((ClusNode) getModel(i)).getNbNodes();
+        //        int sumOfLeaves = 0;
+        //        for (int i = 0; i < getNbModels(); i++)
+        //            sumOfLeaves += ((ClusNode) getModel(i)).getNbLeaves();
+        //
+        //        int sumOfNodes = 0;
+        //        for (int i = 0; i < getNbModels(); i++)
+        //            sumOfNodes += ((ClusNode) getModel(i)).getNbNodes();
 
         String targetSubspaces = "";
         if (m_TargetSubspaceInfo != null) {
@@ -250,7 +274,7 @@ public class ClusForest implements ClusModel, Serializable {
 
         String result = String.format("FOREST with %d models (Total nodes: %d and leaves: %d)%s\n", getNbModels(), getNbNodes(), getNbLeaves(), targetSubspaces);
 
-        if (Settings.isPrintEnsembleModelInfo()) {
+        if (getSettings().getEnsemble().isPrintEnsembleModelInfo()) {
             for (int i = 0; i < getNbModels(); i++) {
                 result += "\n\t Model " + (i + 1) + ": " + getModel(i).getModelInfo();
 
@@ -270,12 +294,12 @@ public class ClusForest implements ClusModel, Serializable {
 
 
     public ClusStatistic predictWeighted(DataTuple tuple) {
-        if (ClusEnsembleInduce.m_EnsembleROSScope != Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) {
+        if (ClusEnsembleInduce.m_EnsembleROSScope != SettingsEnsemble.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) {
             switch (ClusEnsembleInduce.m_EnsembleROSScope) {
-                case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING: // only use subspaces for prediction averaging
+                case SettingsEnsemble.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING: // only use subspaces for prediction averaging
                     return ClusEnsembleInduce.isOptimized() ? predictWeightedStandardSubspaceAveragingOpt(tuple) : predictWeightedStandardSubspaceAveraging(tuple);
 
-                case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SMARTERWAY:
+                case SettingsEnsemble.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SMARTERWAY:
                     throw new RuntimeException("NOT YET IMPLEMENTED!");
 
                 default: // case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_TOTAL_AVERAGING: // just use all predictions
@@ -313,6 +337,7 @@ public class ClusForest implements ClusModel, Serializable {
         ClusEnsemblePredictionWriter.setVotes(votes);
         return m_Stat;
     }
+
 
     public ClusStatistic predictWeightedOOB(DataTuple tuple) {
 
@@ -376,7 +401,7 @@ public class ClusForest implements ClusModel, Serializable {
         int position = m_Optimization.locateTuple(tuple);
         int predlength = m_Optimization.getPredictionLength(position);
         m_Stat.reset();
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION || ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        if (m_StatManager.getMode() == ClusStatManager.MODE_REGRESSION || m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             ((RegressionStatBase) m_Stat).m_Means = new double[predlength];
             for (int i = 0; i < predlength; i++) {
                 ((RegressionStatBase) m_Stat).m_Means[i] = ((ClusEnsembleInduceOptRegHMLC) m_Optimization).getPredictionValue(position, i);
@@ -384,7 +409,7 @@ public class ClusForest implements ClusModel, Serializable {
             m_Stat.computePrediction();
             return m_Stat;
         }
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
+        if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             ((ClassificationStat) m_Stat).m_ClassCounts = new double[predlength][];
             for (int j = 0; j < predlength; j++) {
                 ((ClassificationStat) m_Stat).m_ClassCounts[j] = ((ClusEnsembleInduceOptClassification) m_Optimization).getPredictionValueClassification(position, j);
@@ -395,9 +420,10 @@ public class ClusForest implements ClusModel, Serializable {
             }
             return m_Stat;
         }
-        
+
         throw new RuntimeException("clus.ext.ensembles.ClusForest.predictWeightedOpt(DataTuple): unhandled ClusStatManager.getMode() case!");
     }
+
 
     /** used for ROS ensembles */
     public ClusStatistic predictWeightedStandardSubspaceAveraging(DataTuple tuple) {
@@ -410,16 +436,18 @@ public class ClusForest implements ClusModel, Serializable {
         return m_Stat;
     }
 
+
     /** used for OPTIMIZED ROS ensembles */
     public ClusStatistic predictWeightedStandardSubspaceAveragingOpt(DataTuple tuple) {
         // when ensembles are optimized, the running average takes into account the subspaces, so predictWeightedOpt() should return correct results
-        
+
         return predictWeightedOpt(tuple);
     }
 
+
     public void printModel(PrintWriter wrt) {
         // This could be better organized
-        if (Settings.isPrintEnsembleModels()) {
+        if (getSettings().getEnsemble().isPrintEnsembleModels()) {
             ClusModel model;
             for (int i = 0; i < m_Forest.size(); i++) {
                 model = (ClusModel) m_Forest.get(i);
@@ -439,7 +467,7 @@ public class ClusForest implements ClusModel, Serializable {
 
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         // This could be better organized
-        if (Settings.isPrintEnsembleModels()) {
+        if (getSettings().getEnsemble().isPrintEnsembleModels()) {
             ClusModel model;
             for (int i = 0; i < m_Forest.size(); i++) {
                 model = (ClusModel) m_Forest.get(i);
@@ -470,15 +498,18 @@ public class ClusForest implements ClusModel, Serializable {
         printForestToPython();
     }
 
+
     @Override
     public JsonObject getModelJSON() {
         return null;
     }
 
+
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info) {
         return null;
     }
+
 
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
@@ -600,7 +631,7 @@ public class ClusForest implements ClusModel, Serializable {
 
     // this is only for Hierarchical ML Classification
     public ClusForest cloneForestWithThreshold(double threshold) {
-        ClusForest clone = new ClusForest();
+        ClusForest clone = new ClusForest(m_StatManager);
         clone.setModels(getModels());
         WHTDStatistic stat = (WHTDStatistic) getStat().cloneStat();
         stat.copyAll(getStat());
@@ -647,9 +678,9 @@ public class ClusForest implements ClusModel, Serializable {
         /**
          * The class for transforming single trees to rules
          */
-        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, cr.getStatManager().getSettings().rulesFromTree()); // Parameter
-                                                                                                                          // always
-                                                                                                                          // true
+        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, cr.getStatManager().getSettings().getTree().rulesFromTree()); // Parameter
+        // always
+        // true
         ClusRuleSet ruleSet = new ClusRuleSet(cr.getStatManager()); // Manager from super class
 
         // ClusRuleSet ruleSet = new ClusRuleSet(m_Clus.getStatManager());

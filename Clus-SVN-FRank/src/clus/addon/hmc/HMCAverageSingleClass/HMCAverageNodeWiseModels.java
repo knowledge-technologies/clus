@@ -37,7 +37,7 @@ import clus.ext.hierarchical.HierClassWiseAccuracy;
 import clus.main.ClusModelInfoList;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.modelio.ClusModelCollectionIO;
 import clus.statistic.ClusStatistic;

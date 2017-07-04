@@ -15,9 +15,9 @@ import clus.Clus;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NumericAttrType;
-import clus.main.Settings;
 import clus.util.ClusException;
 import clus.jeans.util.cmdline.CMDLineArgs;
+import clus.main.settings.Settings;
 import test.BaseTestCase;
 
 

@@ -6,7 +6,8 @@ import java.util.ArrayList;
 import clus.algo.rules.ClusRuleSet;
 import clus.data.type.ClusAttrType;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsRules;
 import clus.util.tools.optimization.OptProbl.OptParam;
 
 
@@ -37,20 +38,21 @@ public class CallExternGD {
         int nbOfRules = nbOfWeights; // Only rules
         // We are ignoring any other base functions than rules here
 
-        Settings set = clusStatManager.getSettings();
+        SettingsRules set = clusStatManager.getSettings().getRules();
+        
         int nbTargs = (clusStatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET)).getNbAttributes();
         // Parameter data matrix dimension. Do we give descriptive dims also?
         int nbDescrForDataMatrix = 0;
         int nbRows = optInfo.m_trueValues.length;
 
         // if (rules.m_implicitLinearTerms != null) {
-        if (set.getOptAddLinearTerms() == Settings.OPT_GD_ADD_LIN_YES_SAVE_MEMORY) {
+        if (set.getOptAddLinearTerms() == SettingsRules.OPT_GD_ADD_LIN_YES_SAVE_MEMORY) {
             nbDescrForDataMatrix = clusStatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE).length;
             nbOfWeights += nbDescrForDataMatrix * nbTargs;
         }
 
         // Optimization normalization
-        double[] normFactors = OptProbl.initNormFactors(nbTargs, set);
+        double[] normFactors = OptProbl.initNormFactors(nbTargs, clusStatManager.getSettings());
         double[] targetAvg = OptProbl.initMeans(nbTargs);
 
         // Change the default prediction - it will otherwise be set to zero
@@ -146,7 +148,7 @@ public class CallExternGD {
         // String settings = "nbOfIterations 10000\nminTVal 0.0\nlinTermsUsed 0\nnbOfTargs 2\nnbTrainData 3\nnbValData
         // 2\nnbOfRules 3";
         String settings = "";
-        if (set.getOptAddLinearTerms() == Settings.OPT_GD_ADD_LIN_YES_SAVE_MEMORY)
+        if (set.getOptAddLinearTerms() == SettingsRules.OPT_GD_ADD_LIN_YES_SAVE_MEMORY)
             settings += "linTermsUsed 1\n";
         settings += "nbOfTargs " + nbTargs + "\nnbTrainData " + nbInstTrain + "\nnbValData " + nbInstVal + "\nnbOfRules " + nbOfRules + "\nnbOfDescrAttr " + nbDescrForDataMatrix;
         settings += "\nnbOfIterations " + set.getOptGDMaxIter() + "\nminTVal " + set.getOptGDGradTreshold();
@@ -208,7 +210,7 @@ public class CallExternGD {
 //// The last one is so called intercept. Should be added to all predictions
 //// Because of this we add a rule with prediction 1 and always true condition.
 //// Thus the last weight will be for this.
-// if (Settings.VERBOSE > 0) System.out.println("Adding intercept rule created by binary explicitly to rule set.");
+// if (getSettings().getGeneric().getVerbose() > 0) System.out.println("Adding intercept rule created by binary explicitly to rule set.");
 // ClusRule interceptRule = new ClusRule(m_StatManager);
 // interceptRule.m_TargetStat = getStatManager().createTargetStat();
 // if (!(interceptRule.m_TargetStat instanceof RegressionStat))

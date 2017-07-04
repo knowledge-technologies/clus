@@ -30,7 +30,7 @@ import java.util.zip.ZipInputStream;
 
 import clus.jeans.util.FileUtil;
 import clus.jeans.util.MStreamTokenizer;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ClusReader {
@@ -78,7 +78,7 @@ public class ClusReader {
     public void open() throws IOException {
         String fname = m_Name;
         if (m_Settings != null)
-            m_Settings.getFileAbsolute(m_Name);
+            m_Settings.getGeneric().getFileAbsolute(m_Name);
         if (FileUtil.fileExists(fname)) {
             if (fname.toUpperCase().endsWith(".ZIP")) {
                 m_Token = zipOpen(fname);

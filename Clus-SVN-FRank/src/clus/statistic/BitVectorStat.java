@@ -28,7 +28,7 @@ import clus.data.cols.ColTarget;
 import clus.data.rows.DataTuple;
 import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.jeans.list.BitList;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class BitVectorStat extends ClusStatistic {
@@ -39,8 +39,14 @@ public class BitVectorStat extends ClusStatistic {
     protected boolean m_Modified = true;
 
 
+    public BitVectorStat(Settings sett) {
+        super(sett);
+        // TODO Auto-generated constructor stub
+    }
+
+    
     public ClusStatistic cloneStat() {
-        BitVectorStat stat = new BitVectorStat();
+        BitVectorStat stat = new BitVectorStat(this.m_Settings);
         stat.cloneFrom(this);
         return stat;
     }

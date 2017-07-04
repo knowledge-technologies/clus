@@ -20,7 +20,8 @@ import clus.ext.timeseries.DTWTimeSeriesDist;
 import clus.ext.timeseries.QDMTimeSeriesDist;
 import clus.ext.timeseries.TSCTimeSeriesDist;
 import clus.ext.timeseries.TimeSeries;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsTimeSeries;
 import clus.util.ClusException;
 
 
@@ -153,8 +154,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param sigma
      *        The rate of quadratic exponential decay. Note that Weka's sigma is the inverse of our {@code sigma}.
      */
-    public ClusReliefFeatureRanking(RowData data, int[] neighbours, int[] iterations, boolean weightNeighbours, double sigma, int seed) {
-        super();
+    public ClusReliefFeatureRanking(RowData data, int[] neighbours, int[] iterations, boolean weightNeighbours, double sigma, int seed, Settings sett) {
+        super(sett);
         m_NbNeighbours = neighbours;
         m_MaxNbNeighbours = m_NbNeighbours[m_NbNeighbours.length - 1];
         m_NbIterations = iterations;
@@ -213,7 +214,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @throws InterruptedException
      */
     public void calculateReliefImportance(RowData data) throws ClusException, InterruptedException {
-        if(Settings.VERBOSE > 0){
+        if(getSettings().getGeneric().getVerbose() > 0){
         	System.out.println("Calculating importances ...");
         }
         DataTuple tuple;
@@ -228,7 +229,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         boolean[] shouldUpdate = new boolean[nbTargets]; // [overall] or [overall, target1, target2, ...]
         for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
         	double proportion = 100 * (double)(iteration + 1) / ((double) m_MaxNbIterations); 
-        	if(Settings.VERBOSE > 0 && Settings.VERBOSE < 3){
+        	if(getSettings().getGeneric().getVerbose() > 0 && getSettings().getGeneric().getVerbose() < 3){
         		while(m_Percents < proportion && m_Percents < 100){
         			System.out.print(".");
         			m_Percents++;
@@ -236,7 +237,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         				System.out.println(String.format(" %3d percents", m_Percents));
         			}
         		}
-        	} else if (Settings.VERBOSE > 4){
+        	} else if (getSettings().getGeneric().getVerbose() > 4){
         		System.out.println("iteration " + iteration);
         	}
         	
@@ -442,7 +443,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param data
      */
     private void initialize(RowData data){
-    	if(Settings.VERBOSE > 0){
+    	if(getSettings().getGeneric().getVerbose() > 0){
     		System.out.println("Preprocessing steps ...");
     	}
         if (m_WeightNeighbours) {
@@ -454,7 +455,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             Arrays.fill(m_NeighbourWeights, 1.0);
         }
     	
-    	m_TimeSeriesDistance = data.m_Schema.getSettings().m_TimeSeriesDistance.getValue();
+    	m_TimeSeriesDistance = getSettings().getTimeSeries().getTimeSeriesDistance();
         setReliefDescription(m_NbNeighbours, m_NbIterations);
         m_NbExamples = data.getNbRows();
 
@@ -467,7 +468,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         }
         m_NbDescriptiveAttrs = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE].length;
         m_NbTargetAttrs = m_DescriptiveTargetAttr[1].length;
-        m_performPerTargetRanking = data.m_Schema.getSettings().shouldPerformRankingPerTarget();
+        m_performPerTargetRanking = data.m_Schema.getSettings().getEnsemble().shouldPerformRankingPerTarget();
         setNbFeatureRankings();
         
         m_isStandardClassification = computeStandardClassification(0, false);        
@@ -837,16 +838,16 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         TimeSeries ts2 = attr.getTimeSeries(t2);
 
         switch (m_TimeSeriesDistance) {
-            case Settings.TIME_SERIES_DISTANCE_MEASURE_DTW:
+            case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_DTW:
                 return new DTWTimeSeriesDist(attr).calcDistance(t1, t2);
-            case Settings.TIME_SERIES_DISTANCE_MEASURE_QDM:
+            case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_QDM:
                 if (ts1.length() == ts2.length()) {
                     return new QDMTimeSeriesDist(attr).calcDistance(t1, t2);
                 }
                 else {
                     throw new ClusException("QDM Distance is not implemented for time series with different length");
                 }
-            case Settings.TIME_SERIES_DISTANCE_MEASURE_TSC:
+            case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_TSC:
                 return new TSCTimeSeriesDist(attr).calcDistance(t1, t2);
             default:
                 throw new ClusException("ClusReliefFeatureRanking.m_TimeSeriesDistance was not set to any known value.");

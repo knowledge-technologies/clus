@@ -15,7 +15,7 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.data.type.SparseNumericAttrType;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
 import clus.util.ClusRandomNonstatic;
@@ -25,21 +25,21 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 
     public DepthFirstInduceSparse(ClusSchema schema, Settings sett) throws ClusException, IOException {
         super(schema, sett);
-        if (Settings.VERBOSE > 0)
+        if (getSettings().getGeneric().getVerbose() > 0)
             System.out.println("Sparse implementation");
     }
 
 
     public DepthFirstInduceSparse(ClusInductionAlgorithm other) {
         super(other);
-        if (Settings.VERBOSE > 0)
+        if (getSettings().getGeneric().getVerbose() > 0)
             System.out.println("Sparse implementation");
     }
 
 
     public DepthFirstInduceSparse(ClusInductionAlgorithm other, NominalSplit split) {
         super(other);
-        if (Settings.VERBOSE > 0)
+        if (getSettings().getGeneric().getVerbose() > 0)
             System.out.println("Sparse implementation");
     }
 
@@ -55,7 +55,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
      */
     public DepthFirstInduceSparse(ClusInductionAlgorithm other, ClusStatManager mgr, boolean parallelism) {
         super(other, mgr, parallelism);
-        if (Settings.VERBOSE > 0)
+        if (getSettings().getGeneric().getVerbose() > 0)
             System.out.println("Sparse implementation");
     }
 
@@ -144,7 +144,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         if (best.hasBestTest()) {
             node.testToNode(best);
             // Output best test
-            if (Settings.VERBOSE > 1)
+            if (getSettings().getGeneric().getVerbose() > 1)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();
@@ -256,7 +256,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         if (best.hasBestTest()) {
             node.testToNode(best);
             // Output best test
-            if (Settings.VERBOSE > 1)
+            if (getSettings().getGeneric().getVerbose() > 1)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();

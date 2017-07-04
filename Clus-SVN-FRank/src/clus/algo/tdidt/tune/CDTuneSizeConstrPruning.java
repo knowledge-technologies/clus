@@ -47,7 +47,7 @@ import clus.jeans.math.SingleStatList;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.ClusSummary;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.pruning.PruneTree;
@@ -159,9 +159,9 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
             }
             if (getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
                 PruneTree pruner = new PruneTree();
-                boolean bonf = getSettings().isUseBonferroni();
+                boolean bonf = getSettings().getHMLC().isUseBonferroni();
                 HierRemoveInsigClasses hierpruner = new HierRemoveInsigClasses(runs[i].getPruneSet(), pruner, bonf, getStatManager().getHier());
-                hierpruner.setSignificance(getSettings().getHierPruneInSig());
+                hierpruner.setSignificance(getSettings().getHMLC().getHierPruneInSig());
                 hierpruner.prune(tree);
             }
             ClusError err = mi.getTestError().getFirstError();
@@ -311,7 +311,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
 
 
     public final XValMainSelection getXValSelection(Settings sett, int nbrows) throws IOException, ClusException {
-        String value = sett.getTuneFolds();
+        String value = sett.getModel().getTuneFolds();
         if (value.length() > 0 && Character.isDigit(value.charAt(0))) {
             try {
                 int nbfolds = Integer.parseInt(value);
@@ -329,7 +329,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
 
 
     public void findBestSize(ClusData trset) throws ClusException, IOException, InterruptedException {
-        int prevVerb = Settings.enableVerbose(0);
+        int prevVerb = getSettings().getGeneric().enableVerbose(0);
         ClusStatManager mgr = getStatManager();
         ClusSummary summ = new ClusSummary();
         ClusErrorList errorpar = mgr.createDefaultError();
@@ -364,7 +364,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
         }
         if (maxsize == 1) {
             System.out.println("Optimal size (maxsize = 1) = 1");
-            m_Class.getSettings().setSizeConstraintPruning(1);
+            m_Class.getSettings().getConstraints().setSizeConstraintPruning(1);
             return;
         }
         // Get training data in trees
@@ -415,8 +415,8 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
         System.out.println(" Best = " + optimalSize);
         // Write dat file
         setFinalResult(graph, optimalSize, maxsize);
-        getSettings().setSizeConstraintPruning(optimalSize);
-        Settings.enableVerbose(prevVerb);
+        getSettings().getConstraints().setSizeConstraintPruning(optimalSize);
+        getSettings().getGeneric().enableVerbose(prevVerb);
     }
 
 
@@ -455,8 +455,8 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     public void induceAll(ClusRun cr) throws ClusException, InterruptedException {
         try {
             long start_time = System.currentTimeMillis();
-            m_OrigSize = getSettings().getSizeConstraintPruning(0);
-            if (getSettings().getSizeConstraintPruningNumber() > 1) { throw new ClusException("Only one value is allowed for MaxSize if -tunesize is given"); }
+            m_OrigSize = getSettings().getConstraints().getSizeConstraintPruning(0);
+            if (getSettings().getConstraints().getSizeConstraintPruningNumber() > 1) { throw new ClusException("Only one value is allowed for MaxSize if -tunesize is given"); }
             RowData train = (RowData) cr.getTrainingSet();
             m_Schema = train.getSchema();
             m_HasMissing = m_Schema.hasMissing();
@@ -470,9 +470,9 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
             System.out.println();
             // Induce final model
             m_Class.induceAll(cr);
-            getSettings().setSizeConstraintPruning(m_OrigSize);
+            getSettings().getConstraints().setSizeConstraintPruning(m_OrigSize);
             long time = (System.currentTimeMillis() - start_time);
-            if (Settings.VERBOSE > 0)
+            if (getSettings().getGeneric().getVerbose() > 0)
                 System.out.println("Time: " + (double) time / 1000 + " sec");
             cr.setInductionTime(time);
         }

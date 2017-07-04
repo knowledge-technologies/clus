@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 

@@ -28,7 +28,7 @@ import java.io.Serializable;
 import clus.data.type.ClusSchema;
 import clus.error.ClusErrorList;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.processor.ClusEnsemblePredictionWriter;
 import clus.model.processor.ClusModelProcessor;
 import clus.model.processor.ModelProcessorCollection;
@@ -222,11 +222,11 @@ public class ClusModelInfo implements Serializable {
     public final void initEnsemblePredictionWriter(int type) {
         String fname = "";
         if (type == ClusModelInfo.TEST_ERR && m_TestPreds == null) {
-            fname = getSettings().getAppName() + ".ens.test.preds";
+            fname = getSettings().getGeneric().getAppName() + ".ens.test.preds";
             m_TestPreds = new ClusEnsemblePredictionWriter(fname, getSchema(), getSettings());
         }
         if (type == ClusModelInfo.TRAIN_ERR && m_TrainPreds == null) {
-            fname = getSettings().getAppName() + ".ens.train.preds";
+            fname = getSettings().getGeneric().getAppName() + ".ens.train.preds";
             m_TrainPreds = new ClusEnsemblePredictionWriter(fname, getSchema(), getSettings());
         }
     }

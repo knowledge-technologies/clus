@@ -6,7 +6,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import clus.error.MSError;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ErrorOutput {

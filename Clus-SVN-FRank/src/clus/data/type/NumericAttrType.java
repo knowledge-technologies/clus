@@ -36,7 +36,7 @@ import clus.data.rows.DataTuple;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.hierarchicalmtr.ClusHMTRNode;
 import clus.io.ClusSerializable;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 
@@ -207,7 +207,7 @@ public class NumericAttrType extends ClusAttrType {
                 System.err.println("Either error calculating aggregate or certain value is missing");
                 val = MISSING;
             }
-            //if(Settings.VERBOSE > 0) System.out.println("CALCULATING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+            //if(getSettings().getGeneric().getVerbose() > 0) System.out.println("CALCULATING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
             tuple.setDoubleVal(val, getArrayIndex());
             if (val == MISSING) {
@@ -256,7 +256,7 @@ public class NumericAttrType extends ClusAttrType {
             if (Double.isNaN(val))
                 throw new IOException("Error reading HMTR aggregate from dump! Aggregation function is: " + Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
-            // if(Settings.VERBOSE > 0) System.out.println("READING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+            // if(getSettings().getGeneric().getVerbose() > 0) System.out.println("READING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
             tuple.setDoubleVal(val, getArrayIndex());
             if (val == MISSING) {

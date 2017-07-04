@@ -27,7 +27,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.StringAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ClassesAttrTypeSingleLabel extends ClassesAttrType {

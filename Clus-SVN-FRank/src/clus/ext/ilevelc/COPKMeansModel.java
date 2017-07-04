@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 

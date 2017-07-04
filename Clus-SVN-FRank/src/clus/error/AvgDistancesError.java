@@ -25,7 +25,7 @@ package clus.error;
 import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 

@@ -31,7 +31,7 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.data.type.TimeSeriesAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
@@ -48,7 +48,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     // TODO: Investigate the usage of Medoid vs. mean?
 
     protected TimeSeriesAttrType m_Attr;
-    private ArrayList m_TimeSeriesStack = new ArrayList();
+    private ArrayList<TimeSeries> m_TimeSeriesStack = new ArrayList<TimeSeries>();
     public TimeSeries m_RepresentativeMean = new TimeSeries("[]");
     public TimeSeries m_RepresentativeMedoid = new TimeSeries("[]");
 
@@ -57,21 +57,21 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     protected double m_AvgDistances;
 
 
-    public TimeSeriesStat(TimeSeriesAttrType attr, ClusDistance dist, int efflvl) {
-        super(dist, efflvl);
+    public TimeSeriesStat(Settings sett, TimeSeriesAttrType attr, ClusDistance dist, int efflvl) {
+        super(sett, dist, efflvl);
         m_Attr = attr;
     }
 
 
     public ClusStatistic cloneStat() {
-        TimeSeriesStat stat = new TimeSeriesStat(m_Attr, m_Distance, m_Efficiency);
+        TimeSeriesStat stat = new TimeSeriesStat(this.m_Settings, m_Attr, m_Distance, m_Efficiency);
         stat.cloneFrom(this);
         return stat;
     }
 
 
     public ClusStatistic cloneSimple() {
-        TimeSeriesStat stat = new TimeSeriesStat(m_Attr, m_Distance, m_Efficiency);
+        TimeSeriesStat stat = new TimeSeriesStat(this.m_Settings, m_Attr, m_Distance, m_Efficiency);
         stat.m_RepresentativeMean = new TimeSeries(m_RepresentativeMean.length());
         stat.m_RepresentativeMedoid = new TimeSeries(m_RepresentativeMedoid.length());
         return stat;

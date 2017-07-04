@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.type.NumericAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 
@@ -38,13 +38,13 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     public double[] m_SumValues;
 
 
-    public RegressionStatBinaryNomiss(NumericAttrType[] attrs) {
-        this(attrs, false);
+    public RegressionStatBinaryNomiss(Settings sett, NumericAttrType[] attrs) {
+        this(sett, attrs, false);
     }
 
 
-    public RegressionStatBinaryNomiss(NumericAttrType[] attrs, boolean onlymean) {
-        super(attrs, onlymean);
+    public RegressionStatBinaryNomiss(Settings sett, NumericAttrType[] attrs, boolean onlymean) {
+        super(sett, attrs, onlymean);
         if (!onlymean) {
             m_SumValues = new double[m_NbAttrs];
         }
@@ -52,12 +52,12 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
 
 
     public ClusStatistic cloneStat() {
-        return new RegressionStatBinaryNomiss(m_Attrs, false);
+        return new RegressionStatBinaryNomiss(this.m_Settings, m_Attrs, false);
     }
 
 
     public ClusStatistic cloneSimple() {
-        return new RegressionStatBinaryNomiss(m_Attrs, true);
+        return new RegressionStatBinaryNomiss(this.m_Settings, m_Attrs, true);
     }
 
 

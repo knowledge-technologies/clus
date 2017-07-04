@@ -47,7 +47,7 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.jeans.util.array.MIntArray;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStatBinaryNomiss;
 import clus.statistic.StatisticPrintInfo;
@@ -80,8 +80,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
      * @param comp
      * @param distance
      */
-    public WHTDStatistic(ClassHierarchy hier, int comp, int distance) {
-        this(hier, false, comp, distance);
+    public WHTDStatistic(Settings sett, ClassHierarchy hier, int comp, int distance) {
+        this(sett, hier, false, comp, distance);
     }
 
 
@@ -93,24 +93,28 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
      * @param comp
      * @param distance
      */
-    public WHTDStatistic(ClassHierarchy hier, boolean onlymean, int comp, int distance) {
-        super(hier.getDummyAttrs(), onlymean);
-        m_Compatibility = comp;
-        m_Hier = hier;
+    public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean, int comp, int distance) {
+        //super(hier.getDummyAttrs(), onlymean);
+        this(sett, hier, onlymean, comp);
+
+        //m_Compatibility = comp;
+        //m_Hier = hier;
+
         m_Distance = distance;
         m_P = new double[m_Hier.getTotal()];
     }
 
 
-    public WHTDStatistic(ClassHierarchy hier, int comp) {
-        this(hier, false, comp);
+    public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean, int comp) {
+        super(sett, hier.getDummyAttrs(), onlymean);
+
+        m_Compatibility = comp;
+        m_Hier = hier;
     }
 
 
-    public WHTDStatistic(ClassHierarchy hier, boolean onlymean, int comp) {
-        super(hier.getDummyAttrs(), onlymean);
-        m_Compatibility = comp;
-        m_Hier = hier;
+    public WHTDStatistic(Settings sett, ClassHierarchy hier, int comp) {
+        this(sett, hier, false, comp);
     }
 
 
@@ -151,20 +155,20 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     public ClusStatistic cloneStat() {
         if (m_Distance == Settings.HIERDIST_NO_DIST) {// poolAUPRC case
-            return new WHTDStatistic(m_Hier, false, m_Compatibility, m_Distance);
+            return new WHTDStatistic(this.m_Settings, m_Hier, false, m_Compatibility, m_Distance);
         }
         else {
-            return new WHTDStatistic(m_Hier, false, m_Compatibility);
+            return new WHTDStatistic(this.m_Settings, m_Hier, false, m_Compatibility);
         }
     }
 
 
     public ClusStatistic cloneSimple() {
-        WHTDStatistic res = (m_Distance == Settings.HIERDIST_NO_DIST) ? new WHTDStatistic(m_Hier, true, m_Compatibility, m_Distance) : new WHTDStatistic(m_Hier, true, m_Compatibility);// poolAUPRC
-                                                                                                                                                                                        // case
-                                                                                                                                                                                        // :
-                                                                                                                                                                                        // normal
-                                                                                                                                                                                        // case
+        WHTDStatistic res = (m_Distance == Settings.HIERDIST_NO_DIST) ? new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility, m_Distance) : new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility);// poolAUPRC
+                                                                                                                                                                                                                          // case
+                                                                                                                                                                                                                          // :
+                                                                                                                                                                                                                          // normal
+                                                                                                                                                                                                                          // case
         res.m_Threshold = m_Threshold;
         res.m_Training = m_Training;
         if (m_Validation != null) {
@@ -202,7 +206,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         for (int j = 0; j < tp.getNbClasses(); j++) {
             ClassesValue val = tp.getClass(j);
             int idx = val.getIndex();
-            // if (Settings.VERBOSE > 10) System.out.println("idx = "+idx+" weight = "+weight);
+            // if (getSettings().getGeneric().getVerbose() > 10) System.out.println("idx = "+idx+" weight = "+weight);
             m_SumValues[idx] += weight;
             if (m_Distance == Settings.HIERDIST_NO_DIST) {// poolAUPRC case
                 m_P[idx] += weight;

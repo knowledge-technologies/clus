@@ -41,7 +41,7 @@ import clus.data.type.ClusAttrType;
 import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
@@ -97,14 +97,14 @@ public class oTestKnnModel implements ClusModel, Serializable {
         // save prediction template
         if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()) {
-                statTemplate = new ClassificationStat(cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelThreshold());
+                statTemplate = new ClassificationStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelThreshold());
             }
             else {
-                statTemplate = new ClassificationStat(cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                statTemplate = new ClassificationStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
             }
         }
         else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
-            statTemplate = new RegressionStat(cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+            statTemplate = new RegressionStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
     }
 
 
@@ -195,15 +195,18 @@ public class oTestKnnModel implements ClusModel, Serializable {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToPythonScript() - Not supported yet for kNN.");
     }
 
+
     @Override
     public JsonObject getModelJSON() {
         return null;
     }
 
+
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info) {
         return null;
     }
+
 
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {

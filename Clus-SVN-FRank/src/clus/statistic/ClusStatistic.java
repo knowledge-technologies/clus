@@ -35,7 +35,7 @@ import clus.data.type.ClusSchema;
 import clus.ext.beamsearch.ClusBeam;
 import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.ext.timeseries.TimeSeries;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 
@@ -50,7 +50,12 @@ public abstract class ClusStatistic implements Serializable {
     /** The weighted sum of all examples */
     public double m_SumWeight;
     public int m_NbExamples;
-
+    
+    protected Settings m_Settings; // this is here to reduce the usage of static references
+    
+    public ClusStatistic(Settings sett) {
+        m_Settings = sett;
+    }
 
     public abstract ClusStatistic cloneStat();
 
@@ -444,5 +449,10 @@ public abstract class ClusStatistic implements Serializable {
     
     public double getSumWeight(){
     	return m_SumWeight;
+    }
+    
+    
+    public final Settings getSettings() {
+        return m_Settings;
     }
 }

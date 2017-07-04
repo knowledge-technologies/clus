@@ -24,7 +24,7 @@ package clus.jeans.util.compound;
 
 import java.io.Serializable;
 
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 /**

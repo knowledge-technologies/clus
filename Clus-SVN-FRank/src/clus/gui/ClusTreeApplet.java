@@ -37,7 +37,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.border.EtchedBorder;
 
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ClusTreeApplet extends JApplet {

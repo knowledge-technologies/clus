@@ -30,7 +30,8 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.type.ClusAttrType;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 
 
@@ -54,11 +55,11 @@ public class ClusRuleHeuristicError extends ClusHeuristic {
         double n_pos = c_pstat.m_SumWeight;
         // Acceptable?
         // if (n_pos < Settings.MINIMAL_WEIGHT) {
-        if (n_pos - Settings.MINIMAL_WEIGHT < 1e-6) { return Double.NEGATIVE_INFINITY; }
+        if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { return Double.NEGATIVE_INFINITY; }
         double pos_error = c_pstat.getError(m_ClusteringWeights);
         // Prefer rules that cover more examples
         double global_sum_w = m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING).getTotalWeight();
-        double heur_par = getSettings().getHeurCoveragePar();
+        double heur_par = getSettings().getRules().getHeurCoveragePar();
         pos_error *= (1 + heur_par * global_sum_w / c_pstat.m_SumWeight);
 
         return -pos_error;

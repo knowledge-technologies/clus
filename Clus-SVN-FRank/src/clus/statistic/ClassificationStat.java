@@ -44,7 +44,8 @@ import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import clus.jeans.math.MathUtil;
 import clus.jeans.util.StringUtils;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsEnsemble;
 import clus.util.ClusFormat;
 
 
@@ -71,7 +72,9 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     /**
      * Constructor for this class.
      */
-    public ClassificationStat(NominalAttrType[] nomAtts) {
+    public ClassificationStat(Settings sett, NominalAttrType[] nomAtts) {
+        super(sett);
+        
         m_NbTarget = nomAtts.length;
         m_SumWeights = new double[m_NbTarget];
         m_ClassCounts = new double[m_NbTarget][];
@@ -88,15 +91,18 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
      * @param nomAtts
      * @param multiLabelThreshold
      */
-    public ClassificationStat(NominalAttrType[] nomAtts, INIFileNominalOrDoubleOrVector multiLabelThreshold) {
-        // copied
-        m_NbTarget = nomAtts.length;
-        m_SumWeights = new double[m_NbTarget];
-        m_ClassCounts = new double[m_NbTarget][];
-        for (int i = 0; i < m_NbTarget; i++) {
-            m_ClassCounts[i] = new double[nomAtts[i].getNbValues()];
-        }
-        m_Attrs = nomAtts;
+    public ClassificationStat(Settings sett, NominalAttrType[] nomAtts, INIFileNominalOrDoubleOrVector multiLabelThreshold) {
+        //        // copied
+        //        m_NbTarget = nomAtts.length;
+        //        m_SumWeights = new double[m_NbTarget];
+        //        m_ClassCounts = new double[m_NbTarget][];
+        //        for (int i = 0; i < m_NbTarget; i++) {
+        //            m_ClassCounts[i] = new double[nomAtts[i].getNbValues()];
+        //        }
+        //        m_Attrs = nomAtts;
+
+        this(sett, nomAtts);
+
         // new
         double[] thresholds = multiLabelThreshold.getDoubleVector();
         if (thresholds != null) {
@@ -150,7 +156,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public ClusStatistic cloneStat() {
-        ClassificationStat res = new ClassificationStat(m_Attrs);
+        ClassificationStat res = new ClassificationStat(m_Settings, m_Attrs);
         res.m_Training = m_Training;
         if (m_Thresholds != null) {
             res.m_Thresholds = Arrays.copyOf(m_Thresholds, m_Thresholds.length);
@@ -481,13 +487,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public double entropyDifference(ClassificationStat other, ClusAttributeWeights scale) {
-        if (Settings.isEnsembleROSEnabled())
+        if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return entropyDifferenceTargetSubspace(other, scale);
 
         double sum = 0.0;
         for (int i = 0; i < m_NbTarget; i++) {
 
-            if (other.getAttribute(i).getSchema().getSettings().checkEntropyType("StandardEntropy")) {
+            if (other.getAttribute(i).getSchema().getSettings().getTree().checkEntropyType("StandardEntropy")) {
                 sum += entropyDifference(i, other);
             }
             else {
@@ -504,7 +510,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             if (!scale.getEnabled(m_Attrs[i].getIndex()))
                 continue;
 
-            if (other.getAttribute(i).getSchema().getSettings().checkEntropyType("StandardEntropy")) {
+            if (other.getAttribute(i).getSchema().getSettings().getTree().checkEntropyType("StandardEntropy")) {
                 sum += entropyDifference(i, other);
             }
             else {
@@ -516,12 +522,12 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public double entropy(ClusAttributeWeights scale) {
-        if (Settings.isEnsembleROSEnabled())
+        if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return entropyTargetSubspace(scale);
 
         double sum = 0.0;
         for (int i = 0; i < m_NbTarget; i++) {
-            if (getAttribute(i).getSchema().getSettings().checkEntropyType("StandardEntropy")) {
+            if (getAttribute(i).getSchema().getSettings().getTree().checkEntropyType("StandardEntropy")) {
                 sum += entropy(i);
             }
             else {
@@ -539,7 +545,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             if (!scale.getEnabled(m_Attrs[i].getIndex()))
                 continue;
 
-            if (getAttribute(i).getSchema().getSettings().checkEntropyType("StandardEntropy")) {
+            if (getAttribute(i).getSchema().getSettings().getTree().checkEntropyType("StandardEntropy")) {
                 sum += entropy(i);
             }
             else {
@@ -620,7 +626,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     // ERROR
     public double getError(ClusAttributeWeights scale) {
-        if (Settings.isEnsembleROSEnabled())
+        if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getErrorTargetSubspace(scale);
 
         double result = 0.0;
@@ -655,7 +661,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public double getErrorDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (Settings.isEnsembleROSEnabled())
+        if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getErrorDiffTargetSubspace(scale, other);
 
         double result = 0.0;
@@ -690,7 +696,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     // VARIANCE REDUCTION
     public double getSVarS(ClusAttributeWeights scale) {
-        if (Settings.isEnsembleROSEnabled())
+        if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getSVarSTargetSubspace(scale);
 
         // System.err.println(": here");
@@ -702,10 +708,11 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         return result / m_NbTarget;
     }
-    
-    public double getSVarS(int i){
-    	double sumW = m_SumWeight;
-    	return gini(i) * sumW;
+
+
+    public double getSVarS(int i) {
+        double sumW = m_SumWeight;
+        return gini(i) * sumW;
     }
 
 
@@ -726,7 +733,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (Settings.isEnsembleROSEnabled())
+        if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getSVarSDiffTargetSubspace(scale, other);
 
         double result = 0.0;
@@ -1120,11 +1127,12 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public void vote(ArrayList<ClusStatistic> votes) {
-        switch (Settings.m_ClassificationVoteType.getValue()) {
-            case Settings.VOTING_TYPE_MAJORITY:
+        
+        switch (getSettings().getEnsemble().getClassificationVoteType()) {
+            case SettingsEnsemble.VOTING_TYPE_MAJORITY:
                 voteMajority(votes);
                 break;
-            case Settings.VOTING_TYPE_PROBAB_DISTR: 
+            case SettingsEnsemble.VOTING_TYPE_PROBAB_DISTR:
                 voteProbDistr(votes);
                 break;
             default:
@@ -1134,11 +1142,11 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
-        switch (Settings.m_ClassificationVoteType.getValue()) {
-            case Settings.VOTING_TYPE_MAJORITY:
+        switch (getSettings().getEnsemble().getClassificationVoteType()) {
+            case SettingsEnsemble.VOTING_TYPE_MAJORITY:
                 voteMajority(votes, targetSubspaceInfo);
                 break;
-            case Settings.VOTING_TYPE_PROBAB_DISTR:
+            case SettingsEnsemble.VOTING_TYPE_PROBAB_DISTR:
                 voteProbDistr(votes, targetSubspaceInfo);
                 break;
             default:
@@ -1261,9 +1269,9 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
-	@Override
-	public int getNbStatisticComponents() {
-		return m_NbTarget;
-	}
+    @Override
+    public int getNbStatisticComponents() {
+        return m_NbTarget;
+    }
 
 }

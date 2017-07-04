@@ -25,7 +25,7 @@ package clus.ext.optxval;
 import java.util.Arrays;
 
 import clus.jeans.tree.MyNode;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 
 

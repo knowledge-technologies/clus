@@ -55,7 +55,7 @@ public class ClusBeamSyntacticConstraint {
     public void initializeConstraint(ClusRun run) throws IOException {
         ClusStatManager csm = run.getStatManager();
         ClusTreeReader rdr = new ClusTreeReader();
-        String bconstrFile = csm.getSettings().getBeamConstraintFile();
+        String bconstrFile = csm.getSettings().getBeamSearch().getBeamConstraintFile();
         m_Constraint = rdr.loadTree(bconstrFile, csm.getSchema());
         m_Constraint.setClusteringStat(csm.createClusteringStat());
         m_Constraint.setTargetStat(csm.createTargetStat());

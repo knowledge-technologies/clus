@@ -5,7 +5,7 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NumericAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ClusRuleConstraintInduceTest extends NodeTest {

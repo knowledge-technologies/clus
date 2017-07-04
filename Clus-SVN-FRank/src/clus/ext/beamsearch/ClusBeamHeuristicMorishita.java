@@ -27,7 +27,8 @@
 package clus.ext.beamsearch;
 
 import clus.algo.tdidt.ClusNode;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 
@@ -57,7 +58,7 @@ public class ClusBeamHeuristicMorishita extends ClusBeamHeuristic {
         double n_pos = c_pstat.m_SumWeight;
         double n_neg = n_tot - n_pos;
         // Acceptable?
-        if (n_pos < Settings.MINIMAL_WEIGHT || n_neg < Settings.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
+        if (n_pos < SettingsTree.MINIMAL_WEIGHT || n_neg < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
         m_Neg.copy(c_tstat);
         m_Neg.subtractFromThis(c_pstat);
         // Does not take into account missing values!

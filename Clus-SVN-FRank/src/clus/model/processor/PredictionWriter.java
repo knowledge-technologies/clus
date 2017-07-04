@@ -34,7 +34,7 @@ import clus.data.type.ClusSchema;
 import clus.data.type.StringAttrType;
 import clus.jeans.util.MyArray;
 import clus.jeans.util.StringUtils;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;

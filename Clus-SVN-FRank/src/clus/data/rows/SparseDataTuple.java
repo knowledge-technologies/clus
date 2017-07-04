@@ -29,7 +29,7 @@ import java.util.Iterator;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.SparseNumericAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class SparseDataTuple extends DataTuple {

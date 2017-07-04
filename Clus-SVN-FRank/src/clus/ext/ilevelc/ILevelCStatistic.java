@@ -25,7 +25,7 @@ package clus.ext.ilevelc;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.NumericAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
@@ -39,8 +39,8 @@ public class ILevelCStatistic extends RegressionStat {
     protected int m_ClusterID = -1;
 
 
-    public ILevelCStatistic(NumericAttrType[] num) {
-        super(num);
+    public ILevelCStatistic(Settings sett, NumericAttrType[] num) {
+        super(sett, num);
         m_Numeric = num;
     }
 
@@ -56,7 +56,7 @@ public class ILevelCStatistic extends RegressionStat {
 
 
     public ClusStatistic cloneStat() {
-        return new ILevelCStatistic(m_Numeric);
+        return new ILevelCStatistic(this.m_Settings, m_Numeric);
     }
 
 

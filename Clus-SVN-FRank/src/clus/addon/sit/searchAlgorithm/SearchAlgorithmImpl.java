@@ -8,7 +8,7 @@ import clus.addon.sit.TargetSet;
 import clus.addon.sit.mtLearner.MTLearner;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 /**

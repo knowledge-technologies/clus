@@ -28,7 +28,7 @@ import clus.algo.rules.ClusRuleHeuristicDispersion;
 import clus.data.type.NominalAttrType;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.test.SubsetTest;
 import clus.statistic.ClusStatistic;
 import clus.statistic.CombStat;

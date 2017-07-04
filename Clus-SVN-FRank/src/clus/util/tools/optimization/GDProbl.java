@@ -34,7 +34,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 

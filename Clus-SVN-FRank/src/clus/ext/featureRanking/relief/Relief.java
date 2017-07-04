@@ -9,7 +9,7 @@ import clus.algo.ClusInductionAlgorithmType;
 import clus.data.type.ClusSchema;
 import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.util.ClusException;
 

@@ -36,7 +36,7 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.io.ClusSerializable;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 

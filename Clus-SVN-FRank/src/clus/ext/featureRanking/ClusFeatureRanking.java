@@ -59,7 +59,10 @@ import clus.ext.hierarchical.HierErrorMeasures;
 import clus.jeans.util.StringUtils;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsEnsemble;
+import clus.main.settings.SettingsHMLC;
+import clus.main.settings.SettingsMLC;
 import clus.model.ClusModel;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
@@ -67,11 +70,12 @@ import clus.util.ClusException;
 
 
 public class ClusFeatureRanking {
-	/**
-	 * The keys are attribute names and the values are the arrays of the following form:<br>
-	 * {@code [type of the attribute, position of the attribute, relevance1, relevance2, ..., relevanceK]}<br>
-	 * where {@code K >= 1} and each relevance corresponds to some ranking.
-	 */
+
+    /**
+     * The keys are attribute names and the values are the arrays of the following form:<br>
+     * {@code [type of the attribute, position of the attribute, relevance1, relevance2, ..., relevanceK]}<br>
+     * where {@code K >= 1} and each relevance corresponds to some ranking.
+     */
     protected HashMap<String, double[]> m_AllAttributes;
     // boolean m_FeatRank;
     protected TreeMap<Double, ArrayList<String>> m_FeatureRanks;// sorted by the rank
@@ -79,19 +83,27 @@ public class ClusFeatureRanking {
 
     /** Description of the ranking that appears in the first lines of the .fimp file */
     String m_RankingDescription;
-    /** Header for the table of relevances in the .fimp file*/
+    /** Header for the table of relevances in the .fimp file */
     String m_FimpTableHeader;
 
     ClusReadWriteLock m_Lock;
-    
+
     int m_NbFeatureRankings;
 
+    Settings m_Settings;
 
-    public ClusFeatureRanking() {
+
+    public ClusFeatureRanking(Settings sett) {
         m_AllAttributes = new HashMap<String, double[]>();
         m_FeatureRankByName = new HashMap<String, Double>();
         m_FeatureRanks = new TreeMap<Double, ArrayList<String>>();
         m_Lock = new ClusReadWriteLock();
+        m_Settings = sett;
+    }
+
+
+    public final Settings getSettings() {
+        return m_Settings;
     }
 
 
@@ -151,8 +163,11 @@ public class ClusFeatureRanking {
         }
     }
 
+
     /**
-     * Writes fimp with attributes sorted decreasingly by relevances. This method should be called only if the number of feature rankings is 1.
+     * Writes fimp with attributes sorted decreasingly by relevances. This method should be called only if the number of
+     * feature rankings is 1.
+     * 
      * @param fname
      * @param rankingMethod
      * @throws IOException
@@ -188,11 +203,11 @@ public class ClusFeatureRanking {
         return output;
     }
 
-    
+
     public void writeRankingByAttributeName(String fname, ClusAttrType[] descriptive, int rankingMethod) throws IOException {
         File franking = new File(fname + ".fimp");
         FileWriter wrtr = new FileWriter(franking);
-        
+
         wrtr.write(m_RankingDescription + "\n");
         wrtr.write(m_FimpTableHeader + "\n");
         wrtr.write(StringUtils.makeString('-', m_FimpTableHeader.length()) + "\n");
@@ -247,10 +262,10 @@ public class ClusFeatureRanking {
 
         String taskTypeString = (schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET).length > 1) ? "MT " : "ST ";
         // taskTypeString += (m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET)[0].getTypeName()) ? "MT" : "ST";
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION) {
+        if (cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION) {
             taskTypeString += "Regression";
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
+        else if (cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY) {
             taskTypeString += "Classification";
         }
         JsonElement taskType = new JsonPrimitive(taskTypeString);
@@ -277,23 +292,23 @@ public class ClusFeatureRanking {
 
         JsonObject algorithmSpec = new JsonObject();
         JsonElement algorithmName;
-        int ens_method = cr.getStatManager().getSettings().getEnsembleMethod();
-        int fr_method = cr.getStatManager().getSettings().getRankingMethod();
-        if (ens_method == Settings.ENSEMBLE_EXTRA_TREES) {
+        int ens_method = getSettings().getEnsemble().getEnsembleMethod();
+        int fr_method = getSettings().getEnsemble().getRankingMethod();
+        if (ens_method == SettingsEnsemble.ENSEMBLE_EXTRA_TREES) {
             algorithmName = new JsonPrimitive("ExtraTrees/GENIE3");
         }
-        else if ((ens_method == Settings.ENSEMBLE_RFOREST) && (fr_method == Settings.RANKING_RFOREST)) {
+        else if ((ens_method == SettingsEnsemble.ENSEMBLE_RFOREST) && (fr_method == SettingsEnsemble.RANKING_RFOREST)) {
             algorithmName = new JsonPrimitive("RandomForestRanking");
         }
-        else if ((ens_method == Settings.ENSEMBLE_RFOREST) && (fr_method == Settings.RANKING_GENIE3)) {
+        else if ((ens_method == SettingsEnsemble.ENSEMBLE_RFOREST) && (fr_method == SettingsEnsemble.RANKING_GENIE3)) {
             algorithmName = new JsonPrimitive("RandomForest/GENIE3");
         }
         else {
             algorithmName = new JsonPrimitive("Ranking method specified incorrectly!");
         }
 
-        int ens_size = cr.getStatManager().getSettings().getNbBaggingSets().getInt();
-        String feat_size = cr.getStatManager().getSettings().getNbRandomAttrString();
+        int ens_size = getSettings().getEnsemble().getNbBaggingSets().getInt();
+        String feat_size = getSettings().getEnsemble().getNbRandomAttrString();
 
         JsonElement parameters = new JsonPrimitive("Iterations: " + ens_size + "; SelectRandomSubspaces: " + feat_size);
 
@@ -323,12 +338,12 @@ public class ClusFeatureRanking {
 
         functionOutputJSON.add("ranking", rankingResults);
 
-        File jsonfile = new File(cr.getStatManager().getSettings().getAppName() + ".json");
+        File jsonfile = new File(getSettings().getGeneric().getAppName() + ".json");
         FileWriter json = new FileWriter(jsonfile);
         json.write(jsonBuilder.toJson(functionOutputJSON));
         json.flush();
         json.close();
-        System.out.println("JSON model written to: " + cr.getStatManager().getSettings().getAppName() + ".json");
+        System.out.println("JSON model written to: " + getSettings().getGeneric().getAppName() + ".json");
 
     }
 
@@ -425,14 +440,16 @@ public class ClusFeatureRanking {
      * @param data
      * @param model
      * @param cr
-     * @return {@code [[listOfResultsForErr1, [sign1]], [listOfResultsForErr2, [sign2]], ...]},<br> where {@code signI = errorI.shouldBeLow() ? -1.0 : 1.0}, and
-     * {@code listOfResultsForErr} always contains the overall {@code Err} error in the position 0, and possibly also per target calculations for {@code Err}
-     * in the positions i > 0.
+     * @return {@code [[listOfResultsForErr1, [sign1]], [listOfResultsForErr2, [sign2]], ...]},<br>
+     *         where {@code signI = errorI.shouldBeLow() ? -1.0 : 1.0}, and
+     *         {@code listOfResultsForErr} always contains the overall {@code Err} error in the position 0, and possibly
+     *         also per target calculations for {@code Err}
+     *         in the positions i > 0.
      * @throws ClusException
      */
     public double[][][] calcAverageErrors(RowData data, ClusModel model, ClusStatManager mgr) throws ClusException {
-    	ClusSchema schema = data.getSchema();
-    	ClusErrorList error = computeErrorList(schema, mgr);
+        ClusSchema schema = data.getSchema();
+        ClusErrorList error = computeErrorList(schema, mgr);
         /* attach model to given schema */
         schema.attachModel(model);
         /* iterate over tuples and compute error */
@@ -441,98 +458,99 @@ public class ClusFeatureRanking {
             ClusStatistic pred = model.predictWeighted(tuple);
             error.addExample(tuple, pred);
         }
-//        if (m_FimpTableHeader == null) {
-//            setRForestDescription(error);
-//        }
+        //        if (m_FimpTableHeader == null) {
+        //            setRForestDescription(error);
+        //        }
         /* return the average errors */
         double[][][] errors = new double[error.getNbErrors()][2][];
         for (int i = 0; i < errors.length; i++) {
-        	ClusError currentError = error.getError(i);
-        	int nbResultsPerError = 1;
-        	if (mgr.getSettings().shouldPerformRankingPerTarget() && (currentError instanceof ComponentError)){
-        		nbResultsPerError += currentError.getDimension();
-        	}
-        	errors[i][0] = new double[nbResultsPerError];
-        	// compute overall error
-        	errors[i][0][0] = currentError.getModelError();
-        	// compute per target errors if necessary
-        	for(int dim = 1; dim < errors[i][0].length; dim++){
-        		errors[i][0][dim] = currentError.getModelErrorComponent(dim - 1);
-        	}	
-        	// should be low?
-        	errors[i][1] = new double[]{currentError.shouldBeLow() ? -1.0 : 1.0};
+            ClusError currentError = error.getError(i);
+            int nbResultsPerError = 1;
+            if (mgr.getSettings().getEnsemble().shouldPerformRankingPerTarget() && (currentError instanceof ComponentError)) {
+                nbResultsPerError += currentError.getDimension();
+            }
+            errors[i][0] = new double[nbResultsPerError];
+            // compute overall error
+            errors[i][0][0] = currentError.getModelError();
+            // compute per target errors if necessary
+            for (int dim = 1; dim < errors[i][0].length; dim++) {
+                errors[i][0][dim] = currentError.getModelErrorComponent(dim - 1);
+            }
+            // should be low?
+            errors[i][1] = new double[] { currentError.shouldBeLow() ? -1.0 : 1.0 };
         }
         return errors;
     }
 
-    public ClusErrorList computeErrorList(ClusSchema schema, ClusStatManager mgr){
-    	Settings sett = mgr.getSettings();
+
+    public ClusErrorList computeErrorList(ClusSchema schema, ClusStatManager mgr) {
+        Settings sett = mgr.getSettings();
         ClusErrorList error = new ClusErrorList();
         NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
         NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
-            if (sett.getSectionMultiLabel().isEnabled()) {
-                int[] measures = sett.getMultiLabelRankingMeasures();
+        if (mgr.getMode() == ClusStatManager.MODE_CLASSIFY) {
+            if (sett.getMLC().getSectionMultiLabel().isEnabled()) {
+                int[] measures = sett.getMLC().getMultiLabelRankingMeasures();
                 for (int measure : measures) {
                     switch (measure) {
-                        case Settings.MULTILABEL_MEASURES_HAMMINGLOSS:
+                        case SettingsMLC.MULTILABEL_MEASURES_HAMMINGLOSS:
                             error.addError(new HammingLoss(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MLACCURACY:
+                        case SettingsMLC.MULTILABEL_MEASURES_MLACCURACY:
                             error.addError(new MLAccuracy(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MLPRECISION:
+                        case SettingsMLC.MULTILABEL_MEASURES_MLPRECISION:
                             error.addError(new MLPrecision(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MLRECALL:
+                        case SettingsMLC.MULTILABEL_MEASURES_MLRECALL:
                             error.addError(new MLRecall(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MLFONE:
+                        case SettingsMLC.MULTILABEL_MEASURES_MLFONE:
                             error.addError(new MLFOneMeasure(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_SUBSETACCURACY:
+                        case SettingsMLC.MULTILABEL_MEASURES_SUBSETACCURACY:
                             error.addError(new SubsetAccuracy(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MACROPRECISION:
+                        case SettingsMLC.MULTILABEL_MEASURES_MACROPRECISION:
                             error.addError(new MacroPrecision(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MACRORECALL:
+                        case SettingsMLC.MULTILABEL_MEASURES_MACRORECALL:
                             error.addError(new MacroRecall(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MACROFONE:
+                        case SettingsMLC.MULTILABEL_MEASURES_MACROFONE:
                             error.addError(new MacroFOne(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MICROPRECISION:
+                        case SettingsMLC.MULTILABEL_MEASURES_MICROPRECISION:
                             error.addError(new MicroPrecision(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MICRORECALL:
+                        case SettingsMLC.MULTILABEL_MEASURES_MICRORECALL:
                             error.addError(new MicroRecall(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_MICROFONE:
+                        case SettingsMLC.MULTILABEL_MEASURES_MICROFONE:
                             error.addError(new MisclassificationError(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_ONEERROR:
+                        case SettingsMLC.MULTILABEL_MEASURES_ONEERROR:
                             error.addError(new OneError(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_COVERAGE:
+                        case SettingsMLC.MULTILABEL_MEASURES_COVERAGE:
                             error.addError(new Coverage(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_RANKINGLOSS:
+                        case SettingsMLC.MULTILABEL_MEASURES_RANKINGLOSS:
                             error.addError(new RankingLoss(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_AVERAGEPRECISION:
+                        case SettingsMLC.MULTILABEL_MEASURES_AVERAGEPRECISION:
                             error.addError(new AveragePrecision(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_AUROC:
+                        case SettingsMLC.MULTILABEL_MEASURES_AUROC:
                             error.addError(new MLaverageAUROC(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_AUPRC:
+                        case SettingsMLC.MULTILABEL_MEASURES_AUPRC:
                             error.addError(new MLaverageAUPRC(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_WEIGHTED_AUPRC:
+                        case SettingsMLC.MULTILABEL_MEASURES_WEIGHTED_AUPRC:
                             error.addError(new MLweightedAUPRC(error, nom));
                             break;
-                        case Settings.MULTILABEL_MEASURES_POOLED_AUPRC:
+                        case SettingsMLC.MULTILABEL_MEASURES_POOLED_AUPRC:
                             error.addError(new MLpooledAUPRC(error, nom));
                             break;
                     }
@@ -542,13 +560,13 @@ public class ClusFeatureRanking {
                 error.addError(new Accuracy(error, nom));
             }
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION) {
+        else if (mgr.getMode() == ClusStatManager.MODE_REGRESSION) {
             // error.addError(new MSError(error, num));
             // error.addError(new RelativeError(error, num));
             error.addError(new RMSError(error, num));
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            error.addError(new HierErrorMeasures(error, mgr.getHier(), sett.getRecallValues().getDoubleVector(), sett.getCompatibility(), Settings.HIERMEASURE_POOLED_AUPRC, false));
+        else if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+            error.addError(new HierErrorMeasures(error, mgr.getHier(), sett.getHMLC().getRecallValues().getDoubleVector(), sett.getGeneral().getCompatibility(), SettingsHMLC.HIERMEASURE_POOLED_AUPRC, false));
         }
         else {
             System.err.println("Feature ranking with Random Forests is supported only for:");
@@ -559,6 +577,7 @@ public class ClusFeatureRanking {
         }
         return error;
     }
+
 
     // returns sorted feature ranking
     public TreeMap<Double, ArrayList<String>> getFeatureRanks() {
@@ -571,6 +590,7 @@ public class ClusFeatureRanking {
         return m_FeatureRankByName;
     }
 
+
     public double[] getAttributeInfo(String attribute) {
         m_Lock.readingLock();
         double[] info = Arrays.copyOf(m_AllAttributes.get(attribute), m_AllAttributes.get(attribute).length);
@@ -578,11 +598,13 @@ public class ClusFeatureRanking {
         return info;
     }
 
+
     public void putAttributeInfo(String attribute, double[] info) throws InterruptedException {
         m_Lock.writingLock();
         m_AllAttributes.put(attribute, info);
         m_Lock.writingUnlock();
     }
+
 
     public void putAttributesInfos(HashMap<String, double[][]> partialFimportances) throws InterruptedException {
         for (String attribute : partialFimportances.keySet()) {
@@ -590,46 +612,53 @@ public class ClusFeatureRanking {
             double[][] partialInfo = partialFimportances.get(attribute);
             int ind = 0;
             for (int i = 0; i < partialInfo.length; i++) {
-            	for(int j = 0; j < partialInfo[i].length; j++){
-            		info[ind + 2] += partialInfo[i][j];
-            		ind++;
-            	}
+                for (int j = 0; j < partialInfo[i].length; j++) {
+                    info[ind + 2] += partialInfo[i][j];
+                    ind++;
+                }
             }
             putAttributeInfo(attribute, info);
         }
     }
 
-    public void setFimpHeader(String header){
-    	m_FimpTableHeader = header;
-    }
-        
-    public void setRankingDescription(String descr){
-    	m_RankingDescription = descr;
+
+    public void setFimpHeader(String header) {
+        m_FimpTableHeader = header;
     }
 
-    public String fimpTableHeader(Iterable<? extends CharSequence> list){
-    	return "attributeName\t[" + String.join(",", list) + "]";
+
+    public void setRankingDescription(String descr) {
+        m_RankingDescription = descr;
     }
-    
-    public String fimpTableHeader(CharSequence... list){
-    	return "attributeName\t[" + String.join(",", list) + "]";
+
+
+    public String fimpTableHeader(Iterable<? extends CharSequence> list) {
+        return "attributeName\t[" + String.join(",", list) + "]";
     }
-    
+
+
+    public String fimpTableHeader(CharSequence... list) {
+        return "attributeName\t[" + String.join(",", list) + "]";
+    }
+
+
     public int getNbFeatureRankings() {
         return m_NbFeatureRankings;
     }
-    
-    public void setNbFeatureRankings(int nbRankings){
-    	m_NbFeatureRankings = nbRankings;
+
+
+    public void setNbFeatureRankings(int nbRankings) {
+        m_NbFeatureRankings = nbRankings;
     }
-    
-    
-    public void createFimp(ClusRun cr, int numberOfTrees) throws IOException{
-    	createFimp(cr, "", numberOfTrees);
+
+
+    public void createFimp(ClusRun cr, int numberOfTrees) throws IOException {
+        createFimp(cr, "", numberOfTrees);
     }
-    
-    public void createFimp(ClusRun cr, String appendixToFimpName, int numberOfTrees) throws IOException{
-        boolean sorted = cr.getStatManager().getSettings().shouldSortRankingByRelevance();
+
+
+    public void createFimp(ClusRun cr, String appendixToFimpName, int numberOfTrees) throws IOException {
+        boolean sorted = cr.getStatManager().getSettings().getEnsemble().shouldSortRankingByRelevance();
         if (sorted && getNbFeatureRankings() > 1) {
             System.err.println("More than one feature ranking will be output. " + "The attributes will appear as in ARFF\nand will not be sorted " + "by relevance, although SortRankingByRelevance = Yes.");
             sorted = false;
@@ -638,14 +667,15 @@ public class ClusFeatureRanking {
             sortFeatureRanks(numberOfTrees);
         }
         convertRanksByName();
-        String appName = cr.getStatManager().getSettings().getFileAbsolute(cr.getStatManager().getSettings().getAppName()) + appendixToFimpName;
-        if (sorted){
-        	writeRanking(appName, cr.getStatManager().getSettings().getRankingMethod());
-        } else{
-        	writeRankingByAttributeName(appName, cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getRankingMethod());
+        String appName = cr.getStatManager().getSettings().getGeneric().getFileAbsolute(cr.getStatManager().getSettings().getGeneric().getAppName()) + appendixToFimpName;
+        if (sorted) {
+            writeRanking(appName, cr.getStatManager().getSettings().getEnsemble().getRankingMethod());
         }
-        if (cr.getStatManager().getSettings().isOutputJSONModel()){
-        	writeJSON(cr);
+        else {
+            writeRankingByAttributeName(appName, cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getEnsemble().getRankingMethod());
+        }
+        if (cr.getStatManager().getSettings().getOutput().isOutputJSONModel()) {
+            writeJSON(cr);
         }
     }
 }

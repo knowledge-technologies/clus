@@ -36,7 +36,7 @@ import clus.ext.hierarchical.WHTDStatistic;
 import clus.jeans.util.FileUtil;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 
 

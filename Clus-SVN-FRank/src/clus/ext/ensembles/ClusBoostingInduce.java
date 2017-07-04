@@ -37,7 +37,7 @@ import clus.data.type.ClusSchema;
 import clus.jeans.util.array.MDoubleArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;
@@ -100,9 +100,9 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
         else {
             tdidt = new DepthFirstInduce(this);
         }
-        int[] outputEnsembleAt = getSettings().getNbBaggingSets().getIntVectorSorted();
+        int[] outputEnsembleAt = getSettings().getEnsemble().getNbBaggingSets().getIntVectorSorted();
         int nbTrees = outputEnsembleAt[outputEnsembleAt.length - 1];
-        int verbose = Settings.VERBOSE;
+        int verbose = getSettings().getGeneric().getVerbose();
         for (int i = 0; i < nbTrees; i++) {
             if (verbose != 0) {
                 System.out.println();
@@ -140,12 +140,12 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
         model_info.setName("Original");
         model_info.setModel(model);
         if (cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            double[] thresholds = cr.getStatManager().getSettings().getClassificationThresholds().getDoubleVector();
+            double[] thresholds = cr.getStatManager().getSettings().getHMLC().getClassificationThresholds().getDoubleVector();
             if (thresholds != null) {
                 for (int i = 0; i < thresholds.length; i++) {
                     ClusModelInfo pruned_info = cr.addModelInfo(ClusModel.PRUNED + i);
                     ClusBoostingForest new_forest = model.cloneBoostingForestWithThreshold(thresholds[i]);
-                    new_forest.setPrintModels(Settings.isPrintEnsembleModels());
+                    new_forest.setPrintModels(getSettings().getEnsemble().isPrintEnsembleModels());
                     pruned_info.setModel(new_forest);
                     pruned_info.setName("T(" + thresholds[i] + ")");
                 }

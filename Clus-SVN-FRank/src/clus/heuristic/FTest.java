@@ -29,7 +29,7 @@ import org.apache.commons.math.distribution.DistributionFactory;
 import org.apache.commons.math.distribution.FDistribution;
 
 import clus.jeans.math.MathUtil;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 
@@ -152,7 +152,7 @@ public class FTest {
             df++;
         }
         while ((value - limit) / limit > 0.05);
-        if(Settings.VERBOSE > 0){
+        if(getSettings().getGeneric().getVerbose() > 0){
         	System.out.println("F-Test = " + sig + " limit = " + ClusFormat.TWO_AFTER_DOT.format(limit) + " values = " + values.size());
         }
         FTEST_LIMIT = limit;

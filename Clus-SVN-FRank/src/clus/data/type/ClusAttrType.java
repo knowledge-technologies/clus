@@ -33,7 +33,7 @@ import clus.data.cols.attribute.ClusAttribute;
 import clus.data.rows.DataPreprocs;
 import clus.data.rows.DataTuple;
 import clus.io.ClusSerializable;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 

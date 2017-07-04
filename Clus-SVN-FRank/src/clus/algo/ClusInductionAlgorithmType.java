@@ -30,7 +30,7 @@ import clus.jeans.resource.ResourceInfo;
 import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
@@ -113,10 +113,10 @@ public abstract class ClusInductionAlgorithmType {
         cr.setPruneTime(ResourceInfo.getTime() - done_time);
         postProcess(cr);
         
-        if (Settings.VERBOSE > 0) {
+        if (getSettings().getGeneric().getVerbose() > 0) {
             
             String parallelTime = "";
-            if (getSettings().isEnsembleWithParallelExecution()){
+            if (getSettings().getEnsemble().isEnsembleWithParallelExecution()){
                 parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format(((double)cr.getInductionTimeSequential() / 1000.0)) + " sec)";
             }
             

@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 import clus.data.rows.RowData;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 
@@ -62,7 +62,10 @@ public class ClusBeamSimilarityOutput {
         // String str =
         // run.getStatManager().getSettings().getFileAbsolute(run.getStatManager().getSettings().getAppName())+".bsim";
         // File output = new File(fname);
-        FileWriter wrtr = new FileWriter(new File(run.getStatManager().getSettings().getAppName() + ".bsim"), true);
+        
+        Settings set = run.getStatManager().getSettings();
+        
+        FileWriter wrtr = new FileWriter(new File(set.getGeneric().getAppName() + ".bsim"), true);
         double[] sim = new double[2];
         // sim[0] - training
         // sim[1] - testing
@@ -77,9 +80,9 @@ public class ClusBeamSimilarityOutput {
         try {
             sim[1] = ClusBeamModelDistance.calcBeamSimilarity(models, run.getTestSet(), isNum);
             m_BeamSimTest.add(Double.valueOf(sim[1]));
-            if (Settings.IS_XVAL) {
+            if (set.getExperimental().IS_XVAL) {
                 wrtr.write("Fold " + run.getIndexString() + ":\t" + outF.format(sim[0]) + "\t\t" + outF.format(sim[1]) + "\n");
-                if (run.getIndex() == run.getStatManager().getSettings().getXValFolds()) {
+                if (run.getIndex() == set.getData().getXValFolds()) {
                     // we reached the last fold, so we write a summary
                     wrtr.write("---------------------------------------\n");
                     wrtr.write("Summary:\t" + outF.format(getAverage(m_BeamSimTrain)) + "\t\t" + outF.format(getAverage(m_BeamSimTest)) + "\n");
@@ -89,7 +92,7 @@ public class ClusBeamSimilarityOutput {
                 wrtr.append("\t\t" + outF.format(sim[0]) + "\t\t" + outF.format(sim[1]) + "\n");
         }
         catch (NullPointerException e) {
-            if (!Settings.IS_XVAL)
+            if (!set.getExperimental().IS_XVAL)
                 wrtr.append("Summary:\t" + outF.format(sim[0]) + "\t\t" + "N/A" + "\n");
         }
         wrtr.flush();
@@ -97,11 +100,11 @@ public class ClusBeamSimilarityOutput {
 
 
     public void writeHeader(Settings sett) throws IOException {
-        File output = new File(sett.getAppName() + ".bsim");
+        File output = new File(sett.getGeneric().getAppName() + ".bsim");
         FileWriter wrtr = new FileWriter(output);
         wrtr.write("Clus Beam-Search run\n");
         wrtr.write("----------------------\n");
-        wrtr.write("Date:\t" + DateFormat.getInstance().format(sett.getDate()) + "\n");
+        wrtr.write("Date:\t" + DateFormat.getInstance().format(sett.getGeneric().getDate()) + "\n");
         wrtr.write("File:\t" + output + "\n");
         wrtr.write("\n");
         wrtr.write("Beam Similarity Output\n");

@@ -5,7 +5,7 @@ import java.io.Serializable;
 
 import clus.algo.kNN.distance.attributeWeighting.AttributeWeighting;
 import clus.data.rows.DataTuple;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ClusDistance implements Serializable {

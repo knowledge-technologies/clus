@@ -29,7 +29,7 @@ import clus.algo.rules.ClusRule;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 
 

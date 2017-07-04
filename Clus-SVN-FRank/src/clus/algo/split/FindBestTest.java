@@ -35,7 +35,7 @@ import clus.data.type.SparseNumericAttrType;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.heuristic.VarianceReductionHeuristicEfficient;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandom;

@@ -33,7 +33,10 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsOutput;
+import clus.main.settings.SettingsRules;
+import clus.main.settings.SettingsTree;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
@@ -99,13 +102,13 @@ public class ClusRulesFromTree {
         RowData data = (RowData) cr.getTrainingSet();
 
         // Optimizing rule set if needed
-        if (optimizeRuleWeights == Settings.RULE_PREDICTION_METHOD_OPTIMIZED || optimizeRuleWeights == Settings.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+        if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED || optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
             OptAlg optAlg = null;
 
             OptProbl.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
 
             // Find the rule weights with optimization algorithm.
-            if (optimizeRuleWeights == Settings.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+            if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
                 optAlg = (OptAlg) new GDAlg(mgr, param, ruleSet);
             }
             else {
@@ -174,7 +177,7 @@ public class ClusRulesFromTree {
 
     /** Only terminal nodes are added to rule set */
     public void constructRecursive(ClusNode node, ClusRule rule, ClusRuleSet set) {
-        if (node.atBottomLevel() || m_Mode == Settings.CONVERT_RULES_ALLNODES) {
+        if (node.atBottomLevel() || m_Mode == SettingsOutput.CONVERT_RULES_ALLNODES) {
             if (!m_Validated || node.getTargetStat().isValidPrediction()) {
                 rule.setTargetStat(node.getTargetStat());
                 rule.setID(node.getID());

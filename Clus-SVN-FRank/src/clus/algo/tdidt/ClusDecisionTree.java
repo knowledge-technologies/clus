@@ -35,7 +35,8 @@ import clus.ext.bestfirst.BestFirstInduce;
 import clus.ext.ilevelc.ILevelCInduce;
 import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsOutput;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.pruning.PruneTree;
@@ -61,18 +62,18 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
 
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
 
-        if (sett.hasConstraintFile()) {
+        if (sett.getConstraints().hasConstraintFile()) {
             boolean fillin = cargs.hasOption("fillin");
             return new ConstraintDFInduce(schema, sett, fillin);
         }
-        else if (sett.isSectionILevelCEnabled()) {
+        else if (sett.getILevelC().isSectionILevelCEnabled()) {
             return new ILevelCInduce(schema, sett);
         }
         else if (schema.isSparse()) {
             return new DepthFirstInduceSparse(schema, sett);
         }
         else {
-            if (sett.checkInductionOrder("DepthFirst")) {
+            if (sett.getTree().checkInductionOrder("DepthFirst")) {
                 return new DepthFirstInduce(schema, sett);
             }
             else {
@@ -110,11 +111,11 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
      */
     public void convertToRules(ClusRun cr, ClusModelInfo model) throws ClusException, IOException {
         ClusNode tree_root = (ClusNode) model.getModel();
-        ClusRulesFromTree rft = new ClusRulesFromTree(true, getSettings().rulesFromTree());
+        ClusRulesFromTree rft = new ClusRulesFromTree(true, getSettings().getTree().rulesFromTree());
         ClusRuleSet rule_set = null;
-        boolean compDis = getSettings().computeDispersion(); // Do we want to compute dispersion
+        boolean compDis = getSettings().getRules().computeDispersion(); // Do we want to compute dispersion
 
-        rule_set = rft.constructRules(cr, tree_root, getStatManager(), compDis, getSettings().getRulePredictionMethod());
+        rule_set = rft.constructRules(cr, tree_root, getStatManager(), compDis, getSettings().getRules().getRulePredictionMethod());
         rule_set.addDataToRules((RowData) cr.getTrainingSet());
 
         ClusModelInfo rules_info = cr.addModelInfo("Rules-" + model.getName());
@@ -154,7 +155,7 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
         ClusNode defmod = pruneToRoot(orig);
         ClusModelInfo def_info = cr.addModelInfo(ClusModel.DEFAULT);
         def_info.setModel(defmod);
-        if (getSettings().rulesFromTree() != Settings.CONVERT_RULES_NONE) {
+        if (getSettings().getTree().rulesFromTree() != SettingsOutput.CONVERT_RULES_NONE) {
             ClusModelInfo model = cr.getModelInfoFallback(ClusModel.PRUNED, ClusModel.ORIGINAL);
             convertToRules(cr, model);
         }

@@ -5,7 +5,8 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.type.ClusAttrType;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 
 
@@ -27,7 +28,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
 
         double n_pos = c_pstat.m_SumWeight;
-        if (n_pos - Settings.MINIMAL_WEIGHT < 1e-6) { // (n_pos < Settings.MINIMAL_WEIGHT)
+        if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { // (n_pos < Settings.MINIMAL_WEIGHT)
             return Double.NEGATIVE_INFINITY;
         }
 
@@ -50,7 +51,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
         // Coverage(r) part
         double train_sum_w = m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING).getTotalWeight();
         double coverage = (n_pos / train_sum_w);
-        double cov_par = m_StatManager.getSettings().getHeurCoveragePar();
+        double cov_par = m_StatManager.getSettings().getRules().getHeurCoveragePar();
         coverage = Math.pow(coverage, cov_par);
         value = value * coverage;
 

@@ -53,7 +53,7 @@ import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.jeans.util.cmdline.CMDLineArgsProvider;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.test.InverseNumericTest;
@@ -78,8 +78,8 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
         CMDLineArgs cargs = new CMDLineArgs(this);
         cargs.process(args);
         if (cargs.allOK()) {
-            sett.setDate(new Date());
-            sett.setAppName(cargs.getMainArg(0));
+            sett.getGeneric().setDate(new Date());
+            sett.getGeneric().setAppName(cargs.getMainArg(0));
             m_Clus.initSettings(cargs);
             // m_Clus.setExtension(new DefaultExtension());
             ClusInductionAlgorithmType clss = new ClusRuleClassifier(m_Clus);
@@ -190,8 +190,8 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
         prune.calcTotalStat(global);
         global.calcMean();
         Settings sett = m_Clus.getSettings();
-        boolean useBonferroni = sett.isUseBonferroni();
-        double sigLevel = sett.getHierPruneInSig();
+        boolean useBonferroni = sett.getHMLC().isUseBonferroni();
+        double sigLevel = sett.getHMLC().getHierPruneInSig();
         if (sigLevel == 0.0)
             return;
         for (int i = 0; i < rules.getModelSize(); i++) {
@@ -224,7 +224,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
 
     void evaluateRuleSet(ClusRun cr, ClusRuleSet rules) throws IOException, ClusException {
         Settings sett = m_Clus.getSettings();
-        ClusOutput output = new ClusOutput(sett.getAppName() + ".rules.out", m_Clus.getSchema(), sett);
+        ClusOutput output = new ClusOutput(sett.getGeneric().getAppName() + ".rules.out", m_Clus.getSchema(), sett);
         ClusModelInfo info = cr.addModelInfo(ClusModel.DEFAULT);
         info.setStatManager(m_Clus.getStatManager());
         info.setModel(rules);
@@ -232,7 +232,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
         m_Clus.addModelErrorMeasures(cr);
         m_Clus.calcError(cr, null); // Calc error
         output.writeHeader();
-        output.writeOutput(cr, true, sett.isOutTrainError());
+        output.writeOutput(cr, true, sett.getOutput().isOutTrainError());
         output.close();
     }
 
@@ -256,7 +256,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
         }
         else {
             Settings sett = m_Clus.getSettings();
-            PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(sett.getAppName() + ".sgene")));
+            PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(sett.getGeneric().getAppName() + ".sgene")));
             for (int i = 0; i < rules.getModelSize(); i++) {
                 AmandaRule rule = (AmandaRule) rules.getRule(i);
                 rule.printModel(wrt);

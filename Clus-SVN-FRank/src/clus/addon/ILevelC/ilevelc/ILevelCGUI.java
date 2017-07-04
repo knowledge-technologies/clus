@@ -53,7 +53,7 @@ import clus.data.type.NumericAttrType;
 import clus.ext.ilevelc.DerivedConstraintsComputer;
 import clus.ext.ilevelc.ILevelConstraint;
 import clus.jeans.util.FileUtil;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 

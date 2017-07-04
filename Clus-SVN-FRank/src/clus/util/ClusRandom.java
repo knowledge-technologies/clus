@@ -24,7 +24,7 @@ package clus.util;
 
 import java.util.Random;
 
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ClusRandom {
@@ -77,9 +77,9 @@ public class ClusRandom {
 
     public static void initialize(Settings sett) {
         m_Random = new Random[NB_RANDOM];
-        if (sett.hasRandomSeed()) {
+        if (sett.getGeneral().hasRandomSeed()) {
             m_IsPreset = true;
-            m_Preset = sett.getRandomSeed();
+            m_Preset = sett.getGeneral().getRandomSeed();
             for (int i = 0; i < NB_RANDOM; i++) {
                 m_Random[i] = new Random(m_Preset);
             }

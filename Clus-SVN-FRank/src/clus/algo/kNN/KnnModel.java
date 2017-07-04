@@ -56,7 +56,7 @@ import clus.ext.timeseries.TimeSeriesStat;
 import clus.jeans.util.MyArray;
 import clus.main.ClusModelInfoList;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;

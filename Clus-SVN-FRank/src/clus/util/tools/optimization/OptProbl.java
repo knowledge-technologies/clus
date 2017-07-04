@@ -41,7 +41,7 @@ import clus.algo.rules.RuleNormalization;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;

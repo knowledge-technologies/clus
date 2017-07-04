@@ -29,7 +29,7 @@ import clus.data.cols.ColTarget;
 import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
 import clus.ext.ensembles.ClusEnsembleROSInfo;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusFormat;
@@ -44,7 +44,9 @@ public class MultiScoreStat extends ClusStatistic {
     protected double[] m_MeanValues;
 
 
-    public MultiScoreStat(ClusStatistic stat, MultiScore score) {
+    public MultiScoreStat(Settings sett, ClusStatistic stat, MultiScore score) {
+        super(sett);
+
         m_MeanValues = stat.getNumericPred();
         m_NbTarget = m_MeanValues.length;
         m_Score = score.multiScore(m_MeanValues);
@@ -160,9 +162,10 @@ public class MultiScoreStat extends ClusStatistic {
     public void updateWeighted(SparseDataTuple tuple, int idx) {
     }
 
-	@Override
-	public int getNbStatisticComponents() {
-		throw new RuntimeException(getClass().getName() + "getNbStatisticComponents(): not implemented");
-	}
+
+    @Override
+    public int getNbStatisticComponents() {
+        throw new RuntimeException(getClass().getName() + "getNbStatisticComponents(): not implemented");
+    }
 
 }

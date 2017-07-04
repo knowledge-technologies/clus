@@ -42,7 +42,7 @@ import clus.data.type.NumericAttrType;
 import clus.jeans.math.SingleStat;
 import clus.jeans.tree.CompleteTreeIterator;
 import clus.jeans.util.array.StringTable;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 
@@ -339,8 +339,8 @@ public class ClassHierarchy implements Serializable {
 
     public final void calcWeights() {
         HierNodeWeights ws = new HierNodeWeights();
-        int wtype = getSettings().getHierWType();
-        double widec = getSettings().getHierWParam();
+        int wtype = getSettings().getHMLC().getHierWType();
+        double widec = getSettings().getHMLC().getHierWParam();
         ws.initExponentialDepthWeights(this, wtype, widec);
         m_Weights = ws.getWeights();
     }

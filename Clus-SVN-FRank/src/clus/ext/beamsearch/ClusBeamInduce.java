@@ -34,7 +34,7 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
 import clus.ext.ensembles.ClusForest;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
@@ -85,14 +85,14 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
         updateAllPredictions(lst);
 
         // the pruning is ON for all setings! This could be turned off when needed!
-        if (getSettings().getBeamTreeMaxSize() <= -1)
+        if (getSettings().getBeamSearch().getBeamTreeMaxSize() <= -1)
             postPruneBeamModels(cr, lst);
-        if (getSettings().getBeamSortOnTrainParameter())
+        if (getSettings().getBeamSearch().getBeamSortOnTrainParameter())
             sortModels(cr, lst);
         // if (!getSettings().isFastBS()) writeSimilarityFile(lst, cr);
         ClusBeamSimilarityOutput bsimout = new ClusBeamSimilarityOutput(getSettings());
         bsimout.appendToFile(lst, cr);
-        boolean toForest = cr.getStatManager().getSettings().isBeamToForest();
+        boolean toForest = cr.getStatManager().getSettings().getBeamSearch().isBeamToForest();
         ClusForest bForest = new ClusForest(getStatManager(), null); // no optimisation for now
 
         for (int i = 0; i < lst.size(); i++) {

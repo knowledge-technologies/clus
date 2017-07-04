@@ -9,7 +9,7 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.rows.SparseDataTuple;
 import clus.io.ClusSerializable;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 

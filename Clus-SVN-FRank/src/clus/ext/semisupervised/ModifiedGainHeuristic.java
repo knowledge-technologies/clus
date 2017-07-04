@@ -3,7 +3,7 @@ package clus.ext.semisupervised;
 
 import clus.heuristic.ClusHeuristicImpl;
 import clus.jeans.math.MathUtil;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 

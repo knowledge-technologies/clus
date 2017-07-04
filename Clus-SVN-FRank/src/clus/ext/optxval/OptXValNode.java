@@ -28,7 +28,7 @@ import java.util.Arrays;
 import clus.algo.tdidt.ClusNode;
 import clus.jeans.tree.MyNode;
 import clus.jeans.util.array.MyIntArray;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 

@@ -39,7 +39,7 @@ import clus.data.type.NumericAttrType;
 import clus.error.multiscore.MultiScore;
 import clus.ext.constraint.ClusConstraintFile;
 import clus.main.ClusRun;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
@@ -84,7 +84,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
             CurrentBestTestAndHeuristic best = m_FindBestTest.getBestTest();
             if (best.hasBestTest()) {
                 node.testToNode(best);
-                if (Settings.VERBOSE > 0)
+                if (getSettings().getGeneric().getVerbose() > 0)
                     System.out.println("Fill in Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             }
             else {

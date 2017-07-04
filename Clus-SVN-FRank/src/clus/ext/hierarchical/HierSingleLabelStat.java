@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 
 
@@ -40,28 +40,28 @@ public class HierSingleLabelStat extends WHTDStatistic {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
 
-    public HierSingleLabelStat(ClassHierarchy hier, int comp) {
-        super(hier, comp);
+    public HierSingleLabelStat(Settings sett, ClassHierarchy hier, int comp) {
+        this(sett, hier, false, comp);
     }
 
 
-    public HierSingleLabelStat(ClassHierarchy hier, boolean onlymean, int comp) {
-        super(hier, onlymean, comp);
+    public HierSingleLabelStat(Settings sett, ClassHierarchy hier, boolean onlymean, int comp) {
+        super(sett, hier, onlymean, comp);
     }
 
 
     public ClusStatistic cloneStat() {
-        return new HierSingleLabelStat(m_Hier, false, m_Compatibility);
+        return new HierSingleLabelStat(this.m_Settings, m_Hier, false, m_Compatibility);
     }
 
 
     public void addPredictWriterSchema(String prefix, ClusSchema schema) {
-        float biggest = 0;
-        int prediction = 0;
-        int count = 0;
+        //        float biggest = 0;
+        //        int prediction = 0;
+        //        int count = 0;
 
         ClassHierarchy hier = getHier();
-        ArrayList leafClasses = new ArrayList();
+        ArrayList<String> leafClasses = new ArrayList<String>();
         for (int i = 0; i < m_NbAttrs; i++) {
             ClassTerm term = hier.getTermAt(i);
             if (term.getNbChildren() == 0) {
@@ -82,7 +82,7 @@ public class HierSingleLabelStat extends WHTDStatistic {
         double biggest = 0;
         int prediction = -1;
 
-        StringBuffer buf = new StringBuffer();
+//        StringBuffer buf = new StringBuffer();
 
         ClassHierarchy hier = getHier();
 

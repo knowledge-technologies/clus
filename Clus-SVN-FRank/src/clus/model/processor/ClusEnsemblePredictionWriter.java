@@ -12,7 +12,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.jeans.util.MyArray;
 import clus.jeans.util.StringUtils;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStatBase;
 import clus.util.ClusException;
@@ -117,7 +117,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
                 m_EnsPredSchema.addAttrType(at.cloneType());
             }
         }
-        m_Writer = m_Sett.getFileAbsoluteWriter(m_Fname);
+        m_Writer = m_Sett.getGeneric().getFileAbsoluteWriter(m_Fname);
     }
 
 

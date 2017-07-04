@@ -33,7 +33,8 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NumericAttrType;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsRules;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
@@ -145,7 +146,7 @@ public class ClusRuleLinearTerm extends ClusRule {
 
     /** Returns implicit linear terms if this is set in the settings file. */
     static protected ImplicitLinearTerms returnImplicitLinearTermsIfNeeded(RowData data) {
-        if (data.getSchema().getSettings().getOptAddLinearTerms() != Settings.OPT_GD_ADD_LIN_YES_SAVE_MEMORY)
+        if (data.getSchema().getSettings().getRules().getOptAddLinearTerms() != SettingsRules.OPT_GD_ADD_LIN_YES_SAVE_MEMORY)
             return null;
 
         double[][] values = new double[2][];
@@ -192,7 +193,7 @@ public class ClusRuleLinearTerm extends ClusRule {
 
         m_descriptiveDimForLinearTerm = iDescriptDim;
         m_targetDimForLinearTerm = iTargetDim;
-        m_scaleLinearTerm = statManager.getSettings().isOptNormalizeLinearTerms(); // may be changed false later
+        m_scaleLinearTerm = statManager.getSettings().getRules().isOptNormalizeLinearTerms(); // may be changed false later
 
         // Change rule attributes
         m_TargetStat = statManager.createTargetStat();
@@ -256,7 +257,7 @@ public class ClusRuleLinearTerm extends ClusRule {
         double descrValue = (C_statManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))[iDescrDim].getNumeric(tuple);
 
         if (Double.isNaN(descrValue) || Double.isInfinite(descrValue)) {
-            if (sett.getOptNormalizeLinearTerms() == Settings.OPT_LIN_TERM_NORM_CONVERT) {
+            if (sett.getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_CONVERT) {
                 descrValue = getOffSetValue(iDescrDim);
             }
             else {
@@ -264,11 +265,11 @@ public class ClusRuleLinearTerm extends ClusRule {
             }
         }
         // Truncated version - the linear term holds only on the range of training set.
-        if (sett.isOptLinearTermsTruncate() && !Double.isNaN(getMaxValue(iDescrDim)) && !Double.isNaN(getMinValue(iDescrDim))) {
+        if (sett.getRules().isOptLinearTermsTruncate() && !Double.isNaN(getMaxValue(iDescrDim)) && !Double.isNaN(getMinValue(iDescrDim))) {
             descrValue = Math.max(Math.min(descrValue, getMaxValue(iDescrDim)), getMinValue(iDescrDim));
         }
 
-        if (sett.isOptNormalizeLinearTerms() && scaleLinearTerm) {
+        if (sett.getRules().isOptNormalizeLinearTerms() && scaleLinearTerm) {
             descrValue -= getOffSetValue(iDescrDim); // Shift
             descrValue /= 2 * getDescStdDev(iDescrDim); // scale
 
@@ -283,7 +284,7 @@ public class ClusRuleLinearTerm extends ClusRule {
 
     /** Does the term cover the given tuple */
     public boolean covers(DataTuple tuple) {
-        if (getSettings().getOptNormalizeLinearTerms() == Settings.OPT_LIN_TERM_NORM_CONVERT) { return true; // Always
+        if (getSettings().getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_CONVERT) { return true; // Always
                                                                                                              // covers,
                                                                                                              // otherwise
                                                                                                              // problems
@@ -299,20 +300,20 @@ public class ClusRuleLinearTerm extends ClusRule {
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         wrt.println("Linear term for the numerical attribute with index " + m_descriptiveDimForLinearTerm + " predicting target index " + m_targetDimForLinearTerm);
 
-        if (getSettings().isOptLinearTermsTruncate()) {
+        if (getSettings().getRules().isOptLinearTermsTruncate()) {
             wrt.println("The prediction is truncated on the interval [" + C_minValues[m_descriptiveDimForLinearTerm] + "," + C_maxValues[m_descriptiveDimForLinearTerm] + "].");
         }
 
-        if (getSettings().getOptNormalizeLinearTerms() == Settings.OPT_LIN_TERM_NORM_CONVERT) {
+        if (getSettings().getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_CONVERT) {
             // wrt.println("Linear term prediction was scaled and shifted by (x-average)/(2*standard deviation) during
             // normalization.");
             wrt.println("Linear term prediction was scaled and shifted by (x-average)*(standard deviation of target)/(standard deviation of descriptive) during normalization.");
         }
-        else if (getSettings().getOptNormalizeLinearTerms() == Settings.OPT_LIN_TERM_NORM_YES) {
+        else if (getSettings().getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_YES) {
             // wrt.println("Linear term prediction is scaled and shifted by (x-average)/(2*standard deviation)");
             wrt.println("Linear term prediction is scaled and shifted by (x-average)*(standard deviation of target)/(standard deviation of descriptive)");
         }
-        if (getSettings().isOptNormalizeLinearTerms()) {
+        if (getSettings().getRules().isOptNormalizeLinearTerms()) {
             wrt.println("      Standard deviation (targ) : " + getTargStdDev(m_targetDimForLinearTerm));
             wrt.println("      Standard deviation (descr): " + getDescStdDev(m_descriptiveDimForLinearTerm));
             wrt.println("      Average                   : " + getOffSetValue(m_descriptiveDimForLinearTerm));

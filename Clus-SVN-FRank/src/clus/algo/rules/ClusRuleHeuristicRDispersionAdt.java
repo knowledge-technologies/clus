@@ -28,7 +28,8 @@ package clus.algo.rules;
 
 import clus.data.attweights.ClusAttributeWeights;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 import clus.statistic.CombStat;
 
@@ -51,12 +52,12 @@ public class ClusRuleHeuristicRDispersionAdt extends ClusRuleHeuristicDispersion
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double n_pos = c_pstat.m_SumWeight;
         // Acceptable?
-        if (n_pos - Settings.MINIMAL_WEIGHT < 1e-6) { // (n_pos < Settings.MINIMAL_WEIGHT)
+        if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { // (n_pos < Settings.MINIMAL_WEIGHT)
             return Double.NEGATIVE_INFINITY;
         }
         double disp = ((CombStat) c_pstat).rDispersionAdtHeur();
         // Rule distance part
-        if (((CombStat) c_pstat).getSettings().isHeurRuleDist() && (m_CoveredBitVectArray.size() > 0)) {
+        if (((CombStat) c_pstat).getSettings().getRules().isHeurRuleDist() && (m_CoveredBitVectArray.size() > 0)) {
             double avg_dist = 0.0;
             int nb_rules = m_CoveredBitVectArray.size();
             boolean[] bit_vect = new boolean[m_NbTuples];
@@ -76,7 +77,7 @@ public class ClusRuleHeuristicRDispersionAdt extends ClusRuleHeuristicDispersion
                 avg_dist += single_dist;
             }
             avg_dist /= nb_rules;
-            double dist_par = ((CombStat) c_pstat).getSettings().getHeurRuleDistPar();
+            double dist_par = ((CombStat) c_pstat).getSettings().getRules().getHeurRuleDistPar();
             double dist_part = avg_dist * dist_par;
             disp += 1.0 - dist_part; // TODO: Check if this offset is ok!
         }

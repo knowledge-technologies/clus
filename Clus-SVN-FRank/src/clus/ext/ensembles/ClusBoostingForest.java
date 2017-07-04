@@ -19,11 +19,6 @@ public class ClusBoostingForest extends ClusForest {
     protected transient MDoubleArrayComparator m_Compare = new MDoubleArrayComparator(0);
 
 
-    public ClusBoostingForest() {
-        super();
-    }
-
-
     public ClusBoostingForest(ClusStatManager statmgr) {
         super(statmgr, null);
     }
@@ -92,7 +87,7 @@ public class ClusBoostingForest extends ClusForest {
 
 
     public ClusBoostingForest cloneBoostingForestWithThreshold(double threshold) {
-        ClusBoostingForest clone = new ClusBoostingForest();
+        ClusBoostingForest clone = new ClusBoostingForest(m_StatManager);
         clone.setModels(getModels());
         clone.m_BetaI = m_BetaI;
         WHTDStatistic stat = (WHTDStatistic) getStat().cloneStat();

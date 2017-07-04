@@ -30,7 +30,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.NumericAttrType;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.jeans.math.MathUtil;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 
@@ -44,58 +44,70 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     private RegressionStat m_Training;
     private ClusHMTRHierarchy m_HMTRHierarchy;
 
-    public RegressionStat(NumericAttrType[] attrs) {
-        this(attrs, false);
+
+    public RegressionStat(Settings sett, NumericAttrType[] attrs) {
+        this(sett, attrs, false);
     }
 
-    public RegressionStat(NumericAttrType[] attrs, boolean onlymean) {
-        super(attrs, onlymean);
+
+    public RegressionStat(Settings sett, NumericAttrType[] attrs, ClusHMTRHierarchy hier) {
+        this(sett, attrs, hier, false);
+    }
+
+
+    public RegressionStat(Settings sett, NumericAttrType[] attrs, ClusHMTRHierarchy hier, boolean onlymean) {
+        this(sett, attrs, onlymean);
+
+        m_HMTRHierarchy = hier;
+    }
+
+
+    public RegressionStat(Settings sett, NumericAttrType[] attrs, boolean onlymean) {
+        super(sett, attrs, onlymean);
+
         if (!onlymean) {
             m_SumValues = new double[m_NbAttrs];
             m_SumWeights = new double[m_NbAttrs];
             m_SumSqValues = new double[m_NbAttrs];
         }
     }
-    
-    public RegressionStat(NumericAttrType[] attrs, ClusHMTRHierarchy hier, boolean onlymean) {
-        this(attrs, onlymean);
-        m_HMTRHierarchy = hier;
+
+
+    public void setSumValues(int index, double value) {
+        m_SumValues[index] = value;
     }
-    
-    public RegressionStat(NumericAttrType[] attrs, ClusHMTRHierarchy hier) {
-        this(attrs, hier, false);
+
+
+    public void resetSumValues(int length) {
+        m_SumValues = new double[length];
     }
-    
-    
-    public void setSumValues(int index, double value){
-    	m_SumValues[index] = value;
+
+
+    public void setSumWeights(int index, double value) {
+        m_SumWeights[index] = value;
     }
-    
-    public void resetSumValues(int length){
-    	m_SumValues = new double[length];
+
+
+    public void resetSumWeights(int length) {
+        m_SumWeights = new double[length];
     }
-    
-    public void setSumWeights(int index, double value){
-    	 m_SumWeights[index] = value;
-    }
-    
-    public void resetSumWeights(int length){
-    	 m_SumWeights = new double[length];
-    }
+
 
     public void setTrainingStat(ClusStatistic train) {
         m_Training = (RegressionStat) train;
-    }    
+    }
+
 
     public ClusStatistic cloneStat() {
         RegressionStat res;
-        
-        if(Settings.isHMTREnabled()) {
-            res = new RegressionStat(m_Attrs, m_HMTRHierarchy, false);
-        } else {
-            res = new RegressionStat(m_Attrs, false);
+
+        if (Settings.isHMTREnabled()) {
+            res = new RegressionStat(this.m_Settings, m_Attrs, m_HMTRHierarchy, false);
         }
-        
+        else {
+            res = new RegressionStat(this.m_Settings, m_Attrs, false);
+        }
+
         res.m_Training = m_Training;
         return res;
     }
@@ -103,13 +115,14 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
     public ClusStatistic cloneSimple() {
         RegressionStat res;
-        
-        if(Settings.isHMTREnabled()) {
-            res = new RegressionStat(m_Attrs, m_HMTRHierarchy, true);
-        } else {
-            res = new RegressionStat(m_Attrs, true);
+
+        if (Settings.isHMTREnabled()) {
+            res = new RegressionStat(this.m_Settings, m_Attrs, m_HMTRHierarchy, true);
         }
-        
+        else {
+            res = new RegressionStat(this.m_Settings, m_Attrs, true);
+        }
+
         res.m_Training = m_Training;
         return res;
     }
@@ -243,13 +256,14 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     public double getSumWeights(int i) {
         return m_SumWeights[i];
     }
-    
-    public RegressionStat getTraining(){
-    	return m_Training;
+
+
+    public RegressionStat getTraining() {
+        return m_Training;
     }
 
 
-    public double getSVarS(int  i) {
+    public double getSVarS(int i) {
         double n_tot = m_SumWeight;
         double k_tot = m_SumWeights[i];
         double sv_tot = m_SumValues[i];
@@ -294,8 +308,10 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
 
     public double getSVarS(ClusAttributeWeights scale) {
-        if (Settings.isEnsembleROSEnabled()) return getSVarS_ROS(scale);
-        if (Settings.isHMTREnabled()) return getSVarSHMTR(scale);
+        if (Settings.isEnsembleROSEnabled())
+            return getSVarS_ROS(scale);
+        if (Settings.isHMTREnabled())
+            return getSVarSHMTR(scale);
 
         double result = 0.0;
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -318,6 +334,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return result / m_NbAttrs;
     }
 
+
     public double getSVarSHMTR(ClusAttributeWeights scale) {
 
         double result = 0.0;
@@ -328,18 +345,21 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             double sv_tot = m_SumValues[i];
             double ss_tot = m_SumSqValues[i];
             if (k_tot == n_tot) {
-                result += ((ss_tot - sv_tot*sv_tot/n_tot)*scale.getWeight(m_Attrs[i]))*hmtrWeight;
-            } else {
+                result += ((ss_tot - sv_tot * sv_tot / n_tot) * scale.getWeight(m_Attrs[i])) * hmtrWeight;
+            }
+            else {
                 if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
-                    result += (m_Training.getSVarS(i)*scale.getWeight(m_Attrs[i]))*hmtrWeight;
-                } else {
-                    result += ((ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot/k_tot*sv_tot/k_tot)*scale.getWeight(m_Attrs[i]))*hmtrWeight;
+                    result += (m_Training.getSVarS(i) * scale.getWeight(m_Attrs[i])) * hmtrWeight;
+                }
+                else {
+                    result += ((ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot / k_tot * sv_tot / k_tot) * scale.getWeight(m_Attrs[i])) * hmtrWeight;
                 }
             }
         }
         return result / m_NbAttrs;
     }
-    
+
+
     public double getSVarSDiff_ROS(ClusAttributeWeights scale, ClusStatistic other) {
         double result = 0.0;
         int cnt = 0;
@@ -369,10 +389,11 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return result / cnt;
     }
 
+
     public double getSVarSDiffHMTR(ClusAttributeWeights scale, ClusStatistic other) {
 
         double result = 0.0;
-        RegressionStat or = (RegressionStat)other;
+        RegressionStat or = (RegressionStat) other;
         for (int i = 0; i < m_NbAttrs; i++) {
             double hmtrWeight = m_HMTRHierarchy.getWeight(m_Attrs[i].getName());
             double n_tot = m_SumWeight - or.m_SumWeight;
@@ -380,21 +401,26 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             double sv_tot = m_SumValues[i] - or.m_SumValues[i];
             double ss_tot = m_SumSqValues[i] - or.m_SumSqValues[i];
             if (k_tot == n_tot) {
-                result += (ss_tot - sv_tot*sv_tot/n_tot)*scale.getWeight(m_Attrs[i])*hmtrWeight;
-            } else {
+                result += (ss_tot - sv_tot * sv_tot / n_tot) * scale.getWeight(m_Attrs[i]) * hmtrWeight;
+            }
+            else {
                 if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
-                    result += m_Training.getSVarS(i)*scale.getWeight(m_Attrs[i])*hmtrWeight;
-                } else {
-                    result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot/k_tot*sv_tot/k_tot)*scale.getWeight(m_Attrs[i])*hmtrWeight;
+                    result += m_Training.getSVarS(i) * scale.getWeight(m_Attrs[i]) * hmtrWeight;
+                }
+                else {
+                    result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot / k_tot * sv_tot / k_tot) * scale.getWeight(m_Attrs[i]) * hmtrWeight;
                 }
             }
         }
         return result / m_NbAttrs;
     }
-    
+
+
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (Settings.isEnsembleROSEnabled()) return getSVarSDiff_ROS(scale, other);
-        if (Settings.isHMTREnabled()) return getSVarSDiffHMTR(scale, other);
+        if (Settings.isEnsembleROSEnabled())
+            return getSVarSDiff_ROS(scale, other);
+        if (Settings.isHMTREnabled())
+            return getSVarSDiffHMTR(scale, other);
 
         double result = 0.0;
         RegressionStat or = (RegressionStat) other;
@@ -484,9 +510,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
 
 
-	@Override
-	public int getNbStatisticComponents() {
-		return m_SumWeights.length;
-	}
+    @Override
+    public int getNbStatisticComponents() {
+        return m_SumWeights.length;
+    }
 
 }

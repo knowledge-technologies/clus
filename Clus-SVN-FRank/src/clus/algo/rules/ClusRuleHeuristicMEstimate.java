@@ -27,7 +27,8 @@
 package clus.algo.rules;
 
 import clus.heuristic.ClusHeuristic;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 
 
@@ -46,7 +47,7 @@ public class ClusRuleHeuristicMEstimate extends ClusHeuristic {
         double n_pos = c_pstat.m_SumWeight;
         // Acceptable?
         // if (n_pos < Settings.MINIMAL_WEIGHT) {
-        if (n_pos - Settings.MINIMAL_WEIGHT < 1e-6) { return Double.NEGATIVE_INFINITY; }
+        if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { return Double.NEGATIVE_INFINITY; }
         double correct = n_pos - c_pstat.getError();
         double m_estimate = (correct + m_MValue * m_Prior) / (n_pos + m_MValue);
         return m_estimate;

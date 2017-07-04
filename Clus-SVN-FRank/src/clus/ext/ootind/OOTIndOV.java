@@ -34,7 +34,7 @@ import clus.ext.optxval.SoftNumericTest;
 import clus.jeans.resource.ResourceInfo;
 import clus.jeans.util.list.MyListIter;
 import clus.main.ClusStat;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.model.test.SoftTest;
 import clus.util.ClusException;
@@ -102,7 +102,7 @@ public class OOTIndOV extends OOTInduce {
                 // Show best test
                 if (stest != null)
                     stest.sortIntervals();
-                if (Settings.VERBOSE > 0)
+                if (getSettings().getGeneric().getVerbose() > 0)
                     ngrp.println();
                 ngrps.insertBefore(ngrp);
                 nb_groups++;

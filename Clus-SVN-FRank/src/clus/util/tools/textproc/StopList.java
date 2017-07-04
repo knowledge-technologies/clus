@@ -27,7 +27,7 @@ import java.io.IOException;
 import java.io.LineNumberReader;
 import java.util.Hashtable;
 
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class StopList extends Hashtable {

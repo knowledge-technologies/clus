@@ -40,7 +40,7 @@ import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.jeans.util.StringUtils;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 
@@ -58,12 +58,15 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
-    public RegressionStatBase(NumericAttrType[] attrs) {
-        this(attrs, false);
+    public RegressionStatBase(Settings sett, NumericAttrType[] attrs) {
+        this(sett, attrs, false);
     }
 
 
-    public RegressionStatBase(NumericAttrType[] attrs, boolean onlymean) {
+    public RegressionStatBase(Settings sett, NumericAttrType[] attrs, boolean onlymean) {
+        super(sett);
+        
+        
         m_Attrs = attrs;
         m_NbAttrs = attrs.length;
         if (onlymean) {

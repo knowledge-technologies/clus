@@ -27,7 +27,7 @@
 package clus.heuristic;
 
 import clus.jeans.math.MathUtil;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 
 

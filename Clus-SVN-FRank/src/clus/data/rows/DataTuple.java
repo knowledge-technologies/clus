@@ -27,7 +27,7 @@ import java.io.Serializable;
 
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class DataTuple implements Serializable {

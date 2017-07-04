@@ -27,7 +27,7 @@ import java.io.PrintWriter;
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
 import clus.jeans.util.StringUtils;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 

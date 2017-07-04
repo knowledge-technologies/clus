@@ -25,7 +25,7 @@ package clus.gui;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import clus.ext.hierarchical.ClassTerm;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class JTHierTreeNode extends DefaultMutableTreeNode {

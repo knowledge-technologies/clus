@@ -60,7 +60,9 @@ import clus.jeans.util.StringUtils;
 import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.ISettings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
@@ -116,13 +118,13 @@ public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
     public void initializeHeuristic() {
         ClusStatManager smanager = m_BeamInduce.getStatManager();
         Settings sett = smanager.getSettings();
-        m_MaxTreeSize = sett.getMaxSize();
-        m_MaxError = sett.getMaxErrorConstraint(0);
+        m_MaxTreeSize = sett.getConstraints().getMaxSize();
+        m_MaxError = sett.getConstraints().getMaxErrorConstraint(0);
         System.out.println("ClusExhaustiveSearch : The Max Error is " + m_MaxError);
-        m_BeamPostPruning = sett.isBeamPostPrune();
+        m_BeamPostPruning = sett.getBeamSearch().isBeamPostPrune();
         m_Heuristic = (ClusBeamHeuristic) smanager.getHeuristic();
-        int attr_heur = sett.getBeamAttrHeuristic();
-        if (attr_heur != Settings.HEURISTIC_DEFAULT) {
+        int attr_heur = sett.getBeamSearch().getBeamAttrHeuristic();
+        if (attr_heur != SettingsTree.HEURISTIC_DEFAULT) {
             m_AttrHeuristic = smanager.createHeuristic(attr_heur);
             m_Heuristic.setAttrHeuristic(m_AttrHeuristic);
         }
@@ -159,7 +161,7 @@ public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
     public ClusBeam initializeBeamExhaustive(ClusRun run) throws ClusException {
         ClusStatManager smanager = m_BeamInduce.getStatManager();
         Settings sett = smanager.getSettings();
-        sett.setMinimalWeight(1); // the minimal number of covered example in a leaf is 1
+        sett.getModel().setMinimalWeight(1); // the minimal number of covered example in a leaf is 1
         ClusBeam beam = new ClusBeam(-1, false); // infinite size and we add everything
         /* Create single leaf node */
         RowData train = (RowData) run.getTrainingSet();
@@ -170,8 +172,8 @@ public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
         System.out.println("Root statistic: " + stat);
         ClusNode root = null;
         /* Has syntactic constraints? */
-        String constr_file = sett.getConstraintFile();
-        if (StringUtils.unCaseCompare(constr_file, Settings.NONE)) {// no constraint
+        String constr_file = sett.getConstraints().getConstraintFile();
+        if (StringUtils.unCaseCompare(constr_file, ISettings.NONE)) {// no constraint
             root = new ClusNode();
             root.setClusteringStat(stat);
         }
@@ -240,7 +242,7 @@ public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
                 ClusNode ref_leaf = (ClusNode) leaf.cloneNode();
                 ref_leaf.testToNode(sel);
                 // output best test
-                if (Settings.VERBOSE > 0)
+                if (getSettings().getGeneric().getVerbose() > 0)
                     System.out.println("Test: " + ref_leaf.getTestString() + " -> " + sel.m_BestHeur + " (" + ref_leaf.getTest().getPosFreq() + ")");
                 // create child nodes
                 ClusStatManager mgr = m_Induce.getStatManager();
@@ -461,7 +463,7 @@ public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
 
 
     public void saveBeamStats() {
-        MyFile stats = new MyFile(getSettings().getAppName() + ".bmstats");
+        MyFile stats = new MyFile(getSettings().getGeneric().getAppName() + ".bmstats");
         for (int i = 0; i < m_BeamStats.size(); i++) {
             stats.log(getLevelStat(i));
         }
@@ -613,7 +615,7 @@ public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
         if (log.isEnabled()) {
             log.log(txt);
             log.log("*********************************************");
-            beam.print(log.getWriter(), m_Clus.getSettings().getBeamBestN());
+            beam.print(log.getWriter(), m_Clus.getSettings().getBeamSearch().getBeamBestN());
             log.log();
         }
     }

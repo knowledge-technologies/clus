@@ -40,7 +40,7 @@ import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
@@ -294,7 +294,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
             node.testToNode(best);
             // Output best test
-            if (Settings.VERBOSE > 1)
+            if (getSettings().getGeneric().getVerbose() > 1)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
 
             // Create children
@@ -365,7 +365,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
      * // start_time = System.currentTimeMillis();
      * node.testToNode(best);
      * // Output best test
-     * if (Settings.VERBOSE > 0) System.out.println("Test: "+node.getTestString()+" -> "+best.getHeuristicValue());
+     * if (getSettings().getGeneric().getVerbose() > 0) System.out.println("Test: "+node.getTestString()+" -> "+best.getHeuristicValue());
      * // Create children
      * int arity = node.updateArity();
      * NodeTest test = node.getTest();

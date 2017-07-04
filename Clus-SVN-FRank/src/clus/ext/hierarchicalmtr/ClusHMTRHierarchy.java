@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
 
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 /**
@@ -72,8 +72,8 @@ public class ClusHMTRHierarchy  { //implements Serializable {
 
 
     public void initialize(Settings sett) {
-        String hier = sett.getHMTRHierarchyString().getStringValue();
-        double weight = sett.getHMTRHierarchyWeight().getValue();
+        String hier = sett.getHMTR().getHMTRHierarchyString().getStringValue();
+        double weight = sett.getHMTR().getHMTRHierarchyWeight().getValue();
         
         hier = hier.replace("(", "")
                 .replace(")", "")
@@ -102,7 +102,7 @@ public class ClusHMTRHierarchy  { //implements Serializable {
         calculateDepth();
         calculateWeights(weight);
         
-        sett.setSectionHMTREnabled(true);
+        sett.getHMTR().setSectionHMTREnabled(true);
     }
 
 

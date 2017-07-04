@@ -27,7 +27,7 @@ import java.text.NumberFormat;
 
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.type.NumericAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class RMSError extends MSError {

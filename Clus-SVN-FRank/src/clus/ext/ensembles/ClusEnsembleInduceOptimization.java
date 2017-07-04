@@ -8,7 +8,8 @@ import java.util.HashMap;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.TupleIterator;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsEnsemble;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
@@ -31,7 +32,12 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable{
     /** For ROS ensembles */
     protected ClusEnsembleROSInfo m_EnsembleROSInfo = null;
 
-    public ClusEnsembleInduceOptimization(TupleIterator train, TupleIterator test) throws IOException, ClusException {
+    private Settings m_Settings;
+    
+    public ClusEnsembleInduceOptimization(TupleIterator train, TupleIterator test, Settings sett) throws IOException, ClusException {
+        
+        m_Settings = sett;
+        
         // m_HashCodeTuple = new int[nb_tuples];
     	m_TuplePositions = new HashMap<DataTuple, Integer>();
         int count = 0;
@@ -55,6 +61,10 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable{
                 test_tuple = test.readTuple();
             }
         }
+    }
+    
+    public final Settings getSettings() {
+        return m_Settings;
     }
 
 //    public ClusEnsembleInduceOptimization(TupleIterator train, TupleIterator test) throws IOException, ClusException {
@@ -133,7 +143,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable{
         // the current sums are stored in sum_predictions
         double[][] result = new double[sum_predictions.length][];
         
-        if (Settings.isEnsembleROSEnabled() && Settings.getEnsembleROSScope() == Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING) {
+        if (getSettings().getEnsemble().isEnsembleROSEnabled() && getSettings().getEnsemble().getEnsembleROSScope() == SettingsEnsemble.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING) {
             int[] enabled = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(nb_models-1)); // get enabled targets for the model
             
             for (int i = 0; i < sum_predictions.length; i++) {

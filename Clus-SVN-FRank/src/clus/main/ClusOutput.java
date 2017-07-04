@@ -40,6 +40,7 @@ import clus.ext.ensembles.ClusOOBErrorEstimate;
 import clus.jeans.resource.ResourceInfo;
 import clus.jeans.util.FileUtil;
 import clus.jeans.util.StringUtils;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.StatisticPrintInfo;
@@ -69,7 +70,7 @@ public class ClusOutput {
         m_Sett = sett;
         m_Sett2 = sett;
         m_Fname = fname;
-        m_Writer = sett.getFileAbsoluteWriter(fname);
+        m_Writer = sett.getGeneric().getFileAbsoluteWriter(fname);
     }
 
 
@@ -102,7 +103,7 @@ public class ClusOutput {
         m_Writer.println("Clus run " + relname);
         m_Writer.println(StringUtils.makeString('*', 9 + relname.length()));
         m_Writer.println();
-        Date date = m_Schema.getSettings().getDate();
+        Date date = m_Schema.getSettings().getGeneric().getDate();
         m_Writer.println("Date: " + DateFormat.getInstance().format(date));
         m_Writer.println("File: " + m_Fname);
         int a_tot = m_Schema.getNbAttributes();
@@ -127,7 +128,7 @@ public class ClusOutput {
             te_err.showErrorBrief(cr, ClusModelInfo.TEST_ERR, m_Writer);
         }
         ClusErrorList tr_err = cr.getTrainError();
-        if (m_Sett.isOutTrainError() && tr_err != null) {
+        if (m_Sett.getOutput().isOutTrainError() && tr_err != null) {
             tr_err.showErrorBrief(cr, ClusModelInfo.TRAIN_ERR, m_Writer);
         }
         m_Writer.println();
@@ -143,7 +144,7 @@ public class ClusOutput {
         ArrayList<ClusModel> models = new ArrayList<ClusModel>();
         String ridx = cr.getIndexString();
 
-        if (getSettings().isSectionHMTREnabled()) {
+        if (getSettings().getHMTR().isSectionHMTREnabled()) {
             m_Writer.println("HMTR Tree");
             m_Writer.println("---------");
             m_Writer.println();
@@ -156,7 +157,7 @@ public class ClusOutput {
         m_Writer.println("Statistics");
         m_Writer.println("----------");
         m_Writer.println();
-        m_Writer.println("FTValue (FTest): " + m_Sett.getFTest());
+        m_Writer.println("FTValue (FTest): " + m_Sett.getTree().getFTest());
         double tsec = (double) cr.getInductionTime() / 1000.0;
         double tpru = (double) cr.getPruneTime() / 1000.0;
         // Prepare models for printing if required
@@ -175,7 +176,7 @@ public class ClusOutput {
         }
 
         String parallelTime = "";
-        if (getSettings().isEnsembleWithParallelExecution()) {
+        if (getSettings().getEnsemble().isEnsembleWithParallelExecution()) {
             parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format(((double) cr.getInductionTimeSequential() / 1000.0)) + " sec)";
         }
 
@@ -204,7 +205,7 @@ public class ClusOutput {
         }
 
         // print multi-label thresholds
-        if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled() && !cr.getStatManager().getSettings().isRelief()) {
+        if (cr.getStatManager().getSettings().getMLC().getSectionMultiLabel().isEnabled() && !cr.getStatManager().getSettings().getRelief().isRelief()) {
             String mlThresholdsTitle = "MultiLabelThresholds:";
             m_Writer.println(mlThresholdsTitle);
             m_Writer.println(StringUtils.makeString('-', mlThresholdsTitle.length()));
@@ -232,7 +233,7 @@ public class ClusOutput {
         String bName = FileUtil.getName(m_Fname);
         m_Writer.println();
         ClusErrorList te_err = cr.getTestError();
-        if (m_Sett.isOutFoldError() || detail) {
+        if (m_Sett.getOutput().isOutFoldError() || detail) {
             if (outputtrain) {
                 ClusErrorList tr_err = cr.getTrainError();
                 if (tr_err != null) {
@@ -249,7 +250,7 @@ public class ClusOutput {
                 ClusErrorList.printExtraError(cr, ClusModelInfo.TRAIN_ERR, m_Writer);
             }
             ClusErrorList va_err = cr.getValidationError();
-            if (va_err != null && m_Sett.isOutValidError()) {
+            if (va_err != null && m_Sett.getOutput().isOutValidError()) {
                 m_Writer.println("Validation error");
                 m_Writer.println("----------------");
                 m_Writer.println();
@@ -257,7 +258,7 @@ public class ClusOutput {
                 // va_err.showError(cr, ClusModelInfo.VALID_ERR, m_Writer);
                 m_Writer.println();
             }
-            if (te_err != null && m_Sett.isOutTestError()) {
+            if (te_err != null && m_Sett.getOutput().isOutTestError()) {
                 m_Writer.println("Testing error");
                 m_Writer.println("-------------");
                 m_Writer.println();
@@ -266,16 +267,16 @@ public class ClusOutput {
                 m_Writer.println();
             }
         }
-        StatisticPrintInfo info = m_Sett.getStatisticPrintInfo();
+        StatisticPrintInfo info = m_Sett.getOutput().getStatisticPrintInfo();
         for (int i = 0; i < cr.getNbModels(); i++) {
-            if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.shouldShowModel(i)) {
+            if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.getOutput().shouldShowModel(i)) {
                 ClusModelInfo mi = cr.getModelInfo(i);
                 ClusModel root = (ClusModel) models.get(i);
                 String modelname = mi.getName() + " Model";
                 m_Writer.println(modelname);
                 m_Writer.println(StringUtils.makeString('*', modelname.length()));
                 m_Writer.println();
-                if (m_Sett.isPrintModelAndExamples()) {
+                if (m_Sett.getOutput().isPrintModelAndExamples()) {
                     RowData pex = (RowData) cr.getTrainingSet();
                     // System.out.println(te_err);
                     if (te_err != null)
@@ -286,8 +287,8 @@ public class ClusOutput {
                     root.printModel(m_Writer, info);
                 }
                 m_Writer.println();
-                if (getSettings().isOutputPythonModel()) {
-                    if (getSettings().isEnsembleMode() && (i == ClusModel.ORIGINAL)) {
+                if (getSettings().getOutput().isOutputPythonModel()) {
+                    if (getSettings().getEnsemble().isEnsembleMode() && (i == ClusModel.ORIGINAL)) {
                         root.printModelToPythonScript(m_Writer);// root is a forest
                     }
                     else {
@@ -304,19 +305,19 @@ public class ClusOutput {
                 }
             }
         }
-        if (getSettings().isOutputDatabaseQueries()) {
-            int starttree = getSettings().getStartTreeCpt();
-            int startitem = getSettings().getStartItemCpt();
+        if (getSettings().getOutput().isOutputDatabaseQueries()) {
+            int starttree = getSettings().getExhaustiveSearch().getStartTreeCpt();
+            int startitem = getSettings().getExhaustiveSearch().getStartItemCpt();
             ClusModel root = (ClusModel) models.get(cr.getNbModels() - 1);
             // use the following lines for creating a SQL file that will put the tree into a database
-            String out_database_name = m_Sett2.getAppName() + ".txt";
-            PrintWriter database_writer = m_Sett2.getFileAbsoluteWriter(out_database_name);
-            root.printModelToQuery(database_writer, cr, starttree, startitem, getSettings().isExhaustiveSearch());
+            String out_database_name = m_Sett2.getGeneric().getAppName() + ".txt";
+            PrintWriter database_writer = m_Sett2.getGeneric().getFileAbsoluteWriter(out_database_name);
+            root.printModelToQuery(database_writer, cr, starttree, startitem, getSettings().getExhaustiveSearch().isExhaustiveSearch());
             database_writer.close();
             System.out.println("The queries are in " + out_database_name);
         }
 
-        if (getSettings().isOutputClowdFlowsJSON()) {
+        if (getSettings().getOutput().isOutputClowdFlowsJSON()) {
             JsonObject output = new JsonObject();
             StringWriter settingsStringWriter = new StringWriter();
             PrintWriter settingsWriter = new PrintWriter(settingsStringWriter);
@@ -325,7 +326,7 @@ public class ClusOutput {
             JsonArray outputModels = new JsonArray();
             output.add("models", outputModels);
             for (int i = 0; i < cr.getNbModels(); i++) {
-                if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.shouldShowModel(i)) {
+                if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.getOutput().shouldShowModel(i)) {
                     ClusModelInfo mi = cr.getModelInfo(i);
                     ClusModel root = (ClusModel) models.get(i);
                     String modelname = mi.getName();
@@ -340,8 +341,8 @@ public class ClusOutput {
                 }
             }
 
-            String jsonFileName = m_Sett2.getAppName() + ".json";
-            PrintWriter jsonWriter = m_Sett2.getFileAbsoluteWriter(jsonFileName);
+            String jsonFileName = m_Sett2.getGeneric().getAppName() + ".json";
+            PrintWriter jsonWriter = m_Sett2.getGeneric().getFileAbsoluteWriter(jsonFileName);
             jsonWriter.write(output.toString());
             //System.out.print(output.toString());
             jsonWriter.close();
@@ -375,7 +376,7 @@ public class ClusOutput {
         m_Writer.println();
         String bName = FileUtil.getName(m_Fname);
         ClusErrorList tr_err = summary.getTrainError();
-        if (m_Sett.isOutTrainError() && tr_err != null) {
+        if (m_Sett.getOutput().isOutTrainError() && tr_err != null) {
             m_Writer.println("Training error");
             m_Writer.println("--------------");
             m_Writer.println();

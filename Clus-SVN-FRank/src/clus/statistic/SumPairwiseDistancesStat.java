@@ -6,7 +6,7 @@ import java.util.Random;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class SumPairwiseDistancesStat extends BitVectorStat {
@@ -21,19 +21,21 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
     protected int m_Efficiency = 2;
 
 
-    public SumPairwiseDistancesStat(ClusDistance dist) {
+    public SumPairwiseDistancesStat(Settings sett, ClusDistance dist) {
+        super(sett);
+        
         m_Distance = dist;
     }
 
 
-    public SumPairwiseDistancesStat(ClusDistance dist, int efflvl) {
-        m_Distance = dist;
+    public SumPairwiseDistancesStat(Settings sett, ClusDistance dist, int efflvl) {
+        this(sett, dist);
         m_Efficiency = efflvl;
     }
 
 
     public ClusStatistic cloneStat() {
-        return new SumPairwiseDistancesStat(m_Distance, m_Efficiency);
+        return new SumPairwiseDistancesStat(this.m_Settings, m_Distance, m_Efficiency);
     }
 
 

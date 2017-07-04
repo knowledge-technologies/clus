@@ -31,7 +31,7 @@ import java.util.ArrayList;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 

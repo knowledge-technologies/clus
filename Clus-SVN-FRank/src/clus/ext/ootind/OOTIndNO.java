@@ -33,7 +33,7 @@ import clus.ext.optxval.OptXValSplit;
 import clus.jeans.resource.ResourceInfo;
 import clus.jeans.util.list.MyListIter;
 import clus.main.ClusStat;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
 import clus.util.tools.debug.Debug;
@@ -75,7 +75,7 @@ public class OOTIndNO extends OOTInduce {
                     }
                 }
                 // Show best test
-                if (Settings.VERBOSE > 0)
+                if (getSettings().getGeneric().getVerbose() > 0)
                     ngrp.println();
                 ngrps.insertBefore(ngrp);
                 nb_groups++;

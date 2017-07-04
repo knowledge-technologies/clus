@@ -55,7 +55,7 @@ import clus.ext.timeseries.TimeSeriesStat;
 import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusDistance;
@@ -184,19 +184,19 @@ public class TestKnnModel implements ClusModel, Serializable {
         System.out.println(Settings.kNN_distanceWeight.getStringValue());
         System.out.println("------------------------------------------------");
 
-		// save prediction template
+        // save prediction template
         // @todo : should all this be repalced with:
         // statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
         if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()) {
-                m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelThreshold());
+                m_StatTemplate = new ClassificationStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelThreshold());
             }
             else {
-                m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                m_StatTemplate = new ClassificationStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
             }
         }
         else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
-            m_StatTemplate = new RegressionStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+            m_StatTemplate = new RegressionStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
         else if (ClusStatManager.getMode() == ClusStatManager.MODE_TIME_SERIES) {
             // TimeSeriesAttrType attr =
             // this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET)[0];
@@ -325,15 +325,18 @@ public class TestKnnModel implements ClusModel, Serializable {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToPythonScript() - Not supported yet for kNN.");
     }
 
+
     @Override
     public JsonObject getModelJSON() {
         return null;
     }
 
+
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info) {
         return null;
     }
+
 
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {

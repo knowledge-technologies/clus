@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 import clus.jeans.math.MathUtil;
 import clus.jeans.util.compound.DoubleBooleanCount;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ROCAndPRCurve implements Serializable { // does not implement ComponentError - would this make sense?

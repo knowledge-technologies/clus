@@ -7,7 +7,8 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
 import clus.data.type.NominalAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsBeamSearch;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 
@@ -21,8 +22,8 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     private ClusBeam m_Beam;
 
 
-    public ClusBeamSimClassStat(NominalAttrType[] nomAtts, ClusBeam beam) {
-        super(nomAtts); // does not work for multi label !!!
+    public ClusBeamSimClassStat(Settings sett, NominalAttrType[] nomAtts, ClusBeam beam) {
+        super(sett, nomAtts); // does not work for multi label !!!
         m_Beam = beam;
         m_SumPredictions = replicateEmpty(m_ClassCounts);
         m_SumSqPredictions = replicateEmpty(m_ClassCounts);
@@ -30,7 +31,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
 
 
     public ClusStatistic cloneStat() {
-        return new ClusBeamSimClassStat(m_Attrs, m_Beam);
+        return new ClusBeamSimClassStat(m_Settings, m_Attrs, m_Beam);
     }
 
 
@@ -180,7 +181,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
         similarity /= m_NbTarget; // average for the targets
         similarity /= m_Beam.getCrWidth(); // average for the beam size
         // beta times similarity
-        result += Settings.BEAM_SIMILARITY * similarity;
+        result += SettingsBeamSearch.BEAM_SIMILARITY * similarity;
         return result;
     }
 

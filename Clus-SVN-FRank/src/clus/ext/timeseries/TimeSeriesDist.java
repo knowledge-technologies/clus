@@ -24,7 +24,7 @@ package clus.ext.timeseries;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.TimeSeriesAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 

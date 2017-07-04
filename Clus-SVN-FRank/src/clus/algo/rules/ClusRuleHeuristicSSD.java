@@ -27,7 +27,8 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 
 
@@ -59,9 +60,9 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         double n_pos = pstat.m_SumWeight;
         // Acceptable?
-        if (n_pos < Settings.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
+        if (n_pos < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
         // Calculate value
-        double offset = m_StatManager.getSettings().getHeurDispOffset();
+        double offset = m_StatManager.getSettings().getRules().getHeurDispOffset();
         double def_value = getTrainDataHeurValue();
         // System.out.print("Inside calcHeuristic()");
         // System.out.println(" - default SS: "+def_value);
@@ -71,13 +72,13 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
         // [0,1] interval. This weight is in stdev units,
         // default value = 4 = (-2sigma,2sigma) should cover 95% of examples
         // This will only be important when combining different types of atts
-        double norm = m_StatManager.getSettings().getVarBasedDispNormWeight();
+        double norm = m_StatManager.getSettings().getRules().getVarBasedDispNormWeight();
         value = 1 / (norm * norm) * (1 - value / def_value) + offset;
         // Normalized version of 'value = def_value -value + offset'
         // System.out.println(", combined disp. value: "+value);
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING).getTotalWeight();
-        double cov_par = m_StatManager.getSettings().getHeurCoveragePar();
+        double cov_par = m_StatManager.getSettings().getRules().getHeurCoveragePar();
         value *= Math.pow(n_pos / train_sum_w, cov_par);
         // System.out.println(" cov: "+n_pos+"/"+train_sum_w+", final value: "+value); //+" -> -"+value);
         if (value < 1e-6)

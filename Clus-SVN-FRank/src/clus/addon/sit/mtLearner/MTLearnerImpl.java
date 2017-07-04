@@ -4,7 +4,7 @@ package clus.addon.sit.mtLearner;
 import clus.addon.sit.TargetSet;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;

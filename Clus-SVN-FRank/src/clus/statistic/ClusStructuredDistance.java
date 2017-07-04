@@ -22,7 +22,7 @@
  
 package clus.statistic;
 
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 public class ClusStructuredDistance extends ClusDistance {
 

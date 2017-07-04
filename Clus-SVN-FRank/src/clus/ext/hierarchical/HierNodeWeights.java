@@ -24,7 +24,7 @@ package clus.ext.hierarchical;
 
 import java.util.ArrayList;
 
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class HierNodeWeights {

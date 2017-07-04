@@ -10,7 +10,7 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.jeans.list.BitList;
 import clus.jeans.math.matrix.MSymMatrix;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.GeneticDistanceStat;
 

@@ -4,7 +4,7 @@ package clus.ext.hierarchical;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 import clus.statistic.SumPairwiseDistancesStat;
@@ -17,15 +17,15 @@ public class HierSumPairwiseDistancesStat extends WHTDStatistic {
     protected SumPairwiseDistancesStat m_PairwiseDistStat;
 
 
-    public HierSumPairwiseDistancesStat(ClassHierarchy hier, ClusDistance dist, int comp) {
-        super(hier, comp);
-        m_PairwiseDistStat = new SumPairwiseDistancesStat(dist);
+    public HierSumPairwiseDistancesStat(Settings sett, ClassHierarchy hier, ClusDistance dist, int comp) {
+        super(sett, hier, comp);
+        m_PairwiseDistStat = new SumPairwiseDistancesStat(sett, dist);
     }
 
 
     public ClusStatistic cloneStat() {
         ClusDistance dist = m_PairwiseDistStat.getDistance();
-        return new HierSumPairwiseDistancesStat(m_Hier, dist, m_Compatibility);
+        return new HierSumPairwiseDistancesStat(this.m_Settings, m_Hier, dist, m_Compatibility);
     }
 
 

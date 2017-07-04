@@ -43,7 +43,7 @@ import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesAttrTypeSingleLabel;
 import clus.jeans.util.MStreamTokenizer;
 import clus.jeans.util.StringUtils;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusException;
 
 
@@ -141,7 +141,7 @@ public class ARFFFile {
             type.initSettings(schema.getSettings());
         }
         else if (uptype.startsWith("HIERARCHICAL")) {
-            if (schema.getSettings().getHierSingleLabel()) {
+            if (schema.getSettings().getHMLC().getHierSingleLabel()) {
                 ClassesAttrTypeSingleLabel type = new ClassesAttrTypeSingleLabel(aname, atype);
                 schema.addAttrType(type);
                 type.initSettings(schema.getSettings());
@@ -170,7 +170,7 @@ public class ARFFFile {
                 atype = "{1,0}";
             int tlen = atype.length();
             if (tlen > 2 && atype.charAt(0) == '{' && atype.charAt(tlen - 1) == '}') {
-                if (sett.getReduceMemoryNominalAttrs() == true)
+                if (sett.getAttribute().getReduceMemoryNominalAttrs() == true)
                     schema.addAttrType(new BitwiseNominalAttrType(aname, atype));
                 else
                     schema.addAttrType(new NominalAttrType(aname, atype));
@@ -199,7 +199,7 @@ public class ARFFFile {
                 wrt.println();
             }
         }
-        if (!schema.getSettings().shouldWritePredictionsFromEnsemble())
+        if (!schema.getSettings().getEnsemble().shouldWritePredictionsFromEnsemble())
             wrt.println();
         
         wrt.flush();

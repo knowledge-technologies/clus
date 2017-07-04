@@ -31,7 +31,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.NumericAttrType;
 import clus.jeans.util.array.MyIntArray;
 import clus.jeans.util.sort.DoubleIndexSorter;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.model.test.NumericTest;
 import clus.model.test.SoftTest;

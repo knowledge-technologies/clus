@@ -22,7 +22,7 @@
 
 package clus.util;
 
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 public class ClusException extends Exception {

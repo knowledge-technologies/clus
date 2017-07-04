@@ -30,6 +30,7 @@ import clus.data.rows.RowData;
 import clus.data.rows.TupleIterator;
 import clus.error.ClusErrorList;
 import clus.ext.ensembles.ClusReadWriteLock;
+import clus.main.settings.Settings;
 import clus.model.ClusModelInfo;
 import clus.selection.ClusSelection;
 import clus.util.ClusException;

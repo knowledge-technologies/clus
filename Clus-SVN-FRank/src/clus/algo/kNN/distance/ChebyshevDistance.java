@@ -24,7 +24,7 @@ package clus.algo.kNN.distance;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.statistic.ClusDistance;
 
 

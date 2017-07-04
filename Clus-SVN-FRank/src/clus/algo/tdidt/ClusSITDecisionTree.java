@@ -20,7 +20,8 @@ import clus.jeans.util.IntervalCollection;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.ClusSummary;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsSIT;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.selection.XValMainSelection;
@@ -75,7 +76,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
 
 
     public ClusError doParamXVal(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
-        int prevVerb = Settings.enableVerbose(0);
+        int prevVerb = getSettings().getGeneric().enableVerbose(0);
         ClusStatManager mgr = getStatManager();
         ClusSummary summ = new ClusSummary();
         summ.setTestError(createTuneError(mgr));
@@ -96,7 +97,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
 
         }
         ClusModelInfo mi = summ.getModelInfo(ClusModel.PRUNED);
-        Settings.enableVerbose(prevVerb);
+        getSettings().getGeneric().enableVerbose(prevVerb);
 
         ClusErrorList err_list = mi.getTestError();
         ClusError err = err_list.getFirstError();
@@ -246,18 +247,17 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     public void findBestSupportTasks(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
-        int main_target = new Integer(settings.getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
+        int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
                                                                     //// target 1
 
         // only non-interrupted ranges work for now, eg NOT "1-10,12-15"
-        settings.getTarget();
-        IntervalCollection targets = new IntervalCollection(settings.getTarget());
+        IntervalCollection targets = new IntervalCollection(getSettings().getAttribute().getTarget());
 
         int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
                                                                                        // attribute in this range,
                                                                                        // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
-        boolean recursive = settings.getRecursive();
+        boolean recursive = settings.getSIT().getRecursive();
 
         // Optimizing for target 1:
         // set all weights to 0, except the main_target
@@ -283,13 +283,12 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
 
     public void twoSidedSit(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
         ClusStatManager mgr = getStatManager();
-        Settings settings = mgr.getSettings();
+        SettingsSIT settings = mgr.getSettings().getSIT();
         int main_target = new Integer(settings.getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
                                                                     //// target 1
 
         // only non-interrupted ranges work for now, eg NOT "1-10,12-15"
-        settings.getTarget();
-        IntervalCollection targets = new IntervalCollection(settings.getTarget());
+        IntervalCollection targets = new IntervalCollection(getSettings().getAttribute().getTarget());
 
         int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
                                                                                        // attribute in this range,
@@ -348,18 +347,17 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     public void superSit(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
-        int main_target = new Integer(settings.getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
+        int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
                                                                     //// target 1
 
         // only non-interrupted ranges work for now, eg NOT "1-10,12-15"
-        settings.getTarget();
-        IntervalCollection targets = new IntervalCollection(settings.getTarget());
+        IntervalCollection targets = new IntervalCollection(settings.getAttribute().getTarget());
 
         int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
                                                                                        // attribute in this range,
                                                                                        // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
-        boolean recursive = settings.getRecursive();
+        boolean recursive = settings.getSIT().getRecursive();
 
         // estimate ST-error
         // set all weights to 0, except the main_target
@@ -412,18 +410,17 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     public void sweepSit(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
-        int main_target = new Integer(settings.getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
+        int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
                                                                     //// target 1
 
         // only non-interrupted ranges work for now, eg NOT "1-10,12-15"
-        settings.getTarget();
-        IntervalCollection targets = new IntervalCollection(settings.getTarget());
+        IntervalCollection targets = new IntervalCollection(settings.getAttribute().getTarget());
 
         int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
                                                                                        // attribute in this range,
                                                                                        // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
-        boolean recursive = settings.getRecursive();
+        boolean recursive = settings.getSIT().getRecursive();
 
         // estimate ST-error
         // set all weights to 0, except the main_target
@@ -515,19 +512,18 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         // target 1
 
         // only non-interrupted ranges work for now, eg NOT "1-10,12-15"
-        settings.getTarget();
-        IntervalCollection targets = new IntervalCollection(settings.getTarget());
+        IntervalCollection targets = new IntervalCollection(settings.getAttribute().getTarget());
 
         int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
                                                                                        // attribute in this range,
                                                                                        // should be equal to "targets"
                                                                                        // int emc = main_target - support_range[0];//error model component of the main target
-        boolean recursive = settings.getRecursive();
+        boolean recursive = settings.getSIT().getRecursive();
 
         resetWeights();
         double[] weights = mgr.getClusteringWeights().m_Weights;// .clone();
 
-        ClusErrorOutput errOutput = new ClusErrorOutput(settings.getAppName() + ".err", settings);
+        ClusErrorOutput errOutput = new ClusErrorOutput(settings.getGeneric().getAppName() + ".err", settings);
 
         // generate all subsets for n targets
         int n = support_range[1] - support_range[0] + 1;

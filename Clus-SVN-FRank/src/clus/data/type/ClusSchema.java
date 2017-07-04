@@ -35,7 +35,6 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.io.DummySerializable;
-import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.selection.XValDataSelection;
 import clus.selection.XValMainSelection;
@@ -44,6 +43,7 @@ import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.jeans.util.IntervalCollection;
 import clus.jeans.util.StringUtils;
+import clus.main.settings.Settings;
 
 
 public class ClusSchema implements Serializable {
@@ -91,11 +91,11 @@ public class ClusSchema implements Serializable {
     public void initializeSettings(Settings sett) throws ClusException, IOException {
         setSettings(sett);
         setTestSet(-1); /* Support ID for XVAL attribute later on? */
-        setTarget(new IntervalCollection(sett.getTarget()));
-        setDisabled(new IntervalCollection(sett.getDisabled()));
-        setClustering(new IntervalCollection(sett.getClustering()));
-        setDescriptive(new IntervalCollection(sett.getDescriptive()));
-        setKey(new IntervalCollection(sett.getKey()));
+        setTarget(new IntervalCollection(sett.getAttribute().getTarget()));
+        setDisabled(new IntervalCollection(sett.getAttribute().getDisabled()));
+        setClustering(new IntervalCollection(sett.getAttribute().getClustering()));
+        setDescriptive(new IntervalCollection(sett.getAttribute().getDescriptive()));
+        setKey(new IntervalCollection(sett.getAttribute().getKey()));
         updateAttributeUse();
         addIndices(ClusSchema.ROWS);
     }
@@ -625,7 +625,7 @@ public class ClusSchema implements Serializable {
 
     public final XValMainSelection getXValSelection(ClusData data) throws ClusException {
         if (m_TSAttr == null) {
-            return new XValRandomSelection(data.getNbRows(), getSettings().getXValFolds());
+            return new XValRandomSelection(data.getNbRows(), getSettings().getData().getXValFolds());
         }
         else {
             return new XValDataSelection(m_TSAttr);
@@ -799,7 +799,7 @@ public class ClusSchema implements Serializable {
                 }
             }
             m_NonSparse = vectorToAttrArray(nonSparse);
-            if (getSettings().getVerbose() > 0)
+            if (getSettings().getGeneric().getVerbose() > 0)
                 System.out.println("Number of sparse attributes: " + nbSparse);
             addRowsIndex();
             m_IsSparse = true;
@@ -808,7 +808,7 @@ public class ClusSchema implements Serializable {
 
 
     public void printInfo() {
-        if (getSettings().getVerbose() >= 1) {
+        if (getSettings().getGeneric().getVerbose() >= 1) {
             System.out.println("Space required by nominal attributes: " + m_NbVt[ClusAttrType.VALUE_TYPE_INT] * 4 + " bytes/tuple regular, " + m_NbVt[ClusAttrType.VALUE_TYPE_BITWISEINT] * 4 + " bytes/tuple bitwise");
         }
     }

@@ -14,7 +14,7 @@ import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.processor.ModelProcessorCollection;
@@ -31,17 +31,24 @@ public class ClusOOBErrorEstimate {
     static HashMap<Integer, Integer> m_OOBUsage;
     static boolean m_OOBCalculation;
     int m_Mode;
-    
+    Settings m_Settings;
+
     static ClusReadWriteLock m_LockPredictions = new ClusReadWriteLock();
     static ClusReadWriteLock m_LockUsage = new ClusReadWriteLock();
     static ClusReadWriteLock m_LockCalculation = new ClusReadWriteLock();
 
 
-    public ClusOOBErrorEstimate(int mode) {
+    public ClusOOBErrorEstimate(int mode, Settings sett) {
         m_OOBPredictions = new HashMap();
         m_OOBUsage = new HashMap<Integer, Integer>();
         m_OOBCalculation = false;
         m_Mode = mode;
+        m_Settings = sett;
+    }
+
+
+    private Settings getSettings() {
+        return m_Settings;
     }
 
 
@@ -63,7 +70,7 @@ public class ClusOOBErrorEstimate {
 
 
     public static double[][] getPredictionForClassificationTuple(DataTuple tuple) {
-        m_LockPredictions.readingLock();   
+        m_LockPredictions.readingLock();
         double[][] pred = (double[][]) m_OOBPredictions.get(tuple.hashCode());
         double[][] predictions = new double[pred.length][];
         for (int i = 0; i < pred.length; i++) {
@@ -77,7 +84,7 @@ public class ClusOOBErrorEstimate {
     public synchronized void postProcessForestForOOBEstimate(ClusRun cr, OOBSelection oob_total, RowData all_data, Clus cl, String addname) throws ClusException, IOException {
         Settings sett = cr.getStatManager().getSettings();
         ClusSchema schema = all_data.getSchema();
-        ClusOutput output = new ClusOutput(sett.getAppName() + addname + ".oob", schema, sett);
+        ClusOutput output = new ClusOutput(sett.getGeneric().getAppName() + addname + ".oob", schema, sett);
         setOOBCalculation(true);
 
         // this is the part for writing the predictions from the OOB estimate
@@ -93,7 +100,7 @@ public class ClusOOBErrorEstimate {
         calcOOBError(oob_total, all_data, ClusModelInfo.TRAIN_ERR, cr);
         cl.calcExtraTrainingSetErrors(cr);
         output.writeHeader();
-        output.writeOutput(cr, true, cl.getSettings().isOutTrainError());
+        output.writeOutput(cr, true, cl.getSettings().getOutput().isOutTrainError());
         output.close();
         // wrt.close();
         setOOBCalculation(false);
@@ -148,7 +155,7 @@ public class ClusOOBErrorEstimate {
             // this should have a [][].for each attribute we store: Majority: the winning class, for Probability
             // distribution, the class distribution
             ClassificationStat stat = (ClassificationStat) model.predictWeighted(tuple);
-            switch (Settings.m_ClassificationVoteType.getValue()) {// default is Majority Vote
+            switch (getSettings().getEnsemble().getClassificationVoteType()) {// default is Majority Vote
                 case 0:
                     // m_OOBPredictions.put(tuple.hashCode(),
                     // ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
@@ -198,7 +205,7 @@ public class ClusOOBErrorEstimate {
             // implement just addition!!!! and then
             ClassificationStat stat = (ClassificationStat) model.predictWeighted(tuple);
             double[][] predictions = stat.m_ClassCounts.clone();
-            switch (Settings.m_ClassificationVoteType.getValue()) {// default is Majority Vote
+            switch (getSettings().getEnsemble().getClassificationVoteType()) {// default is Majority Vote
                 case 0:
                     predictions = ClusEnsembleInduceOptimization.transformToMajority(predictions);
                     break;

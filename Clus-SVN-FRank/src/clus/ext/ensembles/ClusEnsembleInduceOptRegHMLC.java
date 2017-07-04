@@ -5,7 +5,7 @@ import java.io.IOException;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.TupleIterator;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStatBase;
@@ -22,8 +22,8 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
 //    }
 
 
-    public ClusEnsembleInduceOptRegHMLC(TupleIterator train, TupleIterator test) throws IOException, ClusException {
-        super(train, test);
+    public ClusEnsembleInduceOptRegHMLC(TupleIterator train, TupleIterator test, Settings sett) throws IOException, ClusException {
+        super(train, test, sett);
     }
 
 
@@ -40,7 +40,7 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
 		m_NbUpdates++;		
 		
 		// for ROS
-        if (Settings.isEnsembleROSEnabled()) {
+        if (getSettings().getEnsemble().isEnsembleROSEnabled()) {
             int[] enabledTargets = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(m_NbUpdates-1)); // model (m_NbUpdates-1) uses enabledTargets
             m_EnsembleROSInfo.incrementCoverageOpt(enabledTargets);
             

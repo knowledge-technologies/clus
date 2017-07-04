@@ -35,7 +35,7 @@ import java.util.ArrayList;
 
 import clus.algo.rules.ClusRuleSet;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 
@@ -136,7 +136,7 @@ public class GDAlg extends OptAlg {
      */
     public ArrayList<Double> optimize() {
 
-        if (Settings.VERBOSE > 0)
+        if (getSettings().getGeneric().getVerbose() > 0)
             System.out.print("\nGradient descent: Optimizing rule weights (" + getSettings().getOptGDMaxIter() + ") ");
 
         PrintWriter wrt_log = null;
@@ -166,7 +166,7 @@ public class GDAlg extends OptAlg {
         int nbOfIterations = 0;
         while (nbOfIterations < getSettings().getOptGDMaxIter()) {
 
-            if (Settings.VERBOSE > 0 && nbOfIterations % (Math.ceil(getSettings().getOptGDMaxIter() / 50.0)) == 0)
+            if (getSettings().getGeneric().getVerbose() > 0 && nbOfIterations % (Math.ceil(getSettings().getOptGDMaxIter() / 50.0)) == 0)
                 System.out.print(".");
             if (nbOfIterations % m_earlyStopStep == 0) {
 
@@ -174,7 +174,7 @@ public class GDAlg extends OptAlg {
                     if (GDProbl.m_printGDDebugInformation)
                         wrt_log.println("Increase in test fitness. Reducing step size or stopping.");
 
-                    if (Settings.VERBOSE > 0)
+                    if (getSettings().getGeneric().getVerbose() > 0)
                         System.out.print("\n\tOverfitting after " + nbOfIterations + " iterations.");
 
                     if (!getSettings().isOptGDIsDynStepsize() && m_earlyStopStepsizeReducedNb < getSettings().getOptGDNbOfStepSizeReduce()) {
@@ -182,11 +182,11 @@ public class GDAlg extends OptAlg {
                         m_GDProbl.dropStepSize(0.1); // Drop stepsize to tenth.
                         m_GDProbl.restoreBestWeight(m_weights); // restoring the weight with minimum fitness
                         m_GDProbl.fullGradientComputation(m_weights);
-                        if (Settings.VERBOSE > 0)
+                        if (getSettings().getGeneric().getVerbose() > 0)
                             System.out.print(" Reducing step, continuing.\n");
                     }
                     else { // If dynamic step size, stop always
-                        if (Settings.VERBOSE > 0)
+                        if (getSettings().getGeneric().getVerbose() > 0)
                             System.out.print(" Stopping.\n");
                         if (GDProbl.m_printGDDebugInformation)
                             wrt_log.println("Early stopping detected after " + nbOfIterations + " iterations.");
@@ -214,7 +214,7 @@ public class GDAlg extends OptAlg {
             // Change of the weight according to this gradient.
             double[] valueChange = new double[maxGradients.length];
 
-            boolean debugPrint = Settings.VERBOSE > 0 && false; // DEBUG
+            boolean debugPrint = getSettings().getGeneric().getVerbose() > 0 && false; // DEBUG
 
             if (debugPrint)
                 System.out.print("\nDEBUG: Computing covariances, total " + maxGradients.length + "\n");
@@ -279,7 +279,7 @@ public class GDAlg extends OptAlg {
             nbOfIterations++;
         } // While
 
-        if (Settings.VERBOSE > 0)
+        if (getSettings().getGeneric().getVerbose() > 0)
             System.out.println(" done!");
 
         if (getSettings().getOptGDEarlyStopAmount() > 0) {

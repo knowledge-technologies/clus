@@ -23,6 +23,7 @@
 package clus.ext.optiontree;
 
 import clus.main.*;
+import clus.main.settings.Settings;
 import clus.model.test.*;
 import clus.util.*;
 import clus.statistic.*;
@@ -321,14 +322,14 @@ public class TestAndHeuristic {
         // System.out.println(val);
         
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
-        if (Settings.VERBOSE >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (getSettings().getGeneric().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
         //System.out.println(m_BestHeur);
         //System.out.println(heur);
         if (heur - ClusHeuristic.DELTA > m_BestHeur ) {
-            if (Settings.VERBOSE >= 2) System.err.println("Better.");
+            if (getSettings().getGeneric().getVerbose() >= 2) System.err.println("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
-            if (Settings.VERBOSE >= 2) {
+            if (getSettings().getGeneric().getVerbose() >= 2) {
                 System.err.println(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
             }
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
@@ -350,9 +351,9 @@ public class TestAndHeuristic {
      */
     public final void updateInverseNumeric(double val, ClusAttrType at) {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
-        if (Settings.VERBOSE >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (getSettings().getGeneric().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
-            if (Settings.VERBOSE >= 2) System.err.println("Better.");
+            if (getSettings().getGeneric().getVerbose() >= 2) System.err.println("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;

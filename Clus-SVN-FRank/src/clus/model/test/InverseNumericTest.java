@@ -31,7 +31,7 @@ import java.text.NumberFormat;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.util.ClusRandom;
 
 

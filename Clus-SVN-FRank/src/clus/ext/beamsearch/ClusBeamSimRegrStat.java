@@ -7,7 +7,8 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
 import clus.data.type.NumericAttrType;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsBeamSearch;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
@@ -22,16 +23,18 @@ public class ClusBeamSimRegrStat extends RegressionStat {
     private ClusBeam m_Beam;
 
 
-    public ClusBeamSimRegrStat(NumericAttrType[] attrs, ClusBeam beam) {
-        super(attrs);
+    public ClusBeamSimRegrStat(Settings sett, NumericAttrType[] attrs, ClusBeam beam) {
+        super(sett, attrs);
+        
         m_SumPredictions = new double[m_NbAttrs];
         m_SumSqPredictions = new double[m_NbAttrs];
         m_Beam = beam;
     }
 
 
-    public ClusBeamSimRegrStat(NumericAttrType[] attrs, boolean onlymean, ClusBeam beam) {
-        super(attrs, onlymean);
+    public ClusBeamSimRegrStat(Settings sett, NumericAttrType[] attrs, boolean onlymean, ClusBeam beam) {
+        super(sett, attrs, onlymean);
+        
         if (!onlymean) {
             m_SumPredictions = new double[m_NbAttrs];
             m_SumSqPredictions = new double[m_NbAttrs];
@@ -105,18 +108,18 @@ public class ClusBeamSimRegrStat extends RegressionStat {
         similarity /= m_NbAttrs; // average for the targets
         similarity /= m_Beam.getCrWidth(); // average for the beam size
         // beta times similarity
-        result += Settings.BEAM_SIMILARITY * similarity;
+        result += SettingsBeamSearch.BEAM_SIMILARITY * similarity;
         return result;
     }
 
 
     public ClusStatistic cloneStat() {
-        return new ClusBeamSimRegrStat(m_Attrs, false, m_Beam);
+        return new ClusBeamSimRegrStat(this.m_Settings, m_Attrs, false, m_Beam);
     }
 
 
     public ClusStatistic cloneSimple() {
-        return new ClusBeamSimRegrStat(m_Attrs, true, m_Beam);
+        return new ClusBeamSimRegrStat(this.m_Settings, m_Attrs, true, m_Beam);
     }
 
 

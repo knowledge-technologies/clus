@@ -14,8 +14,7 @@ import clus.data.type.ClusSchema;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.ext.ensembles.ClusForest;
 import clus.main.ClusRun;
-// import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;
@@ -41,8 +40,8 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
     public ClusRuleFromTreeInduce(ClusSchema schema, Settings sett, Clus clus) throws ClusException, IOException {
         super(schema, sett);
         m_Clus = clus;
-        sett.setSectionEnsembleEnabled(true); // For printing out the ensemble texts
-        getSettings().setEnsembleMode(true); // For ensemble things working
+        sett.getEnsemble().setSectionEnsembleEnabled(true); // For printing out the ensemble texts
+        getSettings().getEnsemble().setEnsembleMode(true); // For ensemble things working
     }
 
 
@@ -56,13 +55,13 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
         // The params may already have been disabled, thus we do not want to disable them again
         // (forgets original values)
         // getSettings().returnRuleInduceParams();
-        getSettings().disableRuleInduceParams();
+        getSettings().getRules().disableRuleInduceParams();
 
         // Train the decision tree ensemble with hopefully all the available settings.
         ClusEnsembleInduce ensemble = new ClusEnsembleInduce(this, m_Clus);
 
         ensemble.induceAll(cr);
-        getSettings().returnRuleInduceParams();
+        getSettings().getRules().returnRuleInduceParams();
 
         // Following might cause problems
         // clus.main.ClusStatManager.heuristicNeedsCombStat() -- ok as long as Heuristic = VarianceReduction
@@ -83,7 +82,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
         /**
          * The class for transforming single trees to rules
          */
-        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, getSettings().rulesFromTree()); // Parameter
+        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, getSettings().getTree().rulesFromTree()); // Parameter
                                                                                                       // always true
         ClusRuleSet ruleSet = new ClusRuleSet(getStatManager()); // Manager from super class
 
@@ -100,7 +99,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
             numberOfUniqueRules += ruleSet.addRuleSet(treeTransform.constructRules(treeRootNode, getStatManager()));
         }
 
-        if (Settings.VERBOSE > 0)
+        if (getSettings().getGeneric().getVerbose() > 0)
             System.out.println("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules.\n\tCreated " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
 
         RowData trainingData = (RowData) cr.getTrainingSet();
@@ -115,7 +114,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
             left_over.calcMean();
         }
         else {
-            if (Settings.VERBOSE > 0)
+            if (getSettings().getGeneric().getVerbose() > 0)
                 System.out.println("All training examples covered - default rule on entire training set!");
             ruleSet.m_Comment = new String(" (on entire training set)");
             left_over = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET).cloneStat();
@@ -134,14 +133,14 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
         ruleSet.postProc();
 
         // Optimizing rule set
-        if (getSettings().isRulePredictionOptimized()) {
+        if (getSettings().getRules().isRulePredictionOptimized()) {
             ruleSet = optimizeRuleSet(ruleSet, (RowData) cr.getTrainingSet());
         }
         // ruleSet.setTrainErrorScore(); // Seems to be needed only for some other covering method. Not always needed?
         // ruleSet.addDataToRules(trainingData); // May take huge amount of memory
 
         // Computing dispersion
-        if (getSettings().computeDispersion()) {
+        if (getSettings().getRules().computeDispersion()) {
             ruleSet.computeDispersion(ClusModel.TRAIN);
             ruleSet.removeDataFromRules();
             if (cr.getTestIter() != null) {

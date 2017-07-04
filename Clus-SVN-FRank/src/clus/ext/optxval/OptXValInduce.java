@@ -42,7 +42,7 @@ import clus.error.multiscore.MultiScore;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusRun;
 import clus.main.ClusStat;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;

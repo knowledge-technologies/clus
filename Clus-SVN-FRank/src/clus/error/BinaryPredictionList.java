@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 import clus.jeans.util.compound.DoubleBooleanCount;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 
 
 // Avril Lavigne in matejp se sprasujeta: Why do you have to /.../ make things so complicated?

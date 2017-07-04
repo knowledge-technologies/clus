@@ -8,7 +8,8 @@ import clus.data.rows.RowData;
 import clus.ext.ensembles.containters.NodeDepthPair;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
+import clus.main.settings.SettingsEnsemble;
 import clus.model.ClusModel;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
@@ -17,8 +18,8 @@ import clus.util.ClusException;
 import clus.util.ClusRandomNonstatic;
 
 public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
-	public ClusEnsembleFeatureRanking(){
-		super();
+	public ClusEnsembleFeatureRanking(Settings sett){
+		super(sett);
 	}
 	
 	
@@ -107,7 +108,7 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
         ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);
         HashMap<String, double[][]> partialImportances = new HashMap<String, double[][]>();
         int nbTargetComponents = 0;
-        boolean perTargetRanking = statManager.getSettings().shouldPerformRankingPerTarget(); // we set this option to false if !(root.getClusteringStat() instanceof ComponentStatistic) 
+        boolean perTargetRanking = statManager.getSettings().getEnsemble().shouldPerformRankingPerTarget(); // we set this option to false if !(root.getClusteringStat() instanceof ComponentStatistic) 
         if (perTargetRanking){ 
         	nbTargetComponents += ((ComponentStatistic) root.getClusteringStat()).getNbStatisticComponents();
         }
@@ -265,8 +266,8 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
     }
     
     public void setEnsembleRankigDescription(int ensembleType, int rankingType, int nbTrees){
-    	String[] description_parts = new String[]{String.format("Ensemble method: %s", Settings.ENSEMBLE_TYPE[ensembleType]),
-    											  String.format("Ranking method: %s", Settings.RANKING_TYPE[rankingType]),
+    	String[] description_parts = new String[]{String.format("Ensemble method: %s", getSettings().getEnsemble().getEnsembleTypeName(ensembleType)),
+    											  String.format("Ranking method: %s", getSettings().getEnsemble().getRankingTypeName(rankingType)),
     											  String.format("Ensemble size: %d", nbTrees)};
     	setRankingDescription(String.join("\n", description_parts));
     }

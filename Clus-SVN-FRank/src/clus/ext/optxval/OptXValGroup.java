@@ -29,7 +29,7 @@ import clus.data.rows.RowData;
 import clus.ext.ootind.OOTInduce;
 import clus.jeans.util.list.MyList;
 import clus.main.ClusStatManager;
-import clus.main.Settings;
+import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 
