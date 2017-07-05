@@ -68,6 +68,7 @@ public class ClusSchema implements Serializable {
     protected IntervalCollection m_Disabled = IntervalCollection.EMPTY;
     protected IntervalCollection m_Clustering = IntervalCollection.EMPTY;
     protected IntervalCollection m_Descriptive = IntervalCollection.EMPTY;
+    protected IntervalCollection m_GIS = IntervalCollection.EMPTY; //daniela
     protected IntervalCollection m_Key = IntervalCollection.EMPTY;
     protected int[] m_NbVt;
 
@@ -96,6 +97,7 @@ public class ClusSchema implements Serializable {
         setClustering(new IntervalCollection(sett.getClustering()));
         setDescriptive(new IntervalCollection(sett.getDescriptive()));
         setKey(new IntervalCollection(sett.getKey()));
+        setGIS(new IntervalCollection(sett.getGIS())); //daniela
         updateAttributeUse();
         addIndices(ClusSchema.ROWS);
     }
@@ -359,6 +361,12 @@ public class ClusSchema implements Serializable {
     public final IntervalCollection getDescriptive() {
         return m_Descriptive;
     }
+    
+    // daniela
+    public void setGIS(IntervalCollection m_gis) {
+        m_GIS = m_gis;
+    }
+    // daniela end
 
 
     public final void setTarget(IntervalCollection coll) {

@@ -811,9 +811,10 @@ public class ClusStatManager implements Serializable {
             } else if (getSettings().getHeuristic() == Settings.HEURISTIC_GIS){
                 m_Heuristic = new GISHeuristic(getClusteringWeights(),m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING));  // daniela
                 
+            } else{
+                m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING));
+                getSettings().setHeuristic(Settings.HEURISTIC_VARIANCE_REDUCTION);
             }
-            m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING));
-            getSettings().setHeuristic(Settings.HEURISTIC_VARIANCE_REDUCTION);
         }
         else if (nom.length > 0) {
             if (getSettings().getHeuristic() == Settings.HEURISTIC_SEMI_SUPERVISED) {
