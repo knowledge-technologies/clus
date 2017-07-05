@@ -113,6 +113,7 @@ import clus.heuristic.ClusHeuristic;
 import clus.heuristic.ClusStopCriterion;
 import clus.heuristic.ClusStopCriterionMinNbExamples;
 import clus.heuristic.ClusStopCriterionMinWeight;
+import clus.heuristic.GISHeuristic;
 import clus.heuristic.GainHeuristic;
 import clus.heuristic.GeneticDistanceHeuristicMatrix;
 import clus.heuristic.ReducedErrorHeuristic;
@@ -759,13 +760,19 @@ public class ClusStatManager implements Serializable {
             return;
         }
         if (m_Mode == MODE_HIERARCHICAL) {
-            if (getSettings().getCompatibility() <= Settings.COMPATIBILITY_MLJ08) {
-                m_Heuristic = new VarianceReductionHeuristicCompatibility(createClusteringStat(), getClusteringWeights());
+            // daniela
+            if (getSettings().getHeuristic() == Settings.HEURISTIC_GIS) {
+                m_Heuristic = new GISHeuristic(getClusteringWeights(),m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING));
+            } // daniela end
+            else {  
+                if(getSettings().getCompatibility() <= Settings.COMPATIBILITY_MLJ08) {
+                    m_Heuristic = new VarianceReductionHeuristicCompatibility(createClusteringStat(), getClusteringWeights());
+                }
+                else {
+                    m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), null);
+                }
+                getSettings().setHeuristic(Settings.HEURISTIC_VARIANCE_REDUCTION);
             }
-            else {
-                m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), null);
-            }
-            getSettings().setHeuristic(Settings.HEURISTIC_VARIANCE_REDUCTION);
             return;
         }
         if (m_Mode == MODE_SSPD) {
@@ -788,12 +795,23 @@ public class ClusStatManager implements Serializable {
             return;
         }
         if (num.length > 0 && nom.length > 0) {
-            if (getSettings().getHeuristic() != Settings.HEURISTIC_DEFAULT && getSettings().getHeuristic() != Settings.HEURISTIC_VARIANCE_REDUCTION) { throw new ClusException("Only SS-Reduction heuristic can be used for combined classification/regression trees!"); }
+            if (getSettings().getHeuristic() != Settings.HEURISTIC_DEFAULT && getSettings().getHeuristic() != Settings.HEURISTIC_VARIANCE_REDUCTION) {
+                throw new ClusException("Only SS-Reduction heuristic can be used for combined classification/regression trees!");
+            }
             m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING));
             getSettings().setHeuristic(Settings.HEURISTIC_VARIANCE_REDUCTION);
         }
         else if (num.length > 0) {
-            if (getSettings().getHeuristic() != Settings.HEURISTIC_DEFAULT && getSettings().getHeuristic() != Settings.HEURISTIC_VARIANCE_REDUCTION) { throw new ClusException("Only SS-Reduction heuristic can be used for regression trees!"); }
+            ArrayList<Integer> allowedHeuristics = new ArrayList<Integer>();
+            allowedHeuristics.add(Settings.HEURISTIC_DEFAULT);
+            allowedHeuristics.add(Settings.HEURISTIC_VARIANCE_REDUCTION);
+            allowedHeuristics.add(Settings.HEURISTIC_GIS); // daniela
+            if (! allowedHeuristics.contains(getSettings().getHeuristic())) {
+                throw new ClusException("Only SS-Reduction heuristic and GISHeuristic can be used for regression trees!"); // daniela partially
+            } else if (getSettings().getHeuristic() == Settings.HEURISTIC_GIS){
+                m_Heuristic = new GISHeuristic(getClusteringWeights(),m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING));  // daniela
+                
+            }
             m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING));
             getSettings().setHeuristic(Settings.HEURISTIC_VARIANCE_REDUCTION);
         }
@@ -814,12 +832,20 @@ public class ClusStatManager implements Serializable {
                 m_Heuristic = new GainHeuristic(true, getClusteringWeights());
             }
             else {
-                if ((getSettings().getHeuristic() != Settings.HEURISTIC_DEFAULT && getSettings().getHeuristic() != Settings.HEURISTIC_GAIN) && getSettings().getHeuristic() != Settings.HEURISTIC_GENETIC_DISTANCE) { throw new ClusException("Given heuristic not supported for classification trees!"); }
+                ArrayList<Integer> allowedHeuristics = new ArrayList<Integer>();
+                allowedHeuristics.add(Settings.HEURISTIC_DEFAULT);
+                allowedHeuristics.add(Settings.HEURISTIC_GAIN);
+                allowedHeuristics.add(Settings.HEURISTIC_GENETIC_DISTANCE);
+                allowedHeuristics.add(Settings.HEURISTIC_GIS); // daniela
+                if (!allowedHeuristics.contains(getSettings().getHeuristic())) {
+                    throw new ClusException("Given heuristic not supported for classification trees!");
+                }
                 m_Heuristic = new GainHeuristic(false, getClusteringWeights());
                 getSettings().setHeuristic(Settings.HEURISTIC_GAIN);
             }
         }
-        else {}
+        else {
+        }
     }
 
 

@@ -1111,7 +1111,7 @@ public class Settings implements Serializable {
      * Section: Tree - Heuristic *
      ***********************************************************************/
 
-    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing" };
+    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing", "VarianceReductionGIS"};
     
     //daniela
     public final static String[] SpatialMatrix = {"Binary", "Euclidian", "Modified", "Gaussian"};

@@ -51,6 +51,7 @@ import clus.util.ClusRandomNonstatic;
 public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     protected FindBestTest m_FindBestTest;
+    // proteced FindBestTest m_find_MinMax
     protected ClusNode m_Root;
 
     public DepthFirstInduce(ClusSchema schema, Settings sett) throws ClusException, IOException {
