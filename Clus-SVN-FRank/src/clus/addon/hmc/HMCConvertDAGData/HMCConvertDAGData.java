@@ -57,24 +57,24 @@ public class HMCConvertDAGData {
             ClusStatistic[] stats = new ClusStatistic[1];
             stats[0] = mgr.createClusteringStat();
             data.calcTotalStats(stats);
-            if (!sett.isNullTestFile()) {
-                System.out.println("Loading: " + sett.getTestFile());
+            if (!sett.getData().isNullTestFile()) {
+                System.out.println("Loading: " + sett.getData().getTestFile());
                 if (minfreq != 0.0) {
                     RowData test = (RowData) run.getTestSet();
                     test.calcTotalStats(stats);
                 }
                 else {
-                    clus.updateStatistic(sett.getTestFile(), stats);
+                    clus.updateStatistic(sett.getData().getTestFile(), stats);
                 }
             }
-            if (!sett.isNullPruneFile()) {
-                System.out.println("Loading: " + sett.getPruneFile());
+            if (!sett.getData().isNullPruneFile()) {
+                System.out.println("Loading: " + sett.getData().getPruneFile());
                 if (minfreq != 0.0) {
                     RowData tune = (RowData) run.getPruneSet();
                     tune.calcTotalStats(stats);
                 }
                 else {
-                    clus.updateStatistic(sett.getPruneFile(), stats);
+                    clus.updateStatistic(sett.getData().getPruneFile(), stats);
                 }
             }
             ClusStatistic.calcMeans(stats);
@@ -85,27 +85,27 @@ public class HMCConvertDAGData {
             if (minfreq != 0.0) {
                 ClassesAttrType type = hier.getType();
                 removeLabelsFromData((RowData) run.getTrainingSet(), type, removed);
-                if (!sett.isNullTestFile())
+                if (!sett.getData().isNullTestFile())
                     removeLabelsFromData((RowData) run.getTestSet(), type, removed);
-                if (!sett.isNullPruneFile())
+                if (!sett.getData().isNullPruneFile())
                     removeLabelsFromData((RowData) run.getPruneSet(), type, removed);
             }
             hier.initialize();
             if (minfreq != 0.0) {
                 addIntermediateLabels((RowData) run.getTrainingSet(), hier);
-                if (!sett.isNullTestFile())
+                if (!sett.getData().isNullTestFile())
                     addIntermediateLabels((RowData) run.getTestSet(), hier);
-                if (!sett.isNullPruneFile())
+                if (!sett.getData().isNullPruneFile())
                     addIntermediateLabels((RowData) run.getPruneSet(), hier);
             }
             hier.showSummary();
             RowData train = (RowData) run.getTrainingSet();
             ARFFFile.writeArff(output + ".train.arff", train);
-            if (!sett.isNullTestFile()) {
+            if (!sett.getData().isNullTestFile()) {
                 RowData test = (RowData) run.getTestSet();
                 ARFFFile.writeArff(output + ".test.arff", test);
             }
-            if (!sett.isNullPruneFile()) {
+            if (!sett.getData().isNullPruneFile()) {
                 RowData tune = (RowData) run.getPruneSet();
                 ARFFFile.writeArff(output + ".valid.arff", tune);
             }

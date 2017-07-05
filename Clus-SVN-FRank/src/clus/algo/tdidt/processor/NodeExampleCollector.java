@@ -78,7 +78,7 @@ public class NodeExampleCollector extends BasicExampleCollector {
 
 
     public final void writeFile(ClusNode root) throws IOException {
-        PrintWriter wrt = m_Sett.getFileAbsoluteWriter(m_FName);
+        PrintWriter wrt = m_Sett.getGeneric().getFileAbsoluteWriter(m_FName);
         LeafTreeIterator iter = new LeafTreeIterator(root);
         while (iter.hasMoreNodes()) {
             ClusNode node = (ClusNode) iter.getNextNode();

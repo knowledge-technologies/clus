@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.google.gson.JsonObject;
+
 import clus.Clus;
 import clus.algo.kNN.distance.ChebyshevDistance;
 import clus.algo.kNN.distance.EuclideanDistance;
@@ -63,7 +65,6 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import com.google.gson.JsonObject;
 
 
 /**
@@ -80,17 +81,21 @@ public class TestKnnModel implements ClusModel, Serializable {
     HashMap<String, SearchAlgorithm> m_Algorithms;
     public static HashMap<String, StopWatch> watches;
 
+    Settings m_Settings;
+
 
     public TestKnnModel(ClusRun cr) throws ClusException, IOException {
         m_ClusRun = cr;
+        m_Settings = m_ClusRun.getStatManager().getSettings();
+
         // settings file name; use name for .weight file
-        String fName = m_ClusRun.getStatManager().getSettings().getAppName();
-        m_NbNeighbors = Integer.parseInt(Settings.kNN_k.getValue());
+        String fName = m_Settings.getGeneric().getAppName();
+        m_NbNeighbors = Integer.parseInt(m_Settings.getKNN().getKNNk());
 
         // Initialize attribute weighting according to settings file
         AttributeWeighting attrWe = new NoWeighting();
         ;
-        String weighting = Settings.kNN_attrWeight.getStringValue();
+        String weighting = m_Settings.getKNN().getKNNAttrWeight();
         boolean loadedWeighting = false;
 
         if (weighting.toLowerCase().compareTo("none") == 0) {
@@ -103,7 +108,7 @@ public class TestKnnModel implements ClusModel, Serializable {
                 if (wS.length == 2)
                     nbBags = Integer.parseInt(wS[1]);
                 else
-                    Settings.kNN_attrWeight.setValue(weighting + "," + nbBags);
+                    m_Settings.getKNN().setKNNAttrWeight(weighting + "," + nbBags);
                 attrWe = new RandomForestWeighting(m_ClusRun, nbBags);
             }
             catch (Exception e) {
@@ -137,7 +142,7 @@ public class TestKnnModel implements ClusModel, Serializable {
         }
 
         // Initialize distance according to settings file
-        String dist = Settings.kNN_distance.getStringValue();
+        String dist = m_Settings.getKNN().getKNNDistance();
         SearchDistance searchDistance = new SearchDistance();
         ClusDistance distance;
 
@@ -181,23 +186,23 @@ public class TestKnnModel implements ClusModel, Serializable {
         System.out.println("Method comparison mode..");
         System.out.println(searchDistance.getBasicDistance().getClass());
         System.out.println(m_NbNeighbors);
-        System.out.println(Settings.kNN_distanceWeight.getStringValue());
+        System.out.println(m_Settings.getKNN().getKNNAttrWeight());
         System.out.println("------------------------------------------------");
 
         // save prediction template
         // @todo : should all this be repalced with:
         // statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
-            if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()) {
-                m_StatTemplate = new ClassificationStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelThreshold());
+        if (m_ClusRun.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY) {
+            if (cr.getStatManager().getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
+                m_StatTemplate = new ClassificationStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMLC().getMultiLabelThreshold());
             }
             else {
                 m_StatTemplate = new ClassificationStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
             }
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
+        else if (cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION)
             m_StatTemplate = new RegressionStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_TIME_SERIES) {
+        else if (cr.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES) {
             // TimeSeriesAttrType attr =
             // this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET)[0];
             // statTemplate = new TimeSeriesStat(attxr, new DTWTimeSeriesDist(attr), 0 );
@@ -206,7 +211,7 @@ public class TestKnnModel implements ClusModel, Serializable {
             System.out.println(m_StatTemplate.getDistanceName());
             System.out.println("----------------");
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        else if (cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             m_StatTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
             System.out.println("----------------------");
             System.out.println(m_StatTemplate.getDistanceName());
@@ -252,7 +257,7 @@ public class TestKnnModel implements ClusModel, Serializable {
         }
         // Initialize distance weighting according to setting file
         DistanceWeighting weighting;
-        String distWeight = Settings.kNN_distanceWeight.getStringValue();
+        String distWeight = m_Settings.getKNN().getKNNDistanceWeight();
         if (distWeight.compareTo("1/d") == 0)
             weighting = new WeightOver(nearest, m_Algorithms.get("bf"), tuple);
         else if (distWeight.compareTo("1-d") == 0)
@@ -367,7 +372,7 @@ public class TestKnnModel implements ClusModel, Serializable {
     public static void debugInfo(Clus clus) {
         try {
             System.out.println("--------------");
-            System.out.println("K = " + Settings.kNN_k.getValue());
+            System.out.println("K = " + clus.getStatManager().getSettings().getKNN().getKNNk());
             System.out.println(clus.getSchema().getNbDescriptiveAttributes() + " " + clus.getData().getData().length); // clus.getData().m_Data.length
             for (String key : TestKnnModel.watches.keySet()) {
                 System.out.println(key + " - " + TestKnnModel.watches.get(key).readValue());

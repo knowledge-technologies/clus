@@ -24,6 +24,7 @@ package clus.heuristic;
 
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 
 
@@ -39,33 +40,47 @@ public abstract class ClusHeuristic {
     protected ClusAttributeWeights m_ClusteringWeights;
 
     protected ClusStopCriterion m_StopCrit;
-    
+
     /**
      * Used for more efficient split quality estimation. For now only in the case when
      * the heuristic is VarianceReductionHeuristicEfficient.
      */
     protected double m_NumericSplitTotStatSVarS;
-    
-    
-    public void setSplitStatSVarS(double value){
-    	m_NumericSplitTotStatSVarS = value;
-    }    
 
-    public boolean isEfficient(){
-    	return false;
-    }
+    private Settings m_Settings;
     
+    public ClusHeuristic(Settings sett) {
+        m_Settings = sett;
+    }
+
+    public final Settings getSettings(){
+        return m_Settings;
+    }
+
+    public void setSplitStatSVarS(double value) {
+        m_NumericSplitTotStatSVarS = value;
+    }
+
+
+    public boolean isEfficient() {
+        return false;
+    }
+
+
     /**
-     * This method should be overwritten in the classes of heuristics that are efficient. It is used in the cases when we precompute the total variance.
+     * This method should be overwritten in the classes of heuristics that are efficient. It is used in the cases when
+     * we precompute the total variance.
+     * 
      * @param tstat
      * @param pstat
      * @param missing
      * @param ss_tot
      * @return
      */
-    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot){
-    	return calcHeuristic(tstat, pstat, missing);
+    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot) {
+        return calcHeuristic(tstat, pstat, missing);
     }
+
 
     public void setData(RowData data) {
     }
@@ -90,7 +105,7 @@ public abstract class ClusHeuristic {
 
 
     public abstract double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing);
-    
+
 
     public abstract String getName();
 

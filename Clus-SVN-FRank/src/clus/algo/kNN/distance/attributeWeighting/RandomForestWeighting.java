@@ -35,6 +35,7 @@ import clus.ext.ensembles.ClusEnsembleClassifier;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsEnsemble;
 import clus.util.ClusRandom;
 
 
@@ -71,35 +72,35 @@ public class RandomForestWeighting extends AttributeWeighting {
             Clus new_clus = new Clus();
 
             Settings new_sett = new_clus.getSettings();
-            new_sett.setDate(orig_sett.getDate());
-            new_sett.setAppName(orig_sett.getAppName());
+            new_sett.getGeneric().setDate(orig_sett.getGeneric().getDate());
+            new_sett.getGeneric().setAppName(orig_sett.getGeneric().getAppName());
             new_sett.initialize(null, false);
-            new_sett.setEnsembleMode(true);
-            new_sett.setTarget(orig_sett.getTarget());
-            new_sett.setEnsembleMethod(1);// 1 is for RForest!!!
-            new_sett.setNbBags(nbBags); // TO-DO User Defined!
-            new_sett.setNbRandomAttrSelected(0); // Selects LOG of number of descriptive attributes
-            new_sett.setOOBestimate(true);
-            new_sett.setFeatureRankingMethod(orig_sett.getRankingMethod());
+            new_sett.getEnsemble().setEnsembleMode(true);
+            new_sett.getAttribute().setTarget(orig_sett.getAttribute().getTarget());
+            new_sett.getEnsemble().setEnsembleMethod(SettingsEnsemble.ENSEMBLE_RFOREST);
+            new_sett.getEnsemble().setNbBags(nbBags); // TO-DO User Defined!
+            new_sett.getEnsemble().setNbRandomAttrSelected(0); // Selects LOG of number of descriptive attributes
+            new_sett.getEnsemble().setOOBestimate(true);
+            new_sett.getEnsemble().setFeatureRankingMethod(orig_sett.getEnsemble().getRankingMethod());
             ClusRandom.initialize(new_sett);
 
             RowData trainData = (RowData) run.getTrainingSet().cloneData();
             ClusSchema schema = run.getStatManager().getSchema().cloneSchema();
 
-            // Updata schema based on settings
+            // Update schema based on settings
             new_sett.updateTarget(schema);
             schema.initializeSettings(new_sett);
-            new_sett.setTarget(schema.getTarget().toString());
-            new_sett.setDisabled(schema.getDisabled().toString());
-            new_sett.setClustering(schema.getClustering().toString());
-            new_sett.setDescriptive(schema.getDescriptive().toString());
+            new_sett.getAttribute().setTarget(schema.getTarget().toString());
+            new_sett.getAttribute().setDisabled(schema.getDisabled().toString());
+            new_sett.getAttribute().setClustering(schema.getClustering().toString());
+            new_sett.getAttribute().setDescriptive(schema.getDescriptive().toString());
 
             // null are the 'cargs'
             new_clus.recreateInduce(null, new ClusEnsembleClassifier(new_clus), schema, trainData);
 
             ClusEnsembleInduce ensemble = (ClusEnsembleInduce) new_clus.getInduce();
             new_sett.update(schema);
-            new_sett.disableRuleInduceParams();
+            new_sett.getRules().disableRuleInduceParams();
             new_clus.preprocess(); // necessary in order to link the labels to the class hierarchy in HMC (needs to be
                                    // before m_Induce.initialize())
                                    // new_clus.singleRun(new_clus.getClassifier());

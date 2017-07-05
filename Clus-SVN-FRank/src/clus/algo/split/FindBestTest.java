@@ -31,9 +31,7 @@ import clus.data.rows.RowDataSortHelper;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.data.type.SparseNumericAttrType;
 import clus.ext.ensembles.ClusEnsembleInduce;
-import clus.heuristic.VarianceReductionHeuristicEfficient;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
@@ -44,7 +42,7 @@ import clus.util.ClusRandomNonstatic;
 
 public class FindBestTest {
 
-    public CurrentBestTestAndHeuristic m_BestTest = new CurrentBestTestAndHeuristic();
+    public CurrentBestTestAndHeuristic m_BestTest;
     // public long m_Timer = 0;
     protected RowDataSortHelper m_SortHelper = new RowDataSortHelper();
 
@@ -56,13 +54,15 @@ public class FindBestTest {
     public FindBestTest(ClusStatManager mgr) {
         m_StatManager = mgr;
         m_MaxStats = getSchema().getMaxNbStats();
+        
+        m_BestTest = new CurrentBestTestAndHeuristic(mgr.getSettings().getGeneric().getVerbose());
     }
 
 
     public FindBestTest(ClusStatManager mgr, NominalSplit split) {
-        m_StatManager = mgr;
+        this(mgr);
+        
         m_Split = split;
-        m_MaxStats = getSchema().getMaxNbStats();
     }
 
 
@@ -306,7 +306,7 @@ public class FindBestTest {
     public void findNumeric(NumericAttrType at, ArrayList data){
     	 // for sparse attributes, (already sorted data)
         ArrayList sample;
-        if (getSettings().getTreeSplitSampling() > 0) {
+        if (getSettings().getTree().getTreeSplitSampling() > 0) {
             RowData tmp = new RowData(data, getSchema());
             RowData smpl = createSample(tmp, null);
             if (at.isSparse()) {
@@ -415,7 +415,7 @@ public class FindBestTest {
     public void initSelectorAndSplit(ClusStatistic totstat) throws ClusException {
         m_BestTest.create(m_StatManager, m_MaxStats);
         m_BestTest.setRootStatistic(totstat);
-        if (getSettings().isBinarySplit())
+        if (getSettings().getTree().isBinarySplit())
             m_Split = new SubsetSplit();
         else
             m_Split = new NArySplit();
@@ -436,7 +436,7 @@ public class FindBestTest {
 
 
     private RowData createSample(RowData original, ClusRandomNonstatic rnd) {
-    	int N = getSettings().getTreeSplitSampling();
+    	int N = getSettings().getTree().getTreeSplitSampling();
     	if (N == 0){
     		return original.sample(N, rnd);
     	}

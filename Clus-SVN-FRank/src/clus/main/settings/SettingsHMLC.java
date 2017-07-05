@@ -148,7 +148,7 @@ public class SettingsHMLC implements ISettings {
     }
 
 
-    public static boolean useMEstimate() {
+    public boolean useMEstimate() {
         return m_HierUseMEstimate.getValue();
     }
 

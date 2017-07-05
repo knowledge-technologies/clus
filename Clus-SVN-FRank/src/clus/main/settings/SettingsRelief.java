@@ -1,3 +1,4 @@
+
 package clus.main.settings;
 
 import clus.jeans.io.ini.INIFileBool;
@@ -7,13 +8,14 @@ import clus.jeans.io.ini.INIFileNominalOrIntOrVector;
 import clus.jeans.io.ini.INIFileSection;
 import clus.jeans.math.MathUtil;
 
+
 public class SettingsRelief implements ISettings {
 
     /***********************************************************************
      * Section: Relief *
      ***********************************************************************/
 
-    INIFileSection m_SectionRelief;
+    private INIFileSection m_SectionRelief;
 
     public static final int RELIEF_NEIGHBOUR_DEFAULT = 10;
     public static final int RELIEF_ITERATIONS_DEFAULT = -1;
@@ -110,7 +112,9 @@ public class SettingsRelief implements ISettings {
 
     @Override
     public INIFileSection create() {
-        //    m_SectionRelief = new INIFileSection("Relief");
+
+        m_SectionRelief = new INIFileSection("Relief");
+
         m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("neighbours", NONELIST));
         m_ReliefNbNeighbours.setInt(RELIEF_NEIGHBOUR_DEFAULT);
         m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("iterations", NONELIST));
@@ -121,8 +125,8 @@ public class SettingsRelief implements ISettings {
                                                                                                     // not give any
                                                                                                     // suggestions
         m_SectionRelief.setEnabled(false);
-        
+
         return m_SectionRelief;
-        
+
     }
 }

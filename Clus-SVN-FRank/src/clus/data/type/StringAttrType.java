@@ -30,7 +30,6 @@ import clus.data.rows.DataTuple;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
-import weka.gui.beans.StripChartBeanInfo;
 
 
 public class StringAttrType extends ClusAttrType {

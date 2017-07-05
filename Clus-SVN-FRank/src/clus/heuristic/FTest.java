@@ -29,7 +29,7 @@ import org.apache.commons.math.distribution.DistributionFactory;
 import org.apache.commons.math.distribution.FDistribution;
 
 import clus.jeans.math.MathUtil;
-import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.util.ClusFormat;
 
 
@@ -54,13 +54,13 @@ public class FTest {
     protected final static double critical_f_0001[] = { 405769, 998.56, 166.41, 74.1321, 47.0596, 35.5216, 29.16, 25.4016, 22.8484, 21.0681, 19.7136, 18.6624, 17.8084, 17.1396, 16.5649, 16.0801, 15.6025, 15.3664, 15.0544, 14.8225, 14.5924, 14.3641, 14.2129, 13.9876, 13.8384, 13.7641, 13.6161, 13.4689, 13.3956, 13.3225 };
 
 
-    public static int getLevelAndComputeArray(double significance) {
+    public static int getLevelAndComputeArray(double significance, int verbosityLevel) {
         int maxlevel = FTEST_SIG.length - 1;
         for (int level = 0; level < maxlevel; level++) {
             if (Math.abs(significance - FTEST_SIG[level]) / FTEST_SIG[level] < 0.01) { return level; }
         }
         FTEST_SIG[maxlevel] = significance;
-        initializeFTable(significance);
+        initializeFTable(significance, verbosityLevel);
         return maxlevel;
     }
 
@@ -141,18 +141,18 @@ public class FTest {
 
 
     // Calling getCriticalFCommonsMath() is slow, so build a table
-    public static void initializeFTable(double sig) {
+    public static void initializeFTable(double sig, int verbosityLevel) {
         int df = 3;
         double value = 0.0;
         double limit = getCriticalFCommonsMath(sig, 1e5);
-        ArrayList values = new ArrayList();
+        ArrayList<Double> values = new ArrayList<Double>();
         do {
             value = getCriticalFCommonsMath(sig, df);
             values.add(new Double(value));
             df++;
         }
         while ((value - limit) / limit > 0.05);
-        if(getSettings().getGeneric().getVerbose() > 0){
+        if(verbosityLevel > 0){
         	System.out.println("F-Test = " + sig + " limit = " + ClusFormat.TWO_AFTER_DOT.format(limit) + " values = " + values.size());
         }
         FTEST_LIMIT = limit;
@@ -182,7 +182,7 @@ public class FTest {
 
 
     public static double getSettingSig() {
-        return FTEST_SIG[Settings.FTEST_LEVEL];
+        return FTEST_SIG[SettingsTree.FTEST_LEVEL];
     }
 
 
@@ -192,7 +192,7 @@ public class FTest {
             // Gain too small
             return Double.NEGATIVE_INFINITY;
         }
-        if (Settings.FTEST_LEVEL == 0) {
+        if (SettingsTree.FTEST_LEVEL == 0) {
             // No F-test -> just return value
             return value;
         }
@@ -201,7 +201,7 @@ public class FTest {
             return Double.NEGATIVE_INFINITY;
         }
         else {
-            if (FTest.ftest(Settings.FTEST_LEVEL, ss_tot, ss_sum, n_2)) {
+            if (FTest.ftest(SettingsTree.FTEST_LEVEL, ss_tot, ss_sum, n_2)) {
                 return value;
             }
             else {

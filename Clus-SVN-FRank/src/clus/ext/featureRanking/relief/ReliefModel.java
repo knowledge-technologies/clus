@@ -8,17 +8,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 
+import com.google.gson.JsonObject;
+
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
-import clus.main.settings.Settings;
 import clus.main.settings.SettingsRelief;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import com.google.gson.JsonObject;
 
 
 public class ReliefModel implements ClusModel {

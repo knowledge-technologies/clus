@@ -24,6 +24,7 @@ package clus.heuristic;
 
 import clus.data.attweights.ClusAttributeWeights;
 import clus.jeans.math.MathUtil;
+import clus.main.settings.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 
@@ -33,7 +34,9 @@ public class GainHeuristic extends ClusHeuristic {
     protected boolean m_GainRatio;
 
 
-    public GainHeuristic(boolean gainratio, ClusAttributeWeights prod) {
+    public GainHeuristic(boolean gainratio, ClusAttributeWeights prod, Settings sett) {
+        super(sett);
+        
         m_GainRatio = gainratio;
         m_ClusteringWeights = prod;
     }
@@ -67,7 +70,7 @@ public class GainHeuristic extends ClusHeuristic {
         double neg_ent = tstat.entropyDifference(pstat, m_ClusteringWeights);
 
         double value = 0;
-        if (!tstat.getAttribute(0).getSchema().getSettings().considerUnlableInstancesInIGCalc()) {
+        if (!tstat.getAttribute(0).getSchema().getSettings().getTree().considerUnlableInstancesInIGCalc()) {
             // Gain?
             value = tot_ent - (n_pos * pos_ent + n_neg * neg_ent) / n_tot;
         }

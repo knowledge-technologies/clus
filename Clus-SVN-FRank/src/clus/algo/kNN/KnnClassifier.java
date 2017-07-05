@@ -72,8 +72,9 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
 
 
         public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
-            String[] ks = Settings.kNN_k.getValue().split(",");
-            String[] distWeight = Settings.kNN_distanceWeight.getValue().split(",");
+            
+            String[] ks = getSettings().getKNN().getKNNk().split(",");
+            String[] distWeight = getSettings().getKNN().getKNNDistanceWeight().split(",");
             int[] weights = new int[distWeight.length];
             int i = 0;
             for (String s : distWeight) {

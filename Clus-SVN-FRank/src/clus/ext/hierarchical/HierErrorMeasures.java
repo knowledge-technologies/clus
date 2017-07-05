@@ -12,6 +12,8 @@ import clus.error.ClusError;
 import clus.error.ClusErrorList;
 import clus.error.ROCAndPRCurve;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsGeneral;
+import clus.main.settings.SettingsHMLC;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
@@ -101,13 +103,13 @@ public class HierErrorMeasures extends ClusError {
     public double getModelError() {
         computeAll();
         switch (m_OptimizeMeasure) {
-            case Settings.HIERMEASURE_AUROC:
+            case SettingsHMLC.HIERMEASURE_AUROC:
                 return m_AverageAUROC;
-            case Settings.HIERMEASURE_AUPRC:
+            case SettingsHMLC.HIERMEASURE_AUPRC:
                 return m_AverageAUPRC;
-            case Settings.HIERMEASURE_WEIGHTED_AUPRC:
+            case SettingsHMLC.HIERMEASURE_WEIGHTED_AUPRC:
                 return m_WAvgAUPRC;
-            case Settings.HIERMEASURE_POOLED_AUPRC:
+            case SettingsHMLC.HIERMEASURE_POOLED_AUPRC:
                 return m_PooledAUPRC;
         }
         return 0.0;
@@ -190,7 +192,7 @@ public class HierErrorMeasures extends ClusError {
 
     public void compatibility(ROCAndPRCurve[] curves, ROCAndPRCurve pooled) {
         double[] thr = null;
-        if (m_Compatibility <= Settings.COMPATIBILITY_MLJ08) {
+        if (m_Compatibility <= SettingsGeneral.COMPATIBILITY_MLJ08) {
             thr = new double[51];
             for (int i = 0; i <= 50; i++) {
                 thr[i] = (double) 2 * i / 100.0;

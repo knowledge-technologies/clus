@@ -96,7 +96,7 @@ public class MPCKMeansWrapper {
 
 
     public ClusModel induce(RowData data, RowData test, ArrayList constraints, int cls) throws IOException, ClusException {
-        String main = getStatManager().getSettings().getAppName();
+        String main = getStatManager().getSettings().getGeneric().getAppName();
         String datf = main + "-temp-MPCKMeans.arff";
         String cons = main + "-temp-MPCKMeans.cons";
         String outf = main + "-temp-MPCKMeans.assign";

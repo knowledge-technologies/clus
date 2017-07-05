@@ -45,7 +45,7 @@ public abstract class SearchAlgorithmImpl implements SearchAlgorithm {
             folds.add(learner.LearnModel(tset, f));
         }
 
-        String error = m_Sett.getError();
+        String error = m_Sett.getSIT().getError();
         if (error.equals("MSE")) {
             // System.out.println("using mse");
             return 1 - Evaluator.getMSE(folds, mainTarget.getArrayIndex());

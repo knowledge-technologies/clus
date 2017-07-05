@@ -55,7 +55,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
     public ConstraintDFInduce(ClusSchema schema, Settings sett, boolean fillin) throws ClusException, IOException {
         super(schema, sett);
         m_FillIn = fillin;
-        m_ConstrFile = sett.getConstraintFile();
+        m_ConstrFile = sett.getConstraints().getConstraintFile();
     }
 
 

@@ -9,7 +9,6 @@ import clus.ext.ensembles.containters.NodeDepthPair;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
-import clus.main.settings.SettingsEnsemble;
 import clus.model.ClusModel;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;

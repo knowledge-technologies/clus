@@ -40,12 +40,9 @@ public class ClusRuleHeuristicError extends ClusHeuristic {
     private ClusStatManager m_StatManager = null;
 
 
-    public ClusRuleHeuristicError(ClusAttributeWeights prod) {
-        m_ClusteringWeights = prod;
-    }
+    public ClusRuleHeuristicError(ClusStatManager stat_mgr, ClusAttributeWeights prod, Settings sett) {
+        super(sett);
 
-
-    public ClusRuleHeuristicError(ClusStatManager stat_mgr, ClusAttributeWeights prod) {
         m_StatManager = stat_mgr;
         m_ClusteringWeights = prod;
     }
@@ -69,10 +66,6 @@ public class ClusRuleHeuristicError extends ClusHeuristic {
     public String getName() {
         return "Rule Heuristic (Reduced Error)";
     }
-
-
-    public Settings getSettings() {
-        return m_StatManager.getSettings();
-    }
+ 
 
 }

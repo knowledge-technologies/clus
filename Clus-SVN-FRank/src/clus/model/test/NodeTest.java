@@ -28,7 +28,7 @@ import java.util.HashMap;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
-import clus.main.settings.Settings;
+import clus.main.settings.SettingsOutput;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 
@@ -301,13 +301,13 @@ public abstract class NodeTest implements Serializable {
 
     public final String getTestString() {
         String str = getString();
-        if (Settings.SHOW_BRANCH_FREQ) {
+        if (SettingsOutput.SHOW_BRANCH_FREQ) {
             if (getPosFreq() != Double.NEGATIVE_INFINITY) {
                 String bfr = ClusFormat.ONE_AFTER_DOT.format(getPosFreq() * 100);
                 str += " (" + bfr + "%)";
             }
         }
-        if (Settings.SHOW_UNKNOWN_FREQ) {
+        if (SettingsOutput.SHOW_UNKNOWN_FREQ) {
             String unk = ClusFormat.ONE_AFTER_DOT.format(getUnknownFreq() * 100);
             str += " (miss: " + unk + "%)";
         }
@@ -317,13 +317,13 @@ public abstract class NodeTest implements Serializable {
 
     public final String getPythonTestString() {
         String str = getPythonString();
-        if (Settings.SHOW_BRANCH_FREQ) {
+        if (SettingsOutput.SHOW_BRANCH_FREQ) {
             if (getPosFreq() != Double.NEGATIVE_INFINITY) {
                 String bfr = ClusFormat.ONE_AFTER_DOT.format(getPosFreq() * 100);
                 str += " (" + bfr + "%)";
             }
         }
-        if (Settings.SHOW_UNKNOWN_FREQ) {
+        if (SettingsOutput.SHOW_UNKNOWN_FREQ) {
             String unk = ClusFormat.ONE_AFTER_DOT.format(getUnknownFreq() * 100);
             str += " (miss: " + unk + "%)";
         }
@@ -333,11 +333,11 @@ public abstract class NodeTest implements Serializable {
 
     public final String getTestString(int idx) {
         String str = getBranchString(idx);
-        if (Settings.SHOW_BRANCH_FREQ) {
+        if (SettingsOutput.SHOW_BRANCH_FREQ) {
             String bfr = ClusFormat.ONE_AFTER_DOT.format(getProportion(idx) * 100);
             str += " (" + bfr + "%)";
         }
-        if (idx == 0 && Settings.SHOW_UNKNOWN_FREQ) {
+        if (idx == 0 && SettingsOutput.SHOW_UNKNOWN_FREQ) {
             String unk = ClusFormat.ONE_AFTER_DOT.format(getUnknownFreq() * 100);
             str += " (miss:" + unk + "%)";
         }

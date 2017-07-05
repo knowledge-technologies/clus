@@ -57,7 +57,7 @@ public class FindBestTestRules extends FindBestTest {
         int nbvalues = at.getNbValues();
         m_BestTest.reset(nbvalues + 1);
         int nb_rows = data.getNbRows();
-        if (!getSettings().isHeurRuleDist()) {
+        if (!getSettings().getRules().isHeurRuleDist()) {
             // For each attribute value
             for (int i = 0; i < nb_rows; i++) {
                 DataTuple tuple = data.getTuple(i);
@@ -162,7 +162,7 @@ public class FindBestTestRules extends FindBestTest {
         }
         double prev = Double.NaN;
         int[] data_idx = new int[nb_rows]; // TODO: Skip missing ones?!
-        if (getSettings().isHeurRuleDist()) {
+        if (getSettings().getRules().isHeurRuleDist()) {
             for (int i = first; i < nb_rows; i++) {
                 data_idx[i] = data.getTuple(i).getIndex();
             }
@@ -172,7 +172,7 @@ public class FindBestTestRules extends FindBestTest {
             double value = at.getNumeric(tuple);
             if (value != prev) {
                 if (value != Double.NaN) {
-                    if (getSettings().isHeurRuleDist()) {
+                    if (getSettings().getRules().isHeurRuleDist()) {
                         int[] subset_idx = new int[i - first];
                         System.arraycopy(data_idx, first, subset_idx, 0, i - first);
                         ((ClusRuleHeuristicDispersion) m_BestTest.m_Heuristic).setDataIndexes(subset_idx);
@@ -196,7 +196,7 @@ public class FindBestTestRules extends FindBestTest {
                 next = at.getNumeric(next_tuple);
                 m_BestTest.m_PosStat.updateWeighted(tuple, i);
                 if ((value != next) && (value != Double.NaN)) {
-                    if (getSettings().isHeurRuleDist()) {
+                    if (getSettings().getRules().isHeurRuleDist()) {
                         int[] subset_idx = new int[nb_rows - i];
                         System.arraycopy(data_idx, i, subset_idx, 0, nb_rows - i);
                         ((ClusRuleHeuristicDispersion) m_BestTest.m_Heuristic).setDataIndexes(subset_idx);

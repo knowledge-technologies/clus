@@ -36,8 +36,9 @@ import clus.statistic.ClusStatistic;
 
 public class ClusBeamHeuristicSS extends ClusBeamHeuristic {
 
-    public ClusBeamHeuristicSS(ClusStatistic stat, ClusAttributeWeights prod) {
-        super(stat);
+    public ClusBeamHeuristicSS(ClusStatistic stat, ClusAttributeWeights prod, Settings sett) {
+        super(stat, sett);
+
         m_ClusteringWeights = prod;
     }
 

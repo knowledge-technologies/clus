@@ -15,9 +15,9 @@ import clus.Clus;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NumericAttrType;
-import clus.util.ClusException;
 import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.settings.Settings;
+import clus.util.ClusException;
 import test.BaseTestCase;
 
 
@@ -91,7 +91,7 @@ public class RowDataTest extends BaseTestCase {
         Settings sett = clus.getSettings();
         CMDLineArgs cargs = new CMDLineArgs(clus);
         cargs.process(new String[] { "-silent", settingsFile });
-        sett.setAppName(cargs.getMainArg(0));
+        sett.getGeneric().setAppName(cargs.getMainArg(0));
         clus.initSettings(cargs);
         clus.initialize(cargs);
         return clus.getData();

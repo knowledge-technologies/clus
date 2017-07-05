@@ -36,11 +36,9 @@ import clus.statistic.CombStat;
 
 public class ClusRuleHeuristicRDispersionMlt extends ClusRuleHeuristicDispersion {
 
-    public ClusRuleHeuristicRDispersionMlt(ClusAttributeWeights prod) {
-    }
+    public ClusRuleHeuristicRDispersionMlt(ClusStatManager stat_mgr, ClusAttributeWeights prod, Settings sett) {
+        super(sett);
 
-
-    public ClusRuleHeuristicRDispersionMlt(ClusStatManager stat_mgr, ClusAttributeWeights prod) {
         m_StatManager = stat_mgr;
     }
 

@@ -181,9 +181,9 @@ public class SettingsTree implements ISettings {
     }
 
 
-    public void setFTest(double ftest) {
+    public void setFTest(double ftest, int verbosityLevel) {
         FTEST_VALUE = ftest;
-        FTEST_LEVEL = FTest.getLevelAndComputeArray(ftest);
+        FTEST_LEVEL = FTest.getLevelAndComputeArray(ftest, verbosityLevel);
         m_FTest.setDouble(ftest);
     }
 

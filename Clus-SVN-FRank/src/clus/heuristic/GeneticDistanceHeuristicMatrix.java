@@ -11,6 +11,8 @@ import clus.data.rows.RowData;
 import clus.jeans.list.BitList;
 import clus.jeans.math.matrix.MSymMatrix;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsPhylogeny;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 import clus.statistic.GeneticDistanceStat;
 
@@ -35,6 +37,10 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     protected double m_RootAvgAllDistances; // avg of pairwise distances in the complete dataset
     protected double m_RootSumEntropyWithin; // sum of entropies in the complete dataset
 
+    
+    public GeneticDistanceHeuristicMatrix(Settings sett) {
+        super(sett);
+    }
 
     // executed once, when splitting the root node
     public void setInitialData(ClusStatistic stat, RowData data) {
@@ -92,7 +98,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 
     // reading distance matrix (default name is "dist")
     public MSymMatrix read(Settings sett, ClusStatistic stat) throws IOException {
-        String filename = sett.getPhylogenyDistanceMatrix();
+        String filename = sett.getPhylogeny().getPhylogenyDistanceMatrix();
         ClusReader reader = new ClusReader(filename, sett);
         int nb = (int) reader.readFloat();
         System.out.println("  Loading Distance Matrix: " + filename + " (Size: " + nb + ")");
@@ -111,7 +117,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         System.out.println("  Matrix loaded");
 
         // if entropy stopcriterion will be used, we need to know the sequence information
-        if ((m_RootData.getSchema().getSettings().getPhylogenyEntropyVsRootStop() > 0) || (m_RootData.getSchema().getSettings().getPhylogenyEntropyVsParentStop() > 0)) {
+        if ((m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsRootStop() > 0) || (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsParentStop() > 0)) {
             GeneticDistanceStat gstat = (GeneticDistanceStat) stat;
             m_Sequences = new String[m_RootData.getNbRows()][gstat.m_NbTarget];
             for (int i = 0; i < m_RootData.getNbRows(); i++) {
@@ -140,10 +146,10 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         m_HeurComputed.clear();
         m_DataIndices = constructIndexVector(m_Data);
         m_SumAllDistances = getSumPWDistancesWithin(m_DataIndices);
-        if ((m_RootData.getSchema().getSettings().getPhylogenyDistancesVsRootStop() > 0) || (m_RootData.getSchema().getSettings().getPhylogenyDistancesVsParentStop() > 0)) {
+        if ((m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsRootStop() > 0) || (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsParentStop() > 0)) {
             m_AvgAllDistances = getAvgPWDistancesWithin(m_DataIndices);
         }
-        if ((m_RootData.getSchema().getSettings().getPhylogenyEntropyVsRootStop() > 0) || (m_RootData.getSchema().getSettings().getPhylogenyEntropyVsParentStop() > 0)) {
+        if ((m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsRootStop() > 0) || (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsParentStop() > 0)) {
             m_SumEntropyWithin = getSumOfEntropyWithin(m_DataIndices);
         }
 
@@ -294,12 +300,12 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 
 
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
-        switch (Settings.m_PhylogenyCriterion.getValue()) {
-            case Settings.PHYLOGENY_CRITERION_BRANCHLENGTHS:
+        switch (getSettings().getPhylogeny().getPhylogenyCriterion()) {
+            case SettingsPhylogeny.PHYLOGENY_CRITERION_BRANCHLENGTHS:
                 return calcHeuristicBranchLengths(c_tstat, c_pstat, null);
-            case Settings.PHYLOGENY_CRITERION_MAXAVGPWDIST:
+            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXAVGPWDIST:
                 return calcHeuristicArslan(c_tstat, c_pstat, null);
-            case Settings.PHYLOGENY_CRITERION_MAXMINPWDIST:
+            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXMINPWDIST:
                 return calcHeuristicMaxMinDistance(c_tstat, c_pstat, null);
         }
         return 0.0; // never executed
@@ -309,12 +315,12 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic[] array_stat, int nbsplit) {
         ClusStatistic p_stat = array_stat[0];
         ClusStatistic part_stat = array_stat[1];
-        switch (Settings.m_PhylogenyCriterion.getValue()) {
-            case Settings.PHYLOGENY_CRITERION_BRANCHLENGTHS:
+        switch (getSettings().getPhylogeny().getPhylogenyCriterion()) {
+            case SettingsPhylogeny.PHYLOGENY_CRITERION_BRANCHLENGTHS:
                 return calcHeuristicBranchLengths(c_tstat, p_stat, part_stat);
-            case Settings.PHYLOGENY_CRITERION_MAXAVGPWDIST:
+            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXAVGPWDIST:
                 return calcHeuristicArslan(c_tstat, p_stat, null);
-            case Settings.PHYLOGENY_CRITERION_MAXMINPWDIST:
+            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXMINPWDIST:
                 return calcHeuristicMaxMinDistance(c_tstat, p_stat, null);
         }
         return 0.0; // never executed
@@ -339,8 +345,8 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         double stop = checkStopCriterion(tstat, pstat, nstat);
         if (stop != 0.0) { return stop; }
 
-        double n_pos = pstat.m_SumWeight;
-        double n_neg = nstat.m_SumWeight;
+        //double n_pos = pstat.m_SumWeight;
+        //double n_neg = nstat.m_SumWeight;
 
         int[] posindices = constructIndexVector(m_Data, pstat);
         int[] negindices = constructIndexVector(m_Data, nstat);
@@ -367,8 +373,8 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         double stop = checkStopCriterion(tstat, pstat, nstat);
         if (stop != 0.0) { return stop; }
 
-        double n_pos = pstat.m_SumWeight;
-        double n_neg = nstat.m_SumWeight;
+//        double n_pos = pstat.m_SumWeight;
+//        double n_neg = nstat.m_SumWeight;
 
         int[] posindices = constructIndexVector(m_Data, pstat);
         int[] negindices = constructIndexVector(m_Data, nstat);
@@ -545,7 +551,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         double n_neg = tstat.m_SumWeight - pstat.m_SumWeight;
 
         // If insufficient examples in the children, then stop
-        if (n_pos < Settings.MINIMAL_WEIGHT || n_neg < Settings.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
+        if (n_pos < SettingsTree.MINIMAL_WEIGHT || n_neg < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
 
         // If position missing for some sequence, don't use it in split (probably this approach is not optimal)
         // By default, these positions can be used in split, but examples with missing values do not play a role in
@@ -557,7 +563,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         // If only 2 sequences left and one goes to pos (left) branch and one goes to neg (right) branch (the latter is
         // automatically true, since the "minimal weight" test passed), we don't need to calculate anything
         // Every such split will be equally good (note that we return POS infinity here, instead of NEG infinity)
-        if ((n_pos + n_neg) == 2 * Settings.MINIMAL_WEIGHT) { return Double.POSITIVE_INFINITY; }
+        if ((n_pos + n_neg) == 2 * SettingsTree.MINIMAL_WEIGHT) { return Double.POSITIVE_INFINITY; }
 
         return 0.0; // stopping criterion does not hold
 
@@ -577,9 +583,9 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 
         // if the sum of entropies in the current node is small enough w.r.t. the root node, then stop
         // LARGE threshold means SMALL trees
-        if (m_RootData.getSchema().getSettings().getPhylogenyEntropyVsRootStop() > 0) {
-            if (m_SumEntropyWithin / m_RootSumEntropyWithin < m_RootData.getSchema().getSettings().getPhylogenyEntropyVsRootStop()) {
-                if (m_RootData.getSchema().getSettings().getVerbose() > 2) {
+        if (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsRootStop() > 0) {
+            if (m_SumEntropyWithin / m_RootSumEntropyWithin < m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsRootStop()) {
+                if (m_RootData.getSchema().getSettings().getGeneric().getVerbose() > 2) {
                     System.out.println("STOP: entropy at current node = " + m_SumEntropyWithin + ", at root = " + m_RootSumEntropyWithin);
                 }
                 return false;
@@ -588,9 +594,9 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 
         // if the AvgPWDistance in the current node is small enough w.r.t. the root node, then stop
         // LARGE threshold means SMALL trees
-        if (m_RootData.getSchema().getSettings().getPhylogenyDistancesVsRootStop() > 0) {
-            if (m_AvgAllDistances / m_RootAvgAllDistances < m_RootData.getSchema().getSettings().getPhylogenyDistancesVsRootStop()) {
-                if (m_RootData.getSchema().getSettings().getVerbose() > 2) {
+        if (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsRootStop() > 0) {
+            if (m_AvgAllDistances / m_RootAvgAllDistances < m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsRootStop()) {
+                if (m_RootData.getSchema().getSettings().getGeneric().getVerbose() > 2) {
                     System.out.println("STOP: AvgPWDistance at current node = " + m_AvgAllDistances + ", at root = " + m_RootAvgAllDistances);
                 }
                 return false;
@@ -600,13 +606,13 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         // if the weighted sum of the AvgPWDistance in left and right subset is too close to the AvgPWDistance in the
         // node to be split, then stop
         // LARGE threshold means LARGE trees
-        if (m_RootData.getSchema().getSettings().getPhylogenyDistancesVsParentStop() > 0) {
+        if (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsParentStop() > 0) {
             int[] posindices = constructIndexVector(m_Data, pstat);
             int[] negindices = constructIndexVector(m_Data, nstat);
             double poswithin = getAvgPWDistancesWithin(posindices);
             double negwithin = getAvgPWDistancesWithin(negindices);
-            if ((((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) / m_AvgAllDistances) > m_RootData.getSchema().getSettings().getPhylogenyDistancesVsParentStop()) {
-                if (m_RootData.getSchema().getSettings().getVerbose() > 2) {
+            if ((((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) / m_AvgAllDistances) > m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsParentStop()) {
+                if (m_RootData.getSchema().getSettings().getGeneric().getVerbose() > 2) {
                     System.out.println("STOP: weighted sum of AvgPWDistances in children = " + ((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) + ", AvgPWDistance at node = " + m_AvgAllDistances);
                 }
                 return false;
@@ -616,13 +622,13 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         // if the weighted sum of the sum of entropies in left and right subset is too close to the sum of entropies in
         // the node to be split, then stop
         // LARGE threshold means LARGE trees
-        if (m_RootData.getSchema().getSettings().getPhylogenyEntropyVsParentStop() > 0) {
+        if (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsParentStop() > 0) {
             int[] posindices = constructIndexVector(m_Data, pstat);
             int[] negindices = constructIndexVector(m_Data, nstat);
             double poswithin = getSumOfEntropyWithin(posindices);
             double negwithin = getSumOfEntropyWithin(negindices);
-            if ((((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) / m_SumEntropyWithin) > m_RootData.getSchema().getSettings().getPhylogenyEntropyVsParentStop()) {
-                if (m_RootData.getSchema().getSettings().getVerbose() > 2) {
+            if ((((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) / m_SumEntropyWithin) > m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsParentStop()) {
+                if (m_RootData.getSchema().getSettings().getGeneric().getVerbose() > 2) {
                     System.out.println("STOP: weighted sum of SumEntropies in children = " + ((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) + ", SumEntropies at node = " + m_SumEntropyWithin);
                 }
                 return false;
@@ -634,10 +640,10 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 
 
     public String getName() {
-        switch (Settings.m_PhylogenyCriterion.getValue()) {
-            case Settings.PHYLOGENY_CRITERION_BRANCHLENGTHS:
+        switch (getSettings().getPhylogeny().getPhylogenyCriterion()) {
+            case SettingsPhylogeny.PHYLOGENY_CRITERION_BRANCHLENGTHS:
                 return "GeneticDistanceHeuristicMatrix -> Minimize total branch length";
-            case Settings.PHYLOGENY_CRITERION_MAXAVGPWDIST:
+            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXAVGPWDIST:
                 return "GeneticDistanceHeuristicMatrix -> Maximize avg pairwise distance";
         }
         return "GeneticDistanceHeuristicMatrix";

@@ -149,7 +149,7 @@ public class ClusView {
         FileWriter fr = null;
         BufferedWriter br = null;
 
-        File file = Paths.get(settings.getDataFile() + ".hmtr").toFile();
+        File file = Paths.get(settings.getData().getDataFile() + ".hmtr").toFile();
 
         String newLine = System.lineSeparator();
 
@@ -176,13 +176,13 @@ public class ClusView {
                     if (sc.hasNextLine())
                         sc.nextLine();
 
-                    String aggFromS = settings.getHMTRAggregation().getStringValue();
-                    String hierFromS = settings.getHMTRHierarchyString().getStringValue();
+                    String aggFromS = settings.getHMTR().getHMTRAggregationName();
+                    String hierFromS = settings.getHMTR().getHMTRHierarchyString();
 
                     if (agg.equals(aggFromS) && hier.equals(hierFromS)) {
                         incorrectDump = false;
 
-                        schema.getSettings().setHMTRUsingDump(true);
+                        schema.getSettings().getHMTR().setHMTRUsingDump(true);
                         //ClassHMTRHierarchy.setIsUsingDump(true);
 
                         if (sc.hasNextLine()) {
@@ -238,12 +238,11 @@ public class ClusView {
             }
 
             if (incorrectDump) {
-
                 fr = new FileWriter(file);
                 br = new BufferedWriter(fr);
 
-                br.write(settings.getHMTRAggregation().getStringValue() + newLine +
-                        settings.getHMTRHierarchyString().getStringValue() + newLine + newLine);
+                br.write(settings.getHMTR().getHMTRAggregationName() + newLine +
+                        settings.getHMTR().getHMTRHierarchyString() + newLine + newLine);
 
                 DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
 
@@ -342,8 +341,8 @@ public class ClusView {
                     ClusSerializable attr = (ClusSerializable) m_Attr.get(j);
                     if (!attr.read(reader, tuple)) { throw new IOException("Error reading attirbute " + m_Attr + " at row " + (reader.getRow() + 1)); }
                 }
-                
-                if (schema.getSettings().isHMTRUsingDump()) {
+
+                if (schema.getSettings().getHMTR().isHMTRUsingDump()) {
                     // read attributes from dump
                     for (int j = m_Attr.size() - schema.getNbHMTR(); j < m_Attr.size(); j++) {
                         ClusSerializable attr = (ClusSerializable) m_Attr.get(j);

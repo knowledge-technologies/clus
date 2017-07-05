@@ -1,8 +1,6 @@
 
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileInt;
 import clus.jeans.io.ini.INIFileSection;
 import clus.jeans.io.ini.INIFileString;
 
@@ -13,13 +11,33 @@ public class SettingsKNN implements ISettings {
      * Section: KNN *
      ***********************************************************************/
 
-    INIFileSection m_SectionKNN;
-    public static INIFileString kNN_k;
-    public static INIFileString kNN_distance;
-    public static INIFileString kNN_method;
-    public static INIFileString kNN_distanceWeight;
-    public static INIFileString kNN_attrWeight;
+    private INIFileSection m_SectionKNN;
+    private INIFileString kNN_k;
+    private INIFileString kNN_distance;
+    private INIFileString kNN_method;
+    private INIFileString kNN_distanceWeight;
+    private INIFileString kNN_attrWeight;
 
+
+    public String getKNNk() {
+        return kNN_k.getValue();
+    }
+
+    public String getKNNDistance() {
+        return kNN_distance.getValue();
+    }
+
+    public String getKNNDistanceWeight() {
+        return kNN_distanceWeight.getValue();
+    }
+
+    public String getKNNAttrWeight() {
+        return kNN_attrWeight.getValue();
+    }
+    
+    public void setKNNAttrWeight(String val) {
+        kNN_attrWeight.setValue(val);
+    }
 
     public void setSectionKNNEnabled(boolean enable) {
         m_SectionKNN.setEnabled(enable);
@@ -31,7 +49,7 @@ public class SettingsKNN implements ISettings {
     }
 
 
-    public String getKnnMethod() {
+    public String getKNNMethod() {
         return this.kNN_method.getStringValue();
     }
 

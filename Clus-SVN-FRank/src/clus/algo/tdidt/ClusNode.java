@@ -28,16 +28,15 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import clus.error.multiscore.MultiScore;
-import clus.error.multiscore.MultiScoreStat;
 import clus.jeans.tree.MyNode;
 import clus.jeans.util.MyArray;
 import clus.jeans.util.StringUtils;
@@ -60,8 +59,6 @@ import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.ClusUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 
 public class ClusNode extends MyNode implements ClusModel {

@@ -29,6 +29,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.google.gson.JsonObject;
+
 import clus.algo.kNN.distance.EuclideanDistance;
 import clus.algo.kNN.distance.SearchDistance;
 import clus.algo.kNN.methods.SearchAlgorithm;
@@ -48,7 +50,6 @@ import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import com.google.gson.JsonObject;
 
 
 /**
@@ -95,15 +96,15 @@ public class oTestKnnModel implements ClusModel, Serializable {
             m_Watches.get(alg + "B").pause();
         }
         // save prediction template
-        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
-            if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()) {
-                statTemplate = new ClassificationStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelThreshold());
+        if (cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY) {
+            if (cr.getStatManager().getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
+                statTemplate = new ClassificationStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMLC().getMultiLabelThreshold());
             }
             else {
                 statTemplate = new ClassificationStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
             }
         }
-        else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
+        else if (cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION)
             statTemplate = new RegressionStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
     }
 

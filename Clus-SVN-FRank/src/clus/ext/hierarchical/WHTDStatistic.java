@@ -48,6 +48,8 @@ import clus.data.type.NumericAttrType;
 import clus.jeans.util.array.MIntArray;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsGeneral;
+import clus.main.settings.SettingsHMLC;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStatBinaryNomiss;
 import clus.statistic.StatisticPrintInfo;
@@ -154,7 +156,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public ClusStatistic cloneStat() {
-        if (m_Distance == Settings.HIERDIST_NO_DIST) {// poolAUPRC case
+        if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) {// poolAUPRC case
             return new WHTDStatistic(this.m_Settings, m_Hier, false, m_Compatibility, m_Distance);
         }
         else {
@@ -164,11 +166,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public ClusStatistic cloneSimple() {
-        WHTDStatistic res = (m_Distance == Settings.HIERDIST_NO_DIST) ? new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility, m_Distance) : new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility);// poolAUPRC
-                                                                                                                                                                                                                          // case
-                                                                                                                                                                                                                          // :
-                                                                                                                                                                                                                          // normal
-                                                                                                                                                                                                                          // case
+        WHTDStatistic res = (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) ? new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility, m_Distance) : new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility);
+        // poolAUPRC         
+        // case
+        // :
+        // normal
+        // case
         res.m_Threshold = m_Threshold;
         res.m_Training = m_Training;
         if (m_Validation != null) {
@@ -208,7 +211,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             int idx = val.getIndex();
             // if (getSettings().getGeneric().getVerbose() > 10) System.out.println("idx = "+idx+" weight = "+weight);
             m_SumValues[idx] += weight;
-            if (m_Distance == Settings.HIERDIST_NO_DIST) {// poolAUPRC case
+            if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) {// poolAUPRC case
                 m_P[idx] += weight;
             }
         }
@@ -261,7 +264,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public void calcMean(double[] means) {
-        if (Settings.useMEstimate() && m_Training != null) {
+        if (getSettings().getHMLC().useMEstimate() && m_Training != null) {
             // Use m-estimate
             for (int i = 0; i < m_NbAttrs; i++) {
                 means[i] = (m_SumValues[i] + m_Training.m_Means[i]) / (m_SumWeight + 1.0);
@@ -277,7 +280,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public double getMean(int i) {
-        if (Settings.useMEstimate() && m_Training != null) {
+        if (getSettings().getHMLC().useMEstimate() && m_Training != null) {
             // Use m-estimate
             return (m_SumValues[i] + m_Training.m_Means[i]) / (m_SumWeight + 1.0);
         }
@@ -295,7 +298,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public int round(double value) {
-        if (getCompatibility() == Settings.COMPATIBILITY_CMB05) {
+        if (getCompatibility() == SettingsGeneral.COMPATIBILITY_CMB05) {
             return (int) value;
         }
         else {
@@ -582,7 +585,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public double getSVarS(ClusAttributeWeights scale) {
-        if (m_Distance == Settings.HIERDIST_NO_DIST) { // poolAUPRC case
+        if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC case
             ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
             for (int i = 0; i < m_NbAttrs; i++) {
                 classInd.add(i, i);
@@ -635,7 +638,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (m_Distance == Settings.HIERDIST_NO_DIST) { // poolAUPRC case
+        if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC case
             ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
             for (int i = 0; i < m_NbAttrs; i++) {
                 classInd.add(i, i);
@@ -712,7 +715,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public void copy(ClusStatistic other) {
-        if (m_Distance == Settings.HIERDIST_NO_DIST) { // poolAUPRC case
+        if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC case
             WHTDStatistic or = (WHTDStatistic) other;
             m_SumWeight = or.m_SumWeight;
             m_NbExamples = or.m_NbExamples;

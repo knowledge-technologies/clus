@@ -25,6 +25,7 @@ package clus.heuristic;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.type.ClusAttrType;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 
 
@@ -33,39 +34,45 @@ public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
     private ClusAttrType[] m_Attrs;
 
 
-    public VarianceReductionHeuristicEfficient(ClusAttributeWeights prod, ClusAttrType[] attrs) {
+    public VarianceReductionHeuristicEfficient(ClusAttributeWeights prod, ClusAttrType[] attrs, Settings sett) {
+        super(sett);
+
         m_ClusteringWeights = prod;
         m_Attrs = attrs;
     }
-    
-//    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing){
-//    	// Acceptable?
-//        if (stopCriterion(tstat, pstat, missing)) { return Double.NEGATIVE_INFINITY; }
-//        // Compute |S|Var[S]
-//        double ss_tot = m_NumericSplitTotStatSVarS;
-//        double ss_pos = pstat.getSVarS(m_ClusteringWeights);
-//        double ss_neg = tstat.getSVarSDiff(m_ClusteringWeights, pstat);
-//        // printInfo(ss_tot, ss_pos, ss_neg, pstat);
-//        return FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
-//
-//    }
-//    
-	@Override
-	public boolean isEfficient(){
-		return true;
-	}
-	@Override
-    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot){
-    	// Acceptable?
-      if (stopCriterion(tstat, pstat, missing)) { return Double.NEGATIVE_INFINITY; }
-      // Compute |S|Var[S]
-      double ss_pos = pstat.getSVarS(m_ClusteringWeights);
-      double ss_neg = tstat.getSVarSDiff(m_ClusteringWeights, pstat);
-      // printInfo(ss_tot, ss_pos, ss_neg, pstat);
-      return FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
-//
+
+
+    //    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing){
+    //    	// Acceptable?
+    //        if (stopCriterion(tstat, pstat, missing)) { return Double.NEGATIVE_INFINITY; }
+    //        // Compute |S|Var[S]
+    //        double ss_tot = m_NumericSplitTotStatSVarS;
+    //        double ss_pos = pstat.getSVarS(m_ClusteringWeights);
+    //        double ss_neg = tstat.getSVarSDiff(m_ClusteringWeights, pstat);
+    //        // printInfo(ss_tot, ss_pos, ss_neg, pstat);
+    //        return FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
+    //
+    //    }
+    //    
+    @Override
+    public boolean isEfficient() {
+        return true;
     }
-    
+
+
+    @Override
+    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot) {
+        // Acceptable?
+        if (stopCriterion(tstat, pstat, missing)) { return Double.NEGATIVE_INFINITY; }
+        // Compute |S|Var[S]
+        double ss_pos = pstat.getSVarS(m_ClusteringWeights);
+        double ss_neg = tstat.getSVarSDiff(m_ClusteringWeights, pstat);
+        // printInfo(ss_tot, ss_pos, ss_neg, pstat);
+        return FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
+        //
+    }
+
+
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         // Acceptable?
         if (stopCriterion(tstat, pstat, missing)) { return Double.NEGATIVE_INFINITY; }
@@ -76,7 +83,8 @@ public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
         // printInfo(ss_tot, ss_pos, ss_neg, pstat);
         return FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
     }
-    
+
+
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic[] pstat, int nbsplit) {
         // Acceptable?
         if (stopCriterion(tstat, pstat, nbsplit)) { return Double.NEGATIVE_INFINITY; }
@@ -91,7 +99,7 @@ public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
 
 
     public String getName() {
-        return "Variance Reduction (FTest = " + Settings.FTEST_VALUE + ", " + m_ClusteringWeights.getName(m_Attrs) + ")";
+        return "Variance Reduction (FTest = " + SettingsTree.FTEST_VALUE + ", " + m_ClusteringWeights.getName(m_Attrs) + ")";
     }
 
 

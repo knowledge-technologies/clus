@@ -35,6 +35,7 @@ import clus.jeans.resource.ResourceInfo;
 import clus.jeans.util.list.MyListIter;
 import clus.main.ClusStat;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.model.test.NodeTest;
 import clus.model.test.SoftTest;
 import clus.statistic.ClusStatistic;
@@ -174,7 +175,7 @@ public class OptXValIndOV extends OptXValInduce {
             m_PrevVl[i] = Double.NaN;
         }
         ClusStatistic sum = m_PosStat[0];
-        if (Settings.ONE_NOMINAL) {
+        if (SettingsTree.ONE_NOMINAL) {
             for (int i = first; i < nb_rows; i++) {
                 tuple = data.getTuple(i);
                 boolean no_sum_calc = true;

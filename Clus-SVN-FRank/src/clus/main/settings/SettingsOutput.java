@@ -2,7 +2,6 @@
 package clus.main.settings;
 
 import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileInt;
 import clus.jeans.io.ini.INIFileNominal;
 import clus.jeans.io.ini.INIFileSection;
 import clus.model.ClusModel;

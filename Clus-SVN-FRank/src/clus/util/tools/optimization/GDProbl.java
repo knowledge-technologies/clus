@@ -34,7 +34,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import clus.main.ClusStatManager;
-import clus.main.settings.Settings;
+import clus.main.settings.SettingsRules;
 import clus.util.ClusFormat;
 
 
@@ -140,9 +140,9 @@ public class GDProbl extends OptProbl {
         preparePredictionsForNormalization();
 
         // If early stopping criteria is chosen, reserve part of the training set for early stop testing.
-        if (getSettings().getOptGDEarlyStopAmount() > 0) {
+        if (getSettings().getRules().getOptGDEarlyStopAmount() > 0) {
 
-            int nbDataTest = (int) Math.ceil(getNbOfInstances() * getSettings().getOptGDEarlyStopAmount());
+            int nbDataTest = (int) Math.ceil(getNbOfInstances() * getSettings().getRules().getOptGDEarlyStopAmount());
 
             // Create the early stopping data variables.
             OptParam dataEarlyStop = new OptParam(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbDataTest, getNbOfTargets(), optInfo.m_implicitLinearTerms);
@@ -170,7 +170,7 @@ public class GDProbl extends OptProbl {
         initPredictorVsTrueValuesCovariances();
 
         // dynamic step size computation
-        if (getSettings().isOptGDIsDynStepsize()) {
+        if (getSettings().getRules().isOptGDIsDynStepsize()) {
             computeDynStepSize();
         }
     }
@@ -186,7 +186,7 @@ public class GDProbl extends OptProbl {
     public void initGDForNewRunWithSamePredictions() {
         int nbWeights = getNumVar();
 
-        if (getSettings().getOptGDEarlyStopAmount() > 0) {
+        if (getSettings().getRules().getOptGDEarlyStopAmount() > 0) {
             m_minFitness = Double.POSITIVE_INFINITY;
             m_minFitWeights = new ArrayList<Double>(getNumVar());
 
@@ -198,7 +198,7 @@ public class GDProbl extends OptProbl {
 
         m_isWeightNonZero = new boolean[nbWeights];
 
-        if (getSettings().getOptGDMTGradientCombine() == Settings.OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE) {
+        if (getSettings().getRules().getOptGDMTGradientCombine() == SettingsRules.OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE) {
             m_bannedWeights = new int[nbWeights]; // Are used only for MaxLoss
         }
         else {
@@ -207,10 +207,10 @@ public class GDProbl extends OptProbl {
         m_gradients = new double[nbWeights]; // Initial value is zero
 
         m_nbOfNonZeroRules = 0;
-        m_stepSize = getSettings().getOptGDStepSize();
+        m_stepSize = getSettings().getRules().getOptGDStepSize();
 
         // dynamic step size computation
-        if (getSettings().isOptGDIsDynStepsize()) {
+        if (getSettings().getRules().isOptGDIsDynStepsize()) {
             m_stepSize = m_dynStepLowerBound;
         }
     }
@@ -288,7 +288,7 @@ public class GDProbl extends OptProbl {
             }
 
             covs[iTarget] /= getNbOfInstances();
-            if (getSettings().isOptNormalization()) {
+            if (getSettings().getRules().isOptNormalization()) {
                 covs[iTarget] /= getNormFactor(iTarget);
             }
         }
@@ -440,7 +440,7 @@ public class GDProbl extends OptProbl {
         }
         avgCov /= (nbOfTargets * getNbOfInstances());
 
-        if (getSettings().isOptNormalization()) {
+        if (getSettings().getRules().isOptNormalization()) {
             avgCov /= getNormFactor(iTarget);
         }
 
@@ -477,7 +477,7 @@ public class GDProbl extends OptProbl {
 
         avgCov /= (nbOfTargets * getNbOfInstances());
 
-        if (getSettings().isOptNormalization()) {
+        if (getSettings().getRules().isOptNormalization()) {
             avgCov /= getNormFactor(iTarget);
         }
         return avgCov;
@@ -506,7 +506,7 @@ public class GDProbl extends OptProbl {
             double cov = 0;
             cov += getPredictionsWhenCovered(iPrevious, 0, iTarget) * getPredictionsWhenCovered(iLatter, 0, iTarget);
 
-            if (getSettings().isOptNormalization()) {
+            if (getSettings().getRules().isOptNormalization()) {
                 cov /= getNormFactor(iTarget);
             }
             avgCov += cov / nbOfTargets;
@@ -541,12 +541,12 @@ public class GDProbl extends OptProbl {
     protected double getGradient(int iWeightDim, ArrayList<Double> weights) {
 
         double gradient = 0;
-        switch (getSettings().getOptGDLossFunction()) {
-            case Settings.OPT_LOSS_FUNCTIONS_01ERROR:
+        switch (getSettings().getRules().getOptGDLossFunction()) {
+            case SettingsRules.OPT_LOSS_FUNCTIONS_01ERROR:
                 // gradient = loss01(trueValue, prediction);
                 // break;
-            case Settings.OPT_LOSS_FUNCTIONS_HUBER:
-            case Settings.OPT_LOSS_FUNCTIONS_RRMSE:
+            case SettingsRules.OPT_LOSS_FUNCTIONS_HUBER:
+            case SettingsRules.OPT_LOSS_FUNCTIONS_RRMSE:
                 // gradient = lossHuber(trueValue, prediction);
                 // break;
                 try {
@@ -556,7 +556,7 @@ public class GDProbl extends OptProbl {
                     s.printStackTrace();
                 } // TODO Huber and alpha computing
                   // Default case
-            case Settings.OPT_LOSS_FUNCTIONS_SQUARED:
+            case SettingsRules.OPT_LOSS_FUNCTIONS_SQUARED:
             default:
                 gradient = gradientSquared(iWeightDim, weights);
                 break;
@@ -680,7 +680,7 @@ public class GDProbl extends OptProbl {
      */
     public int[] getMaxGradients(int nbOfIterations) {
         /** Maximum number of nonzero elements. Can we add more? */
-        int maxElements = getSettings().getOptGDMaxNbWeights();
+        int maxElements = getSettings().getRules().getOptGDMaxNbWeights();
         boolean maxNbOfWeightReached = false;
         if (maxElements > 0 && m_nbOfNonZeroRules >= maxElements) {
             // If maximum number of nonzero elements is reached,
@@ -704,7 +704,7 @@ public class GDProbl extends OptProbl {
         ArrayList<Integer> iMaxGradients = new ArrayList<Integer>();
 
         // The least allowed item.
-        double minAllowed = getSettings().getOptGDGradTreshold() * maxGrad;
+        double minAllowed = getSettings().getRules().getOptGDGradTreshold() * maxGrad;
 
         // Copy all the items that are greater to a returned array
         for (int iCopy = 0; iCopy < m_gradients.length; iCopy++) {
@@ -716,7 +716,7 @@ public class GDProbl extends OptProbl {
                 iMaxGradients.add(iCopy);
                 // If the treshold is 1, we only want to change one dimension at time
                 // Default rule is not counted
-                if (getSettings().getOptGDGradTreshold() == 1.0 && iCopy != 0)
+                if (getSettings().getRules().getOptGDGradTreshold() == 1.0 && iCopy != 0)
                     break;
             }
         }
@@ -726,7 +726,7 @@ public class GDProbl extends OptProbl {
         // only the ones needed.
         // However if maximum number of nonzero weights is already reached, we can't
         // take too much of these.
-        if (maxElements > 0 && !maxNbOfWeightReached && getSettings().getOptGDGradTreshold() < 1.0) {
+        if (maxElements > 0 && !maxNbOfWeightReached && getSettings().getRules().getOptGDGradTreshold() < 1.0) {
 
             // Gradients that are already nonzero. (count also default rule, because it is
             // not counted in maxgradients)
@@ -874,7 +874,7 @@ public class GDProbl extends OptProbl {
 
         boolean stop = false;
 
-        if (newFitness > getSettings().getOptGDEarlyStopTreshold() * m_minFitness) {
+        if (newFitness > getSettings().getRules().getOptGDEarlyStopTreshold() * m_minFitness) {
             stop = true;
             if (m_printGDDebugInformation)
                 System.out.println("\nGD: Independent test set error increase detected - overfitting.\n");

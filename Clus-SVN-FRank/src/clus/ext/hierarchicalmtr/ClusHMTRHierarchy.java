@@ -2,10 +2,9 @@
 package clus.ext.hierarchicalmtr;
 
 import java.io.IOException;
-import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Map;
 
 import clus.main.settings.Settings;
@@ -72,7 +71,7 @@ public class ClusHMTRHierarchy  { //implements Serializable {
 
 
     public void initialize(Settings sett) {
-        String hier = sett.getHMTR().getHMTRHierarchyString().getStringValue();
+        String hier = sett.getHMTR().getHMTRHierarchyString();
         double weight = sett.getHMTR().getHMTRHierarchyWeight().getValue();
         
         hier = hier.replace("(", "")

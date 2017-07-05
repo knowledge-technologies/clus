@@ -1,3 +1,4 @@
+
 package clus.main.settings;
 
 import java.util.ArrayList;
@@ -12,17 +13,18 @@ import clus.jeans.io.ini.INIFileNominal;
 import clus.jeans.io.ini.INIFileSection;
 import clus.jeans.io.ini.INIFileString;
 
+
 public class SettingsHMTR implements ISettings {
 
     SettingsAttribute m_SettAttribute;
     SettingsGeneric m_SettGeneric;
-    
+
+
     public SettingsHMTR(SettingsAttribute settAttribute, SettingsGeneric settGeneric) {
         m_SettAttribute = settAttribute;
         m_SettGeneric = settGeneric;
     }
-    
-    
+
     /***********************************************************************
      * Section: Hierarchical multi-target regression *
      ***********************************************************************/
@@ -99,13 +101,18 @@ public class SettingsHMTR implements ISettings {
     }
 
 
-    public INIFileNominal getHMTRAggregation() {
-        return m_HMTRAggregation;
+    public int getHMTRAggregation() {
+        return m_HMTRAggregation.getValue();
     }
 
 
-    public INIFileString getHMTRHierarchyString() {
-        return m_HMTRHierarchyString;
+    public String getHMTRAggregationName() {
+        return m_HMTRAggregation.getStringValue();
+    }
+
+
+    public String getHMTRHierarchyString() {
+        return m_HMTRHierarchyString.getStringValue();
     }
 
 
@@ -119,10 +126,9 @@ public class SettingsHMTR implements ISettings {
         m_SectionHMTR.addNode(m_HMTRHierarchyString = new INIFileString("Hierarchy"));
         m_SectionHMTR.addNode(m_HMTRHierarchyWeight = new INIFileDouble("Weight"));
         m_SectionHMTR.setEnabled(false);
-        
+
         return m_SectionHMTR;
     }
-
 
 
     public void addHMTRTargets(ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy) {
@@ -165,10 +171,10 @@ public class SettingsHMTR implements ISettings {
             for (int i = numAggregates; i > 0; i--) {
                 targets += "," + (nb - i + 1);
             }
-            
+
             m_SettAttribute.setTarget(targets);
             schema.setNbHMTR(numAggregates);
         }
     }
-    
+
 }

@@ -88,13 +88,13 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
             (new File("hsc")).mkdir();
             (new File("hsc/out")).mkdir();
             (new File("hsc/model")).mkdir();
-            sett.setDate(new Date());
-            sett.setAppName(m_Cargs.getMainArg(0));
+            sett.getGeneric().setDate(new Date());
+            sett.getGeneric().setAppName(m_Cargs.getMainArg(0));
             m_Clus.initSettings(m_Cargs);
             ClusDecisionTree clss = new ClusDecisionTree(m_Clus);
-            if (sett.getFTestArray().isVector()) {
-                m_FTests = sett.getFTestArray().getDoubleVector();
-                clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
+            if (sett.getTree().getFTestArray().isVector()) {
+                m_FTests = sett.getTree().getFTestArray().getDoubleVector();
+                clss = new CDTTuneFTest(clss, sett.getTree().getFTestArray().getDoubleVector());
             }
             m_Clus.initialize(m_Cargs, clss);
             doRun();
@@ -208,7 +208,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
             RowData childData = createChildData(nodeData, ctype, child.getIndex());
             ClusInductionAlgorithmType clss;
             if (m_Cargs.hasOption("forest")) {
-                m_Clus.getSettings().setEnsembleMode(true);
+                m_Clus.getSettings().getEnsemble().setEnsembleMode(true);
                 clss = new ClusEnsembleClassifier(m_Clus);
             }
             else {
@@ -218,7 +218,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
                 clss = new CDTTuneFTest(clss, m_FTests);
             }
             m_Clus.recreateInduce(m_Cargs, clss, cschema, childData);
-            String name = m_Clus.getSettings().getAppName() + "-" + nodeName + "-" + childName;
+            String name = m_Clus.getSettings().getGeneric().getAppName() + "-" + nodeName + "-" + childName;
             ClusRun cr = new ClusRun(childData.cloneData(), m_Clus.getSummary());
             cr.copyTrainingData();
             if (valid != null) {
@@ -252,7 +252,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
             m_Clus.induce(cr, clss); // Induce model
             m_Clus.calcError(cr, null); // Calc error
             output.writeHeader();
-            output.writeOutput(cr, true, m_Clus.getSettings().isOutTrainError());
+            output.writeOutput(cr, true, m_Clus.getSettings().getOutput().isOutTrainError());
             output.close();
             ClusModelCollectionIO io = new ClusModelCollectionIO();
             io.addModel(cr.addModelInfo(ClusModel.ORIGINAL));

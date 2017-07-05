@@ -4,14 +4,14 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.jeans.math.MathUtil;
-import clus.main.settings.Settings;
+import clus.main.settings.SettingsMLC;
 
 public class MultiLabelDistance {
 	// If new types are introduced use the same values as in Settings.java
-	private static final int HAMMING_LOSS = Settings.MULTILABEL_MEASURES_HAMMINGLOSS;
-	private static final int ACCURACY = Settings.MULTILABEL_MEASURES_MLACCURACY;
-	private static final int F1 = Settings.MULTILABEL_MEASURES_MLFONE;
-	private static final int SUBSET_ACCURACY = Settings.MULTILABEL_MEASURES_SUBSETACCURACY;
+	private static final int HAMMING_LOSS = SettingsMLC.MULTILABEL_MEASURES_HAMMINGLOSS;
+	private static final int ACCURACY = SettingsMLC.MULTILABEL_MEASURES_MLACCURACY;
+	private static final int F1 = SettingsMLC.MULTILABEL_MEASURES_MLFONE;
+	private static final int SUBSET_ACCURACY = SettingsMLC.MULTILABEL_MEASURES_SUBSETACCURACY;
 	
 	private final int m_DistanceType;
 	private NominalAttrType[] m_Labels;

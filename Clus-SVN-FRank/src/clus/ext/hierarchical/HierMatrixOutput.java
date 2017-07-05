@@ -35,7 +35,7 @@ public class HierMatrixOutput {
 
     public static void writeExamples(RowData data, ClassHierarchy hier) {
         try {
-            PrintWriter wrt = data.getSchema().getSettings().getFileAbsoluteWriter("examples.matrix");
+            PrintWriter wrt = data.getSchema().getSettings().getGeneric().getFileAbsoluteWriter("examples.matrix");
             writeHeader(hier, wrt);
             ClassesAttrType type = hier.getType();
             int sidx = type.getArrayIndex();

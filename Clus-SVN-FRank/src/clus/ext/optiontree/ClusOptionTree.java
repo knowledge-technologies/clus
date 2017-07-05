@@ -24,11 +24,11 @@ package clus.ext.optiontree;
 
 import java.io.IOException;
 
-import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.Clus;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.data.type.ClusSchema;
+import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;

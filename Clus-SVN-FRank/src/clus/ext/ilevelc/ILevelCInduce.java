@@ -133,7 +133,7 @@ public class ILevelCInduce extends DepthFirstInduce {
     public double computeHeuristic(int violated, double ss) {
         double ss_norm = ss / m_GlobalSS;
         double violated_norm = 1.0 * violated / m_Constraints.size();
-        double alpha = getSettings().getILevelCAlpha();
+        double alpha = getSettings().getILevelC().getILevelCAlpha();
         double heur = (1.0 - alpha) * ss_norm + alpha * violated_norm;
         // System.out.println("Violated: "+violated+" SS: "+ss+" -> "+heur);
         return heur;
@@ -554,7 +554,7 @@ public class ILevelCInduce extends DepthFirstInduce {
         if (type.getTypeIndex() == NominalAttrType.THIS_TYPE) {
             NominalAttrType cls = (NominalAttrType) type;
             m_MaxNbClasses = cls.getNbValues();
-            int nbConstraints = getSettings().getILevelCNbRandomConstraints();
+            int nbConstraints = getSettings().getILevelC().getILevelCNbRandomConstraints();
             for (int i = 0; i < nbConstraints; i++) {
                 int t1i = ClusRandom.nextInt(ClusRandom.RANDOM_ALGO_INTERNAL, nbRows);
                 int t2i = ClusRandom.nextInt(ClusRandom.RANDOM_ALGO_INTERNAL, nbRows);
@@ -589,11 +589,11 @@ public class ILevelCInduce extends DepthFirstInduce {
         /* and process it ... */
         data.addIndices();
         m_NbTrain = data.getNbRows();
-        m_MinLeafWeight = getSettings().getMinimalWeight();
+        m_MinLeafWeight = getSettings().getModel().getMinimalWeight();
         ArrayList points = data.toArrayList();
         /* load constraints from file */
-        if (getSettings().hasILevelCFile()) {
-            String fname = getSettings().getILevelCFile();
+        if (getSettings().getILevelC().hasILevelCFile()) {
+            String fname = getSettings().getILevelC().getILevelCFile();
             m_Constraints = ILevelConstraint.loadConstraints(fname, points);
         }
         else {
@@ -601,7 +601,7 @@ public class ILevelCInduce extends DepthFirstInduce {
             /* reason: nbTrain = number of training instances and training instances come first */
             m_Constraints = createConstraints(data, nbTrain);
         }
-        if (getSettings().isILevelCCOPKMeans()) {
+        if (getSettings().getILevelC().isILevelCCOPKMeans()) {
             COPKMeans km = new COPKMeans(m_MaxNbClasses, getStatManager());
             COPKMeansModel model = null;
             int sumIter = 0;
@@ -619,7 +619,7 @@ public class ILevelCInduce extends DepthFirstInduce {
             }
             return model;
         }
-        else if (getSettings().isILevelCMPCKMeans()) {
+        else if (getSettings().getILevelC().isILevelCMPCKMeans()) {
             MPCKMeansWrapper wrap = new MPCKMeansWrapper(getStatManager());
             return wrap.induce(data, test, m_Constraints, m_MaxNbClasses);
         }

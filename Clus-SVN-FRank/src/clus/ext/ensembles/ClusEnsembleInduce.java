@@ -65,7 +65,6 @@ import clus.main.settings.SettingsGeneric;
 import clus.main.settings.SettingsMLC;
 import clus.main.settings.SettingsOutput;
 import clus.main.settings.SettingsRules;
-import clus.main.settings.SettingsTree;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;

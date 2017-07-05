@@ -22,21 +22,25 @@
 
 package clus.ext.optiontree;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.algo.split.NominalSplit;
 import clus.algo.split.SubsetSplit;
-import clus.data.rows.*;
-import clus.data.type.*;
-import clus.heuristic.ClusHeuristic;
-import clus.main.*;
+import clus.data.rows.DataTuple;
+import clus.data.rows.RowData;
+import clus.data.rows.RowDataSortHelper;
+import clus.data.type.ClusAttrType;
+import clus.data.type.ClusSchema;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
-import clus.model.test.NodeTest;
-import clus.statistic.*;
-import clus.util.*;
-import java.util.ArrayList;
+import clus.statistic.ClusStatistic;
+import clus.util.ClusException;
+import clus.util.ClusRandomNonstatic;
 
 public class FindBestTests {
 
@@ -85,7 +89,7 @@ public class FindBestTests {
         
         SubsetSplit split = new SubsetSplit();
         split.initialize(m_StatManager);
-        TestAndHeuristic tnh = new TestAndHeuristic();
+        TestAndHeuristic tnh = new TestAndHeuristic(getSettings().getGeneric().getVerbose());
         tnh.create(m_StatManager, m_MaxStats);
         tnh.initTestSelector(totstat, data);
         tnh.setInitialData(totstat, data);
@@ -126,7 +130,7 @@ public class FindBestTests {
 
         //System.out.println("Adding num test");
         
-        TestAndHeuristic tnh = new TestAndHeuristic();
+        TestAndHeuristic tnh = new TestAndHeuristic(getSettings().getGeneric().getVerbose());
         tnh.create(m_StatManager, m_MaxStats);
         tnh.initTestSelector(totstat, data);
         tnh.setInitialData(totstat, data);
@@ -197,7 +201,7 @@ public class FindBestTests {
     }
     
     private RowData createSample(RowData original) {
-        return original.sample(getSettings().getTreeSplitSampling(), new ClusRandomNonstatic(getSettings().getRandomSeed()));
+        return original.sample(getSettings().getTree().getTreeSplitSampling(), new ClusRandomNonstatic(getSettings().getGeneral().getRandomSeed()));
     }
 
     public void sort() {
@@ -238,7 +242,7 @@ public class FindBestTests {
         if (bestValue == Double.NEGATIVE_INFINITY) return 0;
         int n = 1;
         for (int i = 1; i < m_Tests.size(); i++) {
-            if (m_Tests.get(i).getHeuristicValue() / bestValue > 1 - getSettings().getOptionEpsilon()) {
+            if (m_Tests.get(i).getHeuristicValue() / bestValue > 1 - getSettings().getOptionTree().getOptionEpsilon()) {
                 n++;
             }
         }

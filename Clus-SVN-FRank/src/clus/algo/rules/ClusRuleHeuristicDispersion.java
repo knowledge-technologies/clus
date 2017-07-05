@@ -38,6 +38,11 @@ import clus.main.settings.Settings;
 
 public abstract class ClusRuleHeuristicDispersion extends ClusHeuristic {
 
+    public ClusRuleHeuristicDispersion(Settings sett) {
+        super(sett);
+    }
+
+
     public ClusStatManager m_StatManager = null;
     public int[] m_DataIndexes;
     public int[][] m_DataIndexesPerVal;
@@ -94,10 +99,4 @@ public abstract class ClusRuleHeuristicDispersion extends ClusHeuristic {
     public void setCoveredBitVectArray(ArrayList bit_vect_array) {
         m_CoveredBitVectArray = bit_vect_array;
     }
-
-
-    public Settings getSettings() {
-        return m_StatManager.getSettings();
-    }
-
 }

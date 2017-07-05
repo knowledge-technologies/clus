@@ -15,7 +15,9 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
     protected ClusStatManager m_StatManager;
 
 
-    public ClusRuleHeuristicHierarchical(ClusStatManager stat_mgr, ClusAttributeWeights prod) {
+    public ClusRuleHeuristicHierarchical(ClusStatManager stat_mgr, ClusAttributeWeights prod, Settings sett) {
+        super(sett);
+        
         m_StatManager = stat_mgr;
         m_ClusteringWeights = prod;
     }

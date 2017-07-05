@@ -199,6 +199,6 @@ public class PredictionWriter extends ClusModelProcessor {
                 at.updatePredictWriterSchema(m_OutSchema);
             }
         }
-        m_Writer = m_Sett.getFileAbsoluteWriter(m_Fname);
+        m_Writer = m_Sett.getGeneric().getFileAbsoluteWriter(m_Fname);
     }
 }

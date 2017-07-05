@@ -3,7 +3,6 @@ package clus.ext.ensembles;
 
 import java.io.IOException;
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 
 import clus.data.rows.DataTuple;

@@ -35,8 +35,8 @@ import clus.statistic.RegressionStat;
 
 public class ClusBeamHeuristicMorishita extends ClusBeamHeuristic {
 
-    public ClusBeamHeuristicMorishita(ClusStatistic stat) {
-        super(stat);
+    public ClusBeamHeuristicMorishita(ClusStatistic stat, Settings sett) {
+        super(stat, sett);
     }
 
 

@@ -34,6 +34,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
+import com.google.gson.JsonObject;
+
 import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
@@ -58,7 +60,6 @@ import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import com.google.gson.JsonObject;
 
 
 public class ClusRule implements ClusModel, Serializable {

@@ -1,3 +1,4 @@
+
 package clus.main.settings;
 
 import clus.jeans.io.ini.INIFileBool;
@@ -8,7 +9,9 @@ import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import clus.jeans.io.ini.INIFileSection;
 import clus.jeans.io.ini.INIFileStringOrInt;
 
+
 public class SettingsRules implements ISettings {
+
     /***********************************************************************
      * Section: Rules *
      ***********************************************************************/
@@ -35,12 +38,8 @@ public class SettingsRules implements ISettings {
     public final static int COVERING_METHOD_WEIGHTED_MULTIPLICATIVE = 1;
     public final static int COVERING_METHOD_WEIGHTED_ADDITIVE = 2;
     public final static int COVERING_METHOD_WEIGHTED_ERROR = 3;
-
-    /**
-     * In multi-label classification: predicted set of classes is union
-     * of predictions of individual rules
-     */
-    public final static int COVERING_METHOD_UNION = 4;
+    
+    public final static int COVERING_METHOD_UNION = 4;    // In multi-label classification: predicted set of classes is union of predictions of individual rules
 
     // Evaluates rules in the context of complete rule set: unordered rules
     // public final static int COVERING_METHOD_RULE_SET = 5;
@@ -78,6 +77,10 @@ public class SettingsRules implements ISettings {
      */
     public final static int COVERING_METHOD_RULES_FROM_TREE = 9;
 
+    
+    
+    
+    
     private final String[] RULE_PREDICTION_METHODS = { "DecisionList", "TotCoverageWeighted", "CoverageWeighted", "AccuracyWeighted", "AccCovWeighted", "EquallyWeighted", "Optimized", "Union", "GDOptimized", "GDOptimizedBinary" };
 
     public final static int RULE_PREDICTION_METHOD_DECISION_LIST = 0;
@@ -114,6 +117,11 @@ public class SettingsRules implements ISettings {
     /** Use external binary file for gradient descent optimization of rule weights */
     public final static int RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY = 9;
 
+    
+    
+    
+    
+    
     private final String[] RULE_ADDING_METHODS = { "Always", "IfBetter", "IfBetterBeam" };
     // Always adds a rule to the rule set
     public final static int RULE_ADDING_METHOD_ALWAYS = 0;
@@ -123,7 +131,7 @@ public class SettingsRules implements ISettings {
     // If not, it checks other rules in the beam
     public final static int RULE_ADDING_METHOD_IF_BETTER_BEAM = 2;
 
-    public static boolean IS_RULE_SIG_TESTING = false;
+    private boolean IS_RULE_SIG_TESTING = false;
 
     // ***************** WEIGHT OPTIMIZATION
 
@@ -139,7 +147,8 @@ public class SettingsRules implements ISettings {
     public final static int OPT_LOSS_FUNCTIONS_RRMSE = 2;
     /**
      * Optimization Loss function type. Huber 1962 error. Like squared but robust for outliers. Friedman&Popescu 2005,
-     * p. 7 */
+     * p. 7
+     */
     public final static int OPT_LOSS_FUNCTIONS_HUBER = 3;
 
     /** GD optimization. Possible values for combining gradient targets to single gradient value. */
@@ -153,7 +162,8 @@ public class SettingsRules implements ISettings {
     /**
      * GD optimization, combining of targets - combine by taking the gradient of target with maximal LINEAR loss.
      * I.e. if the real loss is something else, we still use linear loss. NOT IMPLEMENTED!
-     * In fact was not any faster AND max loss is worse than avg.   */
+     * In fact was not any faster AND max loss is worse than avg.
+     */
     public final static int OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE_FAST = 3;
 
     /** For external GD binary, do we use GD or brute force method */
@@ -497,7 +507,8 @@ public class SettingsRules implements ISettings {
     public boolean getRuleInduceParamsDisabled() {
         return m_ruleInduceParamsDisabled;
     }
-    
+
+
     /**
      * For forest induction, disable rule parameters that interfere. If you need to return the originals
      * use returnRuleInduceParams
@@ -803,11 +814,15 @@ public class SettingsRules implements ISettings {
     public boolean getOptGDEarlyTTryStop() {
         return m_OptGDEarlyTTryStop.getValue();
     }
-    
+
+
     public void setIS_RULE_SIG_TESTING(boolean value) {
         IS_RULE_SIG_TESTING = value;
     }
 
+    public boolean getIS_RULE_SIG_TESTING() {
+        return IS_RULE_SIG_TESTING;
+    }
 
     @Override
     public INIFileSection create() {
@@ -869,8 +884,7 @@ public class SettingsRules implements ISettings {
         m_SectionRules.addNode(m_OptGDNbOfTParameterTry = new INIFileInt("OptGDNbOfTParameterTry", 1));
         m_SectionRules.addNode(m_OptGDEarlyTTryStop = new INIFileBool("OptGDEarlyTTryStop", true));
         m_SectionRules.setEnabled(false);
-        
-        
+
         return m_SectionRules;
     }
 }

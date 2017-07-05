@@ -3,6 +3,7 @@ package clus.heuristic;
 
 import clus.data.rows.RowData;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsPhylogeny;
 import clus.statistic.ClusStatistic;
 import clus.statistic.GeneticDistanceStat;
 
@@ -15,6 +16,11 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
     protected int[] m_DataIndices; // the indices (in the original dataset) of the data at the current node
     protected int[] m_ComplDataIndices; // the indices (in the original dataset) of the data in the complement of the
                                         // data at the current node
+
+
+    public GeneticDistanceHeuristic(Settings sett) {
+        super(sett);
+    }
 
 
     public String getName() {
@@ -89,16 +95,16 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
     // output).
 
     public double getDistance(String[] seq1, String[] seq2) {
-        switch (Settings.m_PhylogenyDM.getValue()) {
-            case Settings.PHYLOGENY_DISTANCE_MEASURE_EDIT:
+        switch (getSettings().getPhylogeny().getPhylogenyDM()) {
+            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_EDIT:
                 return getEditDistance(seq1, seq2);
-            case Settings.PHYLOGENY_DISTANCE_MEASURE_PDIST:
+            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_PDIST:
                 return getPDistance(seq1, seq2);
-            case Settings.PHYLOGENY_DISTANCE_MEASURE_JC:
+            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_JC:
                 return getJukesCantorDistance(seq1, seq2);
-            case Settings.PHYLOGENY_DISTANCE_MEASURE_KIMURA:
+            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_KIMURA:
                 return getKimuraDistance(seq1, seq2);
-            case Settings.PHYLOGENY_DISTANCE_MEASURE_AMINOKIMURA:
+            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_AMINOKIMURA:
                 return getAminoKimuraDistance(seq1, seq2);
         }
         return 0.0; // is never executed

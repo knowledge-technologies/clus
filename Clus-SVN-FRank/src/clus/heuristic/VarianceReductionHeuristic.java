@@ -35,17 +35,18 @@ public class VarianceReductionHeuristic extends ClusHeuristic {
     protected ClusStatistic m_NegStat;
 
 
-    public VarianceReductionHeuristic(String basicdist, ClusStatistic negstat, ClusAttributeWeights targetweights) {
+    public VarianceReductionHeuristic(String basicdist, ClusStatistic negstat, ClusAttributeWeights targetweights, Settings sett) {
+        super(sett);
+        
         m_BasicDist = basicdist;
+        
         m_NegStat = negstat;
         m_ClusteringWeights = targetweights;
     }
 
 
-    public VarianceReductionHeuristic(ClusStatistic negstat, ClusAttributeWeights targetweights) {
-        m_BasicDist = negstat.getDistanceName();
-        m_NegStat = negstat;
-        m_ClusteringWeights = targetweights;
+    public VarianceReductionHeuristic(ClusStatistic negstat, ClusAttributeWeights targetweights, Settings sett) {
+        this(negstat.getDistanceName(), negstat, targetweights, sett);
     }
 
 

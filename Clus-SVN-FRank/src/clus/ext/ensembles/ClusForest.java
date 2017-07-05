@@ -30,6 +30,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.gson.JsonObject;
+
 import clus.algo.rules.ClusRuleSet;
 import clus.algo.rules.ClusRulesFromTree;
 import clus.algo.tdidt.ClusNode;
@@ -55,7 +57,6 @@ import clus.statistic.RegressionStat;
 import clus.statistic.RegressionStatBase;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import com.google.gson.JsonObject;
 
 
 /**

@@ -24,7 +24,7 @@ package clus.ext.hierarchical;
 
 import java.util.ArrayList;
 
-import clus.main.settings.Settings;
+import clus.main.settings.SettingsHMLC;
 
 
 public class HierNodeWeights {
@@ -92,7 +92,7 @@ public class HierNodeWeights {
                     term.setMinDepth(minDepth);
                     term.setMaxDepth(maxDepth);
                     double agg_wi;
-                    if (wtype == Settings.HIERWEIGHT_EXP_MIN_PARENT_WEIGHT) {
+                    if (wtype == SettingsHMLC.HIERWEIGHT_EXP_MIN_PARENT_WEIGHT) {
                         agg_wi = Double.MAX_VALUE;
                         for (int j = 0; j < term.getNbParents(); j++) {
                             ClassTerm parent = term.getParent(j);
@@ -101,7 +101,7 @@ public class HierNodeWeights {
                             else
                                 agg_wi = Math.min(agg_wi, m_Weights[parent.getIndex()]);
                         }
-                    } else if (wtype == Settings.HIERWEIGHT_EXP_MAX_PARENT_WEIGHT) {
+                    } else if (wtype == SettingsHMLC.HIERWEIGHT_EXP_MAX_PARENT_WEIGHT) {
                             agg_wi = Double.MIN_VALUE;
                             for (int j = 0; j < term.getNbParents(); j++) {
                                 ClassTerm parent = term.getParent(j);
@@ -119,7 +119,7 @@ public class HierNodeWeights {
                             else
                                 agg_wi += m_Weights[parent.getIndex()];
                         }
-                        if (wtype == Settings.HIERWEIGHT_EXP_AVG_PARENT_WEIGHT) {
+                        if (wtype == SettingsHMLC.HIERWEIGHT_EXP_AVG_PARENT_WEIGHT) {
                             agg_wi = agg_wi / term.getNbParents();
                         }
                     }
@@ -178,7 +178,7 @@ public class HierNodeWeights {
 
     public void initExponentialDepthWeights(ClassHierarchy hier, int wtype, double w0) {
         m_Weights = new double[hier.getTotal()];
-        if (wtype == Settings.HIERWEIGHT_NO_WEIGHT) {
+        if (wtype == SettingsHMLC.HIERWEIGHT_NO_WEIGHT) {
             initNoWeights(hier);
         }
         else {

@@ -28,6 +28,7 @@ package clus.ext.beamsearch;
 
 import clus.algo.tdidt.ClusNode;
 import clus.jeans.math.MathUtil;
+import clus.main.settings.Settings;
 import clus.main.settings.SettingsBeamSearch;
 import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
@@ -38,8 +39,9 @@ public class ClusBeamHeuristicMEstimate extends ClusBeamHeuristic {
     protected double m_Prior, m_MValue;
 
 
-    public ClusBeamHeuristicMEstimate(ClusStatistic stat, double mvalue) {
-        super(stat);
+    public ClusBeamHeuristicMEstimate(ClusStatistic stat, double mvalue, Settings sett) {
+        super(stat, sett);
+
         m_MValue = mvalue;
     }
 

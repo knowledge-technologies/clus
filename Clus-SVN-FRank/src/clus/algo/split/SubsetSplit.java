@@ -28,7 +28,7 @@ import clus.algo.rules.ClusRuleHeuristicDispersion;
 import clus.data.type.NominalAttrType;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusStatManager;
-import clus.main.settings.Settings;
+import clus.main.settings.SettingsPhylogeny;
 import clus.model.test.SubsetTest;
 import clus.statistic.ClusStatistic;
 import clus.statistic.CombStat;
@@ -97,7 +97,7 @@ public class SubsetSplit extends NominalSplit {
         double pos_freq = 0.0;
         double bheur = Double.NEGATIVE_INFINITY;
         // Not working for rules except if constraint of tests to '1' is desired!
-        if (nbvalues == 2 && (!getStatManager().isRuleInduceOnly() || getStatManager().getSettings().isConstrainedToFirstAttVal())) {
+        if (nbvalues == 2 && (!getStatManager().isRuleInduceOnly() || getStatManager().getSettings().getRules().isConstrainedToFirstAttVal())) {
             // Handle binary splits efficiently
             card = 1;
             isin[0] = true;
@@ -106,7 +106,7 @@ public class SubsetSplit extends NominalSplit {
             // showTest(type, isin, -1, bheur, m_MStat, m_CStat);
             pos_freq = CStat.m_SumWeight / m_MStat.m_SumWeight;
         }
-        else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (Settings.m_PhylogenySequence.getValue() == Settings.PHYLOGENY_SEQUENCE_DNA)) {
+        else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence() == SettingsPhylogeny.PHYLOGENY_SEQUENCE_DNA)) {
             // for phylogenetic trees with DNA sequences, we use an optimization method: tests like pos10={A,t} are
             // based on the results for tests pos10=A and pos10=T
             // we do not do this for protein sequences, since there the alphabet is much larger, which would complicate
@@ -170,10 +170,10 @@ public class SubsetSplit extends NominalSplit {
             // Each iteration the cardinality increases by at most one
             m_PStat.reset();
             int bvalue = 0;
-            if ((m_PStat instanceof CombStat) && ((CombStat) m_PStat).getSettings().isHeurRuleDist()) {
+            if ((m_PStat instanceof CombStat) && ((CombStat) m_PStat).getSettings().getRules().isHeurRuleDist()) {
                 ((ClusRuleHeuristicDispersion) node.m_Heuristic).setDataIndexes(new int[0]);
             }
-            boolean allowSubsetSplits = getStatManager().getSettings().isNominalSubsetTests();
+            boolean allowSubsetSplits = getStatManager().getSettings().getModel().isNominalSubsetTests();
             while ((bvalue != -1) && ((card + 1) < nbvalues)) {
                 bvalue = -1;
                 for (int j = 0; j < nbvalues; j++) {
@@ -181,7 +181,7 @@ public class SubsetSplit extends NominalSplit {
                         // Try to add this one to the positive stat
                         m_CStat.copy(m_PStat);
                         m_CStat.add(node.m_TestStat[j]);
-                        if ((m_PStat instanceof CombStat) && ((CombStat) m_PStat).getSettings().isHeurRuleDist()) {
+                        if ((m_PStat instanceof CombStat) && ((CombStat) m_PStat).getSettings().getRules().isHeurRuleDist()) {
                             boolean isin_current[] = new boolean[nbvalues];
                             for (int k = 0; k < nbvalues; k++) {
                                 isin_current[k] = isin[k];
@@ -229,7 +229,7 @@ public class SubsetSplit extends NominalSplit {
             node.resetAlternativeBest();
             // System.out.println("attr: " + type + " best test: " + node.m_BestTest.getString());
         }
-        else if (getStatManager().getSettings().showAlternativeSplits() && (((bheur > node.m_BestHeur - ClusHeuristic.DELTA) && (bheur < node.m_BestHeur + ClusHeuristic.DELTA)) || (bheur == Double.POSITIVE_INFINITY))) {
+        else if (getStatManager().getSettings().getTree().showAlternativeSplits() && (((bheur > node.m_BestHeur - ClusHeuristic.DELTA) && (bheur < node.m_BestHeur + ClusHeuristic.DELTA)) || (bheur == Double.POSITIVE_INFINITY))) {
             // if same heuristic: add to alternatives (list will later be pruned to remove those tests that do
             // not yield exactly the same subsets)
             node.addAlternativeBest(new SubsetTest(type, card, isin, pos_freq));
@@ -305,7 +305,7 @@ public class SubsetSplit extends NominalSplit {
         double bheur = Double.NEGATIVE_INFINITY;
         boolean found_test = false;
 
-        if (nbvalues == 2 && (!getStatManager().isRuleInduceOnly() || getStatManager().getSettings().isConstrainedToFirstAttVal())) {
+        if (nbvalues == 2 && (!getStatManager().isRuleInduceOnly() || getStatManager().getSettings().getRules().isConstrainedToFirstAttVal())) {
             // Handle binary splits efficiently
             card = 1;
             isin[0] = true;
@@ -355,7 +355,7 @@ public class SubsetSplit extends NominalSplit {
             }
 
         }
-        else if ((ClusStatManager.getMode() == ClusStatManager.MODE_PHYLO) && (Settings.m_PhylogenySequence.getValue() == Settings.PHYLOGENY_SEQUENCE_DNA)) {
+        else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence() == SettingsPhylogeny.PHYLOGENY_SEQUENCE_DNA)) {
             System.err.println("Extra-Tree split selection not implemented for Phylogentic trees.");
             System.err.println("Error while searching for a random split in: " + getClass().getName());
             System.exit(-1);

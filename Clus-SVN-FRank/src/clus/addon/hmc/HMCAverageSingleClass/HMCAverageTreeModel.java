@@ -30,6 +30,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.gson.JsonObject;
+
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.ext.hierarchical.WHTDStatistic;
@@ -39,7 +41,6 @@ import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import com.google.gson.JsonObject;
 
 
 public class HMCAverageTreeModel implements ClusModel {

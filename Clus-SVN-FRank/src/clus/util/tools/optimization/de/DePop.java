@@ -49,9 +49,9 @@ public class DePop {
     public DePop(ClusStatManager stat_mgr, DeProbl probl) {
         m_Probl = probl;
         m_StatMgr = stat_mgr;
-        m_Rand = new Random(getSettings().getOptDESeed());
-        m_Inds = new ArrayList<DeInd>(getSettings().getOptDEPopSize());
-        for (int i = 0; i < getSettings().getOptDEPopSize(); i++) {
+        m_Rand = new Random(getSettings().getRules().getOptDESeed());
+        m_Inds = new ArrayList<DeInd>(getSettings().getRules().getOptDEPopSize());
+        for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
             DeInd ind = new DeInd();
             m_Inds.add(ind);
         }
@@ -59,7 +59,7 @@ public class DePop {
 
 
     public void createFirstPop() {
-        for (int i = 0; i < getSettings().getOptDEPopSize(); i++)
+        for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++)
             ((DeInd) m_Inds.get(i)).setGenes(m_Probl.getRandVector(m_Rand));
     }
 
@@ -100,15 +100,15 @@ public class DePop {
 
         // Find separate random indexes i1 and i2 and i3 that are not the parent gene
         do
-            i1 = (int) (getSettings().getOptDEPopSize() * m_Rand.nextDouble());
+            i1 = (int) (getSettings().getRules().getOptDEPopSize() * m_Rand.nextDouble());
         while (i1 == parent);
 
         do
-            i2 = (int) (getSettings().getOptDEPopSize() * m_Rand.nextDouble());
+            i2 = (int) (getSettings().getRules().getOptDEPopSize() * m_Rand.nextDouble());
         while ((i2 == parent) || (i2 == i1));
 
         do
-            i3 = (int) (getSettings().getOptDEPopSize() * m_Rand.nextDouble());
+            i3 = (int) (getSettings().getRules().getOptDEPopSize() * m_Rand.nextDouble());
         while ((i3 == parent) || (i3 == i1) || (i3 == i2));
 
         // Get a random index for gene array. That is, random variable in gene
@@ -122,18 +122,18 @@ public class DePop {
             result.set(i, ((DeInd) m_Inds.get(parent)).getGenes().get(i));
 
             // ****** Crossing over
-            if (m_Rand.nextDouble() < (getSettings().getOptDECrossProb()) || (i == i_rand)) {
-                result.set(i, new Double(getSettings().getOptDEWeight() * (((Double) ((DeInd) m_Inds.get(i1)).getGenes().get(i)).doubleValue() - ((Double) ((DeInd) m_Inds.get(i2)).getGenes().get(i)).doubleValue()) + ((Double) ((DeInd) m_Inds.get(i3)).getGenes().get(i)).doubleValue()));
+            if (m_Rand.nextDouble() < (getSettings().getRules().getOptDECrossProb()) || (i == i_rand)) {
+                result.set(i, new Double(getSettings().getRules().getOptDEWeight() * (((Double) ((DeInd) m_Inds.get(i1)).getGenes().get(i)).doubleValue() - ((Double) ((DeInd) m_Inds.get(i2)).getGenes().get(i)).doubleValue()) + ((Double) ((DeInd) m_Inds.get(i3)).getGenes().get(i)).doubleValue()));
             }
 
             // ******** Mutations
             // If we are searching for lots of zero weights, there should be a mutation for putting the value to zero
-            if (m_Rand.nextDouble() < getSettings().getOptDEProbMutationZero()) {
+            if (m_Rand.nextDouble() < getSettings().getRules().getOptDEProbMutationZero()) {
                 result.set(i, new Double(0.0));
             }
 
             // We should also have a undo for the previous. Put a random number for it.
-            if (m_Rand.nextDouble() < getSettings().getOptDEProbMutationNonZero()) {
+            if (m_Rand.nextDouble() < getSettings().getRules().getOptDEProbMutationNonZero()) {
                 result.set(i, new Double(m_Probl.getRandValueInRange(m_Rand, i)));
             }
 
@@ -150,11 +150,11 @@ public class DePop {
     public void sortPopRandom() {
         int i;
         /** The result: Array of individuals with random permutation. */
-        ArrayList<DeInd> inds = new ArrayList<DeInd>(getSettings().getOptDEPopSize());
+        ArrayList<DeInd> inds = new ArrayList<DeInd>(getSettings().getRules().getOptDEPopSize());
         /** Array of old indexes of these individuals */
-        ArrayList<Integer> indexes = new ArrayList<Integer>(getSettings().getOptDEPopSize());
+        ArrayList<Integer> indexes = new ArrayList<Integer>(getSettings().getRules().getOptDEPopSize());
 
-        for (i = 0; i < getSettings().getOptDEPopSize(); i++) {
+        for (i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
             inds.add(new DeInd());
             indexes.add(new Integer(i));
         }
@@ -162,7 +162,7 @@ public class DePop {
         int n;
 
         // Take the random permutation of m_Inds to inds
-        for (i = 0; i < getSettings().getOptDEPopSize(); i++) {
+        for (i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
             n = (int) (indexes.size() * m_Rand.nextDouble());
             // Copy to inds array the individual in random index
             ((DeInd) inds.get(i)).copy((DeInd) m_Inds.get(((Integer) indexes.get(n)).intValue()));
@@ -170,7 +170,7 @@ public class DePop {
         }
 
         // Copy the new permutation to m_Inds
-        for (i = 0; i < getSettings().getOptDEPopSize(); i++) {
+        for (i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
             ((DeInd) m_Inds.get(i)).copy((DeInd) inds.get(i));
         }
     }

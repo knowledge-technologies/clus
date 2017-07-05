@@ -60,7 +60,7 @@ public class oTestKnnClassifier extends KnnClassifier {
 
 
         public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
-            oTestKnnModel model = new oTestKnnModel(cr, Integer.parseInt(Settings.kNN_k.getValue()));
+            oTestKnnModel model = new oTestKnnModel(cr, Integer.parseInt(getSettings().getKNN().getKNNk()));
 
             ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL);
             model_info.setModel(model);

@@ -38,7 +38,9 @@ public class ClusRuleHeuristicMEstimate extends ClusHeuristic {
     double m_Prior;
 
 
-    public ClusRuleHeuristicMEstimate(double m_value) {
+    public ClusRuleHeuristicMEstimate(double m_value, Settings sett) {
+        super(sett);
+        
         m_MValue = m_value;
     }
 

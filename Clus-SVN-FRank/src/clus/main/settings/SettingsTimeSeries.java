@@ -59,6 +59,10 @@ public class SettingsTimeSeries implements ISettings {
 //      m_SectionTimeSeries.addNode(m_TimeSeriesHeuristicSampling = new INIFileNominal("PrototypeComlexity", TIME_SERIES_PROTOTYPE_COMPLEXITY, 0));
 //      m_SectionTimeSeries.setEnabled(false);
         
+        
+        
+        setSectionTimeSeriesEnabled(false); // disabled by default
+        
         return m_SectionTimeSeries;
     }
 

@@ -28,6 +28,7 @@ package clus.ext.beamsearch;
 
 import clus.algo.tdidt.ClusNode;
 import clus.heuristic.ClusHeuristic;
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 
 
@@ -39,7 +40,9 @@ public abstract class ClusBeamHeuristic extends ClusHeuristic {
     protected ClusHeuristic m_AttrHeuristic;
 
 
-    public ClusBeamHeuristic(ClusStatistic stat) {
+    public ClusBeamHeuristic(ClusStatistic stat, Settings sett) {
+        super(sett);
+        
         m_Pos = stat;
         m_Neg = stat.cloneStat();
     }

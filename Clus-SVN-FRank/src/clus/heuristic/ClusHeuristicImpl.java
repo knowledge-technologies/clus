@@ -1,6 +1,7 @@
 
 package clus.heuristic;
 
+import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 
 
@@ -9,7 +10,9 @@ public abstract class ClusHeuristicImpl extends ClusHeuristic {
     protected ClusStatistic m_NegStat;
 
 
-    public ClusHeuristicImpl(ClusStatistic negstat) {
+    public ClusHeuristicImpl(ClusStatistic negstat, Settings sett) {
+        super(sett);
+
         m_NegStat = negstat;
     }
 

@@ -28,6 +28,7 @@ package clus.heuristic;
 
 import clus.jeans.math.MathUtil;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 
 
@@ -37,7 +38,9 @@ public class ReducedErrorHeuristic extends ClusHeuristic {
     ClusStatistic m_Pos, m_Neg;
 
 
-    public ReducedErrorHeuristic(ClusStatistic stat) {
+    public ReducedErrorHeuristic(ClusStatistic stat, Settings sett) {
+        super(sett);
+        
         m_Pos = stat;
         m_Neg = stat.cloneStat();
     }
@@ -48,7 +51,7 @@ public class ReducedErrorHeuristic extends ClusHeuristic {
         double n_pos = c_pstat.m_SumWeight;
         double n_neg = n_tot - n_pos;
         // Acceptable?
-        if (n_pos < Settings.MINIMAL_WEIGHT || n_neg < Settings.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
+        if (n_pos < SettingsTree.MINIMAL_WEIGHT || n_neg < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
         if (missing.m_SumWeight <= MathUtil.C1E_9) {
             double pos_error = c_pstat.getError();
             double neg_error = c_tstat.getErrorDiff(c_pstat);

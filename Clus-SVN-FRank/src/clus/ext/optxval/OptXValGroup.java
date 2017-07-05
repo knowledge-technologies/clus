@@ -26,10 +26,9 @@ import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.ext.ootind.OOTInduce;
 import clus.jeans.util.list.MyList;
 import clus.main.ClusStatManager;
-import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 
@@ -86,23 +85,24 @@ public class OptXValGroup extends MyList {
     }
 
 
-    public final void preprocNodes2(OptXValNode node, OOTInduce induce) {
-        int nb = getNbFolds();
-        for (int i = 0; i < nb; i++) {
-            CurrentBestTestAndHeuristic sel = induce.getSelector(i);
-            ClusNode fnode = getNode(i);
-            if (sel.hasBestTest()) {
-                fnode.testToNode(sel);
-            }
-            else {
-                fnode.makeLeaf();
-                cleanNode(i);
-            }
-            // Store node in tree
-            node.setNode(getFold(i), fnode);
-        }
-    }
-
+//    @Deprecated
+//    public final void preprocNodes2(OptXValNode node, OOTInduce induce) {
+//        int nb = getNbFolds();
+//        for (int i = 0; i < nb; i++) {
+//            CurrentBestTestAndHeuristic sel = induce.getSelector(i);
+//            ClusNode fnode = getNode(i);
+//            if (sel.hasBestTest()) {
+//                fnode.testToNode(sel);
+//            }
+//            else {
+//                fnode.makeLeaf();
+//                cleanNode(i);
+//            }
+//            // Store node in tree
+//            node.setNode(getFold(i), fnode);
+//        }
+//    }
+//
 
     public final void setSoft() {
         m_IsSoft = true;
@@ -260,7 +260,7 @@ public class OptXValGroup extends MyList {
 
 
     public final boolean stopCrit(int idx) {
-        if (m_TotStat[idx].m_SumWeight < 2.0 * Settings.MINIMAL_WEIGHT)
+        if (m_TotStat[idx].m_SumWeight < 2.0 * SettingsTree.MINIMAL_WEIGHT)
             return true;
         return false;
     }

@@ -71,8 +71,8 @@ public class CombStat extends ClusStatistic {
 
         m_StatManager = statManager;
         m_RegStat = new RegressionStat(statManager.getSettings(), num);
-        if (statManager.getSettings().getSectionMultiLabel().isEnabled()) {
-            m_ClassStat = new ClassificationStat(statManager.getSettings(), nom, statManager.getSettings().getMultiLabelThreshold());
+        if (statManager.getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
+            m_ClassStat = new ClassificationStat(statManager.getSettings(), nom, statManager.getSettings().getMLC().getMultiLabelThreshold());
         }
         else {
             m_ClassStat = new ClassificationStat(statManager.getSettings(), nom);
@@ -161,25 +161,25 @@ public class CombStat extends ClusStatistic {
      */
     public double dispersionAdtHeur() {
         // double comp = 1.0 + dispersion(IN_HEURISTIC); // 1.0 - offset just in case?
-        double offset = getSettings().getHeurDispOffset();
+        double offset = getSettings().getRules().getHeurDispOffset();
         double disp = dispersion(IN_HEURISTIC) + offset;
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat().getTotalWeight();
-        double cov_par = getSettings().getHeurCoveragePar();
+        double cov_par = getSettings().getRules().getHeurCoveragePar();
         // comp += (1.0 - cov_par*m_SumWeight/train_sum_w);
         disp -= cov_par * m_SumWeight / train_sum_w / 2; // Added /2 to reduce this part
         // Prototype distance part
         // Prefers rules that predict different class than the default rule
-        if (getSettings().isHeurPrototypeDistPar()) {
-            double proto_par = getSettings().getHeurPrototypeDistPar();
+        if (getSettings().getRules().isHeurPrototypeDistPar()) {
+            double proto_par = getSettings().getRules().getHeurPrototypeDistPar();
             double proto_val = prototypeDifference((CombStat) m_StatManager.getTrainSetStat());
             // disp += (1.0 - proto_par*m_SumWeight/train_sum_w*proto_val);
             disp -= proto_par * proto_val;
         }
         // Significance testing part - TODO: Complete or remove altogether
-        if (Settings.IS_RULE_SIG_TESTING) {
+        if (getSettings().getRules().getIS_RULE_SIG_TESTING()) {
             int sign_diff;
-            int thresh = getSettings().getRuleNbSigAtt();
+            int thresh = getSettings().getRules().getRuleNbSigAtt();
             if (thresh > 0) {
                 sign_diff = signDifferent();
                 if (sign_diff < thresh) {
@@ -203,7 +203,7 @@ public class CombStat extends ClusStatistic {
      * @return heuristic value
      */
     public double rDispersionAdtHeur() {
-        double offset = getSettings().getHeurDispOffset();
+        double offset = getSettings().getRules().getHeurDispOffset();
         double disp = dispersion(IN_HEURISTIC) + offset;
         // double dis1 = comp;
         double def_disp = ((CombStat) m_StatManager.getTrainSetStat()).dispersion(IN_HEURISTIC);
@@ -211,23 +211,23 @@ public class CombStat extends ClusStatistic {
         // double dis2 = comp;
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat().getTotalWeight();
-        double cov_par = getSettings().getHeurCoveragePar();
+        double cov_par = getSettings().getRules().getHeurCoveragePar();
         // comp += (1.0 - cov_par*m_SumWeight/train_sum_w);
         disp -= cov_par * m_SumWeight / train_sum_w / 2; // Added /2 to reduce this part
         // double dis3 = comp;
         // double dis4 = cov_par*m_SumWeight/train_sum_w;
         // Prototype distance part
         // Prefers rules that predict different class than the default rule
-        if (getSettings().isHeurPrototypeDistPar()) {
-            double proto_par = getSettings().getHeurPrototypeDistPar();
+        if (getSettings().getRules().isHeurPrototypeDistPar()) {
+            double proto_par = getSettings().getRules().getHeurPrototypeDistPar();
             double proto_val = prototypeDifference((CombStat) m_StatManager.getTrainSetStat());
             // disp += (1.0 - proto_par*m_SumWeight/train_sum_w*proto_val);
             disp -= proto_par * proto_val;
         }
         // Significance testing part - TODO: Complete or remove altogether
-        if (Settings.IS_RULE_SIG_TESTING) {
+        if (getSettings().getRules().getIS_RULE_SIG_TESTING()) {
             int sign_diff;
-            int thresh = getSettings().getRuleNbSigAtt();
+            int thresh = getSettings().getRules().getRuleNbSigAtt();
             if (thresh > 0) {
                 sign_diff = signDifferent();
                 if (sign_diff < thresh) {
@@ -253,28 +253,28 @@ public class CombStat extends ClusStatistic {
      */
     public double dispersionMltHeur() {
         // double comp = 1.0 + dispersion(IN_HEURISTIC);
-        double offset = getSettings().getHeurDispOffset();
+        double offset = getSettings().getRules().getHeurDispOffset();
         double disp = dispersion(IN_HEURISTIC) + offset;
         //double dis1 = disp;
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat().getTotalWeight();
-        double cov_par = getSettings().getHeurCoveragePar();
+        double cov_par = getSettings().getRules().getHeurCoveragePar();
         // comp *= (1.0 + cov_par*train_sum_w/m_SumWeight);
         // comp *= cov_par*m_SumWeight/train_sum_w;
         disp *= Math.pow(m_SumWeight / train_sum_w, cov_par);
         //double dis2 = disp;
         // Prototype distance part
         // Prefers rules that predict different class than the default rule
-        if (getSettings().isHeurPrototypeDistPar()) {
-            double proto_par = getSettings().getHeurPrototypeDistPar();
+        if (getSettings().getRules().isHeurPrototypeDistPar()) {
+            double proto_par = getSettings().getRules().getHeurPrototypeDistPar();
             double proto_val = prototypeDifference((CombStat) m_StatManager.getTrainSetStat());
             // disp *= (1.0 + proto_par*m_SumWeight/train_sum_w*proto_val);
             disp = proto_val > 0 ? disp / Math.pow(proto_val, proto_par) : 0.0;
         }
         // Significance testing part - TODO: Complete or remove altogether
-        if (Settings.IS_RULE_SIG_TESTING) {
+        if (getSettings().getRules().getIS_RULE_SIG_TESTING()) {
             int sign_diff;
-            int thresh = getSettings().getRuleNbSigAtt();
+            int thresh = getSettings().getRules().getRuleNbSigAtt();
             if (thresh > 0) {
                 sign_diff = signDifferent();
                 if (sign_diff < thresh) {
@@ -307,7 +307,7 @@ public class CombStat extends ClusStatistic {
          * double def_comp = ((CombStat)m_StatManager.getTrainSetStat()).dispersion(IN_HEURISTIC);
          * return -m_SumWeight/train_sum_w*(def_comp-comp);
          */
-        double offset = getSettings().getHeurDispOffset();
+        double offset = getSettings().getRules().getHeurDispOffset();
         double disp = dispersion(IN_HEURISTIC) + offset;
         //double dis1 = disp;
         double def_disp = ((CombStat) m_StatManager.getTrainSetStat()).dispersion(IN_HEURISTIC);
@@ -315,7 +315,7 @@ public class CombStat extends ClusStatistic {
         //double dis2 = disp;
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat().getTotalWeight();
-        double cov_par = getSettings().getHeurCoveragePar();
+        double cov_par = getSettings().getRules().getHeurCoveragePar();
         // comp *= (1.0 + cov_par*train_sum_w/m_SumWeight); // How about this???
         // comp *= cov_par*train_sum_w/m_SumWeight;
         // comp *= cov_par*m_SumWeight/train_sum_w;
@@ -323,16 +323,16 @@ public class CombStat extends ClusStatistic {
         //double dis3 = disp;
         // Prototype distance part
         // Prefers rules that predict different class than the default rule
-        if (getSettings().isHeurPrototypeDistPar()) {
-            double proto_par = getSettings().getHeurPrototypeDistPar();
+        if (getSettings().getRules().isHeurPrototypeDistPar()) {
+            double proto_par = getSettings().getRules().getHeurPrototypeDistPar();
             double proto_val = prototypeDifference((CombStat) m_StatManager.getTrainSetStat());
             // disp *= (1.0 + proto_par*m_SumWeight/train_sum_w*proto_val);
             disp = proto_val > 0 ? disp / Math.pow(proto_val, proto_par) : 0.0;
         }
         // Significance testing part - TODO: Complete or remove altogether
-        if (Settings.IS_RULE_SIG_TESTING) {
+        if (getSettings().getRules().getIS_RULE_SIG_TESTING()) {
             int sign_diff;
-            int thresh = getSettings().getRuleNbSigAtt();
+            int thresh = getSettings().getRules().getRuleNbSigAtt();
             if (thresh > 0) {
                 sign_diff = signDifferent();
                 if (sign_diff < thresh) {
@@ -397,7 +397,7 @@ public class CombStat extends ClusStatistic {
         // Normalization with the purpose of getting most of the single variances within the
         // [0,1] interval. This weight is in stdev units,
         // default value = 4 = (-2sigma,2sigma) should cover 95% of examples
-        double norm = getSettings().getVarBasedDispNormWeight();
+        double norm = getSettings().getRules().getVarBasedDispNormWeight();
         for (int i = 0; i < m_RegStat.getNbNumericAttributes(); i++) {
             if (use == IN_HEURISTIC) {
                 weight = m_StatManager.getClusteringWeights().getWeight(m_RegStat.getAttribute(i));
@@ -704,7 +704,7 @@ public class CombStat extends ClusStatistic {
      */
     private boolean SignDifferentNum(int att) throws IllegalArgumentException, MathException {
         // alpha = significance level, confidence = 1-alpha
-        double alpha = getSettings().getRuleSignificanceLevel();
+        double alpha = getSettings().getRules().getRuleSignificanceLevel();
         double p_value = m_RegStat.getTTestPValue(att, m_StatManager);
         return (p_value < alpha);
     }
@@ -848,13 +848,7 @@ public class CombStat extends ClusStatistic {
         return m_ClassStat.getNominalPred();
     }
 
-
-    public Settings getSettings() {
-        return m_StatManager.getSettings();
-    }
-
-
-    // TODO: This error assessment should be changed, I guess.
+     // TODO: This error assessment should be changed, I guess.
     public double getError(ClusAttributeWeights scale) {
         System.out.println("CombStat :getError");
         switch (m_StatManager.getMode()) {

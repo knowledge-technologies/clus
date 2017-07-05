@@ -34,6 +34,8 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.google.gson.JsonObject;
+
 // import clus.algo.kNN.KNNStatistics;
 // import clus.algo.kNN.NumericStatistic;
 import clus.data.rows.DataTuple;
@@ -60,8 +62,6 @@ import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.tools.optimization.OptProbl;
-
-import com.google.gson.JsonObject;
 
 
 /**

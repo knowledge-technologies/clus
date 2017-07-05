@@ -159,7 +159,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
             m_PrevVl[i] = Double.NaN;
         }
         // ClusStatistic sum = m_PosStat[0];
-        if (Settings.ONE_NOMINAL) {
+        if (getSettings().getTree().ONE_NOMINAL) {
             for (int i = first; i < nb_rows; i++) {
                 tuple = data.getTuple(i);
                 int crcl = tuple.getClassification();
@@ -298,7 +298,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
             }
             m_PosStat[i] = m_TestStat[i][0];
             // Create test selectors for each fold :-)
-            CurrentBestTestAndHeuristic sel = m_Selector[i] = new CurrentBestTestAndHeuristic();
+            CurrentBestTestAndHeuristic sel = m_Selector[i] = new CurrentBestTestAndHeuristic(getSettings().getGeneric().getVerbose());
             sel.m_Heuristic = m_Heuristic;
         }
         // Initialize test selector for depth first (1opt)
@@ -330,7 +330,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
 
     public final void initialize(int folds) {
         // Create nominal split
-        if (getSettings().isBinarySplit())
+        if (getSettings().getTree().isBinarySplit())
             m_Split = new SubsetSplit();
         else
             m_Split = new NArySplit();

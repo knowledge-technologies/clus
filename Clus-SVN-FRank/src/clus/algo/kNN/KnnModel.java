@@ -30,6 +30,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
+import com.google.gson.JsonObject;
+
 import clus.algo.kNN.distance.ChebyshevDistance;
 import clus.algo.kNN.distance.EuclideanDistance;
 import clus.algo.kNN.distance.ManhattanDistance;
@@ -62,7 +64,6 @@ import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
-import com.google.gson.JsonObject;
 
 
 /**
@@ -108,11 +109,11 @@ public class KnnModel implements ClusModel, Serializable {
         this.m_MaxK = Math.max(this.m_K, this.m_MaxK);
         this.weightingOption = weighting;
         // settings file name; use name for .weight file
-        String fName = this.cr.getStatManager().getSettings().getAppName();
+        String fName = this.cr.getStatManager().getSettings().getGeneric().getAppName();
         // Initialize attribute weighting according to settings file
         AttributeWeighting attrWe = new NoWeighting();
         ;
-        String attrWeighting = Settings.kNN_attrWeight.getStringValue();
+        String attrWeighting = this.cr.getStatManager().getSettings().getKNN().getKNNAttrWeight();
         boolean loadedWeighting = false;
         if (attrWeighting.toLowerCase().compareTo("none") == 0) {
 
@@ -124,7 +125,7 @@ public class KnnModel implements ClusModel, Serializable {
                 if (wS.length == 2)
                     nbBags = Integer.parseInt(wS[1]);
                 else
-                    Settings.kNN_attrWeight.setValue(attrWeighting + "," + nbBags);
+                    this.cr.getStatManager().getSettings().getKNN().setKNNAttrWeight(attrWeighting + "," + nbBags);
                 attrWe = new RandomForestWeighting(this.cr, nbBags);
             }
             catch (Exception e) {
@@ -159,7 +160,7 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // Initialize distance according to settings file
-        String dist = Settings.kNN_distance.getStringValue();
+        String dist = this.cr.getStatManager().getSettings().getKNN().getKNNDistance();
         SearchDistance searchDistance = new SearchDistance();
         ClusDistance distance;
 
@@ -213,7 +214,7 @@ public class KnnModel implements ClusModel, Serializable {
         searchDistance.setNormalizationWeights(mins, maxs);
 
         // Select search method according to settings file.
-        String alg = Settings.kNN_method.getStringValue();
+        String alg = this.cr.getStatManager().getSettings().getKNN().getKNNMethod();
         if (alg.compareTo("vp-tree") == 0) {
             this.search = new VPTree(this.cr, searchDistance);
         }
@@ -229,7 +230,7 @@ public class KnnModel implements ClusModel, Serializable {
         System.out.println(this.search.getClass());
         System.out.println(searchDistance.getBasicDistance().getClass());
         System.out.println(this.m_K);
-        System.out.println(Settings.kNN_distanceWeight.getStringValue());
+        System.out.println(this.cr.getStatManager().getSettings().getKNN().getKNNDistanceWeight());
         System.out.println("------------------------------------------------");
 
         // build tree, preprocessing

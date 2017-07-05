@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 import clus.algo.tdidt.ClusNode;
-import clus.main.settings.Settings;
 import clus.main.settings.SettingsBeamSearch;
 
 

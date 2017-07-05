@@ -24,7 +24,7 @@ public class KNNLearner extends MTLearnerImpl {
     @Override
     protected RowData[] LearnModel(TargetSet targets, RowData train, RowData test) {
 
-        String appName = m_Sett.getAppName();
+        String appName = m_Sett.getGeneric().getAppName();
 
         writeCSV("train.csv" + appName, targets, train);
         writeCSV("test.csv" + appName, targets, test);
@@ -86,7 +86,7 @@ public class KNNLearner extends MTLearnerImpl {
     private RowData readResult(TargetSet targets, RowData result) {
 
         try {
-            FileReader input = new FileReader("result.csv" + m_Sett.getAppName());
+            FileReader input = new FileReader("result.csv" + m_Sett.getGeneric().getAppName());
             BufferedReader bufRead = new BufferedReader(input);
             String line = bufRead.readLine();
 

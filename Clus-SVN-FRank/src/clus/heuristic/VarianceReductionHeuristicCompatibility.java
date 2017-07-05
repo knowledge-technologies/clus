@@ -32,15 +32,16 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
     protected String m_BasicDist;
 
 
-    public VarianceReductionHeuristicCompatibility(String basicdist, ClusStatistic negstat, ClusAttributeWeights targetweights) {
+    public VarianceReductionHeuristicCompatibility(String basicdist, ClusStatistic negstat, ClusAttributeWeights targetweights, Settings sett) {
+        super(sett);
+        
         m_BasicDist = basicdist;
         m_ClusteringWeights = targetweights;
     }
 
 
-    public VarianceReductionHeuristicCompatibility(ClusStatistic negstat, ClusAttributeWeights targetweights) {
-        m_BasicDist = negstat.getDistanceName();
-        m_ClusteringWeights = targetweights;
+    public VarianceReductionHeuristicCompatibility(ClusStatistic negstat, ClusAttributeWeights targetweights, Settings sett) {
+        this(negstat.getDistanceName(), negstat, targetweights, sett);
     }
 
 

@@ -30,6 +30,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Random;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import clus.algo.tdidt.ClusNode;
 import clus.data.ClusData;
 import clus.data.io.ClusReader;
@@ -49,8 +52,6 @@ import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
 import clus.util.ClusRandomNonstatic;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 
 /**

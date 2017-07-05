@@ -29,6 +29,9 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+
 import clus.Clus;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
@@ -46,8 +49,6 @@ import clus.model.ClusModelInfo;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
 
 
 /**

@@ -26,9 +26,13 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Collections;
+
 import clus.data.type.ClusSchema;
 import clus.data.type.IntegerAttrType;
 import clus.jeans.io.ini.INIFile;
+import clus.jeans.io.ini.INIFileSection;
 import clus.jeans.resource.ResourceInfo;
 import clus.jeans.util.StringUtils;
 import clus.jeans.util.cmdline.CMDLineArgs;
@@ -49,34 +53,66 @@ public class Settings implements Serializable {
     /***********************************************************************
      * Create the settings structure *
      ***********************************************************************/
-    protected INIFile m_Ini = new INIFile();
+    private INIFile m_Ini;
 
-    SettingsGeneric m_SettGeneric;
-    SettingsGeneral m_SettGeneral;
-    SettingsData m_SettData;
-    SettingsAttribute m_SettAttribute;
-    SettingsConstraints m_SettConstraints;
-    SettingsOutput m_SettOutput;
-    SettingsNominal m_SettNominal;
-    SettingsModel m_SettModel;
-    SettingsTree m_SettTree;
-    SettingsRules m_SettRules;
-    SettingsMLC m_SettMLC;
-    SettingsHMLC m_SettHMLC;
-    SettingsHMTR m_SettHMTR;
-    SettingsILevelC m_SettILevelC;
-    SettingsBeamSearch m_SettBeamSearch;
-    SettingsExhaustiveSearch m_SettExhaustiveSearch;
-    SettingsTimeSeries m_SettTimeSeries;
-    SettingsPhylogeny m_SettPhylogeny;
-    SettingsRelief m_SettRelief;
-    SettingsDistances m_SettDistances;
-    SettingsEnsemble m_SettEnsemble;
-    SettingsKNN m_SettKNN;
-    SettingsKNNTree m_SettKNNTree;
-    SettingsOptionTree m_SettOptionTree;
-    SettingsExperimental m_SettExperimental;
-    SettingsSIT m_SettSIT;
+    private SettingsGeneric m_SettGeneric;
+    private SettingsGeneral m_SettGeneral;
+    private SettingsData m_SettData;
+    private SettingsAttribute m_SettAttribute;
+    private SettingsConstraints m_SettConstraints;
+    private SettingsOutput m_SettOutput;
+    private SettingsNominal m_SettNominal;
+    private SettingsModel m_SettModel;
+    private SettingsTree m_SettTree;
+    private SettingsRules m_SettRules;
+    private SettingsMLC m_SettMLC;
+    private SettingsHMLC m_SettHMLC;
+    private SettingsHMTR m_SettHMTR;
+    private SettingsILevelC m_SettILevelC;
+    private SettingsBeamSearch m_SettBeamSearch;
+    private SettingsExhaustiveSearch m_SettExhaustiveSearch;
+    private SettingsTimeSeries m_SettTimeSeries;
+    private SettingsPhylogeny m_SettPhylogeny;
+    private SettingsRelief m_SettRelief;
+    private SettingsDistances m_SettDistances;
+    private SettingsEnsemble m_SettEnsemble;
+    private SettingsKNN m_SettKNN;
+    private SettingsKNNTree m_SettKNNTree;
+    private SettingsOptionTree m_SettOptionTree;
+    private SettingsExperimental m_SettExperimental;
+    private SettingsSIT m_SettSIT;
+
+
+    public Settings() {
+        m_Ini = new INIFile();
+
+        m_SettGeneric = new SettingsGeneric();
+        m_SettGeneral = new SettingsGeneral();
+        m_SettData = new SettingsData();
+        m_SettAttribute = new SettingsAttribute();
+        m_SettNominal = new SettingsNominal();
+        m_SettModel = new SettingsModel();
+        m_SettTree = new SettingsTree();
+        m_SettRules = new SettingsRules();
+        m_SettMLC = new SettingsMLC();
+        m_SettHMLC = new SettingsHMLC();
+        m_SettILevelC = new SettingsILevelC();
+        m_SettBeamSearch = new SettingsBeamSearch();
+        m_SettExhaustiveSearch = new SettingsExhaustiveSearch();
+        m_SettTimeSeries = new SettingsTimeSeries();
+        m_SettPhylogeny = new SettingsPhylogeny();
+        m_SettRelief = new SettingsRelief();
+        m_SettDistances = new SettingsDistances();
+        m_SettEnsemble = new SettingsEnsemble();
+        m_SettKNN = new SettingsKNN();
+        m_SettKNNTree = new SettingsKNNTree();
+        m_SettOptionTree = new SettingsOptionTree();
+        m_SettSIT = new SettingsSIT();
+        m_SettExperimental = new SettingsExperimental();
+        m_SettConstraints = new SettingsConstraints(m_SettTree);
+        m_SettHMTR = new SettingsHMTR(m_SettAttribute, m_SettGeneric);
+        m_SettOutput = new SettingsOutput(m_SettHMLC);
+    }
 
 
     public SettingsGeneric getGeneric() {
@@ -210,59 +246,40 @@ public class Settings implements Serializable {
 
 
     public void create() {
+        // Initialize individual settings. Order of initialization is important (see dependencies in the constructor).
 
-        m_SettGeneric = new SettingsGeneric();
-        m_SettGeneral = new SettingsGeneral();
-        m_SettData = new SettingsData();
-        m_SettAttribute = new SettingsAttribute();
-        m_SettConstraints = new SettingsConstraints(m_SettTree);
-        m_SettOutput = new SettingsOutput(m_SettHMLC);
-        m_SettNominal = new SettingsNominal();
-        m_SettModel = new SettingsModel();
-        m_SettTree = new SettingsTree();
-        m_SettRules = new SettingsRules();
-        m_SettMLC = new SettingsMLC();
-        m_SettHMLC = new SettingsHMLC();
-        m_SettHMTR = new SettingsHMTR(m_SettAttribute, m_SettGeneric);
-        m_SettILevelC = new SettingsILevelC();
-        m_SettBeamSearch = new SettingsBeamSearch();
-        m_SettExhaustiveSearch = new SettingsExhaustiveSearch();
-        m_SettTimeSeries = new SettingsTimeSeries();
-        m_SettPhylogeny = new SettingsPhylogeny();
-        m_SettRelief = new SettingsRelief();
-        m_SettDistances = new SettingsDistances();
-        m_SettEnsemble = new SettingsEnsemble();
-        m_SettKNN = new SettingsKNN();
-        m_SettKNNTree = new SettingsKNNTree();
-        m_SettOptionTree = new SettingsOptionTree();
-        m_SettSIT = new SettingsSIT();
-        m_SettExperimental = new SettingsExperimental();
+        ArrayList<INIFileSection> lst = new ArrayList<INIFileSection>();
 
-        m_Ini.addNode(m_SettGeneral.create());
-        m_Ini.addNode(m_SettData.create());
-        m_Ini.addNode(m_SettAttribute.create());
-        m_Ini.addNode(m_SettConstraints.create());
-        m_Ini.addNode(m_SettOutput.create());
-        m_Ini.addNode(m_SettNominal.create());
-        m_Ini.addNode(m_SettModel.create());
-        m_Ini.addNode(m_SettTree.create());
-        m_Ini.addNode(m_SettRules.create());
-        m_Ini.addNode(m_SettMLC.create());
-        m_Ini.addNode(m_SettHMLC.create());
-        m_Ini.addNode(m_SettHMTR.create());
-        m_Ini.addNode(m_SettILevelC.create());
-        m_Ini.addNode(m_SettBeamSearch.create());
-        m_Ini.addNode(m_SettExhaustiveSearch.create());
-        m_Ini.addNode(m_SettTimeSeries.create());
-        m_Ini.addNode(m_SettPhylogeny.create());
-        m_Ini.addNode(m_SettRelief.create());
-        m_Ini.addNode(m_SettDistances.create());
-        m_Ini.addNode(m_SettEnsemble.create());
-        m_Ini.addNode(m_SettKNN.create());
-        m_Ini.addNode(m_SettKNNTree.create());
-        m_Ini.addNode(m_SettOptionTree.create());
-        m_Ini.addNode(m_SettExperimental.create());
-        m_Ini.addNode(m_SettSIT.create());
+        Collections.addAll(lst, 
+                m_SettGeneral.create(),
+                m_SettData.create(),
+                m_SettAttribute.create(),
+                m_SettConstraints.create(),
+                m_SettOutput.create(),
+                m_SettNominal.create(),
+                m_SettModel.create(),
+                m_SettTree.create(),
+                m_SettRules.create(),
+                m_SettMLC.create(),
+                m_SettHMLC.create(),
+                m_SettHMTR.create(),
+                m_SettILevelC.create(),
+                m_SettBeamSearch.create(),
+                m_SettExhaustiveSearch.create(),
+                m_SettTimeSeries.create(),
+                m_SettPhylogeny.create(),
+                m_SettRelief.create(),
+                m_SettDistances.create(),
+                m_SettEnsemble.create(),
+                m_SettKNN.create(),
+                m_SettKNNTree.create(),
+                m_SettOptionTree.create(),
+                m_SettExperimental.create(),
+                m_SettSIT.create());
+
+        for (INIFileSection sec : lst) {
+            m_Ini.addNode(sec);
+        }        
     }
 
 
@@ -325,7 +342,7 @@ public class Settings implements Serializable {
 
 
     public void update(ClusSchema schema) {
-        m_SettTree.setFTest(m_SettTree.getFTest());
+        m_SettTree.setFTest(m_SettTree.getFTest(), m_SettGeneric.getVerbose());
 
         SettingsTree.MINIMAL_WEIGHT = m_SettModel.getMinimalWeight();
         SettingsTree.ONE_NOMINAL = (schema.getNbNominalTargetAttributes() == 1 && schema.getNbNumericTargetAttributes() == 0);

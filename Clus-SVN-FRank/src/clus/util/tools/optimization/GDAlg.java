@@ -35,7 +35,7 @@ import java.util.ArrayList;
 
 import clus.algo.rules.ClusRuleSet;
 import clus.main.ClusStatManager;
-import clus.main.settings.Settings;
+import clus.main.settings.SettingsRules;
 import clus.util.ClusFormat;
 
 
@@ -78,7 +78,7 @@ public class GDAlg extends OptAlg {
 
         // If you want to check these, put early stop amount to 0
         if (GDProbl.m_printGDDebugInformation) {
-            String fname = getSettings().getDataFile();
+            String fname = getSettings().getData().getDataFile();
 
             PrintWriter wrt_pred = null;
             PrintWriter wrt_true = null;
@@ -137,7 +137,7 @@ public class GDAlg extends OptAlg {
     public ArrayList<Double> optimize() {
 
         if (getSettings().getGeneric().getVerbose() > 0)
-            System.out.print("\nGradient descent: Optimizing rule weights (" + getSettings().getOptGDMaxIter() + ") ");
+            System.out.print("\nGradient descent: Optimizing rule weights (" + getSettings().getRules().getOptGDMaxIter() + ") ");
 
         PrintWriter wrt_log = null;
 
@@ -164,20 +164,20 @@ public class GDAlg extends OptAlg {
         m_GDProbl.fullGradientComputation(m_weights);
 
         int nbOfIterations = 0;
-        while (nbOfIterations < getSettings().getOptGDMaxIter()) {
+        while (nbOfIterations < getSettings().getRules().getOptGDMaxIter()) {
 
-            if (getSettings().getGeneric().getVerbose() > 0 && nbOfIterations % (Math.ceil(getSettings().getOptGDMaxIter() / 50.0)) == 0)
+            if (getSettings().getGeneric().getVerbose() > 0 && nbOfIterations % (Math.ceil(getSettings().getRules().getOptGDMaxIter() / 50.0)) == 0)
                 System.out.print(".");
             if (nbOfIterations % m_earlyStopStep == 0) {
 
-                if (getSettings().getOptGDEarlyStopAmount() > 0 && m_GDProbl.isEarlyStop(m_weights)) {
+                if (getSettings().getRules().getOptGDEarlyStopAmount() > 0 && m_GDProbl.isEarlyStop(m_weights)) {
                     if (GDProbl.m_printGDDebugInformation)
                         wrt_log.println("Increase in test fitness. Reducing step size or stopping.");
 
                     if (getSettings().getGeneric().getVerbose() > 0)
                         System.out.print("\n\tOverfitting after " + nbOfIterations + " iterations.");
 
-                    if (!getSettings().isOptGDIsDynStepsize() && m_earlyStopStepsizeReducedNb < getSettings().getOptGDNbOfStepSizeReduce()) {
+                    if (!getSettings().getRules().isOptGDIsDynStepsize() && m_earlyStopStepsizeReducedNb < getSettings().getRules().getOptGDNbOfStepSizeReduce()) {
                         m_earlyStopStepsizeReducedNb++;
                         m_GDProbl.dropStepSize(0.1); // Drop stepsize to tenth.
                         m_GDProbl.restoreBestWeight(m_weights); // restoring the weight with minimum fitness
@@ -237,7 +237,7 @@ public class GDAlg extends OptAlg {
             // If oscillation was detected we do not take real steps.
             // we reduce the step size until the new step is smaller than the first one.
             // It should be smaller because otherwise we are going even further from the optimal point.
-            if (oscillation && !getSettings().isOptGDIsDynStepsize()) {
+            if (oscillation && !getSettings().getRules().isOptGDIsDynStepsize()) {
 
                 if (GDProbl.m_printGDDebugInformation)
                     wrt_log.println("Detected oscillation, reducing step size of: " + m_GDProbl.m_stepSize);
@@ -248,7 +248,8 @@ public class GDAlg extends OptAlg {
                 // For MaxLoss combination the oscillation may be because we are finding some local
                 // optimum point for some weight and it is the most significant. Let us put this weight
                 // to a banned list for some iterations
-                if (nbOfIterations > 10 && (getSettings().getOptGDMTGradientCombine() == Settings.OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE || getSettings().getOptGDMTGradientCombine() == Settings.OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE_FAST)) {
+                if (nbOfIterations > 10 && (getSettings().getRules().getOptGDMTGradientCombine() == SettingsRules.OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE 
+                        || getSettings().getRules().getOptGDMTGradientCombine() == SettingsRules.OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE_FAST)) {
                     putOscillatingWeightsToBan(nbOfIterations);
                 }
                 else {
@@ -282,7 +283,7 @@ public class GDAlg extends OptAlg {
         if (getSettings().getGeneric().getVerbose() > 0)
             System.out.println(" done!");
 
-        if (getSettings().getOptGDEarlyStopAmount() > 0) {
+        if (getSettings().getRules().getOptGDEarlyStopAmount() > 0) {
             m_GDProbl.isEarlyStop(m_weights); // Check if current weights have better fitness than the best so far
             m_GDProbl.restoreBestWeight(m_weights); // Result are the weights with best fitness
         }
@@ -339,7 +340,7 @@ public class GDAlg extends OptAlg {
 
     /** A iteration has been done and oscillation not detected - store the previous changes */
     private void storeTheOscillationData() {
-        if (getSettings().isOptGDIsDynStepsize())
+        if (getSettings().getRules().isOptGDIsDynStepsize())
             return;
         m_prevChange = m_newChange.clone();
         m_iPrevDimension = m_iNewDimension.clone();
@@ -375,7 +376,7 @@ public class GDAlg extends OptAlg {
      * Also initialization tasks for oscillation.
      */
     private void storeGradientsForOscillation(int[] maxGradients) {
-        if (getSettings().isOptGDIsDynStepsize())
+        if (getSettings().getRules().isOptGDIsDynStepsize())
             return;
         m_iNewDimension = maxGradients.clone();
         m_newChange = new double[maxGradients.length];
@@ -393,7 +394,7 @@ public class GDAlg extends OptAlg {
      * @return If oscillation was detected.
      */
     private boolean detectOscillation(int iiNewChange, double valueChange) {
-        if (getSettings().isOptGDIsDynStepsize())
+        if (getSettings().getRules().isOptGDIsDynStepsize())
             return false;
         boolean detectOscillation = false;
 
@@ -448,11 +449,11 @@ public class GDAlg extends OptAlg {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         double trainingFitness = m_GDProbl.calcFitness(m_weights);
         double testFitness = 0;
-        if (getSettings().getOptGDEarlyStopAmount() > 0)
+        if (getSettings().getRules().getOptGDEarlyStopAmount() > 0)
             testFitness = m_GDProbl.m_earlyStopProbl.calcFitness(m_weights);
 
         wrt.print("Iteration " + iterNro + " ");
-        if (getSettings().isOptGDIsDynStepsize())
+        if (getSettings().getRules().isOptGDIsDynStepsize())
             wrt.print("Step size: " + m_GDProbl.m_stepSize + " ");
         wrt.print("(" + fr.format(trainingFitness) + ", " + fr.format(testFitness) + "): ");
         // else

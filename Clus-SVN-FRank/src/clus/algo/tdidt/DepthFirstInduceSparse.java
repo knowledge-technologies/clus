@@ -16,6 +16,8 @@ import clus.data.type.NumericAttrType;
 import clus.data.type.SparseNumericAttrType;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsEnsemble;
+import clus.main.settings.SettingsTree;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
 import clus.util.ClusRandomNonstatic;
@@ -77,7 +79,8 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 
 
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
-        if (getSettings().isEnsembleMode() && ((getSettings().getEnsembleMethod() == Settings.ENSEMBLE_RFOREST) || (getSettings().getEnsembleMethod() == Settings.ENSEMBLE_NOBAGRFOREST))) {
+        if (getSettings().getEnsemble().isEnsembleMode() && ((getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_RFOREST)
+                || (getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_NOBAGRFOREST))) {
             induceRandomForest(node, data, rnd);
         }
         else {
@@ -88,7 +91,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             for (int i = 0; i < attrs.length; i++) {
                 ClusAttrType at = attrs[i];
                 if (at.isSparse()) {
-                    if (((SparseNumericAttrType) at).getExampleWeight() >= getSettings().getMinimalWeight()) {
+                    if (((SparseNumericAttrType) at).getExampleWeight() >= getSettings().getModel().getMinimalWeight()) {
                         attrList.add(at);
 
                         // Object[] exampleArray = ((SparseNumericAttrType) at).getExamples().toArray(); // tuples with non-zero value for this attribute
@@ -128,8 +131,8 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = (ClusAttrType) attrs[i];
             // ArrayList examplelist = (ArrayList) examplelists[i];
-            if (at.isNominal()){ // at instanceof NominalAttrType
-            	m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
+            if (at.isNominal()) { // at instanceof NominalAttrType
+                m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
             }
             // else if (examplelist == null) {
             //    m_FindBestTest.findNumeric((NumericAttrType) at, data, null);
@@ -153,10 +156,10 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             for (int j = 0; j < arity; j++) {
                 subsets[j] = data.applyWeighted(test, j);
             }
-            if (getSettings().showAlternativeSplits()) {
+            if (getSettings().getTree().showAlternativeSplits()) {
                 filterAlternativeSplits(node, data, subsets);
             }
-            if (node != m_Root && getSettings().hasTreeOptimize(Settings.TREE_OPTIMIZE_NO_INODE_STATS)) {
+            if (node != m_Root && getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_INODE_STATS)) {
                 // Don't remove statistics of root node; code below depends on them
                 node.setClusteringStat(null);
                 node.setTargetStat(null);
@@ -174,7 +177,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
                     if (at.isSparse()) {
                         ArrayList<SparseDataTuple> newExampleList = ((SparseNumericAttrType) at).pruneExampleList(subsets[j]);
                         double exampleWeight = getExampleWeight(newExampleList);
-                        if (exampleWeight >= getSettings().getMinimalWeight()) {
+                        if (exampleWeight >= getSettings().getModel().getMinimalWeight()) {
                             attrList.add(at);
                             // examplelistList.add(newExampleList);
                         }
@@ -220,7 +223,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
             if (at.isSparse()) {
-                if (((SparseNumericAttrType) at).getExampleWeight() >= getSettings().getMinimalWeight()) {
+                if (((SparseNumericAttrType) at).getExampleWeight() >= getSettings().getModel().getMinimalWeight()) {
                     attrList.add(at);
                 }
             }
@@ -265,10 +268,10 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             for (int j = 0; j < arity; j++) {
                 subsets[j] = data.applyWeighted(test, j);
             }
-            if (getSettings().showAlternativeSplits()) {
+            if (getSettings().getTree().showAlternativeSplits()) {
                 filterAlternativeSplits(node, data, subsets);
             }
-            if (node != m_Root && getSettings().hasTreeOptimize(Settings.TREE_OPTIMIZE_NO_INODE_STATS)) {
+            if (node != m_Root && getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_INODE_STATS)) {
                 // Don't remove statistics of root node; code below depends on them
                 node.setClusteringStat(null);
                 node.setTargetStat(null);

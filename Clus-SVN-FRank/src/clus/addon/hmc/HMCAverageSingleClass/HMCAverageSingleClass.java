@@ -86,8 +86,8 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
         CMDLineArgs cargs = new CMDLineArgs(this);
         cargs.process(args);
         if (cargs.allOK()) {
-            sett.setDate(new Date());
-            sett.setAppName(cargs.getMainArg(0));
+            sett.getGeneric().setDate(new Date());
+            sett.getGeneric().setAppName(cargs.getMainArg(0));
             m_Clus.initSettings(cargs);
             ClusDecisionTree clss = new ClusDecisionTree(m_Clus);
             m_Clus.initialize(cargs, clss);
@@ -99,10 +99,10 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
             }
             if (cargs.hasOption("models") || cargs.hasOption("hsc")) {
                 if (cargs.hasOption("hsc")) {
-                    m_Clus.getSettings().setSuffix(".hsc.combined");
+                    m_Clus.getSettings().getGeneric().setSuffix(".hsc.combined");
                 }
                 else {
-                    m_Clus.getSettings().setSuffix(".sc.combined");
+                    m_Clus.getSettings().getGeneric().setSuffix(".sc.combined");
                 }
                 ClusRun cr = m_Clus.partitionData();
                 // Don't want separate prune set now
@@ -118,7 +118,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                     }
                 }
                 // Array with error measures for each threshold
-                INIFileNominalOrDoubleOrVector class_thr = getSettings().getClassificationThresholds();
+                INIFileNominalOrDoubleOrVector class_thr = getSettings().getHMLC().getClassificationThresholds();
                 if (class_thr.isVector()) {
                     HierClassTresholdPruner pruner = (HierClassTresholdPruner) getStatManager().getTreePruner(null);
                     m_EvalArray = new ClusErrorList[2][pruner.getNbResults()];
@@ -143,7 +143,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                     loadModelPerModel(cargs.getOptionValue("models"), cr);
                 }
                 // Write output
-                ClusOutput output = new ClusOutput(sett.getAppNameWithSuffix() + ".out", m_Clus.getSchema(), sett);
+                ClusOutput output = new ClusOutput(sett.getGeneric().getAppNameWithSuffix() + ".out", m_Clus.getSchema(), sett);
                 // Create default model
                 ClusModelInfo def_model = cr.addModelInfo(ClusModel.DEFAULT);
                 def_model.setModel(ClusDecisionTree.induceDefault(cr));
@@ -175,12 +175,12 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                     }
                 }
                 output.writeHeader();
-                output.writeOutput(cr, true, getSettings().isOutTrainError());
+                output.writeOutput(cr, true, getSettings().getOutput().isOutTrainError());
                 output.close();
             }
             else if (cargs.hasOption("loadPredictions")) { // coded by Leander 13/5/2009
                 // initializations
-                m_Clus.getSettings().setSuffix(".evaluatedPredictions");
+                m_Clus.getSettings().getGeneric().setSuffix(".evaluatedPredictions");
                 ClusRun cr = m_Clus.partitionData();
                 // Don't want separate prune set now
                 // cr.combineTrainAndValidSets(); //not necessary
@@ -273,7 +273,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                 // m_predProb: datasets i, example j, klasse k (dataset moet enkel testset zijn)
 
                 // Array with error measures for each threshold
-                INIFileNominalOrDoubleOrVector class_thr = getSettings().getClassificationThresholds();
+                INIFileNominalOrDoubleOrVector class_thr = getSettings().getHMLC().getClassificationThresholds();
                 // System.out.println("Bool is "+class_thr.isVector());
                 if (class_thr.isVector()) {
                     HierClassTresholdPruner pruner = (HierClassTresholdPruner) getStatManager().getTreePruner(null);
@@ -289,7 +289,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                 }
 
                 // Write output
-                ClusOutput output = new ClusOutput(sett.getAppNameWithSuffix() + ".out", m_Clus.getSchema(), sett);
+                ClusOutput output = new ClusOutput(sett.getGeneric().getAppNameWithSuffix() + ".out", m_Clus.getSchema(), sett);
                 // Create default model
                 ClusModelInfo def_model = cr.addModelInfo(ClusModel.DEFAULT);
                 def_model.setModel(ClusDecisionTree.induceDefault(cr));
@@ -323,7 +323,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                     }
                 }
                 output.writeHeader();
-                output.writeOutput(cr, true, getSettings().isOutTrainError());
+                output.writeOutput(cr, true, getSettings().getOutput().isOutTrainError());
                 output.close();
             }
             else {
@@ -401,7 +401,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                 evaluateModelAndUpdateErrors(j, class_idx, model, cr);
             }
         }
-        INIFileNominalOrDoubleOrVector class_thr = getSettings().getClassificationThresholds();
+        INIFileNominalOrDoubleOrVector class_thr = getSettings().getHMLC().getClassificationThresholds();
         if (class_thr.isVector()) {
             HierClassTresholdPruner pruner = (HierClassTresholdPruner) getStatManager().getTreePruner(null);
             for (int j = 0; j < pruner.getNbResults(); j++) {
@@ -419,7 +419,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
     public void evaluateModelAndUpdateErrors(int train_or_test, int class_idx, ClusModel model, ClusRun cr) throws ClusException, IOException {
         RowData data = cr.getDataSet(train_or_test);
         m_Clus.getSchema().attachModel(model);
-        INIFileNominalOrDoubleOrVector class_thr = getSettings().getClassificationThresholds();
+        INIFileNominalOrDoubleOrVector class_thr = getSettings().getHMLC().getClassificationThresholds();
         if (class_thr.isVector()) {
             HierClassTresholdPruner pruner = (HierClassTresholdPruner) getStatManager().getTreePruner(null);
             for (int i = 0; i < data.getNbRows(); i++) {
@@ -501,7 +501,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
             test.calcTotalStat(stat);
         stat.calcMean();
         ClassHierarchy hier = getStatManager().getHier();
-        PrintWriter wrt = getSettings().getFileAbsoluteWriter(getSettings().getAppName() + "-hmcstat.arff");
+        PrintWriter wrt = getSettings().getGeneric().getFileAbsoluteWriter(getSettings().getGeneric().getAppName() + "-hmcstat.arff");
         ClusSchema schema = new ClusSchema("HMC-Statistics");
         schema.addAttrType(new StringAttrType("Class"));
         schema.addAttrType(new NumericAttrType("Weight"));

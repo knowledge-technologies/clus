@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import clus.algo.rules.ClusRuleSet;
 import clus.data.type.ClusAttrType;
 import clus.main.ClusStatManager;
-import clus.main.settings.Settings;
 import clus.main.settings.SettingsRules;
 import clus.util.tools.optimization.OptProbl.OptParam;
 

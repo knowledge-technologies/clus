@@ -41,7 +41,9 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
 
 
     // Copied from SSDHeuristic.java
-    public ClusRuleHeuristicSSD(ClusStatManager statManager, String basicdist, ClusStatistic negstat, ClusAttributeWeights targetweights) {
+    public ClusRuleHeuristicSSD(ClusStatManager statManager, String basicdist, ClusStatistic negstat, ClusAttributeWeights targetweights, Settings sett) {
+        super(sett);
+
         m_StatManager = statManager;
         m_BasicDist = basicdist;
         m_NegStat = negstat;

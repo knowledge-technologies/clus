@@ -39,7 +39,6 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
-import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
 

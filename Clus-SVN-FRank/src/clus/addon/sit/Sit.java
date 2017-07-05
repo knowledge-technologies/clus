@@ -76,9 +76,9 @@ public class Sit implements CMDLineArgsProvider {
     public void initialize() throws IOException, ClusException {
         // Load settings file
         ARFFFile arff = null;
-        System.out.println("Loading '" + m_Sett.getAppName() + "'");
+        System.out.println("Loading '" + m_Sett.getGeneric().getAppName() + "'");
         ClusRandom.initialize(m_Sett);
-        ClusReader reader = new ClusReader(m_Sett.getDataFile(), m_Sett);
+        ClusReader reader = new ClusReader(m_Sett.getData().getDataFile(), m_Sett);
         System.out.println();
         System.out.println("Reading ARFF Header");
         arff = new ARFFFile(reader);
@@ -89,10 +89,10 @@ public class Sit implements CMDLineArgsProvider {
         // Updata schema based on settings
         m_Sett.updateTarget(m_Schema);
         m_Schema.initializeSettings(m_Sett);
-        m_Sett.setTarget(m_Schema.getTarget().toString());
-        m_Sett.setDisabled(m_Schema.getDisabled().toString());
-        m_Sett.setClustering(m_Schema.getClustering().toString());
-        m_Sett.setDescriptive(m_Schema.getDescriptive().toString());
+        m_Sett.getAttribute().setTarget(m_Schema.getTarget().toString());
+        m_Sett.getAttribute().setDisabled(m_Schema.getDisabled().toString());
+        m_Sett.getAttribute().setClustering(m_Schema.getClustering().toString());
+        m_Sett.getAttribute().setDescriptive(m_Schema.getDescriptive().toString());
         // Load data from file
         if (ResourceInfo.isLibLoaded()) {
             ClusStat.m_InitialMemory = ResourceInfo.getMemory();
@@ -103,7 +103,7 @@ public class Sit implements CMDLineArgsProvider {
         // Preprocess and initialize induce
         m_Sett.update(m_Schema);
         // Set XVal field in Settings
-        Settings.IS_XVAL = true;
+        getSettings().getExperimental().IS_XVAL = true;
         System.out.println("Has missing values: " + m_Schema.hasMissing());
     }
 
@@ -135,7 +135,7 @@ public class Sit implements CMDLineArgsProvider {
      */
     private void InitLearner() {
 
-        if (this.m_Sett.getLearnerName().equals("KNN")) {
+        if (this.m_Sett.getSIT().getLearnerName().equals("KNN")) {
             System.out.println("Using KNN Learner");
             this.m_Learner = new KNNLearner();
         }
@@ -146,7 +146,7 @@ public class Sit implements CMDLineArgsProvider {
         }
         // this.m_Learner = new AvgLearner();
         this.m_Learner.init(this.m_Data, this.m_Sett);
-        int mt = new Integer(m_Sett.getMainTarget()) - 1;
+        int mt = new Integer(m_Sett.getSIT().getMainTarget()) - 1;
         ClusAttrType mainTarget = m_Schema.getAttrType(mt);
         this.m_Learner.setMainTarget(mainTarget);
 
@@ -157,7 +157,7 @@ public class Sit implements CMDLineArgsProvider {
      * Initialize the MTLearner with partial data for XVAL.
      */
     private void InitLearner(RowData data) {
-        if (this.m_Sett.getLearnerName().equals("KNN")) {
+        if (this.m_Sett.getSIT().getLearnerName().equals("KNN")) {
             System.out.println("Using KNN Learner");
             this.m_Learner = new KNNLearner();
         }
@@ -169,7 +169,7 @@ public class Sit implements CMDLineArgsProvider {
         // this.m_Learner = new AvgLearner();
 
         this.m_Learner.init(data, this.m_Sett);
-        int mt = new Integer(m_Sett.getMainTarget()) - 1;
+        int mt = new Integer(m_Sett.getSIT().getMainTarget()) - 1;
         ClusAttrType mainTarget = m_Schema.getAttrType(mt);
         this.m_Learner.setMainTarget(mainTarget);
 
@@ -180,7 +180,7 @@ public class Sit implements CMDLineArgsProvider {
      * Initialize the SearchAlgorithm
      */
     private void InitSearchAlgorithm() {
-        String search = m_Sett.getSearchName();
+        String search = m_Sett.getSIT().getSearchName();
         if (search.equals("OneTarget")) {
             this.m_Search = new OneTarget();
             System.out.println("Search = single target");
@@ -222,9 +222,9 @@ public class Sit implements CMDLineArgsProvider {
      */
     public TargetSet search() {
 
-        int mt = new Integer(m_Sett.getMainTarget()) - 1;
+        int mt = new Integer(m_Sett.getSIT().getMainTarget()) - 1;
         ClusAttrType mainTarget = m_Schema.getAttrType(mt);
-        IntervalCollection candidates = new IntervalCollection(m_Sett.getTarget());
+        IntervalCollection candidates = new IntervalCollection(m_Sett.getAttribute().getTarget());
         TargetSet candidateSet = new TargetSet(m_Schema, candidates);
         return m_Search.search(mainTarget, candidateSet);
 
@@ -275,7 +275,7 @@ public class Sit implements CMDLineArgsProvider {
         TargetSet trgset = search();
 
         // compute the error of the final set
-        int mt = new Integer(m_Sett.getMainTarget()) - 1;
+        int mt = new Integer(m_Sett.getSIT().getMainTarget()) - 1;
         ClusAttrType mainTarget = m_Schema.getAttrType(mt);
         int errorIdx = mainTarget.getArrayIndex();
         // predict a few folds
@@ -309,7 +309,7 @@ public class Sit implements CMDLineArgsProvider {
             e.printStackTrace();
         }
 
-        int mt = new Integer(m_Sett.getMainTarget()) - 1;
+        int mt = new Integer(m_Sett.getSIT().getMainTarget()) - 1;
         ClusAttrType mainTarget = m_Schema.getAttrType(mt);
         int errorIdx = mainTarget.getArrayIndex();
 
@@ -346,7 +346,7 @@ public class Sit implements CMDLineArgsProvider {
             Long dif = new_d - d;
 
             double error = 0;
-            String errorName = m_Sett.getError();
+            String errorName = m_Sett.getSIT().getError();
             if (errorName.equals("MSE")) {
                 error = Evaluator.getMSE(predictions, errorIdx);
             }
@@ -382,7 +382,7 @@ public class Sit implements CMDLineArgsProvider {
             e.printStackTrace();
         }
 
-        int mt = new Integer(m_Sett.getMainTarget()) - 1;
+        int mt = new Integer(m_Sett.getSIT().getMainTarget()) - 1;
         ClusAttrType mainTarget = m_Schema.getAttrType(mt);
         int errorIdx = mainTarget.getArrayIndex();
 
@@ -437,7 +437,7 @@ public class Sit implements CMDLineArgsProvider {
             Long dif = new_d - d;
 
             double error = 0;
-            String errorName = m_Sett.getError();
+            String errorName = m_Sett.getSIT().getError();
 
             if (errorName.equals("RME")) {
                 error = Evaluator.getRelativeError(predictions, errorIdx);
@@ -483,8 +483,8 @@ public class Sit implements CMDLineArgsProvider {
             System.exit(0);
         }
         if (cargs.allOK()) {
-            sett.setDate(new Date());
-            sett.setAppName(cargs.getMainArg(0));
+            sett.getGeneric().setDate(new Date());
+            sett.getGeneric().setAppName(cargs.getMainArg(0));
             sit.initSettings(cargs);
 
         }

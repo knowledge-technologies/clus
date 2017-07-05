@@ -41,6 +41,9 @@ import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsEnsemble;
+import clus.main.settings.SettingsGeneric;
+import clus.main.settings.SettingsTree;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
@@ -52,6 +55,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     protected FindBestTest m_FindBestTest;
     protected ClusNode m_Root;
+
 
     public DepthFirstInduce(ClusSchema schema, Settings sett) throws ClusException, IOException {
         super(schema, sett);
@@ -103,7 +107,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 
     public boolean initSelectorAndStopCrit(ClusNode node, RowData data) {
-        int max = getSettings().getTreeMaxDepth();
+        int max = getSettings().getTree().getTreeMaxDepth();
         if (max != -1 && node.getLevel() >= max) { return true; }
         return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
     }
@@ -112,40 +116,40 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public ClusAttrType[] getDescriptiveAttributes(ClusRandomNonstatic rnd) {
         ClusSchema schema = getSchema();
         Settings sett = getSettings();
-        if (!sett.isEnsembleMode()) {
+        if (!sett.getEnsemble().isEnsembleMode()) {
             return schema.getDescriptiveAttributes();
         }
         else {
-        	ClusAttrType[] selected;
-        	boolean shouldSet = false;
-            switch (sett.getEnsembleMethod()) { // setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd)
-                case Settings.ENSEMBLE_BAGGING:
+            ClusAttrType[] selected;
+            boolean shouldSet = false;
+            switch (sett.getEnsemble().getEnsembleMethod()) { // setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd)
+                case SettingsEnsemble.ENSEMBLE_BAGGING:
                     selected = schema.getDescriptiveAttributes();
                     break;
-                case Settings.ENSEMBLE_RFOREST:
-                    ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();  
-                    selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
+                case SettingsEnsemble.ENSEMBLE_RFOREST:
+                    ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
+                    selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
                     shouldSet = true; //ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), rnd);
-                    break;                    
-                    // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
-                    // schema.getSettings().getNbRandomAttrSelected());
-                case Settings.ENSEMBLE_RSUBSPACES:
+                    break;
+                // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
+                // schema.getSettings().getNbRandomAttrSelected());
+                case SettingsEnsemble.ENSEMBLE_RSUBSPACES:
                     selected = ClusEnsembleInduce.getRandomSubspaces();
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     break;
-                case Settings.ENSEMBLE_BAGSUBSPACES:
-                	ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
+                case SettingsEnsemble.ENSEMBLE_BAGSUBSPACES:
+                    ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     selected = ClusEnsembleInduce.getRandomSubspaces();
                     break;
-                case Settings.ENSEMBLE_NOBAGRFOREST:
-                	ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
+                case SettingsEnsemble.ENSEMBLE_NOBAGRFOREST:
+                    ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
-                    selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
+                    selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
                     shouldSet = true;// ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     break;
-                case Settings.ENSEMBLE_EXTRA_TREES:// same as for Random Forests
+                case SettingsEnsemble.ENSEMBLE_EXTRA_TREES:// same as for Random Forests
                     ClusAttrType[] attrs_all = schema.getDescriptiveAttributes();
-                    selected = ClusEnsembleInduce.selectRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
+                    selected = ClusEnsembleInduce.selectRandomSubspaces(attrs_all, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
                     shouldSet = true; // ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
                     // schema.getSettings().getNbRandomAttrSelected());
@@ -240,16 +244,16 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     public void makeLeaf(ClusNode node) {
         node.makeLeaf();
-        if (getSettings().hasTreeOptimize(Settings.TREE_OPTIMIZE_NO_CLUSTERING_STATS)) {
+        if (getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_CLUSTERING_STATS)) {
             node.setClusteringStat(null);
         }
     }
 
 
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
-    	if(rnd == null){
-    		ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
-    	}
+        if (rnd == null) {
+            ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
+        }
         // rnd may be null due to some calls of induce that do not support parallelisation yet.
 
         // System.out.println("nonsparse induce");
@@ -261,11 +265,11 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         // Find best test
 
         // long start_time = System.currentTimeMillis();
-                
+
         ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
-            if ((getSettings().isEnsembleMode()) && (getSettings().getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES)) {
+            if ((getSettings().getEnsemble().isEnsembleMode()) && (getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_EXTRA_TREES)) {
                 if (at.isNominal()) { // at instanceof NominalAttrType
                     m_FindBestTest.findNominalExtraTree((NominalAttrType) at, data, rnd);
                 }
@@ -304,10 +308,10 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             for (int j = 0; j < arity; j++) {
                 subsets[j] = data.applyWeighted(test, j);
             }
-            if (getSettings().showAlternativeSplits()) {
+            if (getSettings().getTree().showAlternativeSplits()) {
                 filterAlternativeSplits(node, data, subsets);
             }
-            if (node != m_Root && getSettings().hasTreeOptimize(Settings.TREE_OPTIMIZE_NO_INODE_STATS)) {
+            if (node != m_Root && getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_INODE_STATS)) {
                 // Don't remove statistics of root node; code below depends on them
                 node.setClusteringStat(null);
                 node.setTargetStat(null);
@@ -365,7 +369,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
      * // start_time = System.currentTimeMillis();
      * node.testToNode(best);
      * // Output best test
-     * if (getSettings().getGeneric().getVerbose() > 0) System.out.println("Test: "+node.getTestString()+" -> "+best.getHeuristicValue());
+     * if (getSettings().getGeneric().getVerbose() > 0) System.out.println("Test: "+node.getTestString()+" -> "
+     * +best.getHeuristicValue());
      * // Create children
      * int arity = node.updateArity();
      * NodeTest test = node.getTest();
@@ -452,12 +457,12 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
              * }
              * else {
              */
-           
+
             induce(m_Root, data, rnd);
             /* } */
             // rankFeatures(m_Root, data);
             // Refinement finished
-            if (Settings.EXACT_TIME == false)
+            if (SettingsGeneric.EXACT_TIME == false)
                 break;
         }
 
@@ -475,9 +480,12 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
-        int threads = getSettings().getNumberOfThreads();
+        int threads = getSettings().getEnsemble().getNumberOfThreads();
         if (threads != 1) {
-            String warning = String.format("Potential WARNING:\n" + "It seems that you are trying to build an ensemble in parallel.\n If this is not the case, ignore this message. Otherwise:" + "The chosen number of threads (%d) is not equal to 1, and the method\n" + "induceSingleUnpruned(ClusRun cr) is not appropriate for parallelism (the results might not be reproducible).\n" + "The method induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) should be used instead.", threads);
+            String warning = String.format("Potential WARNING:\n" + "It seems that you are trying"
+                    + " to build an ensemble in parallel.\n If this is not the case, ignore this message. Otherwise:" + "The "
+                    + "chosen number of threads (%d) is not equal to 1, and the method\n" + "induceSingleUnpruned(ClusRun cr) is not appropriate for parallelism"
+                    + " (the results might not be reproducible).\n" + "The method induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) should be used instead.", threads);
             System.err.println(warning);
         }
         return induceSingleUnpruned((RowData) cr.getTrainingSet(), null);

@@ -60,7 +60,7 @@ public class OptXVal {
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
         schema.addIndices(ClusSchema.ROWS);
         int nb_num = schema.getNbNumericDescriptiveAttributes();
-        if (Settings.XVAL_OVERLAP && nb_num > 0)
+        if (sett.getExperimental().XVAL_OVERLAP && nb_num > 0)
             return new OptXValIndOV(schema, sett);
         else
             return new OptXValIndNO(schema, sett);
@@ -153,7 +153,8 @@ public class OptXVal {
         // Output xval trees
         output = new ClusOutput(appname + ".xval", schema, sett);
         output.writeHeader();
-        if (Settings.SHOW_XVAL_FOREST)
+        
+        if (sett.getExperimental().SHOW_XVAL_FOREST)
             showForest(output.getWriter(), root);
         for (int i = 0; i < sel.getNbFolds(); i++) {
             XValSelection msel = new XValSelection(sel, i);
@@ -162,7 +163,7 @@ public class OptXVal {
             tree.postProc(score, null);
             // m_Clus.storeAndPruneModel(cr, tree);
             // m_Clus.calcError(cr, summary);
-            if (sett.isOutputFoldModels())
+            if (sett.getOutput().isOutputFoldModels())
                 output.writeOutput(cr, false);
         }
         output.writeSummary(summary);

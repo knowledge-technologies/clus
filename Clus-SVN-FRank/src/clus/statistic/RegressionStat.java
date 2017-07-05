@@ -101,7 +101,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     public ClusStatistic cloneStat() {
         RegressionStat res;
 
-        if (Settings.isHMTREnabled()) {
+        if (getSettings().getHMTR().isHMTREnabled()) {
             res = new RegressionStat(this.m_Settings, m_Attrs, m_HMTRHierarchy, false);
         }
         else {
@@ -116,7 +116,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     public ClusStatistic cloneSimple() {
         RegressionStat res;
 
-        if (Settings.isHMTREnabled()) {
+        if (getSettings().getHMTR().isHMTREnabled()) {
             res = new RegressionStat(this.m_Settings, m_Attrs, m_HMTRHierarchy, true);
         }
         else {
@@ -308,9 +308,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
 
     public double getSVarS(ClusAttributeWeights scale) {
-        if (Settings.isEnsembleROSEnabled())
+        if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getSVarS_ROS(scale);
-        if (Settings.isHMTREnabled())
+        if (getSettings().getHMTR().isHMTREnabled())
             return getSVarSHMTR(scale);
 
         double result = 0.0;
@@ -417,9 +417,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
 
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (Settings.isEnsembleROSEnabled())
+        if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getSVarSDiff_ROS(scale, other);
-        if (Settings.isHMTREnabled())
+        if (getSettings().getHMTR().isHMTREnabled())
             return getSVarSDiffHMTR(scale, other);
 
         double result = 0.0;

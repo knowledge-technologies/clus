@@ -75,7 +75,7 @@ public class DeAlg extends OptAlg {
 
     public ArrayList<Double> optimize() {
         int num_eval;
-        System.out.print("\nDifferential evolution: Optimizing rule weights (" + getSettings().getOptDENumEval() + ") ");
+        System.out.print("\nDifferential evolution: Optimizing rule weights (" + getSettings().getRules().getOptDENumEval() + ") ");
         try {
             PrintWriter wrt_log = new PrintWriter(new OutputStreamWriter(new FileOutputStream("evol.log")));
             // PrintWriter wrt_pop = new PrintWriter(new OutputStreamWriter
@@ -84,19 +84,19 @@ public class DeAlg extends OptAlg {
             num_eval = m_Pop.evaluatePop(0);
             m_Best = new DeInd();
             m_Best.copy((DeInd) m_Pop.m_Inds.get(0));
-            for (int i = 0; i < getSettings().getOptDEPopSize(); i++) {
+            for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
                 checkIfBest((DeInd) m_Pop.m_Inds.get(i));
                 OutputLog((DeInd) m_Pop.m_Inds.get(i), i, wrt_log);
             }
             OutputPop();
             // The while loop is over number of individual evaluations, not separate iterations!
-            while (num_eval < getSettings().getOptDENumEval()) {
+            while (num_eval < getSettings().getRules().getOptDENumEval()) {
                 System.out.print(".");
                 m_Pop.sortPopRandom();
                 DeInd candidate = new DeInd();
 
                 // Go trough all the population and try to find a candidate with crossing over.
-                for (int i = 0; i < getSettings().getOptDEPopSize(); i++) {
+                for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
                     candidate.setGenes(m_Pop.getCandidate(i)); // Get a crossed over candidate.
                     num_eval = candidate.evaluate(m_DeProbl, num_eval);
                     checkIfBest((DeInd) m_Pop.m_Inds.get(i));

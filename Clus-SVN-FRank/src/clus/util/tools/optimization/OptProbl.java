@@ -42,6 +42,7 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsRules;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
@@ -221,7 +222,7 @@ public class OptProbl {
     public OptProbl(ClusStatManager stat_mgr, OptParam optInfo) {
         m_StatMgr = stat_mgr;
 
-        m_saveMemoryLinears = getSettings().getOptAddLinearTerms() == Settings.OPT_GD_ADD_LIN_YES_SAVE_MEMORY;
+        m_saveMemoryLinears = getSettings().getRules().getOptAddLinearTerms() == SettingsRules.OPT_GD_ADD_LIN_YES_SAVE_MEMORY;
 
         if (m_saveMemoryLinears) {
             int nbOfTargetAtts = m_StatMgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET).length;
@@ -237,7 +238,7 @@ public class OptProbl {
         m_RulePred = optInfo.m_rulePredictions;
         m_TrueVal = optInfo.m_trueValues;
 
-        if (ClusStatManager.getMode() != ClusStatManager.MODE_REGRESSION && ClusStatManager.getMode() != ClusStatManager.MODE_CLASSIFY) {
+        if (stat_mgr.getMode() != ClusStatManager.MODE_REGRESSION && stat_mgr.getMode() != ClusStatManager.MODE_CLASSIFY) {
             System.err.println("Weight optimization: Mixed types of targets (reg/clas) not implemented. Assuming regression.\n ");
             // "The targets are of different kind, i.e. they are not all for regression or for classifying.\n" +
             // "Mixed targets are not yet implemented. The targets are considered as regression.\n" +
@@ -245,7 +246,7 @@ public class OptProbl {
             // "The optimization may not work in this case also.\n");
         }
 
-        m_ClssTask = (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY);
+        m_ClssTask = (stat_mgr.getMode() == ClusStatManager.MODE_CLASSIFY);
 
         // Compute data statistics
 
@@ -253,13 +254,13 @@ public class OptProbl {
             m_TargetAvg = new double[getNbOfTargets()]; // Only zeroes
 
             // Normalization factors and means are only stored if they are used
-            if (getSettings().isOptNormalization()) {
+            if (getSettings().getRules().isOptNormalization()) {
                 // double[] valuesFor0Variance = new double[getNbOfTargets()];
                 // boolean[] varIsNonZero = checkZeroVariance(valuesFor0Variance);
                 // double[] means = computeMeans(varIsNonZero, valuesFor0Variance);
                 // m_TargetNormFactor = computeOptNormFactors(means, varIsNonZero, valuesFor0Variance);
                 m_TargetNormFactor = initNormFactors(getNbOfTargets(), getSettings());
-                if (getSettings().getOptNormalization() != Settings.OPT_NORMALIZATION_ONLY_SCALING)
+                if (getSettings().getRules().getOptNormalization() != SettingsRules.OPT_NORMALIZATION_ONLY_SCALING)
                     m_TargetAvg = initMeans(getNbOfTargets());
             }
         }
@@ -272,7 +273,7 @@ public class OptProbl {
         Settings set = stat_mgr.getSettings();
         int nbRows = origData.m_trueValues.length;
 
-        int nbDataTest = (int) Math.ceil(nbRows * set.getOptGDEarlyStopAmount());
+        int nbDataTest = (int) Math.ceil(nbRows * set.getRules().getOptGDEarlyStopAmount());
 
         // For random sample
         Random randGen = new Random(0);
@@ -360,8 +361,8 @@ public class OptProbl {
 
         // We are using Fitness function of the problem. Let us put the reg penalty to 0 because we do not
         // want to use it
-        set.setOptRegPar(0);
-        set.setOptNbZeroesPar(0);
+        set.getRules().setOptRegPar(0);
+        set.getRules().setOptNbZeroesPar(0);
 
     }
 
@@ -496,7 +497,7 @@ public class OptProbl {
         // For classification the default is 0-1 loss
         if (isClassifTask()) {
             // Only one sensible loss type available for classification and it is not the default.
-            if (getSettings().getOptDELossFunction() != Settings.OPT_LOSS_FUNCTIONS_01ERROR) {
+            if (getSettings().getRules().getOptDELossFunction() != SettingsRules.OPT_LOSS_FUNCTIONS_01ERROR) {
                 try {
                     throw new Exception("DE optimization task is for classification, but the chosen loss " + "is mainly for regression. Use OptDELossFunction = 01Error to correct this.");
                 }
@@ -516,14 +517,14 @@ public class OptProbl {
 
         // Regularization for getting the weights as small as possible
         double reg_penalty = 0;
-        if (getSettings().getOptRegPar() != 0.0) {
-            reg_penalty = getSettings().getOptRegPar() * regularization(genes);
+        if (getSettings().getRules().getOptRegPar() != 0.0) {
+            reg_penalty = getSettings().getRules().getOptRegPar() * regularization(genes);
         }
 
         // Second Regularization (especially for DE): how many zeroes
         double nbOfZeroes_penalty = 0;
-        if (getSettings().getOptNbZeroesPar() != 0.0) {
-            nbOfZeroes_penalty = getSettings().getOptNbZeroesPar() * returnNbNonZeroes(genes);
+        if (getSettings().getRules().getOptNbZeroesPar() != 0.0) {
+            nbOfZeroes_penalty = getSettings().getRules().getOptNbZeroesPar() * returnNbNonZeroes(genes);
         }
 
         // fitness = (1 - (acc / nb_covered*nb_targets)) + getSettings().getOptRegPar() * reg_penalty;
@@ -637,24 +638,24 @@ public class OptProbl {
     protected double loss(double[][] prediction, int iTarget) {
 
         double loss = 0;
-        switch (getSettings().getOptDELossFunction()) {
-            case Settings.OPT_LOSS_FUNCTIONS_01ERROR:
+        switch (getSettings().getRules().getOptDELossFunction()) {
+            case SettingsRules.OPT_LOSS_FUNCTIONS_01ERROR:
                 if (iTarget != -1)
                     System.err.println("Loss over single target implemented only for squared loss!");
                 loss = loss01(getTrueValues(), prediction);
                 break;
-            case Settings.OPT_LOSS_FUNCTIONS_RRMSE:
+            case SettingsRules.OPT_LOSS_FUNCTIONS_RRMSE:
                 if (iTarget != -1)
                     System.err.println("Loss over single target implemented only for squared loss!");
                 loss = lossRRMSE(getTrueValues(), prediction);
                 break;
-            case Settings.OPT_LOSS_FUNCTIONS_HUBER:
+            case SettingsRules.OPT_LOSS_FUNCTIONS_HUBER:
                 if (iTarget != -1)
                     System.err.println("Loss over single target implemented only for squared loss!");
                 loss = lossHuber(getTrueValues(), prediction);
                 break;
             // Default case
-            case Settings.OPT_LOSS_FUNCTIONS_SQUARED:
+            case SettingsRules.OPT_LOSS_FUNCTIONS_SQUARED:
             default:
                 loss = lossSquared(prediction, iTarget);
                 break;
@@ -700,7 +701,7 @@ public class OptProbl {
                     attributeLoss += Math.pow(getTrueValue(iInstance, jTarget) - prediction[iInstance][jTarget], 2);
                 }
 
-                if (getSettings().isOptNormalization()) {
+                if (getSettings().getRules().isOptNormalization()) {
                     attributeLoss /= getNormFactor(jTarget);
                 }
 
@@ -811,7 +812,7 @@ public class OptProbl {
         int numberOfTargets = trueValues[0].m_targets.length;
 
         // Alpha quantile for how much of data is considered potential outliers
-        double alpha = getSettings().getOptHuberAlpha();
+        double alpha = getSettings().getRules().getOptHuberAlpha();
         double deltas[] = new double[numberOfTargets];
 
         double targetDistances[] = new double[numberOfInstances];
@@ -877,7 +878,7 @@ public class OptProbl {
 
         for (int j = 0; j < genes.size(); j++) {
             // Lasso penalty, i.e. sum of absolute values of weights
-            reg_penalty += Math.pow(Math.abs(((Double) (genes.get(j))).doubleValue()), getSettings().getOptDERegulPower());
+            reg_penalty += Math.pow(Math.abs(((Double) (genes.get(j))).doubleValue()), getSettings().getRules().getOptDERegulPower());
         }
 
         return reg_penalty;
@@ -1030,7 +1031,7 @@ public class OptProbl {
     static protected double[] initNormFactors(int nbTargs, Settings sett) {
         double[] scaleFactor = new double[nbTargs];
         for (int iTarget = 0; iTarget < nbTargs; iTarget++) {
-            if (sett.getOptNormalization() == Settings.OPT_NORMALIZATION_YES_VARIANCE)
+            if (sett.getRules().getOptNormalization() == SettingsRules.OPT_NORMALIZATION_YES_VARIANCE)
                 scaleFactor[iTarget] = Math.pow(RuleNormalization.getTargStdDev(iTarget), 4); // Math.pow(variance,2.0);
             else // std dev
                 scaleFactor[iTarget] = 4 * Math.pow(RuleNormalization.getTargStdDev(iTarget), 2); // 4*variance;
@@ -1092,7 +1093,7 @@ public class OptProbl {
     protected void preparePredictionsForNormalization() {
 
         // Preparations are needed only if some normalization with average shifting is used.
-        if (!getSettings().isOptNormalization() || getSettings().getOptNormalization() == Settings.OPT_NORMALIZATION_ONLY_SCALING)
+        if (!getSettings().getRules().isOptNormalization() || getSettings().getRules().getOptNormalization() == SettingsRules.OPT_NORMALIZATION_ONLY_SCALING)
             return;
 
         // Change only the first rule, this changes the overall average of predictions
@@ -1108,7 +1109,7 @@ public class OptProbl {
         // DEBUG, after the changes, print these again!
         // If you want to check these, put early stop amount to 0
         if (GDProbl.m_printGDDebugInformation) {
-            String fname = getSettings().getDataFile();
+            String fname = getSettings().getData().getDataFile();
 
             PrintWriter wrt_pred = null;
             PrintWriter wrt_true = null;
@@ -1132,7 +1133,7 @@ public class OptProbl {
     /** Changes rule set to undo the changes done to predictions */
     protected void changeRuleSetToUndoNormNormalization(ClusRuleSet rset) {
         // These are needed only if some normalization with average shifting is needed.
-        if (!getSettings().isOptNormalization() || getSettings().getOptNormalization() == Settings.OPT_NORMALIZATION_ONLY_SCALING)
+        if (!getSettings().getRules().isOptNormalization() || getSettings().getRules().getOptNormalization() == SettingsRules.OPT_NORMALIZATION_ONLY_SCALING)
             return;
 
         double[] newPred = new double[getNbOfTargets()];
@@ -1150,7 +1151,7 @@ public class OptProbl {
         String print = "[";
         for (int iTarg = 0; iTarg < getNbOfTargets(); iTarg++) {
             double pred = (double) getPredictionsWhenCovered(ruleIndex, exampleIndex, iTarg);
-            if (getSettings().isOptNormalization()) {
+            if (getSettings().getRules().isOptNormalization()) {
                 pred /= Math.sqrt(getNormFactor(iTarg)); // For single pred you have to take sqrt
             }
             print += "" + fr.format(pred);
@@ -1164,7 +1165,7 @@ public class OptProbl {
 
     /** Print predictions to output file. */
     protected void printPredictionsToFile(PrintWriter wrt) {
-        if (getSettings().isOptNormalization()) {
+        if (getSettings().getRules().isOptNormalization()) {
             wrt.print("Norm factors: [");
             for (int iTarget = 0; iTarget < getNbOfTargets(); iTarget++) {
                 wrt.print(getNormFactor(iTarget));
@@ -1199,7 +1200,7 @@ public class OptProbl {
             wrt.print("[");
             for (int iTarg = 0; iTarg < getNbOfTargets(); iTarg++) {
                 double val = (double) getTrueValue(iTrueVal, iTarg);
-                if (getSettings().isOptNormalization()) {
+                if (getSettings().getRules().isOptNormalization()) {
                     val /= Math.sqrt(getNormFactor(iTarg));
                 }
                 wrt.print(fr.format(val));

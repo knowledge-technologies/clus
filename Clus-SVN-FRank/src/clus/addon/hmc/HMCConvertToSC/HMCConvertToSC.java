@@ -50,7 +50,7 @@ public class HMCConvertToSC {
                 tp.fillBoolArrayNodeAndAncestors(classes[i]);
             }
             writeArffToSC(output + ".train.arff", train, classterms, classes, binary);
-            if (!sett.isNullTestFile()) {
+            if (!sett.getData().isNullTestFile()) {
                 RowData test = (RowData) run.getTestSet();
                 classes = new boolean[test.getNbRows()][hier.getTotal()];
                 for (int i = 0; i < test.getNbRows(); i++) {
@@ -61,7 +61,7 @@ public class HMCConvertToSC {
                 }
                 writeArffToSC(output + ".test.arff", test, classterms, classes, binary);
             }
-            if (!sett.isNullPruneFile()) {
+            if (!sett.getData().isNullPruneFile()) {
                 RowData tune = (RowData) run.getPruneSet();
                 classes = new boolean[tune.getNbRows()][hier.getTotal()];
                 for (int i = 0; i < tune.getNbRows(); i++) {

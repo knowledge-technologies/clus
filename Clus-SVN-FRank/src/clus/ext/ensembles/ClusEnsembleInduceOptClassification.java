@@ -2,7 +2,6 @@
 package clus.ext.ensembles;
 
 import java.io.IOException;
-import java.util.Set;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.TupleIterator;

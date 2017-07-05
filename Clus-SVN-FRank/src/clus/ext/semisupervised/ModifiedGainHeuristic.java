@@ -4,14 +4,15 @@ package clus.ext.semisupervised;
 import clus.heuristic.ClusHeuristicImpl;
 import clus.jeans.math.MathUtil;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 
 
 public class ModifiedGainHeuristic extends ClusHeuristicImpl {
 
-    public ModifiedGainHeuristic(ClusStatistic stat) {
-        super(stat);
+    public ModifiedGainHeuristic(ClusStatistic stat, Settings sett) {
+        super(stat, sett);
     }
 
 
@@ -25,7 +26,7 @@ public class ModifiedGainHeuristic extends ClusHeuristicImpl {
         double n_pos = pstat.m_SumWeight;
         double n_neg = nstat.m_SumWeight;
         // Acceptable?
-        if (n_pos < Settings.MINIMAL_WEIGHT || n_neg < Settings.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
+        if (n_pos < SettingsTree.MINIMAL_WEIGHT || n_neg < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
         // Initialize entropy's
         double pos_ent = 0.0;
         double neg_ent = 0.0;

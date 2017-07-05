@@ -103,7 +103,6 @@ import clus.main.ClusStat;
 import clus.main.ClusStatManager;
 import clus.main.ClusSummary;
 import clus.main.settings.Settings;
-import clus.main.settings.SettingsAttribute;
 import clus.main.settings.SettingsData;
 import clus.main.settings.SettingsGeneral;
 import clus.main.settings.SettingsGeneric;
@@ -163,16 +162,16 @@ public class Clus implements CMDLineArgsProvider {
     protected ClusHMTRHierarchy m_HMTRHierarchy;
 
 
-    private static String getRelativePath(File file, File folder) {
-        String filePath = file.getAbsolutePath();
-        String folderPath = folder.getAbsolutePath();
-        if (filePath.startsWith(folderPath)) {
-            return filePath.substring(folderPath.length() + 1);
-        }
-        else {
-            return null;
-        }
-    }
+//    private static String getRelativePath(File file, File folder) {
+//        String filePath = file.getAbsolutePath();
+//        String folderPath = folder.getAbsolutePath();
+//        if (filePath.startsWith(folderPath)) {
+//            return filePath.substring(folderPath.length() + 1);
+//        }
+//        else {
+//            return null;
+//        }
+//    }
 
 
     public final void initialize(CMDLineArgs cargs, ClusInductionAlgorithmType clss) throws IOException, ClusException {
@@ -1810,7 +1809,11 @@ public class Clus implements CMDLineArgsProvider {
             if (cargs.allOK()) {
                 sett.getGeneric().setDate(new Date());
                 sett.getGeneric().setAppName(cargs.getMainArg(0));
+
                 clus.initSettings(cargs);
+                
+                
+                
                 ClusInductionAlgorithmType clss = null;
 
                 /**

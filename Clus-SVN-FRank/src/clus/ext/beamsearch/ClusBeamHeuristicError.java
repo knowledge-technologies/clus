@@ -36,8 +36,8 @@ import clus.statistic.ClusStatistic;
 
 public class ClusBeamHeuristicError extends ClusBeamHeuristic {
 
-    public ClusBeamHeuristicError(ClusStatistic stat) {
-        super(stat);
+    public ClusBeamHeuristicError(ClusStatistic stat, Settings sett) {
+        super(stat, sett);
     }
 
 

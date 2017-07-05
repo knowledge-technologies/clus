@@ -35,15 +35,15 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.io.DummySerializable;
+import clus.jeans.util.IntervalCollection;
+import clus.jeans.util.StringUtils;
+import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.selection.XValDataSelection;
 import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
-import clus.jeans.util.IntervalCollection;
-import clus.jeans.util.StringUtils;
-import clus.main.settings.Settings;
 
 
 public class ClusSchema implements Serializable {
