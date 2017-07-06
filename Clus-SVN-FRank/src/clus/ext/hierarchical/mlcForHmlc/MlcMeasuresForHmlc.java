@@ -66,7 +66,9 @@ public class MlcMeasuresForHmlc extends ClusError {
             m_SubErrors.add(new MLFOneMeasure());
             m_SubErrors.add(new MLPrecision());
             m_SubErrors.add(new MLRecall());
-
+            m_SubErrors.add(new OneError());
+            m_SubErrors.add(new RankingLoss());
+            m_SubErrors.add(new SubsetAccuracy());
 
         }
 
