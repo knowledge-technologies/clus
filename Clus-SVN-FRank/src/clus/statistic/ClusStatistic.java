@@ -196,6 +196,16 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public abstract void subtractFromOther(ClusStatistic other);
+    
+    
+    public void setData(RowData data){
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }       
+    }
 
 
     public double[] getNumericPred() {

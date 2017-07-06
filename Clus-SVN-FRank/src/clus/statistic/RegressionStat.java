@@ -46,7 +46,8 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     private double[] m_SumSqValues;
     private RegressionStat m_Training;
     
-    //daniela  matejp: removed static in INITIALIZE_PARTIAL_SUM, and made every field in this daniela block private
+    //daniela
+    // matejp: removed static in INITIALIZE_PARTIAL_SUM, and made every field in this daniela block private
 //    private double[] m_ElementsChild; 
     private double m_I;
 //    private double[] m_NodeData;
