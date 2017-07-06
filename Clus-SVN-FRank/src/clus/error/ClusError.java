@@ -27,6 +27,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.text.NumberFormat;
 
+import javax.management.RuntimeErrorException;
+
 import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
@@ -175,10 +177,8 @@ public abstract class ClusError implements Serializable {
     }
 
 
-    public double getModelErrorComponent(int i)
-    {
-    	throw new RuntimeException("This method should be either implemented by a subclass or not at all.");
-        // return 0.0;
+    public double getModelErrorComponent(int i){
+        throw new RuntimeException("This should be implemented by a subclass!");
     }
 
 

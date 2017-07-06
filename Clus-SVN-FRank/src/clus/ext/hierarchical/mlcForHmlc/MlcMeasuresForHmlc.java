@@ -9,6 +9,7 @@ import java.util.Arrays;
 import clus.data.rows.DataTuple;
 import clus.error.ClusError;
 import clus.error.ClusErrorList;
+import clus.error.ComponentError;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesTuple;
@@ -131,94 +132,22 @@ public class MlcMeasuresForHmlc extends ClusError {
 
 
         public double getModelError() {
-//            computeAll();
-//            switch (m_OptimizeMeasure) {
-//                case Settings.HIERMEASURE_AUROC:
-//                    return m_AverageAUROC;
-//                case Settings.HIERMEASURE_AUPRC:
-//                    return m_AverageAUPRC;
-//                case Settings.HIERMEASURE_WEIGHTED_AUPRC:
-//                    return m_WAvgAUPRC;
-//                case Settings.HIERMEASURE_POOLED_AUPRC:
-//                    return m_PooledAUPRC;
-//            }
-            return 0.0;
+            throw new RuntimeException("This call has no sense!");
         }
 
 
         public boolean isEvalClass(int idx) {
-            // Don't include trivial classes (with only pos or only neg examples)
-            return m_EvalClass[idx]; // && includeZeroFreqClasses(idx); // && m_ClassWisePredictions[idx].hasBothPosAndNegEx();
+            return m_EvalClass[idx];
         }
 
 
         public void reset() {
-//            for (int i = 0; i < m_Dim; i++) {
-//                m_ClassWisePredictions[i].clear();
-//            }
+
         }
-
-
-//        public void add(ClusError other) {
-//            BinaryPredictionList[] olist = ((HierErrorMeasures) other).m_ClassWisePredictions;
-//            for (int i = 0; i < m_Dim; i++) {
-//                m_ClassWisePredictions[i].add(olist[i]);
-//            }
-//        }
-//
-//
-//        // For errors computed on a subset of the examples, it is sometimes useful
-//        // to also have information about all the examples, this information is
-//        // passed via this method in the global error measure "global"
-//        public void updateFromGlobalMeasure(ClusError global) {
-//            BinaryPredictionList[] olist = ((HierErrorMeasures) global).m_ClassWisePredictions;
-//            for (int i = 0; i < m_Dim; i++) {
-//                m_ClassWisePredictions[i].copyActual(olist[i]);
-//            }
-//        }
-
-
-        // prints the evaluation results for each single predicted class
-        public void printResultsRec(NumberFormat fr, PrintWriter out, ClassTerm node, boolean[] printed) {
-            int idx = node.getIndex();
-            // avoid printing a given node several times
-            if (printed[idx])
-                return;
-            printed[idx] = true;
-            if (isEvalClass(idx)) {
-                ClassesValue val = new ClassesValue(node);
-//                out.print("      " + idx + ": " + val.toStringWithDepths(m_Hier));
-//                out.print(", AUROC: " + fr.format(m_ROCAndPRCurves[idx].getAreaROC()));
-//                out.print(", AUPRC: " + fr.format(m_ROCAndPRCurves[idx].getAreaPR()));
-//                out.print(", Freq: " + fr.format(m_ClassWisePredictions[idx].getFrequency()));
-//                if (m_RecallValues != null) {
-//                    int nbRecalls = m_RecallValues.length;
-//                    for (int i = 0; i < nbRecalls; i++) {
-//                        int rec = (int) Math.floor(100.0 * m_RecallValues[i] + 0.5);
-//                        out.print(", P" + rec + "R: " + fr.format(100.0 * m_ROCAndPRCurves[idx].getPrecisionAtRecall(i)));
-//                    }
-//                }
-//                out.println();
-            }
-            for (int i = 0; i < node.getNbChildren(); i++) {
-                printResultsRec(fr, out, (ClassTerm) node.getChild(i), printed);
-            }
-        }
-
-
-        public void printResults(NumberFormat fr, PrintWriter out, ClassHierarchy hier) {
-            ClassTerm node = hier.getRoot();
-            boolean[] printed = new boolean[hier.getTotal()];
-            for (int i = 0; i < node.getNbChildren(); i++) {
-                printResultsRec(fr, out, (ClassTerm) node.getChild(i), printed);
-            }
-        }
-
 
         public boolean isMultiLine() {
             return true;
         }
-
 
         public void computeAll() {
             int n = m_SubErrors.size();
@@ -226,33 +155,40 @@ public class MlcMeasuresForHmlc extends ClusError {
             for(int i = 0; i < n; i++){
                 m_ComputedErrors[i] = m_SubErrors.get(i).compute(m_DimEval);
             }
+            
 
         }
 
-
-
-
         public void showModelError(PrintWriter out, String bName, int detail) throws IOException {
-
-            NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
+            NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+            int maxLength = 0;
+            for(MlcHmlcSubError suberror : m_SubErrors){
+                maxLength = Math.max(maxLength, suberror.getName().length());
+            }
+            String formater = String.format("      %%-%ds %%s%%s", 9 + maxLength);
             computeAll();
             
             out.println();
             for(int i = 0; i < m_ComputedErrors.length; i++){
-                out.println("      " + m_SubErrors.get(i).getName() + ":            " + m_ComputedErrors[i]);
+                String components = "";
+                if(m_SubErrors.get(i) instanceof ComponentError){
+                    String[] componentErrors = new String[m_DimEval];
+                    for (int comp = 0; comp < m_DimEval; comp++) {
+                        componentErrors[comp] = fr.format(((ComponentError) m_SubErrors.get(i)).getModelErrorComponent(comp));
+                    }
+                    components = String.format("%s: ", Arrays.toString(componentErrors));
+                }
+                out.println(String.format(formater, m_SubErrors.get(i).getName() + ":", components, fr.format(m_ComputedErrors[i])));
             }
 
         }
-
 
         public String getName() {
             return "Multilabel error measures";
         }
 
-
         public ClusError getErrorClone(ClusErrorList par) {
             return new MlcMeasuresForHmlc(par, m_Hier);
-//            return new HierErrorMeasures(par, m_Hier, m_RecallValues, m_Compatibility, m_OptimizeMeasure, m_WriteCurves);
         }
 
 }
