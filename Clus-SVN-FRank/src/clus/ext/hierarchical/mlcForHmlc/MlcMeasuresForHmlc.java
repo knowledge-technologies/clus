@@ -62,6 +62,10 @@ public class MlcMeasuresForHmlc extends ClusError {
             m_SubErrors.add(new MicroFOne(m_DimEval));
             m_SubErrors.add(new MicroPrecision(m_DimEval));
             m_SubErrors.add(new MicroRecall(m_DimEval));
+            m_SubErrors.add(new MLAccuracy());
+            m_SubErrors.add(new MLFOneMeasure());
+            m_SubErrors.add(new MLPrecision());
+            m_SubErrors.add(new MLRecall());
 
 
         }
