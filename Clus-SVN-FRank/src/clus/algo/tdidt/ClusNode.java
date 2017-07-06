@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.junit.internal.matchers.StacktracePrintingMatcher;
+
 import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
@@ -38,11 +40,13 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.error.multiscore.MultiScore;
 import clus.error.multiscore.MultiScoreStat;
+import clus.ext.hierarchical.WHTDStatistic;
 import clus.jeans.tree.MyNode;
 import clus.jeans.util.MyArray;
 import clus.jeans.util.StringUtils;
 import clus.jeans.util.compound.IntObject;
 import clus.main.ClusRun;
+import clus.main.ClusStat;
 import clus.main.ClusStatManager;
 import clus.main.Global;
 import clus.main.Settings;
@@ -365,16 +369,10 @@ public class ClusNode extends MyNode implements ClusModel {
             throw new RuntimeException("ClusStatManager = null.");
         }
         else {
-            if (mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES) { // multi-label
-                                                                                                                                                                                    // threshold
-                                                                                                                                                                                    // optimisation
+            if (shouldRunThresholdOptimization(mgr.getSettings())) { // mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES
                 double lower = 0.0, upper = 1.0;
                 double middle = lower + (upper - lower) / 2;
-                ClassificationStat targetStat = (ClassificationStat) getTargetStat();
-                int nbRelevantLabels = 0;
-                for (int target = 0; target < targetStat.m_ClassCounts.length; target++) {
-                    nbRelevantLabels += targetStat.m_ClassCounts[target][0];
-                }
+                int nbRelevantLabels = countTrueRelevant();
                 int nbPredictedRelevantNow = -1;
                 while (upper - lower > 0.0005) {// && nbPredictedRelevantBefore != nbPredictedRelevantNow){
                     middle = lower + (upper - lower) / 2;
@@ -415,11 +413,27 @@ public class ClusNode extends MyNode implements ClusModel {
         safePrune();
         return this;
     }
-
+    
+    
+    private boolean shouldRunThresholdOptimization(Settings settings){
+        // settings = mgr.getSettings
+        if(settings.getSectionMultiLabel().isEnabled() || settings.isSectionHierarchicalEnabled()){ // MLC or HMLC
+            return settings.getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES;
+        } else{
+            return false;
+        }
+    }
 
     public void updateThresholds(double threshold) {
-        ClassificationStat targetStat = (ClassificationStat) getTargetStat();
-        targetStat.setThresholds(threshold);
+        if(getTargetStat() instanceof ClassificationStat){
+            ClassificationStat targetStat = (ClassificationStat) getTargetStat();
+            targetStat.setThresholds(threshold);
+        } else if(getTargetStat() instanceof WHTDStatistic){
+            WHTDStatistic targetStat = (WHTDStatistic) getTargetStat();
+            targetStat.setThresholds(threshold);
+        } else{
+            throw new RuntimeException("Unknown type of target statistics.");
+        }
         if (m_Test != null) { // is not leaf
             int nbChildren = getNbChildren();
             ClusNode info;
@@ -430,15 +444,48 @@ public class ClusNode extends MyNode implements ClusModel {
         }
     }
 
+    public int countTrueRelevant(){
+        int nbRelevantLabels = 0;
+        if(getTargetStat() instanceof ClassificationStat){
+            ClassificationStat targetStat = (ClassificationStat) getTargetStat();
+            for (int target = 0; target < targetStat.m_ClassCounts.length; target++) {
+                nbRelevantLabels += targetStat.m_ClassCounts[target][0];
+            }
+        } else if(getTargetStat() instanceof WHTDStatistic){
+            WHTDStatistic targetStat = (WHTDStatistic) getTargetStat();
+            boolean[] evalClasses = targetStat.getHier().getEvalClassesVector();
+            double[] sumValues = targetStat.getSumValues();
+            for(int i = 0; i < evalClasses.length; i++){
+                if(evalClasses[i]){
+                    nbRelevantLabels += sumValues[i];
+                }
+            }
+        } else{
+            throw new RuntimeException("Unknown type of target statistics.");
+        }
+        return nbRelevantLabels;
+    }
 
     public int countPredictedRelevant() {
         int nbPredictedRelevant = 0;
         if (m_Test == null) { // is leaf
-            ClassificationStat targetStat = (ClassificationStat) getTargetStat();
-            for (int target = 0; target < targetStat.m_ClassCounts.length; target++) {
-                if (targetStat.m_ClassCounts[target][0] / targetStat.m_SumWeights[target] >= targetStat.m_Thresholds[target]) {
-                    nbPredictedRelevant += (int) targetStat.m_SumWeights[target]; // TODO: ne deluje za weighted sum of
-                                                                                  // examples!
+            if(getTargetStat() instanceof ClassificationStat){
+                ClassificationStat targetStat = (ClassificationStat) getTargetStat();
+                for (int target = 0; target < targetStat.m_ClassCounts.length; target++) {
+                    if (targetStat.m_ClassCounts[target][0] / targetStat.m_SumWeights[target] >= targetStat.m_Thresholds[target]) {
+                        nbPredictedRelevant += (int) targetStat.m_SumWeights[target]; // TODO: does not work for weighted sum of examples!
+                    }
+                }
+            } else if (getTargetStat() instanceof WHTDStatistic){
+                WHTDStatistic targetStat = (WHTDStatistic) getTargetStat();
+                boolean[] evalClasses = targetStat.getHier().getEvalClassesVector();
+                double[] sumValues = targetStat.getSumValues();
+                double sumWeight = targetStat.getSumWeight();
+                double[] thresholds = targetStat.getThresholds();
+                for(int i = 0; i < evalClasses.length; i++){
+                    if(evalClasses[i] && sumValues[i] / sumWeight >= thresholds[i]){
+                        nbPredictedRelevant += sumWeight;
+                    }
                 }
             }
         }

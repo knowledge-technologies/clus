@@ -71,6 +71,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     // simply denoted by poolAUPRC case
     protected int m_Distance = -1;
     protected double[] m_P;
+    
+    // Thresholds used in making predictions in multi-label classification
+    private double[] m_Thresholds;
 
 
     /**
@@ -166,6 +169,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                                                                                                                                                                                         // normal
                                                                                                                                                                                         // case
         res.m_Threshold = m_Threshold;
+        res.m_Thresholds = m_Thresholds;
         res.m_Training = m_Training;
         if (m_Validation != null) {
             res.m_Validation = (WHTDStatistic) m_Validation.cloneSimple();
@@ -718,5 +722,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else {
             super.copy(other);
         }
+    }
+    
+    public void setThresholds(double threshold){
+        m_Thresholds = new double[m_Hier.getWeights().length];
+        for(int i = 0; i < m_Thresholds.length; i++){
+            m_Thresholds[i] = threshold;
+        }
+    }
+    
+    public double[] getThresholds(){
+        return m_Thresholds;
     }
 }

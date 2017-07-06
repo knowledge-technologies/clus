@@ -98,6 +98,7 @@ import clus.ext.hierarchical.HierRemoveInsigClasses;
 import clus.ext.hierarchical.HierSingleLabelStat;
 import clus.ext.hierarchical.HierSumPairwiseDistancesStat;
 import clus.ext.hierarchical.WHTDStatistic;
+import clus.ext.hierarchical.mlcForHmlc.MlcMeasuresForHmlc;
 import clus.ext.ilevelc.ILevelCRandIndex;
 import clus.ext.ilevelc.ILevelCStatistic;
 import clus.ext.semisupervised.ModifiedGainHeuristic;
@@ -928,6 +929,7 @@ public class ClusStatManager implements Serializable {
                 boolean wrCurves = getSettings().isWriteCurves();
                 if (getSettings().isCalError()) {
                     parent.addError(new HierErrorMeasures(parent, m_Hier, recalls, getSettings().getCompatibility(), -1, wrCurves));
+                    parent.addError(new MlcMeasuresForHmlc(parent, m_Hier));
                 }
                 break;
             case MODE_ILEVELC:

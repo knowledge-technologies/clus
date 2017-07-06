@@ -34,10 +34,8 @@ import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 
 
-/**
+/**Hamming loss is used in multi-label classification scenario.
  * @author matejp
- * 
- *         Hamming loss is used in multi-label classification scenario.
  */
 public class HammingLoss extends ClusNominalError {
 
@@ -94,7 +92,7 @@ public class HammingLoss extends ClusNominalError {
 
 
     public String getName() {
-        return "HammingLoss";
+        return "MlcMeasuresForHmlc";
     }
 
 

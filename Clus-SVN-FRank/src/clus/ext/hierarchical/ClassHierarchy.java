@@ -58,6 +58,7 @@ public class ClassHierarchy implements Serializable {
 
     protected int m_MaxDepth = 0;
     protected int m_HierType = TREE;
+    /** Classes to be evaluated at the end, ignoring hierarchy */
     protected ClassesTuple m_Eval;
     protected ArrayList<ClassTerm> m_ClassList = new ArrayList<ClassTerm>();
     protected HashMap<String,ClassTerm> m_ClassMap = new HashMap<String,ClassTerm>();

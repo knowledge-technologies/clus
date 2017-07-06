@@ -1907,7 +1907,7 @@ public class Settings implements Serializable {
     public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_YES = 0;
     public final static int MULTILABEL_THRESHOLD_OPTIMIZATION_NO = 1;
 
-    public final static String[] MULTILABEL_MEASURES = { "HammingLoss", "MLAccuracy", "MLPrecision", "MLRecall", "MLFOne", "SubsetAccuracy", // Example
+    public final static String[] MULTILABEL_MEASURES = { "MlcMeasuresForHmlc", "MLAccuracy", "MLPrecision", "MLRecall", "MLFOne", "SubsetAccuracy", // Example
             // based
             // measures
             "MacroPrecision", "MacroRecall", "MacroFOne", "MicroPrecision", "MicroRecall", "MicroFOne", // Label based
@@ -2029,6 +2029,10 @@ public class Settings implements Serializable {
 
     public void setSectionHierarchicalEnabled(boolean enable) {
         m_SectionHierarchical.setEnabled(enable);
+    }
+    
+    public boolean isSectionHierarchicalEnabled() {
+        return m_SectionHierarchical.isEnabled();
     }
 
 
