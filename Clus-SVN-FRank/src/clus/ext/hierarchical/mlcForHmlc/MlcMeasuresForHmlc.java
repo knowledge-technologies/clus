@@ -39,9 +39,6 @@ public class MlcMeasuresForHmlc extends ClusError {
         
         private double[] m_ComputedErrors;
 
-        
-        
-
 
         public MlcMeasuresForHmlc(ClusErrorList par, ClassHierarchy hier) {
             super(par, hier.getTotal());
@@ -69,6 +66,10 @@ public class MlcMeasuresForHmlc extends ClusError {
             m_SubErrors.add(new OneError());
             m_SubErrors.add(new RankingLoss());
             m_SubErrors.add(new SubsetAccuracy());
+            m_SubErrors.add(new MLaverageAUPRC(m_DimEval));
+            m_SubErrors.add(new MLaverageAUROC(m_DimEval));
+            m_SubErrors.add(new MLpooledAUPRC(m_DimEval));
+            m_SubErrors.add(new MLweightedAUPRC(m_DimEval));
 
         }
 
