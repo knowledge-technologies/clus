@@ -440,6 +440,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     public void showRootInfo() {
         try {
+            String hierarchyFile = "21";//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
             PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream("hierarchy.txt")));
             wrt.println("Hier #nodes: " + m_Hier.getTotal());
             wrt.println("Hier classes by level: " + MIntArray.toString(m_Hier.getClassesByLevel()));

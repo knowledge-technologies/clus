@@ -13,7 +13,7 @@ public class HammingLoss implements MlcHmlcSubError{
         return ((double) m_NbWrong) / m_NbKnown / dimensions;
     }
     
-    public void addExample(boolean[] actual, boolean[] predictedThresholded){
+    public void addExample(boolean[] actual, double[] predicted, boolean[] predictedThresholded){
         for(int i = 0; i < actual.length; i++){
             if(actual[i] != predictedThresholded[i]){
                 m_NbWrong += 1;

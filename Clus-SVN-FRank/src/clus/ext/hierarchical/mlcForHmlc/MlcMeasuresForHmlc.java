@@ -17,6 +17,9 @@ import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
+import weka.core.expressionlanguage.core.Macro;
+import weka.core.expressionlanguage.core.Node;
+import weka.core.expressionlanguage.core.SemanticException;
 
 /**
  * Use if you want to compute MLC-measures in HMLC case.
@@ -51,7 +54,10 @@ public class MlcMeasuresForHmlc extends ClusError {
             
             m_SubErrors = new ArrayList<MlcHmlcSubError>();
             m_SubErrors.add(new HammingLoss());
-            m_SubErrors.add(new HammingLoss());
+            m_SubErrors.add(new AveragePrecision());
+            m_SubErrors.add(new Coverage());
+            m_SubErrors.add(new MacroFOne(m_DimEval));
+            m_SubErrors.add(new MacroPrecision(m_DimEval));
 
 
         }
@@ -79,7 +85,7 @@ public class MlcMeasuresForHmlc extends ClusError {
         
         public void updateAll(boolean[] actual, double[] predicted, boolean[] predictedThresholded){
             for(MlcHmlcSubError suberror : m_SubErrors){
-                suberror.addExample(actual, predictedThresholded);
+                suberror.addExample(actual, predicted, predictedThresholded);
             }
         }
 
