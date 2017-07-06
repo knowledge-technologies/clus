@@ -2120,6 +2120,37 @@ public class Settings implements Serializable {
     public static boolean useMEstimate() {
         return m_HierUseMEstimate.getValue();
     }
+    
+    public boolean shouldRunThresholdOptimization(){
+        // settings = mgr.getSettings
+        if(getSectionMultiLabel().isEnabled() || isSectionHierarchicalEnabled()){ // MLC or HMLC
+            return getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES;
+        } else{
+            return false;
+        }
+    }
+    
+    public boolean shouldShowThresholds(){
+        if(isRelief()){
+            return false;
+        } else if (shouldRunThresholdOptimization()){
+            return true;
+        } else if (m_SectionMultiLabel.isEnabled()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean shouldShowThresholds(String modelName){
+        if (modelName.equals("Default") || modelName.equals("Original") || modelName.equals("Pruned")){
+            return true;
+        } else if (modelName.startsWith("Forest with ") && !modelName.contains("trees(T = ")){
+            return true;
+        } else{
+            return false;
+        }
+    }
 
     /***********************************************************************
      * Section: Instance level constraints *

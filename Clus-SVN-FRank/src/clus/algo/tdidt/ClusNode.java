@@ -369,7 +369,7 @@ public class ClusNode extends MyNode implements ClusModel {
             throw new RuntimeException("ClusStatManager = null.");
         }
         else {
-            if (shouldRunThresholdOptimization(mgr.getSettings())) { // mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES
+            if (mgr.getSettings().shouldRunThresholdOptimization()) { // mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES
                 double lower = 0.0, upper = 1.0;
                 double middle = lower + (upper - lower) / 2;
                 int nbRelevantLabels = countTrueRelevant();
@@ -415,14 +415,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
     
     
-    private boolean shouldRunThresholdOptimization(Settings settings){
-        // settings = mgr.getSettings
-        if(settings.getSectionMultiLabel().isEnabled() || settings.isSectionHierarchicalEnabled()){ // MLC or HMLC
-            return settings.getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES;
-        } else{
-            return false;
-        }
-    }
+
 
     public void updateThresholds(double threshold) {
         if(getTargetStat() instanceof ClassificationStat){
@@ -1186,10 +1179,24 @@ public class ClusNode extends MyNode implements ClusModel {
      * @param treeIndex
      */
     public void printMultiLabelThresholds(PrintWriter writer, int treeIndex) {
-        writer.print(String.format("Tree %s: [", treeIndex + 1));
-        double[] thresholds = ((ClassificationStat) m_TargetStat).m_Thresholds;
-        for (int i = 0; i < thresholds.length; i++) {
-            writer.print(ClusFormat.FOUR_AFTER_DOT.format(thresholds[i]) + (i == thresholds.length - 1 ? "]\n" : ", "));
+        double[] thresholds;
+        if(m_TargetStat instanceof ClassificationStat){
+            thresholds = ((ClassificationStat) m_TargetStat).m_Thresholds;
+        } else if (m_TargetStat instanceof WHTDStatistic){
+            thresholds = ((WHTDStatistic) m_TargetStat).getThresholds();
+        } else{
+            throw new RuntimeException("Wrong type of target statistics.");
+        }
+        if (treeIndex >= 0){
+            writer.print(String.format("Tree %s: ", treeIndex + 1));
+        }
+        if(thresholds != null){
+            writer.print("[");
+            for (int i = 0; i < thresholds.length; i++) {
+                writer.print(ClusFormat.FOUR_AFTER_DOT.format(thresholds[i]) + (i == thresholds.length - 1 ? "]\n" : ", "));
+            }
+        } else{
+            writer.print("null\n");
         }
 
     }
