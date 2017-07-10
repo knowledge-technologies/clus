@@ -829,6 +829,9 @@ public class ClusStatManager implements Serializable {
             else if (getSettings().getHeuristic() == Settings.HEURISTIC_VARIANCE_REDUCTION) {
                 m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), nom);
             }
+            else if (getSettings().getHeuristic() == Settings.HEURISTIC_GIS){
+                m_Heuristic = new GISHeuristic(getClusteringWeights(), m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_CLUSTERING));
+            }
             else if (getSettings().getHeuristic() == Settings.HEURISTIC_GAIN_RATIO) {
                 m_Heuristic = new GainHeuristic(true, getClusteringWeights());
             }

@@ -334,6 +334,10 @@ public class Settings implements Serializable {
     }
     //end daniela
     
+    public boolean isNullGIS(){
+        return StringUtils.unCaseCompare(m_GIS.getValue(), NONE);
+    }
+    
     public String getTarget() {
         return m_Target.getValue();
     }
