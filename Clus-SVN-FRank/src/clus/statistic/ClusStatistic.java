@@ -50,6 +50,12 @@ public abstract class ClusStatistic implements Serializable {
     /** The weighted sum of all examples */
     public double m_SumWeight;
     public int m_NbExamples;
+    
+    // daniela
+    private int splitIndex;
+    private int prevIndex;
+    public static boolean INITIALIZEPARTIALSUM=true;
+    // daniela end
 
 
     public abstract ClusStatistic cloneStat();
@@ -205,6 +211,23 @@ public abstract class ClusStatistic implements Serializable {
             e.printStackTrace();
             System.exit(1);
         }       
+    }
+    
+    public void setSplitIndex(int i) {
+        splitIndex = i;
+    }
+        
+    public void setPrevIndex(int i) {
+        prevIndex = i;
+    }
+    
+    public void initializeSum() {
+        try{
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }catch(Exception e){
+            e.printStackTrace();
+            System.exit(1);
+        }   
     }
 
 
