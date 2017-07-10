@@ -65,7 +65,7 @@ public class CombStat extends ClusStatistic {
         m_StatManager = statManager;
         m_RegStat = new RegressionStat(num);
         if (statManager.getSettings().getSectionMultiLabel().isEnabled()) {
-            m_ClassStat = new ClassificationStat(nom, statManager.getSettings().getMultiLabelTrheshold());
+            m_ClassStat = new ClassificationStat(nom, statManager.getSettings().getMultiLabelThreshold());
         }
         else {
             m_ClassStat = new ClassificationStat(nom);

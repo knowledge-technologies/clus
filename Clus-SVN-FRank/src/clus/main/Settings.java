@@ -29,11 +29,17 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Date;
 
+import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.IntegerAttrType;
+import clus.data.type.NumericAttrType;
 import clus.ext.hierarchical.ClassesValue;
+import clus.ext.hierarchicalmtr.*;
 import clus.heuristic.FTest;
 import clus.jeans.io.ini.INIFile;
 import clus.jeans.io.ini.INIFileBool;
@@ -87,7 +93,8 @@ public class Settings implements Serializable {
     public final static String INFINITY_STRING = "Infinity";
     public final static int INFINITY_VALUE = 0;
     public final static double[] FOUR_ONES = { 1.0, 1.0, 1.0, 1.0 };
-
+    public final static Charset CHARSET = StandardCharsets.UTF_8;
+    
     /***********************************************************************
      * Generic information *
      ***********************************************************************/
@@ -739,6 +746,7 @@ public class Settings implements Serializable {
     public boolean isOutputJSONModel() {
         return m_OutputJSONModel.getValue();
     }
+
 
     public boolean isOutputClowdFlowsJSON() {
         return m_OutputClowdFlowsJSON.getValue();
@@ -1953,7 +1961,7 @@ public class Settings implements Serializable {
     }
 
 
-    public INIFileNominalOrDoubleOrVector getMultiLabelTrheshold() {
+    public INIFileNominalOrDoubleOrVector getMultiLabelThreshold() {
         return m_MultiLabelThreshold;
     }
 
@@ -2119,6 +2127,83 @@ public class Settings implements Serializable {
 
     public static boolean useMEstimate() {
         return m_HierUseMEstimate.getValue();
+    }
+
+    /***********************************************************************
+     * Section: Hierarchical multi-target regression *
+     ***********************************************************************/
+
+    public final static String[] HMTR_HIERTYPES = { "Disabled", "Tree", "DAG" };
+    public final static int HMTR_HIERTYPE_NONE = 0; // disabled
+    public final static int HMTR_HIERTYPE_TREE = 1;
+    public final static int HMTR_HIERTYPE_DAG = 2;
+
+    public final static String[] HMTR_HIERDIST = { "WeightedEuclidean", "Jaccard" };
+    public final static int HMTR_HIERDIST_WEIGHTED_EUCLIDEAN = 0;
+    public final static int HMTR_HIERDIST_JACCARD = 1;
+
+    public final static String[] HMTR_AGGS = { "SUM", "AVG", "MEDIAN", "MIN", "MAX", "AND", "OR", "COUNT", "VAR", "STDEV", "ZERO", "ONE" };
+    public final static int HMTR_AGG_SUM = 0;
+    public final static int HMTR_AGG_AVG = 1;
+    public final static int HMTR_AGG_MEDIAN = 2;
+    public final static int HMTR_AGG_MIN = 3;
+    public final static int HMTR_AGG_MAX = 4;
+    public final static int HMTR_AGG_AND = 5;
+    public final static int HMTR_AGG_OR = 6;
+    public final static int HMTR_AGG_COUNT = 7;
+    public final static int HMTR_AGG_VAR = 8;
+    public final static int HMTR_AGG_STDEV = 9;
+    public final static int HMTR_AGG_ZERO = 10;
+    public final static int HMTR_AGG_ONE = 11;
+
+    protected INIFileSection m_SectionHMTR;
+    protected static INIFileNominal m_HMTRType;
+    protected INIFileNominal m_HMTRDistance;
+    protected INIFileNominal m_HMTRAggregation;
+    protected INIFileString m_HMTRHierarchyString;
+    protected INIFileDouble m_HMTRHierarchyWeight;
+    protected boolean m_HMTRUsingDump = false; 
+    
+    public void setHMTRUsingDump(boolean val) {
+        m_HMTRUsingDump = val;
+    }
+    
+    public boolean isHMTRUsingDump() {
+        return m_HMTRUsingDump;
+    }
+    
+    
+    public INIFileDouble getHMTRHierarchyWeight() {
+        return m_HMTRHierarchyWeight;
+    }
+
+    public void setSectionHMTREnabled(boolean enable) {
+        m_SectionHMTR.setEnabled(enable);
+    }
+
+    public boolean isSectionHMTREnabled() {
+        return m_SectionHMTR.isEnabled();
+    }
+
+    public static boolean isHMTREnabled() {
+        return getHMTRType() != Settings.HMTR_HIERTYPE_NONE;
+    }
+    public static int getHMTRType() {
+        return m_HMTRType.getValue();
+    }
+
+    public INIFileNominal getHMTRDistance() {
+        return m_HMTRDistance;
+    }
+
+
+    public INIFileNominal getHMTRAggregation() {
+        return m_HMTRAggregation;
+    }
+
+
+    public INIFileString getHMTRHierarchyString() {
+        return m_HMTRHierarchyString;
     }
     
     public boolean shouldRunThresholdOptimization(){
@@ -2468,55 +2553,64 @@ public class Settings implements Serializable {
         return m_ReliefNbNeighbours.getIntVector();
     }
 
+
     /**
      * Returns a list, containing the numbers of the iterations.
      * If this setting is given as a (list of) proportion(s) of the instances
-     * in the training set, we convert it into absolute values.<p>
+     * in the training set, we convert it into absolute values.
+     * <p>
      * If the only value is 1, i.e., 1.0, we assume that this means
-     * all (100%) instances. 
-     * @param nbInstances The number of instances in the training set.
+     * all (100%) instances.
+     * 
+     * @param nbInstances
+     *        The number of instances in the training set.
      * @return
      */
     public int[] getReliefNbIterationsValue(int nbInstances) {
-    	double[] values;
-    	if (m_ReliefNbIterations.isVector()) {
-    		values = m_ReliefNbIterations.getDoubleVector();
-    	} else{
-    		values = new double[]{m_ReliefNbIterations.getDouble()};
-    	}
-    	boolean[] types = new boolean[]{true, true}; // {is double, is integer}
-    	boolean containsOne = false;
-    	for(double value : values){
-    		if (Math.abs(1.0 - value) >= MathUtil.C1E_9){ // value != 1
-    			int roundedValue = (int) Math.round(value);
-    			int wrong_type = Math.abs(roundedValue - value) >= MathUtil.C1E_9 ? 1 : 0;
-    			types[wrong_type] = false;
-    		} else{
-    			containsOne = true;
-    		}
-    	}
-    	int[] iterations = new int[values.length];
-    	if(values.length == 1 && containsOne){
-    		System.err.print(String.format("Warning! Ambiguous setting: %s = 1.0", m_ReliefNbIterations.getName()));
-    		System.err.println(" Assuming 1.0 means 100%.");
-    	}
-    	if (!(types[0] || types[1])){
-    		throw new RuntimeException(String.format("The values for the setting %s must be of the same type!", m_ReliefNbIterations.getName()));
-    	}else if(types[0]){
-			for(int i = 0; i < values.length; i++){
-				double value = values[i];
-				if (0.0 <= value && value <= 1.0){
-					iterations[i] = (int) Math.round(value * nbInstances);
-				} else{
-					throw new RuntimeException("The value is not in the interval [0, 1]!");
-				}
-			} 
-		}else{
-			for(int i = 0; i < values.length; i++){
-				iterations[i] = (int) Math.round(values[i]);
-			} 
-		}
-    	return iterations;
+        double[] values;
+        if (m_ReliefNbIterations.isVector()) {
+            values = m_ReliefNbIterations.getDoubleVector();
+        }
+        else {
+            values = new double[] { m_ReliefNbIterations.getDouble() };
+        }
+        boolean[] types = new boolean[] { true, true }; // {is double, is integer}
+        boolean containsOne = false;
+        for (double value : values) {
+            if (Math.abs(1.0 - value) >= MathUtil.C1E_9) { // value != 1
+                int roundedValue = (int) Math.round(value);
+                int wrong_type = Math.abs(roundedValue - value) >= MathUtil.C1E_9 ? 1 : 0;
+                types[wrong_type] = false;
+            }
+            else {
+                containsOne = true;
+            }
+        }
+        int[] iterations = new int[values.length];
+        if (values.length == 1 && containsOne) {
+            System.err.print(String.format("Warning! Ambiguous setting: %s = 1.0", m_ReliefNbIterations.getName()));
+            System.err.println(" Assuming 1.0 means 100%.");
+        }
+        if (!(types[0] || types[1])) {
+            throw new RuntimeException(String.format("The values for the setting %s must be of the same type!", m_ReliefNbIterations.getName()));
+        }
+        else if (types[0]) {
+            for (int i = 0; i < values.length; i++) {
+                double value = values[i];
+                if (0.0 <= value && value <= 1.0) {
+                    iterations[i] = (int) Math.round(value * nbInstances);
+                }
+                else {
+                    throw new RuntimeException("The value is not in the interval [0, 1]!");
+                }
+            }
+        }
+        else {
+            for (int i = 0; i < values.length; i++) {
+                iterations[i] = (int) Math.round(values[i]);
+            }
+        }
+        return iterations;
     }
 
 
@@ -2571,7 +2665,7 @@ public class Settings implements Serializable {
     public final static int RANKING_RFOREST = 1;
     public final static int RANKING_GENIE3 = 2;
     public final static int RANKING_SYMBOLIC = 3;
-    
+
     public final static String[] ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE = { "None", "TotalAveraging", "SubspaceAveraging", "SMARTERWAY" };
     public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE = 0; /* IF THIS IS SELECTED, ROS IS NOT ACTIVATED */
     public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_TOTAL_AVERAGING = 1;
@@ -2592,7 +2686,7 @@ public class Settings implements Serializable {
     /** Size of the target feature space (similar to m_RandomAttrSelected) */
     protected INIFileString m_RandomTargetAttrSelected;
 
-    /** Used for target subspacing */
+    /** Used for ROS (Random Output Selections) */
     public static INIFileNominal m_EnsembleROSScope;
 
     protected int m_SubsetSize;
@@ -2621,16 +2715,18 @@ public class Settings implements Serializable {
     protected INIFileBool m_EnsembleRandomDepth;
 
     protected INIFileInt m_EnsembleBagSize;
-    
+
     private INIFileBool m_FeatureRankingPerTarget;
-    
-    public boolean shouldPerformRankingPerTarget(){
-    	return m_FeatureRankingPerTarget.getValue();
+
+
+    public boolean shouldPerformRankingPerTarget() {
+        return m_FeatureRankingPerTarget.getValue();
     }
-    
-	public void setPerformRankingPerTarget(boolean b) {
-		m_FeatureRankingPerTarget.setValue(b);		
-	}
+
+
+    public void setPerformRankingPerTarget(boolean b) {
+        m_FeatureRankingPerTarget.setValue(b);
+    }
 
 
     public boolean isEnsembleMode() {
@@ -2921,7 +3017,8 @@ public class Settings implements Serializable {
     public int getNumberOfThreads() {
         return m_NumberOfThreads.getValue();
     }
-    
+
+
     public boolean isEnsembleWithParallelExecution() {
         return isEnsembleMode() && (m_NumberOfThreads.getValue() > 1);
     }
@@ -3065,27 +3162,33 @@ public class Settings implements Serializable {
     protected INIFileDouble m_optionEpsilon;
     protected INIFileInt m_optionMaxNumberOfOptionsPerNode;
     protected INIFileInt m_optionMaxDepthOfOptionNode;
-    
+
+
     public boolean isSectionOptionEnabled() {
         return m_SectionILevelC.isEnabled();
     }
+
 
     public double getOptionDecayFactor() {
         return m_optionDecayFactor.getValue();
     }
 
+
     public double getOptionEpsilon() {
         return m_optionEpsilon.getValue();
     }
-    
+
+
     public int getOptionMaxNumberOfOptionsPerNode() {
         return m_optionMaxNumberOfOptionsPerNode.getValue();
     }
 
+
     public int getOptionMaxDepthOfOptionNode() {
         return m_optionMaxDepthOfOptionNode.getValue();
     }
-    
+
+
     public void setSectionOptionEnabled(boolean enable) {
         m_SectionOptionTree.setEnabled(enable);
     }
@@ -3286,6 +3389,14 @@ public class Settings implements Serializable {
         m_SectionHierarchical.addNode(m_HierUseMEstimate = new INIFileBool("MEstimate", false));
         m_SectionHierarchical.setEnabled(false);
 
+        m_SectionHMTR = new INIFileSection("HMTR");
+        m_SectionHMTR.addNode(m_HMTRType = new INIFileNominal("Type", HMTR_HIERTYPES, HMTR_HIERTYPE_NONE));
+        m_SectionHMTR.addNode(m_HMTRDistance = new INIFileNominal("Distance", HMTR_HIERDIST, HMTR_HIERDIST_WEIGHTED_EUCLIDEAN));
+        m_SectionHMTR.addNode(m_HMTRAggregation = new INIFileNominal("Aggregation", HMTR_AGGS, HMTR_AGG_SUM));
+        m_SectionHMTR.addNode(m_HMTRHierarchyString = new INIFileString("Hierarchy"));
+        m_SectionHMTR.addNode(m_HMTRHierarchyWeight = new INIFileDouble("Weight"));
+        m_SectionHMTR.setEnabled(false);
+        
         m_SectionILevelC = new INIFileSection("ILevelC");
         m_SectionILevelC.addNode(m_ILevelCAlpha = new INIFileDouble("Alpha", 0.5));
         m_SectionILevelC.addNode(m_ILevelCFile = new INIFileString("File", NONE));
@@ -3336,7 +3447,7 @@ public class Settings implements Serializable {
         m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("neighbours", NONELIST));
         m_ReliefNbNeighbours.setInt(RELIEF_NEIGHBOUR_DEFAULT);
         m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("iterations", NONELIST));
-        m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);        
+        m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);
         m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("weightNeighbours", false));
         m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 0.5)); // following Weka,
                                                                                                     // the authors do
@@ -3410,12 +3521,17 @@ public class Settings implements Serializable {
         m_SectionOptionTree = new INIFileSection("OptionTree");
         m_SectionOptionTree.addNode(m_optionDecayFactor = new INIFileDouble("DecayFactor", 0.9));
         m_SectionOptionTree.addNode(m_optionEpsilon = new INIFileDouble("Epsilon", 0.1));
-        m_SectionOptionTree.addNode(m_optionMaxNumberOfOptionsPerNode = new INIFileInt("MaxNumberOfOptionsPerNode", 5)); /* Constant by Kohavi, Kunz */
+        m_SectionOptionTree.addNode(m_optionMaxNumberOfOptionsPerNode = new INIFileInt("MaxNumberOfOptionsPerNode", 5)); /*
+                                                                                                                          * Constant
+                                                                                                                          * by
+                                                                                                                          * Kohavi,
+                                                                                                                          * Kunz
+                                                                                                                          */
         m_SectionOptionTree.addNode(m_optionMaxDepthOfOptionNode = new INIFileInt("MaxDepthOfOptionNode", 3));
         m_optionMaxNumberOfOptionsPerNode.setValueCheck(new IntRangeCheck(2, Integer.MAX_VALUE));
         m_optionMaxDepthOfOptionNode.setValueCheck(new IntRangeCheck(1, Integer.MAX_VALUE));
         m_optionDecayFactor.setValueCheck(new DoubleRangeCheck(0.0, 1.0));
-        m_optionEpsilon.setValueCheck(new DoubleRangeCheck(0.0, 1.0));        
+        m_optionEpsilon.setValueCheck(new DoubleRangeCheck(0.0, 1.0));
         m_SectionOptionTree.setEnabled(false);
 
         INIFileSection exper = new INIFileSection("Experimental");
@@ -3434,6 +3550,7 @@ public class Settings implements Serializable {
         m_Ini.addNode(m_SectionRules);
         m_Ini.addNode(m_SectionMultiLabel);
         m_Ini.addNode(m_SectionHierarchical);
+        m_Ini.addNode(m_SectionHMTR);
         m_Ini.addNode(m_SectionILevelC);
         m_Ini.addNode(m_SectionBeam);
         m_Ini.addNode(m_SectionExhaustive);
@@ -3577,11 +3694,55 @@ public class Settings implements Serializable {
 
     public PrintWriter getFileAbsoluteWriter(String fname) throws FileNotFoundException {
         String path = getFileAbsolute(fname);
-        return new PrintWriter(new OutputStreamWriter(new FileOutputStream(path)));
+        return new PrintWriter(new OutputStreamWriter(new FileOutputStream(path), CHARSET));
     }
 
 
     public void setOutputClowdFlows(boolean value) {
         m_OutputClowdFlowsJSON.setValue(value);
     }
+    
+    public void addHMTRTargets(ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy) {
+
+        if (this.isSectionHMTREnabled()) {
+
+            ArrayList<ClusAttrType> attributes = schema.getAttr();
+
+            ArrayList<String> attrNames = new ArrayList<String>();
+
+                for (ClusAttrType attribute : attributes){
+
+                    attrNames.add(attribute.getName());
+
+                }
+
+            if (VERBOSE>0) System.out.print("Aggregate attributes (a.k.a. not present in the database): ");
+
+                String comma = "";
+                int numAggregates = 0;
+
+            for (ClusHMTRNode node : hmtrHierarchy.getNodes()) {
+                if (!attrNames.contains(node.getName())){
+
+                    node.setAggregate(true);
+                    System.out.print(comma + node.getName());
+                    comma = ", ";
+                    schema.addAttrType(new NumericAttrType(node.getName()));
+                    numAggregates++;
+
+                }
+            }
+     
+            System.out.println();
+            int nb = schema.getNbAttributes();
+
+            String targets = m_Target.getStringValue();
+
+            for (int i = numAggregates; i > 0 ;i--){
+                targets+=","+(nb-i+1);
+            }
+            m_Target.setValue(targets);
+            schema.setNbHMTR(numAggregates);
+        }
+    }    
 }

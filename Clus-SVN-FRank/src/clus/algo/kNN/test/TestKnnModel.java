@@ -189,7 +189,7 @@ public class TestKnnModel implements ClusModel, Serializable {
         // statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
         if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()) {
-                m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelTrheshold());
+                m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelThreshold());
             }
             else {
                 m_StatTemplate = new ClassificationStat(m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));

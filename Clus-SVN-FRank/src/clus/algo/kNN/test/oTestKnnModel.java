@@ -97,7 +97,7 @@ public class oTestKnnModel implements ClusModel, Serializable {
         // save prediction template
         if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()) {
-                statTemplate = new ClassificationStat(cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelTrheshold());
+                statTemplate = new ClassificationStat(cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMultiLabelThreshold());
             }
             else {
                 statTemplate = new ClassificationStat(cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));

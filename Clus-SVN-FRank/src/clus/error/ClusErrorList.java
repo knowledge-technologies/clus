@@ -341,12 +341,13 @@ public class ClusErrorList implements Serializable {
     }
 
 
-    public void showError(ClusModelInfoList models, int type, String bName, PrintWriter out) throws IOException {
+    public void showError(ClusModelInfoList models, int type, String bName, PrintWriter out, Settings sett) throws IOException {
         // public void showError(ClusModelInfoList models, int type, PrintWriter out) throws IOException {
         int nb = m_Error.size();
         ClusModelInfo definf = models.getModelInfo(ClusModel.DEFAULT);
         ClusErrorList defpar = definf.getError(type);
         out.println("Number of examples: " + defpar.getNbExamples());
+        if (sett.isSectionHMTREnabled()) out.println("HMTR weight: " + sett.getHMTRHierarchyWeight().getStringValue());
         int nb_models = models.getNbModels();
         if (!checkCoverage(models, type, defpar.getNbExamples())) {
             out.println("Coverage:");
@@ -359,6 +360,12 @@ public class ClusErrorList implements Serializable {
             }
         }
         for (int i = 0; i < nb; i++) {
+            if(sett.isSectionHMTREnabled() &&  i==(nb/2)) {
+                out.println();
+                out.println("\t***** HMTR leaves only w = " + sett.getHMTRHierarchyWeight().getStringValue()+" *****");
+                out.println();
+            }
+            
             ClusError err1 = getError(i);
             boolean has_models = false;
             for (int j = 0; j < nb_models; j++) {

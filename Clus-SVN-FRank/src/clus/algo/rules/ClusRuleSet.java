@@ -392,7 +392,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
         // If w0 = 0, we have to make some changes
         if (getRule(0).getOptWeight() == 0) {
             // Equals the previous prediction, but no dividing with zero now
-            for (int iTarget = 0; iTarget < firstRuleStat.m_NbAttrs; iTarget++) {
+            for (int iTarget = 0; iTarget < firstRuleStat.getNbAttributes(); iTarget++) {
                 firstRuleStat.m_Means[iTarget] = 0;
             }
             getRule(0).setOptWeight(1.0); //
@@ -411,7 +411,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
             }
         }
 
-        for (int iTarget = 0; iTarget < firstRuleStat.m_NbAttrs; iTarget++) {
+        for (int iTarget = 0; iTarget < firstRuleStat.getNbAttributes(); iTarget++) {
             firstRuleStat.m_Means[iTarget] += addToDefaultPred[iTarget];
             firstRuleStat.setSumValues(iTarget, firstRuleStat.m_Means[iTarget]);  // firstRuleStat.m_SumValues[iTarget] = firstRuleStat.m_Means[iTarget];
             firstRuleStat.setSumWeights(iTarget, 1); // firstRuleStat.m_SumWeights[iTarget] = 1;
@@ -1185,7 +1185,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
                 RegressionStat stat = (RegressionStat) rule.m_TargetStat;
 
-                for (int iTarget = 0; iTarget < stat.m_NbAttrs; iTarget++) {
+                for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
 
                     stat.m_Means[iTarget] -= defaultPred[iTarget];
                     stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
@@ -1223,14 +1223,14 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
                 RegressionStat stat = (RegressionStat) rule.m_TargetStat;
 
-                if (stat.m_NbAttrs > 1) {
+                if (stat.getNbAttributes() > 1) {
 
                     // double scalingValue = Double.POSITIVE_INFINITY;
                     double scalingValue = 0.0;
                     // We try to find the value that is greatest compared to std dev.
                     // However, in actual scaling, we may not be using std dev information.
                     double maxCompareValue = 0.0;
-                    for (int iTarget = 0; iTarget < stat.m_NbAttrs; iTarget++) {
+                    for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
                         // if (Math.abs(stat.m_Means[iTarget]) < Math.abs(scalingValue)) {
                         // if (Math.abs(stat.m_Means[iTarget]) > Math.abs(scalingValue)) {
                         if (Math.abs(stat.m_Means[iTarget] / (2 * getTargStd(iTarget))) > Math.abs(maxCompareValue)) {
@@ -1249,7 +1249,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
                     if (scalingValue == 0.0)
                         scalingValue = 1.0; // Do not scale
 
-                    for (int iTarget = 0; iTarget < stat.m_NbAttrs; iTarget++) {
+                    for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
                         // means[i] = m_SumWeights[i] != 0.0 ? m_SumValues[i] / m_SumWeights[i] : 0.0;
                         // stat.m_Means[iTarget] += Math.copySign(1.0, scalingValue)-scalingValue;
                         // // Here the one nearer to zero should have value -1 or 1
@@ -1299,7 +1299,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
                 RegressionStat stat = (RegressionStat) rule.m_TargetStat;
                 double scalingFactor = stat.m_SumWeight / (double) nbOfExamples;
-                for (int iTarget = 0; iTarget < stat.m_NbAttrs; iTarget++) {
+                for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
                     stat.m_Means[iTarget] *= scalingFactor;
                     stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
                     stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;

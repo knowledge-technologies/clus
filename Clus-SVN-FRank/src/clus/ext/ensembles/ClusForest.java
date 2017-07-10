@@ -63,7 +63,7 @@ import com.google.gson.JsonObject;
  */
 public class ClusForest implements ClusModel, Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     /** A list of decision trees in the forest (or empty if memory optimisation is used). */
     ArrayList<ClusModel> m_Forest;
@@ -98,7 +98,7 @@ public class ClusForest implements ClusModel, Serializable {
 
         if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (statmgr.getSettings().getSectionMultiLabel().isEnabled()) {
-                m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), statmgr.getSettings().getMultiLabelTrheshold());
+                m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), statmgr.getSettings().getMultiLabelThreshold());
             }
             else {
                 m_Stat = new ClassificationStat(statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));

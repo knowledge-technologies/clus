@@ -40,6 +40,9 @@ public class IntervalCollection implements Serializable {
     protected boolean m_Default;
     protected ArrayList m_Interval = new ArrayList();
 
+    public int getTotal() {
+        return m_Total;
+    }
 
     public IntervalCollection(String str) {
         if (str.toUpperCase().equals("DEFAULT")) {

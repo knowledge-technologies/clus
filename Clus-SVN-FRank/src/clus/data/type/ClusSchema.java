@@ -33,6 +33,7 @@ import clus.data.io.ClusView;
 import clus.data.rows.DataPreprocs;
 import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
+import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.io.DummySerializable;
 import clus.main.Settings;
 import clus.model.ClusModel;
@@ -56,7 +57,7 @@ public class ClusSchema implements Serializable {
     protected String m_Relation;
     protected int m_NbAttrs;
     protected int m_NbInts, m_NbDoubles, m_NbObjects;
-    protected ArrayList m_Attr = new ArrayList();
+    protected ArrayList<ClusAttrType> m_Attr = new ArrayList<ClusAttrType>();
     protected ClusAttrType[][] m_AllAttrUse;
     protected NominalAttrType[][] m_NominalAttrUse;
     protected NumericAttrType[][] m_NumericAttrUse;
@@ -70,23 +71,22 @@ public class ClusSchema implements Serializable {
     protected IntervalCollection m_Descriptive = IntervalCollection.EMPTY;
     protected IntervalCollection m_Key = IntervalCollection.EMPTY;
     protected int[] m_NbVt;
+    protected int m_NbHMTR;
+    private ClusHMTRHierarchy m_HMTRHierarchy;
 
 
     public ClusSchema(String name) {
         m_Relation = name;
     }
 
-
     public ClusSchema(String name, String descr) {
         m_Relation = name;
         addFromString(descr);
     }
 
-
     public void setSettings(Settings sett) {
         m_Settings = sett;
     }
-
 
     public void initializeSettings(Settings sett) throws ClusException, IOException {
         setSettings(sett);
@@ -111,16 +111,13 @@ public class ClusSchema implements Serializable {
         return m_Settings;
     }
 
-
     public final String getRelationName() {
         return m_Relation;
     }
 
-
     public final void setRelationName(String name) {
         m_Relation = name;
     }
-
 
     public ClusSchema cloneSchema() {
         ClusSchema result = new ClusSchema(getRelationName());
@@ -919,5 +916,25 @@ public class ClusSchema implements Serializable {
             }
         }
         return buf.toString();
+    }
+    
+    public ArrayList getAttr() {
+        return m_Attr;
+    }
+    
+    public void setHMTRHierarchy(ClusHMTRHierarchy HMTRHierarchy) {
+        m_HMTRHierarchy = HMTRHierarchy;
+    }
+    
+    public ClusHMTRHierarchy getHMTRHierarchy() {
+        return m_HMTRHierarchy;
+    }
+
+    public int getNbHMTR() {
+        return m_NbHMTR;
+    }
+
+    public void setNbHMTR(int nbHMTR) {
+        this.m_NbHMTR = nbHMTR;
     }
 }

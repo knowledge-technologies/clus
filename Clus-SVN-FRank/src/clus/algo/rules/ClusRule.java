@@ -708,7 +708,7 @@ public class ClusRule implements ClusModel, Serializable {
     public void setNumericPrediction(double[] newPred) {
         RegressionStat stat = (RegressionStat) getTargetStat();
 
-        for (int iTarget = 0; iTarget < stat.m_NbAttrs; iTarget++) {
+        for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
             stat.m_Means[iTarget] = newPred[iTarget];
             
             stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];            

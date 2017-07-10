@@ -204,7 +204,8 @@ public class ClusRuleLinearTerm extends ClusRule {
         RegressionStat stat = (RegressionStat) m_TargetStat;
         stat.m_Means = new double[nbTargets];
         stat.m_Means[iTargetDim] = 1; // It does not matter what the value is.
-        stat.m_NbAttrs = nbTargets;
+        //stat.m_NbAttrs = nbTargets;
+        stat.setNbAttributes(nbTargets);
         stat.resetSumValues(nbTargets);    //stat.m_SumValues = new double[nbTargets];
         stat.resetSumWeights(nbTargets);   // stat.m_SumWeights = new double[nbTargets];
         stat.setSumValues(iTargetDim, 1);  //stat.m_SumValues[iTargetDim] = 1;
@@ -222,11 +223,11 @@ public class ClusRuleLinearTerm extends ClusRule {
         // double value = (C_statManager.getSchema().
         // getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))[m_descriptiveDimForLinearTerm].getNumeric(tuple);
 
-        double pred = attributeToLinTermPrediction(getSettings(), tuple, m_descriptiveDimForLinearTerm, m_targetDimForLinearTerm, stat.m_NbAttrs, m_scaleLinearTerm);
+        double pred = attributeToLinTermPrediction(getSettings(), tuple, m_descriptiveDimForLinearTerm, m_targetDimForLinearTerm, stat.getNbAttributes(), m_scaleLinearTerm);
 
         if (Double.isNaN(pred)) {
             // Mark all the target values as NaN. Otherwise causes problems in optimization.
-            for (int i = 0; i < stat.m_NbAttrs; i++) {
+            for (int i = 0; i < stat.getNbAttributes(); i++) {
                 stat.m_Means[i] = Double.NaN;
                 stat.setSumValues(i, Double.NaN);  // stat.m_SumValues[i] = Double.NaN;
                 stat.setSumWeights(i, 1);  // stat.m_SumWeights[i] = 1;
@@ -234,7 +235,7 @@ public class ClusRuleLinearTerm extends ClusRule {
         }
         else {
             // If defined prediction, clear predictions (do not leave NaNs)
-            for (int i = 0; i < stat.m_NbAttrs; i++) {
+            for (int i = 0; i < stat.getNbAttributes(); i++) {
                 stat.m_Means[i] = 0;
                 stat.setSumValues(i, stat.m_Means[i]);  // stat.m_SumValues[i] = stat.m_Means[i];
                 stat.setSumWeights(i, 1); // stat.m_SumWeights[i] = 1;

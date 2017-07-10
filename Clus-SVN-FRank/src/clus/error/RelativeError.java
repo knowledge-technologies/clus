@@ -4,12 +4,13 @@ package clus.error;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.type.NumericAttrType;
+import clus.main.Settings;
 import clus.statistic.ClusStatistic;
 
 
 public class RelativeError extends ClusNumericError implements ComponentError {
 
-    private static final long serialVersionUID = 1L;
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     protected double[] m_SumRelErr;
 
 

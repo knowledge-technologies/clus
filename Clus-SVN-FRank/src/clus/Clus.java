@@ -85,6 +85,7 @@ import clus.ext.exhaustivesearch.ClusExhaustiveDFSearch;
 import clus.ext.featureRanking.relief.Relief;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.HierMatrixOutput;
+import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.optiontree.ClusOptionTree;
 import clus.gui.TreeFrame;
 import clus.jeans.io.MyFile;
@@ -153,6 +154,7 @@ public class Clus implements CMDLineArgsProvider {
     protected Date m_StartDate = new Date();
     protected boolean isxval = false;
     protected CMDLineArgs m_CmdLine;
+    protected ClusHMTRHierarchy m_HMTRHierarchy;
 
 
     private static String getRelativePath(File file, File folder) {
@@ -173,7 +175,9 @@ public class Clus implements CMDLineArgsProvider {
         // Load resource info (this measures among others CPU time on Linux)
         boolean test = m_Sett.getResourceInfoLoaded() == Settings.RESOURCE_INFO_LOAD_TEST;
         ResourceInfo.loadLibrary(test);
+
         // Load settings file
+        initializeHMTRHierarchy(); // creates the hierarchy for hierarchical MTR if the section HMTR is present
         ARFFFile arff = null;
         if (m_Sett.getVerbose() > 0)
             System.out.println("Loading '" + m_Sett.getAppName() + "'");
@@ -197,9 +201,10 @@ public class Clus implements CMDLineArgsProvider {
             System.out.println();
         if (m_Sett.getVerbose() > 0)
             System.out.println("Reading CSV Data");
-        // Updata schema based on settings
+        // Update schema based on settings
 
         m_Sett.updateTarget(m_Schema);
+        m_Sett.addHMTRTargets(m_Schema, m_HMTRHierarchy); //only if HMTR is enabled
         m_Schema.initializeSettings(m_Sett);
         m_Sett.setTarget(m_Schema.getTarget().toString());
         m_Sett.setDisabled(m_Schema.getDisabled().toString());
@@ -211,7 +216,13 @@ public class Clus implements CMDLineArgsProvider {
             ClusStat.m_InitialMemory = ResourceInfo.getMemory();
         }
         ClusView view = m_Schema.createNormalView();
-        m_Data = view.readData(reader, m_Schema);
+        if (Settings.isHMTREnabled()) {
+            m_Data = view.readDataHMTR(reader, m_Schema, m_HMTRHierarchy, m_Sett);
+        }
+        else {
+            m_Data = view.readData(reader, m_Schema);
+        }
+
         reader.close();
         if (m_Sett.getVerbose() > 0)
             System.out.println("Found " + m_Data.getNbRows() + " rows");
@@ -251,22 +262,58 @@ public class Clus implements CMDLineArgsProvider {
         preprocess(); // necessary in order to link the labels to the class
                       // hierarchy in HMC (needs to be before
                       // m_Induce.initialize())
+
+        // TODO: does this really need to be here? martinb
+        m_Schema.setHMTRHierarchy(m_HMTRHierarchy);
+
         m_Induce.initialize();
         initializeAttributeWeights(m_Data);
         m_Induce.initializeHeuristic();
         loadConstraintFile();
         initializeSummary(clss);
+
         if (m_Sett.getVerbose() > 0)
             System.out.println();
+
         // Sample data
         if (cargs.hasOption("sample")) {
             String svalue = cargs.getOptionValue("sample");
             sample(svalue);
         }
+
         if (m_Sett.getVerbose() > 0)
             System.out.println("Has missing values: " + m_Schema.hasMissing());
+
         if (ResourceInfo.isLibLoaded()) {
             System.out.println("Memory usage: loading data took " + (ClusStat.m_LoadedMemory - ClusStat.m_InitialMemory) + " kB");
+        }
+    }
+
+
+    private void initializeHMTRHierarchy() {
+
+        if (m_Sett.isSectionHMTREnabled()) {
+
+            m_HMTRHierarchy = new ClusHMTRHierarchy();
+
+            if (m_Sett.getVerbose() > 0) {
+                System.out.println("Creating hierarchy for HMTR" + System.lineSeparator());
+            }
+
+            m_HMTRHierarchy.initialize(m_Sett);//m_Sett.getHMTRHierarchyString().getStringValue(), 
+                                               //m_Sett.getHMTRHierarchyWeight().getValue());
+
+            if (m_Sett.getVerbose() > 0) {
+                m_HMTRHierarchy.printHierarchy();
+
+                if (m_Sett.getHMTRType() == Settings.HMTR_HIERTYPE_TREE) {
+                    System.out.println(m_HMTRHierarchy.printHierarchyTree());
+                }
+
+                m_HMTRHierarchy.printDepth();
+                m_HMTRHierarchy.printWeights();
+            }
+
         }
     }
 
@@ -453,7 +500,7 @@ public class Clus implements CMDLineArgsProvider {
      */
     public final void induce(ClusRun cr, ClusInductionAlgorithmType clss) throws ClusException, IOException, InterruptedException {
         if (Settings.VERBOSE > 0) {
-        	System.out.println("Time: " + (new SimpleDateFormat("HH:mm:ss")).format(Calendar.getInstance().getTime()));
+            System.out.println("Time: " + (new SimpleDateFormat("HH:mm:ss")).format(Calendar.getInstance().getTime()));
             System.out.println("Run: " + cr.getIndexString());
             System.out.println("Verbose: " + Settings.VERBOSE);
             clss.printInfo();
@@ -830,12 +877,12 @@ public class Clus implements CMDLineArgsProvider {
 
         ModelProcessorCollection allcoll = cr.getAllModelsMI().getAddModelProcessors(type);
         DataTuple tuple = iter.readTuple();
-        
+
         int cnt = 0;
-        
+
         while (tuple != null) {
             cnt++;
-            
+
             allcoll.exampleUpdate(tuple);
             for (int i = 0; i < cr.getNbModels(); i++) {
                 ClusModelInfo mi = cr.getModelInfo(i);
@@ -862,7 +909,7 @@ public class Clus implements CMDLineArgsProvider {
             }
             allcoll.exampleDone();
             tuple = iter.readTuple();
-            
+
             if (cnt % 1000 == 0) {
                 allcoll.flushWriter();
                 cnt = 0;
@@ -1841,7 +1888,7 @@ public class Clus implements CMDLineArgsProvider {
                     if (sett.getFTestArray().isVector())
                         clss = new CDTTuneFTest(clss, sett.getFTestArray()
                                 .getDoubleVector());
-                } 
+                }
                 else {
                     clss = new ClusDecisionTree(clus);
                     if (sett.getFTestArray().isVector())

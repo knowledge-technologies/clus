@@ -19,32 +19,13 @@
  * *
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
+ 
+package clus.statistic;
 
-package clus.io;
+import clus.main.Settings;
 
-import java.io.IOException;
+public class ClusStructuredDistance extends ClusDistance {
 
-import clus.data.io.ClusReader;
-import clus.data.rows.DataTuple;
-import clus.data.type.ClusSchema;
-import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
-
-
-public abstract class ClusSerializable {
-
-    public void term(ClusSchema schema) {
-    }
-
-
-    public boolean read(ClusReader data, DataTuple tuple) throws IOException {
-        throw new IOException("Attribute does not support tuple wise reading");
-    }
-    
-    public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy) throws IOException {
-        throw new IOException("Attribute does not support tuple wise reading");
-    }
-
-    public boolean readHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy, String line) throws IOException {
-        throw new IOException("Attribute does not support tuple wise reading");
-    }
+	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
+	protected ClusDistance[] childDistances;
 }

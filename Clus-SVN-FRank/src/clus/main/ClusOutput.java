@@ -140,8 +140,16 @@ public class ClusOutput {
 
 
     public void writeOutput(ClusRun cr, boolean detail, boolean outputtrain) throws IOException, ClusException {
-        ArrayList models = new ArrayList();
+        ArrayList<ClusModel> models = new ArrayList<ClusModel>();
         String ridx = cr.getIndexString();
+
+        if (getSettings().isSectionHMTREnabled()) {
+            m_Writer.println("HMTR Tree");
+            m_Writer.println("---------");
+            m_Writer.println();
+            m_Writer.println(m_Schema.getHMTRHierarchy().printHierarchyTree());
+        }
+
         m_Writer.println("Run: " + ridx);
         m_Writer.println(StringUtils.makeString('*', 5 + ridx.length()));
         m_Writer.println();
@@ -165,12 +173,12 @@ public class ClusOutput {
                 models.add(null);
             }
         }
-        
+
         String parallelTime = "";
-        if (getSettings().isEnsembleWithParallelExecution()){
-            parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format(((double)cr.getInductionTimeSequential() / 1000.0)) + " sec)";
+        if (getSettings().isEnsembleWithParallelExecution()) {
+            parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format(((double) cr.getInductionTimeSequential() / 1000.0)) + " sec)";
         }
-        
+
         // Compute statistics
         String cpu = ResourceInfo.isLibLoaded() ? " (CPU)" : "";
         m_Writer.println("Induction Time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec" + parallelTime + cpu);
@@ -235,7 +243,7 @@ public class ClusOutput {
                         m_Writer.println("Training error");
                     m_Writer.println("--------------");
                     m_Writer.println();
-                    tr_err.showError(cr, ClusModelInfo.TRAIN_ERR, bName + ".train", m_Writer);
+                    tr_err.showError(cr, ClusModelInfo.TRAIN_ERR, bName + ".train", m_Writer, m_Sett);
                     // tr_err.showError(cr, ClusModelInfo.TRAIN_ERR, m_Writer);
                     m_Writer.println();
                 }
@@ -246,7 +254,7 @@ public class ClusOutput {
                 m_Writer.println("Validation error");
                 m_Writer.println("----------------");
                 m_Writer.println();
-                va_err.showError(cr, ClusModelInfo.VALID_ERR, bName + ".valid", m_Writer);
+                va_err.showError(cr, ClusModelInfo.VALID_ERR, bName + ".valid", m_Writer, m_Sett);
                 // va_err.showError(cr, ClusModelInfo.VALID_ERR, m_Writer);
                 m_Writer.println();
             }
@@ -254,7 +262,7 @@ public class ClusOutput {
                 m_Writer.println("Testing error");
                 m_Writer.println("-------------");
                 m_Writer.println();
-                te_err.showError(cr, ClusModelInfo.TEST_ERR, bName + ".test", m_Writer);
+                te_err.showError(cr, ClusModelInfo.TEST_ERR, bName + ".test", m_Writer, m_Sett);
                 // te_err.showError(cr, ClusModelInfo.TEST_ERR, m_Writer);
                 m_Writer.println();
             }
@@ -328,7 +336,7 @@ public class ClusOutput {
                     // System.out.println(te_err);
                     if (te_err != null)
                         pex = (RowData) cr.getTestSet();
-                    currentModel.add("representation", root.getModelJSON(info,pex));
+                    currentModel.add("representation", root.getModelJSON(info, pex));
                     outputModels.add(currentModel);
                 }
             }
@@ -372,7 +380,7 @@ public class ClusOutput {
             m_Writer.println("Training error");
             m_Writer.println("--------------");
             m_Writer.println();
-            tr_err.showError(summary, ClusModelInfo.TRAIN_ERR, bName + ".train", m_Writer);
+            tr_err.showError(summary, ClusModelInfo.TRAIN_ERR, bName + ".train", m_Writer, m_Sett);
             // tr_err.showError(summary, ClusModelInfo.TRAIN_ERR, m_Writer);
             m_Writer.println();
         }
@@ -381,7 +389,7 @@ public class ClusOutput {
             m_Writer.println("Validation error");
             m_Writer.println("----------------");
             m_Writer.println();
-            va_err.showError(summary, ClusModelInfo.VALID_ERR, bName + ".valid", m_Writer);
+            va_err.showError(summary, ClusModelInfo.VALID_ERR, bName + ".valid", m_Writer, m_Sett);
             // va_err.showError(summary, ClusModelInfo.VALID_ERR, m_Writer);
             m_Writer.println();
         }
@@ -390,7 +398,7 @@ public class ClusOutput {
             m_Writer.println("Testing error");
             m_Writer.println("-------------");
             m_Writer.println();
-            te_err.showError(summary, ClusModelInfo.TEST_ERR, bName + ".test", m_Writer);
+            te_err.showError(summary, ClusModelInfo.TEST_ERR, bName + ".test", m_Writer, m_Sett);
             // te_err.showError(summary, ClusModelInfo.TEST_ERR, m_Writer);
         }
         m_Writer.println();

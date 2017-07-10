@@ -1238,8 +1238,8 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         // 2: initialise Dtot , Dcov , Ctot and Cviol
         m_BestHeur = Double.NEGATIVE_INFINITY;
         ILevelCStatistic cs = (ILevelCStatistic) rule.getClusteringStat();
-        RegressionStat s = new RegressionStat(cs.m_Attrs);
-        RegressionStat s_I = new RegressionStat(cs.m_Attrs);
+        RegressionStat s = new RegressionStat(cs.getAttributes());
+        RegressionStat s_I = new RegressionStat(cs.getAttributes());
         // s.setIndices(m_ConstraintsIndex, m_Constraints, ie, clusters);
         /* initially all data is in negative statistic */
         for (int i = 0; i < data.getNbRows(); i++) {

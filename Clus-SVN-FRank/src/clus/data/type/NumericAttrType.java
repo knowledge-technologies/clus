@@ -24,12 +24,17 @@ package clus.data.type;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import clus.data.cols.ColTarget;
 import clus.data.cols.attribute.ClusAttribute;
 import clus.data.cols.attribute.NumericTarget;
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
+import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
+import clus.ext.hierarchicalmtr.ClusHMTRNode;
 import clus.io.ClusSerializable;
 import clus.main.Settings;
 import clus.util.ClusException;
@@ -177,6 +182,224 @@ public class NumericAttrType extends ClusAttrType {
         }
 
 
+        public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy) throws IOException {
+
+            int key = schema.getKeyAttribute().length;
+            int desc = schema.getDescriptiveAttributes().length;
+            int dis = schema.getDisabled().getTotal();
+
+            int nbNominalTargets = schema.getNbNominalTargetAttributes();
+            if (nbNominalTargets > 0)
+                throw new IOException("Nominal attributes used as targets in Hierarchical Multi-Target Regression!");
+
+            ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
+
+            double val = Double.NaN;
+
+            int ind = m_Index - key - dis - desc;
+            String name = targets[ind].getName();
+
+            List<ClusHMTRNode> nodes = hmtrHierarchy.getNodes();
+
+            val = calcHMTR(nodes, name, tuple);
+
+            if (Double.isNaN(val)) {
+                System.err.println("Either error calculating aggregate or certain value is missing");
+                val = MISSING;
+            }
+            //if(Settings.VERBOSE > 0) System.out.println("CALCULATING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+
+            tuple.setDoubleVal(val, getArrayIndex());
+            if (val == MISSING) {
+                incNbMissing();
+                m_NbZero++;
+            }
+            if (val == 0.0) {
+                m_NbZero++;
+            }
+            else if (val < 0.0) {
+                m_NbNeg++;
+            }
+            m_NbTotal++;
+            return true;
+        }
+
+
+        public boolean readHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy, String line) throws IOException {
+
+            int key = schema.getKeyAttribute().length;
+            int desc = schema.getDescriptiveAttributes().length;
+            int dis = schema.getDisabled().getTotal();
+            int tar = schema.getTargetAttributes().length;
+
+            int pos = m_Index - key - dis - desc - tar + schema.getNbHMTR();
+
+            String[] lineElements = line.split(",");
+
+            if (data.getRow() == 232) {
+                System.out.println();
+            }
+
+            double val = MISSING;
+            if (!lineElements[pos].contains("?")) {
+                val = Double.parseDouble(lineElements[pos]);
+            }
+            else {
+                val = MISSING;
+            }
+
+            ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
+
+            int ind = m_Index - key - dis - desc;
+            String name = targets[ind].getName();
+
+            if (Double.isNaN(val))
+                throw new IOException("Error reading HMTR aggregate from dump! Aggregation function is: " + Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+
+            // if(Settings.VERBOSE > 0) System.out.println("READING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+
+            tuple.setDoubleVal(val, getArrayIndex());
+            if (val == MISSING) {
+                incNbMissing();
+                m_NbZero++;
+            }
+            if (val == 0.0) {
+                m_NbZero++;
+            }
+            else if (val < 0.0) {
+                m_NbNeg++;
+            }
+            m_NbTotal++;
+            return true;
+        }
+
+
+        private double calcHMTR(List<ClusHMTRNode> nodes, String name, DataTuple tuple) throws IOException {
+
+            for (ClusHMTRNode node : nodes) {
+                if (node.getName().equals(name)) {
+                    if (!node.isAggregate())
+                        throw new IOException("Attribute " + node.getName() + " is  not aggregate!");
+
+                    List<ClusHMTRNode> children = node.getChildren(); // children of the node
+
+                    double sum = 0;
+                    List<Double> values = new ArrayList<Double>();
+
+                    for (ClusHMTRNode child : children) {
+
+                        String n = child.getName();
+                        if (child.isAggregate()) {
+                            double res = calcHMTR(nodes, child.getName(), tuple);
+                            sum += res;
+                            values.add(res);
+                        }
+                        else {
+                            double res = getHMTRValue(tuple, child.getName());
+                            sum += res;
+                            values.add(res);
+                        }
+                    }
+                    //            HMTR_AGG_SUM = 0;
+                    //            HMTR_AGG_AVG = 1;
+                    //            HMTR_AGG_MEDIAN = 2;
+                    //            HMTR_AGG_MIN = 3;
+                    //            HMTR_AGG_MAX = 4;
+                    //            HMTR_AGG_AND = 5;
+                    //            HMTR_AGG_OR = 6;
+                    //            HMTR_AGG_COUNT = 7;
+                    //            HMTR_AGG_VAR = 8;
+                    //            HMTR_AGG_STDEV = 9;
+                    //            HMTR_AGG_ZERO = 10
+                    //            HMTR_AGG_ONE = 11
+                    Collections.sort(values);
+                    switch (getSettings().getHMTRAggregation().getValue()) {
+                        case 0:
+                            return sum;
+                        case 1:
+                            return sum / children.size();
+                        case 2:
+                            int middle = values.size() / 2;
+                            if (values.size() % 2 == 1) {
+                                return values.get(middle);
+                            }
+                            else {
+                                return ((values.get(middle - 1) + values.get(middle)) / 2.0);
+                            }
+                        case 3:
+                            return Collections.min(values);
+                        case 4:
+                            return Collections.max(values);
+                        case 5:
+                            for (int i = 0; i < values.size(); i++) {
+                                double val = values.get(i);
+                                if (!(val == 0) && !(val == 1))
+                                    throw new IOException("Value " + val + " is not 1 or 0 while using AND or OR");
+                                if (val == 0)
+                                    return 0;
+                            }
+                            return 1;
+                        case 6:
+                            for (int i = 0; i < values.size(); i++) {
+                                double val = values.get(i);
+                                if (!(val == 0) && !(val == 1))
+                                    throw new IOException("Value " + val + " is not 1 or 0 while using AND or OR");
+                                if (val == 1)
+                                    return 1;
+                            }
+                            return 0;
+                        case 7:
+                            return values.size();
+                        case 8:
+                            double sumDiffsSquared = 0.0;
+                            double avg = sum / children.size();
+                            for (int i = 0; i < values.size(); i++) {
+                                double diff = values.get(i) - avg;
+                                diff *= diff;
+                                sumDiffsSquared += diff;
+                            }
+                            return sumDiffsSquared / (double) (values.size());
+                        case 9:
+                            double mean = sum / children.size();
+                            double temp = 0;
+                            for (int i = 0; i < values.size(); i++) {
+                                double val = values.get(i);
+                                double squrDiffToMean = Math.pow(val - mean, 2);
+                                temp += squrDiffToMean;
+                            }
+                            double meanOfDiffs = (double) temp / (double) (values.size());
+                            return Math.sqrt(meanOfDiffs);
+                        case 10:
+                            return 0;
+                        case 11:
+                            return 1;
+                    }
+                }
+            }
+            return Double.NaN;
+        }
+
+
+        public double getHMTRValue(DataTuple tuple, String name) {
+
+            double value = Double.NaN;
+
+            ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
+
+            for (ClusAttrType target : targets) {
+
+                if (target.getName().equals(name)) {
+                    int i = target.m_ArrayIndex;
+                    value = tuple.getDoubleVal(i);
+                    break;
+                }
+
+            }
+
+            return value;
+        }
+
+
         public void term(ClusSchema schema) {
             // System.out.println("Attribute: "+getName()+" "+((double)100.0*m_NbZero/m_NbTotal));
             if (m_NbNeg == 0 && m_NbZero > m_NbTotal * 5 / 10) {
@@ -184,9 +407,10 @@ public class NumericAttrType extends ClusAttrType {
             }
         }
     }
-    
-    public boolean isNumeric(){
-    	return true;
+
+
+    public boolean isNumeric() {
+        return true;
     }
 
 }
