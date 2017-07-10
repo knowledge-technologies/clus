@@ -3,7 +3,9 @@
 package clus;
 
 import java.io.BufferedReader;
+import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.io.IOException;
 import java.util.StringTokenizer;
 
 class Numero {
@@ -140,70 +142,79 @@ public class PredictionAnalyzer {
         return I;
     }
     
-    public static void calculateI(String fileName, int fileSize, double b) throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader(fileName));
-        boolean datastarted = false;
-        int n = 0; N = fileSize; D= new float[N][N];punti = new Numero[N];
-        while (br.ready()){
-            String s = br.readLine();
-            StringTokenizer st = new StringTokenizer(s,",");
-            float[] values = new float[11]; //7
-            if (s.contains("Fold")) continue;
-            if (datastarted){
-                int i = 0; 
-                while (st.hasMoreTokens()){
-                    String mystring = st.nextToken();
-                    mystring = mystring.replace("\"","");
-                    values[i++] = Float.parseFloat(mystring);
-                }            
-                i = 0;        
-                punti[n] = new Numero(values[0],values[1],values[2],values[7]); //5
-                n++;
-            }else{
-                if (s.contains("DATA")){
-                    datastarted = true;
+    public static void calculateI(String fileName, int fileSize, double b) {
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            boolean datastarted = false;
+            int n = 0; N = fileSize; D= new float[N][N];punti = new Numero[N];
+            while (br.ready()){
+                String s = br.readLine();
+                StringTokenizer st = new StringTokenizer(s,",");
+                float[] values = new float[11]; //7
+                if (s.contains("Fold")) continue;
+                if (datastarted){
+                    int i = 0; 
+                    while (st.hasMoreTokens()){
+                        String mystring = st.nextToken();
+                        mystring = mystring.replace("\"","");
+                        values[i++] = Float.parseFloat(mystring);
+                    }            
+                    i = 0;        
+                    punti[n] = new Numero(values[0],values[1],values[2],values[7]); //5
+                    n++;
+                }else{
+                    if (s.contains("DATA")){
+                        datastarted = true;
+                    }
                 }
             }
+            br.close();
+        } catch (Exception e){
+            e.printStackTrace();
         }
-        br.close();
+        
         calcolaW();
         float bandwidth = (float)(0.95*maxdist);
         System.out.println("maxDist: "+maxdist+" Ireal: "+MoranIndex1((float)b)+" IrealMax: "+MoranIndex1(bandwidth)+" Ipredicted: "+MoranIndex2((float)b)+" IpredictedMax: "+MoranIndex2(bandwidth));
     }
 
-    public static void calculateBI(String fileName, int fileSize, double b) throws Exception {
-        BufferedReader br = new BufferedReader(new FileReader(fileName));
+    public static void calculateBI(String fileName, int fileSize, double b) {
         boolean datastarted = false; float bandwidth;
-        int n = 0;
-        N = fileSize;
-        D = new float[N][N];
-        punti = new Numero[N];
-        puntiM = new Numero[N];
-        while (br.ready()){
-            String s = br.readLine();
-            StringTokenizer st = new StringTokenizer(s, ",");
-            float[] values = new float[10];
-            if (s.contains("Fold")){
-                continue;
-            }
-            if (datastarted){
-                int i = 0; 
-                while (st.hasMoreTokens()){
-                    String mystring = st.nextToken();
-                    mystring = mystring.replace("\"","");
-                    values[i++] = Float.parseFloat(mystring);
-                }            
-                i = 0;        
-                punti[n] = new Numero(values[0],values[1],values[2],values[3]); //xy,real 2
-                puntiM[n] = new Numero(values[0],values[1],values[7],values[8]); //xy,predicted 2
-                n++;                                 
-            }else{
-                if (s.contains("DATA")){
-                    datastarted = true;
+        try{
+            BufferedReader br = new BufferedReader(new FileReader(fileName));        
+            int n = 0;
+            N = fileSize;
+            D = new float[N][N];
+            punti = new Numero[N];
+            puntiM = new Numero[N];
+            while (br.ready()){
+                String s = br.readLine();
+                StringTokenizer st = new StringTokenizer(s, ",");
+                float[] values = new float[10];
+                if (s.contains("Fold")){
+                    continue;
+                }
+                if (datastarted){
+                    int i = 0; 
+                    while (st.hasMoreTokens()){
+                        String mystring = st.nextToken();
+                        mystring = mystring.replace("\"","");
+                        values[i++] = Float.parseFloat(mystring);
+                    }            
+                    i = 0;        
+                    punti[n] = new Numero(values[0],values[1],values[2],values[3]); //xy,real 2
+                    puntiM[n] = new Numero(values[0],values[1],values[7],values[8]); //xy,predicted 2
+                    n++;                                 
+                }else{
+                    if (s.contains("DATA")){
+                        datastarted = true;
+                    }
                 }
             }
+            br.close();
+        } catch(Exception e){
+            System.err.println(e.getMessage());
         }
-        br.close();
         calcolaW();
         bandwidth = (float)(0.95*maxdist); 
         System.out.println("bandwidth: "+b+" Real1: "+MoranIndex1((float)b)+" Real2: "+MoranIndex2((float)b)+" Pred1: "+MoranIndex11((float)b)+" Pred2: "+MoranIndex22((float)b));

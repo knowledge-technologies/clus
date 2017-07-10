@@ -1751,6 +1751,7 @@ public class Clus implements CMDLineArgsProvider {
             }
         }catch (Exception e){
             e.printStackTrace();
+            System.err.println("Prediction analysis failed.");
         }
         //end daniela
     }
