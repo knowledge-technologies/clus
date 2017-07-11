@@ -30,12 +30,12 @@ import java.io.IOException;
 
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.split.CurrentBestTestAndHeuristic;
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.error.common.multiscore.MultiScore;
 import clus.ext.constraint.ClusConstraintFile;
 import clus.main.ClusRun;

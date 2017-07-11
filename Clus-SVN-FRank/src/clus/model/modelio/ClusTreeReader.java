@@ -34,10 +34,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.schema.ClusSchema;
+import clus.data.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.model.test.NominalTest;
 import clus.model.test.NumericTest;
 import clus.model.test.SubsetTest;

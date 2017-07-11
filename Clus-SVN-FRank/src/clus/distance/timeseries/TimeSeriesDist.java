@@ -23,7 +23,7 @@
 package clus.distance.timeseries;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.TimeSeriesAttrType;
+import clus.data.type.primitive.TimeSeriesAttrType;
 import clus.distance.ClusDistance;
 import clus.ext.timeseries.TimeSeries;
 import clus.ext.timeseries.TimeSeriesStat;

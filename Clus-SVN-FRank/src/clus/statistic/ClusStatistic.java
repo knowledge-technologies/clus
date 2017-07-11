@@ -27,11 +27,11 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import clus.data.ClusSchema;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.cols.ColTarget;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.distance.ClusDistance;
 import clus.ext.beamsearch.ClusBeam;
 import clus.ext.ensembles.ClusEnsembleROSInfo;

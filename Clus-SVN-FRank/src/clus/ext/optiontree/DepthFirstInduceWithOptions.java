@@ -27,11 +27,11 @@ import java.util.ArrayList;
 
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.tdidt.ClusDecisionTree;
+import clus.data.ClusSchema;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsGeneric;

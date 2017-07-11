@@ -1,9 +1,9 @@
 
 package clus.model;
 
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 

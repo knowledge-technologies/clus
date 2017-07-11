@@ -25,7 +25,7 @@ package clus.data.rows;
 import java.io.IOException;
 
 import clus.data.ClusData;
-import clus.data.schema.ClusSchema;
+import clus.data.ClusSchema;
 import clus.util.ClusException;
 
 

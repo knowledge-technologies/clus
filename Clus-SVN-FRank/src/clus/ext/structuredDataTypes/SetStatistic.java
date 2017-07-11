@@ -20,19 +20,18 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>.         *
  *************************************************************************/
 
-package clus.ext.sets;
+package clus.ext.structuredDataTypes;
 
 import java.text.NumberFormat;
 import java.util.*;
 
+import clus.data.ClusSchema;
 import clus.data.attweights.*;
 import clus.data.rows.*;
-import clus.data.schema.ClusSchema;
-import clus.data.type.*;
+import clus.data.type.primitive.NumericAttrType;
 import clus.data.type.structured.SetAttrType;
 import clus.distance.ClusDistance;
-import clus.ext.sspd.*;
-import clus.main.*;
+import clus.distance.SetDistance;
 import clus.main.settings.Settings;
 import clus.statistic.*;
 import clus.util.*;
@@ -46,7 +45,7 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 	// TODO: Investigate the usage of Medoid vs. mean?
 
 	protected SetAttrType m_Attr;
-	private ArrayList m_SetStack = new ArrayList();
+	private ArrayList<Set> m_SetStack = new ArrayList<Set>();
 	public Set m_RepresentativeMean = null;
 	public Set m_RepresentativeMedoid = null;
 

@@ -2,7 +2,7 @@ package clus.distance.primitive.relief;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.main.settings.SettingsMLC;
 import clus.util.jeans.math.MathUtil;
 

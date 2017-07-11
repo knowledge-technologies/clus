@@ -29,8 +29,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-import clus.data.schema.ClusSchema;
-import clus.data.type.IntegerAttrType;
+import clus.data.ClusSchema;
+import clus.data.type.primitive.IntegerAttrType;
 import clus.util.jeans.io.ini.INIFile;
 import clus.util.jeans.io.ini.INIFileSection;
 import clus.util.jeans.resource.ResourceInfo;

@@ -28,8 +28,8 @@ import java.io.PrintStream;
 import java.util.HashMap;
 
 import clus.Clus;
+import clus.data.ClusSchema;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
 import clus.ext.ensembles.ClusEnsembleClassifier;
 import clus.ext.ensembles.ClusEnsembleInduce;

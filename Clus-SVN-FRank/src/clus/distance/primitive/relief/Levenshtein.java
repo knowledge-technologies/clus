@@ -2,7 +2,7 @@
 package clus.distance.primitive.relief;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.StringAttrType;
+import clus.data.type.primitive.StringAttrType;
 
 
 public class Levenshtein {

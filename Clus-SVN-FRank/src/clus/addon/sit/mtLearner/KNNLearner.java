@@ -12,11 +12,11 @@ import java.io.PrintWriter;
 import java.util.Iterator;
 
 import clus.addon.sit.TargetSet;
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 
 
 public class KNNLearner extends MTLearnerImpl {

@@ -3,7 +3,7 @@ package clus.addon.sit;
 
 import java.util.Iterator;
 
-import clus.data.schema.ClusSchema;
+import clus.data.ClusSchema;
 import clus.data.type.ClusAttrType;
 import clus.util.jeans.util.IntervalCollection;
 

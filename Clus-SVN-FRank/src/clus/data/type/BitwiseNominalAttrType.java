@@ -2,6 +2,7 @@
 package clus.data.type;
 
 import clus.data.rows.DataTuple;
+import clus.data.type.primitive.NominalAttrType;
 
 
 public class BitwiseNominalAttrType extends NominalAttrType {

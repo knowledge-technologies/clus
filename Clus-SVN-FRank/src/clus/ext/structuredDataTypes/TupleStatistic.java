@@ -20,17 +20,19 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.ext.tuples;
+package clus.ext.structuredDataTypes;
 
 import java.text.NumberFormat;
 import java.util.*;
 
+import clus.data.ClusSchema;
 import clus.data.attweights.*;
 import clus.data.rows.*;
-import clus.data.schema.ClusSchema;
 import clus.data.type.*;
+import clus.data.type.primitive.NumericAttrType;
 import clus.data.type.structured.TupleAttrType;
 import clus.distance.ClusDistance;
+import clus.distance.TupleDistance;
 import clus.main.settings.Settings;
 import clus.statistic.*;
 import clus.util.*;

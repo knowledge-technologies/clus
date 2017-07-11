@@ -20,13 +20,14 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.data.type;
+package clus.data.type.primitive;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
 import clus.ext.timeseries.TimeSeries;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;

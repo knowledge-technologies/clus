@@ -23,10 +23,10 @@
 
 package clus.ext.hierarchical;
 
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.StringAttrType;
+import clus.data.type.primitive.StringAttrType;
 import clus.main.settings.Settings;
 
 

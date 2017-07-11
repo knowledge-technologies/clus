@@ -26,8 +26,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 
 import clus.algo.tdidt.ClusNode;
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;

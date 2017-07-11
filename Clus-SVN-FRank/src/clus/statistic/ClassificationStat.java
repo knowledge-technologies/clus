@@ -32,13 +32,13 @@ import org.apache.commons.math.MathException;
 import org.apache.commons.math.distribution.ChiSquaredDistribution;
 import org.apache.commons.math.distribution.DistributionFactory;
 
+import clus.data.ClusSchema;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleROSInfo;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;

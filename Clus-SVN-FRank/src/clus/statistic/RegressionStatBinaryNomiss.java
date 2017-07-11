@@ -26,7 +26,7 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 
 import clus.data.attweights.ClusAttributeWeights;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 

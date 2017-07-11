@@ -5,8 +5,8 @@ import java.io.IOException;
 
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.tdidt.ClusNode;
+import clus.data.ClusSchema;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;

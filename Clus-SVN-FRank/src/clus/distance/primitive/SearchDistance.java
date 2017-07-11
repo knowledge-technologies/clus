@@ -24,8 +24,8 @@ package clus.distance.primitive;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
 

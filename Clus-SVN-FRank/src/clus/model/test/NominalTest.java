@@ -25,7 +25,7 @@ package clus.model.test;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.main.settings.Settings;
 import clus.util.ClusRandom;
 import clus.util.jeans.util.sort.DoubleIndexSorter;

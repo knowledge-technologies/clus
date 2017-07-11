@@ -27,7 +27,7 @@ import java.io.IOException;
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
-import clus.data.type.IntegerAttrType;
+import clus.data.type.primitive.IntegerAttrType;
 import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
 import clus.util.ClusException;

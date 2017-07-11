@@ -23,7 +23,7 @@
 package clus.algo.kNN.distance.valentin;
 
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.main.settings.Settings;
 import clus.data.rows.DataTuple;
 

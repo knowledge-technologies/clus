@@ -8,6 +8,7 @@ import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.rows.SparseDataTuple;
+import clus.data.type.primitive.NumericAttrType;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;
 import clus.util.ClusException;

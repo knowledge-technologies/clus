@@ -25,7 +25,7 @@ package clus.error.common.multiscore;
 import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;
 import clus.error.common.ClusNominalError;

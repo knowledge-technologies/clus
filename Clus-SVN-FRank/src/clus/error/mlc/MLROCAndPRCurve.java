@@ -25,7 +25,7 @@ package clus.error.mlc;
 import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.error.BinaryPredictionList;
 import clus.error.ROCAndPRCurve;
 import clus.main.settings.Settings;

@@ -25,7 +25,7 @@ package clus.error;
 import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;
 import clus.error.common.ClusNominalError;

@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.data.type;
+package clus.data.type.primitive;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -34,6 +34,7 @@ import clus.data.cols.attribute.ClusAttribute;
 import clus.data.cols.attribute.NominalTarget;
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
@@ -50,7 +51,7 @@ public class NominalAttrType extends ClusAttrType {
     public final static int THIS_TYPE = NOMINAL_ATR_TYPE;
     public final static String THIS_TYPE_NAME = "Nominal";
     private NominalStatistic m_StatNominal;
-    
+
     /**
      * Number of possible values for nominal type.
      */
@@ -82,18 +83,19 @@ public class NominalAttrType extends ClusAttrType {
         createHash();
     }
 
- // new for knn
 
-    public void setStatistic(NominalStatistic stat){
+    // new for knn
+
+    public void setStatistic(NominalStatistic stat) {
         m_StatNominal = stat;
     }
-    public NominalStatistic getStatistic(){
+
+
+    public NominalStatistic getStatistic() {
         return m_StatNominal;
     }
 
 
-    
-    
     public String[] getValues() {
         return m_Values;
     }

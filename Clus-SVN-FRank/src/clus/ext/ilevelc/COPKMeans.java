@@ -27,13 +27,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 
+import clus.data.ClusSchema;
 import clus.data.attweights.ClusNormalizedAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.statistic.RegressionStat;

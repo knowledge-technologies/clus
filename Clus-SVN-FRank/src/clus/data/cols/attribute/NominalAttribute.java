@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import clus.data.cols.ColTarget;
 import clus.data.io.ClusReader;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.main.ClusStatManager;
 import clus.selection.ClusSelection;
 import clus.util.jeans.util.MyArray;

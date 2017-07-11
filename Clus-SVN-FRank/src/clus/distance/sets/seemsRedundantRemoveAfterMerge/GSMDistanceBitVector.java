@@ -5,8 +5,8 @@ import java.util.Arrays;
 
 import clus.data.type.structured.SetAttrType;
 import clus.distance.ClusDistance;
-import clus.ext.sets.Set;
-import clus.ext.sets.SetDistance;
+import clus.distance.SetDistance;
+import clus.ext.structuredDataTypes.Set;
 
 
 public class GSMDistanceBitVector extends SetDistance {

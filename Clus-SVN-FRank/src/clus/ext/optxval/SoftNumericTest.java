@@ -28,7 +28,7 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.model.test.NumericTest;

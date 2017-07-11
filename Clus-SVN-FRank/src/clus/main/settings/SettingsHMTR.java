@@ -3,9 +3,9 @@ package clus.main.settings;
 
 import java.util.ArrayList;
 
-import clus.data.schema.ClusSchema;
+import clus.data.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.hierarchicalmtr.ClusHMTRNode;
 import clus.util.jeans.io.ini.INIFileDouble;

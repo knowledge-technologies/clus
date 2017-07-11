@@ -33,11 +33,11 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import clus.data.ClusSchema;
 import clus.data.io.ARFFFile;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.util.ClusException;

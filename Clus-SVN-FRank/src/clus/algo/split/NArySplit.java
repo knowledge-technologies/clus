@@ -24,7 +24,7 @@ package clus.algo.split;
 
 import java.util.Random;
 
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusStatManager;
 import clus.model.test.NominalTest;

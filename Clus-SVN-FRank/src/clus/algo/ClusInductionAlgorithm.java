@@ -25,9 +25,9 @@ package clus.algo;
 import java.io.IOException;
 
 import clus.data.ClusData;
+import clus.data.ClusSchema;
 import clus.data.rows.DataPreprocs;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;

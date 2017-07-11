@@ -22,7 +22,7 @@
 
 package clus.error.common;
 
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.main.settings.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;

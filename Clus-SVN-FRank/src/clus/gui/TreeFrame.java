@@ -68,8 +68,8 @@ import javax.swing.tree.TreeSelectionModel;
 
 import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.tdidt.ClusNode;
+import clus.data.ClusSchema;
 import clus.data.attweights.ClusAttributeWeights;
-import clus.data.schema.ClusSchema;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;

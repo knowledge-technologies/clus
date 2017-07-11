@@ -27,9 +27,9 @@ import java.io.InputStream;
 import java.util.Vector;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.schema.ClusSchema;
+import clus.data.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.util.ClusException;

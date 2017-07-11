@@ -32,13 +32,13 @@ import java.util.Date;
 
 import clus.Clus;
 import clus.algo.tdidt.ClusDecisionTree;
+import clus.data.ClusSchema;
 import clus.data.io.ARFFFile;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NumericAttrType;
-import clus.data.type.StringAttrType;
+import clus.data.type.primitive.NumericAttrType;
+import clus.data.type.primitive.StringAttrType;
 import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;

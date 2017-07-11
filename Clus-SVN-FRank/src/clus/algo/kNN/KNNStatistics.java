@@ -23,11 +23,13 @@
 package clus.algo.kNN;
 
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.algo.kNN.distance.valentin.NominalStatistic;
 import clus.algo.kNN.distance.valentin.NumericStatistic;
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
 import clus.data.type.*;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 
 /**
  * This class calculates several usefull statistics of

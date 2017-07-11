@@ -25,12 +25,12 @@ package clus.ext.timeseries;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import clus.data.ClusSchema;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
-import clus.data.type.NumericAttrType;
-import clus.data.type.TimeSeriesAttrType;
+import clus.data.type.primitive.NumericAttrType;
+import clus.data.type.primitive.TimeSeriesAttrType;
 import clus.distance.ClusDistance;
 import clus.distance.timeseries.TimeSeriesDist;
 import clus.main.settings.Settings;

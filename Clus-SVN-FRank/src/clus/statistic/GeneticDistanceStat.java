@@ -4,7 +4,7 @@ package clus.statistic;
 import java.text.NumberFormat;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 import clus.util.jeans.list.BitList;

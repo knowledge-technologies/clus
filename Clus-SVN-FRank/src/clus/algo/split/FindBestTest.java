@@ -25,12 +25,12 @@ package clus.algo.split;
 import java.util.ArrayList;
 import java.util.Random;
 
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.rows.RowDataSortHelper;
-import clus.data.schema.ClusSchema;
-import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;

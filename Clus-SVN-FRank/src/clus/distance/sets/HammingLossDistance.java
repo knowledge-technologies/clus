@@ -3,8 +3,8 @@ package clus.distance.sets;
 
 import clus.data.type.structured.SetAttrType;
 import clus.distance.ClusDistance;
-import clus.ext.sets.Set;
-import clus.ext.sets.SetDistance;
+import clus.distance.SetDistance;
+import clus.ext.structuredDataTypes.Set;
 import clus.main.settings.Settings;
 
 

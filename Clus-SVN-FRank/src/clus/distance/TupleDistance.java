@@ -20,11 +20,12 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>.         *
  *************************************************************************/
 
-package clus.ext.tuples;
+package clus.distance;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.structured.TupleAttrType;
-import clus.distance.ClusStructuredDistance;
+import clus.ext.structuredDataTypes.Tuple;
+import clus.ext.structuredDataTypes.TupleStatistic;
 import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 

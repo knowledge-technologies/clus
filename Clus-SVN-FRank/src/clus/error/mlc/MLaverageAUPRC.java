@@ -4,7 +4,7 @@ package clus.error.mlc;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;
 import clus.main.settings.Settings;

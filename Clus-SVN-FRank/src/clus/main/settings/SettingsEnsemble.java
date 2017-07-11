@@ -1,7 +1,7 @@
 
 package clus.main.settings;
 
-import clus.data.schema.ClusSchema;
+import clus.data.ClusSchema;
 import clus.util.jeans.io.ini.INIFileBool;
 import clus.util.jeans.io.ini.INIFileInt;
 import clus.util.jeans.io.ini.INIFileNominal;

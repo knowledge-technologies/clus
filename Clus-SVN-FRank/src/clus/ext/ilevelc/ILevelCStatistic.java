@@ -24,7 +24,7 @@ package clus.ext.ilevelc;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;

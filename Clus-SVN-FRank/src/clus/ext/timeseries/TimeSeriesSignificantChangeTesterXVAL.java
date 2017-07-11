@@ -28,10 +28,10 @@ import java.util.Arrays;
 import java.util.Random;
 
 import clus.algo.rules.ClusRule;
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
-import clus.data.type.TimeSeriesAttrType;
+import clus.data.type.primitive.TimeSeriesAttrType;
 import clus.distance.timeseries.TimeSeriesDist;
 import clus.main.settings.Settings;
 import clus.error.common.ClusError;

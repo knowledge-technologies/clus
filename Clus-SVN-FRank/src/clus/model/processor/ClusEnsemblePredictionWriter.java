@@ -6,9 +6,9 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
+import clus.data.ClusSchema;
 import clus.data.io.ARFFFile;
 import clus.data.rows.DataTuple;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
 import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;

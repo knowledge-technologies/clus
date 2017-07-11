@@ -30,18 +30,21 @@ import java.util.ArrayList;
 import com.google.gson.JsonObject;
 
 import clus.algo.kNN.distance.valentin.BasicDistance;
+import clus.data.ClusSchema;
 import clus.data.cols.ColTarget;
 import clus.data.cols.attribute.ClusAttribute;
 import clus.data.rows.DataPreprocs;
 import clus.data.rows.DataTuple;
-import clus.data.schema.ClusSchema;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
+import clus.data.type.primitive.TimeSeriesAttrType;
 import clus.data.type.structured.SetAttrType;
 import clus.data.type.structured.TupleAttrType;
 import clus.distance.ClusDistance;
+import clus.distance.TupleDistance;
 import clus.distance.timeseries.TimeSeriesDist;
+import clus.ext.structuredDataTypes.Tuple;
 import clus.ext.timeseries.TimeSeries;
-import clus.ext.tuples.Tuple;
-import clus.ext.tuples.TupleDistance;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsTree;
@@ -533,10 +536,10 @@ public abstract class ClusAttrType implements Serializable, Comparable {
             TupleDistance tupleDist = null;
             switch (settings.getTree().getTupleDistance()) {
                 case SettingsTree.TUPLEDISTANCES_EUCLIDEAN:
-                    tupleDist = new clus.ext.tuples.distances.EuclideanDistance((TupleAttrType) type, innerDistances);
+                    tupleDist = new clus.distance.tuples.EuclideanDistance((TupleAttrType) type, innerDistances);
                     break;
                 case SettingsTree.TUPLEDISTANCES_MINKOWSKI:
-                    tupleDist = new clus.ext.tuples.distances.MinkowskiDistance(3, innerDistances);
+                    tupleDist = new clus.distance.tuples.MinkowskiDistance(3, innerDistances);
                     break;
             }
             return tupleDist;

@@ -44,12 +44,12 @@ import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import clus.data.ClusSchema;
 import clus.data.io.ARFFFile;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
-import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.ext.ilevelc.DerivedConstraintsComputer;
 import clus.ext.ilevelc.ILevelConstraint;
 import clus.main.settings.Settings;

@@ -35,10 +35,10 @@ import com.google.gson.JsonObject;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.ClusData;
+import clus.data.ClusSchema;
 import clus.data.io.ClusReader;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.error.common.ClusErrorList;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.model.test.ClusRuleConstraintInduceTest;

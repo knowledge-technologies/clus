@@ -1,7 +1,7 @@
 package clus.distance.sets.seemsRedundantRemoveAfterMerge;
 
 import clus.distance.ClusDistance;
-import clus.ext.sets.Set;
+import clus.ext.structuredDataTypes.Set;
 
 public class SetOperations {
 

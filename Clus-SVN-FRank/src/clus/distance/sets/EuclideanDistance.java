@@ -3,9 +3,9 @@ package clus.distance.sets;
 
 import clus.data.type.structured.SetAttrType;
 import clus.distance.ClusDistance;
+import clus.distance.SetDistance;
 import clus.distance.timeseries.TimeSeriesDist;
-import clus.ext.sets.Set;
-import clus.ext.sets.SetDistance;
+import clus.ext.structuredDataTypes.Set;
 import clus.ext.timeseries.TimeSeries;
 import clus.main.settings.Settings;
 

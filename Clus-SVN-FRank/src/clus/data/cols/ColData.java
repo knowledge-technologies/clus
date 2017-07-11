@@ -26,10 +26,10 @@ import java.util.Vector;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.ClusData;
+import clus.data.ClusSchema;
 import clus.data.cols.attribute.ClusAttribute;
 import clus.data.io.ClusView;
 import clus.data.rows.DataPreprocs;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
 import clus.error.common.ClusErrorList;
 import clus.io.DummySerializable;

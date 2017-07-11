@@ -25,8 +25,8 @@ package clus.model.processor;
 import java.io.IOException;
 
 import clus.algo.tdidt.ClusNode;
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
-import clus.data.schema.ClusSchema;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.util.jeans.tree.CompleteTreeIterator;

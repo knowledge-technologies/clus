@@ -34,8 +34,8 @@ import com.google.gson.JsonObject;
 
 import clus.Clus;
 import clus.algo.tdidt.ClusNode;
+import clus.data.ClusSchema;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
 import clus.error.common.ClusErrorList;
 import clus.ext.ensembles.ClusForest;

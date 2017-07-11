@@ -1,10 +1,10 @@
 
-package clus.ext.tuples.distances;
+package clus.distance.tuples;
 
 import clus.data.type.structured.TupleAttrType;
 import clus.distance.ClusDistance;
-import clus.ext.tuples.Tuple;
-import clus.ext.tuples.TupleDistance;
+import clus.distance.TupleDistance;
+import clus.ext.structuredDataTypes.Tuple;
 import clus.main.settings.Settings;
 
 

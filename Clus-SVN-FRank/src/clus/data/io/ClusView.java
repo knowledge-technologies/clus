@@ -31,9 +31,9 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 
+import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;

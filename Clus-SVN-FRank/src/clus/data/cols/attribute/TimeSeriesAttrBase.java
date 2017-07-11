@@ -23,7 +23,7 @@
 package clus.data.cols.attribute;
 
 import clus.data.type.ClusAttrType;
-import clus.data.type.TimeSeriesAttrType;
+import clus.data.type.primitive.TimeSeriesAttrType;
 
 
 public abstract class TimeSeriesAttrBase extends ClusAttribute {

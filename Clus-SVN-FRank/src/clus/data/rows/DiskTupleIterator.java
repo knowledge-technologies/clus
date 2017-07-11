@@ -24,10 +24,10 @@ package clus.data.rows;
 
 import java.io.IOException;
 
+import clus.data.ClusSchema;
+import clus.data.ClusSchemaInitializer;
 import clus.data.io.ARFFFile;
 import clus.data.io.ClusReader;
-import clus.data.schema.ClusSchema;
-import clus.data.schema.ClusSchemaInitializer;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
 

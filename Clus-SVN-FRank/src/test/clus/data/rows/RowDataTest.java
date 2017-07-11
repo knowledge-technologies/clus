@@ -14,7 +14,7 @@ import org.junit.Test;
 import clus.Clus;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
 import clus.util.jeans.util.cmdline.CMDLineArgs;

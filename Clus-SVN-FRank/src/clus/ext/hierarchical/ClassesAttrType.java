@@ -26,13 +26,13 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import clus.data.ClusSchema;
 import clus.data.io.ClusReader;
 import clus.data.rows.DataPreprocs;
 import clus.data.rows.DataTuple;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NominalAttrType;
-import clus.data.type.StringAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.StringAttrType;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsHMLC;

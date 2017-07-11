@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 
 import clus.data.attweights.ClusAttributeWeights;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.settings.Settings;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;

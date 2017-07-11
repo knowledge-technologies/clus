@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import clus.data.schema.ClusSchema;
+import clus.data.ClusSchema;
 import clus.data.type.ClusAttrType;
 import clus.data.type.SparseNumericAttrType;
 import clus.main.settings.Settings;

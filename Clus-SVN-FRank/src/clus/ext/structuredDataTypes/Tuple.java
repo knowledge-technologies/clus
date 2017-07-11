@@ -20,71 +20,45 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.ext.sets;
+package clus.ext.structuredDataTypes;
 
-import java.io.IOException;
 import java.io.Serializable;
-import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
-import clus.ext.timeseries.TimeSeries;
 import clus.main.settings.Settings;
-import clus.util.ClusFormat;
 
 
-public class Set implements Serializable {
+// TODO: extends single class, ClusType...
+public class Tuple implements Serializable {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     private Object[] m_Values;
-    private double m_SetWeight;
+    private double m_TSWeight;
 
 
-    public Set(String values) throws IOException {
-        this(values, "");
-    }
-
-
-    public Set(String values, String typeDefinition) throws IOException {
+    public Tuple(String values) {
         values = values.trim();
-
-        if (values.charAt(0) != '{' || values.charAt(values.length() - 1) != '}')
-            throw new IOException("This is not a well defined set! Please use {,} brackets to define a set!");
-        values = values.substring(1);
-        values = values.substring(0, values.length() - 1);
-
-        String subType = typeDefinition.trim().substring(4);//take of SET{		
-        subType = subType.substring(0, subType.length() - 1);
-
-        if (subType.equalsIgnoreCase("numeric")) {
-            StringTokenizer st = new StringTokenizer(values, ",");
-            m_Values = new Object[st.countTokens()];
-            int i = 0;
-            while (st.hasMoreTokens()) {
-                m_Values[i++] = Double.parseDouble(st.nextToken());
-            }
-        }
-        else if (subType.equalsIgnoreCase("timeseries")) {
-            StringTokenizer st = new StringTokenizer(values, "]");
-            m_Values = new Object[st.countTokens()];
-            int i = 0;
-            while (st.hasMoreTokens()) {
-                String ts = st.nextToken();
-                ts = ts.replace(",[", "");
-                ts = ts.replace("[", "");
-                m_Values[i++] = new TimeSeries(ts);
-            }
+        values = values.replace("[", "");
+        values = values.replace("]", "");
+        //values = values.replaceAll("\\[", "");
+        //values = values.replaceAll("\\]", "");
+        StringTokenizer st = new StringTokenizer(values, ",");
+        m_Values = new Object[st.countTokens()];
+        int i = 0;
+        while (st.hasMoreTokens()) {
+            m_Values[i++] = Double.parseDouble(st.nextToken());
         }
     }
 
 
-    public Set(Object[] values) {
+    public Tuple(Object[] values) {
         m_Values = new Object[values.length];
         System.arraycopy(values, 0, m_Values, 0, values.length);
     }
 
 
-    public Set(int size) {
+    public Tuple(int size) {
         m_Values = new Object[size];
         for (int i = 0; i < size; i++) {
             m_Values[i] = 0.0;
@@ -92,12 +66,12 @@ public class Set implements Serializable {
     }
 
 
-    public Set(Set set) {
-        this(set.getValues());
+    public Tuple(Tuple series) {
+        this(series.getValues());
     }
 
 
-    public int size() {
+    public int length() {
         if (m_Values == null)
             return 0;
         return m_Values.length;
@@ -116,31 +90,54 @@ public class Set implements Serializable {
     }
 
 
+    public Object getValue(int index) {
+        return m_Values[index];
+    }
+
+
     public void setValues(Object[] values) {
         System.arraycopy(values, 0, this.m_Values, 0, values.length);
     }
 
 
+    /*
+     * [Aco]
+     * Seting a single value
+     */
+    public void setValue(int index, Object value) {
+        m_Values[index] = value;
+    }
+
+
+    /*
+     * [Aco]
+     * For easy printing of the series
+     * @see java.lang.Object#toString()
+     */
     public String toString() {
-        StringBuffer a = new StringBuffer("{");
-        for (int i = 0; i < size() - 1; i++) {
-            a.append(String.valueOf(m_Values[i]));
+        //NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        StringBuffer a = new StringBuffer("[");
+        for (int i = 0; i < length() - 1; i++) {
+            if (m_Values[i] != null)
+                a.append(m_Values[i]);
+            else
+                a.append("?");
             a.append(',');
         }
-        if (size() > 0)
-            a.append(String.valueOf(m_Values[size() - 1]));
-        a.append('}');
+        if (length() > 0)
+            a.append(m_Values[length() - 1]);
+        a.append(']');
         return a.toString();
     }
 
 
-    public double getSetWeight() {
-        return m_SetWeight;
+    public double geTSWeight() {
+        return m_TSWeight;
     }
 
 
-    public void setSetWeight(double weight) {
-        m_SetWeight = weight;
+    public void setTSWeight(double weight) {
+        m_TSWeight = weight;
     }
 
 }

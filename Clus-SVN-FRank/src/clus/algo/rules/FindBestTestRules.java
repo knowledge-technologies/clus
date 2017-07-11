@@ -28,8 +28,8 @@ import clus.algo.split.FindBestTest;
 import clus.algo.split.NominalSplit;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.NominalAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NominalAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.ClusStatManager;
 
 

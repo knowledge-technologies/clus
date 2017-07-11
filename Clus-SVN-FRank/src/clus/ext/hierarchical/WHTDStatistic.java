@@ -39,12 +39,12 @@ import org.apache.commons.math.MathException;
 import org.apache.commons.math.distribution.DistributionFactory;
 import org.apache.commons.math.distribution.HypergeometricDistribution;
 
+import clus.data.ClusSchema;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsGeneral;

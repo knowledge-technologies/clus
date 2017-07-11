@@ -22,7 +22,7 @@
 
 package clus.error.common;
 
-import clus.data.type.NumericAttrType;
+import clus.data.type.primitive.NumericAttrType;
 import clus.main.settings.Settings;
 
 

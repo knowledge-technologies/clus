@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.data.type;
+package clus.data.type.primitive;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -29,12 +29,13 @@ import java.util.Collections;
 import java.util.List;
 
 import clus.algo.kNN.distance.valentin.NumericStatistic;
+import clus.data.ClusSchema;
 import clus.data.cols.ColTarget;
 import clus.data.cols.attribute.ClusAttribute;
 import clus.data.cols.attribute.NumericTarget;
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
-import clus.data.schema.ClusSchema;
+import clus.data.type.ClusAttrType;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.hierarchicalmtr.ClusHMTRNode;
 import clus.io.ClusSerializable;
@@ -58,22 +59,23 @@ public class NumericAttrType extends ClusAttrType {
     protected boolean m_Sparse;
     private NumericStatistic m_StatNumeric;
 
+
     public NumericAttrType(String name) {
         super(name);
     }
 
+
     //new for knn
-    public void setStatistic(NumericStatistic stat){
+    public void setStatistic(NumericStatistic stat) {
         m_StatNumeric = stat;
     }
-    public NumericStatistic getStatistic(){
+
+
+    public NumericStatistic getStatistic() {
         return m_StatNumeric;
     }
 
-    
-    
-    
-    
+
     public ClusAttrType cloneType() {
         NumericAttrType at = new NumericAttrType(m_Name);
         cloneType(at);
@@ -268,7 +270,7 @@ public class NumericAttrType extends ClusAttrType {
             String name = targets[ind].getName();
 
             if (Double.isNaN(val))
-                throw new IOException("Error reading HMTR aggregate from dump! Aggregation function is: " + getSettings().getHMTR().getHMTRAggregationName()); 
+                throw new IOException("Error reading HMTR aggregate from dump! Aggregation function is: " + getSettings().getHMTR().getHMTRAggregationName());
 
             // if(getSettings().getGeneric().getVerbose() > 0) System.out.println("READING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
@@ -401,9 +403,8 @@ public class NumericAttrType extends ClusAttrType {
             ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
 
             for (ClusAttrType target : targets) {
-
                 if (target.getName().equals(name)) {
-                    int i = target.m_ArrayIndex;
+                    int i = target.getArrayIndex();
                     value = tuple.getDoubleVal(i);
                     break;
                 }

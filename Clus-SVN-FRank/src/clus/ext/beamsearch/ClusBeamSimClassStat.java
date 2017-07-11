@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
-import clus.data.type.NominalAttrType;
+import clus.data.type.primitive.NominalAttrType;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsBeamSearch;
 import clus.statistic.ClassificationStat;
