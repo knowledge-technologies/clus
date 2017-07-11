@@ -1,21 +1,16 @@
 
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileNominal;
-import clus.jeans.io.ini.INIFileSection;
 import clus.model.ClusModel;
 import clus.statistic.StatisticPrintInfo;
+import clus.util.jeans.io.ini.INIFileBool;
+import clus.util.jeans.io.ini.INIFileNominal;
+import clus.util.jeans.io.ini.INIFileSection;
 
 
 public class SettingsOutput implements ISettings {
 
-    SettingsHMLC m_HMLC;
-
-
-    public SettingsOutput(SettingsHMLC hmlc) {
-        m_HMLC = hmlc;
-    }
+    
 
     /***********************************************************************
      * Section: Output *
@@ -76,9 +71,6 @@ public class SettingsOutput implements ISettings {
     }
 
 
-    public boolean isCalError() {
-        return m_HMLC.m_CalErr.getValue();
-    }
 
 
     public boolean isShowBranchFreq() {

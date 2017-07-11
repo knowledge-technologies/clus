@@ -1,13 +1,13 @@
 
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileNominal;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.ini.INIFileString;
-import clus.jeans.io.ini.INIFileStringOrDouble;
-import clus.jeans.io.ini.INIFileStringOrInt;
-import clus.jeans.util.StringUtils;
+import clus.util.jeans.io.ini.INIFileBool;
+import clus.util.jeans.io.ini.INIFileNominal;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileString;
+import clus.util.jeans.io.ini.INIFileStringOrDouble;
+import clus.util.jeans.io.ini.INIFileStringOrInt;
+import clus.util.jeans.util.StringUtils;
 
 
 public class SettingsData implements ISettings {
@@ -16,17 +16,17 @@ public class SettingsData implements ISettings {
      * Section: Data *
      ***********************************************************************/
 
-    protected INIFileString m_DataFile;
-    protected INIFileStringOrDouble m_TestSet;
-    protected INIFileStringOrDouble m_PruneSet;
-    protected INIFileStringOrInt m_PruneSetMax;
+    private INIFileString m_DataFile;
+    private INIFileStringOrDouble m_TestSet;
+    private INIFileStringOrDouble m_PruneSet;
+    private INIFileStringOrInt m_PruneSetMax;
     /** How many folds are we having in xval OR gives a file that defines the used folds (in the data set) */
-    protected INIFileStringOrInt m_XValFolds;
-    protected INIFileBool m_RemoveMissingTarget;
+    private INIFileStringOrInt m_XValFolds;
+    private INIFileBool m_RemoveMissingTarget;
 
     // Gradient descent optimization algorithm
     /** Possible values for normalizeData */
-    public final static String[] NORMALIZE_DATA_VALUES = { "None", "Numeric" };
+    private final String[] NORMALIZE_DATA_VALUES = { "None", "Numeric" };
     /** Do not normalize data. DEFAULT */
     public final static int NORMALIZE_DATA_NONE = 0;
     /** Normalize only numeric variables */
@@ -34,7 +34,7 @@ public class SettingsData implements ISettings {
     /** Normalize all the variables Not implemented */
     // public final static int NORMALIZE_DATA_ALL = 3;
     /** Do normalization for the data in the beginning. Done by dividing with the variance. */
-    protected INIFileNominal m_NormalizeData;
+    private INIFileNominal m_NormalizeData;
 
 
     public String getDataFile() {
@@ -129,7 +129,14 @@ public class SettingsData implements ISettings {
     public int getNormalizeData() {
         return m_NormalizeData.getValue();
     }
+    
+    public void setPruneSetMaxEnabled(boolean value) {
+        m_PruneSetMax.setEnabled(value);
+    }
 
+    public boolean isPruneSetString(String str) {
+        return m_PruneSet.isString(str);
+    }
 
     @Override
     public INIFileSection create() {

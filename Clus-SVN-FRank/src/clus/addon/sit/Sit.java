@@ -23,16 +23,16 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
-import clus.jeans.resource.ResourceInfo;
-import clus.jeans.util.IntervalCollection;
-import clus.jeans.util.cmdline.CMDLineArgs;
-import clus.jeans.util.cmdline.CMDLineArgsProvider;
 import clus.main.ClusStat;
 import clus.main.settings.Settings;
 import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
+import clus.util.jeans.resource.ResourceInfo;
+import clus.util.jeans.util.IntervalCollection;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
+import clus.util.jeans.util.cmdline.CMDLineArgsProvider;
 
 
 public class Sit implements CMDLineArgsProvider {

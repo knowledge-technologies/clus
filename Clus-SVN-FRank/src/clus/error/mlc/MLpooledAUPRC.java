@@ -5,13 +5,15 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 
 import clus.data.type.NominalAttrType;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.main.settings.Settings;
 import clus.util.ClusFormat;
 
 
 public class MLpooledAUPRC extends MLROCAndPRCurve {
-
+ 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     private final int m_Measure = pooledAUPRC;
 
 

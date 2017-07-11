@@ -1,9 +1,9 @@
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileNominal;
-import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import clus.jeans.io.ini.INIFileNominalOrIntOrVector;
-import clus.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileNominal;
+import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
+import clus.util.jeans.io.ini.INIFileSection;
 
 public class SettingsMLC implements ISettings {
     /***********************************************************************

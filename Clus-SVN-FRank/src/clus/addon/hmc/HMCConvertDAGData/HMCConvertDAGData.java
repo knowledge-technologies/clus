@@ -33,11 +33,11 @@ import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesTuple;
 import clus.ext.hierarchical.WHTDStatistic;
-import clus.jeans.util.FileUtil;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
+import clus.util.jeans.util.FileUtil;
 
 
 public class HMCConvertDAGData {

@@ -3,8 +3,8 @@ package clus.ext.featureRanking.relief.distances;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
-import clus.jeans.math.MathUtil;
 import clus.main.settings.SettingsMLC;
+import clus.util.jeans.math.MathUtil;
 
 public class MultiLabelDistance {
 	// If new types are introduced use the same values as in Settings.java

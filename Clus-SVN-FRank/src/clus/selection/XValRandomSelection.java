@@ -24,9 +24,9 @@ package clus.selection;
 
 import java.util.Random;
 
-import clus.jeans.util.array.MyIntArray;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
+import clus.util.jeans.util.array.MyIntArray;
 
 
 // "almost linear" algorithm for randomisation

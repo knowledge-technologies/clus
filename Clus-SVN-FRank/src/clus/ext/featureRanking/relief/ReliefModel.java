@@ -12,13 +12,13 @@ import com.google.gson.JsonObject;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.settings.SettingsRelief;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import clus.util.jeans.util.MyArray;
 
 
 public class ReliefModel implements ClusModel {

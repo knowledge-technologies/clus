@@ -47,10 +47,6 @@ import clus.data.type.NumericAttrType;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassesTuple;
 import clus.ext.hierarchical.WHTDStatistic;
-import clus.jeans.util.MStreamTokenizer;
-import clus.jeans.util.StringUtils;
-import clus.jeans.util.cmdline.CMDLineArgs;
-import clus.jeans.util.cmdline.CMDLineArgsProvider;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
@@ -62,6 +58,10 @@ import clus.model.test.NumericTest;
 import clus.model.test.SubsetTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.util.MStreamTokenizer;
+import clus.util.jeans.util.StringUtils;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
+import clus.util.jeans.util.cmdline.CMDLineArgsProvider;
 
 
 public class ClusAmandaRules implements CMDLineArgsProvider {

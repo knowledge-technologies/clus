@@ -32,10 +32,10 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import clus.jeans.io.ObjectLoadStream;
-import clus.jeans.io.ObjectSaveStream;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
+import clus.util.jeans.io.ObjectLoadStream;
+import clus.util.jeans.io.ObjectSaveStream;
 
 
 public class ClusModelCollectionIO implements Serializable {

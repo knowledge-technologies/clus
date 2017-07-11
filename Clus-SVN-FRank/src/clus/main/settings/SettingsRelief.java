@@ -1,12 +1,12 @@
 
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileDouble;
-import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import clus.jeans.io.ini.INIFileNominalOrIntOrVector;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.math.MathUtil;
+import clus.util.jeans.io.ini.INIFileBool;
+import clus.util.jeans.io.ini.INIFileDouble;
+import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.math.MathUtil;
 
 
 public class SettingsRelief implements ISettings {

@@ -35,7 +35,6 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.ext.hierarchical.HierSingleLabelStat;
 import clus.ext.hierarchical.WHTDStatistic;
-import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.Global;
@@ -48,6 +47,7 @@ import clus.statistic.GeneticDistanceStat;
 import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import clus.util.jeans.util.MyArray;
 
 
 public class ClusOptionNode extends MyNode {

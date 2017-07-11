@@ -35,8 +35,6 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.io.DummySerializable;
-import clus.jeans.util.IntervalCollection;
-import clus.jeans.util.StringUtils;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.selection.XValDataSelection;
@@ -44,6 +42,8 @@ import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.jeans.util.IntervalCollection;
+import clus.util.jeans.util.StringUtils;
 
 
 public class ClusSchema implements Serializable {
@@ -79,14 +79,17 @@ public class ClusSchema implements Serializable {
         m_Relation = name;
     }
 
+
     public ClusSchema(String name, String descr) {
         m_Relation = name;
         addFromString(descr);
     }
 
+
     public void setSettings(Settings sett) {
         m_Settings = sett;
     }
+
 
     public void initializeSettings(Settings sett) throws ClusException, IOException {
         setSettings(sett);
@@ -111,13 +114,16 @@ public class ClusSchema implements Serializable {
         return m_Settings;
     }
 
+
     public final String getRelationName() {
         return m_Relation;
     }
 
+
     public final void setRelationName(String name) {
         m_Relation = name;
     }
+
 
     public ClusSchema cloneSchema() {
         ClusSchema result = new ClusSchema(getRelationName());
@@ -917,22 +923,27 @@ public class ClusSchema implements Serializable {
         }
         return buf.toString();
     }
-    
+
+
     public ArrayList getAttr() {
         return m_Attr;
     }
-    
+
+
     public void setHMTRHierarchy(ClusHMTRHierarchy HMTRHierarchy) {
         m_HMTRHierarchy = HMTRHierarchy;
     }
-    
+
+
     public ClusHMTRHierarchy getHMTRHierarchy() {
         return m_HMTRHierarchy;
     }
 
+
     public int getNbHMTR() {
         return m_NbHMTR;
     }
+
 
     public void setNbHMTR(int nbHMTR) {
         this.m_NbHMTR = nbHMTR;

@@ -31,8 +31,6 @@ import com.google.gson.JsonObject;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.jeans.util.MyArray;
-import clus.jeans.util.StringUtils;
 import clus.main.ClusRun;
 import clus.main.Global;
 import clus.main.settings.Settings;
@@ -42,6 +40,8 @@ import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import clus.util.jeans.util.MyArray;
+import clus.util.jeans.util.StringUtils;
 
 public class ClusSplitNode extends MyNode {
 

@@ -25,10 +25,10 @@ package clus.model.modelio.tilde;
 import java.io.IOException;
 
 import clus.algo.tdidt.ClusNode;
-import clus.jeans.util.MStreamTokenizer;
 import clus.main.ClusStatManager;
 import clus.model.test.FakeTest;
 import clus.statistic.ClassificationStat;
+import clus.util.jeans.util.MStreamTokenizer;
 
 
 public class TildeTreeReader {

@@ -29,7 +29,7 @@ package clus.algo.rules;
 import java.io.IOException;
 
 import clus.data.rows.DataTuple;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.model.ClusModel;
 import clus.model.processor.ClusModelProcessor;
 

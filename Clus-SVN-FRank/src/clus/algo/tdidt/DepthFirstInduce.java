@@ -107,7 +107,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 
     public boolean initSelectorAndStopCrit(ClusNode node, RowData data) {
-        int max = getSettings().getTree().getTreeMaxDepth();
+        int max = getSettings().getConstraints().getTreeMaxDepth();
         if (max != -1 && node.getLevel() >= max) { return true; }
         return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
     }

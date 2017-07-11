@@ -38,10 +38,10 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleROSInfo;
-import clus.jeans.util.StringUtils;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.util.ClusFormat;
+import clus.util.jeans.util.StringUtils;
 
 
 public abstract class RegressionStatBase extends ClusStatistic {

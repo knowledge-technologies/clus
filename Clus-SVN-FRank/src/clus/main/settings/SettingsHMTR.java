@@ -8,10 +8,10 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.hierarchicalmtr.ClusHMTRNode;
-import clus.jeans.io.ini.INIFileDouble;
-import clus.jeans.io.ini.INIFileNominal;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.ini.INIFileString;
+import clus.util.jeans.io.ini.INIFileDouble;
+import clus.util.jeans.io.ini.INIFileNominal;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileString;
 
 
 public class SettingsHMTR implements ISettings {

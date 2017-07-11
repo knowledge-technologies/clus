@@ -26,11 +26,11 @@ import java.io.IOException;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusSchema;
-import clus.jeans.util.MyArray;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.util.MyArray;
 
 
 public class ModelProcessorCollection extends MyArray {

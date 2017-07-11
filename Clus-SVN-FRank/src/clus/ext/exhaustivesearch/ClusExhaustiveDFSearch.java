@@ -43,9 +43,6 @@ import clus.data.type.NumericAttrType;
 import clus.ext.beamsearch.ClusBeam;
 import clus.ext.beamsearch.ClusBeamModel;
 import clus.ext.constraint.ClusConstraintFile;
-import clus.jeans.math.MDouble;
-import clus.jeans.util.MyArray;
-import clus.jeans.util.StringUtils;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.ISettings;
@@ -53,6 +50,9 @@ import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.math.MDouble;
+import clus.util.jeans.util.MyArray;
+import clus.util.jeans.util.StringUtils;
 
 
 public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {

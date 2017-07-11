@@ -39,7 +39,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.data.type.StringAttrType;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesTuple;
@@ -47,11 +47,6 @@ import clus.ext.hierarchical.ClassesValue;
 import clus.ext.hierarchical.HierClassTresholdPruner;
 import clus.ext.hierarchical.HierClassWiseAccuracy;
 import clus.ext.hierarchical.WHTDStatistic;
-import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import clus.jeans.util.FileUtil;
-import clus.jeans.util.array.StringTable;
-import clus.jeans.util.cmdline.CMDLineArgs;
-import clus.jeans.util.cmdline.CMDLineArgsProvider;
 import clus.main.ClusModelInfoList;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
@@ -63,6 +58,11 @@ import clus.model.modelio.ClusModelCollectionIO;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.util.ClusException;
+import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.util.jeans.util.FileUtil;
+import clus.util.jeans.util.array.StringTable;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
+import clus.util.jeans.util.cmdline.CMDLineArgsProvider;
 
 
 public class HMCAverageSingleClass implements CMDLineArgsProvider {

@@ -46,15 +46,14 @@ import clus.data.rows.RowData;
 import clus.data.rows.TupleIterator;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
-import clus.error.ClusErrorList;
-import clus.error.ComponentError;
-import clus.ext.ensembles.containters.OneBagResults;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ComponentError;
+import clus.ext.ensembles.containers.OneBagResults;
 import clus.ext.ensembles.induceCallables.InduceExtraTreeCallable;
 import clus.ext.ensembles.induceCallables.InduceOneBagCallable;
 import clus.ext.featureRanking.ClusEnsembleFeatureRanking;
 import clus.ext.featureRanking.ClusFeatureRanking;
 import clus.heuristic.ClusHeuristic;
-import clus.jeans.resource.ResourceInfo;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
@@ -76,6 +75,7 @@ import clus.util.ClusException;
 import clus.util.ClusRandom;
 import clus.util.ClusRandomNonstatic;
 import clus.util.cloner.Cloner;
+import clus.util.jeans.resource.ResourceInfo;
 import clus.util.tools.optimization.GDProbl;
 
 
@@ -585,7 +585,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (sett.isEnsembleRandomDepth()) {
             // Random depth for the ensembles
             // The original Max depth is used as the average
-            origMaxDepth = getSettings().getTree().getTreeMaxDepth();
+            origMaxDepth = getSettings().getConstraints().getTreeMaxDepth();
         }
         BaggingSelection msel = null;
         int[] bagSelections = sett.getBagSelection().getIntVectorSorted();
@@ -703,7 +703,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         // Restore the old maxDepth
         if (origMaxDepth != -1) {
-            getSettings().getTree().setTreeMaxDepth(origMaxDepth);
+            getSettings().getConstraints().setTreeMaxDepth(origMaxDepth);
         }
 
     }
@@ -851,7 +851,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         if (sett.isEnsembleRandomDepth()) {
             // Set random tree max depth
-            getSettings().getTree().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(
+            getSettings().getConstraints().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(
                     // m_randTreeDepth.nextDouble(),
                     rnd.nextDouble(ClusRandomNonstatic.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
         }

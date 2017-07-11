@@ -2,13 +2,13 @@
 package clus.main.settings;
 
 import clus.heuristic.FTest;
-import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileDouble;
-import clus.jeans.io.ini.INIFileInt;
-import clus.jeans.io.ini.INIFileNominal;
-import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.range.IntRangeCheck;
+import clus.util.jeans.io.ini.INIFileBool;
+import clus.util.jeans.io.ini.INIFileDouble;
+import clus.util.jeans.io.ini.INIFileInt;
+import clus.util.jeans.io.ini.INIFileNominal;
+import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.range.IntRangeCheck;
 
 
 public class SettingsTree implements ISettings {
@@ -17,51 +17,65 @@ public class SettingsTree implements ISettings {
      * Section: Tree *
      ***********************************************************************/
 
-    public final static String[] TREE_OPTIMIZE_VALUES = { "NoClusteringStats", "NoInodeStats" };
+    private final String[] TREE_OPTIMIZE_VALUES = { "NoClusteringStats", "NoInodeStats" };
     public final static int[] TREE_OPTIMIZE_NONE = {};
     public final static int TREE_OPTIMIZE_NO_CLUSTERING_STATS = 0;
     public final static int TREE_OPTIMIZE_NO_INODE_STATS = 1;
 
+    //@!TODO
+    /* consider creating new section Structured Data for heuristic and structured data distance measures */
+    // TODO: good suggestion because this is a mess; martinb
+    private final String[] HEURISTIC_COMPLEXITY = { "N2", "LOG", "LINEAR", "NPAIRS", "TEST" };
+
     // Added by Eduardo Costa - 06/06/2011
 
-    public final static String[] INDUCTION_ORDER = { "DepthFirst", "BestFirst" };
+    private final String[] INDUCTION_ORDER = { "DepthFirst", "BestFirst" };
     public final static int DEPTH_FIRST = 0;
     public final static int BEST_FIRST = 1;
 
-    protected INIFileNominal m_InductionOrder;
+    private INIFileNominal m_InductionOrder;
 
     // end block added by Eduardo
 
     // Added by Eduardo Costa - 27/09/2011
 
-    public final static String[] ENTROPY_TYPE = { "StandardEntropy", "ModifiedEntropy" };
+    private final String[] ENTROPY_TYPE = { "StandardEntropy", "ModifiedEntropy" };
     public final static int STANDARD_ENTROPY = 0;
     public final static int MODIFIED_ENTROPY = 1;
 
-    protected INIFileNominal m_EntropyType;
+    private INIFileNominal m_EntropyType;
 
-    protected INIFileBool m_ConsiderUnlableInstancesInIGCalc;
+    private INIFileBool m_ConsiderUnlableInstancesInIGCalc;
 
     // end block added by Eduardo
 
-    protected INIFileSection m_SectionTree;
-    protected INIFileNominal m_Heuristic;
-    protected INIFileInt m_TreeMaxDepth;
-    protected INIFileBool m_BinarySplit;
-    protected INIFileBool m_AlternativeSplits;
-    protected INIFileNominalOrDoubleOrVector m_FTest;
-    protected INIFileNominal m_PruningMethod;
-    protected INIFileBool m_1SERule;
-    protected INIFileBool m_MSENominal;
-    protected INIFileDouble m_M5PruningMult;
+    private INIFileSection m_SectionTree;
+    private INIFileNominal m_Heuristic;
+    private INIFileNominal m_SetDistance;
+    private INIFileNominal m_TupleDistance;
+    private INIFileNominal m_TSDistance;
+    private INIFileNominal m_HeuristicComplexity;
+
+    private INIFileBool m_BinarySplit;
+    private INIFileBool m_AlternativeSplits;
+    private INIFileNominalOrDoubleOrVector m_FTest;
+    private INIFileNominal m_PruningMethod;
+    private INIFileBool m_1SERule;
+    private INIFileBool m_MSENominal;
+    private INIFileDouble m_M5PruningMult;
     /** Do we transform leaves or all nodes of tree to rules */
-    protected INIFileNominal m_RulesFromTree;
-    protected INIFileNominal m_TreeOptimize;
+    private INIFileNominal m_RulesFromTree;
+    private INIFileNominal m_TreeOptimize;
     /**
      * Amount of datapoints to include for calculating split heuristic
      * Datapoints will be selected randomly
      **/
-    protected INIFileInt m_TreeSplitSampling;
+    private INIFileInt m_TreeSplitSampling;
+
+
+    public int getHeuristicComplexity() {
+        return m_HeuristicComplexity.getValue();
+    }
 
 
     public void setSectionTreeEnabled(boolean enable) {
@@ -81,6 +95,46 @@ public class SettingsTree implements ISettings {
 
     public boolean checkHeuristic(String value) {
         return m_Heuristic.getStringSingle().equals(value);
+    }
+
+
+    public void setTSDistance(int value) {
+        m_TSDistance.setSingleValue(value);
+    }
+
+
+    public int getTSDistance() {
+        return m_TSDistance.getValue();
+    }
+
+
+    public int getSetDistance() {
+        return m_SetDistance.getValue();
+    }
+
+
+    public void setSetDistance(int value) {
+        m_SetDistance.setSingleValue(value);
+    }
+
+
+    public boolean checkSetDistance(String value) {
+        return m_SetDistance.getStringSingle().equals(value);
+    }
+
+
+    public int getTupleDistance() {
+        return m_TupleDistance.getValue();
+    }
+
+
+    public void setTupleDistance(int value) {
+        m_TupleDistance.setSingleValue(value);
+    }
+
+
+    public boolean checkTupleDistance(String value) {
+        return m_TupleDistance.getStringSingle().equals(value);
     }
 
 
@@ -124,11 +178,6 @@ public class SettingsTree implements ISettings {
     // end block added by Eduardo
 
 
-    public int getTreeMaxDepth() {
-        return m_TreeMaxDepth.getValue();
-    }
-
-
     /**
      * To find the best split, heuristic can be calculated on a
      * random sample of the training set to conserve time
@@ -149,15 +198,6 @@ public class SettingsTree implements ISettings {
      */
     public void setTreeSplitSampling(int value) {
         m_TreeSplitSampling.setValue(value);
-    }
-
-
-    /**
-     * For tree to rules procedure, we want to induce a tree without maximum
-     * depth
-     */
-    public void setTreeMaxDepth(int value) {
-        m_TreeMaxDepth.setValue(value);
     }
 
 
@@ -218,6 +258,11 @@ public class SettingsTree implements ISettings {
     }
 
 
+    public void setTreeSplitSamplingNamedValue(int value, String name) {
+        m_TreeSplitSampling.setNamedValue(value, name);
+    }
+
+
     /**
      * If we transform the induced trees to rules.
      */
@@ -234,7 +279,7 @@ public class SettingsTree implements ISettings {
      * Section: Tree - Heuristic *
      ***********************************************************************/
 
-    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing" };
+    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing", "StructuredData" };
 
     public final static int HEURISTIC_DEFAULT = 0;
     public final static int HEURISTIC_REDUCED_ERROR = 1;
@@ -260,10 +305,40 @@ public class SettingsTree implements ISettings {
     public static boolean ONE_NOMINAL = true;
 
     /***********************************************************************
+     * Section: Tree - SetDistance *
+     ***********************************************************************/
+
+    private final String[] SETDISTANCES = { "GSMDistance", "HammingLoss", "Jaccard", "Matching", "Euclidean" };
+
+    public final static int SETDISTANCES_GSM = 0;
+    public final static int SETDISTANCES_HAMMING = 1;
+    public final static int SETDISTANCES_JACCARD = 2;
+    public final static int SETDISTANCES_MATCHING = 3;
+    public final static int SETDISTANCES_EUCLIDEAN = 4;
+
+    /***********************************************************************
+     * Section: Tree - TupleDistance *
+     ***********************************************************************/
+
+    private final String[] TUPLEDISTANCES = { "Euclidean", "Minkowski" };
+    public final static int TUPLEDISTANCES_EUCLIDEAN = 0;
+    public final static int TUPLEDISTANCES_MINKOWSKI = 1;
+
+    /***********************************************************************
+     * Section: Tree - TimeSeriesDistance *
+     ***********************************************************************/
+
+    private final String[] TIME_SERIES_DISTANCE_MEASURE = { "DTW", "QDM", "TSC" };
+
+    public final static int TIME_SERIES_DISTANCE_MEASURE_DTW = 0;
+    public final static int TIME_SERIES_DISTANCE_MEASURE_QDM = 1;
+    public final static int TIME_SERIES_DISTANCE_MEASURE_TSC = 2;
+
+    /***********************************************************************
      * Section: Tree - Pruning method *
      ***********************************************************************/
 
-    public final static String[] PRUNING_METHODS = { "Default", "None", "C4.5", "M5", "M5Multi", "ReducedErrorVSB", "Garofalakis", "GarofalakisVSB", "CartVSB", "CartMaxSize", "EncodingCost", "CategoryUtility" };
+    private final String[] PRUNING_METHODS = { "Default", "None", "C4.5", "M5", "M5Multi", "ReducedErrorVSB", "Garofalakis", "GarofalakisVSB", "CartVSB", "CartMaxSize", "EncodingCost", "CategoryUtility" };
 
     public final static int PRUNING_METHOD_DEFAULT = 0;
     public final static int PRUNING_METHOD_NONE = 1;
@@ -279,10 +354,29 @@ public class SettingsTree implements ISettings {
     public final static int PRUNING_METHOD_CATEGORY_UTILITY = 11;
 
 
+    public void setM5PruningMultEnabled(boolean value) {
+        m_M5PruningMult.setEnabled(value);
+    }
+
+
+    public void set1SERuleEnabled(boolean value) {
+        m_1SERule.setEnabled(value);
+    }
+
+    public void setFTestEnabled(boolean value) {
+        m_FTest.setEnabled(value);
+    }
+
     @Override
     public INIFileSection create() {
         m_SectionTree = new INIFileSection("Tree");
         m_SectionTree.addNode(m_Heuristic = new INIFileNominal("Heuristic", HEURISTICS, HEURISTIC_DEFAULT));
+
+        m_SectionTree.addNode(m_HeuristicComplexity = new INIFileNominal("HeuristicComlexity", HEURISTIC_COMPLEXITY, 0));
+        m_SectionTree.addNode(m_SetDistance = new INIFileNominal("SetDistance", SETDISTANCES, SETDISTANCES_GSM));
+        m_SectionTree.addNode(m_TupleDistance = new INIFileNominal("TupleDistance", TUPLEDISTANCES, TUPLEDISTANCES_EUCLIDEAN));
+        m_SectionTree.addNode(m_TSDistance = new INIFileNominal("TSDistance", TIME_SERIES_DISTANCE_MEASURE, TIME_SERIES_DISTANCE_MEASURE_DTW));
+
         m_SectionTree.addNode(m_PruningMethod = new INIFileNominal("PruningMethod", PRUNING_METHODS, PRUNING_METHOD_DEFAULT));
         m_SectionTree.addNode(m_M5PruningMult = new INIFileDouble("M5PruningMult", 2.0));
         m_SectionTree.addNode(m_1SERule = new INIFileBool("1-SE-Rule", false));
@@ -300,7 +394,7 @@ public class SettingsTree implements ISettings {
         m_SectionTree.addNode(m_InductionOrder = new INIFileNominal("InductionOrder", INDUCTION_ORDER, DEPTH_FIRST));
 
         // added by Eduardo Costa 29/09/2011
-        m_SectionTree.addNode(m_EntropyType = new INIFileNominal("EntropyType", ENTROPY_TYPE, 0));
+        m_SectionTree.addNode(m_EntropyType = new INIFileNominal("EntropyType", ENTROPY_TYPE, STANDARD_ENTROPY));
         m_SectionTree.addNode(m_ConsiderUnlableInstancesInIGCalc = new INIFileBool("ConsiderUnlableInstancesInIGCalc", false));
 
         return m_SectionTree;

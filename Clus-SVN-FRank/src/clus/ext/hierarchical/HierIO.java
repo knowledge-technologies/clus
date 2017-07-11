@@ -28,10 +28,10 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.PrintWriter;
 
-import clus.jeans.util.StringUtils;
-import clus.jeans.util.array.StringTable;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.jeans.util.StringUtils;
+import clus.util.jeans.util.array.StringTable;
 
 
 public class HierIO {

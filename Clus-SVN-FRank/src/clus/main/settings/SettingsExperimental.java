@@ -1,8 +1,8 @@
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileInt;
-import clus.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileBool;
+import clus.util.jeans.io.ini.INIFileInt;
+import clus.util.jeans.io.ini.INIFileSection;
 
 public class SettingsExperimental implements ISettings {
 

@@ -29,12 +29,12 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Stack;
 
-import clus.jeans.math.SingleStat;
-import clus.jeans.tree.Node;
-import clus.jeans.util.StringUtils;
-import clus.jeans.util.compound.IndexedItem;
 import clus.main.settings.Settings;
 import clus.util.ClusFormat;
+import clus.util.jeans.math.SingleStat;
+import clus.util.jeans.tree.Node;
+import clus.util.jeans.util.StringUtils;
+import clus.util.jeans.util.compound.IndexedItem;
 
 
 public class ClassTerm extends IndexedItem implements Node, Comparable {

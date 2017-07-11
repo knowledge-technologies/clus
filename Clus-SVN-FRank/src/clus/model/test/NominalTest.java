@@ -26,9 +26,9 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
-import clus.jeans.util.sort.DoubleIndexSorter;
 import clus.main.settings.Settings;
 import clus.util.ClusRandom;
+import clus.util.jeans.util.sort.DoubleIndexSorter;
 
 
 public class NominalTest extends NodeTest {

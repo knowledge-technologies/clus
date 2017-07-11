@@ -25,7 +25,7 @@ package clus.model.pmml.tildepmml;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import clus.jeans.util.StringUtils;
+import clus.util.jeans.util.StringUtils;
 
 
 public class CompoundPredicate {

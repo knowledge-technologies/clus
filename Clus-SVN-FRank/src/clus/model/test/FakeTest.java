@@ -24,8 +24,8 @@ package clus.model.test;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
-import clus.jeans.util.MyArray;
 import clus.main.settings.Settings;
+import clus.util.jeans.util.MyArray;
 
 
 public class FakeTest extends NodeTest {

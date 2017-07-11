@@ -29,12 +29,12 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
 import clus.error.ClusSumError;
 import clus.error.MSError;
 import clus.error.MSNominalError;
 import clus.error.MisclassificationError;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.util.ClusException;
 
 

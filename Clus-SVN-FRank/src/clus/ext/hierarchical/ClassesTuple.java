@@ -29,9 +29,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.StringTokenizer;
 
-import clus.jeans.util.array.StringTable;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
+import clus.util.jeans.util.array.StringTable;
 
 
 public class ClassesTuple implements Serializable {

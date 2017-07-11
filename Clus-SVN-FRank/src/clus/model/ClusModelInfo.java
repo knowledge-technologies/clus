@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.Serializable;
 
 import clus.data.type.ClusSchema;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.model.processor.ClusEnsemblePredictionWriter;

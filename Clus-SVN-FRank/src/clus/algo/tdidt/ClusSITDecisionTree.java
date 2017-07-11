@@ -10,13 +10,11 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.error.Accuracy;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
-import clus.error.ClusErrorOutput;
 import clus.error.PearsonCorrelation;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusErrorOutput;
 import clus.ext.hierarchical.HierClassWiseAccuracy;
-import clus.jeans.resource.ResourceInfo;
-import clus.jeans.util.IntervalCollection;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.ClusSummary;
@@ -28,6 +26,8 @@ import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
+import clus.util.jeans.resource.ResourceInfo;
+import clus.util.jeans.util.IntervalCollection;
 
 
 public class ClusSITDecisionTree extends ClusDecisionTree {

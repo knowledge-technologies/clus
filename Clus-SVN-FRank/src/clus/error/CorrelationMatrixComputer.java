@@ -35,6 +35,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
+import clus.error.common.ClusErrorList;
 import clus.util.ClusFormat;
 
 

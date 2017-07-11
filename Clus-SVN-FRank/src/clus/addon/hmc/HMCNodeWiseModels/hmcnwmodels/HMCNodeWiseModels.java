@@ -46,9 +46,6 @@ import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesTuple;
 import clus.ext.hierarchical.ClassesValue;
-import clus.jeans.util.array.StringTable;
-import clus.jeans.util.cmdline.CMDLineArgs;
-import clus.jeans.util.cmdline.CMDLineArgsProvider;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
@@ -56,6 +53,9 @@ import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.modelio.ClusModelCollectionIO;
 import clus.util.ClusException;
+import clus.util.jeans.util.array.StringTable;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
+import clus.util.jeans.util.cmdline.CMDLineArgsProvider;
 
 
 public class HMCNodeWiseModels implements CMDLineArgsProvider {

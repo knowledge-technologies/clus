@@ -28,7 +28,7 @@ import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.jeans.util.array.MDoubleArray;
+import clus.util.jeans.util.array.MDoubleArray;
 
 
 public class HierMatrixOutput {

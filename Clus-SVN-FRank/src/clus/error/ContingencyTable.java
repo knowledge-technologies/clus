@@ -26,10 +26,14 @@ import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
-import clus.jeans.util.StringUtils;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusNominalError;
+import clus.error.common.ComponentError;
 import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
+import clus.util.jeans.util.StringUtils;
 
 
 public class ContingencyTable extends ClusNominalError implements ComponentError {

@@ -8,13 +8,13 @@ import java.util.HashMap;
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.jeans.list.BitList;
-import clus.jeans.math.matrix.MSymMatrix;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsPhylogeny;
 import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 import clus.statistic.GeneticDistanceStat;
+import clus.util.jeans.list.BitList;
+import clus.util.jeans.math.matrix.MSymMatrix;
 
 
 public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {

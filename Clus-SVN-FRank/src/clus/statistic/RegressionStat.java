@@ -29,9 +29,9 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.type.NumericAttrType;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
-import clus.jeans.math.MathUtil;
 import clus.main.settings.Settings;
 import clus.util.ClusFormat;
+import clus.util.jeans.math.MathUtil;
 
 
 public class RegressionStat extends RegressionStatBase implements ComponentStatistic {

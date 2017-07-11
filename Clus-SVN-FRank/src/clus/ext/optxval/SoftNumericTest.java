@@ -29,13 +29,13 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NumericAttrType;
-import clus.jeans.util.array.MyIntArray;
-import clus.jeans.util.sort.DoubleIndexSorter;
 import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.model.test.NumericTest;
 import clus.model.test.SoftTest;
 import clus.util.ClusFormat;
+import clus.util.jeans.util.array.MyIntArray;
+import clus.util.jeans.util.sort.DoubleIndexSorter;
 
 
 public class SoftNumericTest extends SoftTest {

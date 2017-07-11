@@ -31,6 +31,8 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
 import clus.main.settings.Settings;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusDistance;

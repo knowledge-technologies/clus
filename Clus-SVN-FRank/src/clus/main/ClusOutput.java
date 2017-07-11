@@ -37,18 +37,18 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.ext.ensembles.ClusForest;
 import clus.ext.ensembles.ClusOOBErrorEstimate;
-import clus.jeans.resource.ResourceInfo;
-import clus.jeans.util.FileUtil;
-import clus.jeans.util.StringUtils;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.jeans.resource.ResourceInfo;
+import clus.util.jeans.util.FileUtil;
+import clus.util.jeans.util.StringUtils;
 
 
 /**
@@ -64,7 +64,6 @@ public class ClusOutput {
     protected String m_Fname;
     protected Settings m_Sett2;
     protected StringWriter m_StrWrt;
-
 
     public ClusOutput(String fname, ClusSchema schema, Settings sett) throws IOException {
         m_Schema = schema;

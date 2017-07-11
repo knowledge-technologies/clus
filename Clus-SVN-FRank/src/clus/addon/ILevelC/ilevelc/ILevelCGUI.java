@@ -52,9 +52,9 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.ext.ilevelc.DerivedConstraintsComputer;
 import clus.ext.ilevelc.ILevelConstraint;
-import clus.jeans.util.FileUtil;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
+import clus.util.jeans.util.FileUtil;
 
 
 public class ILevelCGUI extends JFrame {

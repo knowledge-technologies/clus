@@ -22,8 +22,8 @@
 
 package clus.gui.statvis;
 
-import clus.jeans.graph.swing.drawable.Drawable;
 import clus.statistic.ClusStatistic;
+import clus.util.jeans.graph.swing.drawable.Drawable;
 
 
 public interface ClusStatVisualizer {

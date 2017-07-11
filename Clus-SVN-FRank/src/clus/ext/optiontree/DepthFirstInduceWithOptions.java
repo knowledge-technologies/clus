@@ -241,7 +241,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
 
     private boolean initSelectorAndStopCrit(ClusSplitNode node, RowData data) {
         // if (data.getSumWeights() <= 50) return true;
-        int max = getSettings().getTree().getTreeMaxDepth();
+        int max = getSettings().getConstraints().getTreeMaxDepth();
         if (max != -1 && node.getLevel() >= max)
             return true;
         if (getSettings().getModel().getMinimalNbExamples() > 0 && data.getSumWeights() < getSettings().getModel().getMinimalNbExamples())

@@ -10,13 +10,13 @@ import clus.data.io.ARFFFile;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
-import clus.jeans.util.MyArray;
-import clus.jeans.util.StringUtils;
 import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStatBase;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.jeans.util.MyArray;
+import clus.util.jeans.util.StringUtils;
 
 
 /**

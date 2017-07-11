@@ -4,7 +4,7 @@ package clus.main.settings;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
-import clus.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileSection;
 
 
 public interface ISettings {

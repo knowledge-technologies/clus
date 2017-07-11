@@ -27,10 +27,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
-import clus.jeans.tree.CompleteTreeIterator;
-import clus.jeans.util.MStreamTokenizer;
-import clus.jeans.util.array.StringTable;
 import clus.util.ClusException;
+import clus.util.jeans.tree.CompleteTreeIterator;
+import clus.util.jeans.util.MStreamTokenizer;
+import clus.util.jeans.util.array.StringTable;
 
 
 public class ClassHierarchyIO {

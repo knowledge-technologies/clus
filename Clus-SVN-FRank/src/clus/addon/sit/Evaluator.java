@@ -9,12 +9,12 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.error.ClusErrorList;
 import clus.error.MSError;
 import clus.error.MisclassificationError;
 import clus.error.PearsonCorrelation;
 import clus.error.RMSError;
 import clus.error.RelativeError;
+import clus.error.common.ClusErrorList;
 
 
 /**

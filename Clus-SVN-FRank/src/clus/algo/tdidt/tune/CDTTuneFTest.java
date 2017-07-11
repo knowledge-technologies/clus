@@ -37,11 +37,10 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.error.Accuracy;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
 import clus.error.RMSError;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.HierErrorMeasures;
-import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.ClusSummary;
@@ -54,6 +53,7 @@ import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 // added 18-05-06

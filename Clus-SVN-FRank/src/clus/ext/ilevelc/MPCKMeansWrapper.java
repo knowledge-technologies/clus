@@ -38,10 +38,10 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
-import clus.jeans.util.FileUtil;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.util.ClusException;
+import clus.util.jeans.util.FileUtil;
 
 
 public class MPCKMeansWrapper {

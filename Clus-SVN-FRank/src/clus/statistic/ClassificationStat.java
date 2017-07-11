@@ -40,13 +40,13 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleROSInfo;
-import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import clus.jeans.math.MathUtil;
-import clus.jeans.util.StringUtils;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsEnsemble;
 import clus.util.ClusFormat;
+import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.util.jeans.math.MathUtil;
+import clus.util.jeans.util.StringUtils;
 
 
 /**

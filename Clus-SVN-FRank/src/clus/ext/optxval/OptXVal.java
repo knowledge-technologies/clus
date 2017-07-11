@@ -32,10 +32,7 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
-import clus.error.multiscore.MultiScore;
-import clus.jeans.resource.ResourceInfo;
-import clus.jeans.util.array.MDoubleArray;
-import clus.jeans.util.cmdline.CMDLineArgs;
+import clus.error.common.multiscore.MultiScore;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.ClusStat;
@@ -44,6 +41,9 @@ import clus.main.settings.Settings;
 import clus.selection.XValMainSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
+import clus.util.jeans.resource.ResourceInfo;
+import clus.util.jeans.util.array.MDoubleArray;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
 import clus.util.tools.debug.Debug;
 
 

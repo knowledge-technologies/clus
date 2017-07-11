@@ -30,10 +30,10 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.StringAttrType;
-import clus.jeans.tree.LeafTreeIterator;
-import clus.jeans.util.MyArray;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
+import clus.util.jeans.tree.LeafTreeIterator;
+import clus.util.jeans.util.MyArray;
 
 
 public class NodeExampleCollector extends BasicExampleCollector {

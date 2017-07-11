@@ -4,6 +4,8 @@ package clus.error;
 import java.util.ArrayList;
 
 import clus.data.rows.DataTuple;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.statistic.ClusStatistic;
 import clus.statistic.CombStat;
 

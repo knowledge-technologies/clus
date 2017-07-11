@@ -1,9 +1,9 @@
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileInt;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.ini.INIFileString;
+import clus.util.jeans.io.ini.INIFileBool;
+import clus.util.jeans.io.ini.INIFileInt;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileString;
 
 public class SettingsKNNTree implements ISettings {
     /***********************************************************************
@@ -11,13 +11,17 @@ public class SettingsKNNTree implements ISettings {
      ***********************************************************************/
 
     INIFileSection m_SectionKNNT;
-    public static INIFileInt kNNT_k;
-    public static INIFileString kNNT_vectDist;
-    public static INIFileBool kNNT_distWeighted;
-    public static INIFileBool kNNT_normalized;
-    public static INIFileBool kNNT_attrWeighted;
+    private INIFileInt kNNT_k;
+    private INIFileString kNNT_vectDist;
+    private INIFileBool kNNT_distWeighted;
+    private INIFileBool kNNT_normalized;
+    private INIFileBool kNNT_attrWeighted;
 
 
+    public boolean getKNNTNormalized() {
+        return kNNT_normalized.getValue();
+    }
+    
     public void setSectionKNNTEnabled(boolean enable) {
         m_SectionKNNT.setEnabled(enable);
     }

@@ -35,13 +35,13 @@ import clus.algo.tdidt.ClusDecisionTree;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
-import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsRules;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 public class ClusRuleClassifier extends ClusInductionAlgorithmType {

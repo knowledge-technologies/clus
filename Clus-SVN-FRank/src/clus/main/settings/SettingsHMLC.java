@@ -1,13 +1,13 @@
 package clus.main.settings;
 
 import clus.ext.hierarchical.ClassesValue;
-import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileDouble;
-import clus.jeans.io.ini.INIFileNominal;
-import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.ini.INIFileString;
-import clus.jeans.util.StringUtils;
+import clus.util.jeans.io.ini.INIFileBool;
+import clus.util.jeans.io.ini.INIFileDouble;
+import clus.util.jeans.io.ini.INIFileNominal;
+import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileString;
+import clus.util.jeans.util.StringUtils;
 
 public class SettingsHMLC implements ISettings {
     /***********************************************************************
@@ -92,6 +92,10 @@ public class SettingsHMLC implements ISettings {
     }
 
 
+    public boolean isCalError() {
+        return m_CalErr.getValue();
+    }
+    
     public INIFileNominalOrDoubleOrVector getClassificationThresholds() {
         return m_HierClassThreshold;
     }

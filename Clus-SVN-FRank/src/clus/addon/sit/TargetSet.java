@@ -5,7 +5,7 @@ import java.util.Iterator;
 
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
-import clus.jeans.util.IntervalCollection;
+import clus.util.jeans.util.IntervalCollection;
 
 
 public class TargetSet extends java.util.TreeSet {

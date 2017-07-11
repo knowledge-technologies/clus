@@ -34,7 +34,6 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
-import clus.jeans.util.array.MDoubleArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
@@ -42,6 +41,7 @@ import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.util.array.MDoubleArray;
 
 
 // Method based on:

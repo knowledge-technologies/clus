@@ -4,9 +4,9 @@ package clus.error;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import clus.jeans.math.MathUtil;
-import clus.jeans.util.compound.DoubleBooleanCount;
 import clus.main.settings.Settings;
+import clus.util.jeans.math.MathUtil;
+import clus.util.jeans.util.compound.DoubleBooleanCount;
 
 
 public class ROCAndPRCurve implements Serializable { // does not implement ComponentError - would this make sense?
@@ -18,8 +18,8 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
 
     protected transient boolean m_ExtendPR;
     protected transient int m_PrevTP, m_PrevFP;
-    protected transient ArrayList m_ROC;
-    protected transient ArrayList m_PR;
+    protected transient ArrayList<double[]> m_ROC;
+    protected transient ArrayList<double[]> m_PR;
     protected transient BinaryPredictionList m_Values;
     protected transient double[] m_PrecisionAtRecall;
 
@@ -35,12 +35,12 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
     }
 
 
-    public ArrayList getROCCurve() {
+    public ArrayList<double[]> getROCCurve() {
         return m_ROC;
     }
 
 
-    public ArrayList getPRCurve() {
+    public ArrayList<double[]> getPRCurve() {
         return m_PR;
     }
 
@@ -57,8 +57,8 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
 
     public void computeCurves() {
         // Create new curves
-        m_ROC = new ArrayList();
-        m_PR = new ArrayList();
+        m_ROC = new ArrayList<double[]>();
+        m_PR = new ArrayList<double[]>();
         m_AreaPR = 0.0;
         m_AreaROC = 0.5;
         if (m_Values.getNbPos() != 0) {
@@ -155,7 +155,7 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
     }
 
 
-    public double computeArea(ArrayList curve) {
+    public double computeArea(ArrayList<double[]> curve) {
         double area = 0.0;
         // System.out.println("Computing areas");
         if (curve.size() > 0) {

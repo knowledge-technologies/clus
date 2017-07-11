@@ -26,14 +26,14 @@ import java.io.IOException;
 
 import clus.Clus;
 import clus.data.type.ClusSchema;
-import clus.jeans.resource.ResourceInfo;
-import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.jeans.resource.ResourceInfo;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 /**

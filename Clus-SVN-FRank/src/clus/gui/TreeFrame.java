@@ -71,15 +71,15 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.type.ClusSchema;
 import clus.ext.hierarchical.ClassHierarchy;
-import clus.jeans.graph.PercentLayout;
-import clus.jeans.graph.WindowClosingListener;
-import clus.jeans.util.FileUtil;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.jeans.graph.PercentLayout;
+import clus.util.jeans.graph.WindowClosingListener;
+import clus.util.jeans.util.FileUtil;
 
 
 public class TreeFrame extends JFrame {

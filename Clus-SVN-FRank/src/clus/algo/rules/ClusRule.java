@@ -43,10 +43,9 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 // import clus.ext.ilevelc.ILevelCStatistic;
 import clus.ext.ilevelc.ILevelConstraint;
-import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
@@ -60,6 +59,7 @@ import clus.statistic.RegressionStat;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.jeans.util.MyArray;
 
 
 public class ClusRule implements ClusModel, Serializable {

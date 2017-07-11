@@ -28,9 +28,9 @@ import org.apache.commons.math.MathException;
 import org.apache.commons.math.distribution.DistributionFactory;
 import org.apache.commons.math.distribution.FDistribution;
 
-import clus.jeans.math.MathUtil;
 import clus.main.settings.SettingsTree;
 import clus.util.ClusFormat;
+import clus.util.jeans.math.MathUtil;
 
 
 public class FTest {

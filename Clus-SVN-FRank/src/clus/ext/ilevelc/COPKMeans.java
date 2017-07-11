@@ -34,11 +34,11 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.jeans.util.DisjointSetForest;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.statistic.RegressionStat;
 import clus.util.ClusRandom;
+import clus.util.jeans.util.DisjointSetForest;
 
 
 public class COPKMeans {

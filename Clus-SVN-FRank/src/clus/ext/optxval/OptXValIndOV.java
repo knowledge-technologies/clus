@@ -31,8 +31,6 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.jeans.resource.ResourceInfo;
-import clus.jeans.util.list.MyListIter;
 import clus.main.ClusStat;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsTree;
@@ -40,6 +38,8 @@ import clus.model.test.NodeTest;
 import clus.model.test.SoftTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.resource.ResourceInfo;
+import clus.util.jeans.util.list.MyListIter;
 import clus.util.tools.debug.Debug;
 
 

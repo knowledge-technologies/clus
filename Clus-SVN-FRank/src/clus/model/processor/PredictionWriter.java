@@ -32,13 +32,13 @@ import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.StringAttrType;
-import clus.jeans.util.MyArray;
-import clus.jeans.util.StringUtils;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.util.MyArray;
+import clus.util.jeans.util.StringUtils;
 
 
 public class PredictionWriter extends ClusModelProcessor {

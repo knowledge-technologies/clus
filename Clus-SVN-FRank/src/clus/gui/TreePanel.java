@@ -32,14 +32,6 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.gui.statvis.ClassStatVis;
 import clus.gui.statvis.ClusStatVisualizer;
-import clus.jeans.graph.swing.drawable.Drawable;
-import clus.jeans.graph.swing.drawable.DrawableCanvas;
-import clus.jeans.graph.swing.drawable.DrawableScrollableCanvas;
-import clus.jeans.graph.tree.MyDrawableNode;
-import clus.jeans.graph.tree.MyNodePainter;
-import clus.jeans.graph.tree.NodePainterSettings;
-import clus.jeans.graph.tree.TreeRenderer;
-import clus.jeans.tree.Node;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
@@ -47,6 +39,14 @@ import clus.pruning.SizeConstraintPruning;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.graph.swing.drawable.Drawable;
+import clus.util.jeans.graph.swing.drawable.DrawableCanvas;
+import clus.util.jeans.graph.swing.drawable.DrawableScrollableCanvas;
+import clus.util.jeans.graph.tree.MyDrawableNode;
+import clus.util.jeans.graph.tree.MyNodePainter;
+import clus.util.jeans.graph.tree.NodePainterSettings;
+import clus.util.jeans.graph.tree.TreeRenderer;
+import clus.util.jeans.tree.Node;
 
 
 public class TreePanel extends JPanel {

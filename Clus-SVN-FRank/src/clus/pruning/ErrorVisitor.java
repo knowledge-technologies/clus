@@ -26,7 +26,7 @@
 
 package clus.pruning;
 
-import clus.error.ClusError;
+import clus.error.common.ClusError;
 
 
 public class ErrorVisitor {

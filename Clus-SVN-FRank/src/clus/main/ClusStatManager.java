@@ -47,11 +47,12 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
+import clus.data.type.SetAttrType;
 import clus.data.type.TimeSeriesAttrType;
+import clus.data.type.TupleAttrType;
 import clus.error.AbsoluteError;
 import clus.error.Accuracy;
 import clus.error.AvgDistancesError;
-import clus.error.ClusErrorList;
 import clus.error.ContingencyTable;
 import clus.error.ICVPairwiseDistancesError;
 import clus.error.MSError;
@@ -60,6 +61,8 @@ import clus.error.MisclassificationError;
 import clus.error.PearsonCorrelation;
 import clus.error.RMSError;
 import clus.error.RRMSError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.multiscore.MultiScore;
 import clus.error.mlc.AveragePrecision;
 import clus.error.mlc.Coverage;
 import clus.error.mlc.HammingLoss;
@@ -80,7 +83,9 @@ import clus.error.mlc.MicroRecall;
 import clus.error.mlc.OneError;
 import clus.error.mlc.RankingLoss;
 import clus.error.mlc.SubsetAccuracy;
-import clus.error.multiscore.MultiScore;
+import clus.error.sets.F1Score;
+import clus.error.sets.Precision;
+import clus.error.sets.Recall;
 import clus.ext.beamsearch.ClusBeamHeuristicError;
 import clus.ext.beamsearch.ClusBeamHeuristicMEstimate;
 import clus.ext.beamsearch.ClusBeamHeuristicMorishita;
@@ -101,8 +106,14 @@ import clus.ext.hierarchical.WHTDStatistic;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.ilevelc.ILevelCRandIndex;
 import clus.ext.ilevelc.ILevelCStatistic;
+import clus.ext.nominal.NominalDistance;
 import clus.ext.semisupervised.ModifiedGainHeuristic;
 import clus.ext.semisupervised.SemiSupMinLabeledWeightStopCrit;
+import clus.ext.sets.SetStatistic;
+import clus.ext.sets.distances.EuclideanDistance;
+import clus.ext.sets.distances.GSMDistance;
+import clus.ext.sets.distances.HammingLossDistance;
+import clus.ext.sets.distances.JaccardDistance;
 import clus.ext.sspd.SSPDMatrix;
 import clus.ext.timeseries.DTWTimeSeriesDist;
 import clus.ext.timeseries.QDMTimeSeriesDist;
@@ -110,6 +121,7 @@ import clus.ext.timeseries.TSCTimeSeriesDist;
 import clus.ext.timeseries.TimeSeriesDist;
 import clus.ext.timeseries.TimeSeriesSignificantChangeTesterXVAL;
 import clus.ext.timeseries.TimeSeriesStat;
+import clus.ext.tuples.TupleStatistic;
 import clus.heuristic.ClusHeuristic;
 import clus.heuristic.ClusStopCriterion;
 import clus.heuristic.ClusStopCriterionMinNbExamples;
@@ -121,7 +133,6 @@ import clus.heuristic.VarianceReductionHeuristic;
 import clus.heuristic.VarianceReductionHeuristicCompatibility;
 import clus.heuristic.VarianceReductionHeuristicEfficient;
 import clus.heuristic.VarianceReductionHeuristicInclMissingValues;
-import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsAttribute;
 import clus.main.settings.SettingsBeamSearch;
@@ -150,6 +161,7 @@ import clus.statistic.GeneticDistanceStat;
 import clus.statistic.RegressionStat;
 import clus.statistic.SumPairwiseDistancesStat;
 import clus.util.ClusException;
+import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 
 
 /**
@@ -183,6 +195,8 @@ public class ClusStatManager implements Serializable {
     public final static int MODE_BEAM_SEARCH = 8;
 
     public final static int MODE_HIERARCHICAL_MTR = 9;
+
+    public final static int MODE_STRUCTURED = 10;
 
     protected static int m_Mode = MODE_NONE;
 
@@ -485,9 +499,16 @@ public class ClusStatManager implements Serializable {
             m_Mode = MODE_TIME_SERIES;
             nb_types++;
         }
+
+        if (getSettings().getTree().checkHeuristic("StructuredData")) {
+            m_Mode = MODE_STRUCTURED;
+            nb_types++;
+        }
+
         if (getSettings().getILevelC().isSectionILevelCEnabled()) {
             m_Mode = MODE_ILEVELC;
         }
+
         if (getSettings().getBeamSearch().isBeamSearchMode() && (getSettings().getBeamSearch().getBeamSimilarity() != 0.0)) {
             m_Mode = MODE_BEAM_SEARCH;
         }
@@ -656,6 +677,58 @@ public class ClusStatManager implements Serializable {
                         break;
                 }
                 break;
+            case MODE_STRUCTURED:
+                efficiency = getSettings().getTree().getHeuristicComplexity();
+                ClusAttrType[] structured_target = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
+                try {
+                    SetAttrType myType = (SetAttrType) structured_target[0];
+
+                    ClusDistance d = getInnerDistanceForType(myType.getTypeDefinition());
+                    ClusDistance setDistance = null;
+                    switch (m_Settings.getTree().getSetDistance()) {
+                        case SettingsTree.SETDISTANCES_GSM:
+                            setDistance = new GSMDistance(myType, d, 1);
+                            break;
+                        case SettingsTree.SETDISTANCES_EUCLIDEAN:
+                            setDistance = new EuclideanDistance(myType, d);
+                            break;
+
+                        case SettingsTree.SETDISTANCES_HAMMING:
+                            setDistance = new HammingLossDistance(myType, d);
+                            break;
+                        case SettingsTree.SETDISTANCES_JACCARD:
+                            setDistance = new JaccardDistance(myType, d);
+                            break;
+                    }
+                    setClusteringStatistic(new SetStatistic(getSettings(), myType, setDistance, efficiency));
+                    setTargetStatistic(new SetStatistic(getSettings(), myType, setDistance, efficiency));
+                }
+                catch (Exception e) {
+                    try {
+
+                        TupleAttrType myType = (TupleAttrType) structured_target[0];
+                        ClusDistance tupleDistance = ClusAttrType.createDistance(myType, m_Settings);
+                        setClusteringStatistic(new TupleStatistic(getSettings(), myType, tupleDistance, efficiency));
+                        setTargetStatistic(new TupleStatistic(getSettings(), myType, tupleDistance, efficiency));
+                    }
+                    catch (Exception e1) {
+                        try {
+                            TimeSeriesAttrType myType = (TimeSeriesAttrType) structured_target[0];
+                            ClusDistance tupleDistance = ClusAttrType.createDistance(myType, m_Settings);
+                            setClusteringStatistic(new TimeSeriesStat(getSettings(), myType, tupleDistance, efficiency));
+                            setTargetStatistic(new TimeSeriesStat(getSettings(), myType, tupleDistance, efficiency));
+
+                        }
+                        catch (Exception e2) {
+
+                            e2.printStackTrace();
+                            throw new ClusException(e2.getMessage());
+                        }
+                    }
+                }
+                //TimeSeriesAttrType type = (TimeSeriesAttrType)structured_tagget[0];
+                //int efficiency = getSettings().m_TimeSeriesHeuristicSampling.getValue();          
+                break;
             case MODE_ILEVELC:
                 setTargetStatistic(new ILevelCStatistic(getSettings(), num2));
                 setClusteringStatistic(new ILevelCStatistic(getSettings(), num3));
@@ -667,6 +740,63 @@ public class ClusStatManager implements Serializable {
                 }
                 break;
         }
+    }
+
+
+    /*
+     * FIXME
+     * this is pretty unfinished and buggy method - do not use it
+     * TODO: yes, your fan base will probably decrease because of this one. (=this should be reviewed; martinb)
+     */
+    private ClusDistance getInnerDistanceForType(String myType) {
+
+        if (myType.startsWith("SET{")) {
+            String def = myType;
+            String innerType = "";
+            int open = 0;
+            int start = 0, end = 0;
+            def = def.replace("SET{", "");
+            def = def.substring(0, def.length() - 1);
+            ClusDistance cd = null;
+            if (def.equalsIgnoreCase("TIMESERIES")) {
+                switch (m_Settings.getTimeSeries().getTimeSeriesDistance()) {
+                    case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_DTW:
+                        cd = new DTWTimeSeriesDist(null);
+                        break;
+                    case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_QDM:
+                        cd = new QDMTimeSeriesDist(null);
+                        break;
+                }
+                return cd;
+            }
+
+            for (int i = 0; i < def.length(); i++) {
+                if (def.charAt(i) == '[') {
+                    start = i + 1;
+                    open++;
+                }
+                else if (def.charAt(i) == ']') {
+                    end = i;
+                    open--;
+                }
+                //FIXME!
+                if (open > 1 && !myType.contains("NOMINAL")) {
+                    //complex type 
+                    //TODO Implement
+                    try {
+                        throw new Exception("not implemented");
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                        System.exit(1);
+                    }
+                }
+            }
+            innerType = def.substring(start, end);
+            if (myType.contains("NOMINAL")) { return new NominalDistance(); }
+        }
+        // TODO Auto-generated method stub
+        return null;
     }
 
 
@@ -809,6 +939,12 @@ public class ClusStatManager implements Serializable {
             getSettings().getTree().setHeuristic(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
             return;
         }
+        if (m_Mode == MODE_STRUCTURED) {
+            ClusStatistic clusstat = createClusteringStat();
+            m_Heuristic = new VarianceReductionHeuristic(clusstat.getDistanceName(), clusstat, getClusteringWeights(), getSettings());
+            getSettings().getTree().setHeuristic(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
+            return;
+        }
         /* Set heuristic for trees */
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
@@ -850,7 +986,6 @@ public class ClusStatManager implements Serializable {
                 getSettings().getTree().setHeuristic(SettingsTree.HEURISTIC_GAIN);
             }
         }
-        else {}
     }
 
 
@@ -963,13 +1098,41 @@ public class ClusStatManager implements Serializable {
                 }
                 double[] recalls = getSettings().getHMLC().getRecallValues().getDoubleVector();
                 boolean wrCurves = getSettings().getOutput().isWriteCurves();
-                if (getSettings().getOutput().isCalError()) {
+                if (getSettings().getHMLC().isCalError()) {
                     parent.addError(new HierErrorMeasures(parent, m_Hier, recalls, getSettings().getGeneral().getCompatibility(), -1, wrCurves));
                 }
                 break;
             case MODE_ILEVELC:
                 NominalAttrType cls = (NominalAttrType) getSchema().getLastNonDisabledType();
                 parent.addError(new ILevelCRandIndex(parent, cls));
+                break;
+
+            case MODE_STRUCTURED:
+                ClusAttrType[] target = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
+                //@FIXME - hardcoded - how do you know it is a set ... it should be general 
+                try {
+                    SetAttrType set = (SetAttrType) target[0];
+                    SetAttrType[] sets = { set };
+                    //@FIXME - this hardcoded nominal distance should be extracted from set (setattrtype)
+                    //parent.addError(new HammingLossError(parent, sets, new NominalDistance(), set.getNumberOfPossibleValues()));
+                    parent.addError(new clus.error.sets.Accuracy(parent, sets, new NominalDistance()));
+                    parent.addError(new clus.error.sets.Precision(parent, sets, new NominalDistance()));
+                    parent.addError(new clus.error.sets.Recall(parent, sets, new NominalDistance()));
+                    parent.addError(new clus.error.sets.F1Score(parent, sets, new NominalDistance()));
+                    parent.addError(new clus.error.sets.SubsetAccuracy(parent, sets, new NominalDistance()));
+                }
+                catch (Exception e) {
+                    //TupleAttrType tuple = (TupleAttrType)target[0];
+                    //@FIXME
+                    //TODO IMPLEMENT THIS!!!
+                    /*
+                     * parent.addError(new clus.error.sets.Accuracy(parent, sets, new NominalDistance()));
+                     * parent.addError(new Precision(parent, sets, new NominalDistance()));
+                     * parent.addError(new Recall(parent, sets, new NominalDistance()));
+                     * parent.addError(new F1Score(parent, sets, new NominalDistance()));
+                     * parent.addError(new SubsetAccuracy(parent, sets, new NominalDistance()));
+                     */
+                }
                 break;
         }
         return parent;

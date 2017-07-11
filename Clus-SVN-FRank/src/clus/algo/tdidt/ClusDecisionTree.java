@@ -33,7 +33,6 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
 import clus.ext.bestfirst.BestFirstInduce;
 import clus.ext.ilevelc.ILevelCInduce;
-import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsOutput;
@@ -41,6 +40,7 @@ import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.pruning.PruneTree;
 import clus.util.ClusException;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 public class ClusDecisionTree extends ClusInductionAlgorithmType {

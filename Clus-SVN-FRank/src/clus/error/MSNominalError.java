@@ -7,6 +7,10 @@ import java.text.NumberFormat;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusNominalError;
+import clus.error.common.ComponentError;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 

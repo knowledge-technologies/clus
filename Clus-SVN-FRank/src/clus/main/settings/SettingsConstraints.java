@@ -1,39 +1,47 @@
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileInt;
-import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import clus.jeans.io.ini.INIFileNominalOrIntOrVector;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.ini.INIFileString;
-import clus.jeans.util.StringUtils;
+import clus.util.jeans.io.ini.INIFileInt;
+import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileString;
+import clus.util.jeans.util.StringUtils;
 
 public class SettingsConstraints implements ISettings {
-    
-    SettingsTree m_SettTree;
-    
-    public SettingsConstraints(SettingsTree tree)
-    {
-        m_SettTree = tree;
-    }
     
     /***********************************************************************
      * Section: Constraints *
      ***********************************************************************/
 
-    protected INIFileString m_SyntacticConstrFile;
-    protected INIFileNominalOrIntOrVector m_MaxSizeConstr;
-    protected INIFileNominalOrDoubleOrVector m_MaxErrorConstr;
-
+    private INIFileString m_SyntacticConstrFile;
+    private INIFileNominalOrIntOrVector m_MaxSizeConstr;
+    private INIFileNominalOrDoubleOrVector m_MaxErrorConstr;
+    private INIFileInt m_TreeMaxDepth;
 
     public boolean hasConstraintFile() {
         return !StringUtils.unCaseCompare(m_SyntacticConstrFile.getValue(), NONE);
     }
 
+    public int getTreeMaxDepth() {
+        return m_TreeMaxDepth.getValue();
+    }
+    
+    /**
+     * For tree to rules procedure, we want to induce a tree without maximum
+     * depth
+     */
+    public void setTreeMaxDepth(int value) {
+        m_TreeMaxDepth.setValue(value);
+    }
+    
 
     public String getConstraintFile() {
         return m_SyntacticConstrFile.getValue();
     }
 
+    public void setTreeMaxDepthNamedValue(int value, String name) {
+        m_TreeMaxDepth.setNamedValue(value, name);
+    }
 
     public int getMaxSize() {
         return getSizeConstraintPruning(0);
@@ -110,7 +118,7 @@ public class SettingsConstraints implements ISettings {
         constr.addNode(m_SyntacticConstrFile = new INIFileString("Syntactic", NONE));
         constr.addNode(m_MaxSizeConstr = new INIFileNominalOrIntOrVector("MaxSize", INFINITY));
         constr.addNode(m_MaxErrorConstr = new INIFileNominalOrDoubleOrVector("MaxError", INFINITY));
-        constr.addNode(m_SettTree.m_TreeMaxDepth = new INIFileInt("MaxDepth", -1));
+        constr.addNode(m_TreeMaxDepth = new INIFileInt("MaxDepth", -1));
         m_MaxSizeConstr.setNominal(0);
         m_MaxErrorConstr.setDouble(0);
         

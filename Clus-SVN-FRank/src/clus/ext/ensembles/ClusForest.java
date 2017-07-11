@@ -42,7 +42,6 @@ import clus.data.type.ClusSchema;
 import clus.ext.hierarchical.HierClassTresholdPruner;
 import clus.ext.hierarchical.HierSingleLabelStat;
 import clus.ext.hierarchical.WHTDStatistic;
-import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
@@ -57,6 +56,7 @@ import clus.statistic.RegressionStat;
 import clus.statistic.RegressionStatBase;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
+import clus.util.jeans.util.MyArray;
 
 
 /**

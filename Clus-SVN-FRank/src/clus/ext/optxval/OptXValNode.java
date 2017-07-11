@@ -26,10 +26,10 @@ import java.io.PrintWriter;
 import java.util.Arrays;
 
 import clus.algo.tdidt.ClusNode;
-import clus.jeans.tree.MyNode;
-import clus.jeans.util.array.MyIntArray;
 import clus.main.settings.Settings;
 import clus.util.ClusFormat;
+import clus.util.jeans.tree.MyNode;
+import clus.util.jeans.util.array.MyIntArray;
 
 
 public class OptXValNode extends MyNode {

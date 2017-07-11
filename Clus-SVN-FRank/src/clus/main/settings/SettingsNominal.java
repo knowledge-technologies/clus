@@ -1,8 +1,8 @@
 
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileDouble;
-import clus.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileDouble;
+import clus.util.jeans.io.ini.INIFileSection;
 
 
 public class SettingsNominal implements ISettings {

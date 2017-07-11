@@ -25,9 +25,9 @@ package clus.ext.hierarchical;
 import java.io.Serializable;
 import java.util.StringTokenizer;
 
-import clus.jeans.util.array.StringTable;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
+import clus.util.jeans.util.array.StringTable;
 
 
 public class ClassesValue implements Serializable {

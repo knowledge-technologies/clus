@@ -28,6 +28,8 @@ package clus.error;
 
 import clus.data.type.NominalAttrType;
 import clus.main.settings.Settings;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 

@@ -33,6 +33,10 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.type.NumericAttrType;
 import clus.main.settings.Settings;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusNumericError;
+import clus.error.common.ComponentError;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 

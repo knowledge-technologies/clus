@@ -20,6 +20,14 @@ public class ClusDistance implements Serializable {
     }
 
 
+    public double calcDistance(Object t1, Object t2) {
+        System.err.println("Method unimplemented ... ");
+        new Exception("Method unimplemented ... ").printStackTrace();
+        System.exit(1);
+        return Double.POSITIVE_INFINITY;
+    }
+
+
     public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {
         return Double.POSITIVE_INFINITY;
     }

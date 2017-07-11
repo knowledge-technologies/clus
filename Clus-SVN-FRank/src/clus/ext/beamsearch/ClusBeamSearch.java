@@ -48,11 +48,6 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.ext.constraint.ClusConstraintFile;
 import clus.heuristic.ClusHeuristic;
-import clus.jeans.io.MyFile;
-import clus.jeans.math.SingleStat;
-import clus.jeans.util.MyArray;
-import clus.jeans.util.StringUtils;
-import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.ISettings;
@@ -65,6 +60,11 @@ import clus.model.modelio.ClusModelCollectionIO;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.io.MyFile;
+import clus.util.jeans.math.SingleStat;
+import clus.util.jeans.util.MyArray;
+import clus.util.jeans.util.StringUtils;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 public class ClusBeamSearch extends ClusInductionAlgorithmType {

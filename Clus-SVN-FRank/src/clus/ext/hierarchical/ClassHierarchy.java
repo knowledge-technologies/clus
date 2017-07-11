@@ -39,11 +39,11 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
-import clus.jeans.math.SingleStat;
-import clus.jeans.tree.CompleteTreeIterator;
-import clus.jeans.util.array.StringTable;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
+import clus.util.jeans.math.SingleStat;
+import clus.util.jeans.tree.CompleteTreeIterator;
+import clus.util.jeans.util.array.StringTable;
 
 
 public class ClassHierarchy implements Serializable {

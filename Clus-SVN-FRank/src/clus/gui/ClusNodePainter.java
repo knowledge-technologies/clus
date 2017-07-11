@@ -37,16 +37,16 @@ import javax.swing.JPopupMenu;
 
 import clus.algo.tdidt.ClusNode;
 import clus.gui.statvis.ClassStatVis;
-import clus.jeans.graph.swing.drawable.Drawable;
-import clus.jeans.graph.swing.drawable.DrawableCanvas;
-import clus.jeans.graph.swing.drawable.DrawableExpandButton;
-import clus.jeans.graph.swing.drawable.DrawableLines;
-import clus.jeans.graph.tree.MyDrawableNode;
-import clus.jeans.graph.tree.MyNodePainter;
 import clus.model.test.NodeTest;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.graph.swing.drawable.Drawable;
+import clus.util.jeans.graph.swing.drawable.DrawableCanvas;
+import clus.util.jeans.graph.swing.drawable.DrawableExpandButton;
+import clus.util.jeans.graph.swing.drawable.DrawableLines;
+import clus.util.jeans.graph.tree.MyDrawableNode;
+import clus.util.jeans.graph.tree.MyNodePainter;
 
 
 public class ClusNodePainter extends MyNodePainter implements ActionListener {

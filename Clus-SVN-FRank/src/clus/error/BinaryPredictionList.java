@@ -7,8 +7,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 
-import clus.jeans.util.compound.DoubleBooleanCount;
 import clus.main.settings.Settings;
+import clus.util.jeans.util.compound.DoubleBooleanCount;
 
 
 // Avril Lavigne in matejp se sprasujeta: Why do you have to /.../ make things so complicated?
@@ -142,7 +142,7 @@ public class BinaryPredictionList implements Serializable {
     public void add(BinaryPredictionList other) {
         m_NbPos += other.getNbPos();
         m_NbNeg += other.getNbNeg();
-        Iterator values = other.m_ValueSet.values().iterator();
+        Iterator<DoubleBooleanCount> values = other.m_ValueSet.values().iterator();
         while (values.hasNext()) {
             DoubleBooleanCount otherValue = (DoubleBooleanCount) values.next();
             DoubleBooleanCount myValue = (DoubleBooleanCount) m_ValueSet.get(otherValue);

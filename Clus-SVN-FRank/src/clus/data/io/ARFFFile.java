@@ -36,15 +36,17 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
+import clus.data.type.SetAttrType;
 import clus.data.type.StringAttrType;
 import clus.data.type.TimeSeriesAttrType;
+import clus.data.type.TupleAttrType;
 // FIXME - use plugin system
 import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesAttrTypeSingleLabel;
-import clus.jeans.util.MStreamTokenizer;
-import clus.jeans.util.StringUtils;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
+import clus.util.jeans.util.MStreamTokenizer;
+import clus.util.jeans.util.StringUtils;
 
 
 /// The ARFF files include the data and description of variable types.
@@ -68,7 +70,7 @@ public class ARFFFile {
         schema.setSettings(sett);
         MStreamTokenizer tokens = m_Reader.getTokens();
         String token = tokens.getToken().toUpperCase();
-        HashMap attrMap = new HashMap();
+        HashMap<String, int[]> attrMap = new HashMap<String, int[]>();
         while (expected < 3) {
             if (token == null) { throw new IOException("End of ARFF file before " + TAG_NAME[expected] + " tag"); }
             if (token.equals(TAG_NAME[0])) {
@@ -123,7 +125,7 @@ public class ARFFFile {
     }
 
 
-    protected void addAttribute(ClusSchema schema, String aname, String atype, HashMap attrMap) throws IOException, ClusException {
+    protected void addAttribute(ClusSchema schema, String aname, String atype, HashMap<String, int[]> attrMap) throws IOException, ClusException {
         Settings sett = schema.getSettings();
         String uptype = atype.toUpperCase();
         while (attrMap.containsKey(aname)) {
@@ -151,7 +153,6 @@ public class ARFFFile {
                 schema.addAttrType(type);
                 type.initSettings(schema.getSettings());
             }
-
         }
         else if (uptype.equals("STRING")) {
             schema.addAttrType(new StringAttrType(aname));
@@ -164,6 +165,14 @@ public class ARFFFile {
         else if (uptype.equals("TIMESERIES")) {
             TimeSeriesAttrType tsat = new TimeSeriesAttrType(aname);
             schema.addAttrType(tsat);
+        }
+        else if (uptype.startsWith("TUPLE")) {
+            TupleAttrType tupleat = (TupleAttrType) ClusAttrType.createClusAttrType(uptype, aname);
+            schema.addAttrType(tupleat);
+        }
+        else if (uptype.startsWith("SET")) {
+            SetAttrType setat = new SetAttrType(aname, uptype);
+            schema.addAttrType(setat);
         }
         else {
             if (uptype.equals("BINARY"))
@@ -201,7 +210,7 @@ public class ARFFFile {
         }
         if (!schema.getSettings().getEnsemble().shouldWritePredictionsFromEnsemble())
             wrt.println();
-        
+
         wrt.flush();
     }
 

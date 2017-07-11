@@ -30,11 +30,11 @@ import clus.algo.tdidt.ClusNode;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
-import clus.jeans.util.MStreamTokenizer;
-import clus.jeans.util.MyArray;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
+import clus.util.jeans.util.MStreamTokenizer;
+import clus.util.jeans.util.MyArray;
 
 
 public class TildeOutReader {

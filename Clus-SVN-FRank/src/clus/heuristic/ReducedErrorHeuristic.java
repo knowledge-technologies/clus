@@ -26,10 +26,10 @@
 
 package clus.heuristic;
 
-import clus.jeans.math.MathUtil;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
+import clus.util.jeans.math.MathUtil;
 
 
 public class ReducedErrorHeuristic extends ClusHeuristic {

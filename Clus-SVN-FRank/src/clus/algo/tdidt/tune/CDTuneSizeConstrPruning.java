@@ -39,11 +39,9 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.MemoryTupleIterator;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.HierRemoveInsigClasses;
-import clus.jeans.io.MyFile;
-import clus.jeans.math.SingleStatList;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.ClusSummary;
@@ -59,6 +57,8 @@ import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.io.MyFile;
+import clus.util.jeans.math.SingleStatList;
 
 
 /*

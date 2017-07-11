@@ -1,10 +1,10 @@
 
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileDouble;
-import clus.jeans.io.ini.INIFileNominal;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.ini.INIFileString;
+import clus.util.jeans.io.ini.INIFileDouble;
+import clus.util.jeans.io.ini.INIFileNominal;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileString;
 
 
 public class SettingsPhylogeny implements ISettings {

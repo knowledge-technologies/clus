@@ -5,9 +5,9 @@ import java.text.NumberFormat;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.NominalAttrType;
-import clus.jeans.list.BitList;
 import clus.main.settings.Settings;
 import clus.util.ClusFormat;
+import clus.util.jeans.list.BitList;
 
 
 public class GeneticDistanceStat extends BitVectorStat {

@@ -36,7 +36,7 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.error.multiscore.MultiScore;
+import clus.error.common.multiscore.MultiScore;
 import clus.ext.constraint.ClusConstraintFile;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;

@@ -1,11 +1,11 @@
 
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileInt;
-import clus.jeans.io.ini.INIFileNominal;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.ini.INIFileString;
-import clus.jeans.util.StringUtils;
+import clus.util.jeans.io.ini.INIFileInt;
+import clus.util.jeans.io.ini.INIFileNominal;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileString;
+import clus.util.jeans.util.StringUtils;
 
 
 public class SettingsGeneral implements ISettings {

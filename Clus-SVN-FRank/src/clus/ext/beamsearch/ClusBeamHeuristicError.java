@@ -27,11 +27,11 @@
 package clus.ext.beamsearch;
 
 import clus.algo.tdidt.ClusNode;
-import clus.jeans.math.MathUtil;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsBeamSearch;
 import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
+import clus.util.jeans.math.MathUtil;
 
 
 public class ClusBeamHeuristicError extends ClusBeamHeuristic {

@@ -30,12 +30,12 @@ import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
-import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.util.ClusException;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 /**
@@ -56,7 +56,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
 
 
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
-
+ 
     }
 
 
@@ -64,6 +64,8 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
         return model;
     }
 
+    
+    
     private class ClusInductionAlgorithmImpl extends ClusInductionAlgorithm {
 
         public ClusInductionAlgorithmImpl(ClusSchema schema, Settings sett) throws ClusException, IOException {

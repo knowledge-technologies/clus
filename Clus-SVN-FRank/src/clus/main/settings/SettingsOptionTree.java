@@ -1,10 +1,10 @@
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileDouble;
-import clus.jeans.io.ini.INIFileInt;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.range.DoubleRangeCheck;
-import clus.jeans.io.range.IntRangeCheck;
+import clus.util.jeans.io.ini.INIFileDouble;
+import clus.util.jeans.io.ini.INIFileInt;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.range.DoubleRangeCheck;
+import clus.util.jeans.io.range.IntRangeCheck;
 
 public class SettingsOptionTree implements ISettings {
     /***********************************************************************

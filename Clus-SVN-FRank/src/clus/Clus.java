@@ -22,7 +22,6 @@
 
 package clus;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -40,9 +39,6 @@ import java.util.Date;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.kNN.KnnClassifier;
-import clus.algo.kNN.test.TestKnnModel;
-import clus.algo.kNN.test.oTestKnnClassifier;
-import clus.algo.kNN.test.oTestKnnModel;
 import clus.algo.rules.ClusCalcRuleErrorProc;
 import clus.algo.rules.ClusRuleClassifier;
 import clus.algo.rules.ClusRuleSet;
@@ -71,11 +67,11 @@ import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.error.Accuracy;
-import clus.error.ClusErrorList;
-import clus.error.ClusErrorOutput;
 import clus.error.CorrelationMatrixComputer;
 import clus.error.PearsonCorrelation;
-import clus.error.multiscore.MultiScore;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ClusErrorOutput;
+import clus.error.common.multiscore.MultiScore;
 import clus.ext.beamsearch.ClusBeamSearch;
 import clus.ext.beamsearch.ClusFastBeamSearch;
 import clus.ext.constraint.ClusConstraintFile;
@@ -88,15 +84,6 @@ import clus.ext.hierarchical.HierMatrixOutput;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.optiontree.ClusOptionTree;
 import clus.gui.TreeFrame;
-import clus.jeans.io.MyFile;
-import clus.jeans.io.ObjectLoadStream;
-import clus.jeans.io.ObjectSaveStream;
-import clus.jeans.resource.ResourceInfo;
-import clus.jeans.util.FileUtil;
-import clus.jeans.util.IntervalCollection;
-import clus.jeans.util.StringUtils;
-import clus.jeans.util.cmdline.CMDLineArgs;
-import clus.jeans.util.cmdline.CMDLineArgsProvider;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.ClusStat;
@@ -132,6 +119,15 @@ import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.ClusRandom;
 import clus.util.DebugFile;
+import clus.util.jeans.io.MyFile;
+import clus.util.jeans.io.ObjectLoadStream;
+import clus.util.jeans.io.ObjectSaveStream;
+import clus.util.jeans.resource.ResourceInfo;
+import clus.util.jeans.util.FileUtil;
+import clus.util.jeans.util.IntervalCollection;
+import clus.util.jeans.util.StringUtils;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
+import clus.util.jeans.util.cmdline.CMDLineArgsProvider;
 import clus.util.tools.debug.Debug;
 
 
@@ -149,17 +145,17 @@ public class Clus implements CMDLineArgsProvider {
 
     public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
 
-    protected Settings m_Sett = new Settings();
-    protected ClusSummary m_Summary = new ClusSummary();
-    protected ClusSchema m_Schema;
-    protected MultiScore m_Score;
-    protected ClusInductionAlgorithmType m_Classifier;
-    protected ClusInductionAlgorithm m_Induce;
-    protected RowData m_Data;
-    protected Date m_StartDate = new Date();
-    protected boolean isxval = false;
-    protected CMDLineArgs m_CmdLine;
-    protected ClusHMTRHierarchy m_HMTRHierarchy;
+    private Settings m_Sett = new Settings();
+    private ClusSummary m_Summary = new ClusSummary();
+    private ClusSchema m_Schema;
+    private MultiScore m_Score;
+    private ClusInductionAlgorithmType m_Classifier;
+    private ClusInductionAlgorithm m_Induce;
+    private RowData m_Data;
+    private Date m_StartDate = new Date();
+    private boolean isxval = false;
+    private CMDLineArgs m_CmdLine;
+    private ClusHMTRHierarchy m_HMTRHierarchy;
 
 
 //    private static String getRelativePath(File file, File folder) {
@@ -202,15 +198,17 @@ public class Clus implements CMDLineArgsProvider {
             m_Schema = arff.read(m_Sett);
         }
         // Count rows and move to data segment
-        if (m_Sett.getGeneric().getVerbose() > 0)
+        if (m_Sett.getGeneric().getVerbose() > 0) {
             System.out.println();
-        if (m_Sett.getGeneric().getVerbose() > 0)
             System.out.println("Reading CSV Data");
+        }
+        
         // Update schema based on settings
-
         m_Sett.updateTarget(m_Schema);
         m_Sett.getHMTR().addHMTRTargets(m_Schema, m_HMTRHierarchy); //only if HMTR is enabled
+        
         m_Schema.initializeSettings(m_Sett);
+        
         m_Sett.getAttribute().setTarget(m_Schema.getTarget().toString());
         m_Sett.getAttribute().setDisabled(m_Schema.getDisabled().toString());
         m_Sett.getAttribute().setClustering(m_Schema.getClustering().toString());
@@ -990,14 +988,12 @@ public class Clus implements CMDLineArgsProvider {
             if (getSettings().getGeneric().getVerbose() > 0)
                 System.out.println("Computing training error");
             calcError(cr.getTrainIter(), ClusModelInfo.TRAIN_ERR, cr, ens_pred);
-            oTestKnnModel.setTest(true);// used for kNNtest
         }
         TupleIterator tsiter = cr.getTestIter();
         if (m_Sett.getOutput().isOutTestError() && tsiter != null) {
             if (getSettings().getGeneric().getVerbose() > 0)
                 System.out.println("Computing testing error");
             calcError(tsiter, ClusModelInfo.TEST_ERR, cr, ens_pred);
-            oTestKnnModel.setTest(false);// used for kNNtest
         }
         if (m_Sett.getOutput().isOutValidError() && cr.getPruneSet() != null) {
             if (getSettings().getGeneric().getVerbose() > 0)
@@ -1420,6 +1416,8 @@ public class Clus implements CMDLineArgsProvider {
             // E.g., rule-wise error measures
             addModelErrorMeasures(cr);
         }
+        
+        
         // Calc error
         calcError(cr, null, null);
 
@@ -1587,7 +1585,12 @@ public class Clus implements CMDLineArgsProvider {
     public final void xvalRun(ClusInductionAlgorithmType clss) throws IOException, ClusException, InterruptedException {
         ClusErrorOutput errFileOutput = null;
         if (getSettings().getOutput().isWriteErrorFile()) {
-            errFileOutput = new ClusErrorOutput(m_Sett.getGeneric().getAppName() + ".err", m_Schema, m_Sett);
+            errFileOutput = new ClusErrorOutput(
+                    m_Sett.getGeneric().getAppName() + ".err",
+                    m_Schema, 
+                    m_Sett);
+            
+            
             errFileOutput.writeHeader();
         }
         PredictionWriter testPredWriter = null;
@@ -1837,20 +1840,7 @@ public class Clus implements CMDLineArgsProvider {
                 }
                 else if (cargs.hasOption("knn")) {
                     clus.getSettings().getKNN().setSectionKNNEnabled(true);
-                    // clus.getSettings().setSectionTreeEnabled(false);
                     clss = new KnnClassifier(clus);
-
-                }
-                else if (cargs.hasOption("knnTEST")) {
-                    clus.getSettings().getKNN().setSectionKNNEnabled(true);
-                    clss = new oTestKnnClassifier(clus);
-                    TestKnnModel.debugInfo(clus);
-                }
-                else if (cargs.hasOption("knnTree")) {
-                    System.err.println("The option argument 'knnTree' has been discontinued!");
-                    System.exit(-1);
-                    // clus.getSettings().setSectionKNNTEnabled(true);
-                    // clss = new KNNTreeClassifier(clus);
                 }
                 else if (cargs.hasOption("rules")) {
                     clus.getSettings().getBeamSearch().setSectionBeamEnabled(true);

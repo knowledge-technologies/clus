@@ -29,11 +29,11 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.error.Accuracy;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
-import clus.error.ComponentError;
 import clus.error.MisclassificationError;
 import clus.error.RMSError;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
+import clus.error.common.ComponentError;
 import clus.error.mlc.AveragePrecision;
 import clus.error.mlc.Coverage;
 import clus.error.mlc.HammingLoss;
@@ -56,7 +56,6 @@ import clus.error.mlc.SubsetAccuracy;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.ext.ensembles.ClusReadWriteLock;
 import clus.ext.hierarchical.HierErrorMeasures;
-import clus.jeans.util.StringUtils;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
@@ -67,6 +66,7 @@ import clus.model.ClusModel;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
+import clus.util.jeans.util.StringUtils;
 
 
 public class ClusFeatureRanking {

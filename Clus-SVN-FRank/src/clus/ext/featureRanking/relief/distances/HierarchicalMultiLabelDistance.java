@@ -10,7 +10,7 @@ import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesTuple;
-import clus.jeans.math.MathUtil;
+import clus.util.jeans.math.MathUtil;
 
 public class HierarchicalMultiLabelDistance {
 	/** Hash map for hierarchical attributes: {attributeName: hierarchy, ... } */

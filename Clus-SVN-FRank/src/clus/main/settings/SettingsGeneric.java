@@ -7,8 +7,8 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Date;
 
-import clus.jeans.util.FileUtil;
-import clus.jeans.util.StringUtils;
+import clus.util.jeans.util.FileUtil;
+import clus.util.jeans.util.StringUtils;
 
 public class SettingsGeneric {
 

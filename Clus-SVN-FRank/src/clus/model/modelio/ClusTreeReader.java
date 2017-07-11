@@ -38,10 +38,10 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.jeans.util.MStringTokenizer;
 import clus.model.test.NominalTest;
 import clus.model.test.NumericTest;
 import clus.model.test.SubsetTest;
+import clus.util.jeans.util.MStringTokenizer;
 
 
 public class ClusTreeReader {

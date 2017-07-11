@@ -22,8 +22,8 @@
 
 package clus.data.rows;
 
-import clus.jeans.util.MyArray;
 import clus.util.ClusException;
+import clus.util.jeans.util.MyArray;
 
 
 public class DataPreprocs {

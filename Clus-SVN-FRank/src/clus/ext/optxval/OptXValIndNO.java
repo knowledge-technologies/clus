@@ -27,12 +27,12 @@ import java.io.IOException;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
 import clus.data.type.ClusSchema;
-import clus.jeans.resource.ResourceInfo;
-import clus.jeans.util.list.MyListIter;
 import clus.main.ClusStat;
 import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
+import clus.util.jeans.resource.ResourceInfo;
+import clus.util.jeans.util.list.MyListIter;
 import clus.util.tools.debug.Debug;
 
 

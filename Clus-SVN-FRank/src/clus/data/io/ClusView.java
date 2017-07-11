@@ -205,7 +205,6 @@ public class ClusView {
 
                         while (tuple != null) {
                             items.add(tuple);
-                            String oldline = line;
                             if (sc.hasNextLine()) {
                                 line = sc.nextLine();
                             }
@@ -222,9 +221,7 @@ public class ClusView {
                             //                                throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
                             //                                }
                         }
-
                     }
-
                 }
                 finally {
                     if (inputStream != null) {
@@ -234,7 +231,6 @@ public class ClusView {
                         sc.close();
                     }
                 }
-
             }
 
             if (incorrectDump) {
@@ -357,9 +353,7 @@ public class ClusView {
                         ClusSerializable attr = (ClusSerializable) m_Attr.get(j);
                         if (!attr.calculateHMTRAttribute(reader, tuple, schema, hmtrHierarchy)) { throw new IOException("Error calculating Hierarchical MTR attribute " + m_Attr + " at row " + (reader.getRow() + 1)); }
                     }
-
                 }
-
             }
         }
         // Attribute read operations eat ',' after attribute field
@@ -371,5 +365,4 @@ public class ClusView {
         reader.readEol();
         return tuple;
     }
-
 }

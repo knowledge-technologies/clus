@@ -2,14 +2,14 @@
 package clus.main.settings;
 
 import clus.data.type.ClusSchema;
-import clus.jeans.io.ini.INIFileBool;
-import clus.jeans.io.ini.INIFileInt;
-import clus.jeans.io.ini.INIFileNominal;
-import clus.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import clus.jeans.io.ini.INIFileNominalOrIntOrVector;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.io.ini.INIFileString;
-import clus.jeans.io.range.IntRangeCheck;
+import clus.util.jeans.io.ini.INIFileBool;
+import clus.util.jeans.io.ini.INIFileInt;
+import clus.util.jeans.io.ini.INIFileNominal;
+import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileString;
+import clus.util.jeans.io.range.IntRangeCheck;
 
 
 public class SettingsEnsemble implements ISettings {

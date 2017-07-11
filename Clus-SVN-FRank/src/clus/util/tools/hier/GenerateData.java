@@ -27,11 +27,11 @@ import java.util.Arrays;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.HierIO;
-import clus.jeans.io.MyFile;
-import clus.jeans.math.SingleStat;
-import clus.jeans.util.MyArray;
 import clus.util.ClusFormat;
 import clus.util.ClusRandom;
+import clus.util.jeans.io.MyFile;
+import clus.util.jeans.math.SingleStat;
+import clus.util.jeans.util.MyArray;
 
 
 @Deprecated

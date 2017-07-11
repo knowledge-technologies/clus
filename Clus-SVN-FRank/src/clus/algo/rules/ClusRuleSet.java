@@ -44,9 +44,8 @@ import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.WHTDStatistic;
-import clus.jeans.util.MyArray;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
@@ -61,6 +60,7 @@ import clus.statistic.StatisticPrintInfo;
 // import clus.tools.optimization.de.DeProbl; // Optimization information (data, predictions)
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.jeans.util.MyArray;
 import clus.util.tools.optimization.OptProbl;
 
 

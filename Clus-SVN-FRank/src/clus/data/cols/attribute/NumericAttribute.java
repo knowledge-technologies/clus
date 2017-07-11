@@ -30,15 +30,15 @@ import java.io.PrintWriter;
 import clus.data.cols.ColTarget;
 import clus.data.io.ClusReader;
 import clus.data.type.NumericAttrType;
-import clus.jeans.util.MyArray;
-import clus.jeans.util.sort.DoubleIndexSorter;
 import clus.main.ClusStatManager;
 import clus.selection.ClusSelection;
+import clus.util.jeans.util.MyArray;
+import clus.util.jeans.util.sort.DoubleIndexSorter;
 
 
 public class NumericAttribute extends NumericAttrBase {
 
-    public int DEBUG = 0;
+    public int DEBUG = 0; // TODO: this should be handled outside martinb
 
     public double[] m_Data;
     public int[] m_Index;

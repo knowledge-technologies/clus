@@ -31,11 +31,11 @@ import java.util.Collections;
 
 import clus.data.type.ClusSchema;
 import clus.data.type.IntegerAttrType;
-import clus.jeans.io.ini.INIFile;
-import clus.jeans.io.ini.INIFileSection;
-import clus.jeans.resource.ResourceInfo;
-import clus.jeans.util.StringUtils;
-import clus.jeans.util.cmdline.CMDLineArgs;
+import clus.util.jeans.io.ini.INIFile;
+import clus.util.jeans.io.ini.INIFileSection;
+import clus.util.jeans.resource.ResourceInfo;
+import clus.util.jeans.util.StringUtils;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 /**
@@ -109,9 +109,9 @@ public class Settings implements Serializable {
         m_SettOptionTree = new SettingsOptionTree();
         m_SettSIT = new SettingsSIT();
         m_SettExperimental = new SettingsExperimental();
-        m_SettConstraints = new SettingsConstraints(m_SettTree);
+        m_SettConstraints = new SettingsConstraints();
         m_SettHMTR = new SettingsHMTR(m_SettAttribute, m_SettGeneric);
-        m_SettOutput = new SettingsOutput(m_SettHMLC);
+        m_SettOutput = new SettingsOutput();
     }
 
 
@@ -284,9 +284,11 @@ public class Settings implements Serializable {
 
 
     public void initNamedValues() {
-        m_SettTree.m_TreeMaxDepth.setNamedValue(-1, "Infinity");
+        m_SettConstraints.setTreeMaxDepthNamedValue(-1, "Infinity");
+        
         m_SettBeamSearch.m_TreeMaxSize.setNamedValue(-1, "Infinity");
-        m_SettTree.m_TreeSplitSampling.setNamedValue(0, "None");
+
+        m_SettTree.setTreeSplitSamplingNamedValue(0, "None");
     }
 
 
@@ -363,12 +365,14 @@ public class Settings implements Serializable {
 
     public void updateDisabledSettings() {
         int pruning = m_SettTree.getPruningMethod();
-        m_SettTree.m_M5PruningMult.setEnabled(pruning == SettingsTree.PRUNING_METHOD_M5 || pruning == SettingsTree.PRUNING_METHOD_M5_MULTI);
-        m_SettData.m_PruneSetMax.setEnabled(!m_SettData.m_PruneSet.isString(ISettings.NONE));
-        m_SettTree.m_1SERule.setEnabled(pruning == SettingsTree.PRUNING_METHOD_GAROFALAKIS_VSB);
         int heur = m_SettTree.getHeuristic();
-        m_SettTree.m_FTest.setEnabled(heur == SettingsTree.HEURISTIC_SSPD || heur == SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
-
+        
+        m_SettTree.setM5PruningMultEnabled(pruning == SettingsTree.PRUNING_METHOD_M5 || pruning == SettingsTree.PRUNING_METHOD_M5_MULTI);
+        m_SettTree.set1SERuleEnabled(pruning == SettingsTree.PRUNING_METHOD_GAROFALAKIS_VSB);
+        m_SettTree.setFTestEnabled(heur == SettingsTree.HEURISTIC_SSPD || heur == SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
+        
+        m_SettData.setPruneSetMaxEnabled(!m_SettData.isPruneSetString(ISettings.NONE));
+        
         if (ResourceInfo.isLibLoaded())
             m_SettGeneral.m_ResourceInfoLoaded.setSingleValue(SettingsGeneral.RESOURCE_INFO_LOAD_YES);
         else

@@ -15,12 +15,12 @@ import clus.data.type.ClusSchema;
 import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.ClassTerm;
 import clus.ext.hierarchical.ClassesTuple;
-import clus.jeans.util.FileUtil;
-import clus.jeans.util.StringUtils;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
+import clus.util.jeans.util.FileUtil;
+import clus.util.jeans.util.StringUtils;
 
 
 public class HMCConvertToSC {

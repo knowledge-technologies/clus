@@ -23,10 +23,10 @@
 package clus.heuristic;
 
 import clus.data.attweights.ClusAttributeWeights;
-import clus.jeans.math.MathUtil;
 import clus.main.settings.Settings;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
+import clus.util.jeans.math.MathUtil;
 
 
 public class GainHeuristic extends ClusHeuristic {

@@ -1,6 +1,6 @@
 package clus.main.settings;
 
-import clus.jeans.io.ini.INIFileSection;
+import clus.util.jeans.io.ini.INIFileSection;
 
 public class SettingsDistances implements ISettings {
 

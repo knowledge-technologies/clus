@@ -31,9 +31,9 @@ import java.text.NumberFormat;
 import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
-import clus.error.ClusError;
-import clus.error.ClusErrorList;
 import clus.main.settings.Settings;
+import clus.error.common.ClusError;
+import clus.error.common.ClusErrorList;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusFormat;
 

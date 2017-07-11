@@ -26,11 +26,11 @@ import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.jeans.util.list.MyList;
 import clus.main.ClusStatManager;
 import clus.main.settings.SettingsTree;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
+import clus.util.jeans.util.list.MyList;
 
 
 public class OptXValGroup extends MyList {

@@ -27,8 +27,8 @@ import java.util.ArrayList;
 import clus.data.cols.ColTarget;
 import clus.data.rows.DataTuple;
 import clus.ext.ensembles.ClusEnsembleROSInfo;
-import clus.jeans.list.BitList;
 import clus.main.settings.Settings;
+import clus.util.jeans.list.BitList;
 
 
 public class BitVectorStat extends ClusStatistic {

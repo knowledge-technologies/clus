@@ -26,11 +26,11 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 
 import clus.data.rows.RowData;
-import clus.jeans.util.MyArray;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
+import clus.util.jeans.util.MyArray;
 
 public abstract class MyNode implements Node, Serializable, ClusModel {
 

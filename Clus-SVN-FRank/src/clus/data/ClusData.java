@@ -24,7 +24,7 @@ package clus.data;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataPreprocs;
-import clus.error.ClusErrorList;
+import clus.error.common.ClusErrorList;
 import clus.selection.ClusSelection;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;

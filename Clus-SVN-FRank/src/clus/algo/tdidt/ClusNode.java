@@ -36,11 +36,7 @@ import clus.algo.split.CurrentBestTestAndHeuristic;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.error.multiscore.MultiScore;
-import clus.jeans.tree.MyNode;
-import clus.jeans.util.MyArray;
-import clus.jeans.util.StringUtils;
-import clus.jeans.util.compound.IntObject;
+import clus.error.common.multiscore.MultiScore;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.Global;
@@ -54,11 +50,13 @@ import clus.selection.OOBSelection;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
-// import weka.classifiers.trees.j48.NoSplit;
-// import weka.core.Utils;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
 import clus.util.ClusUtil;
+import clus.util.jeans.tree.MyNode;
+import clus.util.jeans.util.MyArray;
+import clus.util.jeans.util.StringUtils;
+import clus.util.jeans.util.compound.IntObject;
 
 
 public class ClusNode extends MyNode implements ClusModel {

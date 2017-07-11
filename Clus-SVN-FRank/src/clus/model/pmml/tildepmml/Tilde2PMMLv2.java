@@ -32,10 +32,10 @@ import java.util.HashMap;
 import java.util.Vector;
 
 import clus.algo.tdidt.ClusNode;
-import clus.jeans.util.FileUtil;
-import clus.jeans.util.MStreamTokenizer;
 import clus.model.modelio.tilde.TildeOutReader;
 import clus.statistic.ClassificationStat;
+import clus.util.jeans.util.FileUtil;
+import clus.util.jeans.util.MStreamTokenizer;
 
 
 public class Tilde2PMMLv2 {

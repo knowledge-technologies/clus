@@ -7,11 +7,11 @@ import clus.Clus;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.data.type.ClusSchema;
-import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.util.ClusException;
+import clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 public class Relief extends ClusInductionAlgorithmType {

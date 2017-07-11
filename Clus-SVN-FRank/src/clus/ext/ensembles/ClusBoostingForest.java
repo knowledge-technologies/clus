@@ -6,11 +6,11 @@ import java.util.Arrays;
 
 import clus.data.rows.DataTuple;
 import clus.ext.hierarchical.WHTDStatistic;
-import clus.jeans.util.array.MDoubleArrayComparator;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
+import clus.util.jeans.util.array.MDoubleArrayComparator;
 
 
 public class ClusBoostingForest extends ClusForest {

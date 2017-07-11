@@ -34,10 +34,10 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.StringAttrType;
 import clus.io.ClusSerializable;
-import clus.jeans.util.array.StringTable;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsHMLC;
 import clus.util.ClusException;
+import clus.util.jeans.util.array.StringTable;
 
 
 public class ClassesAttrType extends ClusAttrType {

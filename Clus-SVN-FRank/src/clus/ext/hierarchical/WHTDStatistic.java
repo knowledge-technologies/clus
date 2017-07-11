@@ -45,7 +45,6 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
-import clus.jeans.util.array.MIntArray;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsGeneral;
@@ -55,6 +54,7 @@ import clus.statistic.RegressionStatBinaryNomiss;
 import clus.statistic.StatisticPrintInfo;
 import clus.util.ClusException;
 import clus.util.ClusFormat;
+import clus.util.jeans.util.array.MIntArray;
 
 
 public class WHTDStatistic extends RegressionStatBinaryNomiss {
