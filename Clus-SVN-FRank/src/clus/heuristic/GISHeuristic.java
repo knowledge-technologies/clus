@@ -81,20 +81,22 @@ public class GISHeuristic extends ClusHeuristic {
             }
             return resultvector;
         }        
-        //generate matrix & write to file
-    public void generateMatrix(RowData data) throws IOException { 
+    //generate matrix & write to file matejp: introduced permutation and everything that comes from this
+    public void generateMatrix(RowData data, Integer[] permutation) throws IOException { 
             //PrintWriter pw = new PrintWriter(new FileWriter("distances.txt"));            
             m_distances.clear();
             ClusSchema schema = data.getSchema();
             int N = data.getNbRows();
-            double maxdist=0; double d=0;double W = 0;double minDistLine=Double.POSITIVE_INFINITY;double maxOnMinDistLine=0;
+            double maxdist=0; double d=0; double W = 0; double minDistLine=Double.POSITIVE_INFINITY; double maxOnMinDistLine=0;
             double[][] w = new double[N][N]; 
                 //max distance in the file
                 for (int i = 0; i < N; i++) {
                     minDistLine=Double.POSITIVE_INFINITY;
                     for (int j = 0; j < N; j++) {
-                        DataTuple exi = data.getTuple(i);
-                        DataTuple exj = data.getTuple(j);                
+                        int tupleI = permutation[i];
+                        int tupleJ = permutation[j];
+                        DataTuple exi = data.getTuple(tupleI); // i
+                        DataTuple exj = data.getTuple(tupleJ); // j              
                         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0]; 
                         ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1];
                         double xi = xt.getNumeric(exi);
@@ -117,14 +119,16 @@ public class GISHeuristic extends ClusHeuristic {
                 //calculate the weights 
                 for (int i = 0; i < N; i++) {
                     for (int j = 0; j < N; j++) {
-                        if (i>j){
-                            w[i][j]=w[j][i];
-                            W+=w[i][j];
-                            continue;
-                        }
+                        int tupleI = permutation[i]; // these two replace all
+                        int tupleJ = permutation[j]; // occurrences of i and j in this block
                         
-                        DataTuple exi = data.getTuple(i);  //example i
-                        DataTuple exj = data.getTuple(j); //example j                
+                        if (tupleI > tupleJ){
+                            w[tupleI][tupleJ]=w[tupleJ][tupleI];
+                            W+=w[tupleI][tupleJ];
+                            continue;
+                        }                        
+                        DataTuple exi = data.getTuple(tupleI);  //example i
+                        DataTuple exj = data.getTuple(tupleJ); //example j                
                         ClusAttrType xti = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0]; 
                         ClusAttrType yti = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1];
                         double xii = xti.getNumeric(exi);
@@ -143,19 +147,19 @@ public class GISHeuristic extends ClusHeuristic {
                             xi[ii] = xt.getNumeric(exi); xj[ii] = xt.getNumeric(exj);
                             dd += (xi[ii]-xj[ii])*(xi[ii]-xj[ii]); //euc over all atrb}*/
                         int spatialMatrix = schema.getSettings().getSpatialMatrix();
-                        if (d>=b) w[i][j]=0; 
-                            else {if (d==0) w[i][j]=1; 
+                        if (d >= b) w[tupleI][tupleJ]=0; 
+                            else {if (d==0) w[tupleI][tupleJ]=1; 
                                 else{ 
                                     switch (spatialMatrix) {
-                                        case 0:  w[i][j]=1; //0;   break;  //binary 
-                                        case 1:  w[i][j]=1-d/b; break;  //euclidian
-                                        case 2:  w[i][j]=(1-(d*d)/(b*b))*(1-(d*d)/(b*b)); break; //modified
-                                        case 3:  w[i][j]=Math.exp(-(d*d)/(b*b)); break;  //gausian
-                                        default: w[i][j]=0; break;
+                                        case 0:  w[tupleI][tupleJ] = 1; //0;   break;  //binary 
+                                        case 1:  w[tupleI][tupleJ] = 1-d/b; break;  //euclidian
+                                        case 2:  w[tupleI][tupleJ] = (1-(d*d)/(b*b))*(1-(d*d)/(b*b)); break; //modified
+                                        case 3:  w[tupleI][tupleJ] = Math.exp(-(d*d)/(b*b)); break;  //gausian
+                                        default: w[tupleI][tupleJ] = 0; break;
                                     }
-                                 W+=w[i][j]; //System.out.println(i+"\t"+j+"\t"+exi+"\t"+exj+"\t"+(long)(i*N+j)+"\t"+w[i][j]);
+                                 W+=w[tupleI][tupleJ]; //System.out.println(i+"\t"+j+"\t"+exi+"\t"+exj+"\t"+(long)(i*N+j)+"\t"+w[i][j]);
                                 }
-                            m_distances.put((long)(i*N+j),w[i][j]); //write to hasp map only, not in file
+                            m_distances.put((long)(tupleI * N + tupleJ),w[tupleI][tupleJ]); //write to hasp map only, not in file
                             //pw.println(i+"#"+j+" "+d);
                             //pw.println(i+"\t"+W);     //write to file
                             }
@@ -237,7 +241,7 @@ public class GISHeuristic extends ClusHeuristic {
         br.close();    
     }    
     
-    public double calcI(ClusStatistic t_stat, ClusStatistic p_stat, ClusStatistic missing) {
+    public double calcI(ClusStatistic t_stat, ClusStatistic p_stat, ClusStatistic missing, Integer[] permutation) {
             //try{
             //ClusStatistic tstat = (ClusStatistic)t_stat;
         ClusStatistic pstat = (ClusStatistic)p_stat;
@@ -251,7 +255,7 @@ public class GISHeuristic extends ClusHeuristic {
             int SpatialMeasure= schema.getSettings().getSpatialMeasure();
             
             switch (SpatialMeasure) {
-            case 0:  ss_pos = pstat.calcItotal(); break; //"Global Moran"
+            case 0:  ss_pos = pstat.calcItotal(permutation); break; //"Global Moran"
             case 1:  ss_pos = pstat.calcGtotal();  break; //"Global Geary"
             case 2:  ss_pos = pstat.calcGetisTotal(); break;//"Global Getis"
             case 3:  ss_pos = pstat.calcLISAtotal(); break; //"Local Moran"

@@ -4602,7 +4602,7 @@ public double calcItotalD() {
 }
 
 // global I
-public double calcItotal() {
+public double calcItotal(Integer[] permutation) { // matejp: all indices of tuples must be replaced by the corresponding permutation[tuple index]
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -4620,8 +4620,9 @@ public double calcItotal() {
                 
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
+            int permI = permutation[i];
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permI);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -4632,18 +4633,20 @@ public double calcItotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            int permI = permutation[i];
+            DataTuple exi = m_data.getTuple(permI);
             double xi = type.getNominal(exi);
-            for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+            for (int j =M; j < N; j++) {
+                int permJ = permutation[j];
+                DataTuple exj = m_data.getTuple(permJ);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permI;
+                long indexJ=permJ;
+                if (permI!=permJ){
+                    if (permI>permJ){
+                        indexI=permJ;
+                        indexJ=permI;
                     }
                     long indexMap = indexI*(NR)+indexJ;
                     Double temp= GISHeuristic.m_distances.get(indexMap); 
@@ -4673,8 +4676,9 @@ public double calcItotal() {
                 
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
+            int permI = permutation[i];
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permI);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
         }
@@ -4685,18 +4689,20 @@ public double calcItotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            int permI = permutation[i];
+            DataTuple exi = m_data.getTuple(permI);
             double xi = type.getNominal(exi);
-            for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+            for (int j =M; j < N; j++) {
+                int permJ = permutation[j];
+                DataTuple exj = m_data.getTuple(permJ);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permI;
+                long indexJ=permJ;
+                if (permI!=permJ){
+                    if (permI>permJ){
+                        indexI=permJ;
+                        indexJ=permI;
                     }
                     long indexMap = indexI*(NR)+indexJ;
                     Double temp= GISHeuristic.m_distances.get(indexMap); 

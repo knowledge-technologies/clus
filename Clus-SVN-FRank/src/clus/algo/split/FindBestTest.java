@@ -127,10 +127,13 @@ public class FindBestTest {
         m_BestTest.reset(nbvalues + 1); // Reset positive statistic
         int nb_rows = sample.getNbRows();
         
-        
         if(!data.getSchema().getSettings().isNullGIS()){ // handle Daniela
             // daniela
             //generateMatrix for each attribute GISHeuristic           
+            Integer[] indicesSorted = new Integer[nb_rows]; // matejp: no sorting here, but needed for technical reasons
+            for(int i = 0; i < nb_rows; i++){
+                indicesSorted[i] = i;
+            }
             try{
                 ClusHeuristic m_Heuristic=m_StatManager.getHeuristic();         
                 if(m_Heuristic instanceof VarianceReductionHeuristicCompatibility) {
@@ -145,7 +148,7 @@ public class FindBestTest {
                     ClusAttrType[] arr = at.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_GIS); //numeric and string GIS
                     if (arr.length==1){
                         gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
-                    }else gisHeuristic.generateMatrix(sample); // 2 coordinates 
+                    }else gisHeuristic.generateMatrix(sample, indicesSorted); // 2 coordinates 
                  } 
             }
             catch(Exception e){
@@ -296,7 +299,7 @@ public class FindBestTest {
             //for scaling of h -regression (daniela)
             if ((m_BestTest.m_Heuristic instanceof GISHeuristic || m_BestTest.m_Heuristic instanceof VarianceReductionHeuristicCompatibility) && (Settings.ALPHA!=1.0)){
                 for (int i = pos; i < nb_rows; i++) {
-                    tuple = sample.getTuple(indicesSorted[pos]);  // every such tuple is positive or, as some people say, sekoj vakov tuple pripaga vo positive
+                    tuple = sample.getTuple(indicesSorted[i]);  // every such tuple is positive or, as some people say, sekoj vakov tuple pripaga vo positive
                     double value = at.getNumeric(tuple);
                     if (value != prev) {
                         if (value != Double.NaN) {
@@ -339,7 +342,7 @@ public class FindBestTest {
                     if (arr.length==1){
                         gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
                     } else{
-                        gisHeuristic.generateMatrix(sample); // 2 coordinates 
+                        gisHeuristic.generateMatrix(sample, indicesSorted); // 2 coordinates 
                     }
                 } 
             } catch(Exception e){
@@ -365,9 +368,9 @@ public class FindBestTest {
                 tuple = sample.getTuple(indicesSorted[i]);
                 double value = at.getNumeric(tuple);
                 if (value != prev) {
-                	m_BestTest.updateNumeric(value, at, tot_corr_SVarS, false); // isEfficient
+                	m_BestTest.updateNumericGIS(value, at, indicesSorted);
                     prev = value;
-                    m_BestTest.m_PosStat.setPrevIndex(i); // daniela; matejp removed casting to ClusStatistic (this can be also done elsewhere)
+                    ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(i); // daniela; matejp removed casting to ClusStatistic (this can be also done elsewhere)
                 }
                 m_BestTest.m_PosStat.updateWeighted(tuple, i);
                 ((ClusStatistic)m_BestTest.m_PosStat).setSplitIndex(i+1); // daniela

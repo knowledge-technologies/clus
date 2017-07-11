@@ -3429,7 +3429,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI; 
     }
     //global I 
-    public double calcItotal() {
+    public double calcItotal(Integer[] permutation) { // matejp: all tuple indices <index> are replaced by permutation[<index>]
         ClusSchema schema = m_Data.getSchema();
         double num,den;
         m_TempData=m_Data;
@@ -3449,7 +3449,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -3463,18 +3463,20 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                int permI = permutation[i];
+                DataTuple exi = m_Data.getTuple(permI);
                 double xi = type.getNumeric(exi);
-                for (int j =M; j < N; j++) {                
-                    DataTuple exj = m_Data.getTuple(j);
+                for (int j = M; j < N; j++) {
+                    int permJ = permutation[j];
+                    DataTuple exj = m_Data.getTuple(permJ);
                     double xj = type.getNumeric(exj);                   
                     double w=0;
-                    long indexI=i;
-                    long indexJ=j;
-                    if (i!=j){
-                        if (i>j){
-                            indexI=j;
-                            indexJ=i;
+                    long indexI=permI;
+                    long indexJ=permJ;
+                    if (permI!=permJ){
+                        if (permI>permJ){
+                            indexI=permJ;
+                            indexJ=permI;
                         }
                         long indexMap = indexI*(NR)+indexJ;
                         Double temp= GISHeuristic.m_distances.get(indexMap); 
@@ -3510,7 +3512,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 meansR[k] += xi;
             }
@@ -3521,18 +3523,20 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                int permI = permutation[i];
+                DataTuple exi = m_Data.getTuple(permI);
                 double xi = type.getNumeric(exi);
-                for (int j =M; j < N; j++) {                
-                    DataTuple exj = m_Data.getTuple(j);
+                for (int j =M; j < N; j++) {
+                    int permJ = permutation[j];
+                    DataTuple exj = m_Data.getTuple(permJ);
                     double xj = type.getNumeric(exj);
                     double w=0; 
-                    long indexI=i;
-                    long indexJ=j;
-                    if (i!=j){
-                        if (i>j){
-                            indexI=j;
-                            indexJ=i;
+                    long indexI=permI;
+                    long indexJ=permJ;
+                    if (permI!=permJ){
+                        if (permI>permJ){
+                            indexI=permJ;
+                            indexJ=permI;
                         }
         
                         long indexMap = indexI*(NR)+indexJ;

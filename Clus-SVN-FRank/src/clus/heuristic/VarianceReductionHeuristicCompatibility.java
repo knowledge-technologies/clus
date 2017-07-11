@@ -270,7 +270,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
     
     
     
-    public double calcI(ClusStatistic t_stat, ClusStatistic p_stat, ClusStatistic missing) {
+    public double calcI(ClusStatistic t_stat, ClusStatistic p_stat, ClusStatistic missing, Integer[] permutation) {
         //try{
         //ClusStatistic tstat = (ClusStatistic)t_stat;
     ClusStatistic pstat = (ClusStatistic)p_stat; // Acceptable?
@@ -283,7 +283,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
         int SpatialMeasure= schema.getSettings().getSpatialMeasure();
         
         switch (SpatialMeasure) {
-        case 0:  ss_pos = pstat.calcItotal(); break; //"Global Moran"
+        case 0:  ss_pos = pstat.calcItotal(permutation); break; //"Global Moran"
         case 1:  ss_pos = pstat.calcGtotal();  break; //"Global Geary"
         case 2:  ss_pos = pstat.calcGetisTotal(); break;//"Global Getis"
         case 3:  ss_pos = pstat.calcLISAtotal(); break; //"Local Moran"

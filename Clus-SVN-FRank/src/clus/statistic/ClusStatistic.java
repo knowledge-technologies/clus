@@ -481,7 +481,7 @@ public abstract class ClusStatistic implements Serializable {
     
     
     //daniela
-    public double calcItotal() {
+    public double calcItotal(Integer[] permutation) {
         try{
             throw new Exception("This method shoud be implemented. Exiting...");
         }catch(Exception e){
