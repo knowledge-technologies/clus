@@ -26,8 +26,8 @@ import java.io.IOException;
 
 import clus.data.io.ARFFFile;
 import clus.data.io.ClusReader;
-import clus.data.type.ClusSchema;
-import clus.data.type.ClusSchemaInitializer;
+import clus.data.schema.ClusSchema;
+import clus.data.schema.ClusSchemaInitializer;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
 

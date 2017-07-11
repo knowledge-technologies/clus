@@ -25,10 +25,10 @@ package clus.algo.kNN.methods.bfMethod;
 import java.io.IOException;
 import java.util.LinkedList;
 
-import clus.algo.kNN.distance.SearchDistance;
 import clus.algo.kNN.methods.NNStack;
 import clus.algo.kNN.methods.SearchAlgorithm;
 import clus.data.rows.DataTuple;
+import clus.distance.primitive.SearchDistance;
 import clus.main.ClusRun;
 import clus.util.ClusException;
 

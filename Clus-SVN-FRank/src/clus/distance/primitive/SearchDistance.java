@@ -20,14 +20,14 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.algo.kNN.distance;
+package clus.distance.primitive;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 
 
 /**
@@ -161,6 +161,12 @@ public class SearchDistance extends ClusDistance {
 
     public ClusDistance getBasicDistance() {
         return m_Distance;
+    }
+
+
+    @Override
+    public String getDistanceName() {
+        return "Search distance";
     }
 
 }

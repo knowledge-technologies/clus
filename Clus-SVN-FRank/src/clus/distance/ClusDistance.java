@@ -1,14 +1,16 @@
 
-package clus.statistic;
+package clus.distance;
 
 import java.io.Serializable;
 
 import clus.algo.kNN.distance.attributeWeighting.AttributeWeighting;
 import clus.data.rows.DataTuple;
 import clus.main.settings.Settings;
+import clus.statistic.ClusStatistic;
 
 
-public class ClusDistance implements Serializable {
+
+public abstract class ClusDistance implements Serializable {
 
     public AttributeWeighting m_AttrWeighting;
 
@@ -38,9 +40,13 @@ public class ClusDistance implements Serializable {
     }
 
 
-    public String getDistanceName() {
-        return "UnknownDistance";
-    }
+    public abstract String getDistanceName();
+//    public String getDistanceName() {
+//        new Exception("Method unimplemented ... ").printStackTrace();
+//        System.exit(1);
+//
+//        return "UnknownDistance";
+//    }
 
 
     public AttributeWeighting getWeighting() {

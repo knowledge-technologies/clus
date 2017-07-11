@@ -28,7 +28,7 @@ import java.util.Random;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.rows.RowDataSortHelper;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleInduce;

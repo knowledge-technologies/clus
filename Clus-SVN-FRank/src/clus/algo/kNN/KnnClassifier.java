@@ -29,7 +29,7 @@ import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
@@ -49,6 +49,9 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
     }
 
 
+    
+
+
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
         ClusInductionAlgorithm induce = new ClusInductionAlgorithmImpl(schema, sett);
         return induce;
@@ -56,7 +59,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
 
 
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
- 
+
     }
 
 
@@ -64,8 +67,6 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
         return model;
     }
 
-    
-    
     private class ClusInductionAlgorithmImpl extends ClusInductionAlgorithm {
 
         public ClusInductionAlgorithmImpl(ClusSchema schema, Settings sett) throws ClusException, IOException {
@@ -74,7 +75,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
 
 
         public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
-            
+
             String[] ks = getSettings().getKNN().getKNNk().split(",");
             String[] distWeight = getSettings().getKNN().getKNNDistanceWeight().split(",");
             int[] weights = new int[distWeight.length];

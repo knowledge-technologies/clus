@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.data.type;
+package clus.data.schema;
 
 import java.io.IOException;
 

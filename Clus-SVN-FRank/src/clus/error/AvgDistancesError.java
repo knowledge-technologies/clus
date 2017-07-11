@@ -25,10 +25,10 @@ package clus.error;
 import java.io.PrintWriter;
 
 import clus.data.rows.DataTuple;
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;
-import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 
 

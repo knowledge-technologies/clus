@@ -1,4 +1,4 @@
-package clus.statistic.distance.relief;
+package clus.distance.primitive.relief;
 
 import java.util.ArrayList;
 import java.util.HashMap;

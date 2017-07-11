@@ -31,8 +31,8 @@ package clus.error;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.error.common.ClusErrorList;

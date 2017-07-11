@@ -1,13 +1,13 @@
 
-package clus.statistic.distance.sets;
+package clus.distance.sets;
 
 import java.util.Arrays;
 
-import clus.data.type.SetAttrType;
+import clus.data.type.structured.SetAttrType;
+import clus.distance.ClusDistance;
 import clus.ext.sets.Set;
 import clus.ext.sets.SetDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 
 
 public class GSMDistance extends SetDistance {
@@ -31,7 +31,6 @@ public class GSMDistance extends SetDistance {
     @Override
     public double calcDistance(Set set1, Set set2) {
         ClusDistance clusDistance = m_ChildDistances[0];
-        long timeStart = System.currentTimeMillis();
 
         double distance = 0;
         int m = set1.size();
@@ -83,10 +82,12 @@ public class GSMDistance extends SetDistance {
         //when we do metric learning
         distance += (maxCostFlow * maximal_possible_distance / 2);
 
-        long timeEnd = System.currentTimeMillis();
-
-        //System.out.println("To calculate distance between two sets:\t" + (timeEnd-timeStart)+ " miliseconds.");
-
         return distance;
+    }
+
+
+    @Override
+    public String getDistanceName() {
+        return "Greedy matching (sets)";
     }
 }

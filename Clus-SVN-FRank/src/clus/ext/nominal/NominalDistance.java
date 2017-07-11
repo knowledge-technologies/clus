@@ -1,8 +1,8 @@
 
 package clus.ext.nominal;
 
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 
 
 public class NominalDistance extends ClusDistance {
@@ -17,5 +17,11 @@ public class NominalDistance extends ClusDistance {
         else {
             return 1;
         }
+    }
+
+
+    @Override
+    public String getDistanceName() {
+        return "Nominal distance"; // 
     }
 }

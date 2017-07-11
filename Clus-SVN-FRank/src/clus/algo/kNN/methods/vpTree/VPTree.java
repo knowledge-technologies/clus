@@ -28,11 +28,11 @@ import java.util.LinkedList;
 import org.apache.commons.math.random.RandomData;// this is not with the CLUS spirit...
 import org.apache.commons.math.random.RandomDataImpl;
 
-import clus.algo.kNN.distance.SearchDistance;
 import clus.algo.kNN.methods.NNStack;
 import clus.algo.kNN.methods.SearchAlgorithm;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.distance.primitive.SearchDistance;
 import clus.main.ClusRun;
 import clus.util.ClusException;
 

@@ -28,8 +28,8 @@ import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
 import clus.data.type.IntegerAttrType;
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 import clus.util.ClusException;
 import clus.util.jeans.math.matrix.MSymMatrix;
 

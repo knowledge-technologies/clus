@@ -3,11 +3,11 @@ package clus.ext.tuples.distances;
 
 import clus.data.type.ClusAttrType;
 import clus.data.type.NumericAttrType;
-import clus.data.type.TupleAttrType;
+import clus.data.type.structured.TupleAttrType;
+import clus.distance.ClusDistance;
 import clus.ext.tuples.Tuple;
 import clus.ext.tuples.TupleDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 
 
 public class MinkowskiDistance extends TupleDistance {
@@ -36,7 +36,6 @@ public class MinkowskiDistance extends TupleDistance {
 
 
     public double calcDistance(Tuple t1, Tuple t2) {
-        int n = t1.length();
         double distance = 0;
         if (!Double.isInfinite(m_Order)) {
             int i = 0;
@@ -59,6 +58,12 @@ public class MinkowskiDistance extends TupleDistance {
             throw new UnsupportedOperationException("clus.ext.tuples.distances.MinkowskiDistance.calcDistance(Tuple, Tuple); m_Order == Infinity");
         }
         return distance;
+    }
+
+
+    @Override
+    public String getDistanceName() {
+        return "Minkowski distance (tuples)";
     }
 
 }

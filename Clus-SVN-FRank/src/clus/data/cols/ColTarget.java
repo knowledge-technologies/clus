@@ -23,7 +23,7 @@
 package clus.data.cols;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.selection.ClusSelection;
 import clus.statistic.ClusStatistic;
 

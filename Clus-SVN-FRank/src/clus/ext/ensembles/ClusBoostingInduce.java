@@ -33,7 +33,7 @@ import clus.algo.tdidt.DepthFirstInduceSparse;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;

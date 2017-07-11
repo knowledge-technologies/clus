@@ -4,8 +4,8 @@ package clus.ext.hierarchical;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 import clus.statistic.SumPairwiseDistancesStat;
 

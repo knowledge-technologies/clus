@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.data.type;
+package clus.data.schema;
 
 import java.io.IOException;
 import java.io.Serializable;
@@ -33,6 +33,13 @@ import clus.data.io.ClusView;
 import clus.data.rows.DataPreprocs;
 import clus.data.rows.DataTuple;
 import clus.data.rows.SparseDataTuple;
+import clus.data.type.BitwiseNominalAttrType;
+import clus.data.type.ClusAttrType;
+import clus.data.type.IndexAttrType;
+import clus.data.type.NominalAttrType;
+import clus.data.type.NumericAttrType;
+import clus.data.type.SparseNumericAttrType;
+import clus.data.type.TimeSeriesAttrType;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.io.DummySerializable;
 import clus.main.settings.Settings;

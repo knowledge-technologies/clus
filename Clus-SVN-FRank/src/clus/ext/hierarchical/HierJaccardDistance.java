@@ -2,8 +2,8 @@
 package clus.ext.hierarchical;
 
 import clus.data.rows.DataTuple;
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 
 

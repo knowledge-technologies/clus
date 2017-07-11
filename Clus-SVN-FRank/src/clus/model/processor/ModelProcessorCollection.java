@@ -25,7 +25,7 @@ package clus.model.processor;
 import java.io.IOException;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;

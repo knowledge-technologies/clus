@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 
 

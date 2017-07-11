@@ -1,4 +1,4 @@
-package clus.statistic.distance.relief;
+package clus.distance.primitive.relief;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;

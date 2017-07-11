@@ -27,7 +27,7 @@ import java.io.IOException;
 import clus.Clus;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;

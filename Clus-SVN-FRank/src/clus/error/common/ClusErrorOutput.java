@@ -3,7 +3,7 @@ package clus.error.common;
 
 import java.io.IOException;
 
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;

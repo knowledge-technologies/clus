@@ -20,42 +20,14 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.statistic.distance.timeseries;
+package clus.distance;
 
-import clus.data.rows.DataTuple;
-import clus.data.type.TimeSeriesAttrType;
-import clus.ext.timeseries.TimeSeries;
-import clus.ext.timeseries.TimeSeriesStat;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
-import clus.statistic.ClusStatistic;
 
 
-public abstract class TimeSeriesDist extends ClusDistance {
+public abstract class ClusStructuredDistance extends ClusDistance {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
+    protected ClusDistance[] m_ChildDistances;
 
-    protected TimeSeriesAttrType m_Attr;
-
-
-    public TimeSeriesDist(TimeSeriesAttrType attr) {
-        m_Attr = attr;
-    }
-
-
-    public abstract double calcDistance(TimeSeries t1, TimeSeries t2);
-
-
-    public double calcDistance(DataTuple t1, DataTuple t2) {
-        TimeSeries ts1 = m_Attr.getTimeSeries(t1);
-        TimeSeries ts2 = m_Attr.getTimeSeries(t2);
-        return calcDistance(ts1, ts2);
-    }
-
-
-    public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {
-        TimeSeries ts1 = m_Attr.getTimeSeries(t1);
-        TimeSeriesStat stat = (TimeSeriesStat) s2;
-        return calcDistance(ts1, stat.getRepresentativeMedoid());
-    }
 }

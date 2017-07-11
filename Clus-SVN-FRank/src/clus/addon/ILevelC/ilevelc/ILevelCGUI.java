@@ -47,7 +47,7 @@ import javax.swing.JPanel;
 import clus.data.io.ARFFFile;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.ext.ilevelc.DerivedConstraintsComputer;

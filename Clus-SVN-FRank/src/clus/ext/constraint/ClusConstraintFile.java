@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.HashMap;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.model.modelio.ClusTreeReader;
 
 

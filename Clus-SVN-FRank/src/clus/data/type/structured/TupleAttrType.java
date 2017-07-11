@@ -20,57 +20,51 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>.         *
  *************************************************************************/
 
-package clus.data.type;
+package clus.data.type.structured;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.distance.ClusDistance;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;
 import clus.util.ClusException;
-import clus.ext.sets.*;
+import clus.ext.tuples.*;
 
-public class SetAttrType extends ClusAttrType {
+public class TupleAttrType extends ClusAttrType {
 
 	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-	public final static String THIS_TYPE_NAME = "Set";
-	public final static int THIS_TYPE = 6;
-	private String typeDefinition;
-	private int numberOfPossibleValues;
+	public final static String THIS_TYPE_NAME = "Tuple";
+	public final static int THIS_TYPE = 7;
 
-	public static boolean m_isEqualLength = true;
 	int m_Length = -1;
+	
+	
+	
 
-	public SetAttrType(String name) {
+	public TupleAttrType(String name) {
 		super(name);
 	}
 	
-	public SetAttrType(String name,String typeDefinition) {
+	public TupleAttrType(String name, String typeDefinition, ClusAttrType[] innerTypes) {
 		super(name);
 		typeDefinition=typeDefinition.toUpperCase();
-		this.setTypeDefinition(typeDefinition);
-		if (typeDefinition.contains("NOMINAL[")){
-			int start = typeDefinition.indexOf("NOMINAL[");
-			int end = typeDefinition.indexOf("]", start);
-			String nominalDefinition=typeDefinition.substring(start,end);
-			StringTokenizer st = new StringTokenizer(nominalDefinition,",");	
-			this.numberOfPossibleValues=st.countTokens();
-		}
+		this.setTypeDefinition(typeDefinition);	
+		this.setInnerTypes(innerTypes);
 		
-		//TODO implement
-	}	
-	
-	public SetAttrType(String name,String typeDefinition, int numberOfPossibleValues) {
-		this(name,typeDefinition);		
-		this.setNumberOfPossibleValues(numberOfPossibleValues);
-	}	
-	
+		//TODO implement tuple type definition
+	}
+
+
+
 	public ClusAttrType cloneType() {
-		SetAttrType tsat = new SetAttrType(m_Name);
+		TupleAttrType tsat = new TupleAttrType(m_Name);
 		return tsat;
 	}
 
@@ -86,16 +80,16 @@ public class SetAttrType extends ClusAttrType {
 		return THIS_TYPE_NAME;
 	}
 
-	public Set getSet(DataTuple tuple) {
-		return (Set)tuple.getObjVal(m_ArrayIndex);
+	public Tuple getTuple(DataTuple tuple) {
+		return (Tuple)tuple.getObjVal(m_ArrayIndex);
 	}
 
-	public void setSet(DataTuple tuple, Set value) {
+	public void setTuple(DataTuple tuple, Tuple value) {
 		tuple.setObjectVal(value, m_ArrayIndex);
 	}
 
 	public String getString(DataTuple tuple) {
-		Set ts_data = (Set)tuple.getObjVal(getArrayIndex());
+		Tuple ts_data = (Tuple)tuple.getObjVal(this.m_ArrayIndex);
 		return ts_data.toString();
 	}
 
@@ -103,14 +97,11 @@ public class SetAttrType extends ClusAttrType {
 		return new MySerializable();
 	}
 
-	public boolean isEqualLength(){
-		return m_isEqualLength;
-	}
 
 	public class MySerializable extends ClusSerializable {
 
 		public String getString(DataTuple tuple){
-			Set ts_data=(Set)tuple.getObjVal(0);
+			Tuple ts_data=(Tuple)tuple.getObjVal(0);
 			Object[] data=ts_data.getValues();
 			String str="[";
 			for (int k=0;k<data.length;k++){
@@ -122,31 +113,22 @@ public class SetAttrType extends ClusAttrType {
 		}
 
 		public boolean read(ClusReader data, DataTuple tuple) throws IOException {
-			String str = data.readSet();
+			String str = data.readTuple();
 			if (str == null) return false;
-			Set value = new Set(str, getTypeDefinition());
-			tuple.setObjectVal(value, getArrayIndex());
+			Tuple value = (Tuple)ClusAttrType.createDataObject(str, TupleAttrType.this);
+			//Tuple value = new Tuple(str,TupleAttrType.this.getTypeDefinition());
+			tuple.setObjectVal(value, TupleAttrType.this.getArrayIndex());
+			if (m_Length == -1) {				
+				m_Length = value.length();
+			}
 			return true;
 		}
 	}
 
 	public void writeARFFType(PrintWriter wrt) throws ClusException {
-		wrt.print("Set");
+		wrt.print("Tuple");
 	}
 
-	public void setTypeDefinition(String typeDefinition) {
-		this.typeDefinition = typeDefinition;
-	}
 
-	public String getTypeDefinition() {
-		return typeDefinition;
-	}
 
-	public void setNumberOfPossibleValues(int numberOfPossibleValues) {
-		this.numberOfPossibleValues = numberOfPossibleValues;
-	}
-
-	public int getNumberOfPossibleValues() {
-		return numberOfPossibleValues;
-	}
 }

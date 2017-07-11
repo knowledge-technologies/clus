@@ -25,9 +25,9 @@ package clus.algo.kNN.methods.kdTree;
 import java.util.Comparator;
 import java.util.LinkedList;
 
-import clus.algo.kNN.distance.SearchDistance;
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
+import clus.distance.primitive.SearchDistance;
 import clus.main.ClusRun;
 
 

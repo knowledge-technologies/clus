@@ -34,8 +34,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import clus.algo.tdidt.ClusNode;
+import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.model.test.NominalTest;

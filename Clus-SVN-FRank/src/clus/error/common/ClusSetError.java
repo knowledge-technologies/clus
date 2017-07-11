@@ -23,6 +23,7 @@
 package clus.error.common;
 
 import clus.data.type.*;
+import clus.data.type.structured.SetAttrType;
 import clus.main.settings.Settings;
 
 

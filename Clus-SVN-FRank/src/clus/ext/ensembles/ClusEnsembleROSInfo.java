@@ -5,8 +5,8 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import weka.core.Utils;
 
 

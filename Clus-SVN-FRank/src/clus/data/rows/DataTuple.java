@@ -25,8 +25,8 @@ package clus.data.rows;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
+import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import clus.main.settings.Settings;
 
 

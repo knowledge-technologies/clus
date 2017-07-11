@@ -28,15 +28,15 @@ import java.util.ArrayList;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.data.type.TimeSeriesAttrType;
+import clus.distance.ClusDistance;
+import clus.distance.timeseries.TimeSeriesDist;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.statistic.SumPairwiseDistancesStat;
-import clus.statistic.distance.timeseries.TimeSeriesDist;
 import clus.util.ClusFormat;
 
 

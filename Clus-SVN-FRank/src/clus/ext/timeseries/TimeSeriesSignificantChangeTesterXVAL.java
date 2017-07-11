@@ -30,8 +30,9 @@ import java.util.Random;
 import clus.algo.rules.ClusRule;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.data.type.TimeSeriesAttrType;
+import clus.distance.timeseries.TimeSeriesDist;
 import clus.main.settings.Settings;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;
@@ -39,7 +40,6 @@ import clus.model.ClusModel;
 import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
-import clus.statistic.distance.timeseries.TimeSeriesDist;
 import clus.util.ClusException;
 
 

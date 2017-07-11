@@ -31,7 +31,7 @@ import clus.algo.ClusInductionAlgorithm;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.error.common.multiscore.MultiScore;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;

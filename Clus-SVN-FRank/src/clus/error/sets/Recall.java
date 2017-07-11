@@ -31,6 +31,9 @@ import java.text.NumberFormat;
 import clus.data.attweights.*;
 import clus.data.rows.*;
 import clus.data.type.*;
+import clus.data.type.structured.SetAttrType;
+import clus.distance.ClusDistance;
+import clus.distance.sets.seemsRedundantRemoveAfterMerge.SetOperations;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;
 import clus.error.common.ClusSetError;
@@ -39,7 +42,6 @@ import clus.ext.sets.SetStatistic;
 import clus.main.*;
 import clus.main.settings.Settings;
 import clus.statistic.*;
-import clus.statistic.distance.sets.seemsRedundantRemoveAfterMerge.SetOperations;
 
 
 public class Recall extends ClusSetError {

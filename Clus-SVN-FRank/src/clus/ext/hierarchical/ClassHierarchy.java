@@ -36,8 +36,8 @@ import java.util.Iterator;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.main.settings.Settings;
 import clus.util.ClusException;

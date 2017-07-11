@@ -29,8 +29,8 @@ import java.util.HashSet;
 
 import clus.data.io.ARFFFile;
 import clus.data.rows.DataTuple;
+import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import clus.data.type.StringAttrType;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;

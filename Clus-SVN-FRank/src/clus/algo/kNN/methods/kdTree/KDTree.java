@@ -26,13 +26,11 @@ import java.io.IOException;
 // import java.util.Collection;
 import java.util.LinkedList;
 
-// import clus.algo.kNN.*;
-// import clus.algo.kNN.distance.EuclideanDistance;
-import clus.algo.kNN.distance.SearchDistance;
 import clus.algo.kNN.methods.NNStack;
 import clus.algo.kNN.methods.SearchAlgorithm;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.distance.primitive.SearchDistance;
 // import clus.data.type.ClusAttrType;
 import clus.main.ClusRun;
 import clus.util.ClusException;

@@ -31,7 +31,7 @@ import clus.algo.tdidt.ClusDecisionTree;
 import clus.algo.tdidt.ClusNode;
 import clus.data.ClusData;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.ext.beamsearch.ClusBeamModel;
 import clus.main.ClusRun;
 import clus.main.settings.Settings;

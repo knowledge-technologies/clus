@@ -33,7 +33,7 @@ import java.util.Scanner;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;

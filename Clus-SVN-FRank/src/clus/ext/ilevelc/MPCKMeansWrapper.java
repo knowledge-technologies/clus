@@ -36,7 +36,7 @@ import java.util.Arrays;
 import clus.data.io.ARFFFile;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;

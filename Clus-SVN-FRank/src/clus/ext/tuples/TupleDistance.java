@@ -23,10 +23,10 @@
 package clus.ext.tuples;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.TupleAttrType;
+import clus.data.type.structured.TupleAttrType;
+import clus.distance.ClusStructuredDistance;
 import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
-import clus.statistic.ClusStructuredDistance;
 
 public abstract class TupleDistance extends ClusStructuredDistance {
 

@@ -26,7 +26,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.error.common.ClusErrorList;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;

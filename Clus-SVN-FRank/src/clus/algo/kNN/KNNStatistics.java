@@ -23,6 +23,7 @@
 package clus.algo.kNN;
 
 import clus.data.rows.RowData;
+import clus.data.schema.ClusSchema;
 import clus.algo.kNN.distance.valentin.NominalStatistic;
 import clus.algo.kNN.distance.valentin.NumericStatistic;
 import clus.data.rows.DataTuple;

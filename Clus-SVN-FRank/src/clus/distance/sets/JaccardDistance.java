@@ -1,11 +1,11 @@
 
-package clus.statistic.distance.sets;
+package clus.distance.sets;
 
-import clus.data.type.SetAttrType;
+import clus.data.type.structured.SetAttrType;
+import clus.distance.ClusDistance;
 import clus.ext.sets.Set;
 import clus.ext.sets.SetDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 
 
 public class JaccardDistance extends SetDistance {
@@ -44,10 +44,12 @@ public class JaccardDistance extends SetDistance {
             }
         }
 
-        long timeEnd = System.currentTimeMillis();
-
-        //System.out.println("To calculate distance between two sets:\t" + (timeEnd-timeStart)+ " miliseconds.");
-
         return 1 - (intersection / union);
+    }
+
+
+    @Override
+    public String getDistanceName() {
+        return "Jaccard distance (sets)";
     }
 }

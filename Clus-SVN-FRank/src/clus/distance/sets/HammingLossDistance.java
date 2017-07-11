@@ -1,11 +1,11 @@
 
-package clus.statistic.distance.sets;
+package clus.distance.sets;
 
-import clus.data.type.SetAttrType;
+import clus.data.type.structured.SetAttrType;
+import clus.distance.ClusDistance;
 import clus.ext.sets.Set;
 import clus.ext.sets.SetDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 
 
 public class HammingLossDistance extends SetDistance {
@@ -51,10 +51,12 @@ public class HammingLossDistance extends SetDistance {
             }
         }
 
-        long timeEnd = System.currentTimeMillis();
-
-        //System.out.println("To calculate distance between two sets:\t" + (timeEnd-timeStart)+ " miliseconds.");
-
         return distance / numberOfTotalPossibleValues;
+    }
+
+
+    @Override
+    public String getDistanceName() {
+        return "Hamming loss (sets)";
     }
 }

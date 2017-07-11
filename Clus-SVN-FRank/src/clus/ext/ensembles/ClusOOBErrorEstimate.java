@@ -8,7 +8,7 @@ import java.util.HashMap;
 import clus.Clus;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.ClusOutput;

@@ -20,38 +20,42 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.algo.kNN.distance;
+package clus.distance.timeseries;
 
 import clus.data.rows.DataTuple;
-import clus.data.type.ClusAttrType;
+import clus.data.type.TimeSeriesAttrType;
+import clus.distance.ClusDistance;
+import clus.ext.timeseries.TimeSeries;
+import clus.ext.timeseries.TimeSeriesStat;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
+import clus.statistic.ClusStatistic;
 
 
-/**
- * @author Mitja Pugelj
- */
-public class ChebyshevDistance extends ClusDistance {
+public abstract class TimeSeriesDist extends ClusDistance {
 
-    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-    private SearchDistance m_Search;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
+    protected TimeSeriesAttrType m_Attr;
 
 
-    public ChebyshevDistance(SearchDistance search) {
-        m_Search = search;
+    public TimeSeriesDist(TimeSeriesAttrType attr) {
+        m_Attr = attr;
     }
+
+
+    public abstract double calcDistance(TimeSeries t1, TimeSeries t2);
 
 
     public double calcDistance(DataTuple t1, DataTuple t2) {
-        double dist = 0;
-        for (ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
-            dist = Math.max(dist, m_Search.calcDistanceOnAttr(t1, t2, attr));
-        return dist;
+        TimeSeries ts1 = m_Attr.getTimeSeries(t1);
+        TimeSeries ts2 = m_Attr.getTimeSeries(t2);
+        return calcDistance(ts1, ts2);
     }
 
 
-    public String getName() {
-        return "Chebyshev distance";
+    public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {
+        TimeSeries ts1 = m_Attr.getTimeSeries(t1);
+        TimeSeriesStat stat = (TimeSeriesStat) s2;
+        return calcDistance(ts1, stat.getRepresentativeMedoid());
     }
-
 }

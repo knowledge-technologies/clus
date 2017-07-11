@@ -3,7 +3,7 @@ package clus.model;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 

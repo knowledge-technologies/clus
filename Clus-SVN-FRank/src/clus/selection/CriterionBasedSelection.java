@@ -3,8 +3,8 @@ package clus.selection;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 
 
 public class CriterionBasedSelection {

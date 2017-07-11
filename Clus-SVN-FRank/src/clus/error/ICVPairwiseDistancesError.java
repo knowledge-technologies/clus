@@ -29,13 +29,13 @@ import clus.algo.rules.ClusRuleSet;
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
-import clus.statistic.ClusDistance;
 
 
 public class ICVPairwiseDistancesError extends ClusError {

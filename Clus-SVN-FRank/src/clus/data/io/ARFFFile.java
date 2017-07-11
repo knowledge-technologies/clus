@@ -31,15 +31,15 @@ import java.util.HashMap;
 
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
+import clus.data.schema.ClusSchema;
 import clus.data.type.BitwiseNominalAttrType;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
-import clus.data.type.SetAttrType;
 import clus.data.type.StringAttrType;
 import clus.data.type.TimeSeriesAttrType;
-import clus.data.type.TupleAttrType;
+import clus.data.type.structured.SetAttrType;
+import clus.data.type.structured.TupleAttrType;
 // FIXME - use plugin system
 import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesAttrTypeSingleLabel;

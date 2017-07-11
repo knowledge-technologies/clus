@@ -3,8 +3,8 @@ package clus.main.settings;
 
 import java.util.ArrayList;
 
+import clus.data.schema.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.hierarchicalmtr.ClusHMTRNode;

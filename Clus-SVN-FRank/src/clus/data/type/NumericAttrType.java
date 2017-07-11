@@ -34,6 +34,7 @@ import clus.data.cols.attribute.ClusAttribute;
 import clus.data.cols.attribute.NumericTarget;
 import clus.data.io.ClusReader;
 import clus.data.rows.DataTuple;
+import clus.data.schema.ClusSchema;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.hierarchicalmtr.ClusHMTRNode;
 import clus.io.ClusSerializable;

@@ -19,13 +19,40 @@
  * *
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
- 
-package clus.statistic;
 
+package clus.distance.primitive;
+
+import clus.data.rows.DataTuple;
+import clus.data.type.ClusAttrType;
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
 
-public class ClusStructuredDistance extends ClusDistance {
 
-	public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
-	protected ClusDistance[] m_ChildDistances;
+/**
+ * @author Mitja Pugelj
+ */
+public class ChebyshevDistance extends ClusDistance {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+    private SearchDistance m_Search;
+
+
+    public ChebyshevDistance(SearchDistance search) {
+        m_Search = search;
+    }
+
+
+    public double calcDistance(DataTuple t1, DataTuple t2) {
+        double dist = 0;
+        for (ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
+            dist = Math.max(dist, m_Search.calcDistanceOnAttr(t1, t2, attr));
+        return dist;
+    }
+
+
+    @Override
+    public String getDistanceName() {
+        return "Chebyshev distance";
+    }
+
 }

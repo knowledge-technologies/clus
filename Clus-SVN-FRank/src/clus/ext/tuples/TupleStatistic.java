@@ -27,7 +27,10 @@ import java.util.*;
 
 import clus.data.attweights.*;
 import clus.data.rows.*;
+import clus.data.schema.ClusSchema;
 import clus.data.type.*;
+import clus.data.type.structured.TupleAttrType;
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
 import clus.statistic.*;
 import clus.util.*;

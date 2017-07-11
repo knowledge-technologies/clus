@@ -38,7 +38,7 @@ import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.DataTuple;
 import clus.data.rows.MemoryTupleIterator;
 import clus.data.rows.RowData;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;
 import clus.ext.hierarchical.HierRemoveInsigClasses;

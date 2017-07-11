@@ -31,7 +31,7 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import clus.algo.tdidt.ClusNode;
-import clus.data.type.ClusSchema;
+import clus.data.schema.ClusSchema;
 import clus.main.settings.Settings;
 import clus.model.modelio.tilde.TildeOutReader;
 import clus.util.jeans.graph.WindowClosingListener;

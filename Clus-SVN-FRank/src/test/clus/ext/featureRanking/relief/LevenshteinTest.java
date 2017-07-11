@@ -7,7 +7,7 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
-import clus.statistic.distance.relief.Levenshtein;
+import clus.distance.primitive.relief.Levenshtein;
 
 
 public class LevenshteinTest {

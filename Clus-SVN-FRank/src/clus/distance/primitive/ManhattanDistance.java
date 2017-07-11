@@ -20,12 +20,12 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.algo.kNN.distance;
+package clus.distance.primitive;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;
+import clus.distance.ClusDistance;
 import clus.main.settings.Settings;
-import clus.statistic.ClusDistance;
 
 
 /**
@@ -51,7 +51,9 @@ public class ManhattanDistance extends ClusDistance {
     }
 
 
-    public String getName() {
+    @Override
+    public String getDistanceName() {
         return "Manhattan distance";
     }
+
 }
