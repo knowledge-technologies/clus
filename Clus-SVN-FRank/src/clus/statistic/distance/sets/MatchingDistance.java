@@ -1,4 +1,4 @@
-package clus.ext.sets.distances;
+package clus.statistic.distance.sets;
 
 import clus.data.type.SetAttrType;
 import clus.ext.sets.Set;

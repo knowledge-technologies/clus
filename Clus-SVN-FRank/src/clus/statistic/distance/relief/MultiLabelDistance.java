@@ -1,4 +1,4 @@
-package clus.ext.featureRanking.relief.distances;
+package clus.statistic.distance.relief;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.ClusAttrType;

@@ -1,4 +1,4 @@
-package clus.ext.featureRanking.relief.distances;
+package clus.statistic.distance.relief;
 
 import java.util.ArrayList;
 import java.util.HashMap;

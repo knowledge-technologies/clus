@@ -39,6 +39,7 @@ import clus.model.ClusModel;
 import clus.selection.XValMainSelection;
 import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
+import clus.statistic.distance.timeseries.TimeSeriesDist;
 import clus.util.ClusException;
 
 

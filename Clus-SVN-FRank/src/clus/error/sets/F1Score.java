@@ -36,10 +36,10 @@ import clus.error.common.ClusErrorList;
 import clus.error.common.ClusSetError;
 import clus.ext.sets.Set;
 import clus.ext.sets.SetStatistic;
-import clus.ext.sets.distances.seemsRedundantRemoveAfterMerge.SetOperations;
 import clus.main.*;
 import clus.main.settings.Settings;
 import clus.statistic.*;
+import clus.statistic.distance.sets.seemsRedundantRemoveAfterMerge.SetOperations;
 
 
 public class F1Score extends ClusSetError {

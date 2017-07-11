@@ -1,11 +1,11 @@
-package clus.ext.sets.distances;
+package clus.statistic.distance.sets;
 import clus.data.type.SetAttrType;
 import clus.ext.sets.Set;
 import clus.ext.sets.SetDistance;
 import clus.ext.timeseries.TimeSeries;
-import clus.ext.timeseries.TimeSeriesDist;
 import clus.main.settings.Settings;
 import clus.statistic.ClusDistance;
+import clus.statistic.distance.timeseries.TimeSeriesDist;
 
 
 public class EuclideanDistance extends SetDistance{

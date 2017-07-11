@@ -35,13 +35,13 @@ import clus.data.cols.attribute.ClusAttribute;
 import clus.data.rows.DataPreprocs;
 import clus.data.rows.DataTuple;
 import clus.ext.timeseries.TimeSeries;
-import clus.ext.timeseries.TimeSeriesDist;
 import clus.ext.tuples.Tuple;
 import clus.ext.tuples.TupleDistance;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsTree;
 import clus.statistic.ClusDistance;
+import clus.statistic.distance.timeseries.TimeSeriesDist;
 import clus.util.ClusException;
 
 
@@ -543,14 +543,14 @@ public abstract class ClusAttrType implements Serializable, Comparable {
             TimeSeriesDist tsDistance = null;
             switch (settings.getTree().getTSDistance()) {
                 case SettingsTree.TIME_SERIES_DISTANCE_MEASURE_DTW:
-                    tsDistance = new clus.ext.timeseries.DTWTimeSeriesDist((TimeSeriesAttrType) type);
+                    tsDistance = new clus.statistic.distance.timeseries.DTWTimeSeriesDist((TimeSeriesAttrType) type);
                     break;
                 case SettingsTree.TIME_SERIES_DISTANCE_MEASURE_QDM:
-                    tsDistance = new clus.ext.timeseries.QDMTimeSeriesDist((TimeSeriesAttrType) type);
+                    tsDistance = new clus.statistic.distance.timeseries.QDMTimeSeriesDist((TimeSeriesAttrType) type);
                     break;
 
                 case SettingsTree.TIME_SERIES_DISTANCE_MEASURE_TSC:
-                    tsDistance = new clus.ext.timeseries.TSCTimeSeriesDist((TimeSeriesAttrType) type);
+                    tsDistance = new clus.statistic.distance.timeseries.TSCTimeSeriesDist((TimeSeriesAttrType) type);
                     break;
             }
             return tsDistance;

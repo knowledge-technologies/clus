@@ -1,5 +1,5 @@
 
-package clus.ext.sets.distances;
+package clus.statistic.distance.sets;
 
 import java.util.Arrays;
 

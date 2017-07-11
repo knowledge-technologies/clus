@@ -1,4 +1,4 @@
-package clus.ext.sets.distances.seemsRedundantRemoveAfterMerge;
+package clus.statistic.distance.sets.seemsRedundantRemoveAfterMerge;
 import java.util.Arrays;
 
 import clus.data.type.SetAttrType;

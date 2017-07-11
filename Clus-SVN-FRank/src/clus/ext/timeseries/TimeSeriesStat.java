@@ -36,6 +36,7 @@ import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;
 import clus.statistic.SumPairwiseDistancesStat;
+import clus.statistic.distance.timeseries.TimeSeriesDist;
 import clus.util.ClusFormat;
 
 

@@ -14,14 +14,15 @@ import clus.data.type.NumericAttrType;
 import clus.data.type.StringAttrType;
 import clus.data.type.TimeSeriesAttrType;
 import clus.ext.featureRanking.ClusFeatureRanking;
-import clus.ext.featureRanking.relief.distances.HierarchicalMultiLabelDistance;
 import clus.ext.hierarchical.ClassesAttrType;
-import clus.ext.timeseries.DTWTimeSeriesDist;
-import clus.ext.timeseries.QDMTimeSeriesDist;
-import clus.ext.timeseries.TSCTimeSeriesDist;
 import clus.ext.timeseries.TimeSeries;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsTimeSeries;
+import clus.statistic.distance.relief.HierarchicalMultiLabelDistance;
+import clus.statistic.distance.relief.Levenshtein;
+import clus.statistic.distance.timeseries.DTWTimeSeriesDist;
+import clus.statistic.distance.timeseries.QDMTimeSeriesDist;
+import clus.statistic.distance.timeseries.TSCTimeSeriesDist;
 import clus.util.ClusException;
 
 

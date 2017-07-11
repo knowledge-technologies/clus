@@ -20,10 +20,12 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package clus.ext.timeseries;
+package clus.statistic.distance.timeseries;
 
 import clus.data.rows.DataTuple;
 import clus.data.type.TimeSeriesAttrType;
+import clus.ext.timeseries.TimeSeries;
+import clus.ext.timeseries.TimeSeriesStat;
 import clus.main.settings.Settings;
 import clus.statistic.ClusDistance;
 import clus.statistic.ClusStatistic;
