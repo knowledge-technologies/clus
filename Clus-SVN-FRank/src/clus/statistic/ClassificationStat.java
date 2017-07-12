@@ -1383,7 +1383,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     public RowData getData() {
         return m_data;
     }
-    public double calcPDistance() {
+    public double calcPDistance(Integer[] permutation) {
         ClusSchema schema = m_data.getSchema();
         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         int M = 0; int N = m_data.getNbRows();
@@ -1400,7 +1400,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_data.getTuple(i);
+                DataTuple exi = m_data.getTuple(permutation[i]);
                 double xi = type.getNominal(exi);
                 means[k] += xi;
             }
@@ -1410,7 +1410,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];  
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_data.getTuple(i);
+                DataTuple exi = m_data.getTuple(permutation[i]);
                 double xi = type.getNominal(exi);
                 for (int j =M; j < N; j++) {                
                     DataTuple exj = m_data.getTuple(j);
@@ -1450,7 +1450,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_data.getTuple(i);
+                DataTuple exi = m_data.getTuple(permutation[i]);
                 double xi = type.getNominal(exi);
                 meansR[k] += xi;
             }
@@ -1460,10 +1460,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_data.getTuple(i);
+                DataTuple exi = m_data.getTuple(permutation[i]);
                 double xi = type.getNominal(exi);
                 for (int j =M; j < N; j++) {                
-                    DataTuple exj = m_data.getTuple(j);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     double xj = type.getNominal(exj);
                     long xxi = (long)xt.getNumeric(exi);        
                     long yyi = (long)xt.getNumeric(exj);    
@@ -1497,7 +1497,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         return scaledI;             
     }
-public double calcPtotal() {
+public double calcPtotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -1515,7 +1515,7 @@ public double calcPtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -1525,17 +1525,17 @@ public double calcPtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];  
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);                                       
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                     long indexMap = indexI*(NR)+indexJ;
                     Double temp= GISHeuristic.m_distances.get(indexMap); 
@@ -1563,7 +1563,7 @@ public double calcPtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
         }
@@ -1573,17 +1573,17 @@ public double calcPtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                     long indexMap = indexI*(NR)+indexJ;
                     Double temp= GISHeuristic.m_distances.get(indexMap); 
@@ -1609,7 +1609,7 @@ public double calcPtotal() {
     return scaledI;             
 }
 
-public double calcMultiIwithNeighbours(){
+public double calcMultiIwithNeighbours(Integer[] permutation){
     ClusSchema schema = m_data.getSchema();
     if (schema.getNbTargetAttributes()==1) {System.out.println("Error calculating Bivariate Heuristics with only one target!");System.exit(1);}     
     int M = 0;
@@ -1628,7 +1628,7 @@ public double calcMultiIwithNeighbours(){
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -1644,7 +1644,7 @@ public double calcMultiIwithNeighbours(){
             double[][] w = new double[N][N]; //matrica  
             for (int i = M; i < N; i++) {
                 Distance distances[]=new Distance[NeighCount];
-                DataTuple exi = m_data.getTuple(i);  //example i
+                DataTuple exi = m_data.getTuple(permutation[i]);  //example i
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                 double ti = type.getNumeric(exi);
@@ -1654,14 +1654,14 @@ public double calcMultiIwithNeighbours(){
                 int biggestindex=Integer.MAX_VALUE;
                 
                 for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j); //example j     
+                DataTuple exj = m_data.getTuple(permutation[j]); //example j     
                 double tj = type.getNumeric(exj);       
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) distances[j]=new Distance(j,tj,d);
+                if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                 else {
-                    if (j<NeighCount) distances[j]=new Distance(j,tj,d);
+                    if (permutation[j]<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -1672,7 +1672,7 @@ public double calcMultiIwithNeighbours(){
                          }
                         if (d < biggestd)
                         {
-                         distances[biggestindex].index = j;
+                         distances[biggestindex].index = permutation[j];
                          distances[biggestindex].target = tj;
                          distances[biggestindex].distance = d;
                         }
@@ -1685,18 +1685,18 @@ public double calcMultiIwithNeighbours(){
                 if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[j].distance==0.0) w[i][j]=1; 
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsum[k] += w[i][j]*(ti-means[k])*(distances[j].target-means[k]); //m_distances.get(i*N+j) [i][j]
-                W+=w[i][j];
+                upsum[k] += w[permutation[i]][permutation[j]]*(ti-means[k])*(distances[permutation[j]].target-means[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
+                W+=w[permutation[i]][permutation[j]];
                 }   
             downsum[k]+=((ti-means[k])*(ti-means[k]));
             }
@@ -1722,7 +1722,7 @@ public double calcMultiIwithNeighbours(){
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
         }
@@ -1739,7 +1739,7 @@ public double calcMultiIwithNeighbours(){
             double[][] w = new double[N][N]; //matrica  
             for (int i = M; i < N; i++) {
                 Distance distances[]=new Distance[NeighCount];
-                DataTuple exi = m_data.getTuple(i);  //example i
+                DataTuple exi = m_data.getTuple(permutation[i]);  //example i
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                 double ti = type.getNumeric(exi);
@@ -1749,14 +1749,14 @@ public double calcMultiIwithNeighbours(){
                 double biggestd=Double.POSITIVE_INFINITY; 
                 int biggestindex=Integer.MAX_VALUE;
                 for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j); //example j     
+                DataTuple exj = m_data.getTuple(permutation[j]); //example permutation[j]     
                 double tj = type.getNumeric(exj);       
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) {distances[a]=new Distance(j,tj,d); a++;}
+                if ((N-M)<NeighCount) {distances[a]=new Distance(permutation[j],tj,d); a++;}
                 else {
-                    if (a<NeighCount) {distances[a]=new Distance(j,tj,d); a++;}
+                    if (a<NeighCount) {distances[a]=new Distance(permutation[j],tj,d); a++;}
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -1767,7 +1767,7 @@ public double calcMultiIwithNeighbours(){
                          }
                         if (d < biggestd)
                         {
-                         distances[biggestindex].index = j;
+                         distances[biggestindex].index = permutation[j];
                          distances[biggestindex].target = tj;
                          distances[biggestindex].distance = d;
                         }
@@ -1779,19 +1779,19 @@ public double calcMultiIwithNeighbours(){
                 //if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount);   
                 //M NN
                 int j=0;
-                while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
-                if (distances[j].distance==0.0) w[i][j]=1;
+                while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsumR[k] += w[i][j]*(ti-meansR[k])*(distances[j].target-meansR[k]); //m_distances.get(i*N+j) [i][j]
-                WR+=w[i][j];
+                upsumR[k] += w[permutation[i]][permutation[j]]*(ti-meansR[k])*(distances[permutation[j]].target-meansR[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
+                WR+=w[permutation[i]][permutation[j]];
                 j++;
                 }   
             downsumR[k]+=((ti-meansR[k])*(ti-meansR[k]));
@@ -1820,7 +1820,7 @@ public double calcMultiIwithNeighbours(){
     return scaledI;         
 }
 
-public double calcBivariateLee() {
+public double calcBivariateLee(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     if (schema.getNbTargetAttributes()==1) {System.out.println("Error calculating Bivariate Heuristics with only one target!");System.exit(1);}     
     int M = 0;int N = m_data.getNbRows();long NR = m_data.getNbRows();
@@ -1837,7 +1837,7 @@ public double calcBivariateLee() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xxi = type.getNumeric(exi);
             means[k] += xxi;
         }
@@ -1845,38 +1845,38 @@ public double calcBivariateLee() {
     }
     double avgik=0;double upsum0=0; double upsum1=1;double downsum0=0; double downsum1=0;double WL=0.0; 
     for (int i = M; i <N; i++) {
-        DataTuple exi = m_data.getTuple(i);
+        DataTuple exi = m_data.getTuple(permutation[i]);
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         xi[k] = type.getNumeric(exi);}
         double W=0.0; 
         for (int j =M; j < N; j++) {
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             for (int k = 0; k < schema.getNbTargetAttributes(); k++){
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             xj[k] = type.getNumeric(exj);}
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                     long indexMap = indexI*(NR)+indexJ;
                     Double temp = GISHeuristic.m_distances.get(indexMap);
                     if (temp!=null) w=temp;else w=0;    
-                    //upsum[0][i] += w*xj[0]; upsum[1][i] += w*xj[1]; W+=w*w;   
-                    upsum[0][i] += w*(xj[0]-means[0]); upsum[1][i] += w*(xj[1]-means[1]); W+=w;     
+                    //upsum[0][permutation[i]] += w*xj[0]; upsum[1][permutation[i]] += w*xj[1]; W+=w*w;   
+                    upsum[0][permutation[i]] += w*(xj[0]-means[0]); upsum[1][permutation[i]] += w*(xj[1]-means[1]); W+=w;     
                 }  
                 else{
-                    //upsum[0][i] += xi[0]; upsum[1][i] +=xi[1];W+=1; 
-                    upsum[0][i] += xi[0]-means[0]; upsum[1][i] +=xi[1]-means[1];W+=1; 
+                    //upsum[0][permutation[i]] += xi[0]; upsum[1][permutation[i]] +=xi[1];W+=1; 
+                    upsum[0][permutation[i]] += xi[0]-means[0]; upsum[1][permutation[i]] +=xi[1]-means[1];W+=1; 
                     }
             }       
-            //upsum0+= (upsum[0][i]-means[0]); upsum1+= (upsum[1][i]-means[1]);
+            //upsum0+= (upsum[0][permutation[i]]-means[0]); upsum1+= (upsum[1][permutation[i]]-means[1]);
             WL+=W*W; 
-            upsum0+= upsum[0][i]*upsum[1][i];
+            upsum0+= upsum[0][permutation[i]]*upsum[1][permutation[i]];
             downsum0+= (xi[0]-means[0])*(xi[0]-means[0]); downsum1+= (xi[1]-means[1])*(xi[1]-means[1]);
     }           
     if (upsum0!=0.0 && upsum1!=0.0 && downsum0!=0.0 && downsum1!=0.0)
@@ -1894,35 +1894,35 @@ public double calcBivariateLee() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xxi = type.getNumeric(exi);
             meansR[k] += xxi;
         }
         meansR[k]/=(N-M);
     }
     for (int i = M; i <N; i++) {
-    DataTuple exi = m_data.getTuple(i);
+    DataTuple exi = m_data.getTuple(permutation[i]);
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
     ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
     xiR[k] = type.getNumeric(exi);}
     double WR=0.0; 
         for (int j =M; j < N; j++) {
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             for (int k = 0; k < schema.getNbTargetAttributes(); k++){
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             xjR[k] = type.getNumeric(exj);}
-            double w=0;long indexI=i;long indexJ=j;
-            if (i!=j){
-                if (i>j){indexI=j;indexJ=i;}        
+            double w=0;long indexI=permutation[i];long indexJ=permutation[j];
+            if (permutation[i]!=permutation[j]){
+                if (permutation[i]>permutation[j]){indexI=permutation[j];indexJ=permutation[i];}        
                 long indexMap = indexI*(NR)+indexJ;
                 Double temp = GISHeuristic.m_distances.get(indexMap);
                 if (temp!=null) w=temp;else w=0;        
-                upsumR[0][(i-M)] += w*(xjR[0]-meansR[0]); upsumR[1][(i-M)] += w*(xjR[1]-meansR[1]); WR+=w; 
+                upsumR[0][(permutation[i]-M)] += w*(xjR[0]-meansR[0]); upsumR[1][(permutation[i]-M)] += w*(xjR[1]-meansR[1]); WR+=w; 
             }  
-            else{upsumR[0][(i-M)] += xiR[0]-meansR[0]; upsumR[1][(i-M)] +=xiR[1]-meansR[1];WR+=1; }
+            else{upsumR[0][(permutation[i]-M)] += xiR[0]-meansR[0]; upsumR[1][(permutation[i]-M)] +=xiR[1]-meansR[1];WR+=1; }
         }       
         WRR+=WR*WR; 
-        upsumR0+= upsumR[0][(i-M)]*upsumR[1][(i-M)];        
+        upsumR0+= upsumR[0][(permutation[i]-M)]*upsumR[1][(permutation[i]-M)];        
         downsumR0+= (xiR[0]-meansR[0])*(xiR[0]-meansR[0]); downsumR1+= (xiR[1]-meansR[1])*(xiR[1]-meansR[1]);
     }           
     if (upsumR0!=0.0 && upsumR1!=0.0 && downsumR0!=0.0 && downsumR1!=0.0)
@@ -1938,7 +1938,7 @@ public double calcBivariateLee() {
     }
     return scaledI;         
 }
-public double calcLeewithNeighbours() {
+public double calcLeewithNeighbours(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     if (schema.getNbTargetAttributes()==1) {System.out.println("Error calculating Bivariate Heuristics with only one target!");System.exit(1);}     
     int M = 0;int N = m_data.getNbRows();
@@ -1955,7 +1955,7 @@ public double calcLeewithNeighbours() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double m = type.getNumeric(exi);
             means[k] += m;
         }
@@ -1968,7 +1968,7 @@ public double calcLeewithNeighbours() {
     if (NeighCount>0){
         double[][] w = new double[N][N]; //matrica  
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double yyi=0.0;double xxi=0.0;double W=0;
             for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
                 ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k]; //target
@@ -1979,16 +1979,16 @@ public double calcLeewithNeighbours() {
             DistanceB distances[]=new DistanceB[NeighCount];double yyj=0.0;double xxj=0.0;  
             
             for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 for (int k = 0; k < schema.getNbTargetAttributes(); k++){
                 ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];//target
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord     
                 xj[k] = type.getNumeric(exj);xxj = xt.getNumeric(exi);yyj = yt.getNumeric(exi);}
                 double d = Math.sqrt((xxi-xxj)*(xxi-xxj)+(yyi-yyj)*(yyi-yyj));  
-                if ((N-M)<NeighCount) distances[j]=new DistanceB(j,xj[0],xj[1],d);
+                if ((N-M)<NeighCount) distances[permutation[j]]=new DistanceB(permutation[j],xj[0],xj[1],d);
                 else {
-                    if (j<NeighCount) distances[j]=new DistanceB(j,xj[0],xj[1],d);
+                    if (permutation[j]<NeighCount) distances[permutation[j]]=new DistanceB(permutation[j],xj[0],xj[1],d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -1997,7 +1997,7 @@ public double calcLeewithNeighbours() {
                             {biggestd = distances[a].distance;  biggestindex = a;}
                          if (d < biggestd)
                          {
-                         distances[biggestindex].index = j; distances[biggestindex].distance = d;
+                         distances[biggestindex].index = permutation[j]; distances[biggestindex].distance = d;
                          distances[biggestindex].target1 = xj[0]; distances[biggestindex].target2 = xj[1];
                          }
                       }
@@ -2005,21 +2005,21 @@ public double calcLeewithNeighbours() {
                 }
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[j].distance==0.0) w[i][j]=1; 
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }
-                upsum[0][i] += w[i][j]*(xj[0]-means[0]); upsum[1][i] += w[i][j]*(xj[1]-means[1]); W+=w[i][j];
+                upsum[0][permutation[i]] += w[permutation[i]][permutation[j]]*(xj[0]-means[0]); upsum[1][permutation[i]] += w[permutation[i]][permutation[j]]*(xj[1]-means[1]); W+=w[permutation[i]][permutation[j]];
                 }
                 
                 WL+=W*W; 
-                upsum0+= upsum[0][i]*upsum[1][i];
+                upsum0+= upsum[0][permutation[i]]*upsum[1][permutation[i]];
                 downsum0+= (xi[0]-means[0])*(xi[0]-means[0]); downsum1+= (xi[1]-means[1])*(xi[1]-means[1]);
             }
         }       
@@ -2037,7 +2037,7 @@ public double calcLeewithNeighbours() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double m = type.getNumeric(exi);
             meansR[k] += m;
         }
@@ -2047,7 +2047,7 @@ public double calcLeewithNeighbours() {
     if (NeighCount>0){
         double[][] w = new double[N][N]; //matrica  
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double yyi=0.0;double xxi=0.0;double WR=0;
             for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
                 ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k]; //target
@@ -2058,7 +2058,7 @@ public double calcLeewithNeighbours() {
             DistanceB distances[]=new DistanceB[NeighCount];double yyj=0.0;double xxj=0.0;  
             
             for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 for (int k = 0; k < schema.getNbTargetAttributes(); k++){
                 ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];//target
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
@@ -2066,37 +2066,37 @@ public double calcLeewithNeighbours() {
                 xRj[k] = type.getNumeric(exj);xxj = xt.getNumeric(exi);yyj = yt.getNumeric(exi);}
                 double d = Math.sqrt((xxi-xxj)*(xxi-xxj)+(yyi-yyj)*(yyi-yyj)); 
                 
-                if ((N-M)<NeighCount) {distances[a]=new DistanceB(j,xRj[0],xRj[1],d); a++;}
+                if ((N-M)<NeighCount) {distances[a]=new DistanceB(permutation[j],xRj[0],xRj[1],d); a++;}
                 else {
-                    if (a<NeighCount) {distances[a]=new DistanceB(j,xRj[0],xRj[1],d); a++;}  
+                    if (a<NeighCount) {distances[a]=new DistanceB(permutation[j],xRj[0],xRj[1],d); a++;}  
                     else{
                      biggestindex = 0; biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      for (a=1; a<NeighCount; a++)
                         if (distances[a].distance > biggestd)
                             {biggestd = distances[a].distance; biggestindex = a;}
                         if (d < biggestd)
-                        {distances[biggestindex].index = j; distances[biggestindex].distance = d;
+                        {distances[biggestindex].index = permutation[j]; distances[biggestindex].distance = d;
                          distances[biggestindex].target1 = xRj[0]; distances[biggestindex].target2 = xRj[1];}
                      }
                 }
             }
 
             int j=0;
-            while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
-            if (distances[j].distance==0.0) w[i][j]=1;
+            while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
+            if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                      }
                     }               
-                upsumR[0][i] += w[i][j]*(xRj[0]-meansR[0]); upsumR[1][i] += w[i][j]*(xRj[1]-meansR[1]); WR+=w[i][j];
+                upsumR[0][permutation[i]] += w[permutation[i]][permutation[j]]*(xRj[0]-meansR[0]); upsumR[1][permutation[i]] += w[permutation[i]][permutation[j]]*(xRj[1]-meansR[1]); WR+=w[permutation[i]][permutation[j]];
             }
             WRR+=WR*WR; 
-            upsumR0+= upsumR[0][i]*upsumR[1][i];
+            upsumR0+= upsumR[0][permutation[i]]*upsumR[1][permutation[i]];
             downsumR0+= (xRi[0]-meansR[0])*(xRi[0]-meansR[0]); downsumR1+= (xRi[1]-meansR[1])*(xRi[1]-meansR[1]);
         }
     }       
@@ -2115,7 +2115,7 @@ public double calcLeewithNeighbours() {
     return scaledI;         
 }
 
-public double calcMutivariateItotal() {
+public double calcMutivariateItotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     if (schema.getNbTargetAttributes()==1) {System.out.println("Error calculating Bivariate Heuristics with only one target!");System.exit(1);}     
     int M = 0;
@@ -2135,29 +2135,29 @@ public double calcMutivariateItotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xxi = type.getNumeric(exi);
             means[k] += xxi;
         }
         means[k]/=(N-M);
     }
     for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             xi[k] = type.getNumeric(exi);}
             for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 for (int k = 0; k < schema.getNbTargetAttributes(); k++){
                 ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
                 xj[k] = type.getNumeric(exj);}
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }       
                 long indexMap = indexI*(NR)+indexJ;
                 Double temp = GISHeuristic.m_distances.get(indexMap);
@@ -2187,29 +2187,29 @@ public double calcMutivariateItotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xxi = type.getNumeric(exi);
             meansR[k] += xxi;
         }
         meansR[k]/=(N-M);
     }
     for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             xiR[k] = type.getNumeric(exi);}
             for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 for (int k = 0; k < schema.getNbTargetAttributes(); k++){
                 ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
                 xjR[k] = type.getNumeric(exj);}
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }       
                 long indexMap = indexI*(NR)+indexJ;
                 Double temp = GISHeuristic.m_distances.get(indexMap);
@@ -2242,7 +2242,7 @@ public double calcMutivariateItotal() {
 }
 
 //Connectivity Index (CI) for Graph Data with a distance file
-public double calcCItotalD() {
+public double calcCItotalD(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();double num,den;
     ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
     int M = 0;
@@ -2261,10 +2261,10 @@ public double calcCItotalD() {
     double avgik = 0; //Double.NEGATIVE_INFINITY;
     for (int k = 0; k < m_NbAttrs; k++) {
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             long xxi = (long)xt.getNumeric(exi);    
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 long yyi = (long)xt.getNumeric(exj);    
                 long indexI=xxi;
                 long indexJ=yyi;
@@ -2275,15 +2275,15 @@ public double calcCItotalD() {
                     }
                     String indexMap = indexI +"#"+indexJ;
                     Double temp = GISHeuristic.m_distancesS.get(indexMap);
-                    if (temp!=null) w[i][j]=temp;else w[i][j]=0;
-                    D[i]+=w[i][j]; //za sekoj node
+                    if (temp!=null) w[permutation[i]][permutation[j]]=temp;else w[permutation[i]][permutation[j]]=0;
+                    D[permutation[i]]+=w[permutation[i]][permutation[j]]; //za sekoj node
                 }  
             }
         }
         for (int i = M; i <N; i++) {
             for (int j = M; j <N; j++) 
-                if (i!=j && D[j]!=0) W[i]+=Math.sqrt(D[j]); 
-            if (D[i]!=0) ikk[k]+=Math.sqrt(D[i]);
+                if (permutation[i]!=permutation[j] && D[permutation[j]]!=0) W[permutation[i]]+=Math.sqrt(D[permutation[j]]); 
+            if (D[permutation[i]]!=0) ikk[k]+=Math.sqrt(D[permutation[i]]);
         }                   
             avgik+=ikk[k]; //average of the all targets
     }       
@@ -2299,10 +2299,10 @@ public double calcCItotalD() {
     double[] ikkR = new double[m_NbAttrs];                          
     for (int k = 0; k < m_NbAttrs; k++) {
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             long xxi = (long)xt.getNumeric(exi);    
                 for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 long yyi = (long)xt.getNumeric(exj);    
                 long indexI=xxi;
                 long indexJ=yyi;
@@ -2313,15 +2313,15 @@ public double calcCItotalD() {
                         }
                     String indexMap = indexI +"#"+indexJ;
                     Double temp = GISHeuristic.m_distancesS.get(indexMap);
-                    if (temp!=null) wr[(i-M)][(j-M)]=temp;else wr[(i-M)][(j-M)]=0;
-                    DR[(i-M)]+=wr[(i-M)][(j-M)]; //za sekoj node
+                    if (temp!=null) wr[(permutation[i]-M)][(permutation[j]-M)]=temp;else wr[(permutation[i]-M)][(permutation[j]-M)]=0;
+                    DR[(permutation[i]-M)]+=wr[(permutation[i]-M)][(permutation[j]-M)]; //za sekoj node
                 }  
             }
         }
         for (int i = M; i <N; i++) {
             for (int j = M; j <N; j++) 
-                if (i!=j && DR[(j-M)]!=0) WR[(i-M)]+=wr[(i-M)][(j-M)]/Math.sqrt(DR[(j-M)]); 
-            if (DR[(i-M)]!=0) ikkR[k]+=WR[(i-M)]/Math.sqrt(DR[(i-M)]); 
+                if (permutation[i]!=permutation[j] && DR[(permutation[j]-M)]!=0) WR[(permutation[i]-M)]+=wr[(permutation[i]-M)][(permutation[j]-M)]/Math.sqrt(DR[(permutation[j]-M)]); 
+            if (DR[(permutation[i]-M)]!=0) ikkR[k]+=WR[(permutation[i]-M)]/Math.sqrt(DR[(permutation[i]-M)]); 
         }                   
             IR+=ikkR[k]; //average of the all targets
     }       
@@ -2339,7 +2339,7 @@ public double calcCItotalD() {
 }
 
 //Connectivity Index (CI) for Graph Data 
-public double calcCItotal() {
+public double calcCItotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -2358,25 +2358,25 @@ public double calcCItotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i <N; i++) {
             for (int j =M; j < N; j++) {                
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }   
                     String indexMap = indexI +"#"+indexJ;
                     Double temp = GISHeuristic.m_distances.get(indexMap);
-                    if (temp!=null) w[i][j]=temp;else w[i][j]=0;
-                    D[i]+=w[i][j]; //za sekoj node
+                    if (temp!=null) w[permutation[i]][permutation[j]]=temp;else w[permutation[i]][permutation[j]]=0;
+                    D[permutation[i]]+=w[permutation[i]][permutation[j]]; //za sekoj node
                 }  
             }
         }
         for (int i = M; i <N; i++) {
             for (int j = M; j <N; j++) 
-                if (i!=j && D[j]!=0) W[i]+=w[i][j]/Math.sqrt(D[j]); 
-            if (D[i]!=0) ikk[k]+=W[i]/Math.sqrt(D[i]);
-            ikk[k]+=W[i]/Math.sqrt(D[i]);
+                if (permutation[i]!=permutation[j] && D[permutation[j]]!=0) W[permutation[i]]+=w[permutation[i]][permutation[j]]/Math.sqrt(D[permutation[j]]); 
+            if (D[permutation[i]]!=0) ikk[k]+=W[permutation[i]]/Math.sqrt(D[permutation[i]]);
+            ikk[k]+=W[permutation[i]]/Math.sqrt(D[permutation[i]]);
         }                   
             avgik+=ikk[k]; //average of the all targets
     }       
@@ -2393,24 +2393,24 @@ public double calcCItotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i <N; i++) {
             for (int j =M; j < N; j++) {                
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }   
                     long indexMap = indexI*(NR)+indexJ;
                     Double temp = GISHeuristic.m_distances.get(indexMap);
-                    if (temp!=null) wr[(i-M)][(j-M)]=temp;else wr[(i-M)][(j-M)]=0;
-                    DR[(i-M)]+=wr[(i-M)][(j-M)]; //za sekoj node
+                    if (temp!=null) wr[(permutation[i]-M)][(permutation[j]-M)]=temp;else wr[(permutation[i]-M)][(permutation[j]-M)]=0;
+                    DR[(permutation[i]-M)]+=wr[(permutation[i]-M)][(permutation[j]-M)]; //za sekoj node
                 }  
             }
         }
         for (int i = M; i <N; i++) {
             for (int j = M; j <N; j++) 
-                if (i!=j && DR[(j-M)]!=0) WR[(i-M)]+=wr[(i-M)][(j-M)]/Math.sqrt(DR[(j-M)]); 
-            ikkR[k]+=WR[(i-M)]/Math.sqrt(DR[(i-M)]); 
+                if (permutation[i]!=permutation[j] && DR[(permutation[j]-M)]!=0) WR[(permutation[i]-M)]+=wr[(permutation[i]-M)][(permutation[j]-M)]/Math.sqrt(DR[(permutation[j]-M)]); 
+            ikkR[k]+=WR[(permutation[i]-M)]/Math.sqrt(DR[(permutation[i]-M)]); 
         }                   
             IR+=ikkR[k]; //average of the all targets
     }       
@@ -2430,7 +2430,7 @@ public double calcCItotal() {
     }
     return scaledI;             
 }
-public double calcEquvalentPDistance() {
+public double calcEquvalentPDistance(Integer[] permutation) {
     try{
         throw new Exception("This method shoud be implemented. Exiting...");
     }catch(Exception e){
@@ -2440,7 +2440,7 @@ public double calcEquvalentPDistance() {
     return 0;
 }
 //Connectivity Index (CI) for Graph Data with neigh.
-public double calcCIwithNeighbours() {
+public double calcCIwithNeighbours(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -2466,20 +2466,20 @@ public double calcCIwithNeighbours() {
             int NN;
             if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_data.getTuple(i);  //example i
+                DataTuple exi = m_data.getTuple(permutation[i]);  //example i
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                 double xi = xt.getNumeric(exi);
                 double yi = yt.getNumeric(exi);
                 for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j); //example j     
+                DataTuple exj = m_data.getTuple(permutation[j]); //example j     
                 double tj = type.getNumeric(exj);       
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) distances[j]=new Distance(j,tj,d);
+                if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                 else {
-                    if (j<NeighCount) distances[j]=new Distance(j,tj,d);
+                    if (permutation[j]<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -2490,7 +2490,7 @@ public double calcCIwithNeighbours() {
                          }
                         if (d < biggestd)
                         {
-                         distances[biggestindex].index = j;
+                         distances[biggestindex].index = permutation[j];
                          distances[biggestindex].target = tj;
                          distances[biggestindex].distance = d;
                         }
@@ -2499,36 +2499,35 @@ public double calcCIwithNeighbours() {
                 }
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[j].distance==0.0) w[i][j]=1; 
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                D[i]+=w[i][j]; //za sekoj node
-                }   
-                //System.out.println(i+" end "+D[i]);
+                D[permutation[i]]+=w[permutation[i]][permutation[j]]; //za sekoj node
+                }
             }
             for (int i = M; i < N; i++) {
                 //System.out.println(i+" end "+D[i]);
                 for (int j = M; j < NN; j++) {      
-                    if (distances[j].distance==0.0) w[i][j]=1; 
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    W[i]+=w[i][j]/Math.sqrt(D[j]); 
+                    W[permutation[i]]+=w[permutation[i]][permutation[j]]/Math.sqrt(D[permutation[j]]); 
                     } 
-                ikk[k]+=W[i]/Math.sqrt(D[i]);
+                ikk[k]+=W[permutation[i]]/Math.sqrt(D[permutation[i]]);
             }
         }   
     avgik+=ikk[k];
@@ -2554,21 +2553,21 @@ public double calcCIwithNeighbours() {
             int spatialMatrix = schema.getSettings().getSpatialMatrix();
 
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_data.getTuple(i);  //example i
+                DataTuple exi = m_data.getTuple(permutation[i]);  //example i
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                 double xi = xt.getNumeric(exi);
                 double yi = yt.getNumeric(exi);
                 int a=0; 
                 for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j); //example j     
+                DataTuple exj = m_data.getTuple(permutation[j]); //example j     
                 double tj = type.getNumeric(exj);       
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) {distances[a]=new Distance(j,tj,d); a++;}
+                if ((N-M)<NeighCount) {distances[a]=new Distance(permutation[j],tj,d); a++;}
                 else {
-                    if (a<NeighCount) {distances[a]=new Distance(j,tj,d); a++;}
+                    if (a<NeighCount) {distances[a]=new Distance(permutation[j],tj,d); a++;}
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -2579,7 +2578,7 @@ public double calcCIwithNeighbours() {
                          }
                         if (d < biggestd)
                         {
-                         distances[biggestindex].index = j;
+                         distances[biggestindex].index = permutation[j];
                          distances[biggestindex].target = tj;
                          distances[biggestindex].distance = d;
                         }
@@ -2588,34 +2587,34 @@ public double calcCIwithNeighbours() {
                 }
                 int j=0;
                 while (j < NeighCount) {        
-                if (distances[j].distance==0.0) w[i][j]=1;
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                DR[i]+=w[i][j]; //za sekoj node
+                DR[permutation[i]]+=w[permutation[i]][permutation[j]]; //za sekoj node
                 }   
             }
             for (int i = M; i < N; i++) {
                 for (int j = M; j < N; j++) {       
-                    if (distances[j].distance==0.0) w[i][j]=1; 
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    WR[i]+=w[i][j]/Math.sqrt(DR[j]); 
+                    WR[permutation[i]]+=w[permutation[i]][permutation[j]]/Math.sqrt(DR[permutation[j]]); 
                     } 
-                ikkR[k]+=WR[i]/Math.sqrt(DR[i]);
+                ikkR[k]+=WR[permutation[i]]/Math.sqrt(DR[permutation[i]]);
             }   
         }   
         avgikR+=ikkR[k];
@@ -2635,7 +2634,7 @@ public double calcCIwithNeighbours() {
     return scaledI;         
 }
 //Geary C wit neigh.
-public double calcCwithNeighbourstotal() {
+public double calcCwithNeighbourstotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -2653,7 +2652,7 @@ public double calcCwithNeighbourstotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -2669,7 +2668,7 @@ public double calcCwithNeighbourstotal() {
             double[][] w = new double[N][N]; //matrica  
             for (int i = M; i < N; i++) {
                 Distance distances[]=new Distance[NeighCount];
-                DataTuple exi = m_data.getTuple(i);  //example i
+                DataTuple exi = m_data.getTuple(permutation[i]);  //example i
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                 double ti = type.getNumeric(exi);
@@ -2679,14 +2678,14 @@ public double calcCwithNeighbourstotal() {
                 int biggestindex=Integer.MAX_VALUE;
                 
                 for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j); //example j     
+                DataTuple exj = m_data.getTuple(permutation[j]); //example permutation[j]     
                 double tj = type.getNumeric(exj);       
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) distances[j]=new Distance(j,tj,d);
+                if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                 else {
-                    if (j<NeighCount) distances[j]=new Distance(j,tj,d);
+                    if (j<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -2697,7 +2696,7 @@ public double calcCwithNeighbourstotal() {
                          }
                         if (d < biggestd)
                         {
-                         distances[biggestindex].index = j;
+                         distances[biggestindex].index = permutation[j];
                          distances[biggestindex].target = tj;
                          distances[biggestindex].distance = d;
                         }
@@ -2709,18 +2708,18 @@ public double calcCwithNeighbourstotal() {
                 if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[j].distance==0.0) w[i][j]=1; 
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsum[k] += w[i][j]*(ti-distances[j].target)*(ti-distances[j].target); 
-                W+=w[i][j];
+                upsum[k] += w[permutation[i]][permutation[j]]*(ti-distances[permutation[j]].target)*(ti-distances[permutation[j]].target); 
+                W+=w[permutation[i]][permutation[j]];
                 }   
             downsum[k]+=((ti-means[k])*(ti-means[k]));
             }
@@ -2746,7 +2745,7 @@ public double calcCwithNeighbourstotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
         }
@@ -2763,7 +2762,7 @@ public double calcCwithNeighbourstotal() {
             double[][] w = new double[N][N]; //matrica  
             for (int i = M; i < N; i++) {
                 Distance distances[]=new Distance[NeighCount];
-                DataTuple exi = m_data.getTuple(i);  //example i
+                DataTuple exi = m_data.getTuple(permutation[i]);  //example i
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                 double ti = type.getNumeric(exi);
@@ -2773,14 +2772,14 @@ public double calcCwithNeighbourstotal() {
                 double biggestd=Double.POSITIVE_INFINITY; 
                 int biggestindex=Integer.MAX_VALUE;
                 for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j); //example j     
+                DataTuple exj = m_data.getTuple(permutation[j]); //example permutation[j]     
                 double tj = type.getNumeric(exj);       
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) {distances[a]=new Distance(j,tj,d); a++;}
+                if ((N-M)<NeighCount) {distances[a]=new Distance(permutation[j],tj,d); a++;}
                 else {
-                    if (a<NeighCount) {distances[a]=new Distance(j,tj,d); a++;}
+                    if (a<NeighCount) {distances[a]=new Distance(permutation[j],tj,d); a++;}
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -2791,7 +2790,7 @@ public double calcCwithNeighbourstotal() {
                          }
                         if (d < biggestd)
                         {
-                         distances[biggestindex].index = j;
+                         distances[biggestindex].index = permutation[j];
                          distances[biggestindex].target = tj;
                          distances[biggestindex].distance = d;
                         }
@@ -2803,19 +2802,19 @@ public double calcCwithNeighbourstotal() {
                 //if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount);   
                 //M NN
                 int j=0;
-                while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
-                if (distances[j].distance==0.0) w[i][j]=1;
+                while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsumR[k] += w[i][j]*(ti-distances[j].target)*(ti-distances[j].target); 
-                WR+=w[i][j];
+                upsumR[k] += w[permutation[i]][permutation[j]]*(ti-distances[permutation[j]].target)*(ti-distances[permutation[j]].target); 
+                WR+=w[permutation[i]][permutation[j]];
                 j++;
                 }   
             downsumR[k]+=((ti-meansR[k])*(ti-meansR[k]));
@@ -2842,7 +2841,7 @@ public double calcCwithNeighbourstotal() {
 }
 
 //Moran Global I with neigh.
-public double calcIwithNeighbourstotal() {
+public double calcIwithNeighbourstotal(Integer[] permutation) {
     //calcLeewithNeighbours
     ClusSchema schema = m_data.getSchema();
     int M = 0;
@@ -2861,7 +2860,7 @@ public double calcIwithNeighbourstotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -2877,7 +2876,7 @@ public double calcIwithNeighbourstotal() {
             double[][] w = new double[N][N]; //matrica  
             for (int i = M; i < N; i++) {
                 Distance distances[]=new Distance[NeighCount];
-                DataTuple exi = m_data.getTuple(i);  //example i
+                DataTuple exi = m_data.getTuple(permutation[i]);  //example i
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                 double ti = type.getNumeric(exi);
@@ -2887,14 +2886,14 @@ public double calcIwithNeighbourstotal() {
                 int biggestindex=Integer.MAX_VALUE;
                 
                 for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j); //example j     
+                DataTuple exj = m_data.getTuple(permutation[j]); //example permutation[j]     
                 double tj = type.getNumeric(exj);       
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) distances[j]=new Distance(j,tj,d);
+                if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                 else {
-                    if (j<NeighCount) distances[j]=new Distance(j,tj,d);
+                    if (permutation[j]<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -2905,31 +2904,31 @@ public double calcIwithNeighbourstotal() {
                          }
                         if (d < biggestd)
                         {
-                         distances[biggestindex].index = j;
+                         distances[biggestindex].index = permutation[j];
                          distances[biggestindex].target = tj;
                          distances[biggestindex].distance = d;
                         }
                         }
                     }
-                //PrivateDistances[j] = distances[j];
+                //PrivateDistances[permutation[j]] = distances[permutation[j]];
                 }
                 int spatialMatrix = schema.getSettings().getSpatialMatrix();
                 int NN;
                 if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[j].distance==0.0) w[i][j]=1; 
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsum[k] += w[i][j]*(ti-means[k])*(distances[j].target-means[k]); //m_distances.get(i*N+j) [i][j]
-                W+=w[i][j];
+                upsum[k] += w[permutation[i]][permutation[j]]*(ti-means[k])*(distances[permutation[j]].target-means[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
+                W+=w[permutation[i]][permutation[j]];
                 }   
             downsum[k]+=((ti-means[k])*(ti-means[k]));
             }
@@ -2955,7 +2954,7 @@ public double calcIwithNeighbourstotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
         }
@@ -2972,7 +2971,7 @@ public double calcIwithNeighbourstotal() {
             double[][] w = new double[N][N]; //matrica  
             for (int i = M; i < N; i++) {
                 Distance distances[]=new Distance[NeighCount];
-                DataTuple exi = m_data.getTuple(i);  //example i
+                DataTuple exi = m_data.getTuple(permutation[i]);  //example i
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                 double ti = type.getNumeric(exi);
@@ -2982,14 +2981,14 @@ public double calcIwithNeighbourstotal() {
                 double biggestd=Double.POSITIVE_INFINITY; 
                 int biggestindex=Integer.MAX_VALUE;
                 for (int j = M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(j); //example j     
+                DataTuple exj = m_data.getTuple(permutation[j]); //example permutation[j]     
                 double tj = type.getNumeric(exj);       
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) {distances[a]=new Distance(j,tj,d); a++;}
+                if ((N-M)<NeighCount) {distances[a]=new Distance(permutation[j],tj,d); a++;}
                 else {
-                    if (a<NeighCount) {distances[a]=new Distance(j,tj,d); a++;}
+                    if (a<NeighCount) {distances[a]=new Distance(permutation[j],tj,d); a++;}
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -3000,7 +2999,7 @@ public double calcIwithNeighbourstotal() {
                          }
                         if (d < biggestd)
                         {
-                         distances[biggestindex].index = j;
+                         distances[biggestindex].index = permutation[j];
                          distances[biggestindex].target = tj;
                          distances[biggestindex].distance = d;
                         }
@@ -3012,19 +3011,19 @@ public double calcIwithNeighbourstotal() {
                 //if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount);   
                 //M NN
                 int j=0;
-                while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
-                if (distances[j].distance==0.0) w[i][j]=1;
+                while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
-                        case 0:  w[i][j]=1;   break;  //binary 
-                        case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                        case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                        default: w[i][j]=1; break;
+                        case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsumR[k] += w[i][j]*(ti-meansR[k])*(distances[j].target-meansR[k]); //m_distances.get(i*N+j) [i][j]
-                WR+=w[i][j];
+                upsumR[k] += w[permutation[i]][permutation[j]]*(ti-meansR[k])*(distances[permutation[j]].target-meansR[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
+                WR+=w[permutation[i]][permutation[j]];
                 j++;
                 }   
             downsumR[k]+=((ti-meansR[k])*(ti-meansR[k]));
@@ -3053,7 +3052,7 @@ public double calcIwithNeighbourstotal() {
     return scaledI;         
 }
 //calculate EquvalentI with neighbours
-public double calcEquvalentIwithNeighbourstotal() {
+public double calcEquvalentIwithNeighbourstotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();     
     double[] a = new double[schema.getNbTargetAttributes()]; 
     double[] b = new double[schema.getNbTargetAttributes()];
@@ -3091,7 +3090,7 @@ public double calcEquvalentIwithNeighbourstotal() {
         for (int i = M; i < N; i++) {
             Distance distances[]=new Distance[NeighCount];
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double ti = type.getNumeric(exi);
             ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
             ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
@@ -3179,7 +3178,7 @@ public double calcEquvalentIwithNeighbourstotal() {
 
 
 //calculate Equvalent Geary C with Distance file
-public double calcEquvalentGDistance() {        
+public double calcEquvalentGDistance(Integer[] permutation) {        
     ClusSchema schema = m_data.getSchema();             
     double[] ikk = new double[schema.getNbTargetAttributes()];
     double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -3200,14 +3199,14 @@ public double calcEquvalentGDistance() {
             INITIALIZEPARTIALSUM=false;
             M=0;
             for (int i = M; i < NR; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);    
             meansR[k] += xi;
             previousSumX2R[k] +=xi*xi;
             previousSumXR[k]+=xi;
             for (int j = M; j <NR; j++) {
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 long yyi = (long)xt.getNumeric(exj);                
                 double w=0;
@@ -3233,7 +3232,7 @@ public double calcEquvalentGDistance() {
         boolean flagLeftAllEqual=true;
         {
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
             previousSumX2[k] +=xi*xi;
@@ -3247,7 +3246,7 @@ public double calcEquvalentGDistance() {
         flagLeftAllEqual=true;
         double oldX=type.getNominal(m_data.getTuple(0));
         for (int i = 1; i<N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
         if(xi!=oldX) // to check that partition does not contain values which are all the same
             {
@@ -3257,11 +3256,11 @@ public double calcEquvalentGDistance() {
         }
         
         for (int i = 0; i<M; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);        
             for (int j = M; j<N; j++) {
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);   
             long yyi = (long)xt.getNumeric(exj);
             double w=0;
@@ -3285,9 +3284,9 @@ public double calcEquvalentGDistance() {
         for (int i = M; i<N; i++) {
             for (int j = 0; j<M; j++) {
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);        
             long yyi = (long)xt.getNumeric(exj);
@@ -3309,10 +3308,10 @@ public double calcEquvalentGDistance() {
         }
         //left (old-new)(old-new)
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);           
             for (int j = M; j <N; j++) {    
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
                 long xxi = (long)xt.getNumeric(exi);        
@@ -3338,13 +3337,13 @@ public double calcEquvalentGDistance() {
         flagRightAllEqual=true;
         oldX=type.getNominal(m_data.getTuple(N));
         for (int i = N; i<NR; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             if(oldX!=xi)
                 flagRightAllEqual=false;
             for (int j = M; j<N; j++) {
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);               
             if(xi!=oldX)
                 flagRightAllEqual=false;
@@ -3372,9 +3371,9 @@ public double calcEquvalentGDistance() {
         for (int i = M; i<N; i++) {
             for (int j = N; j<NR; j++) {                
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);        
             long yyi = (long)xt.getNumeric(exj);
@@ -3396,11 +3395,11 @@ public double calcEquvalentGDistance() {
         }
         //right (old-new)(old-new)
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);       
             long xxi = (long)xt.getNumeric(exi);                
             for (int j = M; j <N; j++) {                        
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 long yyi = (long)xt.getNumeric(exj);
                 double w=0;
@@ -3457,7 +3456,7 @@ public double calcEquvalentGDistance() {
     return scaledI;
     }
 
-public double calcEquvalentIDistance() {        
+public double calcEquvalentIDistance(Integer[] permutation) {        
     ClusSchema schema = m_data.getSchema();             
     double[] ikk = new double[schema.getNbTargetAttributes()];
     double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -3478,14 +3477,14 @@ public double calcEquvalentIDistance() {
             INITIALIZEPARTIALSUM=false;
             M=0;
             for (int i = M; i < NR; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);    
             meansR[k] += xi;
             previousSumX2R[k] +=xi*xi;
             previousSumXR[k]+=xi;
             for (int j = M; j <NR; j++) {
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 long yyi = (long)xt.getNumeric(exj);                
                 double w=0;
@@ -3512,7 +3511,7 @@ public double calcEquvalentIDistance() {
         boolean flagLeftAllEqual=true;
         {
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
             previousSumX2[k] +=xi*xi;
@@ -3526,7 +3525,7 @@ public double calcEquvalentIDistance() {
         flagLeftAllEqual=true;
         double oldX=type.getNumeric(m_data.getTuple(0));
         for (int i = 1; i<N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
         if(xi!=oldX) // Annalisa : to check that partition does not contain values which are all the same
             {
@@ -3536,11 +3535,11 @@ public double calcEquvalentIDistance() {
         }
         
         for (int i = 0; i<M; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);        
             for (int j = M; j<N; j++) {
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);   
             long yyi = (long)xt.getNumeric(exj);
             double w=0;
@@ -3562,9 +3561,9 @@ public double calcEquvalentIDistance() {
         for (int i = M; i<N; i++) {
             for (int j = 0; j<M; j++) {
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);        
             long yyi = (long)xt.getNumeric(exj);
@@ -3584,10 +3583,10 @@ public double calcEquvalentIDistance() {
         }
         //left (old-new)(old-new)
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);           
             for (int j = M; j <N; j++) {    
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
                 long xxi = (long)xt.getNumeric(exi);        
@@ -3611,13 +3610,13 @@ public double calcEquvalentIDistance() {
         flagRightAllEqual=true;
         oldX=type.getNumeric(m_data.getTuple(N));
         for (int i = N; i<NR; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             if(oldX!=xi)
                 flagRightAllEqual=false;
             for (int j = M; j<N; j++) {
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);               
             if(xi!=oldX)
                 flagRightAllEqual=false;
@@ -3642,9 +3641,9 @@ public double calcEquvalentIDistance() {
         for (int i = M; i<N; i++) {
             for (int j = N; j<NR; j++) {                
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);        
             long yyi = (long)xt.getNumeric(exj);
@@ -3664,11 +3663,11 @@ public double calcEquvalentIDistance() {
         }
         //right (old-new)(old-new)
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);       
             long xxi = (long)xt.getNumeric(exi);                
             for (int j = M; j <N; j++) {                        
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 long yyi = (long)xt.getNumeric(exj);
                 double w=0;
@@ -3723,7 +3722,7 @@ public double calcEquvalentIDistance() {
     }
 //calculate EquvalentI to Global Moran I -Annalisa
 
-public double calcEquvalentGtotal() {   
+public double calcEquvalentGtotal(Integer[] permutation) {   
     ClusSchema schema = m_data.getSchema();             
     double[] ikk = new double[schema.getNbTargetAttributes()];
     double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -3743,18 +3742,18 @@ public double calcEquvalentGtotal() {
             INITIALIZEPARTIALSUM=false;
             M=0;
             for (int i = M; i < NR; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
             previousSumX2R[k] +=xi*xi;
             previousSumXR[k]+=xi;
             for (int j = M; j <NR; j++) {
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
-                long indexMap = i*(NR)+j;                   
+                long indexMap = permutation[i]*(NR)+permutation[j];                   
                 double w=0;
-                if (i>j)
-                    indexMap= j*(NR)+i;     
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i];     
                 Double temp = GISHeuristic.m_distances.get(indexMap);
                 if (temp!=null) w=temp; else w=0;   
                 previousSumWR[k]+=w;
@@ -3769,7 +3768,7 @@ public double calcEquvalentGtotal() {
         boolean flagLeftAllEqual=true;
         {
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
             previousSumX2[k] +=xi*xi;
@@ -3783,7 +3782,7 @@ public double calcEquvalentGtotal() {
         flagLeftAllEqual=true;
         double oldX=type.getNumeric(m_data.getTuple(0));
         for (int i = 1; i<N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
         if(xi!=oldX) // Annalisa : to check that partition does not contain values which are all the same
             {
@@ -3793,16 +3792,16 @@ public double calcEquvalentGtotal() {
         }
         
         for (int i = 0; i<M; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j = M; j<N; j++) {
-            long indexMap = i*(NR)+j;                   
+            long indexMap = permutation[i]*(NR)+permutation[j];                   
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
             
-            if (i>j)
-                indexMap= j*(NR)+i; 
+            if (permutation[i]>permutation[j])
+                indexMap= permutation[j]*(NR)+permutation[i]; 
             Double temp = GISHeuristic.m_distances.get(indexMap);
             if (temp!=null) w=temp; else w=0;   
             previousSumW[k]+=w;
@@ -3812,14 +3811,14 @@ public double calcEquvalentGtotal() {
         //left (old-new)(0-old)
         for (int i = M; i<N; i++) {
             for (int j = 0; j<M; j++) {
-            long indexMap = i*(NR)+j;                   
+            long indexMap = permutation[i]*(NR)+permutation[j];                   
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
-            if (i>j)
-                indexMap= j*(NR)+i; 
+            if (permutation[i]>permutation[j])
+                indexMap= permutation[j]*(NR)+permutation[i]; 
             Double temp = GISHeuristic.m_distances.get(indexMap);
             if (temp!=null) w=temp; else w=0;   
             previousSumW[k]+=w;
@@ -3828,21 +3827,21 @@ public double calcEquvalentGtotal() {
         }
         //left (old-new)(old-new)
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);           
             for (int j = M; j <N; j++) {    
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                 long indexMap = indexI*(NR)+indexJ; 
-                if (i>j)
-                    indexMap= j*(NR)+i; 
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i]; 
                 Double temp = GISHeuristic.m_distances.get(indexMap);
                 if (temp!=null) w=temp; else w=0;   
                 previousSumW[k]+=w;
@@ -3854,20 +3853,20 @@ public double calcEquvalentGtotal() {
         flagRightAllEqual=true;
         oldX=type.getNumeric(m_data.getTuple(N));
         for (int i = N; i<NR; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             if(oldX!=xi)
                 flagRightAllEqual=false;
             for (int j = M; j<N; j++) {
-            long indexMap = i*(NR)+j;                   
+            long indexMap = permutation[i]*(NR)+permutation[j];                   
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
             
             if(xi!=oldX)
                 flagRightAllEqual=false;
-            if (i>j)
-                indexMap= j*(NR)+i; 
+            if (permutation[i]>permutation[j])
+                indexMap= permutation[j]*(NR)+permutation[i]; 
             Double temp = GISHeuristic.m_distances.get(indexMap);
             if (temp!=null) w=temp; else w=0;   
             previousSumWR[k]-=w;
@@ -3877,14 +3876,14 @@ public double calcEquvalentGtotal() {
         //right (old-new)(new-end)
         for (int i = M; i<N; i++) {
             for (int j = N; j<NR; j++) {
-            long indexMap = i*(NR)+j;                   
+            long indexMap = permutation[i]*(NR)+permutation[j];                   
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
-            if (i>j)
-                indexMap= j*(NR)+i; 
+            if (permutation[i]>permutation[j])
+                indexMap= permutation[j]*(NR)+permutation[i]; 
             Double temp = GISHeuristic.m_distances.get(indexMap);
             if (temp!=null) w=temp; else w=0;   
             previousSumWR[k]-=w;
@@ -3893,21 +3892,21 @@ public double calcEquvalentGtotal() {
         }
         //right (old-new)(old-new)
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);           
             for (int j = M; j <N; j++) {    
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj= type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                 long indexMap = indexI*(NR)+indexJ; 
-                if (i>j)
-                    indexMap= j*(NR)+i; 
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i]; 
                 Double temp = GISHeuristic.m_distances.get(indexMap);
                 if (temp!=null) w=temp; else w=0;   
                 previousSumWR[k]-=w;
@@ -3951,7 +3950,7 @@ public double calcEquvalentGtotal() {
 }
 
 
-public double calcEquvalentItotal() {       
+public double calcEquvalentItotal(Integer[] permutation) {       
     ClusSchema schema = m_data.getSchema();             
     double[] ikk = new double[schema.getNbTargetAttributes()];
     double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -3971,18 +3970,18 @@ public double calcEquvalentItotal() {
             INITIALIZEPARTIALSUM=false;
             M=0;
             for (int i = M; i < NR; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
             previousSumX2R[k] +=xi*xi;
             previousSumXR[k]+=xi;
             for (int j = M; j <NR; j++) {
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
-                long indexMap = i*(NR)+j;                   
+                long indexMap = permutation[i]*(NR)+permutation[j];                   
                 double w=0;
-                if (i>j)
-                    indexMap= j*(NR)+i;     
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i];     
                 Double temp = GISHeuristic.m_distances.get(indexMap);
                 if (temp!=null) w=temp; else w=0;   
                 previousSumWR[k]+=w;
@@ -3999,7 +3998,7 @@ public double calcEquvalentItotal() {
         boolean flagLeftAllEqual=true;
         {
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
             previousSumX2[k] +=xi*xi;
@@ -4013,7 +4012,7 @@ public double calcEquvalentItotal() {
         flagLeftAllEqual=true;
         double oldX=type.getNumeric(m_data.getTuple(0));
         for (int i = 1; i<N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
         if(xi!=oldX) // Annalisa : to check that partition does not contain values which are all the same
             {
@@ -4023,16 +4022,16 @@ public double calcEquvalentItotal() {
         }
         
         for (int i = 0; i<M; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j = M; j<N; j++) {
-            long indexMap = i*(NR)+j;                   
+            long indexMap = permutation[i]*(NR)+permutation[j];                   
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
             
-            if (i>j)
-                indexMap= j*(NR)+i; 
+            if (permutation[i]>permutation[j])
+                indexMap= permutation[j]*(NR)+permutation[i]; 
             Double temp = GISHeuristic.m_distances.get(indexMap);
             if (temp!=null) w=temp; else w=0;   
             previousSumW[k]+=w;
@@ -4043,14 +4042,14 @@ public double calcEquvalentItotal() {
         //left (old-new)(0-old)
         for (int i = M; i<N; i++) {
             for (int j = 0; j<M; j++) {
-            long indexMap = i*(NR)+j;                   
+            long indexMap = permutation[i]*(NR)+permutation[j];                   
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
-            if (i>j)
-                indexMap= j*(NR)+i; 
+            if (permutation[i]>permutation[j])
+                indexMap= permutation[j]*(NR)+permutation[i]; 
             Double temp = GISHeuristic.m_distances.get(indexMap);
             if (temp!=null) w=temp; else w=0;   
             previousSumW[k]+=w;
@@ -4060,21 +4059,21 @@ public double calcEquvalentItotal() {
         }
         //left (old-new)(old-new)
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);           
             for (int j = M; j <N; j++) {    
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                 long indexMap = indexI*(NR)+indexJ; 
-                if (i>j)
-                    indexMap= j*(NR)+i; 
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i]; 
                 Double temp = GISHeuristic.m_distances.get(indexMap);
                 if (temp!=null) w=temp; else w=0;   
                 previousSumW[k]+=w;
@@ -4087,20 +4086,20 @@ public double calcEquvalentItotal() {
         flagRightAllEqual=true;
         oldX=type.getNumeric(m_data.getTuple(N));
         for (int i = N; i<NR; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             if(oldX!=xi)
                 flagRightAllEqual=false;
             for (int j = M; j<N; j++) {
-            long indexMap = i*(NR)+j;                   
+            long indexMap = permutation[i]*(NR)+permutation[j];                   
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
             
             if(xi!=oldX)
                 flagRightAllEqual=false;
-            if (i>j)
-                indexMap= j*(NR)+i; 
+            if (permutation[i]>permutation[j])
+                indexMap= permutation[j]*(NR)+permutation[i]; 
             Double temp = GISHeuristic.m_distances.get(indexMap);
             if (temp!=null) w=temp; else w=0;   
             previousSumWR[k]-=w;
@@ -4111,14 +4110,14 @@ public double calcEquvalentItotal() {
         //right (old-new)(new-end)
         for (int i = M; i<N; i++) {
             for (int j = N; j<NR; j++) {
-            long indexMap = i*(NR)+j;                   
+            long indexMap = permutation[i]*(NR)+permutation[j];                   
             double w=0;
-            DataTuple exj = m_data.getTuple(j);
+            DataTuple exj = m_data.getTuple(permutation[j]);
             double xj = type.getNominal(exj);
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
-            if (i>j)
-                indexMap= j*(NR)+i; 
+            if (permutation[i]>permutation[j])
+                indexMap= permutation[j]*(NR)+permutation[i]; 
             Double temp = GISHeuristic.m_distances.get(indexMap);
             if (temp!=null) w=temp; else w=0;   
             previousSumWR[k]-=w;
@@ -4128,21 +4127,21 @@ public double calcEquvalentItotal() {
         }
         //right (old-new)(old-new)
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);           
             for (int j = M; j <N; j++) {    
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj= type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                 long indexMap = indexI*(NR)+indexJ; 
-                if (i>j)
-                    indexMap= j*(NR)+i; 
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i]; 
                 Double temp = GISHeuristic.m_distances.get(indexMap);
                 if (temp!=null) w=temp; else w=0;   
                 previousSumWR[k]-=w;
@@ -4187,7 +4186,7 @@ public double calcEquvalentItotal() {
     return scaledI; 
 }
 
-public double calcGtotal() {
+public double calcGtotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -4206,7 +4205,7 @@ public double calcGtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -4217,18 +4216,18 @@ public double calcGtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                     long indexMap = indexI*(NR)+indexJ;
                     Double temp= GISHeuristic.m_distances.get(indexMap); 
@@ -4259,7 +4258,7 @@ public double calcGtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
         }
@@ -4270,18 +4269,18 @@ public double calcGtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                     long indexMap = indexI*(NR)+indexJ;
                     Double temp= GISHeuristic.m_distances.get(indexMap); 
@@ -4338,7 +4337,7 @@ public double calcGtotal() {
         double[] ikk = new double[nbvalues];
         
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             int xi = type.getNominal(exi);
             for (int j=0; j<nbvalues; j++)              
                 if (xi==j) 
@@ -4346,7 +4345,7 @@ public double calcGtotal() {
         }
         
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             int xi = type.getNominal(exi);  
             for (int j =M; j < N; j++) {                
             DataTuple exj = m_data.getTuple(j);
@@ -4403,14 +4402,14 @@ public double calcGtotal() {
         double[] ikkR = new double[nbvalues];
     
     for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             int xi = type.getNominal(exi);
             for (int j=0; j<nbvalues; j++)              
                 if (xi==j) meansR[j] += 1/(N-M); 
         }
         
     for (int i = M; i <N; i++) {
-        DataTuple exi = m_data.getTuple(i);
+        DataTuple exi = m_data.getTuple(permutation[i]);
         int xi = type.getNominal(exi);  
         for (int j =M; j < N; j++) {                
         DataTuple exj = m_data.getTuple(j);
@@ -4463,7 +4462,7 @@ public double calcGtotal() {
 }
 */
 // global I calculation with a separate distance file
-public double calcItotalD() {
+public double calcItotalD(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     double num,den;
     double avgik = 0; double W = 0.0; 
@@ -4484,7 +4483,7 @@ public double calcItotalD() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = m_Attrs[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -4495,11 +4494,11 @@ public double calcItotalD() {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];           
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);                
             for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 long yyi = (long)xt.getNumeric(exj);                    
                 double w=0;
@@ -4542,7 +4541,7 @@ public double calcItotalD() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
         }
@@ -4553,11 +4552,11 @@ public double calcItotalD() {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0]; 
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);                
             for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 long yyi = (long)xt.getNumeric(exj);                    
                 double w=0;
@@ -4571,7 +4570,7 @@ public double calcItotalD() {
                     String indexMap = indexI +"#"+indexJ;
                     Double tmp= GISHeuristic.m_distancesS.get(indexMap);
                     if (tmp!=null)w=tmp;else w=0;
-                    upsumR[k] += w*(xi-meansR[k])*(xj-meansR[k]); //m_distances.get(i*N+j) [i][j]
+                    upsumR[k] += w*(xi-meansR[k])*(xj-meansR[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
                     WR+=w;      
                 }
                 else
@@ -4735,7 +4734,7 @@ public double calcItotal(Integer[] permutation) { // matejp: all indices of tupl
         
 }
 // global C calculation with a separate distance file
-public double calcGtotalD() {
+public double calcGtotalD(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -4754,7 +4753,7 @@ public double calcGtotalD() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -4767,12 +4766,12 @@ public double calcGtotalD() {
         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0]; 
         
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);
             
             for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 long yyi = (long)xt.getNumeric(exj);
                 
@@ -4813,7 +4812,7 @@ public double calcGtotalD() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             meansR[k] += xi;
         }
@@ -4826,12 +4825,12 @@ public double calcGtotalD() {
         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0]; 
         
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             long xxi = (long)xt.getNumeric(exi);
             
             for (int j =M; j < N; j++) {                
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 long yyi = (long)xt.getNumeric(exj);
                 
@@ -4876,7 +4875,7 @@ public double calcGtotalD() {
 }
 
 // global Getis
-public double calcGetisTotal() {
+public double calcGetisTotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -4894,18 +4893,18 @@ public double calcGetisTotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j = M; j < N; j++) {               
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                     long indexMap = indexI*(N-M)+indexJ;                            
                     if (GISHeuristic.m_distances.get(indexMap)!=null){
@@ -4934,7 +4933,7 @@ public double calcGetisTotal() {
 
 
 //local Moran I calculation
-public double calcLISAtotal() {
+public double calcLISAtotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -4955,7 +4954,7 @@ public double calcLISAtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -4967,40 +4966,40 @@ public double calcLISAtotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j = M; j < N; j++) {               
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                     long indexMap = indexI*(N-M)+indexJ;                            
                     if (GISHeuristic.m_distances.get(indexMap)!=null){
                         w=GISHeuristic.m_distances.get(indexMap);
                         }else{w=0;} 
-                    upsum1[k][i] += w*(xj-means[k]); 
-                    //System.out.println(upsum[k][i]);  
+                    upsum1[k][permutation[i]] += w*(xj-means[k]); 
+                    //System.out.println(upsum[k][permutation[i]]);  
                 }           
             }               
         }           
         
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
-            upsum[k][i] = (xi-means[k])*upsum1[k][i];
+            upsum[k][permutation[i]] = (xi-means[k])*upsum1[k][permutation[i]];
             downsum[k]+=((xi-means[k])*(xi-means[k]));
         }
         downsum[k]/=(N-M+0.0);
         for (int i = M; i < N; i++) {
         if (downsum[k]!=0.0 && upsum[k][i]!=0.0){
-            ik[k][i]=(upsum[k][i])/(downsum[k]); //I for each point 
-            ikk[k]+=ik[k][i]; //average of all points for each targets
+            ik[k][permutation[i]]=(upsum[k][permutation[i]])/(downsum[k]); //I for each point 
+            ikk[k]+=ik[k][permutation[i]]; //average of all points for each targets
             //System.out.println("LISA0: "+ik[k][i]);   
             } else ikk[k] = 0;
         }
@@ -5019,7 +5018,7 @@ public double calcLISAtotal() {
 }   
 
 //local Geary C
-public double calcGLocalTotal() {
+public double calcGLocalTotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -5039,7 +5038,7 @@ public double calcGLocalTotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -5051,38 +5050,38 @@ public double calcGLocalTotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j = M; j < N; j++) {               
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                     long indexMap = indexI*(N-M)+indexJ;                            
                     if (GISHeuristic.m_distances.get(indexMap)!=null){
                         w=GISHeuristic.m_distances.get(indexMap);
                         }else{w=0;} 
-                    upsum[k][i] += w*(xi-xj)*(xi-xj); 
-                    //System.out.println("Upsum:"+xi+" "+xj+","+upsum[k][i]);       
+                    upsum[k][permutation[i]] += w*(xi-xj)*(xi-xj); 
+                    //System.out.println("Upsum:"+xi+" "+xj+","+upsum[k][permutation[i]]);       
                     W+=w;
                 }  
         
             }
-            //System.out.println("Geary C:"+k+" "+i+","+upsum[k][i]);                   
+            //System.out.println("Geary C:"+k+" "+permutation[i]+","+upsum[k][permutation[i]]);                   
             downsum[k]+=((xi-means[k])*(xi-means[k]));
         }
         
         for (int i = M; i < N; i++) {
-            if (downsum[k]!=0.0 && upsum[k][i]!=0.0){
-                ik[k][i]=((N-M)*upsum[k][i])/(downsum[k]); //C for each point   
-                //System.out.println("Geary C:"+k+" "+i+","+upsum[k][i]+"/"+(N-M)/downsum[k]);  
-                ikk[k]+=ik[k][i]; //average of all points for each targets
+            if (downsum[k]!=0.0 && upsum[k][permutation[i]]!=0.0){
+                ik[k][permutation[i]]=((N-M)*upsum[k][permutation[i]])/(downsum[k]); //C for each point   
+                //System.out.println("Geary C:"+k+" "+permutation[i]+","+upsum[k][permutation[i]]+"/"+(N-M)/downsum[k]);  
+                ikk[k]+=ik[k][permutation[i]]; //average of all points for each targets
                 } else ikk[k] = 0;
             }
             avgik+=ikk[k]; 
@@ -5098,7 +5097,7 @@ public double calcGLocalTotal() {
         
 }
 //local Getis
-public double calcLocalGetisTotal() {
+public double calcLocalGetisTotal(Integer[] permutation) {
     ClusSchema schema = m_data.getSchema();
     int M = 0;
     int N = m_data.getNbRows();
@@ -5118,7 +5117,7 @@ public double calcLocalGetisTotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         for (int i = M; i < N; i++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             means[k] += xi;
         }
@@ -5130,30 +5129,30 @@ public double calcLocalGetisTotal() {
     for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         for (int i = M; i < N; i++) {
-            DataTuple exi = m_data.getTuple(i);
+            DataTuple exi = m_data.getTuple(permutation[i]);
             double xi = type.getNominal(exi);
             for (int j = M; j < N; j++) {               
-                DataTuple exj = m_data.getTuple(j);
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 double xj = type.getNominal(exj);
                 double w=0;
-                long indexI=i;
-                long indexJ=j;
-                if (i!=j){
-                    if (i>j){
-                        indexI=j;
-                        indexJ=i;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];
                     }
                     long indexMap = indexI*(N-M)+indexJ;                            
                     if (GISHeuristic.m_distances.get(indexMap)!=null){
                         w=GISHeuristic.m_distances.get(indexMap);
                         }else{w=0;} 
-                    upsum[k][i] += w*xj; 
-                    downsum[k][i]+=xj;
+                    upsum[k][permutation[i]] += w*xj; 
+                    downsum[k][permutation[i]]+=xj;
                 }  
             }
-            if (upsum[k][i]!=0.0){
-                ik[k][i]=(upsum[k][i])/(downsum[k][i]); //Local Getis for each point    
-                ikk[k]+=ik[k][i]; //average of all points for each targets
+            if (upsum[k][permutation[i]]!=0.0){
+                ik[k][permutation[i]]=(upsum[k][permutation[i]])/(downsum[k][permutation[i]]); //Local Getis for each point    
+                ikk[k]+=ik[k][permutation[i]]; //average of all points for each targets
                 } else ikk[k] = 0;
             avgik+=ikk[k]; 
         }
@@ -5170,7 +5169,7 @@ public double calcLocalGetisTotal() {
 }
     
 //local Getis calculation=standardized z    
-public double calcGETIStotal() {
+public double calcGETIStotal(Integer[] permutation) {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -5193,7 +5192,7 @@ public double calcGETIStotal() {
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_data.getTuple(i);
+                DataTuple exi = m_data.getTuple(permutation[i]);
                 double xi = type.getNominal(exi);
                 means[k] += xi;
             }
@@ -5205,41 +5204,41 @@ public double calcGETIStotal() {
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_data.getTuple(i);
+                DataTuple exi = m_data.getTuple(permutation[i]);
                 double xi = type.getNominal(exi);
                 for (int j = M; j < N; j++) {               
-                    DataTuple exj = m_data.getTuple(j);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     double xj = type.getNominal(exj);
                     double w=0;
-                    long indexI=i;
-                    long indexJ=j;
-                    if (i!=j){
-                        if (i>j){
-                            indexI=j;
-                            indexJ=i;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];
                         }
                         long indexMap = indexI*(N-M)+indexJ;                            
                         if (GISHeuristic.m_distances.get(indexMap)!=null){
                             w=GISHeuristic.m_distances.get(indexMap);
                         }else{w=0;} 
-                        upsum1[k][i]+= w*xj; 
-                        downsum1[k][i]+= w*w; 
-                        W[i]+=w;
+                        upsum1[k][permutation[i]]+= w*xj; 
+                        downsum1[k][permutation[i]]+= w*w; 
+                        W[permutation[i]]+=w;
                     }               
                 }
-                upsum[k][i] = upsum1[k][i]- means[k]*W[i];
+                upsum[k][permutation[i]] = upsum1[k][permutation[i]]- means[k]*W[permutation[i]];
                 downsum[k]+=((xi-means[k])*(xi-means[k]));  //downsum the same as geary's C
-                downsum2[k][i] = (N-M)*downsum1[k][i]-W[i]*W[i];
-                //System.out.println("downsum2:"+downsum2[k][i]);
+                downsum2[k][permutation[i]] = (N-M)*downsum1[k][permutation[i]]-W[permutation[i]]*W[permutation[i]];
+                //System.out.println("downsum2:"+downsum2[k][permutation[i]]);
             }
             
             for (int i = M; i < N; i++) {
-                if (downsum[k]!=0.0 && upsum[k][i]!=0.0 && downsum2[k][i]!=0.0){
-                    double im= downsum2[k][i];
+                if (downsum[k]!=0.0 && upsum[k][permutation[i]]!=0.0 && downsum2[k][permutation[i]]!=0.0){
+                    double im= downsum2[k][permutation[i]];
                     //System.out.println(im);
-                    ik[k][i]=upsum[k][i]/(Math.sqrt((downsum[k]/((N-M)*(N-M-1)))*downsum2[k][i])); //I for each point   
-                    ikk[k]+=ik[k][i]; //average of all points for each targets
-                    //System.out.println(k+" : "+downsum1[k][i]+" , "+W[i]+" , "+downsum2[k][i]+" rez: "+ik[k][i]+" br: "+(N-M));
+                    ik[k][permutation[i]]=upsum[k][permutation[i]]/(Math.sqrt((downsum[k]/((N-M)*(N-M-1)))*downsum2[k][permutation[i]])); //I for each point   
+                    ikk[k]+=ik[k][permutation[i]]; //average of all points for each targets
+                    //System.out.println(k+" : "+downsum1[k][permutation[i]]+" , "+W[permutation[i]]+" , "+downsum2[k][permutation[i]]+" rez: "+ik[k][permutation[i]]+" br: "+(N-M));
                     } else ikk[k] = 0;
                 }
                 avgik+=ikk[k]; 

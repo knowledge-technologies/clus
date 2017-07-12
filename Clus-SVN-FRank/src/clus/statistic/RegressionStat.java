@@ -555,7 +555,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         }
     }
     
-    public double calcEquvalentPDistance() {
+    public double calcEquvalentPDistance(Integer[] permutation) {
     try{
         throw new Exception("This method shoud be implemented. Exiting...");
     }catch(Exception e){
@@ -565,7 +565,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     return 0;
     }
     
-    public double calcPDistance() {
+    public double calcPDistance(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         int M = 0;
@@ -584,7 +584,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -594,10 +594,10 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];  
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 for (int j =M; j < N; j++) {                
-                    DataTuple exj = m_Data.getTuple(j);
+                    DataTuple exj = m_Data.getTuple(permutation[j]);
                     double xj = type.getNumeric(exj);
                     long xxi = (long)xt.getNumeric(exi);        
                     long yyi = (long)xt.getNumeric(exj);    
@@ -634,7 +634,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 meansR[k] += xi;
             }
@@ -644,13 +644,13 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 for (int j =M; j < N; j++) {                
-                    DataTuple exj = m_Data.getTuple(j);
+                    DataTuple exj = m_Data.getTuple(permutation[j]);
                     double xj = type.getNumeric(exj);
-                    long xxi = (long)xt.getNumeric(exi);        
-                    long yyi = (long)xt.getNumeric(exj);    
+                    long xxi = (long)xt.getNumeric(exi);     
+                    long yyi = (long)xt.getNumeric(exj);
                     long indexI=xxi;
                     long indexJ=yyi;
                     if (indexI!=indexJ){                        
@@ -682,7 +682,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI;             
     }
     
-    public double calcPtotal() {
+    public double calcPtotal(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -700,7 +700,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -710,17 +710,17 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];  
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 for (int j =M; j < N; j++) {                
-                    DataTuple exj = m_Data.getTuple(j);
+                    DataTuple exj = m_Data.getTuple(permutation[j]);
                     double xj = type.getNumeric(exj);                                       
-                    long indexI=i;
-                    long indexJ=j;
-                    if (i!=j){
-                        if (i>j){
-                            indexI=j;
-                            indexJ=i;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];
                         }
                         long indexMap = indexI*(NR)+indexJ;
                         Double temp= GISHeuristic.m_distances.get(indexMap); 
@@ -748,7 +748,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 meansR[k] += xi;
             }
@@ -758,17 +758,17 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 for (int j =M; j < N; j++) {                
-                    DataTuple exj = m_Data.getTuple(j);
+                    DataTuple exj = m_Data.getTuple(permutation[j]);
                     double xj = type.getNumeric(exj);
-                    long indexI=i;
-                    long indexJ=j;
-                    if (i!=j){
-                        if (i>j){
-                            indexI=j;
-                            indexJ=i;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];
                         }
                         long indexMap = indexI*(NR)+indexJ;
                         Double temp= GISHeuristic.m_distances.get(indexMap); 
@@ -794,7 +794,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI;             
     }
     
-    public double calcMultiIwithNeighbours(){
+    public double calcMultiIwithNeighbours(Integer[] permutation){
         ClusSchema schema = m_Data.getSchema();
         if (schema.getNbTargetAttributes()==1) {System.out.println("Error calculating Bivariate Heuristics with only one target!");System.exit(1);}     
         int M = 0;
@@ -813,7 +813,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -826,10 +826,10 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             double W = 0.0; 
             if (NeighCount>0)
             {
-                double[][] w = new double[N][N]; //matrica  
+                double[][] w = new double[N][N]; //matrix
                 for (int i = M; i < N; i++) {
                     Distance distances[]=new Distance[NeighCount];
-                    DataTuple exi = m_Data.getTuple(i);  //example i
+                    DataTuple exi = m_Data.getTuple(permutation[i]);  //example i
                     ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                     ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                     double ti = type.getNumeric(exi);
@@ -839,14 +839,14 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     int biggestindex=Integer.MAX_VALUE;
                     
                     for (int j = M; j < N; j++) {
-                    DataTuple exj = m_Data.getTuple(j); //example j     
+                    DataTuple exj = m_Data.getTuple(permutation[j]); //example j     
                     double tj = type.getNumeric(exj);       
                     double xj = xt.getNumeric(exj);
                     double yj = yt.getNumeric(exj);
                     double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                    if ((N-M)<NeighCount) distances[j]=new Distance(j,tj,d);
+                    if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                     else {
-                        if (j<NeighCount) distances[j]=new Distance(j,tj,d);
+                        if (permutation[j]<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
                         else{
                          biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                          biggestindex = 0;
@@ -857,7 +857,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                              }
                             if (d < biggestd)
                             {
-                             distances[biggestindex].index = j;
+                             distances[biggestindex].index = permutation[j];
                              distances[biggestindex].target = tj;
                              distances[biggestindex].distance = d;
                             }
@@ -870,18 +870,18 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                     
                     for (int j = M; j < NN; j++) {      
-                    if (distances[j].distance==0.0) w[i][j]=1; 
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    upsum[k] += w[i][j]*(ti-means[k])*(distances[j].target-means[k]); //m_distances.get(i*N+j) [i][j]
-                    W+=w[i][j];
+                    upsum[k] += w[permutation[i]][permutation[j]]*(ti-means[k])*(distances[permutation[j]].target-means[k]); //m_distances.get(i*N+j) [i][permutation[j]]
+                    W+=w[permutation[i]][permutation[j]];
                     }   
                 downsum[k]+=((ti-means[k])*(ti-means[k]));
                 }
@@ -907,7 +907,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 meansR[k] += xi;
             }
@@ -924,7 +924,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double[][] w = new double[N][N]; //matrica  
                 for (int i = M; i < N; i++) {
                     Distance distances[]=new Distance[NeighCount];
-                    DataTuple exi = m_Data.getTuple(i);  //example i
+                    DataTuple exi = m_Data.getTuple(permutation[i]);  //example i
                     ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                     ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                     double ti = type.getNumeric(exi);
@@ -964,19 +964,19 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     //if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount);   
                     //M NN
                     int j=0;
-                    while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
-                    if (distances[j].distance==0.0) w[i][j]=1;
+                    while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    upsumR[k] += w[i][j]*(ti-meansR[k])*(distances[j].target-meansR[k]); //m_distances.get(i*N+j) [i][j]
-                    WR+=w[i][j];
+                    upsumR[k] += w[permutation[i]][permutation[j]]*(ti-meansR[k])*(distances[permutation[j]].target-meansR[k]); //m_distances.get(i*N+j) [permutation[i]][permutation[j]]
+                    WR+=w[permutation[i]][permutation[j]];
                     j++;
                     }   
                 downsumR[k]+=((ti-meansR[k])*(ti-meansR[k]));
@@ -1005,7 +1005,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI;         
     }
     
-    public double calcBivariateLee() {
+    public double calcBivariateLee(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         if (schema.getNbTargetAttributes()==1) {System.out.println("Error calculating Bivariate Heuristics with only one target!");System.exit(1);}     
         int M = 0;int N = m_Data.getNbRows();long NR = m_Data.getNbRows();
@@ -1022,7 +1022,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xxi = type.getNumeric(exi);
                 means[k] += xxi;
             }
@@ -1030,7 +1030,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         }
         double avgik=0;double upsum0=0; double upsum1=1;double downsum0=0; double downsum1=0;double WL=0.0; 
         for (int i = M; i <N; i++) {
-            DataTuple exi = m_Data.getTuple(i);
+            DataTuple exi = m_Data.getTuple(permutation[i]);
             for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             xi[k] = type.getNumeric(exi);}
@@ -1051,7 +1051,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                         long indexMap = indexI*(NR)+indexJ;
                         Double temp = GISHeuristic.m_distances.get(indexMap);
                         if (temp!=null) w=temp;else w=0;    
-                        //upsum[0][i] += w*xj[0]; upsum[1][i] += w*xj[1]; W+=w*w;   
+                        //upsum[0][permutation[i]] += w*xj[0]; upsum[1][i] += w*xj[1]; W+=w*w;   
                         upsum[0][i] += w*(xj[0]-means[0]); upsum[1][i] += w*(xj[1]-means[1]); W+=w;     
                     }  
                     else{
@@ -1059,9 +1059,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                         upsum[0][i] += xi[0]-means[0]; upsum[1][i] +=xi[1]-means[1];W+=1; 
                         }
                 }       
-                //upsum0+= (upsum[0][i]-means[0]); upsum1+= (upsum[1][i]-means[1]);
+                //upsum0+= (upsum[0][permutation[i]]-means[0]); upsum1+= (upsum[1][permutation[i]]-means[1]);
                 WL+=W*W; 
-                upsum0+= upsum[0][i]*upsum[1][i];
+                upsum0+= upsum[0][permutation[i]]*upsum[1][permutation[i]];
                 downsum0+= (xi[0]-means[0])*(xi[0]-means[0]); downsum1+= (xi[1]-means[1])*(xi[1]-means[1]);
         }           
         if (upsum0!=0.0 && upsum1!=0.0 && downsum0!=0.0 && downsum1!=0.0)
@@ -1079,14 +1079,14 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xxi = type.getNumeric(exi);
                 meansR[k] += xxi;
             }
             meansR[k]/=(N-M);
         }
         for (int i = M; i <N; i++) {
-        DataTuple exi = m_Data.getTuple(i);
+        DataTuple exi = m_Data.getTuple(permutation[i]);
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
         ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
         xiR[k] = type.getNumeric(exi);}
@@ -1123,7 +1123,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         }
         return scaledI;         
     }
-    public double calcLeewithNeighbours() {
+    public double calcLeewithNeighbours(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         if (schema.getNbTargetAttributes()==1) {System.out.println("Error calculating Bivariate Heuristics with only one target!");System.exit(1);}     
         int M = 0;int N = m_Data.getNbRows();
@@ -1140,7 +1140,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double m = type.getNumeric(exi);
                 means[k] += m;
             }
@@ -1153,7 +1153,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         if (NeighCount>0){
             double[][] w = new double[N][N]; //matrica  
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double yyi=0.0;double xxi=0.0;double W=0;
                 for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
                     ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k]; //target
@@ -1171,9 +1171,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord     
                     xj[k] = type.getNumeric(exj);xxj = xt.getNumeric(exi);yyj = yt.getNumeric(exi);}
                     double d = Math.sqrt((xxi-xxj)*(xxi-xxj)+(yyi-yyj)*(yyi-yyj));  
-                    if ((N-M)<NeighCount) distances[j]=new DistanceB(j,xj[0],xj[1],d);
+                    if ((N-M)<NeighCount) distances[permutation[j]]=new DistanceB(j,xj[0],xj[1],d);
                     else {
-                        if (j<NeighCount) distances[j]=new DistanceB(j,xj[0],xj[1],d);
+                        if (j<NeighCount) distances[permutation[j]]=new DistanceB(j,xj[0],xj[1],d);
                         else{
                          biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                          biggestindex = 0;
@@ -1190,21 +1190,21 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     }
                     
                     for (int j = M; j < NN; j++) {      
-                    if (distances[j].distance==0.0) w[i][j]=1; 
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }
-                    upsum[0][i] += w[i][j]*(xj[0]-means[0]); upsum[1][i] += w[i][j]*(xj[1]-means[1]); W+=w[i][j];
+                    upsum[0][permutation[i]] += w[permutation[i]][permutation[j]]*(xj[0]-means[0]); upsum[1][permutation[i]] += w[permutation[i]][permutation[j]]*(xj[1]-means[1]); W+=w[permutation[i]][permutation[j]];
                     }
                     
                     WL+=W*W; 
-                    upsum0+= upsum[0][i]*upsum[1][i];
+                    upsum0+= upsum[0][permutation[i]]*upsum[1][permutation[i]];
                     downsum0+= (xi[0]-means[0])*(xi[0]-means[0]); downsum1+= (xi[1]-means[1])*(xi[1]-means[1]);
                 }
             }       
@@ -1222,7 +1222,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double m = type.getNumeric(exi);
                 meansR[k] += m;
             }
@@ -1232,7 +1232,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         if (NeighCount>0){
             double[][] w = new double[N][N]; //matrica  
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double yyi=0.0;double xxi=0.0;double WR=0;
                 for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
                     ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k]; //target
@@ -1267,21 +1267,21 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 }
     
                 int j=0;
-                while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
-                if (distances[j].distance==0.0) w[i][j]=1;
+                while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
+                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                          }
                         }               
-                    upsumR[0][i] += w[i][j]*(xRj[0]-meansR[0]); upsumR[1][i] += w[i][j]*(xRj[1]-meansR[1]); WR+=w[i][j];
+                    upsumR[0][permutation[i]] += w[permutation[i]][permutation[j]]*(xRj[0]-meansR[0]); upsumR[1][permutation[i]] += w[permutation[i]][permutation[j]]*(xRj[1]-meansR[1]); WR+=w[permutation[i]][permutation[j]];
                 }
                 WRR+=WR*WR; 
-                upsumR0+= upsumR[0][i]*upsumR[1][i];
+                upsumR0+= upsumR[0][permutation[i]]*upsumR[1][permutation[i]];
                 downsumR0+= (xRi[0]-meansR[0])*(xRi[0]-meansR[0]); downsumR1+= (xRi[1]-meansR[1])*(xRi[1]-meansR[1]);
             }
         }       
@@ -1300,7 +1300,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI;         
     }
     
-    public double calcMutivariateItotal() {
+    public double calcMutivariateItotal(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         if (schema.getNbTargetAttributes()==1) {System.out.println("Error calculating Bivariate Heuristics with only one target!");System.exit(1);}     
         int M = 0;
@@ -1320,14 +1320,14 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xxi = type.getNumeric(exi);
                 means[k] += xxi;
             }
             means[k]/=(N-M);
         }
         for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
                 xi[k] = type.getNumeric(exi);}
@@ -1372,14 +1372,14 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xxi = type.getNumeric(exi);
                 meansR[k] += xxi;
             }
             meansR[k]/=(N-M);
         }
         for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
                 xiR[k] = type.getNumeric(exi);}
@@ -1427,7 +1427,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
     
     //Connectivity Index (CI) for Graph Data with a distance file
-    public double calcCItotalD() {
+    public double calcCItotalD(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         int M = 0;
@@ -1445,7 +1445,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         double avgik = 0; //Double.NEGATIVE_INFINITY;
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i <N; i++) {
-            DataTuple exi = m_Data.getTuple(i);
+            DataTuple exi = m_Data.getTuple(permutation[i]);
             long xxi = (long)xt.getNumeric(exi);    
                 for (int j =M; j < N; j++) {
                 DataTuple exj = m_Data.getTuple(j);
@@ -1459,15 +1459,15 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     }
                     String indexMap =indexI +"#"+indexJ;
                     Double temp= GISHeuristic.m_distancesS.get(indexMap);
-                    if (temp!=null) w[i][j]=temp;else w[i][j]=0;
-                    D[i]+=w[i][j]; //za sekoj node
+                    if (temp!=null) w[permutation[i]][permutation[j]]=temp;else w[permutation[i]][permutation[j]]=0;
+                    D[permutation[i]]+=w[permutation[i]][permutation[j]]; //za sekoj node
                     }  
                 }
             }
             for (int i = M; i <N; i++) {
                 for (int j = M; j <N; j++) 
-                    if (i!=j && D[j]!=0) W[i]+=Math.sqrt(D[j]); 
-                if (D[i]!=0) ikk[k]+=Math.sqrt(D[i]);
+                    if (i!=j && D[permutation[j]]!=0) W[permutation[i]]+=Math.sqrt(D[permutation[j]]); 
+                if (D[permutation[i]]!=0) ikk[k]+=Math.sqrt(D[permutation[i]]);
             }                   
                 avgik+=ikk[k]; //average of the all targets
         }       
@@ -1483,7 +1483,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         double[] ikkR = new double[schema.getNbTargetAttributes()];                         
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i <N; i++) {
-            DataTuple exi = m_Data.getTuple(i);
+            DataTuple exi = m_Data.getTuple(permutation[i]);
             long xxi = (long)xt.getNumeric(exi);    
                 for (int j =M; j < N; j++) {                
                 DataTuple exj = m_Data.getTuple(j);
@@ -1523,7 +1523,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
     
     //Connectivity Index (CI) for Graph Data 
-    public double calcCItotal() {
+    public double calcCItotal(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -1551,15 +1551,15 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                         }   
                         long indexMap = indexI*(NR)+indexJ;
                         Double temp = GISHeuristic.m_distances.get(indexMap);
-                        if (temp!=null) w[i][j]=temp;else w[i][j]=0;
-                        D[i]+=w[i][j]; //za sekoj node
+                        if (temp!=null) w[permutation[i]][permutation[j]]=temp;else w[permutation[i]][permutation[j]]=0;
+                        D[permutation[i]]+=w[permutation[i]][permutation[j]]; //za sekoj node
                     }  
                 }
             }
             for (int i = M; i <N; i++) {
                 for (int j = M; j <N; j++) 
-                    if (i!=j && D[j]!=0) W[i]+=w[i][j]/Math.sqrt(D[j]); 
-                if (D[i]!=0) ikk[k]+=W[i]/Math.sqrt(D[i]);
+                    if (i!=j && D[permutation[j]]!=0) W[permutation[i]]+=w[permutation[i]][permutation[j]]/Math.sqrt(D[permutation[j]]); 
+                if (D[permutation[i]]!=0) ikk[k]+=W[permutation[i]]/Math.sqrt(D[permutation[i]]);
             }                   
                 avgik+=ikk[k]; //average of the all targets
         }       
@@ -1608,7 +1608,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
     
     //Connectivity Index (CI) for Graph Data with neigh.
-    public double calcCIwithNeighbours() {
+    public double calcCIwithNeighbours(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -1634,7 +1634,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 int NN;
                 if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                 for (int i = M; i < N; i++) {
-                    DataTuple exi = m_Data.getTuple(i);  //example i
+                    DataTuple exi = m_Data.getTuple(permutation[i]);  //example i
                     ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                     ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                     double xi = xt.getNumeric(exi);
@@ -1645,9 +1645,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     double xj = xt.getNumeric(exj);
                     double yj = yt.getNumeric(exj);
                     double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                    if ((N-M)<NeighCount) distances[j]=new Distance(j,tj,d);
+                    if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(j,tj,d);
                     else {
-                        if (j<NeighCount) distances[j]=new Distance(j,tj,d);
+                        if (j<NeighCount) distances[permutation[j]]=new Distance(j,tj,d);
                         else{
                          biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                          biggestindex = 0;
@@ -1667,36 +1667,36 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     }
                     
                     for (int j = M; j < NN; j++) {      
-                    if (distances[j].distance==0.0) w[i][j]=1; 
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    D[i]+=w[i][j]; //za sekoj node
+                    D[permutation[i]]+=w[permutation[i]][permutation[j]]; //za sekoj node
                     }   
-                    //System.out.println(i+" end "+D[i]);
+                    //System.out.println(i+" end "+D[permutation[i]]);
                 }
                 for (int i = M; i < N; i++) {
-                    //System.out.println(i+" end "+D[i]);
+                    //System.out.println(i+" end "+D[permutation[i]]);
                     for (int j = M; j < NN; j++) {      
-                        if (distances[j].distance==0.0) w[i][j]=1; 
+                        if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                         else{
                             switch (spatialMatrix) {
-                                case 0:  w[i][j]=1;   break;  //binary 
-                                case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                                case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                                case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                                default: w[i][j]=1; break;
+                                case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                                case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                                case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                                case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                                default: w[permutation[i]][permutation[j]]=1; break;
                                 }
                             }               
-                        W[i]+=w[i][j]/Math.sqrt(D[j]); 
+                        W[permutation[i]]+=w[permutation[i]][permutation[j]]/Math.sqrt(D[permutation[j]]); 
                         } 
-                    ikk[k]+=W[i]/Math.sqrt(D[i]);
+                    ikk[k]+=W[permutation[i]]/Math.sqrt(D[permutation[i]]);
                 }
             }   
         avgik+=ikk[k];
@@ -1722,7 +1722,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 int spatialMatrix = schema.getSettings().getSpatialMatrix();
     
                 for (int i = M; i < N; i++) {
-                    DataTuple exi = m_Data.getTuple(i);  //example i
+                    DataTuple exi = m_Data.getTuple(permutation[i]);  //example i
                     ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                     ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                     double xi = xt.getNumeric(exi);
@@ -1756,34 +1756,34 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     }
                     int j=0;
                     while (j < NeighCount) {        
-                    if (distances[j].distance==0.0) w[i][j]=1;
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    DR[i]+=w[i][j]; //za sekoj node
+                    DR[permutation[i]]+=w[permutation[i]][permutation[j]]; //za sekoj node
                     }   
                 }
                 for (int i = M; i < N; i++) {
                     for (int j = M; j < N; j++) {       
-                        if (distances[j].distance==0.0) w[i][j]=1; 
+                        if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                         else{
                             switch (spatialMatrix) {
-                                case 0:  w[i][j]=1;   break;  //binary 
-                                case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                                case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                                case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                                default: w[i][j]=1; break;
+                                case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                                case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                                case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                                case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                                default: w[permutation[i]][permutation[j]]=1; break;
                                 }
                             }               
-                        WR[i]+=w[i][j]/Math.sqrt(DR[j]); 
+                        WR[permutation[i]]+=w[permutation[i]][permutation[j]]/Math.sqrt(DR[permutation[j]]); 
                         } 
-                    ikkR[k]+=WR[i]/Math.sqrt(DR[i]);
+                    ikkR[k]+=WR[permutation[i]]/Math.sqrt(DR[permutation[i]]);
                 }   
             }   
             avgikR+=ikkR[k];
@@ -1803,7 +1803,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI;         
     }
     //Geary C wit neigh.
-    public double calcCwithNeighbourstotal() {
+    public double calcCwithNeighbourstotal(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -1821,7 +1821,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -1837,7 +1837,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double[][] w = new double[N][N]; //matrica  
                 for (int i = M; i < N; i++) {
                     Distance distances[]=new Distance[NeighCount];
-                    DataTuple exi = m_Data.getTuple(i);  //example i
+                    DataTuple exi = m_Data.getTuple(permutation[i]);  //example i
                     ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                     ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                     double ti = type.getNumeric(exi);
@@ -1852,9 +1852,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     double xj = xt.getNumeric(exj);
                     double yj = yt.getNumeric(exj);
                     double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                    if ((N-M)<NeighCount) distances[j]=new Distance(j,tj,d);
+                    if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(j,tj,d);
                     else {
-                        if (j<NeighCount) distances[j]=new Distance(j,tj,d);
+                        if (j<NeighCount) distances[permutation[j]]=new Distance(j,tj,d);
                         else{
                          biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                          biggestindex = 0;
@@ -1877,18 +1877,18 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                     
                     for (int j = M; j < NN; j++) {      
-                    if (distances[j].distance==0.0) w[i][j]=1; 
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    upsum[k] += w[i][j]*(ti-distances[j].target)*(ti-distances[j].target); 
-                    W+=w[i][j];
+                    upsum[k] += w[permutation[i]][permutation[j]]*(ti-distances[permutation[j]].target)*(ti-distances[permutation[j]].target); 
+                    W+=w[permutation[i]][permutation[j]];
                     }   
                 downsum[k]+=((ti-means[k])*(ti-means[k]));
                 }
@@ -1914,7 +1914,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 meansR[k] += xi;
             }
@@ -1931,7 +1931,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double[][] w = new double[N][N]; //matrica  
                 for (int i = M; i < N; i++) {
                     Distance distances[]=new Distance[NeighCount];
-                    DataTuple exi = m_Data.getTuple(i);  //example i
+                    DataTuple exi = m_Data.getTuple(permutation[i]);  //example i
                     ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                     ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                     double ti = type.getNumeric(exi);
@@ -1971,19 +1971,19 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     //if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount);   
                     //M NN
                     int j=0;
-                    while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
-                    if (distances[j].distance==0.0) w[i][j]=1;
+                    while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    upsumR[k] += w[i][j]*(ti-distances[j].target)*(ti-distances[j].target); 
-                    WR+=w[i][j];
+                    upsumR[k] += w[permutation[i]][permutation[j]]*(ti-distances[permutation[j]].target)*(ti-distances[permutation[j]].target); 
+                    WR+=w[permutation[i]][permutation[j]];
                     j++;
                     }   
                 downsumR[k]+=((ti-meansR[k])*(ti-meansR[k]));
@@ -2010,7 +2010,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
     
     //Moran Global I with neigh.
-    public double calcIwithNeighbourstotal() {
+    public double calcIwithNeighbourstotal(Integer[] permutation) {
         //calcLeewithNeighbours
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
@@ -2029,7 +2029,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -2045,7 +2045,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double[][] w = new double[N][N]; //matrica  
                 for (int i = M; i < N; i++) {
                     Distance distances[]=new Distance[NeighCount];
-                    DataTuple exi = m_Data.getTuple(i);  //example i
+                    DataTuple exi = m_Data.getTuple(permutation[i]);  //example i
                     ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                     ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                     double ti = type.getNumeric(exi);
@@ -2060,9 +2060,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     double xj = xt.getNumeric(exj);
                     double yj = yt.getNumeric(exj);
                     double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                    if ((N-M)<NeighCount) distances[j]=new Distance(j,tj,d);
+                    if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(j,tj,d);
                     else {
-                        if (j<NeighCount) distances[j]=new Distance(j,tj,d);
+                        if (j<NeighCount) distances[permutation[j]]=new Distance(j,tj,d);
                         else{
                          biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                          biggestindex = 0;
@@ -2079,25 +2079,25 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                             }
                             }
                         }
-                    //PrivateDistances[j] = distances[j];
+                    //PrivateDistances[permutation[j]] = distances[permutation[j]];
                     }
                     int spatialMatrix = schema.getSettings().getSpatialMatrix();
                     int NN;
                     if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                     
                     for (int j = M; j < NN; j++) {      
-                    if (distances[j].distance==0.0) w[i][j]=1; 
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    upsum[k] += w[i][j]*(ti-means[k])*(distances[j].target-means[k]); //m_distances.get(i*N+j) [i][j]
-                    W+=w[i][j];
+                    upsum[k] += w[permutation[i]][permutation[j]]*(ti-means[k])*(distances[permutation[j]].target-means[k]); //m_distances.get(i*N+j) [permutation[i]][permutation[j]]
+                    W+=w[permutation[i]][permutation[j]];
                     }   
                 downsum[k]+=((ti-means[k])*(ti-means[k]));
                 }
@@ -2123,7 +2123,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 meansR[k] += xi;
             }
@@ -2140,7 +2140,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double[][] w = new double[N][N]; //matrica  
                 for (int i = M; i < N; i++) {
                     Distance distances[]=new Distance[NeighCount];
-                    DataTuple exi = m_Data.getTuple(i);  //example i
+                    DataTuple exi = m_Data.getTuple(permutation[i]);  //example i
                     ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                     ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
                     double ti = type.getNumeric(exi);
@@ -2180,19 +2180,19 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     //if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount);   
                     //M NN
                     int j=0;
-                    while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
-                    if (distances[j].distance==0.0) w[i][j]=1;
+                    while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
+                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
                     else{
                         switch (spatialMatrix) {
-                            case 0:  w[i][j]=1;   break;  //binary 
-                            case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                            case 2:  w[i][j]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[i][j]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
-                            default: w[i][j]=1; break;
+                            case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
-                    upsumR[k] += w[i][j]*(ti-meansR[k])*(distances[j].target-meansR[k]); //m_distances.get(i*N+j) [i][j]
-                    WR+=w[i][j];
+                    upsumR[k] += w[permutation[i]][permutation[j]]*(ti-meansR[k])*(distances[permutation[j]].target-meansR[k]); //m_distances.get(i*N+j) [permutation[i]][permutation[j]]
+                    WR+=w[permutation[i]][permutation[j]];
                     j++;
                     }   
                 downsumR[k]+=((ti-meansR[k])*(ti-meansR[k]));
@@ -2263,7 +2263,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             for (int i = M; i < N; i++) {
                 Distance distances[]=new Distance[NeighCount];
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double ti = type.getNumeric(exi);
                 ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];  //x coord
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord
@@ -2279,9 +2279,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     double xj = xt.getNumeric(exj);
                     double yj = yt.getNumeric(exj);
                     double tempd = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                    if (vkupenBrojElementiVoOvojSplit<NeighCount) distances[j]=new Distance(j,tj,tempd);
+                    if (vkupenBrojElementiVoOvojSplit<NeighCount) distances[permutation[j]]=new Distance(j,tj,tempd);
                     else {
-                        if (j<NeighCount) distances[j]=new Distance(j,tj,tempd);
+                        if (j<NeighCount) distances[permutation[j]]=new Distance(j,tj,tempd);
                         else{
                          biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                          biggestindex = 0;
@@ -2305,20 +2305,20 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     for (int j = M; j <N; j++) {
                     DataTuple exj = m_Data.getTuple(j); 
                     double tj = type.getNumeric(exj);
-                    if (i==j) w[i][j]=0; 
-                    else if ((distances[j].distance==0.0) && (i!=j)) w[i][j]=1; 
+                    if (i==j) w[permutation[i]][permutation[j]]=0; 
+                    else if ((distances[permutation[j]].distance==0.0) && (i!=j)) w[permutation[i]][permutation[j]]=1; 
                         else{
                                 switch (spatialMatrix) {
-                                case 0:  w[i][j]=0;   break;  //binary 
-                                case 1:  w[i][j]=1/distances[j].distance; break;  //euclidian
-                                default: w[i][j]=0; break;
+                                case 0:  w[permutation[i]][permutation[j]]=0;   break;  //binary 
+                                case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
+                                default: w[permutation[i]][permutation[j]]=0; break;
                                 }
-                             W+=w[i][j];
+                             W+=w[permutation[i]][permutation[j]];
                             }               
-                        a[k] += 2*w[i][j];
-                        b[k] += 2*w[i][j]*ti*tj;
-                        c[k] += w[i][j]*tj;
-                        c[k] += w[i][j]*tj;
+                        a[k] += 2*w[permutation[i]][permutation[j]];
+                        b[k] += 2*w[permutation[i]][permutation[j]]*ti*tj;
+                        c[k] += w[permutation[i]][permutation[j]]*tj;
+                        c[k] += w[permutation[i]][permutation[j]]*tj;
                     }   
     
                 m_PreviousSumW[k]  =a[k]; 
@@ -2352,7 +2352,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI;         
     }
     //calculate Equvalent Geary C with Distance file
-    public double calcEquvalentGDistance() {        
+    public double calcEquvalentGDistance(Integer[] permutation) {        
         ClusSchema schema = m_Data.getSchema();             
         double[] ikk = new double[schema.getNbTargetAttributes()];
         double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -2373,7 +2373,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 INITIALIZE_PARTIAL_SUM=false;
                 M=0;
                 for (int i = M; i < NR; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);    
                 meansR[k] += xi;
@@ -2406,7 +2406,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             boolean flagLeftAllEqual=true;
             {
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
                 m_PreviousSumX2[k] +=xi*xi;
@@ -2420,7 +2420,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             flagLeftAllEqual=true;
             double oldX=type.getNumeric(m_Data.getTuple(0));
             for (int i = 1; i<N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
             if(xi!=oldX) // to check that partition does not contain values which are all the same
                 {
@@ -2430,7 +2430,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             }
             
             for (int i = 0; i<M; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);        
                 for (int j = M; j<N; j++) {
@@ -2460,7 +2460,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double w=0;
                 DataTuple exj = m_Data.getTuple(j);
                 double xj = type.getNumeric(exj);
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);        
                 long yyi = (long)xt.getNumeric(exj);
@@ -2482,7 +2482,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             }
             //left (old-new)(old-new)
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);           
                 for (int j = M; j <N; j++) {    
                     DataTuple exj = m_Data.getTuple(j);
@@ -2511,7 +2511,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             flagRightAllEqual=true;
             oldX=type.getNumeric(m_Data.getTuple(N));
             for (int i = N; i<NR; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 if(oldX!=xi)
                     flagRightAllEqual=false;
@@ -2548,7 +2548,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double w=0;
                 DataTuple exj = m_Data.getTuple(j);
                 double xj = type.getNumeric(exj);
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);        
                 long yyi = (long)xt.getNumeric(exj);
@@ -2570,7 +2570,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             }
             //right (old-new)(old-new)
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);       
                 long xxi = (long)xt.getNumeric(exi);                
                 for (int j = M; j <N; j++) {                        
@@ -2631,7 +2631,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI;
         }
     //calculate EquvalentI with Distance file
-    public double calcEquvalentIDistance() {        
+    public double calcEquvalentIDistance(Integer[] permutation) {        
         ClusSchema schema = m_Data.getSchema();             
         double[] ikk = new double[schema.getNbTargetAttributes()];
         double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -2652,7 +2652,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 INITIALIZE_PARTIAL_SUM=false;
                 M=0;
                 for (int i = M; i < NR; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);    
                 meansR[k] += xi;
@@ -2689,7 +2689,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             boolean flagLeftAllEqual=true;
             {
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
                 m_PreviousSumX2[k] +=xi*xi;
@@ -2703,7 +2703,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             flagLeftAllEqual=true;
             double oldX=type.getNumeric(m_Data.getTuple(0));
             for (int i = 1; i<N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
             if(xi!=oldX) // to check that partition does not contain values which are all the same
                 {
@@ -2713,7 +2713,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             }
             
             for (int i = 0; i<M; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);        
                 for (int j = M; j<N; j++) {
@@ -2744,7 +2744,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double w=0;
                 DataTuple exj = m_Data.getTuple(j);
                 double xj = type.getNumeric(exj);
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);        
                 long yyi = (long)xt.getNumeric(exj);
@@ -2767,7 +2767,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             }
             //left (old-new)(old-new)
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);           
                 for (int j = M; j <N; j++) {    
                     DataTuple exj = m_Data.getTuple(j);
@@ -2799,7 +2799,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             flagRightAllEqual=true;
             oldX=type.getNumeric(m_Data.getTuple(N));
             for (int i = N; i<NR; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 if(oldX!=xi)
                     flagRightAllEqual=false;
@@ -2839,7 +2839,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double w=0;
                 DataTuple exj = m_Data.getTuple(j);
                 double xj = type.getNumeric(exj);
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);        
                 long yyi = (long)xt.getNumeric(exj);
@@ -2865,7 +2865,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             }
             //right (old-new)(old-new)
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);       
                 long xxi = (long)xt.getNumeric(exi);                
                 for (int j = M; j <N; j++) {                        
@@ -2931,7 +2931,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI;
         }
     //calculate EquvalentI to Geary C -Annalisa
-    public double calcEquvalentGtotal() {   
+    public double calcEquvalentGtotal(Integer[] permutation) {   
             ClusSchema schema = m_Data.getSchema();             
             double[] ikk = new double[schema.getNbTargetAttributes()];
             double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -2951,7 +2951,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     INITIALIZE_PARTIAL_SUM=false;
                     M=0;
                     for (int i = M; i < NR; i++) {
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);
                     meansR[k] += xi;
 
@@ -2980,7 +2980,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 boolean flagLeftAllEqual=true;
                 {
                 for (int i = M; i < N; i++) {
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);
                     means[k] += xi;
 
@@ -2998,7 +2998,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 flagLeftAllEqual=true;
                 double oldX=type.getNumeric(m_Data.getTuple(0));
                 for (int i = 1; i<N; i++) {
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);
                 if(xi!=oldX) // Annalisa : to check that partition does not contain values which are all the same
                     {
@@ -3008,7 +3008,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 }
                 
                 for (int i = 0; i<M; i++) {
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);
                     for (int j = M; j<N; j++) {
                     long indexMap = i*(NR)+j;                   
@@ -3031,7 +3031,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     double w=0;
                     DataTuple exj = m_Data.getTuple(j);
                     double xj = type.getNumeric(exj);
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);
                     if (i>j)
                         indexMap= j*(NR)+i; 
@@ -3043,7 +3043,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 }
                 //left (old-new)(old-new)
                 for (int i = M; i < N; i++) {
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);           
                     for (int j = M; j <N; j++) {    
                         DataTuple exj = m_Data.getTuple(j);
@@ -3070,7 +3070,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 flagRightAllEqual=true;
                 oldX=type.getNumeric(m_Data.getTuple(N));
                 for (int i = N; i<NR; i++) {
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);
                     if(oldX!=xi)
                         flagRightAllEqual=false;
@@ -3098,7 +3098,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                     double w=0;
                     DataTuple exj = m_Data.getTuple(j);
                     double xj = type.getNumeric(exj);
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);
                     if (i>j)
                         indexMap= j*(NR)+i; 
@@ -3111,7 +3111,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 }
                 //right (old-new)(old-new)
                 for (int i = M; i < N; i++) {
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);           
                     for (int j = M; j <N; j++) {    
                         DataTuple exj = m_Data.getTuple(j);
@@ -3171,7 +3171,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         }
         
     //calculate EquvalentI to Global Moran I -Annalisa
-    public double calcEquvalentItotal() {       
+    public double calcEquvalentItotal(Integer[] permutation) {       
         ClusSchema schema = m_Data.getSchema();             
         double[] ikk = new double[schema.getNbTargetAttributes()];
         double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -3191,7 +3191,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 INITIALIZE_PARTIAL_SUM=false;
                 M=0;
                 for (int i = M; i < NR; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 meansR[k] += xi;
 
@@ -3223,7 +3223,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             boolean flagLeftAllEqual=true;
             {
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
 
@@ -3241,7 +3241,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             flagLeftAllEqual=true;
             double oldX=type.getNumeric(m_Data.getTuple(0));
             for (int i = 1; i<N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
             if(xi!=oldX) // Annalisa : to check that partition does not contain values which are all the same
                 {
@@ -3251,7 +3251,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             }
             
             for (int i = 0; i<M; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 for (int j = M; j<N; j++) {
                 long indexMap = i*(NR)+j;                   
@@ -3277,7 +3277,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double w=0;
                 DataTuple exj = m_Data.getTuple(j);
                 double xj = type.getNumeric(exj);
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 if (i>j)
                     indexMap= j*(NR)+i; 
@@ -3292,7 +3292,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             }
             //left (old-new)(old-new)
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);           
                 for (int j = M; j <N; j++) {    
                     DataTuple exj = m_Data.getTuple(j);
@@ -3321,7 +3321,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             flagRightAllEqual=true;
             oldX=type.getNumeric(m_Data.getTuple(N));
             for (int i = N; i<NR; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 if(oldX!=xi)
                     flagRightAllEqual=false;
@@ -3352,7 +3352,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 double w=0;
                 DataTuple exj = m_Data.getTuple(j);
                 double xj = type.getNumeric(exj);
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 if (i>j)
                     indexMap= j*(NR)+i; 
@@ -3368,7 +3368,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             }
             //right (old-new)(old-new)
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);           
                 for (int j = M; j <N; j++) {    
                     DataTuple exj = m_Data.getTuple(j);
@@ -3449,7 +3449,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(permutation[i]);
+                DataTuple exi = m_Data.getTuple(permutation[permutation[i]]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -3467,7 +3467,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 DataTuple exi = m_Data.getTuple(permI);
                 double xi = type.getNumeric(exi);
                 for (int j = M; j < N; j++) {
-                    int permJ = permutation[j];
+                    int permJ = permutation[permutation[j]];
                     DataTuple exj = m_Data.getTuple(permJ);
                     double xj = type.getNumeric(exj);                   
                     double w=0;
@@ -3572,7 +3572,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return scaledI;             
     }
     // global I calculation with a separate distance file
-    public double calcItotalD() {
+    public double calcItotalD(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         double num,den;
         double avgik = 0; double W = 0.0; 
@@ -3593,7 +3593,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -3604,7 +3604,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];           
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);                
                 for (int j =M; j < N; j++) {                
@@ -3717,7 +3717,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
     
     // global C
-    public double calcGtotal() {
+    public double calcGtotal(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -3736,7 +3736,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -3747,7 +3747,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 for (int j =M; j < N; j++) {                
                     DataTuple exj = m_Data.getTuple(j);
@@ -3789,7 +3789,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 meansR[k] += xi;
             }
@@ -3800,7 +3800,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 for (int j =M; j < N; j++) {                
                     DataTuple exj = m_Data.getTuple(j);
@@ -3844,7 +3844,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             
     }
     // global C calculation with a separate distance file
-    public double calcGtotalD() {
+    public double calcGtotalD(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -3863,7 +3863,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -3876,7 +3876,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0]; 
             
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);
                 
@@ -3922,7 +3922,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 meansR[k] += xi;
             }
@@ -3935,7 +3935,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0]; 
             
             for (int i = M; i <N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 long xxi = (long)xt.getNumeric(exi);
                 
@@ -3985,7 +3985,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
     
     // global Getis
-    public double calcGetisTotal() {
+    public double calcGetisTotal(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -4003,7 +4003,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 for (int j = M; j < N; j++) {               
                     DataTuple exj = m_Data.getTuple(j);
@@ -4043,7 +4043,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     
     
     //local Moran I calculation
-    public double calcLISAtotal() {
+    public double calcLISAtotal(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -4064,7 +4064,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -4076,7 +4076,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i < N; i++) {
-//                DataTuple exi = m_Data.getTuple(i);
+//                DataTuple exi = m_Data.getTuple(permutation[i]);
 //                double xi = type.getNumeric(exi);
                 for (int j = M; j < N; j++) {               
                     DataTuple exj = m_Data.getTuple(j);
@@ -4093,24 +4093,24 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                         if (GISHeuristic.m_distances.get(indexMap)!=null){
                             w=GISHeuristic.m_distances.get(indexMap);
                             }else{w=0;} 
-                        upsum1[k][i] += w*(xj-means[k]); 
-                        //System.out.println(upsum[k][i]);  
+                        upsum1[k][permutation[i]] += w*(xj-means[k]); 
+                        //System.out.println(upsum[k][permutation[i]]);  
                     }           
                 }               
             }           
             
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
-                upsum[k][i] = (xi-means[k])*upsum1[k][i];
+                upsum[k][permutation[i]] = (xi-means[k])*upsum1[k][permutation[i]];
                 downsum[k]+=((xi-means[k])*(xi-means[k]));
             }
             downsum[k]/=(N-M+0.0);
             for (int i = M; i < N; i++) {
-            if (downsum[k]!=0.0 && upsum[k][i]!=0.0){
-                ik[k][i]=(upsum[k][i])/(downsum[k]); //I for each point 
-                ikk[k]+=ik[k][i]; //average of all points for each targets
-                //System.out.println("LISA0: "+ik[k][i]);   
+            if (downsum[k]!=0.0 && upsum[k][permutation[i]]!=0.0){
+                ik[k][permutation[i]]=(upsum[k][permutation[i]])/(downsum[k]); //I for each point 
+                ikk[k]+=ik[k][permutation[i]]; //average of all points for each targets
+                //System.out.println("LISA0: "+ik[k][permutation[i]]);   
                 } else ikk[k] = 0;
             }
             avgik+=ikk[k]; 
@@ -4128,7 +4128,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }   
     
     //local Geary C
-    public double calcGLocalTotal() {
+    public double calcGLocalTotal(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -4148,7 +4148,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -4160,7 +4160,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 for (int j = M; j < N; j++) {               
                     DataTuple exj = m_Data.getTuple(j);
@@ -4177,21 +4177,21 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                         if (GISHeuristic.m_distances.get(indexMap)!=null){
                             w=GISHeuristic.m_distances.get(indexMap);
                             }else{w=0;} 
-                        upsum[k][i] += w*(xi-xj)*(xi-xj); 
-                        //System.out.println("Upsum:"+xi+" "+xj+","+upsum[k][i]);       
+                        upsum[k][permutation[i]] += w*(xi-xj)*(xi-xj); 
+                        //System.out.println("Upsum:"+xi+" "+xj+","+upsum[k][permutation[i]]);       
 //                        W+=w;
                     }  
             
                 }
-                //System.out.println("Geary C:"+k+" "+i+","+upsum[k][i]);                   
+                //System.out.println("Geary C:"+k+" "+i+","+upsum[k][permutation[i]]);                   
                 downsum[k]+=((xi-means[k])*(xi-means[k]));
             }
             
             for (int i = M; i < N; i++) {
-                if (downsum[k]!=0.0 && upsum[k][i]!=0.0){
-                    ik[k][i]=((N-M)*upsum[k][i])/(downsum[k]); //C for each point   
-                    //System.out.println("Geary C:"+k+" "+i+","+upsum[k][i]+"/"+(N-M)/downsum[k]);  
-                    ikk[k]+=ik[k][i]; //average of all points for each targets
+                if (downsum[k]!=0.0 && upsum[k][permutation[i]]!=0.0){
+                    ik[k][permutation[i]]=((N-M)*upsum[k][permutation[i]])/(downsum[k]); //C for each point   
+                    //System.out.println("Geary C:"+k+" "+i+","+upsum[k][permutation[i]]+"/"+(N-M)/downsum[k]);  
+                    ikk[k]+=ik[k][permutation[i]]; //average of all points for each targets
                     } else ikk[k] = 0;
                 }
                 avgik+=ikk[k]; 
@@ -4207,7 +4207,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             
     }
     //local Getis
-    public double calcLocalGetisTotal() {
+    public double calcLocalGetisTotal(Integer[] permutation) {
         ClusSchema schema = m_Data.getSchema();
         int M = 0;
         int N = m_Data.getNbRows();
@@ -4227,7 +4227,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             for (int i = M; i < N; i++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                DataTuple exi = m_Data.getTuple(i);
+                DataTuple exi = m_Data.getTuple(permutation[i]);
                 double xi = type.getNumeric(exi);
                 means[k] += xi;
             }
@@ -4239,7 +4239,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
             ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
             for (int i = M; i < N; i++) {
-//                DataTuple exi = m_Data.getTuple(i);
+//                DataTuple exi = m_Data.getTuple(permutation[i]);
 //                double xi = type.getNumeric(exi);
                 for (int j = M; j < N; j++) {               
                     DataTuple exj = m_Data.getTuple(j);
@@ -4256,13 +4256,13 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                         if (GISHeuristic.m_distances.get(indexMap)!=null){
                             w=GISHeuristic.m_distances.get(indexMap);
                             }else{w=0;} 
-                        upsum[k][i] += w*xj; 
-                        downsum[k][i]+=xj;
+                        upsum[k][permutation[i]] += w*xj; 
+                        downsum[k][permutation[i]]+=xj;
                     }  
                 }
-                if (upsum[k][i]!=0.0){
-                    ik[k][i]=(upsum[k][i])/(downsum[k][i]); //Local Getis for each point    
-                    ikk[k]+=ik[k][i]; //average of all points for each targets
+                if (upsum[k][permutation[i]]!=0.0){
+                    ik[k][permutation[i]]=(upsum[k][permutation[i]])/(downsum[k][permutation[i]]); //Local Getis for each point    
+                    ikk[k]+=ik[k][permutation[i]]; //average of all points for each targets
                     } else ikk[k] = 0;
                 avgik+=ikk[k]; 
             }
@@ -4279,7 +4279,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
         
     //local Getis calculation=standardized z    
-    public double calcGETIStotal() {
+    public double calcGETIStotal(Integer[] permutation) {
             ClusSchema schema = m_Data.getSchema();
             int M = 0;
             int N = m_Data.getNbRows();
@@ -4302,7 +4302,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
                 for (int i = M; i < N; i++) {
                     ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);
                     means[k] += xi;
                 }
@@ -4314,7 +4314,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
             for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
                 for (int i = M; i < N; i++) {
-                    DataTuple exi = m_Data.getTuple(i);
+                    DataTuple exi = m_Data.getTuple(permutation[i]);
                     double xi = type.getNumeric(exi);
                     for (int j = M; j < N; j++) {               
                         DataTuple exj = m_Data.getTuple(j);
@@ -4331,24 +4331,23 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                             if (GISHeuristic.m_distances.get(indexMap)!=null){
                                 w=GISHeuristic.m_distances.get(indexMap);
                             }else{w=0;} 
-                            upsum1[k][i]+= w*xj; 
-                            downsum1[k][i]+= w*w; 
-                            W[i]+=w;
+                            upsum1[k][permutation[i]]+= w*xj; 
+                            downsum1[k][permutation[i]]+= w*w; 
+                            W[permutation[i]]+=w;
                         }               
                     }
-                    upsum[k][i] = upsum1[k][i]- means[k]*W[i];
+                    upsum[k][permutation[i]] = upsum1[k][permutation[i]]- means[k]*W[permutation[i]];
                     downsum[k]+=((xi-means[k])*(xi-means[k]));  //downsum the same as geary's C
-                    downsum2[k][i] = (N-M)*downsum1[k][i]-W[i]*W[i];
-                    //System.out.println("downsum2:"+downsum2[k][i]);
+                    downsum2[k][permutation[i]] = (N-M)*downsum1[k][permutation[i]]-W[permutation[i]]*W[permutation[i]];
+                    //System.out.println("downsum2:"+downsum2[k][permutation[i]]);
                 }
                 
                 for (int i = M; i < N; i++) {
-                    if (downsum[k]!=0.0 && upsum[k][i]!=0.0 && downsum2[k][i]!=0.0){
-//                        double im= downsum2[k][i];
+                    if (downsum[k]!=0.0 && upsum[k][permutation[i]]!=0.0 && downsum2[k][permutation[i]]!=0.0){
+//                        double im= downsum2[k][permutation[i]];
                         //System.out.println(im);
-                        ik[k][i]=upsum[k][i]/(Math.sqrt((downsum[k]/((N-M)*(N-M-1)))*downsum2[k][i])); //I for each point   
-                        ikk[k]+=ik[k][i]; //average of all points for each targets
-                        //System.out.println(k+" : "+downsum1[k][i]+" , "+W[i]+" , "+downsum2[k][i]+" rez: "+ik[k][i]+" br: "+(N-M));
+                        ik[k][permutation[i]]=upsum[k][permutation[i]]/(Math.sqrt((downsum[k]/((N-M)*(N-M-1)))*downsum2[k][permutation[i]])); //I for each point   
+                        ikk[k]+=ik[k][permutation[i]]; //average of all points for each targets
                         } else ikk[k] = 0;
                     }
                     avgik+=ikk[k]; 

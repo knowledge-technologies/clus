@@ -1945,9 +1945,9 @@ public class Clus implements CMDLineArgsProvider {
             if (Debug.debug == 1)
                 ClusStat.show();
             DebugFile.close();
-            //daniela matejp moved this to a method
-            tryAnalyzePredictions(clus, sett);
-            //end daniela
+            if(!sett.isNullGIS()){
+                tryAnalyzePredictions(clus, sett);
+            }
         }
         catch (ClusException e) {
             System.err.println();
