@@ -54,7 +54,7 @@ import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.model.modelio.ClusModelCollectionIO;
+import clus.model.io.ClusModelCollectionIO;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 import clus.util.ClusException;

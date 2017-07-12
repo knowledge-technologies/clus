@@ -32,7 +32,7 @@ import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.primitive.TimeSeriesAttrType;
-import clus.distance.timeseries.TimeSeriesDist;
+import clus.distance.primitive.timeseries.TimeSeriesDist;
 import clus.main.settings.Settings;
 import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;

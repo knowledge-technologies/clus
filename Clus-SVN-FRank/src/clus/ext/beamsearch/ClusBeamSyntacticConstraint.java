@@ -31,7 +31,7 @@ import clus.data.rows.RowData;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.model.ClusModel;
-import clus.model.modelio.ClusTreeReader;
+import clus.model.io.ClusTreeReader;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 

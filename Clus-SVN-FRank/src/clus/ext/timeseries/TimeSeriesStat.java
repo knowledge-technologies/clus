@@ -32,7 +32,7 @@ import clus.data.rows.RowData;
 import clus.data.type.primitive.NumericAttrType;
 import clus.data.type.primitive.TimeSeriesAttrType;
 import clus.distance.ClusDistance;
-import clus.distance.timeseries.TimeSeriesDist;
+import clus.distance.primitive.timeseries.TimeSeriesDist;
 import clus.main.settings.Settings;
 import clus.statistic.ClusStatistic;
 import clus.statistic.StatisticPrintInfo;

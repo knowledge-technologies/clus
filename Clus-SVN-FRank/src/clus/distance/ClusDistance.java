@@ -41,12 +41,6 @@ public abstract class ClusDistance implements Serializable {
 
 
     public abstract String getDistanceName();
-//    public String getDistanceName() {
-//        new Exception("Method unimplemented ... ").printStackTrace();
-//        System.exit(1);
-//
-//        return "UnknownDistance";
-//    }
 
 
     public AttributeWeighting getWeighting() {

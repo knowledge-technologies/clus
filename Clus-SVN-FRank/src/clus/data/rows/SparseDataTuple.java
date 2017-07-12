@@ -28,7 +28,7 @@ import java.util.Iterator;
 
 import clus.data.ClusSchema;
 import clus.data.type.ClusAttrType;
-import clus.data.type.SparseNumericAttrType;
+import clus.data.type.primitive.SparseNumericAttrType;
 import clus.main.settings.Settings;
 
 

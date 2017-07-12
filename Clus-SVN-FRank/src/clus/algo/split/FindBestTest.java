@@ -231,7 +231,8 @@ public class FindBestTest {
             	m_BestTest.updateNumeric(value, at, tot_corr_SVarS, false); // isEfficient
                 prev = value;
             }
-            m_BestTest.m_PosStat.updateWeighted(tuple, i);
+            m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]);
+            
             if (isSparseAtr && value == minValue){
             	break;
             }
@@ -302,114 +303,114 @@ public class FindBestTest {
     }
 
 
-   @Deprecated
-    public void findNumeric(NumericAttrType at, ArrayList data){
-    	 // for sparse attributes, (already sorted data)
-        ArrayList sample;
-        if (getSettings().getTree().getTreeSplitSampling() > 0) {
-            RowData tmp = new RowData(data, getSchema());
-            RowData smpl = createSample(tmp, null);
-            if (at.isSparse()) {
-                smpl.sortSparse(at, getSortHelper());
-            }
-            else {
-                smpl.sort(at);
-            }
-            sample = smpl.toArrayList();
-        }
-        else {
-            sample = data;
-        }
-        DataTuple tuple;
-        m_BestTest.reset(2);
-        // Missing values
-        int first = 0;
-        int nb_rows = sample.size();
-        // Copy total statistic into corrected total
-        m_BestTest.copyTotal();
-        if (at.hasMissing()) {
-            // Because of sorting, all missing values are in the front :-)
-            while (first < nb_rows && at.isMissing((DataTuple) sample.get(first))) {
-                tuple = (DataTuple) sample.get(first);
-                m_BestTest.m_MissingStat.updateWeighted(tuple, first);
-                first++;
-            }
-            m_BestTest.subtractMissing();
-        }
-        double prev = Double.NaN;
-
-        for (int i = first; i < nb_rows; i++) {
-            tuple = (DataTuple) sample.get(i);
-            double value = at.getNumeric(tuple);
-            if (value != prev) {
-                if (!Double.isNaN(value)) {
-                    // System.err.println("Value (>): " + value);
-                    m_BestTest.updateNumeric(value, at);
-                }
-                prev = value;
-            }
-            m_BestTest.m_PosStat.updateWeighted(tuple, i);
-        }
-        m_BestTest.updateNumeric(0.0, at); // otherwise tests of the form "X>0.0" are not considered
-    }
-
-    @Deprecated
-    public void findNumericRandom(NumericAttrType at, RowData data, RowData orig_data, Random rn) {
-        // TODO: if this method gets completed, sampling of the RowDatas must be included as well
-        DataTuple tuple;
-        int idx = at.getArrayIndex();
-        // Sort values from large to small
-        if (at.isSparse()) {
-            data.sortSparse(at, m_SortHelper);
-        }
-        else {
-            data.sort(at);
-        }
-        m_BestTest.reset(2);
-        // Missing values
-        int first = 0;
-        int nb_rows = data.getNbRows();
-        // Copy total statistic into corrected total
-        m_BestTest.copyTotal();
-        if (at.hasMissing()) {
-            // Because of sorting, all missing values are in the front :-)
-            while (first < nb_rows && (tuple = data.getTuple(first)).hasNumMissing(idx)) {
-                m_BestTest.m_MissingStat.updateWeighted(tuple, first);
-                first++;
-            }
-            m_BestTest.subtractMissing();
-        }
-        // Do the same for original data, except updating the statistics:
-        // Sort values from large to small
-        if (at.isSparse()) {
-            orig_data.sortSparse(at, m_SortHelper);
-        }
-        else {
-            orig_data.sort(at);
-        }
-        // Missing values
-        int orig_first = 0;
-        int orig_nb_rows = orig_data.getNbRows();
-        if (at.hasMissing()) {
-            // Because of sorting, all missing values are in the front :-)
-            while (orig_first < orig_nb_rows && (tuple = orig_data.getTuple(orig_first)).hasNumMissing(idx)) {
-                orig_first++;
-            }
-        }
-        // Generate the random split value based on the original data
-        double min_value = orig_data.getTuple(orig_nb_rows - 1).getDoubleVal(idx);
-        double max_value = orig_data.getTuple(orig_first).getDoubleVal(idx);
-        double split_value = (max_value - min_value) * rn.nextDouble() + min_value;
-        for (int i = first; i < nb_rows; i++) {
-            tuple = data.getTuple(i);
-            if (tuple.getDoubleVal(idx) <= split_value)
-                break;
-            m_BestTest.m_PosStat.updateWeighted(tuple, i);
-        }
-        m_BestTest.updateNumeric(split_value, at);
-        System.err.println("Inverse splits not yet included!");
-        // TODO: m_Selector.updateInverseNumeric(split_value, at);
-    }
+//   @Deprecated
+//    public void findNumeric(NumericAttrType at, ArrayList data){
+//    	 // for sparse attributes, (already sorted data)
+//        ArrayList sample;
+//        if (getSettings().getTree().getTreeSplitSampling() > 0) {
+//            RowData tmp = new RowData(data, getSchema());
+//            RowData smpl = createSample(tmp, null);
+//            if (at.isSparse()) {
+//                smpl.sortSparse(at, getSortHelper());
+//            }
+//            else {
+//                smpl.sort(at);
+//            }
+//            sample = smpl.toArrayList();
+//        }
+//        else {
+//            sample = data;
+//        }
+//        DataTuple tuple;
+//        m_BestTest.reset(2);
+//        // Missing values
+//        int first = 0;
+//        int nb_rows = sample.size();
+//        // Copy total statistic into corrected total
+//        m_BestTest.copyTotal();
+//        if (at.hasMissing()) {
+//            // Because of sorting, all missing values are in the front :-)
+//            while (first < nb_rows && at.isMissing((DataTuple) sample.get(first))) {
+//                tuple = (DataTuple) sample.get(first);
+//                m_BestTest.m_MissingStat.updateWeighted(tuple, first);
+//                first++;
+//            }
+//            m_BestTest.subtractMissing();
+//        }
+//        double prev = Double.NaN;
+//
+//        for (int i = first; i < nb_rows; i++) {
+//            tuple = (DataTuple) sample.get(i);
+//            double value = at.getNumeric(tuple);
+//            if (value != prev) {
+//                if (!Double.isNaN(value)) {
+//                    // System.err.println("Value (>): " + value);
+//                    m_BestTest.updateNumeric(value, at);
+//                }
+//                prev = value;
+//            }
+//            m_BestTest.m_PosStat.updateWeighted(tuple, i);
+//        }
+//        m_BestTest.updateNumeric(0.0, at); // otherwise tests of the form "X>0.0" are not considered
+//    }
+//
+//    @Deprecated
+//    public void findNumericRandom(NumericAttrType at, RowData data, RowData orig_data, Random rn) {
+//        // TODO: if this method gets completed, sampling of the RowDatas must be included as well
+//        DataTuple tuple;
+//        int idx = at.getArrayIndex();
+//        // Sort values from large to small
+//        if (at.isSparse()) {
+//            data.sortSparse(at, m_SortHelper);
+//        }
+//        else {
+//            data.sort(at);
+//        }
+//        m_BestTest.reset(2);
+//        // Missing values
+//        int first = 0;
+//        int nb_rows = data.getNbRows();
+//        // Copy total statistic into corrected total
+//        m_BestTest.copyTotal();
+//        if (at.hasMissing()) {
+//            // Because of sorting, all missing values are in the front :-)
+//            while (first < nb_rows && (tuple = data.getTuple(first)).hasNumMissing(idx)) {
+//                m_BestTest.m_MissingStat.updateWeighted(tuple, first);
+//                first++;
+//            }
+//            m_BestTest.subtractMissing();
+//        }
+//        // Do the same for original data, except updating the statistics:
+//        // Sort values from large to small
+//        if (at.isSparse()) {
+//            orig_data.sortSparse(at, m_SortHelper);
+//        }
+//        else {
+//            orig_data.sort(at);
+//        }
+//        // Missing values
+//        int orig_first = 0;
+//        int orig_nb_rows = orig_data.getNbRows();
+//        if (at.hasMissing()) {
+//            // Because of sorting, all missing values are in the front :-)
+//            while (orig_first < orig_nb_rows && (tuple = orig_data.getTuple(orig_first)).hasNumMissing(idx)) {
+//                orig_first++;
+//            }
+//        }
+//        // Generate the random split value based on the original data
+//        double min_value = orig_data.getTuple(orig_nb_rows - 1).getDoubleVal(idx);
+//        double max_value = orig_data.getTuple(orig_first).getDoubleVal(idx);
+//        double split_value = (max_value - min_value) * rn.nextDouble() + min_value;
+//        for (int i = first; i < nb_rows; i++) {
+//            tuple = data.getTuple(i);
+//            if (tuple.getDoubleVal(idx) <= split_value)
+//                break;
+//            m_BestTest.m_PosStat.updateWeighted(tuple, i);
+//        }
+//        m_BestTest.updateNumeric(split_value, at);
+//        System.err.println("Inverse splits not yet included!");
+//        // TODO: m_Selector.updateInverseNumeric(split_value, at);
+//    }
 
 
     public void initSelectorAndSplit(ClusStatistic totstat) throws ClusException {

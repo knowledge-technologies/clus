@@ -297,7 +297,9 @@ public class CurrentBestTestAndHeuristic {
 
 
     public final void updateNumeric(double val, ClusAttrType at, double ss_tot, boolean isEfficient) {
-    	double heur = isEfficient ? m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat, ss_tot) : m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);    	
+    	double heur = isEfficient ? 
+    	        m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat, ss_tot) :
+    	            m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);    	
 //    	System.out.println(t1 - t0);
         if (m_Verbose >= 2)
             System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);

@@ -35,15 +35,15 @@ import clus.data.cols.ColTarget;
 import clus.data.cols.attribute.ClusAttribute;
 import clus.data.rows.DataPreprocs;
 import clus.data.rows.DataTuple;
+import clus.data.type.complex.SetAttrType;
+import clus.data.type.complex.TupleAttrType;
 import clus.data.type.primitive.NominalAttrType;
 import clus.data.type.primitive.NumericAttrType;
 import clus.data.type.primitive.TimeSeriesAttrType;
-import clus.data.type.structured.SetAttrType;
-import clus.data.type.structured.TupleAttrType;
 import clus.distance.ClusDistance;
-import clus.distance.TupleDistance;
-import clus.distance.timeseries.TimeSeriesDist;
-import clus.ext.structuredDataTypes.Tuple;
+import clus.distance.complex.TupleDistance;
+import clus.distance.primitive.timeseries.TimeSeriesDist;
+import clus.ext.structuredTypes.Tuple;
 import clus.ext.timeseries.TimeSeries;
 import clus.io.ClusSerializable;
 import clus.main.settings.Settings;
@@ -88,6 +88,8 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     public final static int STRING_ATR_TYPE = 3;
     public final static int INTEGER_ATR_TYPE = 4;
     public final static int TIME_SERIES_ATR_TYPE = 5;
+    public final static int SET_ATR_TYPE = 6;
+    public final static int TUPLE_ATR_TYPE = 7;
 
     protected String m_Name;
     protected int m_Index, m_ArrayIndex;
@@ -536,10 +538,10 @@ public abstract class ClusAttrType implements Serializable, Comparable {
             TupleDistance tupleDist = null;
             switch (settings.getTree().getTupleDistance()) {
                 case SettingsTree.TUPLEDISTANCES_EUCLIDEAN:
-                    tupleDist = new clus.distance.tuples.EuclideanDistance((TupleAttrType) type, innerDistances);
+                    tupleDist = new clus.distance.complex.tuples.EuclideanDistance((TupleAttrType) type, innerDistances);
                     break;
                 case SettingsTree.TUPLEDISTANCES_MINKOWSKI:
-                    tupleDist = new clus.distance.tuples.MinkowskiDistance(3, innerDistances);
+                    tupleDist = new clus.distance.complex.tuples.MinkowskiDistance(3, innerDistances);
                     break;
             }
             return tupleDist;
@@ -549,14 +551,14 @@ public abstract class ClusAttrType implements Serializable, Comparable {
             TimeSeriesDist tsDistance = null;
             switch (settings.getTree().getTSDistance()) {
                 case SettingsTree.TIME_SERIES_DISTANCE_MEASURE_DTW:
-                    tsDistance = new clus.distance.timeseries.DTWTimeSeriesDist((TimeSeriesAttrType) type);
+                    tsDistance = new clus.distance.primitive.timeseries.DTWTimeSeriesDist((TimeSeriesAttrType) type);
                     break;
                 case SettingsTree.TIME_SERIES_DISTANCE_MEASURE_QDM:
-                    tsDistance = new clus.distance.timeseries.QDMTimeSeriesDist((TimeSeriesAttrType) type);
+                    tsDistance = new clus.distance.primitive.timeseries.QDMTimeSeriesDist((TimeSeriesAttrType) type);
                     break;
 
                 case SettingsTree.TIME_SERIES_DISTANCE_MEASURE_TSC:
-                    tsDistance = new clus.distance.timeseries.TSCTimeSeriesDist((TimeSeriesAttrType) type);
+                    tsDistance = new clus.distance.primitive.timeseries.TSCTimeSeriesDist((TimeSeriesAttrType) type);
                     break;
             }
             return tsDistance;

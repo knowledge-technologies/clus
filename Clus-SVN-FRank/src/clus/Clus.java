@@ -83,7 +83,6 @@ import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.HierMatrixOutput;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.optiontree.ClusOptionTree;
-import clus.gui.TreeFrame;
 import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.ClusStat;
@@ -97,8 +96,8 @@ import clus.main.settings.SettingsHMTR;
 import clus.main.settings.SettingsTree;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.model.modelio.ClusModelCollectionIO;
-import clus.model.modelio.ClusTreeReader;
+import clus.model.io.ClusModelCollectionIO;
+import clus.model.io.ClusTreeReader;
 import clus.model.processor.ClusEnsemblePredictionWriter;
 import clus.model.processor.ModelProcessorCollection;
 import clus.model.processor.PredictionWriter;
@@ -152,7 +151,6 @@ public class Clus implements CMDLineArgsProvider {
     private ClusInductionAlgorithmType m_Classifier;
     private ClusInductionAlgorithm m_Induce;
     private RowData m_Data;
-    private Date m_StartDate = new Date();
     private boolean isxval = false;
     private CMDLineArgs m_CmdLine;
     private ClusHMTRHierarchy m_HMTRHierarchy;
@@ -516,16 +514,16 @@ public class Clus implements CMDLineArgsProvider {
     }
 
 
-    public final void showTree(String fname) throws ClusException, IOException, ClassNotFoundException {
-        TreeFrame.showTree(getSettings().getGeneric().getFileAbsolute(fname));
-    }
-
-
-    public final void gui(String lok) throws ClusException, IOException, ClassNotFoundException {
-        ClusSchema schema = new ClusSchema("Clus");
-        ClusStatManager mgr = new ClusStatManager(schema, m_Sett, false);
-        TreeFrame.start(mgr, lok);
-    }
+//    public final void showTree(String fname) throws ClusException, IOException, ClassNotFoundException {
+//        TreeFrame.showTree(getSettings().getGeneric().getFileAbsolute(fname));
+//    }
+//
+//
+//    public final void gui(String lok) throws ClusException, IOException, ClassNotFoundException {
+//        ClusSchema schema = new ClusSchema("Clus");
+//        ClusStatManager mgr = new ClusStatManager(schema, m_Sett, false);
+//        TreeFrame.start(mgr, lok);
+//    }
 
 
     public final void postprocModel(ClusModel model, TupleIterator iter, ModelProcessorCollection coll) throws IOException, ClusException {
@@ -1951,13 +1949,13 @@ public class Clus implements CMDLineArgsProvider {
                     clus.initialize(cargs, clss);
                     clus.baggingRun(clss);
                 }
-                else if (cargs.hasOption("show")) {
-                    // clus.showModel(clus.getAppName());
-                    clus.showTree(clus.getAppName());
-                }
-                else if (cargs.hasOption("gui")) {
-                    clus.gui(cargs.getMainArg(0));
-                }
+//                else if (cargs.hasOption("show")) {
+//                    // clus.showModel(clus.getAppName());
+//                    clus.showTree(clus.getAppName());
+//                }
+//                else if (cargs.hasOption("gui")) {
+//                    clus.gui(cargs.getMainArg(0));
+//                }
                 else if (cargs.hasOption("tseries")) {
                     clus.getSettings().getTimeSeries().setSectionTimeSeriesEnabled(true);
                     clus.initialize(cargs, clss);

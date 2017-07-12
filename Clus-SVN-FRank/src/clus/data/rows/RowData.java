@@ -226,7 +226,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         int nbrows = getNbRows();
         for (int i = 0; i < nbrows; i++) {
             temp = getTuple(i);
-            ClusSchema schema = temp.getSchema(); // TU JE NEKAJ CUDNEGA: na chloru dobimo 9 vrednosti ?! (descriptive =
+            ClusSchema schema = temp.getSchema(); // TODO: TU JE NEKAJ CUDNEGA: na chloru dobimo 9 vrednosti ?! (descriptive =
                                                   // 24, disabled = 4, target = 5)
             for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)[j];
@@ -251,12 +251,13 @@ public class RowData extends ClusData implements MSortable, Serializable {
             stddev[i] = Math.round(stddev[i] * 100) / 100.0;
         }
 
-        sb.append(prefix + "Min: " + Arrays.toString(min) + "\n");
-        sb.append(prefix + "Max: " + Arrays.toString(max) + "\n");
-        sb.append(prefix + "Avg: " + Arrays.toString(avg) + "\n");
-        sb.append(prefix + "StdDev: " + Arrays.toString(stddev) + "\n");
+        sb.append(prefix + "Min: " + Arrays.toString(min) + System.lineSeparator());
+        sb.append(prefix + "Max: " + Arrays.toString(max) + System.lineSeparator());
+        sb.append(prefix + "Avg: " + Arrays.toString(avg) + System.lineSeparator());
+        sb.append(prefix + "StdDev: " + Arrays.toString(stddev) + System.lineSeparator());
         return sb.toString();
     }
+
 
     public JsonObject getSummaryJSON() {
         JsonObject summary = new JsonObject();
@@ -291,7 +292,8 @@ public class RowData extends ClusData implements MSortable, Serializable {
                     }
                     avg[j] += tmpvalue;
                     stddev[j] += tmpvalue * tmpvalue;
-                } else {
+                }
+                else {
                     missing_values[j]++;
                 }
             }
@@ -307,7 +309,8 @@ public class RowData extends ClusData implements MSortable, Serializable {
                     }
                     avg[j] += tmpvalue;
                     stddev[j] += tmpvalue * tmpvalue;
-                } else {
+                }
+                else {
                     missing_values[j]++;
                 }
             }
@@ -319,8 +322,8 @@ public class RowData extends ClusData implements MSortable, Serializable {
         JsonArray stddevArray = new JsonArray();
 
         for (int i = 0; i < nda + nta; i++) {
-            avg[i] /= nbrows-missing_values[i];
-            stddev[i] = (stddev[i] - (nbrows-missing_values[i]) * avg[i] * avg[i]) / (nbrows-missing_values[i]);
+            avg[i] /= nbrows - missing_values[i];
+            stddev[i] = (stddev[i] - (nbrows - missing_values[i]) * avg[i] * avg[i]) / (nbrows - missing_values[i]);
             stddev[i] = Math.sqrt(stddev[i]);
             min[i] = Math.round(min[i] * 100) / 100.0;
             max[i] = Math.round(max[i] * 100) / 100.0;
@@ -488,10 +491,11 @@ public class RowData extends ClusData implements MSortable, Serializable {
         m_Data[j] = temp;
     }
 
+
     public Integer[] smartSort(NumericAttrType at) {
         if (m_SortedInstances.containsKey(at) && m_SortedInstances.get(at).length == m_Data.length) {
             // here, we assume that m_Data has not changed from the last call of this method
-        	//throw new RuntimeException("This should not be true");
+            //throw new RuntimeException("This should not be true");
             return m_SortedInstances.get(at);
         }
         else if (at.isSparse()) {
@@ -1191,6 +1195,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         return new RowData(res, getSchema().cloneSchema());
     }
 
+
     // Be careful when using this method! Current use in FindBestTest is wrong in the case when N != 0:
     // this is used for finding the best test. However, if N != 0 (otherwise we simply return all the data),
     // this can lead to problems (duplicates of tuples --> wrong statistics --> ...)
@@ -1205,7 +1210,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         // sample with replacement
         int i;
         if (rnd == null) {
-        	ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
+            ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
             for (int size = 0; size < N; size++) {
                 i = ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE, nbRows);
                 res.add(getTuple(i));

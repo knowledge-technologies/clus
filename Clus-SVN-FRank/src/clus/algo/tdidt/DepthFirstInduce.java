@@ -121,7 +121,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         }
         else {
             ClusAttrType[] selected;
-            boolean shouldSet = false;
+            //boolean shouldSet = false;
             switch (sett.getEnsemble().getEnsembleMethod()) { // setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd)
                 case SettingsEnsemble.ENSEMBLE_BAGGING:
                     selected = schema.getDescriptiveAttributes();
@@ -129,7 +129,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 case SettingsEnsemble.ENSEMBLE_RFOREST:
                     ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
-                    shouldSet = true; //ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    //shouldSet = true; //ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     break;
                 // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
                 // schema.getSettings().getNbRandomAttrSelected());
@@ -145,12 +145,12 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
-                    shouldSet = true;// ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    //shouldSet = true;// ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     break;
                 case SettingsEnsemble.ENSEMBLE_EXTRA_TREES:// same as for Random Forests
                     ClusAttrType[] attrs_all = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrs_all, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
-                    shouldSet = true; // ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    //shouldSet = true; // ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
                     // schema.getSettings().getNbRandomAttrSelected());
                     break;
@@ -168,7 +168,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 
     public void filterAlternativeSplits(ClusNode node, RowData data, RowData[] subsets) {
-        boolean removed = false;
+       // boolean removed = false;
         CurrentBestTestAndHeuristic best = m_FindBestTest.getBestTest();
         int arity = node.getTest().updateArity();
         ArrayList<NodeTest> alternatives = best.getAlternativeBest(); // alternatives: all tests that result in same
@@ -187,7 +187,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 alternatives.remove(k);
                 k--;
                 System.out.println("Alternative split with different arity: " + nt.getString());
-                removed = true;
+               // removed = true;
             }
             else {
                 // we assume the arity is 2 here
@@ -230,7 +230,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                     alternatives.remove(k);
                     k--;
                     System.out.println("Alternative split with different ex in subsets: " + nt.getString());
-                    removed = true;
+                    //removed = true;
                 }
 
             }
@@ -298,7 +298,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
             node.testToNode(best);
             // Output best test
-            if (getSettings().getGeneric().getVerbose() > 1)
+            if (getSettings().getGeneric().getVerbose() > 0)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
 
             // Create children

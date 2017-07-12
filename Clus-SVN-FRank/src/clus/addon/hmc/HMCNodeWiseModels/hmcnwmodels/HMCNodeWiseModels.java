@@ -51,7 +51,7 @@ import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.model.ClusModel;
-import clus.model.modelio.ClusModelCollectionIO;
+import clus.model.io.ClusModelCollectionIO;
 import clus.util.ClusException;
 import clus.util.jeans.util.array.StringTable;
 import clus.util.jeans.util.cmdline.CMDLineArgs;

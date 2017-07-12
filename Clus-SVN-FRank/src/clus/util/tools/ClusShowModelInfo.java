@@ -33,7 +33,7 @@ import clus.error.common.ClusError;
 import clus.error.common.ClusErrorList;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.model.modelio.ClusModelCollectionIO;
+import clus.model.io.ClusModelCollectionIO;
 
 
 public class ClusShowModelInfo {

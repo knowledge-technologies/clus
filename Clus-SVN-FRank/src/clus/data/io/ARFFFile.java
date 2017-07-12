@@ -34,12 +34,12 @@ import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.type.BitwiseNominalAttrType;
 import clus.data.type.ClusAttrType;
+import clus.data.type.complex.SetAttrType;
+import clus.data.type.complex.TupleAttrType;
 import clus.data.type.primitive.NominalAttrType;
 import clus.data.type.primitive.NumericAttrType;
 import clus.data.type.primitive.StringAttrType;
 import clus.data.type.primitive.TimeSeriesAttrType;
-import clus.data.type.structured.SetAttrType;
-import clus.data.type.structured.TupleAttrType;
 // FIXME - use plugin system
 import clus.ext.hierarchical.ClassesAttrType;
 import clus.ext.hierarchical.ClassesAttrTypeSingleLabel;

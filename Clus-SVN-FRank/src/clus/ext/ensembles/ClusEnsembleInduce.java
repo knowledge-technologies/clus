@@ -66,7 +66,7 @@ import clus.main.settings.SettingsOutput;
 import clus.main.settings.SettingsRules;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.model.modelio.ClusModelCollectionIO;
+import clus.model.io.ClusModelCollectionIO;
 import clus.selection.BaggingSelection;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;

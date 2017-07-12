@@ -31,7 +31,7 @@ import java.util.HashMap;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.ClusSchema;
-import clus.model.modelio.ClusTreeReader;
+import clus.model.io.ClusTreeReader;
 
 
 public class ClusConstraintFile {

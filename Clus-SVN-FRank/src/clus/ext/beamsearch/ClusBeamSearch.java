@@ -56,7 +56,7 @@ import clus.main.settings.SettingsBeamSearch;
 import clus.main.settings.SettingsTree;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.model.modelio.ClusModelCollectionIO;
+import clus.model.io.ClusModelCollectionIO;
 import clus.model.test.NodeTest;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
