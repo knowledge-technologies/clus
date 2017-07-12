@@ -5,10 +5,13 @@ import clus.jeans.util.cmdline.CMDLineArgs;
 import clus.Clus;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
+import clus.algo.tdidt.ClusDecisionTree;
+import clus.algo.tdidt.ClusNode;
 import clus.data.type.ClusSchema;
 import clus.main.ClusRun;
 import clus.main.Settings;
 import clus.model.ClusModel;
+import clus.model.ClusModelInfo;
 import clus.util.ClusException;
 
 public class ClusSemiSupervisedClassifier extends ClusInductionAlgorithmType {
@@ -47,7 +50,11 @@ public class ClusSemiSupervisedClassifier extends ClusInductionAlgorithmType {
     @Override
     public void postProcess(ClusRun cr) throws ClusException, IOException {
         cr.addModelInfo(ClusModel.DEFAULT);
+        ClusModelInfo def_info = cr.getModelInfo(ClusModel.DEFAULT);
+        def_info.setModel(ClusDecisionTree.induceDefault(cr));
         m_clss.postProcess(cr);
+        
+        
     }
 
     @Override
