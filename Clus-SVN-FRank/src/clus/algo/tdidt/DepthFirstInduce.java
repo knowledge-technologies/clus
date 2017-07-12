@@ -38,12 +38,15 @@ import clus.data.type.ClusSchema;
 import clus.data.type.NominalAttrType;
 import clus.data.type.NumericAttrType;
 import clus.ext.ensembles.ClusEnsembleInduce;
+import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
+import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
+import clus.statistic.RegressionStat;
 import clus.util.ClusException;
 import clus.util.ClusRandomNonstatic;
 
@@ -51,17 +54,20 @@ import clus.util.ClusRandomNonstatic;
 public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     protected FindBestTest m_FindBestTest;
+    protected FindBestTest m_find_MinMax; // daniela
     protected ClusNode m_Root;
 
     public DepthFirstInduce(ClusSchema schema, Settings sett) throws ClusException, IOException {
         super(schema, sett);
         m_FindBestTest = new FindBestTest(getStatManager());
+        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
     }
 
 
     public DepthFirstInduce(ClusInductionAlgorithm other) {
         super(other);
         m_FindBestTest = new FindBestTest(getStatManager());
+        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
     }
 
 
@@ -77,6 +83,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public DepthFirstInduce(ClusInductionAlgorithm other, ClusStatManager mgr, boolean parallelism) {
         super(other, mgr);
         m_FindBestTest = new FindBestTest(getStatManager());
+        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
 
     }
 
@@ -84,6 +91,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public DepthFirstInduce(ClusInductionAlgorithm other, NominalSplit split) {
         super(other);
         m_FindBestTest = new FindBestTest(getStatManager(), split);
+        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
     }
 
 
@@ -105,6 +113,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public boolean initSelectorAndStopCrit(ClusNode node, RowData data) {
         int max = getSettings().getTreeMaxDepth();
         if (max != -1 && node.getLevel() >= max) { return true; }
+        m_find_MinMax.initSelectorAndStopCrit(node.getClusteringStat(), data); // daniela
         return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
     }
 
@@ -248,11 +257,11 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
     	if(rnd == null){
+    	 // rnd may be null due to some calls of induce that do not support parallelisation yet
     		ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
     	}
-        // rnd may be null due to some calls of induce that do not support parallelisation yet.
-
         // System.out.println("nonsparse induce");
+    	
         // Initialize selector and perform various stopping criteria
         if (initSelectorAndStopCrit(node, data)) {
             makeLeaf(node);
@@ -263,8 +272,32 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         // long start_time = System.currentTimeMillis();
                 
         ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
+        boolean isDaniela = !getSettings().isNullGIS();
+        if (isDaniela){
+            // daniela
+            //only for every binary attribute or, as some say, samo za site binarni atr
+            double globalMax=Double.NEGATIVE_INFINITY, globalMin=Double.POSITIVE_INFINITY;
+            m_find_MinMax.resetMinMax();
+            for (int i = 0; i < attrs.length; i++) {
+                ClusAttrType at = attrs[i];
+                if (at instanceof NominalAttrType && ((NominalAttrType)at).getNbValues()==2){ 
+                    m_find_MinMax.rememberMinMax((NominalAttrType)at, data);
+                    if (m_find_MinMax.hMaxB>globalMax) globalMax=m_find_MinMax.hMaxB;
+                    if (m_find_MinMax.hMinB<globalMin) globalMin=m_find_MinMax.hMinB;
+                }
+            }
+            // daniela end
+        }      
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
+            if (isDaniela){
+                // daniela
+                RegressionStat.INITIALIZEPARTIALSUM=true;      // This way the first time a split threshold of the current
+                ClassificationStat.INITIALIZEPARTIALSUM=true;  // attribute is evaluated, the corresponding partial sums of
+                WHTDStatistic.INITIALIZEPARTIALSUM=true;       // Optimized Moran I would be computed
+                // daniela end
+            }
+            
             if ((getSettings().isEnsembleMode()) && (getSettings().getEnsembleMethod() == Settings.ENSEMBLE_EXTRA_TREES)) {
                 if (at.isNominal()) { // at instanceof NominalAttrType
                     m_FindBestTest.findNominalExtraTree((NominalAttrType) at, data, rnd);
@@ -421,11 +454,13 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     public void initSelectorAndSplit(ClusStatistic stat) throws ClusException {
         m_FindBestTest.initSelectorAndSplit(stat);
+        m_find_MinMax.initSelectorAndSplit(stat); // daniela
     }
 
 
     public void setInitialData(ClusStatistic stat, RowData data) throws ClusException {
         m_FindBestTest.setInitialData(stat, data);
+        m_find_MinMax.setInitialData(stat,data); // daniela
     }
 
 

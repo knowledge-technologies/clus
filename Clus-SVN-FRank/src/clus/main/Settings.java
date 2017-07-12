@@ -329,8 +329,22 @@ public class Settings implements Serializable {
     protected INIFileNominalOrDoubleOrVector m_Weights;
     protected INIFileNominalOrDoubleOrVector m_ClusteringWeights;
     protected INIFileBool m_ReduceMemoryNominal;
+    //daniela
+    protected INIFileString m_GIS;
+    
+    public String getGIS() {
+        return m_GIS.getValue();
+    }
 
-
+    public void setGIS(String str) {
+        m_GIS.setValue(str);
+    }
+    //end daniela
+    
+    public boolean isNullGIS(){
+        return StringUtils.unCaseCompare(m_GIS.getValue(), NONE);
+    }
+    
     public String getTarget() {
         return m_Target.getValue();
     }
@@ -888,6 +902,50 @@ public class Settings implements Serializable {
     /** Do we transform leaves or all nodes of tree to rules */
     protected INIFileNominal m_RulesFromTree;
     protected INIFileNominal m_TreeOptimize;
+    //daniela
+    protected INIFileNominal m_SpatialMatrix;
+    protected INIFileNominal m_SpatialMeasure;
+    protected INIFileDouble m_Bandwidth;
+    protected INIFileBool m_Longlat;
+    protected INIFileDouble m_NeighCount;
+    protected INIFileDouble m_SpatialAlpha;    
+    // matejp: moved the getters and setters in this daniela block from, e.g., the Attribute section
+    public int getSpatialMatrix() {
+        return m_SpatialMatrix.getValue();
+    }
+    
+    public int getSpatialMeasure() {
+        return m_SpatialMeasure.getValue();
+    }
+    
+   
+    public double getBandwidth() {
+        return m_Bandwidth.getValue();
+    }
+    
+    public boolean isLonglat() {
+        return m_Longlat.getValue();
+    }
+    
+    public double getNumNeightbours() {
+        return m_NeighCount.getValue();
+    }
+    
+    public double getSpatialAlpha() {
+        return m_SpatialAlpha.getValue();
+    }
+    
+    public void setSpatialMeasure(int method) {
+        m_SpatialMeasure.setSingleValue(method);
+    }
+
+    public void setSpatialMatrix(int method) {
+        m_SpatialMatrix.setSingleValue(method);
+    }
+
+    //end daniela
+    
+    
     /**
      * Amount of datapoints to include for calculating split heuristic
      * Datapoints will be selected randomly
@@ -1065,8 +1123,17 @@ public class Settings implements Serializable {
      * Section: Tree - Heuristic *
      ***********************************************************************/
 
-    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing" };
-
+    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing", "VarianceReductionGIS"};
+    
+    //daniela
+    public final static String[] SpatialMatrix = {"Binary", "Euclidian", "Modified", "Gaussian"};
+    public final static String[] SpatialMeasure = {"GlobalMoran","GlobalGeary","GlobalGetis","LocalMoran","LocalGeary","LocalGetis","StandardizedGetis","EquvalentI","IwithNeighbours","EquvalentIwithNeighbours","GlobalMoranDistance","GlobalGearyDistance","CI", "MultiVariateMoranI","CwithNeighbours","Lee","MultiIwithNeighbours","CIwithNeighbours","LeewithNeighbours","Pearson","CIDistance","DH","EquvalentIDistance","PearsonDistance","EquvalentG", "EquvalentGDistance", "EquvalentPDistance"};    
+    public final static double BANDWIDTH =0.01;
+    public final static double NumNeightbours =0.0;
+    public static boolean LONGLAT = false;
+    public final static int HEURISTIC_GIS = 15;
+    //end daniela
+    
     public final static int HEURISTIC_DEFAULT = 0;
     public final static int HEURISTIC_REDUCED_ERROR = 1;
     public final static int HEURISTIC_GAIN = 2;
@@ -1967,7 +2034,7 @@ public class Settings implements Serializable {
 
 
     public int[] getMultiLabelRankingMeasures() {
-    	return m_MultiLabelRankingMeasure.getNominalVector();
+        return m_MultiLabelRankingMeasure.getNominalVector();
     }
 
 
@@ -2718,16 +2785,13 @@ public class Settings implements Serializable {
 
     private INIFileBool m_FeatureRankingPerTarget;
 
-
-    public boolean shouldPerformRankingPerTarget() {
+    public boolean shouldPerformRankingPerTarget(){
         return m_FeatureRankingPerTarget.getValue();
     }
 
-
-    public void setPerformRankingPerTarget(boolean b) {
+    public void setPerformRankingPerTarget(boolean b){
         m_FeatureRankingPerTarget.setValue(b);
     }
-
 
     public boolean isEnsembleMode() {
         return m_EnsembleMode;
@@ -3143,9 +3207,17 @@ public class Settings implements Serializable {
     public void setSectionKNNTEnabled(boolean enable) {
         m_SectionKNNT.setEnabled(enable);
     }
-
+    
+    
+    //daniela matej: this is not a seaction really
     /***********************************************************************
-     * Cross-validaiton *
+    * Section: Spatial *
+    ***********************************************************************/
+    public static double ALPHA;
+    //end daniela
+    
+    /***********************************************************************
+     * Cross-validation *
      ***********************************************************************/
 
     public static boolean SHOW_XVAL_FOREST;
@@ -3227,6 +3299,9 @@ public class Settings implements Serializable {
         m_ClusteringWeights.setDouble(1.0);
         m_ClusteringWeights.setArrayIndexNames(NUM_NOM_TAR_NTAR_WEIGHTS);
         attrs.addNode(m_ReduceMemoryNominal = new INIFileBool("ReduceMemoryNominalAttrs", false));
+        //daniela
+        attrs.addNode(m_GIS = new INIFileString("GIS", NONE));
+        //end daniela
 
         m_SectionSIT = new INIFileSection("SIT");
         m_SectionSIT.addNode(m_MainTarget = new INIFileString("Main_target", DEFAULT));
@@ -3281,6 +3356,14 @@ public class Settings implements Serializable {
 
         m_SectionTree = new INIFileSection("Tree");
         m_SectionTree.addNode(m_Heuristic = new INIFileNominal("Heuristic", HEURISTICS, 0));
+        //daniela
+        m_SectionTree.addNode(m_SpatialMatrix = new INIFileNominal("SpatialMatrix", SpatialMatrix,0));
+        m_SectionTree.addNode(m_SpatialMeasure = new INIFileNominal("SpatialMeasure", SpatialMeasure,0));
+        m_SectionTree.addNode(m_Bandwidth = new INIFileDouble("Bandwidth", 0.001));
+        m_SectionTree.addNode(m_Longlat = new INIFileBool("Longlat", false));
+        m_SectionTree.addNode(m_NeighCount = new INIFileDouble("NumNeightbours", 0.0));
+        m_SectionTree.addNode(m_SpatialAlpha = new INIFileDouble("Alpha", 1.0));
+        //end daniela
         m_SectionTree.addNode(m_PruningMethod = new INIFileNominal("PruningMethod", PRUNING_METHODS, 0));
         m_SectionTree.addNode(m_M5PruningMult = new INIFileDouble("M5PruningMult", 2.0));
         m_SectionTree.addNode(m_1SERule = new INIFileBool("1-SE-Rule", false));
@@ -3640,6 +3723,9 @@ public class Settings implements Serializable {
         BEAM_SIMILARITY = getBeamSimilarity();
         BEAM_SYNT_DIST_CONSTR = hasBeamConstraintFile();
         VERBOSE = m_Verbose.getValue();
+        //daniela
+        ALPHA = getSpatialAlpha();
+        //end daniela
         // if (isEnsembleMode())updateNbRandomAttrSelected(schema);
     }
 

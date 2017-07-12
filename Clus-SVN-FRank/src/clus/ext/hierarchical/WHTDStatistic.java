@@ -45,6 +45,7 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.data.type.ClusSchema;
 import clus.data.type.NumericAttrType;
+import clus.heuristic.GISHeuristic;
 import clus.jeans.util.array.MIntArray;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
@@ -74,6 +75,26 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     
     // Thresholds used in making predictions in multi-label classification
     private double[] m_Thresholds;
+
+    // daniela matejp: public -> private, commented out unused fields
+    private RowData m_data;
+    // private double[] m_SumValuesSpatial;
+    private int splitIndex;
+    private int prevIndex;
+    private double[] previousSumW ;
+    private double[] previousSumX ;
+    private double[] previousSumXR ;
+    private double[] previousSumWXX;
+    private double[] previousSumWX ;
+    private double[] previousSumX2;
+    private double[] previousSumWXXR;
+    private double[] previousSumWXR ;
+    private double[] previousSumWR;
+    private double[] previousSumX2R;
+    // private String m_BasicDist;
+    private double[] m_Weights;
+    public static boolean INITIALIZEPARTIALSUM=true;
+    // daniela end
 
 
     /**
@@ -114,6 +135,19 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         super(hier.getDummyAttrs(), onlymean);
         m_Compatibility = comp;
         m_Hier = hier;
+        // daniela
+        m_Weights=m_Hier.getWeights();
+        previousSumX = new double[1];
+        previousSumXR  = new double[1];
+        previousSumW   = new double[1];
+        previousSumWXX = new double[1];
+        previousSumWX  = new double[1];
+        previousSumX2  = new double[1];
+        previousSumWR   = new double[1];
+        previousSumWXXR = new double[1];
+        previousSumWXR  = new double[1];
+        previousSumX2R  = new double[1];
+        // daniela end
     }
 
 
@@ -221,7 +255,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public final void setHier(ClassHierarchy hier) throws ClusException {
-        if (m_Hier != null && m_Hier.getTotal() != hier.getTotal()) { throw new ClusException("Different number of classes in new hierarchy: " + hier.getTotal() + " <> " + m_Hier.getTotal()); }
+        if (m_Hier != null && m_Hier.getTotal() != hier.getTotal()) {
+            throw new ClusException("Different number of classes in new hierarchy: " + hier.getTotal() + " <> " + m_Hier.getTotal());
+        }
         m_Hier = hier;
     }
 
@@ -376,6 +412,1757 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         return sum / getNbAttributes();
     }
 
+    //daniela
+    //Compute squared Euclidean distance between tuple's target attributes and this statistic's mean.
+    public double getSquaredDistanceH(DataTuple tuple, double[] m_Weights) {
+        if (m_Means==null) calcMean();//this depends on the Compatibility
+        double sum = 0.0;
+        boolean[] actual = new boolean[m_Hier.getTotal()];
+        ClassesTuple tp = (ClassesTuple)tuple.getObjVal(m_Hier.getType().getArrayIndex());
+        tp.fillBoolArrayNodeAndAncestors(actual);
+        for (int i = 0; i < m_Hier.getTotal(); i++) {
+            double actual_zo = actual[i] ? 1.0 : 0.0;
+            double dist = actual_zo - m_Means[i];
+            sum += dist * dist*m_Weights[i];
+        }
+        return sum ; /// getNbAttributes();
+    }
+    
+    //Compute squared Euclidean distance between two tuple's target attributes
+    public double calcDistance(ClassesTuple t1, ClassesTuple t2) {
+        double sum = 0.0;
+        boolean[] actual1 = new boolean[m_Hier.getTotal()];
+        boolean[] actual2 = new boolean[m_Hier.getTotal()];
+        t1.fillBoolArrayNodeAndAncestors(actual1);
+        t2.fillBoolArrayNodeAndAncestors(actual2);
+        for (int i = 0; i < m_Hier.getTotal(); i++) {
+            double actual_zo1 = actual1[i] ? 1.0 : 0.0;
+            double actual_zo2 = actual2[i] ? 1.0 : 0.0;
+            if (actual_zo1!=actual_zo2) 
+                sum += (actual_zo1-actual_zo2)*(actual_zo1-actual_zo2)*m_Weights[i];
+        }
+        return sum; /// getNbAttributes();
+    }   
+    //RA
+    public double calcPtotal(Integer[] permutation) {
+        double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
+        int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
+        if (splitIndex>0){
+            N=splitIndex;
+        }else{
+            M=-splitIndex;
+        }
+        //left      
+        for (int i = M; i < N; i++) {   
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}
+                    long indexMap = indexI*(NR)+indexJ;
+                    Double temp= GISHeuristic.m_distances.get(indexMap);
+                    if (temp!=null) upsum += Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                    } 
+                }       
+                downsum+=getSquaredDistanceH(exi, m_Weights);
+        }
+            if (upsum!=0.0 && downsum!=0.0){
+                avgik=((N-M+0.0)*upsum)/(W*downsum);
+            }else avgik = 1;
+        double IL=avgik*(N-M);
+        
+        //right side
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
+        for (int i = M; i <N; i++) {
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}                  
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) upsumR +=Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                    }  
+                }       
+                downsumR+=getSquaredDistanceH(exi, m_Weights);
+        }
+        if (upsumR!=0.0 && downsumR!=0.0) avgikR=((N-M+0.0)*upsumR)/(WR*downsumR); else avgikR = 1;
+        double I=1+((IL+avgikR*(N-M))/m_data.getNbRows());
+        if (Double.isNaN(I)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return I;
+    }   
+    //global Geary C
+    public double calcGtotal(Integer[] permutation) {
+        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
+        int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
+        if (splitIndex>0){
+            N=splitIndex;
+        }else{
+            M=-splitIndex;
+        }
+        //left      
+        for (int i = M; i < N; i++) {               
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                double w=0;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}                      
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        upsum += w*calcDistance(tp,tp1);
+                        W+=w;
+                }  
+                else{upsum += calcDistance(tp,tp);W+=1; }
+                }       
+                downsum+=getSquaredDistanceH(exi, m_Weights);
+        }
+            num=((N-M-1.0)*upsum);
+            den=(2*W*downsum);
+            if (num!=0.0 && den!=0.0){
+                avgik=num/den;
+            }else avgik = 0;
+        //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
+        double IL=avgik*(N-M);
+        
+        //right side
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
+        for (int i = M; i <N; i++) {
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                double w=0;
+                long indexI=permutation[i];
+                long indexJ=permutation[j];
+                if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];}
+                    long indexMap = indexI*(NR)+indexJ;
+                    Double temp= GISHeuristic.m_distances.get(indexMap);
+                    if (temp!=null) w=temp; else w=0;
+                    upsumR += w*calcDistance(tp,tp1);
+                    WR+=w;
+                    }  
+                else{upsumR += calcDistance(tp,tp);WR+=1; }
+                }   
+                downsumR+=getSquaredDistanceH(exi,m_Weights);
+        }
+        num=((N-M-1.0)*upsumR);
+        den=(2*WR*downsumR);
+        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 0;
+        //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+upsumR+" downsum: "+downsumR);
+        double scaledI=1+((IL+avgikR*(N-M))/m_data.getNbRows());
+        //System.out.println();
+        if (Double.isNaN(scaledI)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return scaledI;
+    }
+    //calculate EquvalentI
+    //Equvalent I
+    public double calcEquvalentItotal(Integer[] permutation) {                   
+        int M = 0;int N = 0;int NR = m_data.getNbRows(); double I=0;
+        double avgik=0.0; double avgikR=0.0; double num,den,numR,denR,ikk,ikkR=0.0;
+        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;
+        M=prevIndex; N=splitIndex;
+
+            if(INITIALIZEPARTIALSUM){ //Annalisa: to check that you need to inizialize the partial sums
+                INITIALIZEPARTIALSUM=false;
+                M=0;
+                for (int i = M; i < NR; i++) {
+                DataTuple exi = m_data.getTuple(permutation[i]);
+                previousSumX2R[0] +=getSquaredDistanceH(exi, m_Weights);
+                previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi, m_Weights));
+                for (int j = M; j <NR; j++) {
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    long indexMap = permutation[i]*(NR)+permutation[j];
+                    double w=0;
+                    if (permutation[i]>permutation[j])
+                        indexMap= permutation[j]*(NR)+permutation[i];
+                    Double temp = GISHeuristic.m_distances.get(indexMap);
+                    if (temp!=null) w=temp; else w=0;
+                    previousSumWR[0]+=w;
+                    previousSumWXXR[0] +=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                }
+                }
+                //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+                //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            }
+            //else
+            boolean flagRightAllEqual=true;
+            boolean flagLeftAllEqual=true;
+            {
+            for (int i = M; i < N; i++) {
+                DataTuple exi = m_data.getTuple(permutation[i]);
+                previousSumX2[0] +=getSquaredDistanceH(exi, m_Weights);
+                previousSumX[0]+=Math.sqrt(getSquaredDistanceH(exi, m_Weights));
+                previousSumX2R[0] -=getSquaredDistanceH(exi, m_Weights);
+                previousSumXR[0]-=Math.sqrt(getSquaredDistanceH(exi, m_Weights));
+            }
+            
+            //left (0-old)(old-new)
+            flagLeftAllEqual=true;
+            double oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(0),m_Weights));
+            for (int i = 1; i<N; i++) {
+                DataTuple exi = m_data.getTuple(permutation[i]);
+            if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX) // Annalisa : to check that partition does not contain values which are all the same
+                {
+                flagLeftAllEqual=false;
+                break;
+                }
+            }
+            
+            for (int i = 0; i<M; i++) {
+                DataTuple exi = m_data.getTuple(permutation[i]);
+                for (int j = M; j<N; j++) {
+                long indexMap = permutation[i]*(NR)+permutation[j];
+                double w=0;
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i];
+                Double temp = GISHeuristic.m_distances.get(indexMap);
+                if (temp!=null) w=temp; else w=0;
+                previousSumW[0]+=w;
+                previousSumWXX[0] +=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                }
+            }
+            //left (old-new)(0-old)
+            for (int i = M; i<N; i++) {
+                for (int j = 0; j<M; j++) {
+                long indexMap = permutation[i]*(NR)+permutation[j];
+                double w=0;
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                DataTuple exi = m_data.getTuple(permutation[i]);
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i];
+                Double temp = GISHeuristic.m_distances.get(indexMap);
+                if (temp!=null) w=temp; else w=0;
+                previousSumW[0]+=w;
+                previousSumWXX[0] +=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                }
+            }
+            //left (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                DataTuple exi = m_data.getTuple(permutation[i]);
+                for (int j = M; j <N; j++) {    
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];
+                        }
+                    long indexMap = indexI*(NR)+indexJ;
+                    if (permutation[i]>permutation[j])
+                        indexMap= permutation[j]*(NR)+permutation[i];
+                    Double temp = GISHeuristic.m_distances.get(indexMap);
+                    if (temp!=null) w=temp; else w=0;
+                    previousSumW[0]+=w;
+                    previousSumWXX[0] +=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                }
+            }
+
+            //right side (new-end)(old-new) 
+            flagRightAllEqual=true;
+            oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(N),m_Weights));
+            for (int i = N; i<NR; i++) {
+                DataTuple exi = m_data.getTuple(i);
+                if(oldX!=Math.sqrt(getSquaredDistanceH(exi,m_Weights)))
+                    flagRightAllEqual=false;
+                for (int j = M; j<N; j++) {
+                long indexMap = permutation[i]*(NR)+permutation[j];
+                double w=0;
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
+                    flagRightAllEqual=false;
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i];
+                Double temp = GISHeuristic.m_distances.get(indexMap);
+                if (temp!=null) w=temp; else w=0;
+                previousSumWR[0]-=w;
+                previousSumWXXR[0] -=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));;
+                }
+            }
+            //right (old-new)(new-end)
+            for (int i = M; i<N; i++) {
+                for (int j = N; j<NR; j++) {
+                long indexMap = permutation[i]*(NR)+permutation[j];
+                double w=0;
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                DataTuple exi = m_data.getTuple(permutation[i]);
+                if (permutation[i]>permutation[j])
+                    indexMap= permutation[j]*(NR)+permutation[i];
+                Double temp = GISHeuristic.m_distances.get(indexMap);
+                if (temp!=null) w=temp; else w=0;
+                previousSumWR[0]-=w;
+                previousSumWXXR[0] -=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                }
+            }
+            //right (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                DataTuple exi = m_data.getTuple(permutation[i]);
+                for (int j = M; j <N; j++) {    
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];
+                        }
+                    long indexMap = indexI*(NR)+indexJ;
+                    if (permutation[i]>permutation[j])
+                        indexMap= permutation[j]*(NR)+permutation[i];
+                    Double temp = GISHeuristic.m_distances.get(indexMap);
+                    if (temp!=null) w=temp; else w=0;
+                    previousSumWR[0]-=w;
+                    previousSumWXXR[0] -=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                }
+            }           
+            }
+            
+            //System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+            //System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+
+            vkupenBrojElementiVoOvojSplit=N;
+            num=vkupenBrojElementiVoOvojSplit*previousSumWXX[0];
+            den=previousSumW[0]*previousSumX2[0];
+            if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den;
+                else ikk= 1;
+            
+            vkupenBrojElementiVoOvojSplit=NR-N;
+            numR=vkupenBrojElementiVoOvojSplit*previousSumWXXR[0];
+            denR=previousSumWR[0]*previousSumX2R[0];
+            if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR;
+                else ikkR=1;
+
+        avgikR+=ikkR;
+        avgik+=ikk;
+        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        I=(avgik*N+avgikR*(NR-N))/vkupenBrojElementiVoCelataSuma;
+        M=prevIndex; N=splitIndex;
+        double scaledI=1+I;
+        if (Double.isNaN(scaledI)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return scaledI;
+    }
+    
+    //calculate Equvalent Geary C
+    public double calcEquvalentGtotal(Integer[] permutation) {        
+        int M = 0;int N = 0;int NR = m_data.getNbRows(); double I=0;
+        double avgik=0.0; double avgikR=0.0; double num,den,numR,denR,ikk,ikkR,W,WR=0.0;
+        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;
+        M=prevIndex; N=splitIndex;
+        
+            if(INITIALIZEPARTIALSUM){ 
+                INITIALIZEPARTIALSUM=false;
+                M=0;
+                for (int i = M; i < NR; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                previousSumX2R[0] +=getSquaredDistanceH(exi,m_Weights);
+                previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+                for (int j = M; j <NR; j++) {
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}                      
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        previousSumWR[0]+=w;
+                        previousSumWXXR[0] +=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumWR[0]+=1;previousSumWXXR[0]+=calcDistance(tp, tp);}
+                 }
+                }
+                //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+                //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            }
+            //else
+            boolean flagRightAllEqual=true;
+            boolean flagLeftAllEqual=true;
+            {
+            for (int i = M; i < N; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                previousSumX2[0]+=getSquaredDistanceH(exi,m_Weights);
+                previousSumX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+                previousSumX2R[0]-=getSquaredDistanceH(exi,m_Weights);
+                previousSumXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+            }
+            
+            //left (0-old)(old-new)
+            flagLeftAllEqual=true;
+            double oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(0),m_Weights));
+            for (int i = 1; i<N; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+            if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX) // to check that partition does not contain values which are all the same
+                {
+                flagLeftAllEqual=false;
+                break;
+                }
+            }
+            
+            for (int i = 0; i<M; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j = M; j<N; j++) {
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}                      
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        previousSumW[0]+=w;
+                        previousSumWXX[0]+=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumW[0]+=1;previousSumWXX[0]+=calcDistance(tp, tp);}
+                }
+            }
+            //left (old-new)(0-old)
+            for (int i = M; i<N; i++) {
+                for (int j = 0; j<M; j++) {
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}                      
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        previousSumW[0]+=w;
+                        previousSumWXX[0]+=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumW[0]+=1;previousSumWXX[0]+=calcDistance(tp, tp);}
+                }
+            }
+            //left (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                for (int j = M; j <N; j++) {                        
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}                      
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        previousSumW[0]+=w;
+                        previousSumWXX[0]+=w*calcDistance(tp, tp1);
+                        }
+                        else {previousSumW[0]+=1;previousSumWXX[0]+=calcDistance(tp, tp);}
+                }
+            }
+            //right side (new-end)(old-new) 
+            flagRightAllEqual=true;
+            oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(N),m_Weights));
+            for (int i = N; i<NR; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                if(oldX!=Math.sqrt(getSquaredDistanceH(exi,m_Weights)))
+                    flagRightAllEqual=false;
+                for (int j = M; j<N; j++) {
+                double w=0;
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
+                    flagRightAllEqual=false;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        previousSumWR[0]-=w;
+                        previousSumWXXR[0]-=w*calcDistance(tp, tp1);
+                    }
+                else {previousSumWR[0]-=1;previousSumWXXR[0]-=calcDistance(tp, tp);}
+                }
+            }
+            //right (old-new)(new-end)
+            for (int i = M; i<N; i++) {
+                for (int j = N; j<NR; j++) {                
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}                      
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        previousSumWR[0]-=w;
+                        previousSumWXXR[0]-=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumWR[0]-=1;previousSumWXXR[0]-=calcDistance(tp, tp);}
+                }
+            }
+            //right (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j = M; j <N; j++) {                        
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                        if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];}                      
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        previousSumWR[0]-=w;
+                        previousSumWXXR[0]-=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumWR[0]-=1;previousSumWXXR[0]-=calcDistance(tp, tp);}
+                }
+            }
+        }
+            
+        //System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+        //System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+        vkupenBrojElementiVoOvojSplit=N;
+        num=(vkupenBrojElementiVoOvojSplit-1)* previousSumWXX[0];
+        den=2*previousSumW[0]*previousSumX2[0];
+        if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den;
+            else ikk= 0;
+            
+        vkupenBrojElementiVoOvojSplit=NR-N;
+        numR=(vkupenBrojElementiVoOvojSplit-1)*previousSumWXXR[0];
+        denR=2*previousSumWR[0]*previousSumX2R[0];
+        if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR;
+            else ikkR=0;
+
+        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        I=(ikk*N+ikkR*(NR-N))/vkupenBrojElementiVoCelataSuma;
+        M=prevIndex; N=splitIndex;
+        double scaledI=1+I;
+        //System.out.println(scaledI);
+        if (Double.isNaN(scaledI)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return scaledI;
+    }
+    //Moran I
+    public double calcItotal(Integer[] permutation) {
+        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
+        int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
+        if (splitIndex>0){
+            N=splitIndex;
+        }else{
+            M=-splitIndex;
+        }
+        //left      
+        for (int i = M; i < N; i++) {   
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                            indexI=permutation[j];
+                            indexJ=permutation[i];
+                        }
+                        long indexMap = indexI*(NR)+indexJ;
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        upsum += w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                        W+=w;
+                    }  
+                    else{upsum += getSquaredDistanceH(exi,m_Weights);W+=1; }
+                }       
+                downsum+=getSquaredDistanceH(exi, m_Weights);
+        }
+            num=((N-M+0.0)*upsum);
+            den=(W*downsum);
+            if (num!=0.0 && den!=0.0){
+                avgik=num/den;
+            }else avgik = 1;
+        //System.out.println("w: "+W+"num: "+num+"den: "+den+"Left Moran I: "+avgik+"ex: "+((N-M)));
+        //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
+        double IL=avgik*(N-M);
+        
+        //right side
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
+        for (int i = M; i <N; i++) {
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                double w=0;
+                    long indexI=permutation[i];
+                    long indexJ=permutation[j];
+                    if (permutation[i]!=permutation[j]){
+                    if (permutation[i]>permutation[j]){
+                        indexI=permutation[j];
+                        indexJ=permutation[i];}                      
+                    long indexMap = indexI*(NR)+indexJ;
+                    Double temp= GISHeuristic.m_distances.get(indexMap);
+                    if (temp!=null) w=temp; else w=0;
+                    upsumR += w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    WR+=w;
+                    }  
+                    else{upsumR += getSquaredDistanceH(exi,m_Weights);WR+=1; }
+                }       
+                downsumR+=getSquaredDistanceH(exi, m_Weights);
+        }
+        num=((N-M+0.0)*upsumR);
+        den=(WR*downsumR);
+        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 1;
+        //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+num+" downsum: "+den);
+        double I=(IL+avgikR*(N-M))/m_data.getNbRows();
+        double scaledI=1+I;
+        if (Double.isNaN(I)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return scaledI;
+    }
+    //global I with distance file
+    public double calcItotalD(Integer[] permutation) {
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
+        int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
+        if (splitIndex>0){
+            N=splitIndex;
+        }else{
+            M=-splitIndex;
+        }
+        //left      
+        for (int i = M; i < N; i++) {   
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            String xxi = xt.getString(exi);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                String yyi = xt.getString(exj);
+                double w=0;
+                String indexI=xxi;
+                String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                        String indexMap = indexI +"#"+indexJ;
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        upsum += w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                        W+=w;
+                    }  
+                    else{upsum += getSquaredDistanceH(exi,m_Weights);W+=1;}
+                }       
+                downsum+=getSquaredDistanceH(exi, m_Weights);
+        }
+            num=((N-M+0.0)*upsum);
+            den=(W*downsum);
+            if (num!=0.0 && den!=0.0) avgik=num/den; else avgik = 1;
+        //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
+        double IL=avgik*(N-M);
+        
+        //right side
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
+        for (int i = M; i <N; i++) {
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            String xxi = xt.getString(exi);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                String yyi = xt.getString(exj);
+                double w=0;
+                String indexI=xxi;
+                String indexJ=yyi;
+                if (indexI!=indexJ){                        
+                        String indexMap = indexI +"#"+indexJ;
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        upsumR += w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                        WR+=w;
+                    }  
+                    else{upsumR += getSquaredDistanceH(exi,m_Weights);WR+=1; }
+                }       
+                downsumR+=getSquaredDistanceH(exi, m_Weights);
+        }
+        num=(N-M+0.0)*upsumR;
+        den=WR*downsumR;
+        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 1;
+        //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+upsum+" downsum: "+downsum);
+        double I=(IL+avgikR*(N-M))/m_data.getNbRows();
+        double scaledI=1+I;
+        //System.out.println(scaledI);
+        if (Double.isNaN(I)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return scaledI;
+    }
+    //RA with distance file
+    public double calcPDistance(Integer[] permutation) {
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        double avgik = 0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0; int M = 0; int N = m_data.getNbRows();
+        if (splitIndex>0){
+            N=splitIndex;
+        }else{
+            M=-splitIndex;
+        }
+        //left      
+        for (int i = M; i < N; i++) {   
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            String xxi = xt.getString(exi);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
+                String indexI=xxi;
+                String indexJ=yyi;
+                if (indexI!=indexJ){                        
+                        String indexMap = indexI +"#"+indexJ;
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) upsum += Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                    }  
+                }       
+                downsum+=getSquaredDistanceH(exi, m_Weights);
+        }
+        if (upsum!=0.0 && downsum!=0.0) avgik=upsum/downsum; else avgik = 1;
+        double IL=avgik*(N-M);
+        
+        //right side
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;
+        for (int i = M; i <N; i++) {
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            String xxi = xt.getString(exi);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
+                String indexI=xxi;
+                String indexJ=yyi;
+                if (indexI!=indexJ){                        
+                        String indexMap = indexI +"#"+indexJ;
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) upsumR +=Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
+                    }  
+                }       
+                downsumR+=getSquaredDistanceH(exi, m_Weights);
+        }
+        if (upsumR!=0.0 && downsumR!=0.0) avgikR=upsumR/downsumR; else avgikR = 1;
+        double I=1+((IL+avgikR*(N-M))/m_data.getNbRows());
+        //System.out.println(I);
+        if (Double.isNaN(I)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return I;
+    }   
+    //Geary with distance file
+    // global C calculation with a separate distance file
+    public double calcGtotalD(Integer[] permutation) {
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
+        int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
+        if (splitIndex>0){
+            N=splitIndex;
+        }else{
+            M=-splitIndex;
+        }
+        //left      
+        for (int i = M; i < N; i++) {               
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            String xxi = xt.getString(exi);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
+                double w=0;
+                String indexI=xxi;
+                String indexJ=yyi;
+                if (indexI!=indexJ){                        
+                        String indexMap = indexI +"#"+indexJ;
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        upsum += w*calcDistance(tp,tp1);
+                        W+=w;
+                    }  
+                    else{
+                        upsum += calcDistance(tp,tp);
+                        W+=1; }
+                }       
+                downsum+=getSquaredDistanceH(exi, m_Weights);
+        }
+            num=((N-M-1.0)*upsum);
+            den=(2*W*downsum);
+            if (num!=0.0 && den!=0.0){
+                avgik=num/den;
+            }else avgik = 0;
+        //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
+        double IL=avgik*(N-M);
+        
+        //right side
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
+        for (int i = M; i <N; i++) {
+            DataTuple exi=m_data.getTuple(permutation[i]);
+            String xxi = xt.getString(exi);
+            boolean[] actual = new boolean[m_Hier.getTotal()];
+            ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+            tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j =M; j < N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
+                double w=0;
+                String indexI=xxi;
+                String indexJ=yyi;
+                if (indexI!=indexJ){                        
+                        String indexMap = indexI +"#"+indexJ;
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        upsumR += w*calcDistance(tp,tp1);
+                        WR+=w;
+                    }  
+                    else{
+                        upsumR += calcDistance(tp,tp);
+                        WR+=1; }
+                }       
+                downsumR+=getSquaredDistanceH(exi,m_Weights);
+        }
+        num=((N-M-1.0)*upsumR);
+        den=(2*WR*downsumR);
+        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 0;
+        //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+num+" downsum: "+den);
+        double scaledI=1+((IL+avgikR*(N-M))/m_data.getNbRows());
+        //System.out.println(scaledI);
+        if (Double.isNaN(scaledI)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return scaledI;
+    }
+    //calculate EquvalentI with Distance file
+    public double calcEquvalentIDistance(Integer[] permutation) {        
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        int M = 0;int N = 0;int NR = m_data.getNbRows(); double I=0;
+        double num,den,numR,denR,ikk,ikkR=0.0;
+        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;
+        M=prevIndex; N=splitIndex;
+        
+            if(INITIALIZEPARTIALSUM){ 
+                INITIALIZEPARTIALSUM=false;
+                M=0;
+                for (int i = M; i < NR; i++) {              
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                previousSumX2R[0] +=getSquaredDistanceH(exi,m_Weights);
+                previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+                for (int j = M; j <NR; j++) {
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                            previousSumWR[0]+=w;
+                            previousSumWXXR[0] +=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    else {previousSumWR[0]+=1;previousSumWXXR[0]+=getSquaredDistanceH(exi,m_Weights);}
+                }
+                }
+                //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+                //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            }
+            //else
+            boolean flagRightAllEqual=true;
+            boolean flagLeftAllEqual=true;
+            {
+            for (int i = M; i < N; i++) {               
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                previousSumX2[0]+=getSquaredDistanceH(exi,m_Weights);
+                previousSumX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+                previousSumX2R[0]-=getSquaredDistanceH(exi,m_Weights);
+                previousSumXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+            }
+            
+            //left (0-old)(old-new)
+            flagLeftAllEqual=true;
+            double oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(0),m_Weights));
+            for (int i = 1; i<N; i++) {             
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+            if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX) // to check that partition does not contain values which are all the same
+                {
+                flagLeftAllEqual=false;
+                break;
+                }
+            }
+            
+            for (int i = 0; i<M; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j = M; j<N; j++) {
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                            previousSumW[0]+=w;
+                            previousSumWXX[0]+=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    else {previousSumW[0]+=1;previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //left (old-new)(0-old)
+            for (int i = M; i<N; i++) {
+                for (int j = 0; j<M; j++) {
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    String xxi = xt.getString(exi);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                            previousSumW[0]+=w;
+                            previousSumWXX[0]+=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    else {previousSumW[0]+=1;previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //left (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                for (int j = M; j <N; j++) {    
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    String xxi = xt.getString(exi);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                            previousSumW[0]+=w;
+                            previousSumWXX[0]+=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                        }
+                        else {previousSumW[0]+=1;previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //right side (new-end)(old-new) 
+            flagRightAllEqual=true;
+            oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(N),m_Weights));
+            for (int i = N; i<NR; i++) {                
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                if(oldX!=Math.sqrt(getSquaredDistanceH(exi,m_Weights)))
+                    flagRightAllEqual=false;
+                for (int j = M; j<N; j++) {
+                double w=0;
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
+                if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
+                    flagRightAllEqual=false;
+                String indexI=xxi;
+                String indexJ=yyi;
+                if (indexI!=indexJ){                        
+                        String indexMap = indexI +"#"+indexJ;
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        previousSumWR[0]-=w;
+                        previousSumWXXR[0]-=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                else {previousSumWR[0]-=1;previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //right (old-new)(new-end)
+            for (int i = M; i<N; i++) {
+                for (int j = N; j<NR; j++) {                                    
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    String xxi = xt.getString(exi);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                            previousSumWR[0]-=w;
+                            previousSumWXXR[0]-=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    else {previousSumWR[0]-=1;previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //right (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j = M; j <N; j++) {                        
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                    previousSumWR[0]-=w;
+                    previousSumWXXR[0]-=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    else {previousSumWR[0]-=1;previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+        }
+            
+        //System.out.println("Update SumLeft : sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]);
+        //System.out.println("Update SumRight : sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]);
+        vkupenBrojElementiVoOvojSplit=N;
+        num=vkupenBrojElementiVoOvojSplit*previousSumWXX[0];
+        den=previousSumW[0]*previousSumX2[0];
+        if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den; //I for each target
+            else ikk=1;
+            
+        vkupenBrojElementiVoOvojSplit=NR-N;
+        numR=vkupenBrojElementiVoOvojSplit*previousSumWXXR[0];
+        denR=previousSumWR[0]*previousSumX2R[0];
+        if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR; //I for each target
+            else ikkR=1;
+        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        I=(ikk*N+ikkR*(NR-N))/vkupenBrojElementiVoCelataSuma;
+        M=prevIndex; N=splitIndex;
+        double scaledI=1+I;
+        //System.out.println(scaledI);
+        if (Double.isNaN(scaledI)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return scaledI;
+    }
+    //calculate EquvalentP with Distance file
+    public double calcEquvalentPDistance(Integer[] permutation) {        
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        int M = 0;int N = 0;int NR = m_data.getNbRows(); int vkupenBrojElementiVoCelataSuma = NR;double I=0;double ikk,ikkR=0.0;
+        M=prevIndex; N=splitIndex;
+        
+            if(INITIALIZEPARTIALSUM){ 
+                INITIALIZEPARTIALSUM=false;
+                M=0;
+                for (int i = M; i < NR; i++) {              
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                previousSumX2R[0] +=getSquaredDistanceH(exi,m_Weights);
+                previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+                for (int j = M; j <NR; j++) {
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) previousSumWXXR[0] +=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    //else {previousSumWXXR[0]+=getSquaredDistanceH(exi,m_Weights);}
+                }
+                }
+                //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+                //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            }
+            //else
+            boolean flagRightAllEqual=true;
+            boolean flagLeftAllEqual=true;
+            {
+            for (int i = M; i < N; i++) {               
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                previousSumX2[0]+=getSquaredDistanceH(exi,m_Weights);
+                previousSumX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+                previousSumX2R[0]-=getSquaredDistanceH(exi,m_Weights);
+                previousSumXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+            }
+            
+            //left (0-old)(old-new)
+            flagLeftAllEqual=true;
+            double oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(0),m_Weights));
+            for (int i = 1; i<N; i++) {             
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+            if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX) // to check that partition does not contain values which are all the same
+                {
+                flagLeftAllEqual=false;
+                break;
+                }
+            }
+            
+            for (int i = 0; i<M; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j = M; j<N; j++) {
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    } 
+                    //else {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //left (old-new)(0-old)
+            for (int i = M; i<N; i++) {
+                for (int j = 0; j<M; j++) {
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    String xxi = xt.getString(exi);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    //else {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //left (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                for (int j = M; j <N; j++) {    
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    String xxi = xt.getString(exi);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    //else {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //right side (new-end)(old-new) 
+            flagRightAllEqual=true;
+            oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(N),m_Weights));
+            for (int i = N; i<NR; i++) {                
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                if(oldX!=Math.sqrt(getSquaredDistanceH(exi,m_Weights)))
+                    flagRightAllEqual=false;
+                for (int j = M; j<N; j++) {
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
+                if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
+                    flagRightAllEqual=false;
+                String indexI=xxi;
+                String indexJ=yyi;
+                if (indexI!=indexJ){                        
+                        String indexMap = indexI +"#"+indexJ;
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                }
+                //else {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //right (old-new)(new-end)
+            for (int i = M; i<N; i++) {
+                for (int j = N; j<NR; j++) {                                    
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    String xxi = xt.getString(exi);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    //else {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+            //right (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j = M; j <N; j++) {                        
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
+                    }
+                    //else {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                }
+            }
+        }
+            
+        if(previousSumX2[0]!=0 && previousSumWXX[0]!=0 && !flagLeftAllEqual) ikk=previousSumWXX[0]/previousSumX2[0]; else ikk=1;
+        if(previousSumX2R[0]!=0 && previousSumWXXR[0]!=0 && !flagRightAllEqual) ikkR=previousSumWXXR[0]/previousSumX2R[0]; else ikkR=1;
+        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        I=(ikk*N+ikkR*(NR-N))/vkupenBrojElementiVoCelataSuma;
+        M=prevIndex; N=splitIndex;
+        double scaledI=1+I;
+        //System.out.println(scaledI);
+        if (Double.isNaN(scaledI)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return scaledI;
+    }
+    //Equvalent Geary with distance file
+    //calculate Equvalent Geary C with Distance file
+    public double calcEquvalentGDistance(Integer[] permutation) {        
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        int M = 0;int N = 0;int NR = m_data.getNbRows(); double I=0;
+        double avgik=0.0; double avgikR=0.0; double num,den,numR,denR,ikk,ikkR,W,WR=0.0;
+        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;
+        M=prevIndex; N=splitIndex;
+        
+            if(INITIALIZEPARTIALSUM){ 
+                INITIALIZEPARTIALSUM=false;
+                M=0;
+                for (int i = M; i < NR; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                previousSumX2R[0] +=getSquaredDistanceH(exi,m_Weights);
+                previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+                for (int j = M; j <NR; j++) {
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                            previousSumWR[0]+=w;
+                            previousSumWXXR[0] +=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumWR[0]+=1;previousSumWXXR[0]+=calcDistance(tp, tp);}
+                }
+                }
+                //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+                //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            }
+            //else
+            boolean flagRightAllEqual=true;
+            boolean flagLeftAllEqual=true;
+            {
+            for (int i = M; i < N; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                previousSumX2[0]+=getSquaredDistanceH(exi,m_Weights);
+                previousSumX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+                previousSumX2R[0]-=getSquaredDistanceH(exi,m_Weights);
+                previousSumXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
+            }
+            
+            //left (0-old)(old-new)
+            flagLeftAllEqual=true;
+            double oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(0),m_Weights));
+            for (int i = 1; i<N; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+            if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX) // to check that partition does not contain values which are all the same
+                {
+                flagLeftAllEqual=false;
+                break;
+                }
+            }
+            
+            for (int i = 0; i<M; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j = M; j<N; j++) {
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp;else w=0;
+                            previousSumW[0]+=w;
+                            previousSumWXX[0]+=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumW[0]+=1;previousSumWXX[0]+=calcDistance(tp, tp);}
+                }
+            }
+            //left (old-new)(0-old)
+            for (int i = M; i<N; i++) {
+                for (int j = 0; j<M; j++) {
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    String xxi = xt.getString(exi);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                            previousSumW[0]+=w;
+                            previousSumWXX[0]+=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumW[0]+=1;previousSumWXX[0]+=calcDistance(tp, tp);}
+                }
+            }
+            //left (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                for (int j = M; j <N; j++) {                        
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    String xxi = xt.getString(exi);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                            previousSumW[0]+=w;
+                            previousSumWXX[0]+=w*calcDistance(tp, tp1);
+                        }
+                        else {previousSumW[0]+=1;previousSumWXX[0]+=calcDistance(tp, tp);}
+                }
+            }
+            //right side (new-end)(old-new) 
+            flagRightAllEqual=true;
+            oldX=Math.sqrt(getSquaredDistanceH(m_data.getTuple(N),m_Weights));
+            for (int i = N; i<NR; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                if(oldX!=Math.sqrt(getSquaredDistanceH(exi,m_Weights)))
+                    flagRightAllEqual=false;
+                for (int j = M; j<N; j++) {
+                double w=0;
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
+                if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
+                    flagRightAllEqual=false;
+                String indexI=xxi;
+                String indexJ=yyi;
+                if (indexI!=indexJ){                        
+                        String indexMap = indexI +"#"+indexJ;
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
+                        previousSumWR[0]-=w;
+                        previousSumWXXR[0]-=w*calcDistance(tp, tp1);
+                    }
+                else {previousSumWR[0]-=1;previousSumWXXR[0]-=calcDistance(tp, tp);}
+                }
+            }
+            //right (old-new)(new-end)
+            for (int i = M; i<N; i++) {
+                for (int j = N; j<NR; j++) {                
+                    DataTuple exi=m_data.getTuple(permutation[i]);
+                    String xxi = xt.getString(exi);
+                    boolean[] actual = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp.fillBoolArrayNodeAndAncestors(actual);
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                            previousSumWR[0]-=w;
+                            previousSumWXXR[0]-=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumWR[0]-=1;previousSumWXXR[0]-=calcDistance(tp, tp);}
+                }
+            }
+            //right (old-new)(old-new)
+            for (int i = M; i < N; i++) {
+                DataTuple exi=m_data.getTuple(permutation[i]);
+                String xxi = xt.getString(exi);
+                boolean[] actual = new boolean[m_Hier.getTotal()];
+                ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
+                tp.fillBoolArrayNodeAndAncestors(actual);
+                for (int j = M; j <N; j++) {                        
+                    DataTuple exj = m_data.getTuple(permutation[j]);
+                    boolean[] actual1 = new boolean[m_Hier.getTotal()];
+                    ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
+                    double w=0;
+                    String indexI=xxi;
+                    String indexJ=yyi;
+                    if (indexI!=indexJ){                        
+                            String indexMap = indexI +"#"+indexJ;
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
+                    previousSumWR[0]-=w;
+                    previousSumWXXR[0]-=w*calcDistance(tp, tp1);
+                    }
+                    else {previousSumWR[0]-=1;previousSumWXXR[0]-=calcDistance(tp, tp);}
+                }
+            }
+        }
+            
+        //System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+        //System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+        vkupenBrojElementiVoOvojSplit=N;
+        num=(vkupenBrojElementiVoOvojSplit-1)* previousSumWXX[0];
+        den=2*previousSumW[0]*previousSumX2[0];
+        if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den;
+            else ikk= 0;
+            
+        vkupenBrojElementiVoOvojSplit=NR-N;
+        numR=(vkupenBrojElementiVoOvojSplit-1)*previousSumWXXR[0];
+        denR=2*previousSumWR[0]*previousSumX2R[0];
+        if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR;
+            else ikkR=0;
+
+        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+den+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        I=(avgik*N+avgikR*(NR-N))/vkupenBrojElementiVoCelataSuma;
+        M=prevIndex; N=splitIndex;
+        double scaledI=2-I;
+        //System.out.println(scaledI);
+        if (Double.isNaN(scaledI)){
+            System.out.println("err!");
+            System.exit(-1);
+        }
+        return scaledI;
+    }
+    
+    public void setData(RowData data) {
+        m_data = data;
+    }
+
+    public void setSplitIndex(int i) {
+        splitIndex = i;
+    }
+    public int getSplitIndex() {
+        return splitIndex;
+    }
+    public void setPrevIndex(int i) {
+        prevIndex = i;
+    }
+    public int getPrevIndex() {
+        return prevIndex;
+    }
+
+    public void initializeSum() {
+        Arrays.fill(previousSumX, 0.0);
+        Arrays.fill(previousSumXR, 0.0);
+        Arrays.fill(previousSumW, 0.0);
+        Arrays.fill(previousSumWXX, 0.0);
+        Arrays.fill(previousSumWX, 0.0);
+        Arrays.fill(previousSumX2, 0.0);
+        Arrays.fill(previousSumWR, 0.0);
+        Arrays.fill(previousSumWXXR, 0.0);
+        Arrays.fill(previousSumWXR, 0.0);
+        Arrays.fill(previousSumX2R, 0.0);
+    }
+
+    public RowData getData() {
+        return m_data;
+    }
+    //end daniela
 
     public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights, ClusStatManager statmanager) {
         double sum = 0.0;
