@@ -1659,9 +1659,9 @@ public double calcMultiIwithNeighbours(Integer[] permutation){
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
+                if ((N-M)<NeighCount) distances[j]=new Distance(permutation[j],tj,d);
                 else {
-                    if (permutation[j]<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
+                    if (permutation[j]<NeighCount) distances[j]=new Distance(permutation[j],tj,d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -1685,17 +1685,17 @@ public double calcMultiIwithNeighbours(Integer[] permutation){
                 if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
+                if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsum[k] += w[permutation[i]][permutation[j]]*(ti-means[k])*(distances[permutation[j]].target-means[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
+                upsum[k] += w[permutation[i]][permutation[j]]*(ti-means[k])*(distances[j].target-means[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
                 W+=w[permutation[i]][permutation[j]];
                 }   
             downsum[k]+=((ti-means[k])*(ti-means[k]));
@@ -1779,18 +1779,18 @@ public double calcMultiIwithNeighbours(Integer[] permutation){
                 //if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount);   
                 //M NN
                 int j=0;
-                while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
-                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
+                while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
+                if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsumR[k] += w[permutation[i]][permutation[j]]*(ti-meansR[k])*(distances[permutation[j]].target-meansR[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
+                upsumR[k] += w[permutation[i]][permutation[j]]*(ti-meansR[k])*(distances[j].target-meansR[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
                 WR+=w[permutation[i]][permutation[j]];
                 j++;
                 }   
@@ -1986,9 +1986,9 @@ public double calcLeewithNeighbours(Integer[] permutation) {
                 ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1]; //y coord     
                 xj[k] = type.getNumeric(exj);xxj = xt.getNumeric(exi);yyj = yt.getNumeric(exi);}
                 double d = Math.sqrt((xxi-xxj)*(xxi-xxj)+(yyi-yyj)*(yyi-yyj));  
-                if ((N-M)<NeighCount) distances[permutation[j]]=new DistanceB(permutation[j],xj[0],xj[1],d);
+                if ((N-M)<NeighCount) distances[j]=new DistanceB(permutation[j],xj[0],xj[1],d);
                 else {
-                    if (permutation[j]<NeighCount) distances[permutation[j]]=new DistanceB(permutation[j],xj[0],xj[1],d);
+                    if (permutation[j]<NeighCount) distances[j]=new DistanceB(permutation[j],xj[0],xj[1],d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -2005,13 +2005,13 @@ public double calcLeewithNeighbours(Integer[] permutation) {
                 }
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
+                if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }
@@ -2082,14 +2082,14 @@ public double calcLeewithNeighbours(Integer[] permutation) {
             }
 
             int j=0;
-            while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
-            if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
+            while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
+            if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                      }
                     }               
@@ -2477,9 +2477,9 @@ public double calcCIwithNeighbours(Integer[] permutation) {
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
+                if ((N-M)<NeighCount) distances[j]=new Distance(permutation[j],tj,d);
                 else {
-                    if (permutation[j]<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
+                    if (permutation[j]<NeighCount) distances[j]=new Distance(permutation[j],tj,d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -2499,13 +2499,13 @@ public double calcCIwithNeighbours(Integer[] permutation) {
                 }
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
+                if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
@@ -2515,13 +2515,13 @@ public double calcCIwithNeighbours(Integer[] permutation) {
             for (int i = M; i < N; i++) {
                 //System.out.println(i+" end "+D[i]);
                 for (int j = M; j < NN; j++) {      
-                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
+                    if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                     else{
                         switch (spatialMatrix) {
                             case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                             default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
@@ -2587,13 +2587,13 @@ public double calcCIwithNeighbours(Integer[] permutation) {
                 }
                 int j=0;
                 while (j < NeighCount) {        
-                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
+                if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
@@ -2602,13 +2602,13 @@ public double calcCIwithNeighbours(Integer[] permutation) {
             }
             for (int i = M; i < N; i++) {
                 for (int j = M; j < N; j++) {       
-                    if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
+                    if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                     else{
                         switch (spatialMatrix) {
                             case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                            case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                            case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                            case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                            case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                             default: w[permutation[i]][permutation[j]]=1; break;
                             }
                         }               
@@ -2683,9 +2683,9 @@ public double calcCwithNeighbourstotal(Integer[] permutation) {
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
+                if ((N-M)<NeighCount) distances[j]=new Distance(permutation[j],tj,d);
                 else {
-                    if (j<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
+                    if (j<NeighCount) distances[j]=new Distance(permutation[j],tj,d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -2708,17 +2708,17 @@ public double calcCwithNeighbourstotal(Integer[] permutation) {
                 if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
+                if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsum[k] += w[permutation[i]][permutation[j]]*(ti-distances[permutation[j]].target)*(ti-distances[permutation[j]].target); 
+                upsum[k] += w[permutation[i]][permutation[j]]*(ti-distances[j].target)*(ti-distances[j].target); 
                 W+=w[permutation[i]][permutation[j]];
                 }   
             downsum[k]+=((ti-means[k])*(ti-means[k]));
@@ -2802,18 +2802,18 @@ public double calcCwithNeighbourstotal(Integer[] permutation) {
                 //if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount);   
                 //M NN
                 int j=0;
-                while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
-                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
+                while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
+                if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsumR[k] += w[permutation[i]][permutation[j]]*(ti-distances[permutation[j]].target)*(ti-distances[permutation[j]].target); 
+                upsumR[k] += w[permutation[i]][permutation[j]]*(ti-distances[j].target)*(ti-distances[j].target); 
                 WR+=w[permutation[i]][permutation[j]];
                 j++;
                 }   
@@ -2891,9 +2891,9 @@ public double calcIwithNeighbourstotal(Integer[] permutation) {
                 double xj = xt.getNumeric(exj);
                 double yj = yt.getNumeric(exj);
                 double d = Math.sqrt((xi-xj)*(xi-xj)+(yi-yj)*(yi-yj));  
-                if ((N-M)<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
+                if ((N-M)<NeighCount) distances[j]=new Distance(permutation[j],tj,d);
                 else {
-                    if (permutation[j]<NeighCount) distances[permutation[j]]=new Distance(permutation[j],tj,d);
+                    if (permutation[j]<NeighCount) distances[j]=new Distance(permutation[j],tj,d);
                     else{
                      biggestd = distances[0].distance; // go through the knn list and replace the biggest one if possible
                      biggestindex = 0;
@@ -2910,24 +2910,24 @@ public double calcIwithNeighbourstotal(Integer[] permutation) {
                         }
                         }
                     }
-                //PrivateDistances[permutation[j]] = distances[permutation[j]];
+                //Privatedistances[j] = distances[j];
                 }
                 int spatialMatrix = schema.getSettings().getSpatialMatrix();
                 int NN;
                 if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount); 
                 
                 for (int j = M; j < NN; j++) {      
-                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1; 
+                if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1; 
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsum[k] += w[permutation[i]][permutation[j]]*(ti-means[k])*(distances[permutation[j]].target-means[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
+                upsum[k] += w[permutation[i]][permutation[j]]*(ti-means[k])*(distances[j].target-means[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
                 W+=w[permutation[i]][permutation[j]];
                 }   
             downsum[k]+=((ti-means[k])*(ti-means[k]));
@@ -3011,18 +3011,18 @@ public double calcIwithNeighbourstotal(Integer[] permutation) {
                 //if ((N-M)<NeighCount) NN= N-M; else NN= (M+NeighCount);   
                 //M NN
                 int j=0;
-                while ((distances.length>j) && (distances[permutation[j]]!=null) && j < NeighCount) {                             
-                if (distances[permutation[j]].distance==0.0) w[permutation[i]][permutation[j]]=1;
+                while ((distances.length>j) && (distances[j]!=null) && j < NeighCount) {                             
+                if (distances[j].distance==0.0) w[permutation[i]][permutation[j]]=1;
                 else{
                     switch (spatialMatrix) {
                         case 0:  w[permutation[i]][permutation[j]]=1;   break;  //binary 
-                        case 1:  w[permutation[i]][permutation[j]]=1/distances[permutation[j]].distance; break;  //euclidian
-                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount))*(1-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break; //modified
-                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[permutation[j]].distance*distances[permutation[j]].distance)/(NeighCount*NeighCount)); break;  //gausian
+                        case 1:  w[permutation[i]][permutation[j]]=1/distances[j].distance; break;  //euclidian
+                        case 2:  w[permutation[i]][permutation[j]]=(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount))*(1-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break; //modified
+                        case 3:  w[permutation[i]][permutation[j]]=Math.exp(-(distances[j].distance*distances[j].distance)/(NeighCount*NeighCount)); break;  //gausian
                         default: w[permutation[i]][permutation[j]]=1; break;
                         }
                     }               
-                upsumR[k] += w[permutation[i]][permutation[j]]*(ti-meansR[k])*(distances[permutation[j]].target-meansR[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
+                upsumR[k] += w[permutation[i]][permutation[j]]*(ti-meansR[k])*(distances[j].target-meansR[k]); //m_distances.get(permutation[i]*N+permutation[j]) [permutation[i]][permutation[j]]
                 WR+=w[permutation[i]][permutation[j]];
                 j++;
                 }   
