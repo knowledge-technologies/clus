@@ -38,6 +38,8 @@ public class GISHeuristic extends ClusHeuristic {
     public static HashMap<Long, Double> m_distances=new HashMap<Long, Double>();
     public static HashMap<String, Double> m_distancesN=new HashMap<String, Double>();    
     public static HashMap<String, Double> m_distancesS=new HashMap<String, Double>();
+    
+    private boolean m_WarningGiven = false;
 
     //public static HashMap<Integer, HashMap<Integer, Double>> m_distancesM=new HashMap<Integer, HashMap<Integer, Double>>();
         
@@ -253,7 +255,10 @@ public class GISHeuristic extends ClusHeuristic {
             double ss_pos= 0; //pstat.calcItotal();                
             ClusSchema schema = m_Data.getSchema();
             int SpatialMeasure= schema.getSettings().getSpatialMeasure();
-            
+            if(!m_WarningGiven && SpatialMeasure != 0){
+                m_WarningGiven = true;
+                System.err.println("Warning: your spatial measure was not tested. Be careful.");
+            }
             switch (SpatialMeasure) {
             case 0:  ss_pos = pstat.calcItotal(permutation); break; //"Global Moran"
             case 1:  ss_pos = pstat.calcGtotal(permutation);  break; //"Global Geary"

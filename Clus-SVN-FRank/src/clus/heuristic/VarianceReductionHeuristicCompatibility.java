@@ -49,6 +49,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
     public static HashMap<String, Double> m_distancesN=new HashMap<String, Double>();   
     public static HashMap<String, Double> m_distancesS=new HashMap<String, Double>();
     //end daniela
+    private boolean m_WarningGiven = false;
 
 
     public VarianceReductionHeuristicCompatibility(String basicdist, ClusStatistic negstat, ClusAttributeWeights targetweights) {
@@ -281,7 +282,10 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
         double ss_pos= 0; //pstat.calcItotal();             
         ClusSchema schema = m_Data.getSchema();
         int SpatialMeasure= schema.getSettings().getSpatialMeasure();
-        
+        if(!m_WarningGiven && SpatialMeasure != 0){
+            m_WarningGiven = true;
+            System.err.println("Warning: your spatial measure was not tested. Be careful.");
+        }
         switch (SpatialMeasure) {
         case 0:  ss_pos = pstat.calcItotal(permutation); break; //"Global Moran"
         case 1:  ss_pos = pstat.calcGtotal(permutation);  break; //"Global Geary"
