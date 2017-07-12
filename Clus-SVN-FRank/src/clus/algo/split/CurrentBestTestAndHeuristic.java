@@ -23,12 +23,15 @@
 package clus.algo.split;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import clus.algo.tdidt.ClusDecisionTree;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.heuristic.ClusHeuristic;
+import clus.heuristic.GISHeuristic;
+import clus.heuristic.VarianceReductionHeuristicCompatibility;
 import clus.main.ClusStatManager;
 import clus.main.Settings;
 import clus.model.test.InverseNumericTest;
@@ -72,7 +75,24 @@ public class CurrentBestTestAndHeuristic {
     public double m_PosFreq;
 
     // Data set
-    public RowData m_Subset;
+    private RowData m_Subset;
+    // daniela
+    public double m_BestI;
+    public double m_BestC;
+    
+    public static HashMap<String,Double> mins = new HashMap<String,Double>();
+    public static HashMap<String,Double> maxes = new HashMap<String,Double>();
+    
+    public double hMinB=Double.POSITIVE_INFINITY;
+    public double hMaxB=Double.NEGATIVE_INFINITY;
+    public double hMin=Double.POSITIVE_INFINITY;
+    public double hMax=Double.NEGATIVE_INFINITY;
+    
+    private static final int GIS_NOT_CHECKED = -1;
+    private static final int GIS_NO = 0;
+    private static final int GIS_YES = 1;
+    private int isGIS = GIS_NOT_CHECKED;
+    // daniela end
 
 
     /***************************************************************************
@@ -109,6 +129,10 @@ public class CurrentBestTestAndHeuristic {
         m_BestTest.preprocess(ClusDecisionTree.DEPTH_FIRST);
         m_BestTest.setUnknownFreq(m_UnknownFreq);
         m_BestTest.setHeuristicValue(m_BestHeur);
+        // daniela
+        m_BestTest.setIValue(m_BestI);
+        m_BestTest.setIValue(m_BestC);
+        // daniela end
         return m_BestTest;
     }
 
@@ -142,6 +166,10 @@ public class CurrentBestTestAndHeuristic {
         m_BestHeur = Double.NEGATIVE_INFINITY;
         m_UnknownFreq = 0.0;
         m_SplitAttr = null;
+        // daniela
+        m_BestI = Double.NEGATIVE_INFINITY;
+        m_BestC = Double.POSITIVE_INFINITY;
+        // daniela end
         resetAlternativeBest();
     }
 
@@ -162,6 +190,10 @@ public class CurrentBestTestAndHeuristic {
 
 
     public final void reset(int nb) {
+        // daniela
+        hMax = Double.NEGATIVE_INFINITY;
+        hMin = Double.POSITIVE_INFINITY;
+        // daniela end
         for (int i = 0; i < nb; i++) {
             m_TestStat[i].reset();
         }
@@ -254,7 +286,6 @@ public class CurrentBestTestAndHeuristic {
         return m_AlternativeBest;
     }
 
-
     /***************************************************************************
      * Stopping criterion
      ***************************************************************************/
@@ -285,13 +316,112 @@ public class CurrentBestTestAndHeuristic {
             m_SplitAttr = at;
         }
     }
+    
+    // daniela
+    public final void calcMinMax(ClusAttrType at, double value) {
+        double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
+        if (Settings.VERBOSE >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (heur!=Double.NEGATIVE_INFINITY){
+            //System.out.println(at.getName()+" > "+value + "--> heur=" + heur);
+            Double currentMin = mins.get(at.getName());
+            if (currentMin==null){
+              currentMin=Double.POSITIVE_INFINITY;
+            }
+            if (heur<currentMin)
+               mins.put(at.getName(),heur); 
+            Double currentMax = maxes.get(at.getName());
+            if (currentMax==null){
+                currentMax=Double.NEGATIVE_INFINITY;
+            }
+            if (heur>currentMax)
+               maxes.put(at.getName(),heur);                    
+            //System.out.println("at/h/min/max1: "+at+" "+heur+" "+mins.get(at.getName())+" "+maxes.get(at.getName()));
+        }
+    }
+    
+    // min max Heur, scaling of H
+    public final void calculateHMinMax(double val, ClusAttrType at) {   
+        double heur;
+        heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
+        if (heur==Double.POSITIVE_INFINITY || heur==Double.NEGATIVE_INFINITY) return;
+        if (heur>hMax){
+            hMax=heur;
+        }
+        if (heur<hMin){
+            hMin=heur;
+        }       
+    }
+    // daniela end
 
-
-    public final void updateNumeric(double val, ClusAttrType at, double ss_tot, boolean isEfficient) {
-    	double heur = isEfficient ? m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat, ss_tot) : m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);    	
-//    	System.out.println(t1 - t0);
+    /**
+     * Version of updateNumeric for if there are any GIS attributes.
+     * @param val
+     * @param at
+     * @param permutation
+     */
+    public final void updateNumericGIS(double val, ClusAttrType at, Integer[] permutation) {
+        double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);        
         if (Settings.VERBOSE >= 2)
             System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        
+        double I = 0; double alpha = Settings.ALPHA; // daniela
+        if(!at.getSettings().isNullGIS()){ // handle Daniela case ...
+            // daniela
+            if(m_Heuristic instanceof VarianceReductionHeuristicCompatibility && (Settings.ALPHA!=1.0)) {
+                VarianceReductionHeuristicCompatibility gisHeuristic = (VarianceReductionHeuristicCompatibility) m_Heuristic;   
+                I = gisHeuristic.calcI(m_TotCorrStat, m_PosStat, m_MissingStat, permutation);
+                if (alpha!=0.0){
+                    heur = 2*(heur-hMin)/(hMax-hMin);             
+                    heur = alpha*heur+(1-alpha)*I;
+                }
+                else{
+                    heur = I;    
+                }
+            } else if (m_Heuristic instanceof GISHeuristic && (Settings.ALPHA!=1.0)) {    //GIS heuristics (scaled heur, spatial heur)
+                  //boolean conditionI=true;
+                  //conditionI = (I > m_BestI) && (I > 0);                    //1.option max I, max variance reduction    
+                  //heur = heur*I;                                            //2.option multiplication of both
+                  //System.out.println("old Var: "+heur+" "+hMin+"-->"+hMax+" old I: "+I); //3.option linear combination of both  
+                  GISHeuristic gisHeuristic = (GISHeuristic) m_Heuristic;     
+                  I = gisHeuristic.calcI(m_TotCorrStat, m_PosStat, m_MissingStat, permutation);
+                  if (alpha!=0.0){
+                      heur=2*(heur-hMin)/(hMax-hMin);             
+                      heur = alpha*heur+(1-alpha)*I;
+                  }
+                  else{
+                      heur=I;                        
+                  }
+            }
+            // daniela end
+        } else{
+            throw new RuntimeException("Use the standard updateNumeric!");
+        }
+        
+        if (heur > m_BestHeur + ClusHeuristic.DELTA) {
+            if (Settings.VERBOSE >= 2)
+                System.err.println("Better.");
+            double tot_w = getTotWeight();
+            double tot_no_unk = getTotNoUnkW();
+            if (Settings.VERBOSE >= 2) {
+                System.err.println(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
+            }
+            m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
+            m_TestType = TYPE_NUMERIC;
+            m_PosFreq = getPosWeight() / tot_no_unk;
+            m_BestSplit = val;
+            m_BestHeur = heur;
+            m_SplitAttr = at;
+            // daniela
+            m_BestI = I; 
+            //m_BestC = I;
+            // daniela end
+        }
+    }
+    public final void updateNumeric(double val, ClusAttrType at, double ss_tot, boolean isEfficient) {
+    	double heur = isEfficient ? m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat, ss_tot) : m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);    	
+        if (Settings.VERBOSE >= 2)
+            System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+                
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (Settings.VERBOSE >= 2)
                 System.err.println("Better.");
@@ -314,7 +444,8 @@ public class CurrentBestTestAndHeuristic {
     public final void updateNumeric(double val, ClusAttrType at) {
     	double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);      
         if (Settings.VERBOSE >= 2)
-            System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+            System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);    
+        
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (Settings.VERBOSE >= 2)
                 System.err.println("Better.");

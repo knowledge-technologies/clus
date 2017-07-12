@@ -68,6 +68,7 @@ public class ClusSchema implements Serializable {
     protected IntervalCollection m_Disabled = IntervalCollection.EMPTY;
     protected IntervalCollection m_Clustering = IntervalCollection.EMPTY;
     protected IntervalCollection m_Descriptive = IntervalCollection.EMPTY;
+    protected IntervalCollection m_GIS = IntervalCollection.EMPTY; //daniela
     protected IntervalCollection m_Key = IntervalCollection.EMPTY;
     protected int[] m_NbVt;
 
@@ -96,6 +97,7 @@ public class ClusSchema implements Serializable {
         setClustering(new IntervalCollection(sett.getClustering()));
         setDescriptive(new IntervalCollection(sett.getDescriptive()));
         setKey(new IntervalCollection(sett.getKey()));
+        setGIS(new IntervalCollection(sett.getGIS())); //daniela
         updateAttributeUse();
         addIndices(ClusSchema.ROWS);
     }
@@ -359,6 +361,12 @@ public class ClusSchema implements Serializable {
     public final IntervalCollection getDescriptive() {
         return m_Descriptive;
     }
+    
+    // daniela
+    public void setGIS(IntervalCollection m_gis) {
+        m_GIS = m_gis;
+    }
+    // daniela end
 
 
     public final void setTarget(IntervalCollection coll) {
@@ -432,11 +440,13 @@ public class ClusSchema implements Serializable {
         checkRange(m_Key, "key");
         checkRange(m_Disabled, "disabled");
         checkRange(m_Target, "target");
+        checkRange(m_GIS, "GIS"); //daniela
         checkRange(m_Clustering, "clustering");
         checkRange(m_Descriptive, "descriptive");
         setStatusAll(ClusAttrType.STATUS_NORMAL);
         setStatus(m_Disabled, ClusAttrType.STATUS_DISABLED, true);
         setStatus(m_Target, ClusAttrType.STATUS_TARGET, true);
+        setStatus(m_GIS, ClusAttrType.STATUS_GIS, true);  //daniela
         setStatus(m_Clustering, ClusAttrType.STATUS_CLUSTER_NO_TARGET, false);
         setStatus(m_Key, ClusAttrType.STATUS_KEY, true);
         setDescriptiveAll(false);
@@ -560,6 +570,9 @@ public class ClusSchema implements Serializable {
                     break;
                 case ClusAttrType.STATUS_DISABLED:
                     System.out.print("Disabled  ");
+                    break;
+                case ClusAttrType.STATUS_GIS:
+                    System.out.print("GIS    "); //daniela
                     break;
                 case ClusAttrType.STATUS_TARGET:
                     System.out.print("Target    ");
@@ -760,6 +773,11 @@ public class ClusSchema implements Serializable {
                             result.add(type);
                         }
                         break;
+                    case ClusAttrType.ATTR_USE_GIS: // daniela
+                        if (type.getStatus() == ClusAttrType.STATUS_GIS) {
+                            result.add(type);  
+                        }
+                        break;
                 }
             }
         }
@@ -870,7 +888,8 @@ public class ClusSchema implements Serializable {
         m_NominalAttrUse = new NominalAttrType[ClusAttrType.NB_ATTR_USE][];
         m_NumericAttrUse = new NumericAttrType[ClusAttrType.NB_ATTR_USE][];
         m_TimeSeriesAttrUse = new TimeSeriesAttrType[ClusAttrType.NB_ATTR_USE][];
-        for (int attruse = ClusAttrType.ATTR_USE_ALL; attruse <= ClusAttrType.ATTR_USE_KEY; attruse++) {
+        for (int attruse = ClusAttrType.ATTR_USE_ALL; attruse < ClusAttrType.NB_ATTR_USE; attruse++) {
+            // upper bound changed from attruse <= ClusAttrType.ATTR_USE_KEY, because the current way is safer
             m_AllAttrUse[attruse] = vectorToAttrArray(collectAttributes(attruse, ClusAttrType.THIS_TYPE));
             m_NominalAttrUse[attruse] = vectorToNominalAttrArray(collectAttributes(attruse, NominalAttrType.THIS_TYPE));
             m_NumericAttrUse[attruse] = vectorToNumericAttrArray(collectAttributes(attruse, NumericAttrType.THIS_TYPE));
