@@ -75,9 +75,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     
     // daniela matejp: public -> private, commented out unused fields
     private RowData m_data;
-    // private double[] m_SumValuesSpatial; 
+    // private double[] m_SumValuesSpatial;
     private int splitIndex;
-    private int prevIndex;  
+    private int prevIndex;
     private double[] previousSumW ;
     private double[] previousSumX ;
     private double[] previousSumXR ;
@@ -133,14 +133,14 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         m_Compatibility = comp;
         m_Hier = hier;
         // daniela
-        m_Weights=m_Hier.getWeights(); 
+        m_Weights=m_Hier.getWeights();
         previousSumX = new double[1];
         previousSumXR  = new double[1];
-        previousSumW   = new double[1]; 
+        previousSumW   = new double[1];
         previousSumWXX = new double[1];
         previousSumWX  = new double[1];
-        previousSumX2  = new double[1];     
-        previousSumWR   = new double[1]; 
+        previousSumX2  = new double[1];
+        previousSumWR   = new double[1];
         previousSumWXXR = new double[1];
         previousSumWXR  = new double[1];
         previousSumX2R  = new double[1];
@@ -417,7 +417,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         ClassesTuple tp = (ClassesTuple)tuple.getObjVal(m_Hier.getType().getArrayIndex());
         tp.fillBoolArrayNodeAndAncestors(actual);
         for (int i = 0; i < m_Hier.getTotal(); i++) {
-            double actual_zo = actual[i] ? 1.0 : 0.0;           
+            double actual_zo = actual[i] ? 1.0 : 0.0;
             double dist = actual_zo - m_Means[i];
             sum += dist * dist*m_Weights[i];
         }
@@ -426,14 +426,14 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     
     //Compute squared Euclidean distance between two tuple's target attributes
     public double calcDistance(ClassesTuple t1, ClassesTuple t2) {
-        double sum = 0.0;       
+        double sum = 0.0;
         boolean[] actual1 = new boolean[m_Hier.getTotal()];
         boolean[] actual2 = new boolean[m_Hier.getTotal()];
         t1.fillBoolArrayNodeAndAncestors(actual1);
         t2.fillBoolArrayNodeAndAncestors(actual2);
         for (int i = 0; i < m_Hier.getTotal(); i++) {
-            double actual_zo1 = actual1[i] ? 1.0 : 0.0; 
-            double actual_zo2 = actual2[i] ? 1.0 : 0.0; 
+            double actual_zo1 = actual1[i] ? 1.0 : 0.0;
+            double actual_zo2 = actual2[i] ? 1.0 : 0.0;
             if (actual_zo1!=actual_zo2) 
                 sum += (actual_zo1-actual_zo2)*(actual_zo1-actual_zo2)*m_Weights[i];
         }
@@ -441,7 +441,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }   
     //RA
     public double calcPtotal(Integer[] permutation) {
-        double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0; 
+        double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
         int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
         if (splitIndex>0){
             N=splitIndex;
@@ -455,10 +455,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);                 
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
                     if (permutation[i]!=permutation[j]){
@@ -466,29 +466,29 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}
                     long indexMap = indexI*(NR)+indexJ;
-                    Double temp= GISHeuristic.m_distances.get(indexMap); 
-                    if (temp!=null) upsum += Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));    
+                    Double temp= GISHeuristic.m_distances.get(indexMap);
+                    if (temp!=null) upsum += Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                     } 
                 }       
                 downsum+=getSquaredDistanceH(exi, m_Weights);
         }
             if (upsum!=0.0 && downsum!=0.0){
-                avgik=((N-M+0.0)*upsum)/(W*downsum);    
-            }else avgik = 1; 
-        double IL=avgik*(N-M);  
+                avgik=((N-M+0.0)*upsum)/(W*downsum);
+            }else avgik = 1;
+        double IL=avgik*(N-M);
         
         //right side
-        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0; 
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
         for (int i = M; i <N; i++) {
             DataTuple exi=m_data.getTuple(permutation[i]);
             boolean[] actual = new boolean[m_Hier.getTotal()];
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);             
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
                     if (permutation[i]!=permutation[j]){
@@ -496,23 +496,23 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}                  
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) upsumR +=Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));    
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) upsumR +=Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                     }  
                 }       
                 downsumR+=getSquaredDistanceH(exi, m_Weights);
         }
-        if (upsumR!=0.0 && downsumR!=0.0) avgikR=((N-M+0.0)*upsumR)/(WR*downsumR); else avgikR = 1;         
+        if (upsumR!=0.0 && downsumR!=0.0) avgikR=((N-M+0.0)*upsumR)/(WR*downsumR); else avgikR = 1;
         double I=1+((IL+avgikR*(N-M))/m_data.getNbRows());
         if (Double.isNaN(I)){
             System.out.println("err!");
             System.exit(-1);
         }
-        return I;               
+        return I;
     }   
     //global Geary C
     public double calcGtotal(Integer[] permutation) {
-        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0; 
+        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
         int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
         if (splitIndex>0){
             N=splitIndex;
@@ -526,10 +526,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);                 
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
                 double w=0;
                 long indexI=permutation[i];
                 long indexJ=permutation[j];
@@ -538,10 +538,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}                      
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         upsum += w*calcDistance(tp,tp1);
-                        W+=w;   
+                        W+=w;
                 }  
                 else{upsum += calcDistance(tp,tp);W+=1; }
                 }       
@@ -550,23 +550,23 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             num=((N-M-1.0)*upsum);
             den=(2*W*downsum);
             if (num!=0.0 && den!=0.0){
-                avgik=num/den;  
-            }else avgik = 0; 
+                avgik=num/den;
+            }else avgik = 0;
         //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
-        double IL=avgik*(N-M);  
+        double IL=avgik*(N-M);
         
         //right side
-        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0; 
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
         for (int i = M; i <N; i++) {
             DataTuple exi=m_data.getTuple(permutation[i]);
             boolean[] actual = new boolean[m_Hier.getTotal()];
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);             
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
                 double w=0;
                 long indexI=permutation[i];
                 long indexJ=permutation[j];
@@ -575,10 +575,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         indexI=permutation[j];
                         indexJ=permutation[i];}
                     long indexMap = indexI*(NR)+indexJ;
-                    Double temp= GISHeuristic.m_distances.get(indexMap); 
-                    if (temp!=null) w=temp; else w=0;   
+                    Double temp= GISHeuristic.m_distances.get(indexMap);
+                    if (temp!=null) w=temp; else w=0;
                     upsumR += w*calcDistance(tp,tp1);
-                    WR+=w;      
+                    WR+=w;
                     }  
                 else{upsumR += calcDistance(tp,tp);WR+=1; }
                 }   
@@ -586,7 +586,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         num=((N-M-1.0)*upsumR);
         den=(2*WR*downsumR);
-        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 0;      
+        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 0;
         //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+upsumR+" downsum: "+downsumR);
         double scaledI=1+((IL+avgikR*(N-M))/m_data.getNbRows());
         //System.out.println();
@@ -594,15 +594,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             System.out.println("err!");
             System.exit(-1);
         }
-        return scaledI;     
+        return scaledI;
     }
     //calculate EquvalentI
     //Equvalent I
     public double calcEquvalentItotal(Integer[] permutation) {                   
         int M = 0;int N = 0;int NR = m_data.getNbRows(); double I=0;
         double avgik=0.0; double avgikR=0.0; double num,den,numR,denR,ikk,ikkR=0.0;
-        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;        
-        M=prevIndex; N=splitIndex;  
+        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;
+        M=prevIndex; N=splitIndex;
 
             if(INITIALIZEPARTIALSUM){ //Annalisa: to check that you need to inizialize the partial sums
                 INITIALIZEPARTIALSUM=false;
@@ -613,12 +613,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi, m_Weights));
                 for (int j = M; j <NR; j++) {
                     DataTuple exj = m_data.getTuple(permutation[j]);
-                    long indexMap = permutation[i]*(NR)+permutation[j];                   
+                    long indexMap = permutation[i]*(NR)+permutation[j];
                     double w=0;
                     if (permutation[i]>permutation[j])
-                        indexMap= permutation[j]*(NR)+permutation[i];     
+                        indexMap= permutation[j]*(NR)+permutation[i];
                     Double temp = GISHeuristic.m_distances.get(indexMap);
-                    if (temp!=null) w=temp; else w=0;   
+                    if (temp!=null) w=temp; else w=0;
                     previousSumWR[0]+=w;
                     previousSumWXXR[0] +=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                 }
@@ -653,13 +653,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             for (int i = 0; i<M; i++) {
                 DataTuple exi = m_data.getTuple(permutation[i]);
                 for (int j = M; j<N; j++) {
-                long indexMap = permutation[i]*(NR)+permutation[j];                   
+                long indexMap = permutation[i]*(NR)+permutation[j];
                 double w=0;
                 DataTuple exj = m_data.getTuple(permutation[j]);
                 if (permutation[i]>permutation[j])
-                    indexMap= permutation[j]*(NR)+permutation[i]; 
+                    indexMap= permutation[j]*(NR)+permutation[i];
                 Double temp = GISHeuristic.m_distances.get(indexMap);
-                if (temp!=null) w=temp; else w=0;   
+                if (temp!=null) w=temp; else w=0;
                 previousSumW[0]+=w;
                 previousSumWXX[0] +=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                 }
@@ -667,14 +667,14 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             //left (old-new)(0-old)
             for (int i = M; i<N; i++) {
                 for (int j = 0; j<M; j++) {
-                long indexMap = permutation[i]*(NR)+permutation[j];                   
+                long indexMap = permutation[i]*(NR)+permutation[j];
                 double w=0;
                 DataTuple exj = m_data.getTuple(permutation[j]);
                 DataTuple exi = m_data.getTuple(permutation[i]);
                 if (permutation[i]>permutation[j])
-                    indexMap= permutation[j]*(NR)+permutation[i]; 
+                    indexMap= permutation[j]*(NR)+permutation[i];
                 Double temp = GISHeuristic.m_distances.get(indexMap);
-                if (temp!=null) w=temp; else w=0;   
+                if (temp!=null) w=temp; else w=0;
                 previousSumW[0]+=w;
                 previousSumWXX[0] +=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                 }
@@ -691,13 +691,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];
                         }
-                    long indexMap = indexI*(NR)+indexJ; 
+                    long indexMap = indexI*(NR)+indexJ;
                     if (permutation[i]>permutation[j])
-                        indexMap= permutation[j]*(NR)+permutation[i]; 
+                        indexMap= permutation[j]*(NR)+permutation[i];
                     Double temp = GISHeuristic.m_distances.get(indexMap);
-                    if (temp!=null) w=temp; else w=0;   
+                    if (temp!=null) w=temp; else w=0;
                     previousSumW[0]+=w;
-                    previousSumWXX[0] +=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));               
+                    previousSumWXX[0] +=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                 }
             }
 
@@ -709,15 +709,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 if(oldX!=Math.sqrt(getSquaredDistanceH(exi,m_Weights)))
                     flagRightAllEqual=false;
                 for (int j = M; j<N; j++) {
-                long indexMap = permutation[i]*(NR)+permutation[j];                   
+                long indexMap = permutation[i]*(NR)+permutation[j];
                 double w=0;
                 DataTuple exj = m_data.getTuple(permutation[j]);
                 if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
                     flagRightAllEqual=false;
                 if (permutation[i]>permutation[j])
-                    indexMap= permutation[j]*(NR)+permutation[i]; 
+                    indexMap= permutation[j]*(NR)+permutation[i];
                 Double temp = GISHeuristic.m_distances.get(indexMap);
-                if (temp!=null) w=temp; else w=0;   
+                if (temp!=null) w=temp; else w=0;
                 previousSumWR[0]-=w;
                 previousSumWXXR[0] -=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));;
                 }
@@ -725,21 +725,21 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             //right (old-new)(new-end)
             for (int i = M; i<N; i++) {
                 for (int j = N; j<NR; j++) {
-                long indexMap = permutation[i]*(NR)+permutation[j];                   
+                long indexMap = permutation[i]*(NR)+permutation[j];
                 double w=0;
                 DataTuple exj = m_data.getTuple(permutation[j]);
                 DataTuple exi = m_data.getTuple(permutation[i]);
                 if (permutation[i]>permutation[j])
-                    indexMap= permutation[j]*(NR)+permutation[i]; 
+                    indexMap= permutation[j]*(NR)+permutation[i];
                 Double temp = GISHeuristic.m_distances.get(indexMap);
-                if (temp!=null) w=temp; else w=0;   
+                if (temp!=null) w=temp; else w=0;
                 previousSumWR[0]-=w;
                 previousSumWXXR[0] -=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                 }
             }
             //right (old-new)(old-new)
             for (int i = M; i < N; i++) {
-                DataTuple exi = m_data.getTuple(permutation[i]); 
+                DataTuple exi = m_data.getTuple(permutation[i]);
                 for (int j = M; j <N; j++) {    
                     DataTuple exj = m_data.getTuple(permutation[j]);
                     double w=0;
@@ -749,11 +749,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];
                         }
-                    long indexMap = indexI*(NR)+indexJ; 
+                    long indexMap = indexI*(NR)+indexJ;
                     if (permutation[i]>permutation[j])
-                        indexMap= permutation[j]*(NR)+permutation[i]; 
+                        indexMap= permutation[j]*(NR)+permutation[i];
                     Double temp = GISHeuristic.m_distances.get(indexMap);
-                    if (temp!=null) w=temp; else w=0;   
+                    if (temp!=null) w=temp; else w=0;
                     previousSumWR[0]-=w;
                     previousSumWXXR[0] -=w*Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                 }
@@ -766,35 +766,35 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             vkupenBrojElementiVoOvojSplit=N;
             num=vkupenBrojElementiVoOvojSplit*previousSumWXX[0];
             den=previousSumW[0]*previousSumX2[0];
-            if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den; 
+            if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den;
                 else ikk= 1;
             
             vkupenBrojElementiVoOvojSplit=NR-N;
             numR=vkupenBrojElementiVoOvojSplit*previousSumWXXR[0];
             denR=previousSumWR[0]*previousSumX2R[0];
             if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR;
-                else ikkR=1;            
+                else ikkR=1;
 
-        avgikR+=ikkR; 
+        avgikR+=ikkR;
         avgik+=ikk;
         //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);      
+        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I=(avgik*N+avgikR*(NR-N))/vkupenBrojElementiVoCelataSuma;
-        M=prevIndex; N=splitIndex;  
+        M=prevIndex; N=splitIndex;
         double scaledI=1+I;
         if (Double.isNaN(scaledI)){
             System.out.println("err!");
             System.exit(-1);
         }
-        return scaledI; 
+        return scaledI;
     }
     
     //calculate Equvalent Geary C
     public double calcEquvalentGtotal(Integer[] permutation) {        
         int M = 0;int N = 0;int NR = m_data.getNbRows(); double I=0;
         double avgik=0.0; double avgikR=0.0; double num,den,numR,denR,ikk,ikkR,W,WR=0.0;
-        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;        
-        M=prevIndex; N=splitIndex;  
+        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;
+        M=prevIndex; N=splitIndex;
         
             if(INITIALIZEPARTIALSUM){ 
                 INITIALIZEPARTIALSUM=false;
@@ -807,10 +807,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumX2R[0] +=getSquaredDistanceH(exi,m_Weights);
                 previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
                 for (int j = M; j <NR; j++) {
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);                                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
                     double w=0;
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
@@ -819,8 +819,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}                      
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         previousSumWR[0]+=w;
                         previousSumWXXR[0] +=w*calcDistance(tp, tp1);
                     }
@@ -864,12 +864,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 DataTuple exi=m_data.getTuple(permutation[i]);
                 boolean[] actual = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
-                tp.fillBoolArrayNodeAndAncestors(actual);   
+                tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j = M; j<N; j++) {
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
                     double w=0;
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
@@ -878,8 +878,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}                      
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         previousSumW[0]+=w;
                         previousSumWXX[0]+=w*calcDistance(tp, tp1);
                     }
@@ -893,10 +893,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
                     double w=0;
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
@@ -905,8 +905,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}                      
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         previousSumW[0]+=w;
                         previousSumWXX[0]+=w*calcDistance(tp, tp1);
                     }
@@ -920,10 +920,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
                     double w=0;
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
@@ -932,8 +932,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}                      
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         previousSumW[0]+=w;
                         previousSumWXX[0]+=w*calcDistance(tp, tp1);
                         }
@@ -952,10 +952,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     flagRightAllEqual=false;
                 for (int j = M; j<N; j++) {
                 double w=0;
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);                                         
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
                 if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
                     flagRightAllEqual=false;
                     long indexI=permutation[i];
@@ -965,8 +965,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         previousSumWR[0]-=w;
                         previousSumWXXR[0]-=w*calcDistance(tp, tp1);
                     }
@@ -980,10 +980,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
                     double w=0;
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
@@ -992,8 +992,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}                      
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         previousSumWR[0]-=w;
                         previousSumWXXR[0]-=w*calcDistance(tp, tp1);
                     }
@@ -1007,10 +1007,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                 tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j = M; j <N; j++) {                        
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
                     double w=0;
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
@@ -1019,8 +1019,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexI=permutation[j];
                             indexJ=permutation[i];}                      
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         previousSumWR[0]-=w;
                         previousSumWXXR[0]-=w*calcDistance(tp, tp1);
                     }
@@ -1034,19 +1034,19 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         vkupenBrojElementiVoOvojSplit=N;
         num=(vkupenBrojElementiVoOvojSplit-1)* previousSumWXX[0];
         den=2*previousSumW[0]*previousSumX2[0];
-        if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den; 
+        if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den;
             else ikk= 0;
             
         vkupenBrojElementiVoOvojSplit=NR-N;
         numR=(vkupenBrojElementiVoOvojSplit-1)*previousSumWXXR[0];
         denR=2*previousSumWR[0]*previousSumX2R[0];
-        if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR; 
-            else ikkR=0;            
+        if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR;
+            else ikkR=0;
 
         //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
         //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I=(ikk*N+ikkR*(NR-N))/vkupenBrojElementiVoCelataSuma;
-        M=prevIndex; N=splitIndex;          
+        M=prevIndex; N=splitIndex;
         double scaledI=1+I;
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)){
@@ -1057,7 +1057,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
     //Moran I
     public double calcItotal(Integer[] permutation) {
-        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0; 
+        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
         int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
         if (splitIndex>0){
             N=splitIndex;
@@ -1071,10 +1071,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);                 
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
                 double w=0;
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
@@ -1084,10 +1084,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                             indexJ=permutation[i];
                         }
                         long indexMap = indexI*(NR)+indexJ;
-                        Double temp= GISHeuristic.m_distances.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distances.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         upsum += w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
-                        W+=w;   
+                        W+=w;
                     }  
                     else{upsum += getSquaredDistanceH(exi,m_Weights);W+=1; }
                 }       
@@ -1096,24 +1096,24 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             num=((N-M+0.0)*upsum);
             den=(W*downsum);
             if (num!=0.0 && den!=0.0){
-                avgik=num/den;  
-            }else avgik = 1; 
+                avgik=num/den;
+            }else avgik = 1;
         //System.out.println("w: "+W+"num: "+num+"den: "+den+"Left Moran I: "+avgik+"ex: "+((N-M)));
         //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
-        double IL=avgik*(N-M);  
+        double IL=avgik*(N-M);
         
         //right side
-        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0; 
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
         for (int i = M; i <N; i++) {
             DataTuple exi=m_data.getTuple(permutation[i]);
             boolean[] actual = new boolean[m_Hier.getTotal()];
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);                                 
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
                 double w=0;
                     long indexI=permutation[i];
                     long indexJ=permutation[j];
@@ -1122,10 +1122,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         indexI=permutation[j];
                         indexJ=permutation[i];}                      
                     long indexMap = indexI*(NR)+indexJ;
-                    Double temp= GISHeuristic.m_distances.get(indexMap); 
-                    if (temp!=null) w=temp; else w=0;   
+                    Double temp= GISHeuristic.m_distances.get(indexMap);
+                    if (temp!=null) w=temp; else w=0;
                     upsumR += w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
-                    WR+=w;      
+                    WR+=w;
                     }  
                     else{upsumR += getSquaredDistanceH(exi,m_Weights);WR+=1; }
                 }       
@@ -1133,7 +1133,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         num=((N-M+0.0)*upsumR);
         den=(WR*downsumR);
-        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 1;      
+        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 1;
         //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+num+" downsum: "+den);
         double I=(IL+avgikR*(N-M))/m_data.getNbRows();
         double scaledI=1+I;
@@ -1141,13 +1141,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             System.out.println("err!");
             System.exit(-1);
         }
-        return scaledI;             
+        return scaledI;
     }
     //global I with distance file
     public double calcItotalD(Integer[] permutation) {
-        ClusSchema schema = m_data.getSchema(); 
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];   
-        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0; 
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
         int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
         if (splitIndex>0){
             N=splitIndex;
@@ -1159,17 +1159,17 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             DataTuple exi=m_data.getTuple(permutation[i]);
             String xxi = xt.getString(exi);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                             
-                String yyi = xt.getString(exj);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                String yyi = xt.getString(exj);
                 double w=0;
                 String indexI=xxi;
                 String indexJ=yyi;
                     if (indexI!=indexJ){                        
                         String indexMap = indexI +"#"+indexJ;
-                        Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         upsum += w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
-                        W+=w;   
+                        W+=w;
                     }  
                     else{upsum += getSquaredDistanceH(exi,m_Weights);W+=1;}
                 }       
@@ -1177,27 +1177,27 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
             num=((N-M+0.0)*upsum);
             den=(W*downsum);
-            if (num!=0.0 && den!=0.0) avgik=num/den; else avgik = 1; 
+            if (num!=0.0 && den!=0.0) avgik=num/den; else avgik = 1;
         //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
-        double IL=avgik*(N-M);  
+        double IL=avgik*(N-M);
         
         //right side
-        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0; 
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
         for (int i = M; i <N; i++) {
             DataTuple exi=m_data.getTuple(permutation[i]);
             String xxi = xt.getString(exi);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                         
-                String yyi = xt.getString(exj);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
+                String yyi = xt.getString(exj);
                 double w=0;
                 String indexI=xxi;
                 String indexJ=yyi;
                 if (indexI!=indexJ){                        
                         String indexMap = indexI +"#"+indexJ;
-                        Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         upsumR += w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
-                        WR+=w;      
+                        WR+=w;
                     }  
                     else{upsumR += getSquaredDistanceH(exi,m_Weights);WR+=1; }
                 }       
@@ -1205,7 +1205,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         num=(N-M+0.0)*upsumR;
         den=WR*downsumR;
-        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 1;      
+        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 1;
         //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+upsum+" downsum: "+downsum);
         double I=(IL+avgikR*(N-M))/m_data.getNbRows();
         double scaledI=1+I;
@@ -1214,13 +1214,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             System.out.println("err!");
             System.exit(-1);
         }
-        return scaledI;             
+        return scaledI;
     }
     //RA with distance file
     public double calcPDistance(Integer[] permutation) {
-        ClusSchema schema = m_data.getSchema(); 
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];   
-        double avgik = 0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0; int M = 0; int N = m_data.getNbRows(); 
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        double avgik = 0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0; int M = 0; int N = m_data.getNbRows();
         if (splitIndex>0){
             N=splitIndex;
         }else{
@@ -1234,23 +1234,23 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);                 
-                String yyi = xt.getString(exj);                 
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
                 String indexI=xxi;
                 String indexJ=yyi;
                 if (indexI!=indexJ){                        
                         String indexMap = indexI +"#"+indexJ;
-                        Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                        if (temp!=null) upsum += Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));    
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) upsum += Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                     }  
                 }       
                 downsum+=getSquaredDistanceH(exi, m_Weights);
         }
-        if (upsum!=0.0 && downsum!=0.0) avgik=upsum/downsum; else avgik = 1; 
-        double IL=avgik*(N-M);  
+        if (upsum!=0.0 && downsum!=0.0) avgik=upsum/downsum; else avgik = 1;
+        double IL=avgik*(N-M);
         
         //right side
         N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;
@@ -1261,36 +1261,36 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                String yyi = xt.getString(exj);                 
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
                 String indexI=xxi;
                 String indexJ=yyi;
                 if (indexI!=indexJ){                        
                         String indexMap = indexI +"#"+indexJ;
-                        Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                        if (temp!=null) upsumR +=Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));    
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) upsumR +=Math.sqrt(getSquaredDistanceH(exi, m_Weights)*getSquaredDistanceH(exj, m_Weights));
                     }  
                 }       
                 downsumR+=getSquaredDistanceH(exi, m_Weights);
         }
-        if (upsumR!=0.0 && downsumR!=0.0) avgikR=upsumR/downsumR; else avgikR = 1;      
+        if (upsumR!=0.0 && downsumR!=0.0) avgikR=upsumR/downsumR; else avgikR = 1;
         double I=1+((IL+avgikR*(N-M))/m_data.getNbRows());
         //System.out.println(I);
         if (Double.isNaN(I)){
             System.out.println("err!");
             System.exit(-1);
         }
-        return I;               
+        return I;
     }   
     //Geary with distance file
     // global C calculation with a separate distance file
     public double calcGtotalD(Integer[] permutation) {
-        ClusSchema schema = m_data.getSchema(); 
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];   
-        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0; 
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        double num,den; double avgik = 0; double W = 0.0; double upsum=0.0;double downsum=0.0;double upsumR=0.0;double downsumR=0.0;
         int M = 0; int N = m_data.getNbRows(); long NR = m_data.getNbRows();
         if (splitIndex>0){
             N=splitIndex;
@@ -1305,20 +1305,20 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);                 
-                String yyi = xt.getString(exj);                 
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
                 double w=0;
                 String indexI=xxi;
                 String indexJ=yyi;
                 if (indexI!=indexJ){                        
                         String indexMap = indexI +"#"+indexJ;
-                        Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         upsum += w*calcDistance(tp,tp1);
-                        W+=w;   
+                        W+=w;
                     }  
                     else{
                         upsum += calcDistance(tp,tp);
@@ -1329,13 +1329,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             num=((N-M-1.0)*upsum);
             den=(2*W*downsum);
             if (num!=0.0 && den!=0.0){
-                avgik=num/den;  
-            }else avgik = 0; 
+                avgik=num/den;
+            }else avgik = 0;
         //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
-        double IL=avgik*(N-M);  
+        double IL=avgik*(N-M);
         
         //right side
-        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0; 
+        N = m_data.getNbRows(); M=splitIndex;double avgikR = 0;double WR = 0.0;
         for (int i = M; i <N; i++) {
             DataTuple exi=m_data.getTuple(permutation[i]);
             String xxi = xt.getString(exi);
@@ -1343,20 +1343,20 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
             tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j =M; j < N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                String yyi = xt.getString(exj);                 
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
                 double w=0;
                 String indexI=xxi;
                 String indexJ=yyi;
                 if (indexI!=indexJ){                        
                         String indexMap = indexI +"#"+indexJ;
-                        Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         upsumR += w*calcDistance(tp,tp1);
-                        WR+=w;      
+                        WR+=w;
                     }  
                     else{
                         upsumR += calcDistance(tp,tp);
@@ -1366,7 +1366,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         num=((N-M-1.0)*upsumR);
         den=(2*WR*downsumR);
-        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 0;      
+        if (num!=0.0 && den!=0.0) avgikR=num/den; else avgikR = 0;
         //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+num+" downsum: "+den);
         double scaledI=1+((IL+avgikR*(N-M))/m_data.getNbRows());
         //System.out.println(scaledI);
@@ -1374,16 +1374,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             System.out.println("err!");
             System.exit(-1);
         }
-        return scaledI;     
+        return scaledI;
     }
     //calculate EquvalentI with Distance file
     public double calcEquvalentIDistance(Integer[] permutation) {        
-        ClusSchema schema = m_data.getSchema(); 
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];   
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         int M = 0;int N = 0;int NR = m_data.getNbRows(); double I=0;
         double num,den,numR,denR,ikk,ikkR=0.0;
-        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;        
-        M=prevIndex; N=splitIndex;  
+        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;
+        M=prevIndex; N=splitIndex;
         
             if(INITIALIZEPARTIALSUM){ 
                 INITIALIZEPARTIALSUM=false;
@@ -1397,18 +1397,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumX2R[0] +=getSquaredDistanceH(exi,m_Weights);
                 previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
                 for (int j = M; j <NR; j++) {
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                             previousSumWR[0]+=w;
                             previousSumWXXR[0] +=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
@@ -1453,20 +1453,20 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 String xxi = xt.getString(exi);
                 boolean[] actual = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
-                tp.fillBoolArrayNodeAndAncestors(actual);   
+                tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j = M; j<N; j++) {
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);     
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                             previousSumW[0]+=w;
                             previousSumWXX[0]+=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
@@ -1481,18 +1481,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);     
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                             previousSumW[0]+=w;
                             previousSumWXX[0]+=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
@@ -1507,18 +1507,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);     
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                             previousSumW[0]+=w;
                             previousSumWXX[0]+=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                         }
@@ -1538,19 +1538,19 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     flagRightAllEqual=false;
                 for (int j = M; j<N; j++) {
                 double w=0;
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                String yyi = xt.getString(exj);                             
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
                 if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
                     flagRightAllEqual=false;
                 String indexI=xxi;
                 String indexJ=yyi;
                 if (indexI!=indexJ){                        
                         String indexMap = indexI +"#"+indexJ;
-                        Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         previousSumWR[0]-=w;
                         previousSumWXXR[0]-=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
@@ -1565,18 +1565,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                             previousSumWR[0]-=w;
                             previousSumWXXR[0]-=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
@@ -1591,18 +1591,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                 tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j = M; j <N; j++) {                        
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                     previousSumWR[0]-=w;
                     previousSumWXXR[0]-=w*Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
@@ -1623,11 +1623,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         numR=vkupenBrojElementiVoOvojSplit*previousSumWXXR[0];
         denR=previousSumWR[0]*previousSumX2R[0];
         if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR; //I for each target
-            else ikkR=1;            
+            else ikkR=1;
         //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
         //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I=(ikk*N+ikkR*(NR-N))/vkupenBrojElementiVoCelataSuma;
-        M=prevIndex; N=splitIndex;          
+        M=prevIndex; N=splitIndex;
         double scaledI=1+I;
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)){
@@ -1638,10 +1638,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
     //calculate EquvalentP with Distance file
     public double calcEquvalentPDistance(Integer[] permutation) {        
-        ClusSchema schema = m_data.getSchema(); 
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];   
-        int M = 0;int N = 0;int NR = m_data.getNbRows(); int vkupenBrojElementiVoCelataSuma = NR;double I=0;double ikk,ikkR=0.0;                
-        M=prevIndex; N=splitIndex;  
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        int M = 0;int N = 0;int NR = m_data.getNbRows(); int vkupenBrojElementiVoCelataSuma = NR;double I=0;double ikk,ikkR=0.0;
+        M=prevIndex; N=splitIndex;
         
             if(INITIALIZEPARTIALSUM){ 
                 INITIALIZEPARTIALSUM=false;
@@ -1655,16 +1655,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumX2R[0] +=getSquaredDistanceH(exi,m_Weights);
                 previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
                 for (int j = M; j <NR; j++) {
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
                             if (temp!=null) previousSumWXXR[0] +=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
                     //else {previousSumWXXR[0]+=getSquaredDistanceH(exi,m_Weights);}
@@ -1708,18 +1708,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 String xxi = xt.getString(exi);
                 boolean[] actual = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
-                tp.fillBoolArrayNodeAndAncestors(actual);   
+                tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j = M; j<N; j++) {
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);     
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
                             if (temp!=null) previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     } 
                     //else {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
@@ -1733,16 +1733,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);     
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
                             if (temp!=null) previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
                     //else {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
@@ -1756,16 +1756,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);     
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
                             if (temp!=null) previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
                     //else {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
@@ -1783,18 +1783,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 if(oldX!=Math.sqrt(getSquaredDistanceH(exi,m_Weights)))
                     flagRightAllEqual=false;
                 for (int j = M; j<N; j++) {
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                String yyi = xt.getString(exj);                             
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
                 if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
                     flagRightAllEqual=false;
                 String indexI=xxi;
                 String indexJ=yyi;
                 if (indexI!=indexJ){                        
                         String indexMap = indexI +"#"+indexJ;
-                        Double temp= GISHeuristic.m_distancesS.get(indexMap); 
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
                         if (temp!=null) previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                 }
                 //else {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
@@ -1808,16 +1808,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
                             if (temp!=null) previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
                     //else {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
@@ -1831,16 +1831,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                 tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j = M; j <N; j++) {                        
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
                             if (temp!=null) previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));
                     }
                     //else {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
@@ -1848,12 +1848,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             }
         }
             
-        if(previousSumX2[0]!=0 && previousSumWXX[0]!=0 && !flagLeftAllEqual) ikk=previousSumWXX[0]/previousSumX2[0]; else ikk=1;                    
-        if(previousSumX2R[0]!=0 && previousSumWXXR[0]!=0 && !flagRightAllEqual) ikkR=previousSumWXXR[0]/previousSumX2R[0]; else ikkR=1;         
+        if(previousSumX2[0]!=0 && previousSumWXX[0]!=0 && !flagLeftAllEqual) ikk=previousSumWXX[0]/previousSumX2[0]; else ikk=1;
+        if(previousSumX2R[0]!=0 && previousSumWXXR[0]!=0 && !flagRightAllEqual) ikkR=previousSumWXXR[0]/previousSumX2R[0]; else ikkR=1;
         //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
         //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I=(ikk*N+ikkR*(NR-N))/vkupenBrojElementiVoCelataSuma;
-        M=prevIndex; N=splitIndex;          
+        M=prevIndex; N=splitIndex;
         double scaledI=1+I;
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)){
@@ -1865,12 +1865,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     //Equvalent Geary with distance file
     //calculate Equvalent Geary C with Distance file
     public double calcEquvalentGDistance(Integer[] permutation) {        
-        ClusSchema schema = m_data.getSchema(); 
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];   
+        ClusSchema schema = m_data.getSchema();
+        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         int M = 0;int N = 0;int NR = m_data.getNbRows(); double I=0;
         double avgik=0.0; double avgikR=0.0; double num,den,numR,denR,ikk,ikkR,W,WR=0.0;
-        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;        
-        M=prevIndex; N=splitIndex;  
+        int vkupenBrojElementiVoOvojSplit = N-M;int vkupenBrojElementiVoCelataSuma = NR;
+        M=prevIndex; N=splitIndex;
         
             if(INITIALIZEPARTIALSUM){ 
                 INITIALIZEPARTIALSUM=false;
@@ -1884,18 +1884,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumX2R[0] +=getSquaredDistanceH(exi,m_Weights);
                 previousSumXR[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights));
                 for (int j = M; j <NR; j++) {
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                             previousSumWR[0]+=w;
                             previousSumWXXR[0] +=w*calcDistance(tp, tp1);
                     }
@@ -1940,20 +1940,20 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 String xxi = xt.getString(exi);
                 boolean[] actual = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
-                tp.fillBoolArrayNodeAndAncestors(actual);   
+                tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j = M; j<N; j++) {
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);     
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp;else w=0;    
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp;else w=0;
                             previousSumW[0]+=w;
                             previousSumWXX[0]+=w*calcDistance(tp, tp1);
                     }
@@ -1968,18 +1968,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);     
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                             previousSumW[0]+=w;
                             previousSumWXX[0]+=w*calcDistance(tp, tp1);
                     }
@@ -1994,18 +1994,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);     
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                             previousSumW[0]+=w;
                             previousSumWXX[0]+=w*calcDistance(tp, tp1);
                         }
@@ -2025,19 +2025,19 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     flagRightAllEqual=false;
                 for (int j = M; j<N; j++) {
                 double w=0;
-                DataTuple exj = m_data.getTuple(permutation[j]);                 
+                DataTuple exj = m_data.getTuple(permutation[j]);
                 boolean[] actual1 = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                String yyi = xt.getString(exj);                             
+                tp1.fillBoolArrayNodeAndAncestors(actual1);
+                String yyi = xt.getString(exj);
                 if(Math.sqrt(getSquaredDistanceH(exi,m_Weights))!=oldX)
                     flagRightAllEqual=false;
                 String indexI=xxi;
                 String indexJ=yyi;
                 if (indexI!=indexJ){                        
                         String indexMap = indexI +"#"+indexJ;
-                        Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                        if (temp!=null) w=temp; else w=0;   
+                        Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                        if (temp!=null) w=temp; else w=0;
                         previousSumWR[0]-=w;
                         previousSumWXXR[0]-=w*calcDistance(tp, tp1);
                     }
@@ -2052,18 +2052,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     boolean[] actual = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                     tp.fillBoolArrayNodeAndAncestors(actual);
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                             previousSumWR[0]-=w;
                             previousSumWXXR[0]-=w*calcDistance(tp, tp1);
                     }
@@ -2078,18 +2078,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 ClassesTuple tp = (ClassesTuple)exi.getObjVal(m_Hier.getType().getArrayIndex());
                 tp.fillBoolArrayNodeAndAncestors(actual);
                 for (int j = M; j <N; j++) {                        
-                    DataTuple exj = m_data.getTuple(permutation[j]);                 
+                    DataTuple exj = m_data.getTuple(permutation[j]);
                     boolean[] actual1 = new boolean[m_Hier.getTotal()];
                     ClassesTuple tp1 = (ClassesTuple)exj.getObjVal(m_Hier.getType().getArrayIndex());
-                    tp1.fillBoolArrayNodeAndAncestors(actual1);             
-                    String yyi = xt.getString(exj);                 
+                    tp1.fillBoolArrayNodeAndAncestors(actual1);
+                    String yyi = xt.getString(exj);
                     double w=0;
                     String indexI=xxi;
                     String indexJ=yyi;
                     if (indexI!=indexJ){                        
                             String indexMap = indexI +"#"+indexJ;
-                            Double temp= GISHeuristic.m_distancesS.get(indexMap); 
-                            if (temp!=null) w=temp; else w=0;   
+                            Double temp= GISHeuristic.m_distancesS.get(indexMap);
+                            if (temp!=null) w=temp; else w=0;
                     previousSumWR[0]-=w;
                     previousSumWXXR[0]-=w*calcDistance(tp, tp1);
                     }
@@ -2103,19 +2103,19 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         vkupenBrojElementiVoOvojSplit=N;
         num=(vkupenBrojElementiVoOvojSplit-1)* previousSumWXX[0];
         den=2*previousSumW[0]*previousSumX2[0];
-        if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den; 
+        if(den!=0 && num!=0 && !flagLeftAllEqual) ikk=num/den;
             else ikk= 0;
             
         vkupenBrojElementiVoOvojSplit=NR-N;
         numR=(vkupenBrojElementiVoOvojSplit-1)*previousSumWXXR[0];
         denR=2*previousSumWR[0]*previousSumX2R[0];
-        if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR; 
-            else ikkR=0;            
+        if(denR!=0 && numR!=0 && !flagRightAllEqual) ikkR=numR/denR;
+            else ikkR=0;
 
         //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
         //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+den+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I=(avgik*N+avgikR*(NR-N))/vkupenBrojElementiVoCelataSuma;
-        M=prevIndex; N=splitIndex;          
+        M=prevIndex; N=splitIndex;
         double scaledI=2-I;
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)){
@@ -2126,7 +2126,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
     
     public void setData(RowData data) {
-        m_data = data;  
+        m_data = data;
     }
 
     public void setSplitIndex(int i) {
@@ -2145,11 +2145,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     public void initializeSum() {
         Arrays.fill(previousSumX, 0.0);
         Arrays.fill(previousSumXR, 0.0);
-        Arrays.fill(previousSumW, 0.0);     
+        Arrays.fill(previousSumW, 0.0);
         Arrays.fill(previousSumWXX, 0.0);
         Arrays.fill(previousSumWX, 0.0);
         Arrays.fill(previousSumX2, 0.0);
-        Arrays.fill(previousSumWR, 0.0);        
+        Arrays.fill(previousSumWR, 0.0);
         Arrays.fill(previousSumWXXR, 0.0);
         Arrays.fill(previousSumWXR, 0.0);
         Arrays.fill(previousSumX2R, 0.0);

@@ -83,6 +83,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public DepthFirstInduce(ClusInductionAlgorithm other, ClusStatManager mgr, boolean parallelism) {
         super(other, mgr);
         m_FindBestTest = new FindBestTest(getStatManager());
+        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
 
     }
 
@@ -90,7 +91,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public DepthFirstInduce(ClusInductionAlgorithm other, NominalSplit split) {
         super(other);
         m_FindBestTest = new FindBestTest(getStatManager(), split);
-        m_find_MinMax = new FindBestTest(getStatManager());
+        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
     }
 
 
