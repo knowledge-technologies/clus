@@ -205,26 +205,28 @@ public class ClusOutput {
         }
 
         // print multi-label thresholds
-        if (cr.getStatManager().getSettings().getMLC().getSectionMultiLabel().isEnabled() && !cr.getStatManager().getSettings().getRelief().isRelief()) {
+        if (cr.getStatManager().getSettings().getMLC().shouldShowThresholds()) {
+
             String mlThresholdsTitle = "MultiLabelThresholds:";
             m_Writer.println(mlThresholdsTitle);
             m_Writer.println(StringUtils.makeString('-', mlThresholdsTitle.length()));
             for (int i = 0; i < cr.getNbModels(); i++) {
                 ClusModel root = (ClusModel) models.get(i);
                 String modelName = cr.getModelInfo(i).getName();
-                if (root instanceof ClusNode) {
-                    m_Writer.println(modelName);
-                    ((ClusNode) root).printMultiLabelThresholds(m_Writer, -1);
-                    m_Writer.println();
-                }
-                else if (root instanceof ClusForest) {
-                    m_Writer.println(modelName);
-                    ClusForest forest = (ClusForest) root;
-                    int forestSize = forest.getModelSize();
-                    for (int tree = 0; tree < forestSize; tree++) {
-                        ((ClusNode) forest.getModel(tree)).printMultiLabelThresholds(m_Writer, tree);
+                if(cr.getStatManager().getSettings().getMLC().shouldShowThresholds(modelName)){
+                    if (root instanceof ClusForest) {
+                        m_Writer.println(modelName);
+                        ClusForest forest = (ClusForest) root;
+                        int forestSize = forest.getModelSize();
+                        for (int tree = 0; tree < forestSize; tree++) {
+                            ((ClusNode) forest.getModel(tree)).printMultiLabelThresholds(m_Writer, tree);
+                        }
+                        m_Writer.println();
+                    } else if (root instanceof ClusNode) {
+                        m_Writer.println(modelName);
+                        ((ClusNode) root).printMultiLabelThresholds(m_Writer, -1);
+                        m_Writer.println();
                     }
-                    m_Writer.println();
                 }
             }
         }

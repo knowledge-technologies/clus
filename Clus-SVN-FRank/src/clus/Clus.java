@@ -156,18 +156,6 @@ public class Clus implements CMDLineArgsProvider {
     private ClusHMTRHierarchy m_HMTRHierarchy;
 
 
-//    private static String getRelativePath(File file, File folder) {
-//        String filePath = file.getAbsolutePath();
-//        String folderPath = folder.getAbsolutePath();
-//        if (filePath.startsWith(folderPath)) {
-//            return filePath.substring(folderPath.length() + 1);
-//        }
-//        else {
-//            return null;
-//        }
-//    }
-
-
     public final void initialize(CMDLineArgs cargs, ClusInductionAlgorithmType clss) throws IOException, ClusException {
         m_CmdLine = cargs;
         m_Classifier = clss;
@@ -1789,7 +1777,28 @@ public class Clus implements CMDLineArgsProvider {
         return m_Sett.getGeneric().getAppName();
     }
 
-
+    private static void tryAnalyzePredictions(Clus clus, Settings sett){
+    	//daniela  only form 1 target
+        int ts_size = clus.getNbRows();
+        double b = clus.getSettings().getTree().getBandwidth();
+        String ts_name = sett.getGeneric().getAppNameWithSuffix() + ".test.pred.arff";
+        try{
+            // NumericAttrType[] t = clus.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            NominalAttrType[] t = clus.m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            // System.out.println(t.length); // matejp commented this out
+            if (t.length == 1) {
+            	PredictionAnalyzer.calculateI(ts_name, ts_size, b);
+            } else{
+            	PredictionAnalyzer.calculateBI(ts_name, ts_size, b);
+            }
+        }catch (Exception e){
+            e.printStackTrace();
+            System.err.println("Prediction analysis failed.");
+        }
+        //end daniela
+    }
+    
+    
     public static void main(String[] args) {
         try {
             ClusOutput.printHeader();
@@ -1969,6 +1978,9 @@ public class Clus implements CMDLineArgsProvider {
             if (Debug.debug == 1)
                 ClusStat.show();
             DebugFile.close();
+            if(!sett.getAttribute().isNullGIS()){
+                tryAnalyzePredictions(clus, sett);
+            }
         }
         catch (ClusException e) {
             System.err.println();

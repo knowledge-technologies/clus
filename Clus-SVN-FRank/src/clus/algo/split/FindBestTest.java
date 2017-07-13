@@ -29,11 +29,18 @@ import clus.data.ClusSchema;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
 import clus.data.rows.RowDataSortHelper;
+
 import clus.data.type.primitive.NominalAttrType;
 import clus.data.type.primitive.NumericAttrType;
+import clus.data.type.ClusAttrType;
 import clus.ext.ensembles.ClusEnsembleInduce;
+import clus.heuristic.ClusHeuristic;
+import clus.heuristic.GISHeuristic;
+import clus.heuristic.VarianceReductionHeuristicCompatibility;
+import clus.heuristic.VarianceReductionHeuristicEfficient;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
 import clus.util.ClusRandom;
@@ -49,19 +56,25 @@ public class FindBestTest {
     protected ClusStatManager m_StatManager;
     protected NominalSplit m_Split;
     protected int m_MaxStats;
-    
+
+    // daniela
+    private RowData m_NodeData;
+    public double hMaxB = Double.NEGATIVE_INFINITY;
+    public double hMinB = Double.POSITIVE_INFINITY;
+    // daniela end
+
 
     public FindBestTest(ClusStatManager mgr) {
         m_StatManager = mgr;
         m_MaxStats = getSchema().getMaxNbStats();
-        
+
         m_BestTest = new CurrentBestTestAndHeuristic(mgr.getSettings().getGeneric().getVerbose());
     }
 
 
     public FindBestTest(ClusStatManager mgr, NominalSplit split) {
         this(mgr);
-        
+
         m_Split = split;
     }
 
@@ -96,13 +109,82 @@ public class FindBestTest {
     }
 
 
+    // daniela
+    public void rememberMinMax(NominalAttrType at, RowData data) {
+        findNominal(at, data, null);
+        ClusStatistic m_CStat = m_StatManager.createClusteringStat();
+        m_CStat.add(m_BestTest.m_TestStat[0]);
+        double heur = m_BestTest.calcHeuristic(m_BestTest.m_TotStat, m_CStat);
+        if (heur != Double.POSITIVE_INFINITY && heur != Double.NEGATIVE_INFINITY) {
+            if (heur > hMaxB) {
+                hMaxB = heur;
+            }
+            if (heur < hMinB) {
+                hMinB = heur;
+            }
+        }
+        //System.out.println(heur+" "+hMinB+" -- "+hMaxB);
+    }
+    // daniela end
+
+
     public void findNominal(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) {
-        // Reset positive statistic
         // long start_time = System.currentTimeMillis();
         RowData sample = createSample(data, rnd);
         int nbvalues = at.getNbValues();
-        m_BestTest.reset(nbvalues + 1);
+        m_BestTest.reset(nbvalues + 1); // Reset positive statistic
         int nb_rows = sample.getNbRows();
+
+        if (!data.getSchema().getSettings().getAttribute().isNullGIS()) { // handle Daniela
+            // daniela
+            //generateMatrix for each attribute GISHeuristic           
+            Integer[] indicesSorted = new Integer[nb_rows]; // matejp: no sorting here, but needed for technical reasons
+            for (int i = 0; i < nb_rows; i++) {
+                indicesSorted[i] = i;
+            }
+            try {
+                ClusHeuristic m_Heuristic = m_StatManager.getHeuristic();
+                if (m_Heuristic instanceof VarianceReductionHeuristicCompatibility) {
+                    VarianceReductionHeuristicCompatibility gisHeuristic = (VarianceReductionHeuristicCompatibility) m_Heuristic;
+                    ClusAttrType[] arr = at.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_GIS); //numeric and string GIS
+                    if (arr.length == 1) {
+                        gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
+                    }
+                    else
+                        gisHeuristic.generateMatrix(sample); // 2 coordinates 
+                }
+                else if (m_Heuristic instanceof GISHeuristic) {
+                    GISHeuristic gisHeuristic = (GISHeuristic) m_Heuristic;
+                    ClusAttrType[] arr = at.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_GIS); //numeric and string GIS
+                    if (arr.length == 1) {
+                        gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
+                    }
+                    else
+                        gisHeuristic.generateMatrix(sample, indicesSorted); // 2 coordinates 
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error calculating GISHEuristics!");
+                System.exit(1);
+            }
+
+            ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
+            ((ClusStatistic) m_BestTest.m_TotStat).setData(sample);
+            ((ClusStatistic) m_BestTest.m_TotStat).setSplitIndex(sample.getNbRows());
+            ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
+            ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
+
+            for (int i = 0; i < nb_rows; i++) {
+                DataTuple tuple = sample.getTuple(i);
+                int value = at.getNominal(tuple);
+                ((ClusStatistic) m_BestTest.m_TestStat[value]).setData(sample);
+                ((ClusStatistic) m_BestTest.m_TestStat[value]).initializeSum();
+                ((ClusStatistic) m_BestTest.m_TestStat[value]).setPrevIndex(0);
+            }
+            // daniela end
+        }
+
         if (nbvalues == 2 && !at.hasMissing()) {
             // Only count ones for binary attributes (optimization)
             for (int i = 0; i < nb_rows; i++) {
@@ -111,6 +193,7 @@ public class FindBestTest {
                 // The value "1" has index 0 in the list of attribute values
                 if (value == 0) {
                     m_BestTest.m_TestStat[0].updateWeighted(tuple, i);
+                    m_BestTest.m_TestStat[0].setSplitIndex(i + 1); // daniela
                 }
             }
             // Also compute the statistic for the zeros
@@ -123,6 +206,7 @@ public class FindBestTest {
                 DataTuple tuple = sample.getTuple(i);
                 int value = at.getNominal(tuple);
                 m_BestTest.m_TestStat[value].updateWeighted(tuple, i);
+                ((ClusStatistic) m_BestTest.m_TestStat[value]).setSplitIndex(i + 1); // daniela
             }
         }
 
@@ -191,14 +275,14 @@ public class FindBestTest {
     public void findNumeric(NumericAttrType at, RowData data, ClusRandomNonstatic rnd) {
         RowData sample = createSample(data, rnd);
         DataTuple tuple;
-//        if (at.isSparse()) {
-//            sample.sortSparse(at, m_SortHelper);
-//        }
-//        else {
-//            sample.sort(at);
-//        }
+        //        if (at.isSparse()) {
+        //            sample.sortSparse(at, m_SortHelper);
+        //        }
+        //        else {
+        //            sample.sort(at);
+        //        }
         Integer[] indicesSorted = sample.smartSort(at);
-        
+
         m_BestTest.reset(2);
         // Missing values
         int pos = 0;
@@ -213,28 +297,115 @@ public class FindBestTest {
             }
             m_BestTest.subtractMissing();
         }
-        double minValue =  (pos < nb_rows) ? at.getNumeric(sample.getTuple(indicesSorted[nb_rows - 1])) : Double.NaN;
+
         double prev = Double.NaN;
-        boolean isSparseAtr = at.isSparse();
-        
-        double tot_corr_SVarS = 0.0;  // does not matter to which value we choose;
-//        boolean isEfficient = m_BestTest.m_Heuristic.isEfficient();
-//		if(isEfficient){
-//			tot_corr_SVarS = m_BestTest.m_TotCorrStat.getSVarS(m_BestTest.m_Heuristic.getClusteringAttributeWeights());
-////			m_BestTest.m_Heuristic.setSplitStatSVarS(tot_corr_SVarS);
-//		}
-        
-        for (int i = pos; i < nb_rows; i++) {
-            tuple = sample.getTuple(indicesSorted[i]);
-            double value = at.getNumeric(tuple);
-            if (value != prev) {
-            	m_BestTest.updateNumeric(value, at, tot_corr_SVarS, false); // isEfficient
-                prev = value;
+        boolean isDaniela = !data.getSchema().getSettings().getAttribute().isNullGIS();
+        if (isDaniela) { // handle Daniela
+            // daniela
+            ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
+            ((ClusStatistic) m_BestTest.m_TotCorrStat).setData(sample);
+            ((ClusStatistic) m_BestTest.m_TotCorrStat).setSplitIndex(sample.getNbRows());
+            ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
+            ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
+            ((ClusStatistic) m_BestTest.m_TotCorrStat).initializeSum();
+            //for scaling of h -regression (daniela)
+            if ((m_BestTest.m_Heuristic instanceof GISHeuristic || m_BestTest.m_Heuristic instanceof VarianceReductionHeuristicCompatibility) && (SettingsTree.ALPHA != 1.0)) {
+                for (int i = pos; i < nb_rows; i++) {
+                    tuple = sample.getTuple(indicesSorted[i]); // every such tuple is positive or, as some people say, sekoj vakov tuple pripaga vo positive
+                    double value = at.getNumeric(tuple);
+                    if (value != prev) {
+                        if (value != Double.NaN) {
+                            m_BestTest.calculateHMinMax(value, at);
+                            //System.out.println(at +" za: "+m_BestTest.hMax+"-->"+m_BestTest.hMin);
+                        }
+                        prev = value;
+                        ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(i);
+                    }
+                    m_BestTest.m_PosStat.updateWeighted(tuple, i);
+                    ((ClusStatistic) m_BestTest.m_PosStat).setSplitIndex(i + 1); //add Daniela
+                }
+                prev = Double.NaN;
+                ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
+                ((ClusStatistic) m_BestTest.m_TotCorrStat).setData(sample);
+                ((ClusStatistic) m_BestTest.m_TotCorrStat).setSplitIndex(sample.getNbRows());
+                ((ClusStatistic) m_BestTest.m_PosStat).reset();
+                ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
+                ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
             }
-            m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]);
-            
-            if (isSparseAtr && value == minValue){
-            	break;
+            //end for scaling of h -regression (daniela)
+
+            //daniela generateMatrix for each attribute gisheuristic
+            try {
+                ClusHeuristic m_Heuristic = m_StatManager.getHeuristic();
+                //System.out.println(m_Heuristic);
+                if (SettingsTree.ALPHA != 1.0 && m_Heuristic instanceof VarianceReductionHeuristicCompatibility) {
+                    VarianceReductionHeuristicCompatibility gisHeuristic = (VarianceReductionHeuristicCompatibility) m_Heuristic;
+                    ClusAttrType[] arr = at.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_GIS); //numeric and string GIS
+                    if (arr.length == 1) {
+                        gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
+                    }
+                    else {
+                        gisHeuristic.generateMatrix(sample); // 2 coordinates 
+                    }
+                }
+
+                if (m_Heuristic instanceof GISHeuristic && SettingsTree.ALPHA != 1.0) {
+                    GISHeuristic gisHeuristic = (GISHeuristic) m_Heuristic;
+                    ClusAttrType[] arr = at.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_GIS); //numeric and string GIS
+                    if (arr.length == 1) {
+                        gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
+                    }
+                    else {
+                        gisHeuristic.generateMatrix(sample, indicesSorted); // 2 coordinates 
+                    }
+                }
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Error calculating GISHEuristics!");
+                System.exit(1);
+            }
+            // daniela end
+        }
+
+        double minValue = (pos < nb_rows) ? at.getNumeric(sample.getTuple(indicesSorted[nb_rows - 1])) : Double.NaN;
+        boolean isSparseAtr = at.isSparse();
+
+        double tot_corr_SVarS = 0.0; // does not matter to which value we choose;
+        //        boolean isEfficient = m_BestTest.m_Heuristic.isEfficient();
+        //		if(isEfficient){
+        //			tot_corr_SVarS = m_BestTest.m_TotCorrStat.getSVarS(m_BestTest.m_Heuristic.getClusteringAttributeWeights());
+        ////			m_BestTest.m_Heuristic.setSplitStatSVarS(tot_corr_SVarS);
+        //		}
+
+        if (isDaniela) {
+            for (int i = pos; i < nb_rows; i++) {
+                tuple = sample.getTuple(indicesSorted[i]);
+                double value = at.getNumeric(tuple);
+                if (value != prev) {
+                    m_BestTest.updateNumericGIS(value, at, indicesSorted);
+                    prev = value;
+                    ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(i); // daniela; matejp removed casting to ClusStatistic (this can be also done elsewhere)
+                }
+                m_BestTest.m_PosStat.updateWeighted(tuple, i);
+                ((ClusStatistic) m_BestTest.m_PosStat).setSplitIndex(i + 1); // daniela
+                if (isSparseAtr && value == minValue) {
+                    break;
+                }
+            }
+        }
+        else {
+            for (int i = pos; i < nb_rows; i++) {
+                tuple = sample.getTuple(indicesSorted[i]);
+                double value = at.getNumeric(tuple);
+                if (value != prev) {
+                    m_BestTest.updateNumeric(value, at, tot_corr_SVarS, false); // isEfficient
+                    prev = value;
+                }
+                m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]);
+                if (isSparseAtr && value == minValue) {
+                    break;
+                }
             }
         }
     }
@@ -295,7 +466,7 @@ public class FindBestTest {
                     break;
                 m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]);
             }
-            m_BestTest.updateNumeric(split_value, at);  // we test only one split per attribute --> no need for precomputing tot_corr_SVarS
+            m_BestTest.updateNumeric(split_value, at); // we test only one split per attribute --> no need for precomputing tot_corr_SVarS
         }
 
         // System.err.println("Inverse splits not yet included!");
@@ -303,115 +474,114 @@ public class FindBestTest {
     }
 
 
-//   @Deprecated
-//    public void findNumeric(NumericAttrType at, ArrayList data){
-//    	 // for sparse attributes, (already sorted data)
-//        ArrayList sample;
-//        if (getSettings().getTree().getTreeSplitSampling() > 0) {
-//            RowData tmp = new RowData(data, getSchema());
-//            RowData smpl = createSample(tmp, null);
-//            if (at.isSparse()) {
-//                smpl.sortSparse(at, getSortHelper());
-//            }
-//            else {
-//                smpl.sort(at);
-//            }
-//            sample = smpl.toArrayList();
-//        }
-//        else {
-//            sample = data;
-//        }
-//        DataTuple tuple;
-//        m_BestTest.reset(2);
-//        // Missing values
-//        int first = 0;
-//        int nb_rows = sample.size();
-//        // Copy total statistic into corrected total
-//        m_BestTest.copyTotal();
-//        if (at.hasMissing()) {
-//            // Because of sorting, all missing values are in the front :-)
-//            while (first < nb_rows && at.isMissing((DataTuple) sample.get(first))) {
-//                tuple = (DataTuple) sample.get(first);
-//                m_BestTest.m_MissingStat.updateWeighted(tuple, first);
-//                first++;
-//            }
-//            m_BestTest.subtractMissing();
-//        }
-//        double prev = Double.NaN;
-//
-//        for (int i = first; i < nb_rows; i++) {
-//            tuple = (DataTuple) sample.get(i);
-//            double value = at.getNumeric(tuple);
-//            if (value != prev) {
-//                if (!Double.isNaN(value)) {
-//                    // System.err.println("Value (>): " + value);
-//                    m_BestTest.updateNumeric(value, at);
-//                }
-//                prev = value;
-//            }
-//            m_BestTest.m_PosStat.updateWeighted(tuple, i);
-//        }
-//        m_BestTest.updateNumeric(0.0, at); // otherwise tests of the form "X>0.0" are not considered
-//    }
-//
-//    @Deprecated
-//    public void findNumericRandom(NumericAttrType at, RowData data, RowData orig_data, Random rn) {
-//        // TODO: if this method gets completed, sampling of the RowDatas must be included as well
-//        DataTuple tuple;
-//        int idx = at.getArrayIndex();
-//        // Sort values from large to small
-//        if (at.isSparse()) {
-//            data.sortSparse(at, m_SortHelper);
-//        }
-//        else {
-//            data.sort(at);
-//        }
-//        m_BestTest.reset(2);
-//        // Missing values
-//        int first = 0;
-//        int nb_rows = data.getNbRows();
-//        // Copy total statistic into corrected total
-//        m_BestTest.copyTotal();
-//        if (at.hasMissing()) {
-//            // Because of sorting, all missing values are in the front :-)
-//            while (first < nb_rows && (tuple = data.getTuple(first)).hasNumMissing(idx)) {
-//                m_BestTest.m_MissingStat.updateWeighted(tuple, first);
-//                first++;
-//            }
-//            m_BestTest.subtractMissing();
-//        }
-//        // Do the same for original data, except updating the statistics:
-//        // Sort values from large to small
-//        if (at.isSparse()) {
-//            orig_data.sortSparse(at, m_SortHelper);
-//        }
-//        else {
-//            orig_data.sort(at);
-//        }
-//        // Missing values
-//        int orig_first = 0;
-//        int orig_nb_rows = orig_data.getNbRows();
-//        if (at.hasMissing()) {
-//            // Because of sorting, all missing values are in the front :-)
-//            while (orig_first < orig_nb_rows && (tuple = orig_data.getTuple(orig_first)).hasNumMissing(idx)) {
-//                orig_first++;
-//            }
-//        }
-//        // Generate the random split value based on the original data
-//        double min_value = orig_data.getTuple(orig_nb_rows - 1).getDoubleVal(idx);
-//        double max_value = orig_data.getTuple(orig_first).getDoubleVal(idx);
-//        double split_value = (max_value - min_value) * rn.nextDouble() + min_value;
-//        for (int i = first; i < nb_rows; i++) {
-//            tuple = data.getTuple(i);
-//            if (tuple.getDoubleVal(idx) <= split_value)
-//                break;
-//            m_BestTest.m_PosStat.updateWeighted(tuple, i);
-//        }
-//        m_BestTest.updateNumeric(split_value, at);
-//        System.err.println("Inverse splits not yet included!");
-//        // TODO: m_Selector.updateInverseNumeric(split_value, at);
-//    }
-
+    //   @Deprecated
+    //    public void findNumeric(NumericAttrType at, ArrayList data){
+    //    	 // for sparse attributes, (already sorted data)
+    //        ArrayList sample;
+    //        if (getSettings().getTree().getTreeSplitSampling() > 0) {
+    //            RowData tmp = new RowData(data, getSchema());
+    //            RowData smpl = createSample(tmp, null);
+    //            if (at.isSparse()) {
+    //                smpl.sortSparse(at, getSortHelper());
+    //            }
+    //            else {
+    //                smpl.sort(at);
+    //            }
+    //            sample = smpl.toArrayList();
+    //        }
+    //        else {
+    //            sample = data;
+    //        }
+    //        DataTuple tuple;
+    //        m_BestTest.reset(2);
+    //        // Missing values
+    //        int first = 0;
+    //        int nb_rows = sample.size();
+    //        // Copy total statistic into corrected total
+    //        m_BestTest.copyTotal();
+    //        if (at.hasMissing()) {
+    //            // Because of sorting, all missing values are in the front :-)
+    //            while (first < nb_rows && at.isMissing((DataTuple) sample.get(first))) {
+    //                tuple = (DataTuple) sample.get(first);
+    //                m_BestTest.m_MissingStat.updateWeighted(tuple, first);
+    //                first++;
+    //            }
+    //            m_BestTest.subtractMissing();
+    //        }
+    //        double prev = Double.NaN;
+    //
+    //        for (int i = first; i < nb_rows; i++) {
+    //            tuple = (DataTuple) sample.get(i);
+    //            double value = at.getNumeric(tuple);
+    //            if (value != prev) {
+    //                if (!Double.isNaN(value)) {
+    //                    // System.err.println("Value (>): " + value);
+    //                    m_BestTest.updateNumeric(value, at);
+    //                }
+    //                prev = value;
+    //            }
+    //            m_BestTest.m_PosStat.updateWeighted(tuple, i);
+    //        }
+    //        m_BestTest.updateNumeric(0.0, at); // otherwise tests of the form "X>0.0" are not considered
+    //    }
+    //
+    //    @Deprecated
+    //    public void findNumericRandom(NumericAttrType at, RowData data, RowData orig_data, Random rn) {
+    //        // TODO: if this method gets completed, sampling of the RowDatas must be included as well
+    //        DataTuple tuple;
+    //        int idx = at.getArrayIndex();
+    //        // Sort values from large to small
+    //        if (at.isSparse()) {
+    //            data.sortSparse(at, m_SortHelper);
+    //        }
+    //        else {
+    //            data.sort(at);
+    //        }
+    //        m_BestTest.reset(2);
+    //        // Missing values
+    //        int first = 0;
+    //        int nb_rows = data.getNbRows();
+    //        // Copy total statistic into corrected total
+    //        m_BestTest.copyTotal();
+    //        if (at.hasMissing()) {
+    //            // Because of sorting, all missing values are in the front :-)
+    //            while (first < nb_rows && (tuple = data.getTuple(first)).hasNumMissing(idx)) {
+    //                m_BestTest.m_MissingStat.updateWeighted(tuple, first);
+    //                first++;
+    //            }
+    //            m_BestTest.subtractMissing();
+    //        }
+    //        // Do the same for original data, except updating the statistics:
+    //        // Sort values from large to small
+    //        if (at.isSparse()) {
+    //            orig_data.sortSparse(at, m_SortHelper);
+    //        }
+    //        else {
+    //            orig_data.sort(at);
+    //        }
+    //        // Missing values
+    //        int orig_first = 0;
+    //        int orig_nb_rows = orig_data.getNbRows();
+    //        if (at.hasMissing()) {
+    //            // Because of sorting, all missing values are in the front :-)
+    //            while (orig_first < orig_nb_rows && (tuple = orig_data.getTuple(orig_first)).hasNumMissing(idx)) {
+    //                orig_first++;
+    //            }
+    //        }
+    //        // Generate the random split value based on the original data
+    //        double min_value = orig_data.getTuple(orig_nb_rows - 1).getDoubleVal(idx);
+    //        double max_value = orig_data.getTuple(orig_first).getDoubleVal(idx);
+    //        double split_value = (max_value - min_value) * rn.nextDouble() + min_value;
+    //        for (int i = first; i < nb_rows; i++) {
+    //            tuple = data.getTuple(i);
+    //            if (tuple.getDoubleVal(idx) <= split_value)
+    //                break;
+    //            m_BestTest.m_PosStat.updateWeighted(tuple, i);
+    //        }
+    //        m_BestTest.updateNumeric(split_value, at);
+    //        System.err.println("Inverse splits not yet included!");
+    //        // TODO: m_Selector.updateInverseNumeric(split_value, at);
+    //    }
 
     public void initSelectorAndSplit(ClusStatistic totstat) throws ClusException {
         m_BestTest.create(m_StatManager, m_MaxStats);
@@ -436,16 +606,24 @@ public class FindBestTest {
     }
 
 
+    // daniela
+    public void resetMinMax() {
+        hMaxB = Double.NEGATIVE_INFINITY;
+        hMinB = Double.POSITIVE_INFINITY;
+    }
+    // daniela end
+
+
     private RowData createSample(RowData original, ClusRandomNonstatic rnd) {
-    	int N = getSettings().getTree().getTreeSplitSampling();
-    	if (N == 0){
-    		return original.sample(N, rnd);
-    	}
-    	else{
-    		String message = String.format("The value of SplitSampling = %d will result in wrong results.\n"
-    				+ "Use SplitSampling = 0 or correct the code.", N);
-    		throw new RuntimeException(message);
-    	}
+        int N = getSettings().getTree().getTreeSplitSampling();
+        if (N == 0) {
+            return original.sample(N, rnd);
+        }
+        else {
+            String message = String.format("The value of SplitSampling = %d will result in wrong results.\n"
+                    + "Use SplitSampling = 0 or correct the code.", N);
+            throw new RuntimeException(message);
+        }
     }
 
 }

@@ -66,11 +66,56 @@ public class SettingsTree implements ISettings {
     /** Do we transform leaves or all nodes of tree to rules */
     private INIFileNominal m_RulesFromTree;
     private INIFileNominal m_TreeOptimize;
-    /**
-     * Amount of datapoints to include for calculating split heuristic
-     * Datapoints will be selected randomly
-     **/
-    private INIFileInt m_TreeSplitSampling;
+
+    private INIFileNominal m_SpatialMatrix;
+    private INIFileNominal m_SpatialMeasure;
+    private INIFileDouble m_Bandwidth;
+    private INIFileBool m_Longlat;
+    private INIFileDouble m_NeighCount;
+    private INIFileDouble m_SpatialAlpha;
+    private INIFileInt m_TreeSplitSampling; // Amount of datapoints to include for calculating split heuristic.  Datapoints will be selected randomly.
+
+    public static double ALPHA; // danielae
+
+
+    public int getSpatialMatrix() {
+        return m_SpatialMatrix.getValue();
+    }
+
+
+    public int getSpatialMeasure() {
+        return m_SpatialMeasure.getValue();
+    }
+
+
+    public double getBandwidth() {
+        return m_Bandwidth.getValue();
+    }
+
+
+    public boolean isLonglat() {
+        return m_Longlat.getValue();
+    }
+
+
+    public double getNumNeightbours() {
+        return m_NeighCount.getValue();
+    }
+
+
+    public double getSpatialAlpha() {
+        return m_SpatialAlpha.getValue();
+    }
+
+
+    public void setSpatialMeasure(int method) {
+        m_SpatialMeasure.setSingleValue(method);
+    }
+
+
+    public void setSpatialMatrix(int method) {
+        m_SpatialMatrix.setSingleValue(method);
+    }
 
 
     public int getHeuristicComplexity() {
@@ -279,7 +324,7 @@ public class SettingsTree implements ISettings {
      * Section: Tree - Heuristic *
      ***********************************************************************/
 
-    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing", "StructuredData" };
+    public final static String[] HEURISTICS = { "Default", "ReducedError", "Gain", "GainRatio", "SSPD", "VarianceReduction", "MEstimate", "Morishita", "DispersionAdt", "DispersionMlt", "RDispersionAdt", "RDispersionMlt", "GeneticDistance", "SemiSupervised", "VarianceReductionMissing", "StructuredData", "VarianceReductionGIS" };
 
     public final static int HEURISTIC_DEFAULT = 0;
     public final static int HEURISTIC_REDUCED_ERROR = 1;
@@ -298,11 +343,64 @@ public class SettingsTree implements ISettings {
     public final static int HEURISTIC_GENETIC_DISTANCE = 12;
     public final static int HEURISTIC_SEMI_SUPERVISED = 13;
     public final static int HEURISTIC_SS_REDUCTION_MISSING = 14;
+    public final static int HEURISTIC_VARIANCE_REDUCTION_GIS = 15;
 
+    // SPATIAL
+    private final String[] SPATIAL_MATRIX_TYPE = { "Binary", "Euclidean", "Modified", "Gaussian" };
+    public final static int SPATIAL_MATRIX_BINARY = 0;
+    public final static int SPATIAL_MATRIX_EUCLIDEAN = 1;
+    public final static int SPATIAL_MATRIX_MODIFIED = 2;
+    public final static int SPATIAL_MATRIX_GAUSSIAN = 3;
+    
+    
+    private final String[] SPATIAL_MEASURE_TYPE = { 
+            "GlobalMoran", "GlobalGeary", "GlobalGetis", "LocalMoran",
+            "LocalGeary", "LocalGetis", "StandardizedGetis", "EquvalentI", 
+            "IwithNeighbours", "EquvalentIwithNeighbours", "GlobalMoranDistance", "GlobalGearyDistance", 
+            "CI", "MultiVariateMoranI", "CwithNeighbours", "Lee", 
+            "MultiIwithNeighbours", "CIwithNeighbours", "LeewithNeighbours", "Pearson", 
+            "CIDistance", "DH", "EquvalentIDistance", "PearsonDistance", 
+            "EquvalentG", "EquvalentGDistance", "EquvalentPDistance" };
+    
+    public final static int SPATIAL_MEASURE_GLOBAL_MORAN = 0;
+    public final static int SPATIAL_MEASURE_GLOBAL_GEARY = 1;
+    public final static int SPATIAL_MEASURE_GLOBAL_GETIS = 2;
+    public final static int SPATIAL_MEASURE_LOCAL_MORAN = 3;
+    public final static int SPATIAL_MEASURE_LOCAL_GEARY = 4;
+    public final static int SPATIAL_MEASURE_LOCAL_GETIS = 5;
+    public final static int SPATIAL_MEASURE_LOCAL_GETIS_STANDARDIZED = 6;
+    public final static int SPATIAL_MEASURE_EQUVALENT_I = 7;
+    public final static int SPATIAL_MEASURE_I_WITH_NEGHBOURS = 8;
+    public final static int SPATIAL_MEASURE_EQUVALENT_I_WITH_NEIGHBOURS = 9;
+    public final static int SPATIAL_MEASURE_GLOBAL_MORAN_DISTANCE = 10;
+    public final static int SPATIAL_MEASURE_GLOBAL_GEARY_DISTANCE = 11;
+    public final static int SPATIAL_MEASURE_CI = 12;
+    public final static int SPATIAL_MEASURE_MULTIVARIATE_MORAN_I = 13;
+    public final static int SPATIAL_MEASURE_C_WITH_NEIGHBOURS = 14;
+    public final static int SPATIAL_MEASURE_LEE = 15;
+    public final static int SPATIAL_MEASURE_MULTI_I_WITH_NEIGHBOURS = 16;
+    public final static int SPATIAL_MEASURE_CI_WITH_NEIGHBOURS = 17;
+    public final static int SPATIAL_MEASURE_LEE_WITH_NEIGHBOURS = 18;
+    public final static int SPATIAL_MEASURE_PEARSON = 19;
+    public final static int SPATIAL_MEASURE_CI_DISTANCE = 20;
+    public final static int SPATIAL_MEASURE_DH = 21;
+    public final static int SPATIAL_MEASURE_EQUVALENT_I_DISTANCE = 22;
+    public final static int SPATIAL_MEASURE_PEARSON_DISTANCE = 23;
+    public final static int SPATIAL_MEASURE_EQUVALENT_G = 24;
+    public final static int SPATIAL_MEASURE_EQUVALENT_G_DISTANCE = 25;
+    public final static int SPATIAL_MEASURE_EQUVALENT_P_DISTANCE = 26;
+    
+    
+    
+    
+    
     public static int FTEST_LEVEL;
     public static double FTEST_VALUE;
     public static double MINIMAL_WEIGHT;
     public static boolean ONE_NOMINAL = true;
+    public final static double BANDWIDTH = 0.01;
+    public final static double NumNeightbours = 0.0;
+    public static boolean LONGLAT = false;
 
     /***********************************************************************
      * Section: Tree - SetDistance *
@@ -363,9 +461,11 @@ public class SettingsTree implements ISettings {
         m_1SERule.setEnabled(value);
     }
 
+
     public void setFTestEnabled(boolean value) {
         m_FTest.setEnabled(value);
     }
+
 
     @Override
     public INIFileSection create() {
@@ -396,6 +496,13 @@ public class SettingsTree implements ISettings {
         // added by Eduardo Costa 29/09/2011
         m_SectionTree.addNode(m_EntropyType = new INIFileNominal("EntropyType", ENTROPY_TYPE, STANDARD_ENTROPY));
         m_SectionTree.addNode(m_ConsiderUnlableInstancesInIGCalc = new INIFileBool("ConsiderUnlableInstancesInIGCalc", false));
+
+        m_SectionTree.addNode(m_SpatialMatrix = new INIFileNominal("SpatialMatrix", SPATIAL_MATRIX_TYPE, SPATIAL_MATRIX_BINARY));
+        m_SectionTree.addNode(m_SpatialMeasure = new INIFileNominal("SpatialMeasure", SPATIAL_MEASURE_TYPE, SPATIAL_MEASURE_GLOBAL_MORAN));
+        m_SectionTree.addNode(m_Bandwidth = new INIFileDouble("Bandwidth", 0.001));
+        m_SectionTree.addNode(m_Longlat = new INIFileBool("Longlat", false));
+        m_SectionTree.addNode(m_NeighCount = new INIFileDouble("NumNeightbours", 0.0));
+        m_SectionTree.addNode(m_SpatialAlpha = new INIFileDouble("Alpha", 1.0));
 
         return m_SectionTree;
     }

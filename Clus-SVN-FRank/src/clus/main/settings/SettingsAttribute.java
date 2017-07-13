@@ -1,3 +1,4 @@
+
 package clus.main.settings;
 
 import clus.util.jeans.io.ini.INIFileBool;
@@ -6,7 +7,9 @@ import clus.util.jeans.io.ini.INIFileSection;
 import clus.util.jeans.io.ini.INIFileString;
 import clus.util.jeans.util.StringUtils;
 
+
 public class SettingsAttribute implements ISettings {
+
     /***********************************************************************
      * Section: Attribute *
      ***********************************************************************/
@@ -19,7 +22,21 @@ public class SettingsAttribute implements ISettings {
     protected INIFileNominalOrDoubleOrVector m_Weights;
     protected INIFileNominalOrDoubleOrVector m_ClusteringWeights;
     protected INIFileBool m_ReduceMemoryNominal;
+    protected INIFileString m_GIS;
 
+
+    public String getGIS() {
+        return m_GIS.getValue();
+    }
+
+
+    public void setGIS(String str) {
+        m_GIS.setValue(str);
+    }
+
+    public boolean isNullGIS(){
+        return StringUtils.unCaseCompare(m_GIS.getValue(), NONE);
+    }
 
     public String getTarget() {
         return m_Target.getValue();
@@ -101,7 +118,6 @@ public class SettingsAttribute implements ISettings {
         return m_ReduceMemoryNominal.getValue();
     }
 
-    
     /***********************************************************************
      * Section: Attribute - Normalization *
      ***********************************************************************/
@@ -135,9 +151,9 @@ public class SettingsAttribute implements ISettings {
         m_ClusteringWeights.setDouble(1.0);
         m_ClusteringWeights.setArrayIndexNames(NUM_NOM_TAR_NTAR_WEIGHTS);
         attrs.addNode(m_ReduceMemoryNominal = new INIFileBool("ReduceMemoryNominalAttrs", false));
-        
+        attrs.addNode(m_GIS = new INIFileString("GIS", NONE));
+
         return attrs;
     }
-    
-    
+
 }

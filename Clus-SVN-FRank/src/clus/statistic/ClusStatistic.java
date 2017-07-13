@@ -51,12 +51,18 @@ public abstract class ClusStatistic implements Serializable {
     /** The weighted sum of all examples */
     public double m_SumWeight;
     public int m_NbExamples;
-    
+
+    public static boolean INITIALIZEPARTIALSUM = true;
+    private int splitIndex;
+    private int prevIndex;
+
     protected Settings m_Settings; // this is here to reduce the usage of static references
-    
+
+
     public ClusStatistic(Settings sett) {
         m_Settings = sett;
     }
+
 
     public abstract ClusStatistic cloneStat();
 
@@ -81,7 +87,7 @@ public abstract class ClusStatistic implements Serializable {
      * @return The number of all attributes in this statistic. If the statistic
      *         is a target statistic, it returns the number of target attributes.
      */
-    public int getNbAttributes(){
+    public int getNbAttributes() {
         return getNbNominalAttributes() + getNbNumericAttributes();
     }
 
@@ -100,7 +106,8 @@ public abstract class ClusStatistic implements Serializable {
     public int getNbNumericAttributes() {
         return 0;
     }
-    
+
+
     public abstract int getNbStatisticComponents();
 
 
@@ -202,6 +209,38 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public abstract void subtractFromOther(ClusStatistic other);
+
+
+    public void setData(RowData data) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
+
+
+    public void setSplitIndex(int i) {
+        splitIndex = i;
+    }
+
+
+    public void setPrevIndex(int i) {
+        prevIndex = i;
+    }
+
+
+    public void initializeSum() {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+    }
 
 
     public double[] getNumericPred() {
@@ -447,13 +486,340 @@ public abstract class ClusStatistic implements Serializable {
 
     public void setBeam(ClusBeam beam) {
     }
-    
-    public double getSumWeight(){
-    	return m_SumWeight;
+
+
+    public double getSumWeight() {
+        return m_SumWeight;
     }
-    
-    
+
+
     public final Settings getSettings() {
         return m_Settings;
     }
+
+
+    //daniela
+    public double calcItotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcEquvalentIDistance(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcGtotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcGetisTotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcLISAtotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcGLocalTotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcLocalGetisTotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcGETIStotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcEquvalentItotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcIwithNeighbourstotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcEquvalentIwithNeighbourstotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcEquvalentGDistance(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcEquvalentPDistance(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcEquvalentGtotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcItotalD(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcPDistance(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcGtotalD(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcCItotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcMutivariateItotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcCwithNeighbourstotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcBivariateLee(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcMultiIwithNeighbours(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcCIwithNeighbours(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcLeewithNeighbours(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcPtotal(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcCItotalD(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+
+
+    public double calcDHtotalD(Integer[] permutation) {
+        try {
+            throw new Exception("This method shoud be implemented. Exiting...");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.exit(1);
+        }
+        return 0;
+    }
+    //end daniela
 }

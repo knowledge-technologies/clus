@@ -10,8 +10,8 @@ public class MultiLabelDistance {
 	// If new types are introduced use the same values as in Settings.java
 	private static final int HAMMING_LOSS = SettingsMLC.MULTILABEL_MEASURES_HAMMINGLOSS;
 	private static final int ACCURACY = SettingsMLC.MULTILABEL_MEASURES_MLACCURACY;
-	private static final int F1 = SettingsMLC.MULTILABEL_MEASURES_MLFONE;
-	private static final int SUBSET_ACCURACY = SettingsMLC.MULTILABEL_MEASURES_SUBSETACCURACY;
+	// private static final int F1 = SettingsMLC.MULTILABEL_MEASURES_MLFONE;
+	// private static final int SUBSET_ACCURACY = SettingsMLC.MULTILABEL_MEASURES_SUBSETACCURACY;
 	
 	private final int m_DistanceType;
 	private NominalAttrType[] m_Labels;

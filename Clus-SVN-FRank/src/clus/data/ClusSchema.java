@@ -75,6 +75,7 @@ public class ClusSchema implements Serializable {
     protected IntervalCollection m_Disabled = IntervalCollection.EMPTY;
     protected IntervalCollection m_Clustering = IntervalCollection.EMPTY;
     protected IntervalCollection m_Descriptive = IntervalCollection.EMPTY;
+    protected IntervalCollection m_GIS = IntervalCollection.EMPTY; //daniela
     protected IntervalCollection m_Key = IntervalCollection.EMPTY;
     protected int[] m_NbVt;
     protected int m_NbHMTR;
@@ -104,7 +105,9 @@ public class ClusSchema implements Serializable {
         setDisabled(new IntervalCollection(sett.getAttribute().getDisabled()));
         setClustering(new IntervalCollection(sett.getAttribute().getClustering()));
         setDescriptive(new IntervalCollection(sett.getAttribute().getDescriptive()));
+        setGIS(new IntervalCollection(sett.getAttribute().getGIS())); //daniela
         setKey(new IntervalCollection(sett.getAttribute().getKey()));
+        
         updateAttributeUse();
         addIndices(ClusSchema.ROWS);
     }
@@ -390,6 +393,9 @@ public class ClusSchema implements Serializable {
         m_Descriptive = coll;
     }
 
+    public void setGIS(IntervalCollection m_gis) {
+        m_GIS = m_gis;
+    }
 
     public final void setKey(IntervalCollection coll) {
         m_Key = coll;
@@ -441,12 +447,14 @@ public class ClusSchema implements Serializable {
         checkRange(m_Key, "key");
         checkRange(m_Disabled, "disabled");
         checkRange(m_Target, "target");
+        checkRange(m_GIS, "GIS"); //daniela
         checkRange(m_Clustering, "clustering");
         checkRange(m_Descriptive, "descriptive");
         setStatusAll(ClusAttrType.STATUS_NORMAL);
         setStatus(m_Disabled, ClusAttrType.STATUS_DISABLED, true);
         setStatus(m_Target, ClusAttrType.STATUS_TARGET, true);
         setStatus(m_Clustering, ClusAttrType.STATUS_CLUSTER_NO_TARGET, false);
+        setStatus(m_GIS, ClusAttrType.STATUS_GIS, true);  //daniela
         setStatus(m_Key, ClusAttrType.STATUS_KEY, true);
         setDescriptiveAll(false);
         setDescriptive(m_Descriptive, true);
@@ -570,6 +578,9 @@ public class ClusSchema implements Serializable {
                 case ClusAttrType.STATUS_DISABLED:
                     System.out.print("Disabled  ");
                     break;
+                case ClusAttrType.STATUS_GIS:
+                    System.out.print("GIS    "); //daniela
+                    break;                    
                 case ClusAttrType.STATUS_TARGET:
                     System.out.print("Target    ");
                     break;
@@ -769,6 +780,11 @@ public class ClusSchema implements Serializable {
                             result.add(type);
                         }
                         break;
+                    case ClusAttrType.ATTR_USE_GIS: // daniela
+                        if (type.getStatus() == ClusAttrType.STATUS_GIS) {
+                            result.add(type);  
+                        }
+                        break;                        
                 }
             }
         }

@@ -94,7 +94,6 @@ public class Settings implements Serializable {
         m_SettModel = new SettingsModel();
         m_SettTree = new SettingsTree();
         m_SettRules = new SettingsRules();
-        m_SettMLC = new SettingsMLC();
         m_SettHMLC = new SettingsHMLC();
         m_SettILevelC = new SettingsILevelC();
         m_SettBeamSearch = new SettingsBeamSearch();
@@ -110,6 +109,7 @@ public class Settings implements Serializable {
         m_SettSIT = new SettingsSIT();
         m_SettExperimental = new SettingsExperimental();
         m_SettConstraints = new SettingsConstraints();
+        m_SettMLC = new SettingsMLC(m_SettHMLC, m_SettRelief);
         m_SettHMTR = new SettingsHMTR(m_SettAttribute, m_SettGeneric);
         m_SettOutput = new SettingsOutput();
     }
@@ -348,7 +348,8 @@ public class Settings implements Serializable {
 
         SettingsTree.MINIMAL_WEIGHT = m_SettModel.getMinimalWeight();
         SettingsTree.ONE_NOMINAL = (schema.getNbNominalTargetAttributes() == 1 && schema.getNbNumericTargetAttributes() == 0);
-
+        SettingsTree.ALPHA = m_SettTree.getSpatialAlpha();
+        
         SettingsOutput.SHOW_UNKNOWN_FREQ = m_SettOutput.isShowUnknown();
         SettingsOutput.SHOW_BRANCH_FREQ = m_SettOutput.isShowBranchFreq();
 
@@ -360,6 +361,7 @@ public class Settings implements Serializable {
         SettingsBeamSearch.BEAM_SYNT_DIST_CONSTR = m_SettBeamSearch.hasBeamConstraintFile();
 
         SettingsGeneric.VERBOSE = m_SettGeneric.getVerbose();
+        
     }
 
 

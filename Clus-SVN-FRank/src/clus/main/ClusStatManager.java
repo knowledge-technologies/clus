@@ -93,6 +93,7 @@ import clus.error.mlc.MicroRecall;
 import clus.error.mlc.OneError;
 import clus.error.mlc.RankingLoss;
 import clus.error.mlc.SubsetAccuracy;
+import clus.error.mlcForHmlc.MlcMeasuresForHmlc;
 import clus.error.sets.F1Score;
 import clus.error.sets.Precision;
 import clus.error.sets.Recall;
@@ -127,6 +128,7 @@ import clus.heuristic.ClusHeuristic;
 import clus.heuristic.ClusStopCriterion;
 import clus.heuristic.ClusStopCriterionMinNbExamples;
 import clus.heuristic.ClusStopCriterionMinWeight;
+import clus.heuristic.GISHeuristic;
 import clus.heuristic.GainHeuristic;
 import clus.heuristic.GeneticDistanceHeuristicMatrix;
 import clus.heuristic.ReducedErrorHeuristic;
@@ -422,6 +424,12 @@ public class ClusStatManager implements Serializable {
             }
         }
         if (hasBitEqualToOne(shouldNormalize)) {
+            //            //daniela
+            //            if (m_Mode == MODE_HIERARCHICAL) {
+            //                WHTDStatistic tstat = (WHTDStatistic)createStatistic(ClusAttrType.ATTR_USE_TARGET);
+            //                tstat.initNormalizationWeights(m_NormalizationWeights, shouldNormalize);
+            //            }
+            //            //end daniela
             data.calcTotalStat(stat);
             CombStat cmb = (CombStat) stat;
             // data.calcTotalStat(stat); // why is this here? this duplicates weights etc for no apparent reason
@@ -522,6 +530,7 @@ public class ClusStatManager implements Serializable {
         }
         if (nb_types > 1) {
             if (!getSettings().getRelief().isRelief()) { throw new ClusException("Incompatible combination of clustering attribute types"); }
+
         }
     }
 
@@ -554,7 +563,6 @@ public class ClusStatManager implements Serializable {
             else {
                 return new ClassificationStat(getSettings(), nom);
             }
-
         }
         else if (nom.length == 0) {
             return new RegressionStat(getSettings(), num);
@@ -752,7 +760,7 @@ public class ClusStatManager implements Serializable {
 
         if (myType.startsWith("SET{")) {
             String def = myType;
-            String innerType = "";
+            //  String innerType = "";
             int open = 0;
             int start = 0, end = 0;
             def = def.replace("SET{", "");
@@ -792,7 +800,7 @@ public class ClusStatManager implements Serializable {
                     }
                 }
             }
-            innerType = def.substring(start, end);
+            // innerType = def.substring(start, end);
             if (myType.contains("NOMINAL")) { return new NominalDistance(); }
         }
         // TODO Auto-generated method stub
@@ -803,7 +811,7 @@ public class ClusStatManager implements Serializable {
     public ClusHeuristic createHeuristic(int type) {
         switch (type) {
             case SettingsTree.HEURISTIC_GAIN:
-                return new GainHeuristic(false, getClusteringWeights(), getSettings());
+                return new GainHeuristic(false, getClusteringWeights(), getSettings()); // matejp: daniela without the second argument
             default:
                 return null;
         }
@@ -918,13 +926,20 @@ public class ClusStatManager implements Serializable {
             return;
         }
         if (m_Mode == MODE_HIERARCHICAL) {
-            if (getSettings().getGeneral().getCompatibility() <= SettingsGeneral.COMPATIBILITY_MLJ08) {
-                m_Heuristic = new VarianceReductionHeuristicCompatibility(createClusteringStat(), getClusteringWeights(), getSettings());
-            }
+            // daniela
+            if (getSettings().getTree().getHeuristic() == SettingsTree.HEURISTIC_VARIANCE_REDUCTION_GIS) {
+                m_Heuristic = new GISHeuristic(getClusteringWeights(), m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING), getSettings());
+            } // daniela end
             else {
-                m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), null, getSettings());
+                if (getSettings().getGeneral().getCompatibility() <= SettingsGeneral.COMPATIBILITY_MLJ08) {
+                    m_Heuristic = new VarianceReductionHeuristicCompatibility(createClusteringStat(), getClusteringWeights(), getSettings());
+                }
+                else {
+                    m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), null, getSettings());
+                }
+                getSettings().getTree().setHeuristic(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
             }
-            getSettings().getTree().setHeuristic(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
+
             return;
         }
         if (m_Mode == MODE_SSPD) {
@@ -958,9 +973,21 @@ public class ClusStatManager implements Serializable {
             getSettings().getTree().setHeuristic(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
         }
         else if (num.length > 0) {
-            if (getSettings().getTree().getHeuristic() != SettingsTree.HEURISTIC_DEFAULT && getSettings().getTree().getHeuristic() != SettingsTree.HEURISTIC_VARIANCE_REDUCTION) { throw new ClusException("Only SS-Reduction heuristic can be used for regression trees!"); }
-            m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING), getSettings());
-            getSettings().getTree().setHeuristic(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
+            ArrayList<Integer> allowedHeuristics = new ArrayList<Integer>();
+            allowedHeuristics.add(SettingsTree.HEURISTIC_DEFAULT);
+            allowedHeuristics.add(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
+            allowedHeuristics.add(SettingsTree.HEURISTIC_VARIANCE_REDUCTION_GIS); // daniela
+            if (!allowedHeuristics.contains(getSettings().getTree().getHeuristic())) {
+                throw new ClusException("Only SS-Reduction heuristic and GISHeuristic can be used for regression trees!"); // daniela partially
+            }
+            else if (getSettings().getTree().getHeuristic() == SettingsTree.HEURISTIC_VARIANCE_REDUCTION_GIS) {
+                m_Heuristic = new GISHeuristic(getClusteringWeights(), m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING), getSettings()); // daniela
+
+            }
+            else {
+                m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING), getSettings());
+                getSettings().getTree().setHeuristic(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
+            }
         }
         else if (nom.length > 0) {
             if (getSettings().getTree().getHeuristic() == SettingsTree.HEURISTIC_SEMI_SUPERVISED) {
@@ -975,17 +1002,24 @@ public class ClusStatManager implements Serializable {
             else if (getSettings().getTree().getHeuristic() == SettingsTree.HEURISTIC_VARIANCE_REDUCTION) {
                 m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), nom, getSettings());
             }
+            else if (getSettings().getTree().getHeuristic() == SettingsTree.HEURISTIC_VARIANCE_REDUCTION_GIS) {
+                m_Heuristic = new GISHeuristic(getClusteringWeights(), m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_CLUSTERING), getSettings());
+            }
             else if (getSettings().getTree().getHeuristic() == SettingsTree.HEURISTIC_GAIN_RATIO) {
                 m_Heuristic = new GainHeuristic(true, getClusteringWeights(), getSettings());
             }
             else {
-                if ((getSettings().getTree().getHeuristic() != SettingsTree.HEURISTIC_DEFAULT
-                        && getSettings().getTree().getHeuristic() != SettingsTree.HEURISTIC_GAIN)
-                        && getSettings().getTree().getHeuristic() != SettingsTree.HEURISTIC_GENETIC_DISTANCE) { throw new ClusException("Given heuristic not supported for classification trees!"); }
+                ArrayList<Integer> allowedHeuristics = new ArrayList<Integer>();
+                allowedHeuristics.add(SettingsTree.HEURISTIC_DEFAULT);
+                allowedHeuristics.add(SettingsTree.HEURISTIC_GAIN);
+                allowedHeuristics.add(SettingsTree.HEURISTIC_GENETIC_DISTANCE);
+                allowedHeuristics.add(SettingsTree.HEURISTIC_VARIANCE_REDUCTION_GIS); // daniela
+                if (!allowedHeuristics.contains(getSettings().getTree().getHeuristic())) { throw new ClusException("Given heuristic not supported for classification trees!"); }
                 m_Heuristic = new GainHeuristic(false, getClusteringWeights(), getSettings());
                 getSettings().getTree().setHeuristic(SettingsTree.HEURISTIC_GAIN);
             }
         }
+        else {}
     }
 
 
@@ -1100,6 +1134,7 @@ public class ClusStatManager implements Serializable {
                 boolean wrCurves = getSettings().getOutput().isWriteCurves();
                 if (getSettings().getHMLC().isCalError()) {
                     parent.addError(new HierErrorMeasures(parent, m_Hier, recalls, getSettings().getGeneral().getCompatibility(), -1, wrCurves));
+                    parent.addError(new MlcMeasuresForHmlc(parent, m_Hier));
                 }
                 break;
             case MODE_ILEVELC:

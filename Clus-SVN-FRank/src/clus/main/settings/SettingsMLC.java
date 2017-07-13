@@ -1,3 +1,4 @@
+
 package clus.main.settings;
 
 import clus.util.jeans.io.ini.INIFileNominal;
@@ -5,7 +6,17 @@ import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
 import clus.util.jeans.io.ini.INIFileSection;
 
+
 public class SettingsMLC implements ISettings {
+
+    SettingsHMLC m_SettHMLC;
+    SettingsRelief m_SettRelief;
+
+    public SettingsMLC(SettingsHMLC settHMLC, SettingsRelief settRelief) {
+        m_SettHMLC = settHMLC;
+        m_SettRelief = settRelief;
+    }
+
     /***********************************************************************
      * Section: Multi-label classification *
      ***********************************************************************/
@@ -88,6 +99,38 @@ public class SettingsMLC implements ISettings {
     }
 
 
+    public boolean shouldRunThresholdOptimization() {
+        // settings = mgr.getSettings
+        if (getSectionMultiLabel().isEnabled() || m_SettHMLC.isSectionHierarchicalEnabled()) { // MLC or HMLC
+            return getMultiLabelThresholdOptimization() == MULTILABEL_THRESHOLD_OPTIMIZATION_YES;
+        }
+        else {
+            return false;
+        }
+    }
+
+    public boolean shouldShowThresholds(){
+        if(m_SettRelief.isRelief()){
+            return false;
+        } else if (shouldRunThresholdOptimization()){
+            return true;
+        } else if (m_SectionMultiLabel.isEnabled()){
+            return true;
+        } else {
+            return false;
+        }
+    }
+    
+    public boolean shouldShowThresholds(String modelName){
+        if (modelName.equals("Default") || modelName.equals("Original") || modelName.equals("Pruned")){
+            return true;
+        } else if (modelName.startsWith("Forest with ") && !modelName.contains("trees(T = ")){
+            return true;
+        } else{
+            return false;
+        }
+    }
+
     @Override
     public INIFileSection create() {
 
@@ -97,7 +140,7 @@ public class SettingsMLC implements ISettings {
         m_SectionMultiLabel.addNode(m_MultiLabelOptimizeThreshold = new INIFileNominal("OptimizeThresholds", MULTILABEL_THRESHOLD_OPTIMIZATION, MULTILABEL_THRESHOLD_OPTIMIZATION_YES));
         m_SectionMultiLabel.addNode(m_MultiLabelRankingMeasure = new INIFileNominalOrIntOrVector("MultiLabelRankingMeasure", MULTILABEL_MEASURES));
         m_MultiLabelRankingMeasure.setNominal(MULTILABEL_MEASURES_HAMMINGLOSS);
-        
+
         return m_SectionMultiLabel;
     }
 

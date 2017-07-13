@@ -35,7 +35,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public double[] m_SumValues;
+    protected double[] m_SumValues;
 
 
     public RegressionStatBinaryNomiss(Settings sett, NumericAttrType[] attrs) {
@@ -202,6 +202,9 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
         return buf.toString();
     }
 
+    public double[] getSumValues(){
+        return m_SumValues;
+    }
 
     @Override
     public int getNbStatisticComponents() {

@@ -16,7 +16,7 @@ public class SettingsKNNTree implements ISettings {
     private INIFileBool kNNT_distWeighted;
     private INIFileBool kNNT_normalized;
     private INIFileBool kNNT_attrWeighted;
-
+    
 
     public boolean getKNNTNormalized() {
         return kNNT_normalized.getValue();

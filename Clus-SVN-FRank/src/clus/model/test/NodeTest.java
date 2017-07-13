@@ -45,6 +45,7 @@ public abstract class NodeTest implements Serializable {
     public double m_UnknownFreq;
     public double[] m_BranchFreq;
     public double m_HeuristicValue;
+    public double m_IValue; //daniela
 
 
     public final boolean hasUnknownBranch() {
@@ -348,5 +349,13 @@ public abstract class NodeTest implements Serializable {
     // Get string representation of test
     public final String toString() {
         return getString();
+    }
+    
+    /***************************************************************************
+     * Misc
+     ***************************************************************************/
+    //daniela
+    public void setIValue(double value){
+        m_IValue = value;
     }
 }

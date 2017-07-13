@@ -65,7 +65,10 @@ public class SettingsHMLC implements ISettings {
     public void setSectionHierarchicalEnabled(boolean enable) {
         m_SectionHierarchical.setEnabled(enable);
     }
-
+    
+    public boolean isSectionHierarchicalEnabled() {
+        return m_SectionHierarchical.isEnabled();
+    }
 
     public boolean getHierSingleLabel() {
         return m_HierSingleLabel.getValue();
@@ -156,6 +159,8 @@ public class SettingsHMLC implements ISettings {
         return m_HierUseMEstimate.getValue();
     }
 
+
+    
 
     @Override
     public INIFileSection create() {

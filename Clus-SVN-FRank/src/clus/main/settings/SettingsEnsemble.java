@@ -409,6 +409,8 @@ public class SettingsEnsemble implements ISettings {
     public String getEnsembleTypeName(int type) {
         return ENSEMBLE_TYPE[type];
     }
+    
+   
 
     @Override
     public INIFileSection create() {
