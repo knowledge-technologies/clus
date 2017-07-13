@@ -6,7 +6,6 @@ import clus.Clus;
 import clus.algo.ClusInductionAlgorithm;
 import clus.algo.ClusInductionAlgorithmType;
 import clus.algo.tdidt.ClusDecisionTree;
-import clus.algo.tdidt.ClusNode;
 import clus.data.type.ClusSchema;
 import clus.main.ClusRun;
 import clus.main.Settings;
@@ -36,7 +35,7 @@ public class ClusSemiSupervisedClassifier extends ClusInductionAlgorithmType {
             case Settings.SSL_METHOD_SELF_TRAINING_FTF:
                 return new ClusSelfTrainingFTFInduce(schema, sett, m_clss.createInduce(schema, sett, cargs));
             case Settings.SSL_METHOD_PCT:
-                return new ClusSemiSupervisdPCTs(m_clss.createInduce(schema, sett, cargs));
+                return new ClusSemiSupervisedPCTs(m_clss.createInduce(schema, sett, cargs));
         }
         // by default return self training
         return new ClusSelfTrainingInduce(schema, sett, m_clss.createInduce(schema, sett, cargs));
@@ -53,8 +52,6 @@ public class ClusSemiSupervisedClassifier extends ClusInductionAlgorithmType {
         ClusModelInfo def_info = cr.getModelInfo(ClusModel.DEFAULT);
         def_info.setModel(ClusDecisionTree.induceDefault(cr));
         m_clss.postProcess(cr);
-        
-        
     }
 
     @Override

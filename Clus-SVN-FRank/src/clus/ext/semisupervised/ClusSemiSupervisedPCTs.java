@@ -23,7 +23,7 @@ import clus.selection.XValRandomSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
 
-public class ClusSemiSupervisdPCTs extends ClusSemiSupervisedInduce {
+public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
     
 	ClusInductionAlgorithm m_Induce;
     ClusModel m_Model;
@@ -34,7 +34,7 @@ public class ClusSemiSupervisdPCTs extends ClusSemiSupervisedInduce {
     boolean m_SaveScores;		//Should the scores be saved?
     PrintWriter writer;
 
-    public ClusSemiSupervisdPCTs(ClusInductionAlgorithm clss_induce) throws ClusException, IOException {
+    public ClusSemiSupervisedPCTs(ClusInductionAlgorithm clss_induce) throws ClusException, IOException {
         super(clss_induce);
         m_Induce = clss_induce;
 
@@ -64,8 +64,10 @@ public class ClusSemiSupervisdPCTs extends ClusSemiSupervisedInduce {
     }
 
 	@Override
-	public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
-		
+	public ClusModel induceSingleUnpruned(ClusRun crOriginal) throws ClusException, IOException, InterruptedException {
+
+    	ClusRun cr = new ClusRun(crOriginal);
+    	cr.setTrainingSet(crOriginal.getTrainingSet().cloneData());
 		partitionData(cr); //set training set, unlabeled set and testing set (if needed) 
 		
 		if (m_SaveScores) writer = new PrintWriter(m_ScoresPath);
