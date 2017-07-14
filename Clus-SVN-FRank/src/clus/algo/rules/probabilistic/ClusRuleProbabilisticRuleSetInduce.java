@@ -1,34 +1,25 @@
 
-package clus.algo.rules;
+package clus.algo.rules.probabilistic;
 
-import java.io.Console;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Random;
-import java.util.TreeSet;
 import java.util.function.Function;
 
 import clus.Clus;
-import clus.algo.ClusInductionAlgorithm;
+import clus.algo.rules.ClusRuleInduce;
 import clus.algo.rules.ClusRuleSet;
+import clus.algo.rules.ClusRulesFromTree;
 import clus.algo.tdidt.ClusDecisionTree;
 import clus.algo.tdidt.ClusNode;
-import clus.algo.tdidt.DepthFirstInduce;
 import clus.data.rows.DataTuple;
 import clus.data.rows.RowData;
-import clus.data.rows.TupleIterator;
 import clus.data.type.ClusAttrType;
 import clus.data.ClusSchema;
 import clus.ext.ensembles.ClusEnsembleInduce;
 import clus.ext.ensembles.ClusForest;
-import clus.ext.optiontree.ClusOptionTree;
 import clus.ext.optiontree.DepthFirstInduceWithOptions;
 import clus.ext.optiontree.MyNode;
-import clus.heuristic.ClusHeuristic;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.ClusSummary;
@@ -36,10 +27,8 @@ import clus.main.settings.Settings;
 import clus.main.settings.SettingsRules;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
-import clus.pruning.PruneTree;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import clus.util.ClusRandom;
 import clus.util.tools.optimization.sls.OptSmoothLocalSearch;
 
 
@@ -350,7 +339,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
             @Override
             public Double apply(ClusRuleSet t) {
-                return (double) (initialRuleSetSize - t.m_Rules.size()) / initialRuleSetSize;
+                return (double) (initialRuleSetSize - t.getRules().size()) / initialRuleSetSize;
             }
         };
 
@@ -360,8 +349,8 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
             @Override
             public Double apply(ClusRuleSet t) {
                 double f = 0;
-                for (int r = 0; r < t.m_Rules.size(); r++) {
-                    f += (maxGlobalRuleCardinality - t.getRule(r).m_Tests.size());
+                for (int r = 0; r < t.getRules().size(); r++) {
+                    f += (maxGlobalRuleCardinality - t.getRule(r).getTests().size());
                 }
                 return f;
             }
@@ -419,7 +408,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
             public Double apply(ClusRuleSet t) {
                 double f = t.incorrectCoverAcrossAllRules();
 
-                f = (N * t.m_Rules.size()) - f;
+                f = (N * t.getRules().size()) - f;
 
                 return f;
             }

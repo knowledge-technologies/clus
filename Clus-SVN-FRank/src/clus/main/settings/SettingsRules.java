@@ -1,4 +1,3 @@
-
 package clus.main.settings;
 
 import clus.util.jeans.io.ini.INIFileBool;
@@ -33,7 +32,7 @@ public class SettingsRules implements ISettings {
         m_PrintAllRules.setValue(value);
     }
     
-    private final String[] COVERING_METHODS = { "Standard", "WeightedMultiplicative", "WeightedAdditive", "WeightedError", "Union", "BeamRuleDefSet", "RandomRuleSet", "StandardBootstrap", "HeurOnly", "RulesFromTree" };
+    private final String[] COVERING_METHODS = { "Standard", "WeightedMultiplicative", "WeightedAdditive", "WeightedError", "Union", "BeamRuleDefSet", "RandomRuleSet", "StandardBootstrap", "HeurOnly", "RulesFromTree", "SampledRuleSet" };
 
     // Standard covering: ordered rules (decision list)
     public final static int COVERING_METHOD_STANDARD = 0;

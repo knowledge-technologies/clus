@@ -770,6 +770,10 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    public ArrayList<NodeTest> getTests() {
+        return m_Tests;
+    }
+    
     public NodeTest getTest(int i) {
         return (NodeTest) m_Tests.get(i);
     }

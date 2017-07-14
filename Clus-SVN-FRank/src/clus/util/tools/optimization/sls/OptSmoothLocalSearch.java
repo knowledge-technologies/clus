@@ -9,10 +9,10 @@ import java.util.Random;
 import java.util.function.Function;
 
 import clus.algo.rules.ClusRule;
-import clus.algo.rules.ClusRuleProbabilisticRuleSetInduce;
 import clus.algo.rules.ClusRuleSet;
 import clus.algo.rules.Parallel;
 import clus.algo.rules.Parallel.Operation;
+import clus.algo.rules.probabilistic.ClusRuleProbabilisticRuleSetInduce;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.main.ClusRun;
@@ -270,7 +270,7 @@ public class OptSmoothLocalSearch {
         }
 
         //		// calculate default rule and prototypes for the sampled set 
-        returnSet.setTargetStat(initialRuleSet.getTargetStat());
+        //returnSet.setTargetStat(initialRuleSet.getTargetStat());
         //clusRuleProbabilisticRuleSetInduce.calculateDefaultRuleAndPrototypesForRuleSet(returnSet);
 
         return returnSet;
@@ -296,7 +296,8 @@ public class OptSmoothLocalSearch {
 
         //		// calculate default rule and prototypes for the sampled set
         //clusRuleProbabilisticRuleSetInduce.calculateDefaultRuleAndPrototypesForRuleSet(returnSet);
-        returnSet.setTargetStat(initialRuleSet.getTargetStat());
+
+        //returnSet.setTargetStat(initialRuleSet.getTargetStat()); // should this really be here?? the statistic is not correct for the rules that are in the set
 
         return returnSet;
     }
@@ -340,8 +341,9 @@ public class OptSmoothLocalSearch {
             setWithRuleToCheck.add(ruleToCheck);
             setWithoutRuleToCheck.remove(ruleToCheck);
 
-            setWithRuleToCheck.setTargetStat(initialRuleSet.getTargetStat());
-            setWithoutRuleToCheck.setTargetStat(initialRuleSet.getTargetStat());
+         // should this really be here?? the statistic is not correct for the rules that are in the set
+            //setWithRuleToCheck.setTargetStat(initialRuleSet.getTargetStat());
+            //setWithoutRuleToCheck.setTargetStat(initialRuleSet.getTargetStat());
 
             // sample random from rules
             //			tmpSetEstimate1 = objectiveFunction.apply(randomSampleWithoutBias(rulesWith)); // randomly sample without bias and estimate quality

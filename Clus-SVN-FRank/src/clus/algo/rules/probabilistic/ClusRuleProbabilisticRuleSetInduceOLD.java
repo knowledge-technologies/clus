@@ -1,4 +1,4 @@
-package clus.algo.rules;
+package clus.algo.rules.probabilistic;
 
 //import java.io.File;
 //import java.io.FileNotFoundException;
