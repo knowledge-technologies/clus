@@ -10,9 +10,9 @@ import java.util.function.Function;
 
 import clus.algo.rules.ClusRule;
 import clus.algo.rules.ClusRuleSet;
-import clus.algo.rules.Parallel;
-import clus.algo.rules.Parallel.Operation;
 import clus.algo.rules.probabilistic.ClusRuleProbabilisticRuleSetInduce;
+import clus.algo.rules.probabilistic.Parallel;
+import clus.algo.rules.probabilistic.Parallel.Operation;
 import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.main.ClusRun;

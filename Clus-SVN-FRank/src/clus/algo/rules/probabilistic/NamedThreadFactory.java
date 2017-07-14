@@ -1,4 +1,4 @@
-package clus.algo.rules;
+package clus.algo.rules.probabilistic;
 
 
 import java.util.concurrent.Executors;
