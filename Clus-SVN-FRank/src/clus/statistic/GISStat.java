@@ -29,6 +29,7 @@ import clus.data.type.NumericAttrType;
 import clus.jeans.math.MathUtil;
 import clus.main.Settings;
 
+@Deprecated
 public class GISStat extends RegressionStat {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
