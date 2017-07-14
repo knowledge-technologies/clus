@@ -199,10 +199,6 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
         
         setWeights(clusteringWeights, clustering, bestWeight);                      
 
-        if(m_Schema.getSettings().isEnsembleMode())
-			System.err.println(
-					"Jurica: There is some BUG somewhere I did not manage to resolve. If ensemble of SSL-PCTs is constructed, in .out file it says that train and test sets have 0 examples, and the is no default model. However, it seems that the errors are correctly calculated.");
-
         //learn model with new training set and best w parameter
         return m_Induce.induceSingleUnpruned(cr);
 		
