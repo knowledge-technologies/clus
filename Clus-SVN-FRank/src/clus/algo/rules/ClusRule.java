@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -88,6 +89,12 @@ public class ClusRule implements ClusModel, Serializable {
      * Index is 0 for train set, 1 for test set
      */
     protected double[] m_Coverage = new double[2];
+
+    /** Bit vector of covered examples */
+    protected BitSet m_CoverageBits = null;
+
+    /** Bit vector of corretly covered examples */
+    protected BitSet m_CoverageCorrectBits = null;
 
     /** Average error score of the rule */
     protected double m_TrainErrorScore;
@@ -260,20 +267,102 @@ public class ClusRule implements ClusModel, Serializable {
 
 
     public RowData computeCovered(RowData data) {
-        int covered = 0;
+        //      int covered = 0;
+        //      for (int i = 0; i < data.getNbRows(); i++) {
+        //          DataTuple tuple = data.getTuple(i);
+        //          if (covers(tuple)) covered++;
+        //      }
+        //      int idx = 0;
+        //      RowData res = new RowData(data.getSchema(), covered);
+        //      for (int i = 0; i < data.getNbRows(); i++) {
+        //          DataTuple tuple = data.getTuple(i);
+        //          if (covers(tuple)) res.setTuple(tuple, idx++);
+        //      }
+        //      return res;
+        //      int covered = 0;
+
+        RowData res = new RowData(data.getSchema());
         for (int i = 0; i < data.getNbRows(); i++) {
             DataTuple tuple = data.getTuple(i);
             if (covers(tuple))
-                covered++;
+                res.add(tuple);
         }
-        int idx = 0;
-        RowData res = new RowData(data.getSchema(), covered);
-        for (int i = 0; i < data.getNbRows(); i++) {
-            DataTuple tuple = data.getTuple(i);
-            if (covers(tuple))
-                res.setTuple(tuple, idx++);
-        }
+
         return res;
+    }
+
+
+    /**
+     * Compute a bit vector of covered examples
+     * 
+     * @param data
+     */
+    public void computeCoverageBits(RowData data) {
+        int nbRows = data.getNbRows();
+        m_CoverageBits = new BitSet(nbRows);
+        m_CoverageCorrectBits = new BitSet(nbRows);
+        DataTuple tuple;
+        ClusAttrType[] targetAttributes;
+        double diff, variance;
+        boolean correctCoverage = false;
+
+        if (m_TargetStat instanceof ClassificationStat) {
+            targetAttributes = m_StatManager.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+
+            for (int i = 0; i < nbRows; i++) {
+                tuple = data.getTuple(i);
+
+                if (covers(tuple)) {
+                    m_CoverageBits.set(i);
+
+                    int[] predictions = predictWeighted(tuple).getNominalPred();
+                    int true_value;
+                    NominalAttrType[] targetAttrs = data.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+                    for (int j = 0; j < targetAttributes.length; j++) {
+                        true_value = targetAttrs[j].getNominal(tuple);
+                        if (predictions[j] == true_value) {
+                            m_CoverageCorrectBits.set(j);
+                        }
+                    }
+                }
+            }
+        }
+        else if (m_TargetStat instanceof RegressionStat) {
+            targetAttributes = m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+
+            for (int i = 0; i < nbRows; i++) {
+                tuple = data.getTuple(i);
+
+                if (covers(tuple)) {
+                    m_CoverageBits.set(i);
+
+                    // check if cover is "correct"
+                    double[] predictions = ((RegressionStat) predictWeighted(tuple)).getNumericPred();
+
+                    correctCoverage = true;
+
+                    for (int j = 0; j < targetAttributes.length; j++) {
+                        variance = ((RegressionStat) m_TargetStat).getVariance(j); // StandardDeviation
+                        diff = Math.abs(predictions[j] - targetAttributes[j].getNumeric(tuple));
+
+                        // if absolute difference is greater than sigma
+                        if (diff > variance) {
+                            correctCoverage = false;
+                            break;
+                        }
+                    }
+
+                    if (correctCoverage) {
+                        // all variances are in range
+                        m_CoverageCorrectBits.set(i);
+                    }
+                }
+            }
+        }
+        else {
+            // Mixed classification and regression not yet implemented
+            throw new RuntimeException("Mixed classification and regression not yet implemented");
+        }
     }
 
 
@@ -550,6 +639,23 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    public void printModelTests(PrintWriter wrt) {
+        for (NodeTest test : getModelTests()) {
+            wrt.println(test.getString());
+        }
+    }
+
+
+    public ArrayList<NodeTest> getModelTests() {
+        ArrayList<NodeTest> tests = new ArrayList<NodeTest>();
+        for (int i = 0; i < m_Tests.size(); i++) {
+            NodeTest test = (NodeTest) m_Tests.get(i);
+            tests.add(test);
+        }
+        return tests;
+    }
+
+
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         wrt.print("IF ");
         if (m_Tests.size() == 0) {
@@ -622,15 +728,18 @@ public class ClusRule implements ClusModel, Serializable {
     public void printModelToPythonScript(PrintWriter wrt) {
     }
 
+
     @Override
     public JsonObject getModelJSON() {
         return null;
     }
 
+
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info) {
         return null;
     }
+
 
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
@@ -712,9 +821,8 @@ public class ClusRule implements ClusModel, Serializable {
 
         for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
             stat.m_Means[iTarget] = newPred[iTarget];
-            
-            stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];            
-            stat.setSumWeights(iTarget, 1);  // stat.m_SumWeights[iTarget] = 1;
+            stat.setSumValues(iTarget, stat.m_Means[iTarget]); // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];            
+            stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;
         }
         setTargetStat(stat);
     }
@@ -961,5 +1069,33 @@ public class ClusRule implements ClusModel, Serializable {
 
 
     public void retrieveStatistics(ArrayList list) {
+    }
+    
+
+    public float overlap(ClusRule other) {
+        BitSet bs = (BitSet) m_CoverageBits.clone();
+
+        bs.and(other.m_CoverageBits);
+
+        return bs.cardinality();
+    }
+
+
+    public boolean coversCorrect(DataTuple tuple) {
+        // test if the tuple is covered by this rule
+        if (m_CoverageBits.get(tuple.getIndex())) { return m_CoverageCorrectBits.get(tuple.getIndex()); }
+
+        // rule does not cover the given example so we just say the tuple is not covered correctly 
+        // (this makes sense because it is not covered at all)
+        return false;
+    }
+
+
+    public int coversIncorrect() {
+        BitSet tmp = (BitSet) m_CoverageBits.clone();
+
+        tmp.and(m_CoverageCorrectBits);
+
+        return tmp.cardinality();
     }
 }

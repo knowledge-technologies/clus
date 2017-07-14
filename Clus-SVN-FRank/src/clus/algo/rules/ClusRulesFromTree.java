@@ -31,10 +31,14 @@ import java.util.ArrayList;
 
 import clus.algo.tdidt.ClusNode;
 import clus.data.rows.RowData;
+import clus.ext.optiontree.ClusOptionNode;
+import clus.ext.optiontree.ClusSplitNode;
+import clus.ext.optiontree.MyNode;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.SettingsOutput;
 import clus.main.settings.SettingsRules;
+import clus.main.settings.SettingsTree;
 import clus.model.ClusModel;
 import clus.model.test.NodeTest;
 import clus.util.ClusException;
@@ -93,14 +97,87 @@ public class ClusRulesFromTree {
      * @throws ClusException
      * @throws IOException
      */
-    public ClusRuleSet constructRules(ClusRun cr, ClusNode node, ClusStatManager mgr, boolean computeDispersion, int optimizeRuleWeights) throws ClusException, IOException {
+    public ClusRuleSet constructRules(
+            ClusRun cr,
+            ClusNode node,
+            ClusStatManager mgr,
+            boolean computeDispersion,
+            int optimizeRuleWeights)
+            throws ClusException,
+            IOException {
 
         ClusRuleSet ruleSet = constructRules(node, mgr);
 
         RowData data = (RowData) cr.getTrainingSet();
 
         // Optimizing rule set if needed
-        if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED || optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+        if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED
+                || optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+            OptAlg optAlg = null;
+
+            OptProbl.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
+
+            // Find the rule weights with optimization algorithm.
+            if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+                optAlg = (OptAlg) new GDAlg(mgr, param, ruleSet);
+            }
+            else {
+                optAlg = (OptAlg) new DeAlg(mgr, param, ruleSet);
+            }
+
+            ArrayList<Double> weights = optAlg.optimize();
+
+            // Print weights of rules
+            System.out.print("The weights for rules from trees:");
+            for (int j = 0; j < ruleSet.getModelSize(); j++) {
+                ruleSet.getRule(j).setOptWeight(((Double) weights.get(j)).doubleValue());
+                System.out.print(((Double) weights.get(j)).doubleValue() + "; ");
+            }
+            System.out.print(System.lineSeparator());
+            ruleSet.removeLowWeightRules();
+            // RowData data_copy = (RowData)data.cloneData();
+            // updateDefaultRule(rset, data_copy);
+        }
+
+        if (computeDispersion) {
+            // For some kind of reason all that is here was not done if dispersion was not computed
+            RowData testdata;
+            ruleSet.addDataToRules(data);
+            // res.setTrainErrorScore();
+
+            ruleSet.computeDispersion(ClusModel.TRAIN);
+            ruleSet.removeDataFromRules();
+            if (cr.getTestIter() != null) {
+                testdata = (RowData) cr.getTestSet();
+                ruleSet.addDataToRules(testdata);
+                // res.setTrainErrorScore();
+                ruleSet.computeDispersion(ClusModel.TEST);
+                ruleSet.removeDataFromRules();
+            }
+        }
+
+        // Give each rule a unique number (1..nbRules)
+        ruleSet.numberRules();
+        return ruleSet;
+    }
+
+    
+    public ClusRuleSet constructOptionRules(
+            ClusRun cr,
+            MyNode node,
+            ClusStatManager mgr,
+            boolean computeDispersion,
+            int optimizeRuleWeights)
+            throws ClusException,
+            IOException {
+
+        ClusRuleSet ruleSet = constructOptionRules(node, mgr);
+
+        RowData data = (RowData) cr.getTrainingSet();
+
+        // Optimizing rule set if needed
+        if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED ||
+                optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
             OptAlg optAlg = null;
 
             OptProbl.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
@@ -149,7 +226,6 @@ public class ClusRulesFromTree {
         return ruleSet;
     }
 
-
     /**
      * Construct rules from terminal nodes of the given tree. Does not do any processing
      * like dispersion or weight optimization. Especially used
@@ -166,6 +242,19 @@ public class ClusRulesFromTree {
         ClusRule init = new ClusRule(mgr);
         // System.out.println("Constructing rules from a tree.");
         constructRecursive(node, init, ruleSet);
+        ruleSet.removeEmptyRules();
+        ruleSet.simplifyRules();
+        ruleSet.setTargetStat(node.getTargetStat());
+        return ruleSet;
+    }
+
+    
+    /** Option tree conversion */
+    public ClusRuleSet constructOptionRules(MyNode node, ClusStatManager mgr) {
+        ClusRuleSet ruleSet = new ClusRuleSet(mgr);
+        ClusRule init = new ClusRule(mgr);
+        //      System.out.println("Constructing rules from an option tree.");
+        constructRecursiveOption(node, init, ruleSet);
         ruleSet.removeEmptyRules();
         ruleSet.simplifyRules();
         ruleSet.setTargetStat(node.getTargetStat());
@@ -189,6 +278,36 @@ public class ClusRulesFromTree {
             ClusRule child_rule = rule.cloneRule();
             child_rule.addTest(branchTest);
             constructRecursive(child, child_rule, set);
+        }
+    }
+    
+    
+    /** Only terminal nodes are added to rule set (OPTION TREE) */
+    public void constructRecursiveOption(MyNode node, ClusRule rule, ClusRuleSet set) {
+        if (node instanceof ClusOptionNode) {
+            for (int i = 0; i < node.getNbChildren(); i++)
+                constructRecursiveOption(node.getChild(i), rule, set);
+        }
+        else {
+            if (node.atBottomLevel() || m_Mode == SettingsOutput.CONVERT_RULES_ALLNODES) {
+                if (!m_Validated || node.getTargetStat().isValidPrediction()) {
+                    rule.setTargetStat(node.getTargetStat());
+                    rule.setID(node.getID());
+                    set.add(rule);
+                }
+            }
+
+            ClusSplitNode testnode = (ClusSplitNode) node;
+            NodeTest test = testnode.getTest();
+            for (int i = 0; i < testnode.getNbChildren(); i++) {
+                MyNode child = testnode.getChild(i);
+
+                NodeTest branchTest = test.getBranchTest(i);
+                ClusRule child_rule = rule.cloneRule();
+                child_rule.addTest(branchTest);
+                constructRecursiveOption(child, child_rule, set);
+
+            }
         }
     }
 }

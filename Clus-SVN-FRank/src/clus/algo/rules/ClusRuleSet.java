@@ -32,6 +32,7 @@ import java.io.Serializable;
 import java.text.DecimalFormat;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.BitSet;
 import java.util.HashMap;
 
 import com.google.gson.JsonObject;
@@ -52,6 +53,7 @@ import clus.main.settings.Settings;
 import clus.main.settings.SettingsRules;
 import clus.model.ClusModel;
 import clus.model.processor.ClusModelProcessor;
+import clus.model.test.NodeTest;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
@@ -113,6 +115,17 @@ public class ClusRuleSet implements ClusModel, Serializable {
     }
 
 
+    public ClusRuleSet cloneRuleSetNonUnique() {
+        ClusRuleSet new_ruleset = new ClusRuleSet(m_StatManager);
+        new_ruleset.m_Rules = (ArrayList<ClusRule>) m_Rules.clone();
+
+        //      for (int i = 0; i < getModelSize(); i++) {
+        //          new_ruleset.add(getRule(i));
+        //      }
+        return new_ruleset;
+    }
+
+
     /**
      * Deep clones this ruleset, so that it points to different rules that
      * have target statistics with the given threshold.
@@ -151,6 +164,17 @@ public class ClusRuleSet implements ClusModel, Serializable {
         else {
             m_Rules.add(rule);
         }
+    }
+
+
+    /**
+     * Remove given rule from this rule set
+     * 
+     * @param rule
+     *        Rule to remove
+     */
+    public void remove(ClusRule rule) {
+        m_Rules.remove(rule); // !! O(n) !!!
     }
 
 
@@ -226,6 +250,44 @@ public class ClusRuleSet implements ClusModel, Serializable {
             }
         }
         return isUnique;
+    }
+
+
+    public ClusStatistic predictWeightedSLS(DataTuple tuple) {
+        boolean covered = false;
+
+        // Unordered rules (with different weighting schemes)
+        ClusStatistic stat = m_TargetStat.cloneSimple();
+        double weight_sum = 0.0;
+
+        // Get the overall sum of weights for all the rules that cover the example
+        for (int i = 0; i < getModelSize(); i++) {
+            ClusRule rule = getRule(i);
+            if (rule.m_CoverageBits.get(tuple.getIndex())) {
+                weight_sum += getAppropriateWeight(rule);
+            }
+        }
+
+        // Take the prediction. Normalise
+        for (int i = 0; i < getModelSize(); i++) {
+            ClusRule rule = getRule(i);
+            if (rule.m_CoverageBits.get(tuple.getIndex())) {
+                ClusStatistic rulestat = rule.predictWeighted(tuple);
+                double weight = getAppropriateWeight(rule) / weight_sum;
+                ClusStatistic norm_rulestat = rulestat.normalizedCopy();
+                stat.addPrediction(norm_rulestat, weight);
+                covered = true;
+            }
+        }
+        if (covered) {
+            stat.computePrediction();
+            return stat;
+        }
+        else {
+            // If not covered, return default prediction
+            return m_TargetStat;
+        }
+
     }
 
 
@@ -363,7 +425,14 @@ public class ClusRuleSet implements ClusModel, Serializable {
      */
     public int removeLowWeightRules() {
         double threshold = getSettings().getRules().getOptRuleWeightThreshold();
+        boolean binarizeWeights = getSettings().getRules().getOptRuleWeightBinarization();
+
+        if (binarizeWeights)
+            System.err.println("Weight binarization will be used.");
+
         int nb_rules = getModelSize();
+        ClusRule r;
+
         for (int i = nb_rules - 1; i >= 0; i--) {
 
             // If the first rule is all covering, it is not removed (can predict just 0 if that is the weight)
@@ -371,9 +440,21 @@ public class ClusRuleSet implements ClusModel, Serializable {
             if (i == 0 && m_allCoveringRuleExists)
                 continue;
 
-            if (Math.abs(getRule(i).getOptWeight()) < threshold || getRule(i).getOptWeight() == 0.0) {
-                // If optimization is used, the last first covers all the instances. This should not be removed
-                m_Rules.remove(i);
+            r = getRule(i);
+
+            if (binarizeWeights) {
+                if (Math.abs(r.getOptWeight()) > threshold) {
+                    r.setOptWeight(1.0);
+                }
+                else {
+                    m_Rules.remove(i);
+                }
+            }
+            else {
+                if (Math.abs(getRule(i).getOptWeight()) < threshold || getRule(i).getOptWeight() == 0.0) {
+                    // If optimization is used, the last first covers all the instances. This should not be removed
+                    m_Rules.remove(i);
+                }
             }
         }
         if (getSettings().getGeneric().getVerbose() > 0)
@@ -414,7 +495,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
         for (int iTarget = 0; iTarget < firstRuleStat.getNbAttributes(); iTarget++) {
             firstRuleStat.m_Means[iTarget] += addToDefaultPred[iTarget];
-            firstRuleStat.setSumValues(iTarget, firstRuleStat.m_Means[iTarget]);  // firstRuleStat.m_SumValues[iTarget] = firstRuleStat.m_Means[iTarget];
+            firstRuleStat.setSumValues(iTarget, firstRuleStat.m_Means[iTarget]); // firstRuleStat.m_SumValues[iTarget] = firstRuleStat.m_Means[iTarget];
             firstRuleStat.setSumWeights(iTarget, 1); // firstRuleStat.m_SumWeights[iTarget] = 1;
         }
     }
@@ -452,16 +533,16 @@ public class ClusRuleSet implements ClusModel, Serializable {
         if (!getSettings().getRules().isPrintAllRules())
             wrt.println("Set of " + m_Rules.size() + " rules.\n");
 
-        if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED && getSettings().getRules().getOptGDNbOfTParameterTry() > 1) {
+        if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED
+                && getSettings().getRules().getOptGDNbOfTParameterTry() > 1) {
             // Print the T value that won the game.
-            wrt.println("Gradient descent optimization: Smallest test fitness of " + fr.format(m_optWeightBestFitness) + " with T value: " + fr.format(m_optWeightBestTValue) + "\n");
-
+            wrt.println("Gradient descent optimization: Smallest test fitness of "
+                    + fr.format(m_optWeightBestFitness) + " with T value: " + fr.format(m_optWeightBestTValue) + System.lineSeparator());
         }
 
         for (int i = 0; i < m_Rules.size(); i++) {
             ClusRule rule = (ClusRule) m_Rules.get(i);
             if (headers) {
-
                 if (getSettings().getRules().isPrintAllRules()) {
                     String head = new String("Rule " + (i + 1) + ":");
                     char[] underline = new char[head.length()];
@@ -500,19 +581,14 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
         if (m_TargetStat != null && m_TargetStat.isValidPrediction()) {
             if (headers) {
-                if (m_Comment == null) {
-                    wrt.println("Default rule:");
-                    wrt.println("=============");
-                }
-                else {
-                    wrt.println("Default rule" + m_Comment + ":");
-                    wrt.println("=============");
-                }
+                wrt.println("Default rule"
+                        + (m_Comment == null ? "" : m_Comment + ":"));
+                wrt.println("=============");
             }
             wrt.println("Default = " + (m_TargetStat == null ? "N/A" : m_TargetStat.getString()));
         }
         if (headers && getSettings().getRules().computeDispersion()) {
-            wrt.println("\n\nRule set dispersion:");
+            wrt.println(System.lineSeparator() + System.lineSeparator() + "Rule set dispersion:");
             wrt.println("=====================");
             avg_dispersion[0][0] = avg_dispersion[0][0] == 0 ? 0 : avg_dispersion[0][0] / m_Rules.size();
             avg_dispersion[0][1] = avg_dispersion[0][1] == 0 ? 0 : avg_dispersion[0][1] / m_Rules.size();
@@ -582,15 +658,18 @@ public class ClusRuleSet implements ClusModel, Serializable {
     public void printModelToPythonScript(PrintWriter wrt) {
     }
 
+
     @Override
     public JsonObject getModelJSON() {
         return null;
     }
 
+
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info) {
         return null;
     }
+
 
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
@@ -617,6 +696,11 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
     public ClusRule getRule(int i) {
         return (ClusRule) m_Rules.get(i);
+    }
+
+
+    public ArrayList<ClusRule> getRules() {
+        return m_Rules;
     }
 
 
@@ -654,6 +738,9 @@ public class ClusRuleSet implements ClusModel, Serializable {
         m_TargetStat = def;
     }
 
+    public ClusStatistic getTargetStat() {
+        return m_TargetStat;
+    }
 
     /**
      * Post process the rule set rule by rule.
@@ -1189,8 +1276,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
                 for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
 
                     stat.m_Means[iTarget] -= defaultPred[iTarget];
-                    stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
-                    stat.setSumWeights(iTarget, 1);  // stat.m_SumWeights[iTarget] = 1;
+                    stat.setSumValues(iTarget, stat.m_Means[iTarget]); // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
+                    stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;
                 }
             }
         }
@@ -1257,8 +1344,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
                         stat.m_Means[iTarget] /= scalingValue;
                         // Bigger one (on absolute value) is 1
-                        stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
-                        stat.setSumWeights(iTarget, 1);  // stat.m_SumWeights[iTarget] = 1;
+                        stat.setSumValues(iTarget, stat.m_Means[iTarget]); // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
+                        stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;
 
                         // System.out.println(stat.m_Means[iTarget]/(2*getTargStd(iTarget)));
                     }
@@ -1270,8 +1357,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
                         stat.m_Means[0] = 2 * getTargStd(0);
                     else
                         stat.m_Means[0] = 1;
-                    stat.setSumValues(0, stat.m_Means[0]);  // stat.m_SumValues[0] = stat.m_Means[0];
-                    stat.setSumWeights(0, 1);  // stat.m_SumWeights[0] = 1;
+                    stat.setSumValues(0, stat.m_Means[0]); // stat.m_SumValues[0] = stat.m_Means[0];
+                    stat.setSumWeights(0, 1); // stat.m_SumWeights[0] = 1;
                 }
 
             }
@@ -1302,7 +1389,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
                 double scalingFactor = stat.m_SumWeight / (double) nbOfExamples;
                 for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
                     stat.m_Means[iTarget] *= scalingFactor;
-                    stat.setSumValues(iTarget, stat.m_Means[iTarget]);  // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
+                    stat.setSumValues(iTarget, stat.m_Means[iTarget]); // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
                     stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;
                 }
             }
@@ -1344,7 +1431,10 @@ public class ClusRuleSet implements ClusModel, Serializable {
             if (addOnlyUnique) {
                 // If we are optimizing the rule set and we are omitting the rule predictions,
                 // only uniqueness of the descriptive part is important.
-                if (getSettings().getRules().isRulePredictionOptimized() && getSettings().getRules().isOptOmitRulePredictions()) {
+                if ((getSettings().getRules().isRulePredictionOptimized() && getSettings().getRules().isOptOmitRulePredictions())
+                        ||
+                        getSettings().getRules().getCoveringMethod() == SettingsRules.COVERING_METHOD_SAMPLED_RULE_SET) // if covering method = sampling we are only interested in descriptive part
+                {
                     if (addIfUnique(newRules.getRule(iRule)))
                         numberAdded++;
                 }
@@ -1466,6 +1556,95 @@ public class ClusRuleSet implements ClusModel, Serializable {
             System.out.println("\tAdded " + addedTerms + " linear terms explicitly to the set.");
 
         ClusRuleLinearTerm.DeleteImplicitLinearTerms(); // Not needed anymore
-
     }
+
+
+    /**
+     * TODO: Calculates Support for a DataTuple
+     */
+    public int getSupport(DataTuple tuple) {
+        int support = 0;
+
+        for (ClusRule rule : getRules()) {
+            if (rule.covers(tuple))
+                support++;
+        }
+
+        return support;
+    }
+
+
+    /**
+     * Get a set of all test nodes in a rule set
+     */
+    public ArrayList<NodeTest> getRuleSetTests() {
+        ArrayList<NodeTest> tests = new ArrayList<NodeTest>();
+
+        for (int i = 0; i < this.getModelSize(); i++)
+            for (NodeTest t : this.getRule(i).getModelTests())
+                if (!tests.contains(t))
+                    tests.add(t);
+
+        return tests;
+    }
+
+
+    /**
+     * Calculate a BitSet vector of uncovered examples with respect to the input data
+     * 
+     * @param trainingData
+     * @return
+     */
+    public BitSet getUncovered(int numberOfExamples) {
+
+        BitSet covered = new BitSet(numberOfExamples);
+
+        // find covered
+        for (int rule = 0; rule < getModelSize() && covered.cardinality() < numberOfExamples; rule++) {
+            covered.or(getRule(rule).m_CoverageBits);
+        }
+
+        covered.flip(0, numberOfExamples); // get uncovered examples
+
+        return covered;
+    }
+
+
+    /**
+     * Calculate coverage bit vectors for each rule in the rule set with respect to the provided data
+     */
+    public void calculateCoverageBitVectors(RowData trainData) {
+        for (int i = 0; i < this.getModelSize(); i++) {
+            getRule(i).computeCoverageBits(trainData);
+        }
+    }
+
+
+    /**
+     * Returns the number of rules, that correctly predict a given tuple
+     * Correct prediction means that it is equal as original (for classification)
+     * and in certain bounds (for regression)
+     */
+    public int correctCoverRuleCount(DataTuple tuple) {
+        int correctRuleCount = 0;
+
+        for (ClusRule r : getRules()) {
+            if (r.coversCorrect(tuple)) {
+                correctRuleCount++;
+            }
+        }
+
+        return correctRuleCount;
+    }
+
+
+    public int incorrectCoverAcrossAllRules() {
+        int count = 0;
+        for (ClusRule r : getRules()) {
+            count += r.coversIncorrect();
+        }
+
+        return count;
+    }
+
 }

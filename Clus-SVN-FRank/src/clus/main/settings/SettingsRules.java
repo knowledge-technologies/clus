@@ -29,6 +29,10 @@ public class SettingsRules implements ISettings {
         return m_PrintAllRules.getValue();
     }
 
+    public void setPrintAllRules(boolean value) {
+        m_PrintAllRules.setValue(value);
+    }
+    
     private final String[] COVERING_METHODS = { "Standard", "WeightedMultiplicative", "WeightedAdditive", "WeightedError", "Union", "BeamRuleDefSet", "RandomRuleSet", "StandardBootstrap", "HeurOnly", "RulesFromTree" };
 
     // Standard covering: ordered rules (decision list)
@@ -38,8 +42,8 @@ public class SettingsRules implements ISettings {
     public final static int COVERING_METHOD_WEIGHTED_MULTIPLICATIVE = 1;
     public final static int COVERING_METHOD_WEIGHTED_ADDITIVE = 2;
     public final static int COVERING_METHOD_WEIGHTED_ERROR = 3;
-    
-    public final static int COVERING_METHOD_UNION = 4;    // In multi-label classification: predicted set of classes is union of predictions of individual rules
+
+    public final static int COVERING_METHOD_UNION = 4; // In multi-label classification: predicted set of classes is union of predictions of individual rules
 
     // Evaluates rules in the context of complete rule set: unordered rules
     // public final static int COVERING_METHOD_RULE_SET = 5;
@@ -77,10 +81,11 @@ public class SettingsRules implements ISettings {
      */
     public final static int COVERING_METHOD_RULES_FROM_TREE = 9;
 
-    
-    
-    
-    
+    /**
+     * No covering, rules created with PCT enemble, converted to rules and then sampled
+     */
+    public final static int COVERING_METHOD_SAMPLED_RULE_SET = 10;
+
     private final String[] RULE_PREDICTION_METHODS = { "DecisionList", "TotCoverageWeighted", "CoverageWeighted", "AccuracyWeighted", "AccCovWeighted", "EquallyWeighted", "Optimized", "Union", "GDOptimized", "GDOptimizedBinary" };
 
     public final static int RULE_PREDICTION_METHOD_DECISION_LIST = 0;
@@ -117,11 +122,6 @@ public class SettingsRules implements ISettings {
     /** Use external binary file for gradient descent optimization of rule weights */
     public final static int RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY = 9;
 
-    
-    
-    
-    
-    
     private final String[] RULE_ADDING_METHODS = { "Always", "IfBetter", "IfBetterBeam" };
     // Always adds a rule to the rule set
     public final static int RULE_ADDING_METHOD_ALWAYS = 0;
@@ -132,6 +132,13 @@ public class SettingsRules implements ISettings {
     public final static int RULE_ADDING_METHOD_IF_BETTER_BEAM = 2;
 
     private boolean IS_RULE_SIG_TESTING = false;
+
+    /**
+     * How the initial rules are generated when using SampledRuleSet covering method
+     */
+    public final static String[] INITIAL_RULE_GENERATING_METHODS = { "RandomForest", "OptionTree" };
+    public final static int INITIAL_RULE_GENERATING_METHOD_RANDOM_FOREST = 0;
+    public final static int INITIAL_RULE_GENERATING_METHOD_OPTION_TREE = 1;
 
     // ***************** WEIGHT OPTIMIZATION
 
@@ -208,6 +215,7 @@ public class SettingsRules implements ISettings {
     private INIFileNominal m_CoveringMethod;
     private INIFileNominal m_PredictionMethod;
     private INIFileNominal m_RuleAddingMethod;
+    private INIFileNominal m_InitialRuleGeneratingMethod;
     private INIFileDouble m_CoveringWeight;
     private INIFileDouble m_InstCoveringWeightThreshold;
     private INIFileInt m_MaxRulesNb;
@@ -256,6 +264,8 @@ public class SettingsRules implements ISettings {
     private INIFileDouble m_OptNbZeroesPar;
     /** The treshold for rule weights. If weight < this, rule is removed. */
     private INIFileDouble m_OptRuleWeightThreshold;
+    /** If this flag is set, weights higher than m_OptRuleWeightThreshold will get value 1, others will be set to 0 */
+    protected INIFileBool m_OptRuleWeightBinarization;
     /** DE The loss function. The default is squared loss. */
     private INIFileNominal m_OptLossFunction;
     /** Optimization For Huber 1962 loss function an alpha value for outliers has to be given. */
@@ -342,6 +352,16 @@ public class SettingsRules implements ISettings {
      */
     private INIFileBool m_OptGDEarlyTTryStop;
 
+    // Probabilistic Rule sampling
+    /** Expected cardinality (excluding default rule) */
+    private INIFileInt m_MaxRuleCardinality;
+    /** Number of iterations in org.apache.commons.math4.distribution.PoissonDistribution */
+    private INIFileInt m_MaxPoissonIterations;
+    /** Number of generated rule sets */
+    private INIFileInt m_NumberOfSampledRuleSets;
+    /** Percentage of training data to use as validation set when selecting the best sampled rule set */
+    private INIFileDouble m_ValidationSetPercentage;
+
 
     public INIFileNominalOrDoubleOrVector getDispersionWeights() {
         return m_DispersionWeights;
@@ -385,7 +405,9 @@ public class SettingsRules implements ISettings {
 
 
     public boolean isRulePredictionOptimized() {
-        return (getRulePredictionMethod() == RULE_PREDICTION_METHOD_OPTIMIZED || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY);
+        return (getRulePredictionMethod() == RULE_PREDICTION_METHOD_OPTIMIZED
+                || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED
+                || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY);
     }
 
 
@@ -421,6 +443,16 @@ public class SettingsRules implements ISettings {
 
     public void setInstCoveringWeightThreshold(double thresh) {
         m_InstCoveringWeightThreshold.setValue(thresh);
+    }
+
+
+    public int getInitialRuleGeneratingMethod() {
+        return m_InitialRuleGeneratingMethod.getValue();
+    }
+
+
+    public void setInitialRuleGeneratingMethod(int method) {
+        m_InitialRuleGeneratingMethod.setSingleValue(method);
     }
 
 
@@ -475,7 +507,9 @@ public class SettingsRules implements ISettings {
 
 
     public boolean isWeightedCovering() {
-        if (m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ADDITIVE || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_MULTIPLICATIVE || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ERROR) {
+        if (m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ADDITIVE
+                || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_MULTIPLICATIVE
+                || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ERROR) {
             return true;
         }
         else {
@@ -604,6 +638,12 @@ public class SettingsRules implements ISettings {
 
     public double getOptRuleWeightThreshold() {
         return m_OptRuleWeightThreshold.getValue();
+    }
+
+
+    /** If this flag is set, weights higher than m_OptRuleWeightThreshold will get value 1, others will be set to 0 */
+    public boolean getOptRuleWeightBinarization() {
+        return m_OptRuleWeightBinarization.getValue();
     }
 
 
@@ -816,26 +856,53 @@ public class SettingsRules implements ISettings {
     }
 
 
+    /** Expected cardinality (excluding default rule) */
+    public int getMaxRuleCardinality() {
+        return m_MaxRuleCardinality.getValue();
+    }
+
+
+    /** Number of iterations in org.apache.commons.math4.distribution.PoissonDistribution */
+    public int getMaxPoissonIterations() {
+        return m_MaxPoissonIterations.getValue();
+    }
+
+
+    /** Number of generated rule sets */
+    public int getNumberOfSampledRuleSets() {
+        return m_NumberOfSampledRuleSets.getValue();
+    }
+
+
+    /** Percentage of training data to use as validation set when selecting the best sampled rule set */
+    public Double getValidationSetPercentage() {
+        return m_ValidationSetPercentage.getValue();
+    }
+
+
     public void setIS_RULE_SIG_TESTING(boolean value) {
         IS_RULE_SIG_TESTING = value;
     }
+
 
     public boolean getIS_RULE_SIG_TESTING() {
         return IS_RULE_SIG_TESTING;
     }
 
+
     @Override
     public INIFileSection create() {
         m_SectionRules = new INIFileSection("Rules");
-        m_SectionRules.addNode(m_CoveringMethod = new INIFileNominal("CoveringMethod", COVERING_METHODS, 0));
-        m_SectionRules.addNode(m_PredictionMethod = new INIFileNominal("PredictionMethod", RULE_PREDICTION_METHODS, 0));
-        m_SectionRules.addNode(m_RuleAddingMethod = new INIFileNominal("RuleAddingMethod", RULE_ADDING_METHODS, 0));
+        m_SectionRules.addNode(m_CoveringMethod = new INIFileNominal("CoveringMethod", COVERING_METHODS, COVERING_METHOD_STANDARD));
+        m_SectionRules.addNode(m_PredictionMethod = new INIFileNominal("PredictionMethod", RULE_PREDICTION_METHODS, RULE_PREDICTION_METHOD_DECISION_LIST));
+        m_SectionRules.addNode(m_RuleAddingMethod = new INIFileNominal("RuleAddingMethod", RULE_ADDING_METHODS, RULE_ADDING_METHOD_ALWAYS));
         m_SectionRules.addNode(m_CoveringWeight = new INIFileDouble("CoveringWeight", 0.1));
         m_SectionRules.addNode(m_InstCoveringWeightThreshold = new INIFileDouble("InstCoveringWeightThreshold", 0.1));
         m_SectionRules.addNode(m_MaxRulesNb = new INIFileInt("MaxRulesNb", 1000));
         m_SectionRules.addNode(m_HeurDispOffset = new INIFileDouble("HeurDispOffset", 0.0));
         m_SectionRules.addNode(m_HeurCoveragePar = new INIFileDouble("HeurCoveragePar", 1.0));
         m_SectionRules.addNode(m_HeurRuleDistPar = new INIFileDouble("HeurRuleDistPar", 0.0));
+        m_SectionRules.addNode(m_InitialRuleGeneratingMethod = new INIFileNominal("InitialRuleGeneratingMethod", INITIAL_RULE_GENERATING_METHODS, INITIAL_RULE_GENERATING_METHOD_RANDOM_FOREST));
         m_SectionRules.addNode(m_HeurPrototypeDistPar = new INIFileDouble("HeurPrototypeDistPar", 0.0));
         m_SectionRules.addNode(m_RuleSignificanceLevel = new INIFileDouble("RuleSignificanceLevel", 0.05));
         m_SectionRules.addNode(m_RuleNbSigAtts = new INIFileInt("RuleNbSigAtts", 0));
@@ -860,6 +927,7 @@ public class SettingsRules implements ISettings {
         m_SectionRules.addNode(m_OptRegPar = new INIFileDouble("OptRegPar", 0.0));
         m_SectionRules.addNode(m_OptNbZeroesPar = new INIFileDouble("OptNbZeroesPar", 0.0));
         m_SectionRules.addNode(m_OptRuleWeightThreshold = new INIFileDouble("OptRuleWeightThreshold", 0.1));
+        m_SectionRules.addNode(m_OptRuleWeightBinarization = new INIFileBool("OptRuleWeightBinarization", false));
         m_SectionRules.addNode(m_OptLossFunction = new INIFileNominal("OptDELossFunction", OPT_LOSS_FUNCTIONS, OPT_LOSS_FUNCTIONS_SQUARED));
         m_SectionRules.addNode(m_OptDefaultShiftPred = new INIFileBool("OptDefaultShiftPred", true));
         m_SectionRules.addNode(m_OptAddLinearTerms = new INIFileNominal("OptAddLinearTerms", OPT_GD_ADD_LINEAR_TERMS, OPT_GD_ADD_LIN_NO));
@@ -883,6 +951,12 @@ public class SettingsRules implements ISettings {
         m_SectionRules.addNode(m_OptGDMTGradientCombine = new INIFileNominal("OptGDMTGradientCombine", OPT_GD_MT_COMBINE_GRADIENTS, OPT_GD_MT_GRADIENT_AVG));
         m_SectionRules.addNode(m_OptGDNbOfTParameterTry = new INIFileInt("OptGDNbOfTParameterTry", 1));
         m_SectionRules.addNode(m_OptGDEarlyTTryStop = new INIFileBool("OptGDEarlyTTryStop", true));
+
+        m_SectionRules.addNode(m_MaxRuleCardinality = new INIFileInt("MaxRuleCardinality", 30));
+        m_SectionRules.addNode(m_MaxPoissonIterations = new INIFileInt("MaxPoissonIterations", 1000));
+        m_SectionRules.addNode(m_NumberOfSampledRuleSets = new INIFileInt("NumberOfSampledRuleSets", 100));
+        m_SectionRules.addNode(m_ValidationSetPercentage = new INIFileDouble("ValidationSetPercentage", 0.33));
+
         m_SectionRules.setEnabled(false);
 
         return m_SectionRules;

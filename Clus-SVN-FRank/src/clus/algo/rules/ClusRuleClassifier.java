@@ -59,7 +59,9 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
         if (sett.getRules().isRulePredictionOptimized()) {
             NumericAttrType[] descrNumTypes = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
             NumericAttrType[] tarNumTypes = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-            RuleNormalization.initialize(Clus.calcStdDevsForTheSet(getClus().getData(), descrNumTypes), Clus.calcStdDevsForTheSet(getClus().getData(), tarNumTypes));
+            RuleNormalization.initialize(
+                    Clus.calcStdDevsForTheSet(getClus().getData(), descrNumTypes),
+                    Clus.calcStdDevsForTheSet(getClus().getData(), tarNumTypes));
         }
 
         ClusInductionAlgorithm induce;
@@ -106,6 +108,5 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
             ClusModelInfo def_model = cr.addModelInfo(ClusModel.DEFAULT);
             def_model.setModel(ClusDecisionTree.induceDefault(cr));
         }
-
     }
 }
