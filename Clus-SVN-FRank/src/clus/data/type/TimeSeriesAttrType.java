@@ -137,4 +137,11 @@ public class TimeSeriesAttrType extends ClusAttrType {
     public boolean isTimeSeries(){
     	return true;
     }
+
+
+	@Override
+	public void setToMissing(DataTuple t) {
+		// TODO Auto-generated method stub
+		
+	}
 }

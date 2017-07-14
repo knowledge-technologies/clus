@@ -64,7 +64,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     protected ClassHierarchy m_Hier;
     protected boolean[] m_DiscrMean;
-    protected WHTDStatistic m_Global, m_Validation, m_Training;
+    protected WHTDStatistic m_Global, m_Validation;
     protected double m_SigLevel;
     protected double m_Threshold = -1.0;
     protected int m_Compatibility;
@@ -188,10 +188,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     public ClusStatistic cloneStat() {
         if (m_Distance == Settings.HIERDIST_NO_DIST) {// poolAUPRC case
-            return new WHTDStatistic(m_Hier, false, m_Compatibility, m_Distance);
+            WHTDStatistic res = new WHTDStatistic(m_Hier, false, m_Compatibility, m_Distance);
+            res.m_Training = m_Training;
+            res.m_ParentStat = m_ParentStat;
+            return res;
         }
         else {
-            return new WHTDStatistic(m_Hier, false, m_Compatibility);
+            WHTDStatistic res = new WHTDStatistic(m_Hier, false, m_Compatibility);
+            res.m_Training = m_Training;
+            res.m_ParentStat = m_ParentStat;
+            return res;
         }
     }
 
@@ -205,6 +211,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         res.m_Threshold = m_Threshold;
         res.m_Thresholds = m_Thresholds;
         res.m_Training = m_Training;
+        res.m_ParentStat = m_ParentStat;
         if (m_Validation != null) {
             res.m_Validation = (WHTDStatistic) m_Validation.cloneSimple();
             res.m_Global = m_Global;
@@ -235,16 +242,19 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     public void updateWeighted(DataTuple tuple, double weight) {
         int sidx = m_Hier.getType().getArrayIndex();
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(sidx);
-        m_SumWeight += weight;
-        // Add one to the elements in the tuple, zero to the others
-        for (int j = 0; j < tp.getNbClasses(); j++) {
-            ClassesValue val = tp.getClass(j);
-            int idx = val.getIndex();
-            // if (Settings.VERBOSE > 10) System.out.println("idx = "+idx+" weight = "+weight);
-            m_SumValues[idx] += weight;
-            if (m_Distance == Settings.HIERDIST_NO_DIST) {// poolAUPRC case
-                m_P[idx] += weight;
-            }
+        
+        if(tp.getNbClasses() > 0) { //if nbClasses == 0, example is unlabeled
+	        m_SumWeight += weight;
+	        // Add one to the elements in the tuple, zero to the others
+	        for (int j = 0; j < tp.getNbClasses(); j++) {
+	            ClassesValue val = tp.getClass(j);
+	            int idx = val.getIndex();
+	            // if (Settings.VERBOSE > 10) System.out.println("idx = "+idx+" weight = "+weight);
+	            m_SumValues[idx] += weight;
+	            if (m_Distance == Settings.HIERDIST_NO_DIST) {// poolAUPRC case
+	                m_P[idx] += weight;
+	            }
+	        }
         }
     }
 
@@ -295,32 +305,39 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         performSignificanceTest();
     }
 
-
-    public void calcMean(double[] means) {
-        if (Settings.useMEstimate() && m_Training != null) {
-            // Use m-estimate
-            for (int i = 0; i < m_NbAttrs; i++) {
-                means[i] = (m_SumValues[i] + m_Training.m_Means[i]) / (m_SumWeight + 1.0);
-            }
-        }
-        else {
-            // Use default definition (no m-estimate)
-            for (int i = 0; i < m_NbAttrs; i++) {
-                means[i] = m_SumWeight != 0.0 ? m_SumValues[i] / m_SumWeight : 0.0;
-            }
-        }
+    @Override
+    public void predictTuple(DataTuple prediction) {
+        prediction.setObjectVal(computeMeanTuple(), m_Hier.getType().getArrayIndex());     
     }
-
+    
+    
+    public void calcMean(double[] means) {
+    	for (int i = 0; i < m_NbAttrs; i++) {
+    		means[i] = getMean(i);    		
+    	}
+    }
 
     public double getMean(int i) {
         if (Settings.useMEstimate() && m_Training != null) {
             // Use m-estimate
             return (m_SumValues[i] + m_Training.m_Means[i]) / (m_SumWeight + 1.0);
         }
-        else {
-            // Use default definition (no m-estimate)
-            return m_SumWeight != 0.0 ? m_SumValues[i] / m_SumWeight : 0.0;
+            	
+        if (m_SumWeight == 0.0) { //if there are no examples with known value for attribute i
+        	switch (Settings.getMissingTargetAttrHandling()) {
+            	case Settings.MISSING_ATTRIBUTE_HANDLING_TRAINING:
+            		return m_Training.getMean(i);
+                case Settings.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                	return m_ParentStat.getMean(i);
+                case Settings.MISSING_ATTRIBUTE_HANDLING_NONE:
+                	return 0;
+                default:
+                	return m_Training.getMean(i);
+            }
         }
+        
+        // Use default definition (no m-estimate)
+        return m_SumValues[i] / m_SumWeight;
     }
 
 
@@ -395,9 +412,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
-    /*
-     * Compute squared Euclidean distance between tuple's target attributes and this statistic's mean.
-     **/
+    /**
+    * Compute squared Euclidean distance between tuple's target attributes and this statistic's mean.
+    */
     public double getSquaredDistance(DataTuple tuple, ClusAttributeWeights weights) {
         double sum = 0.0;
         boolean[] actual = new boolean[m_Hier.getTotal()];
@@ -2164,6 +2181,25 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
     //end daniela
 
+    /**
+	 * Compute squared distance between each of the tuple's target attributes and this statistic's mean.
+	*/
+	public double[] getPointwiseSquaredDistance(DataTuple tuple) {
+	            double[] distances = new double[m_Hier.getTotal()];
+		boolean[] actual = new boolean[m_Hier.getTotal()];
+		ClassesTuple tp = (ClassesTuple)tuple.getObjVal(m_Hier.getType().getArrayIndex());
+		tp.fillBoolArrayNodeAndAncestors(actual);
+		for (int i = 0; i < m_Hier.getTotal(); i++) {
+			NumericAttrType type = getAttribute(i);
+			double actual_zo = actual[i] ? 1.0 : 0.0;
+			double dist = actual_zo - m_Means[i];
+			distances[i] = dist * dist * m_Hier.m_Weights[i];
+		}
+	
+		return distances;
+	}
+
+
     public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights, ClusStatManager statmanager) {
         double sum = 0.0;
         boolean[] actual = new boolean[m_Hier.getTotal()];
@@ -2512,6 +2548,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
     }
     
+
     public void setThresholds(double threshold){
         m_Thresholds = new double[m_Hier.getWeights().length];
         for(int i = 0; i < m_Thresholds.length; i++){
@@ -2521,5 +2558,47 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     
     public double[] getThresholds(){
         return m_Thresholds;
+    }
+
+    @Override
+    public boolean samePrediction(ClusStatistic other) {
+        WHTDStatistic rstat = (WHTDStatistic) other;
+        
+        for (int i = 0; i < m_NbAttrs; i++) {
+            if(getMean(i) != rstat.getMean(i))
+                return false;
+        }
+        
+        return true;
+    }
+    
+    /**
+     * Provides sum of weights of target attributes
+     * @return sum of weights of target attributes, or NaN if statistic doesn't contain target attributes (i.e., unsupervised learning is performed)
+     */
+    @Override
+    public double getTargetSumWeights() {
+        return getTotalWeight(); //FIXME not sure if this is correct, in HMC there is no partially labeled examples, they are either labeled or unlabeled?
+    }
+    
+    /**
+     * Get weight of labeled examples, if there are 
+     * @return 
+     */
+    public double getWeightLabeled() {
+        if(m_SumWeight == 0.0) {
+            switch (Settings.getMissingClusteringAttrHandling()) {
+                case Settings.MISSING_ATTRIBUTE_HANDLING_TRAINING:
+                    return m_Training.getWeightLabeled();
+                case Settings.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                    return m_ParentStat.getWeightLabeled();
+                case Settings.MISSING_ATTRIBUTE_HANDLING_NONE:
+                    return 0;
+                default:
+                    return m_Training.getWeightLabeled();
+            }
+        }
+        
+        return m_SumWeight;
     }
 }

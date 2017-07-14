@@ -383,7 +383,8 @@ public class FindBestTest {
                 tuple = sample.getTuple(indicesSorted[i]);
                 double value = at.getNumeric(tuple);
                 if (value != prev) {
-                    m_BestTest.updateNumeric(value, at, tot_corr_SVarS, false); // isEfficient
+                    m_BestTest.updateNumeric(value, at, tot_corr_SVarS, false); // isEfficient  //splitting point is at the exact attribute value
+                  //m_BestTest.updateNumeric((value + prev)/2, at, tot_corr_SVarS, false); //FIXME: splitting point is in the middle of two values -> this is maybe better?
                     prev = value;
                 }
                 m_BestTest.m_PosStat.updateWeighted(tuple, i);
@@ -451,6 +452,8 @@ public class FindBestTest {
                 m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]);
             }
             m_BestTest.updateNumeric(split_value, at);  // we test only one split per attribute --> no need for precomputing tot_corr_SVarS
+            //m_BestTest.updateNumeric((value + prev)/2, at); //FIXME: splitting point is in the middle of two values -> this is maybe better?
+        	
         }
 
         // System.err.println("Inverse splits not yet included!");
@@ -501,6 +504,7 @@ public class FindBestTest {
                 if (!Double.isNaN(value)) {
                     // System.err.println("Value (>): " + value);
                     m_BestTest.updateNumeric(value, at);
+                    //m_BestTest.updateNumeric((value + prev)/2, at); //FIXME: splitting point is in the middle of two values -> this is maybe better?	
                 }
                 prev = value;
             }
@@ -608,6 +612,21 @@ public class FindBestTest {
     				+ "Use SplitSampling = 0 or correct the code.", N);
     		throw new RuntimeException(message);
     	}
+    }
+    
+    /**
+     * Set parent stats to children of this node
+     */
+    public void setParentStatsToChildren() {
+        m_BestTest.setParentStatsToTests();
+    }
+
+    /**
+     * Set parent stat to this node
+     * @param stat Statistic of the parent node
+     */
+    public void setParentStatsToThis(ClusStatistic stat) {
+        m_BestTest.setParentStatsToTotal(stat);
     }
 
 }

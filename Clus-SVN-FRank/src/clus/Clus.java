@@ -87,6 +87,7 @@ import clus.ext.hierarchical.ClassHierarchy;
 import clus.ext.hierarchical.HierMatrixOutput;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.ext.optiontree.ClusOptionTree;
+import clus.ext.semisupervised.ClusSemiSupervisedClassifier;
 import clus.gui.TreeFrame;
 import clus.jeans.io.MyFile;
 import clus.jeans.io.ObjectLoadStream;
@@ -139,10 +140,11 @@ public class Clus implements CMDLineArgsProvider {
     public final static String VERSION = "2.11";
 
     // exhaustive was added the 1/08/2006
+    // ssl was added 10/12/2013, Jurica Levatic
     // relief was added 29/08/2016
-    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc", "clowdflows", "option" };
+    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc", "ssl", "clowdflows", "option" };
 
-    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0 };
+    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
 
     protected Settings m_Sett = new Settings();
     protected ClusSummary m_Summary = new ClusSummary();
@@ -203,13 +205,14 @@ public class Clus implements CMDLineArgsProvider {
         // Update schema based on settings
 
         m_Sett.updateTarget(m_Schema);
-        m_Sett.addHMTRTargets(m_Schema, m_HMTRHierarchy); //only if HMTR is enabled
+        m_Sett.addHMTRTargets(m_Schema, m_HMTRHierarchy); //only if HMTR is enabled       
         m_Schema.initializeSettings(m_Sett);
+        
         m_Sett.setTarget(m_Schema.getTarget().toString());
         m_Sett.setDisabled(m_Schema.getDisabled().toString());
         m_Sett.setClustering(m_Schema.getClustering().toString());
         m_Sett.setDescriptive(m_Schema.getDescriptive().toString());
-
+        
         // Load data from file
         if (ResourceInfo.isLibLoaded()) {
             ClusStat.m_InitialMemory = ResourceInfo.getMemory();
@@ -424,7 +427,7 @@ public class Clus implements CMDLineArgsProvider {
         if (m_Sett.isOutTrainError()) {
             m_Summary.setTrainError(error);
         }
-        if (hasTestSet() && m_Sett.isOutTestError()) {
+        if ((hasTestSet() || m_Sett.isSemiSupervisedMode()) && m_Sett.isOutTestError()) {
             m_Summary.setTestError(error);
         }
         if (hasPruneSet() && m_Sett.isOutValidError()) {
@@ -733,6 +736,13 @@ public class Clus implements CMDLineArgsProvider {
             iter.setShouldAttach(true);
             cr.setTestSet(iter);
         }
+		if (!m_Sett.isNullUnlabeledFile()) {
+			MyClusInitializer initUnlabeled = new MyClusInitializer();
+			TupleIterator iterUnlabeled = new DiskTupleIterator(m_Sett.getUnlabeledFile(), initUnlabeled,
+					getPreprocs(true), m_Sett);
+			iterUnlabeled.setShouldAttach(true);
+			cr.setUnlabeledSet(iterUnlabeled);		
+		}
         if (writetest) {
             if (m_Sett.isWriteModelIDPredictions()) {
                 ClusModelInfo mi = cr.addModelInfo(ClusModel.ORIGINAL);
@@ -1529,11 +1539,11 @@ public class Clus implements CMDLineArgsProvider {
         if (wrt != null) {
             wrt.println("! Fold = " + fold);
             cr.getAllModelsMI().addModelProcessor(ClusModelInfo.TEST_ERR, wrt);
-            if (m_Sett.isOutFoldData()) {
-                ARFFFile.writeArff(m_Sett.getAppName() + "-test-" + fold + ".arff", cr.getTestSet());
-                ARFFFile.writeArff(m_Sett.getAppName() + "-train-" + fold + ".arff", (RowData) cr.getTrainingSet());
-            }
         }
+		if (m_Sett.isOutFoldData()) {
+			ARFFFile.writeArff(m_Sett.getAppName() + "-test-" + fold + ".arff", cr.getTestSet());
+			ARFFFile.writeArff(m_Sett.getAppName() + "-train-" + fold + ".arff", (RowData) cr.getTrainingSet());
+		}
         // Used for exporting data to CN2 and Orange formats
 
         /*
@@ -1914,6 +1924,19 @@ public class Clus implements CMDLineArgsProvider {
                     if (sett.getFTestArray().isVector())
                         clss = new CDTTuneFTest(clss, sett.getFTestArray().getDoubleVector());
                 }
+                
+				//check if semi-supervised is turned on
+				if(cargs.hasOption("ssl")) {
+					sett.setSemiSupervisedMode(true);
+					
+			        //by default SSL-PCTs takes all descriptive attributes as clustering (if clustering atts are not explicitly set)
+			        if(sett.getSemiSupervisedMethod() == Settings.SSL_METHOD_PCT) {
+			        	if(sett.getClustering().equals("Default")) //Clustering attributes are not set, use Descriptive+Target as Clustering
+			        		sett.setClustering(sett.getDescriptive() + "," + sett.getTarget());
+			        }
+					
+					clss = new ClusSemiSupervisedClassifier(clus, clss);
+				}
 
                 if (cargs.hasOption("clowdflows")) {
                     clus.getSettings().setOutputClowdFlows(true);

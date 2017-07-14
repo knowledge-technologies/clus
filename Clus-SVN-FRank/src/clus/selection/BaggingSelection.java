@@ -44,6 +44,10 @@ public class BaggingSelection extends ClusSelection {
      * @see clus.main.Settings#getEnsembleBagSize()
      */
 
+    public BaggingSelection(int nbrows) {
+        super(nbrows);
+    }
+    
     /**
      * Create a new bagging selection of size <code>nbselected</code> from a total of <code>nbrows</code> instances.
      * If <code>nbselected</code> == 0, a bagging selection of size <code>nbrows</code> is created

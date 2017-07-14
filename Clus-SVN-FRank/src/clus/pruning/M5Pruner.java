@@ -29,6 +29,7 @@ package clus.pruning;
 import clus.algo.tdidt.ClusNode;
 import clus.data.attweights.ClusAttributeWeights;
 import clus.data.rows.RowData;
+import clus.statistic.ClusStatistic;
 import clus.statistic.RegressionStat;
 
 
@@ -49,8 +50,10 @@ public class M5Pruner extends PruneTree {
 
 
     public void prune(ClusNode node) {
-        RegressionStat stat = (RegressionStat) node.getClusteringStat();
+        ClusStatistic stat = node.getClusteringStat();
         m_GlobalDeviation = Math.sqrt(stat.getSVarS(m_ClusteringWeights) / stat.getTotalWeight());
+        //if pruning according to target stat
+        //m_GlobalDeviation = Math.sqrt(stat.getSVarS(m_ClusteringWeights) / stat.getTargetSumWeights());
         pruneRecursive(node);
         // System.out.println("Performing test of M5 pruning");
         // TestM5PruningRuleNode.performTest(orig, node, m_GlobalDeviation, m_TargetWeights, m_TrainingData);
@@ -75,11 +78,21 @@ public class M5Pruner extends PruneTree {
             ClusNode child = (ClusNode) node.getChild(i);
             pruneRecursive(child);
         }
-        RegressionStat stat = (RegressionStat) node.getClusteringStat();
-        double rmsLeaf = stat.getRMSE(m_ClusteringWeights);
+        
+        //FIXME: should we prune according to clustering or target stat?
+        ClusStatistic stat = node.getClusteringStat();
+        double rmsLeaf = Math.sqrt(stat.getSVarS(m_ClusteringWeights)/stat.getTotalWeight()); //stat.getRMSE(m_ClusteringWeights);
         double adjustedErrorLeaf = rmsLeaf * pruningFactor(stat.getTotalWeight(), 1);
         double rmsSubTree = Math.sqrt(node.estimateClusteringSS(m_ClusteringWeights) / stat.getTotalWeight());
         double adjustedErrorTree = rmsSubTree * pruningFactor(stat.getTotalWeight(), node.getModelSize());
+        
+        //pruning according to target stat
+        //RegressionStat stat = (RegressionStat)node.getTargetStat();
+        //double rmsLeaf = Math.sqrt(stat.getSVarS(m_ClusteringWeights)/stat.getTargetSumWeights());
+        //double adjustedErrorLeaf = rmsLeaf * pruningFactor(stat.getTargetSumWeights(), 1);
+        //double rmsSubTree = Math.sqrt(node.estimateTargetSS(m_ClusteringWeights)/stat.getTargetSumWeights());
+        //double adjustedErrorTree = rmsSubTree * pruningFactor(stat.getTargetSumWeights(), node.getModelSize());
+        
         // System.out.println("C leaf: "+rmsLeaf+" tree: "+rmsSubTree);
         // System.out.println("C leafadj: "+adjustedErrorLeaf +" treeadj: "+rmsSubTree);
         if ((adjustedErrorLeaf <= adjustedErrorTree) || (adjustedErrorLeaf < (m_GlobalDeviation * 0.00001))) {

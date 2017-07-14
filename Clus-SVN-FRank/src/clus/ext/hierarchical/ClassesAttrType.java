@@ -80,7 +80,11 @@ public class ClassesAttrType extends ClusAttrType {
         return m_Hier;
     }
 
-
+    @Override
+    public boolean isMissing(DataTuple tuple) {
+        return this.getValue(tuple).getNbClasses() == 0;
+    }
+    
     public ClusAttrType cloneType() {
         ClassesAttrType at = new ClassesAttrType(m_Name, m_Hier);
         cloneType(at);
@@ -106,7 +110,20 @@ public class ClassesAttrType extends ClusAttrType {
     public ClassesTuple getValue(DataTuple t1) {
         return (ClassesTuple) t1.getObjVal(getArrayIndex());
     }
-
+    
+    public void setValue(DataTuple t1, ClassesTuple val) {
+    	t1.setObjectVal(val, getArrayIndex());
+    }
+    
+	@Override
+	public void setToMissing(DataTuple t) {
+		try {
+			setValue(t, new ClassesTuple(ClassesValue.EMPTY_SET_INDICATOR, null));
+		} catch (ClusException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}	
+	}
 
     public void updatePredictWriterSchema(ClusSchema schema) {
         String name = getName();

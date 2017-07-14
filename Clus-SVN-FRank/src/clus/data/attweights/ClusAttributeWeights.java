@@ -88,7 +88,7 @@ public class ClusAttributeWeights implements Serializable {
 
 
     public String getName() {
-        if (getNbAttributes() > 10) {
+        if (getNbAttributes() > 50) {
             return "Weights (" + getNbAttributes() + ")";
         }
         else {

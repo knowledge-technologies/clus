@@ -104,4 +104,11 @@ public class StringAttrType extends ClusAttrType {
     public boolean isString(){
     	return true;
     }
+
+
+	@Override
+	public void setToMissing(DataTuple t) {
+		// TODO Auto-generated method stub
+		
+	}
 }

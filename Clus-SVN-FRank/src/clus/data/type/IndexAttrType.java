@@ -156,4 +156,10 @@ public class IndexAttrType extends ClusAttrType {
             return true;
         }
     }
+
+	@Override
+	public void setToMissing(DataTuple t) {
+		// TODO Auto-generated method stub
+		
+	}
 }

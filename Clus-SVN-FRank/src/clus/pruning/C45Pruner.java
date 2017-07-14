@@ -58,7 +58,7 @@ public class C45Pruner extends PruneTree {
         return 1;
     }
 
-
+  //FIXME: for some reason this frequently prunes the trees completely, especially when the number of labels is large
     public void pruneC45Recursive(ClusNode node, RowData data) throws ClusException {
         if (!node.atBottomLevel()) {
             // first prune all child trees

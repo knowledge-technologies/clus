@@ -275,6 +275,18 @@ public abstract class RegressionStatBase extends ClusStatistic {
         return sum / getNbAttributes();
     }
 
+    /*
+   	 * Compute squared distance between each of the tuple's target attributes and this statistic's mean.
+   	 **/
+   	public double[] getPointwiseSquaredDistance(DataTuple tuple, ClusAttributeWeights weights) {
+                   double[] distances = new double[getNbAttributes()];
+   		for (int i = 0; i < getNbAttributes(); i++) {
+   			NumericAttrType type = getAttribute(i);
+   			distances[i] = type.getNumeric(tuple) - m_Means[i];
+                           distances[i]*=distances[i];
+   		}
+   		return distances;
+   	}
 
     public String getArrayOfStatistic() {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;

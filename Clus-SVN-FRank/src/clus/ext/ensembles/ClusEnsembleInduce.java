@@ -65,6 +65,7 @@ import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.modelio.ClusModelCollectionIO;
 import clus.selection.BaggingSelection;
+import clus.selection.BaggingSelectionSemiSupervised;
 import clus.selection.OOBSelection;
 import clus.statistic.ClusStatistic;
 import clus.statistic.ComponentStatistic;
@@ -290,6 +291,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
     /**
+     * Makes new ClusOOBErrorEstimate. This is sometimes needed because ClusOOBErrorEstimate has many static members
+     */
+    public void resetClusOOBErrorEstimate() {
+        m_OOBEstimation = new ClusOOBErrorEstimate(m_Mode);
+    }
+    
+    /**
      * Train a decision tree ensemble with an algorithm given in settings
      * 
      * @throws ClusException,
@@ -420,6 +428,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         postProcessForest(cr);
+        
+        /* added July 2014, Jurica Levatiæ JSI
+         * output hierarchy.txt file (for HMC)
+         * disabled this at DepthFirstInduce if ensemble mode is on, otherwise 
+         * this, potentially huge, file is re-written for every tree */
+        ClusStatistic stat = cr.getStatManager().createClusteringStat();
+        ((RowData) cr.getTrainingSet()).calcTotalStatBitVector(stat);
+        stat.showRootInfo(); // clus.ext.hierarchical.WHTDStatistic will write hierarchy.txt here
+        /* end added by Jurica */
 
         // This section is for calculation of the similarity in the ensemble
         // ClusBeamSimilarityOutput bsimout = new ClusBeamSimilarityOutput(cr.getStatManager().getSettings());
@@ -565,11 +582,22 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
-        TupleIterator test_iterator = m_OptMode ? cr.getTestIter() :null; // = test set iterator
+        TupleIterator test_iterator = m_OptMode ? cr.getTestIter() : null; // = test set iterator
 
         OOBSelection oob_total = null; // = total OOB selection
         OOBSelection oob_sel = null; // = current OOB selection
 
+        //- Added by Jurica L. (IJS)
+        //- check if dataset contains unlabeled examples, then use different sampling, labeled and unlabled examples are sampled separately
+        int nbUnlabeled = 0;
+        nbUnlabeled = ((RowData) cr.getTrainingSet()).getNbUnlabeled();
+        if(nbUnlabeled > 0) {     
+            if (nbUnlabeled > 0) { //sort datasets, so that labeled examples come first and unlabeled second, needed for semi-supervised bagging selection
+                ((RowData) cr.getTrainingSet()).sortLabeledFirst();
+            }
+        }
+        // - end added by Jurica
+        
         m_OForest.addEnsembleROSInfo(m_EnsembleROSInfo);
 
         // We store the old maxDepth to this if needed. Thus we get the right depth to .out files etc.
@@ -602,8 +630,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             // normal bagging procedure
             for (int i = 1; i <= m_NbMaxBags; i++) {
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
+                
+                if(nbUnlabeled > 0) {
+                    msel = new BaggingSelectionSemiSupervised(nbrows, cr.getTrainingSet().getNbRows() - nbUnlabeled, nbUnlabeled, rnd);
+                } else {
+                 msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);
+                }
 
-                msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);
                 if (Settings.shouldEstimateOOB()) { // OOB estimate is on
                     // TODO: synchronisation
                     oob_sel = new OOBSelection(msel);
@@ -635,7 +668,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             }
             for (int i = bagSelections[0]; i <= bagSelections[1]; i++) {
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-                msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);
+                
+                if(nbUnlabeled > 0) {
+                    msel = new BaggingSelectionSemiSupervised(nbrows, cr.getTrainingSet().getNbRows() - nbUnlabeled, nbUnlabeled, rnd);
+                } else {
+                 msel = new BaggingSelection(nbrows, getSettings().getEnsembleBagSize(), rnd);
+                }
+                
                 if (Settings.shouldEstimateOOB()) { // OOB estimate is on
                     oob_sel = new OOBSelection(msel);
                 }
@@ -875,7 +914,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         // OOB estimate for the parallel implementation is done in makeForestFromBags method <--- matejp: This is some
         // old parallelisation
         if (Settings.shouldEstimateOOB() && (getSettings().getBagSelection().getIntVectorSorted()[0] == -1)) {
-            m_OOBEstimation.updateOOBTuples(oob_sel, (RowData) cr.getTrainingSet(), model);
+            m_OOBEstimation.updateOOBTuples(oob_sel, (RowData) cr.getTrainingSet(), model, i);
         }
 
         HashMap<String, double[][]> fimportances = new HashMap<String, double[][]>();
@@ -1005,7 +1044,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     }
                     else
                         oob_total.addToThis(oob_sel);
-                    m_OOBEstimation.updateOOBTuples(oob_sel, (RowData) cr.getTrainingSet(), orig_bag_model);
+                    m_OOBEstimation.updateOOBTuples(oob_sel, (RowData) cr.getTrainingSet(), orig_bag_model, i);
                 }
 
                 if (checkToOutEnsemble(i)) {
@@ -1088,7 +1127,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     oob_total = new OOBSelection(msel);
                 else
                     oob_total.addToThis(oob_sel);
-                m_OOBEstimation.updateOOBTuples(oob_sel, (RowData) cr.getTrainingSet(), model);
+                m_OOBEstimation.updateOOBTuples(oob_sel, (RowData) cr.getTrainingSet(), model, i);
             }
 
             if (m_OptMode) {

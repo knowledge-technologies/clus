@@ -29,6 +29,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 
 import clus.algo.rules.ClusRuleSet;
 import clus.algo.rules.ClusRulesFromTree;
@@ -75,6 +77,16 @@ public class ClusForest implements ClusModel, Serializable {
     private int m_NbLeaves = 0;
     ClusEnsembleROSInfo m_TargetSubspaceInfo; // Info about target subspacing method
     
+    //added 13/1/2014 by Jurica Levatic
+    /** Individual votes of trees in ensemble, used for calculation of confidence of predictions in self-training */
+    ArrayList m_Votes;
+    /** // FIXME: A little hack to manipulate model info from outside, this should be implemented otherwise (e.g., ClusModel for Self-training which wraps around this model) */
+    String m_modelInfo = ""; 
+    /** To store random forest proximities, used in self-training */
+    HashMap<Integer, Double> m_Proximities;
+    int m_Mode;
+    // - end added by Jurica
+    
     private ClusReadWriteLock m_NbModelsLock = new ClusReadWriteLock();
     private ClusReadWriteLock m_NbNodesLock = new ClusReadWriteLock();
     private ClusReadWriteLock m_NbLeavesLock = new ClusReadWriteLock();
@@ -106,6 +118,9 @@ public class ClusForest implements ClusModel, Serializable {
         }
         else if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION) {
             m_Stat = new RegressionStat(statmgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+        }
+        else if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY_AND_REGRESSION) {
+            m_Stat = statmgr.getStatistic(ClusAttrType.ATTR_USE_TARGET); //FIXME: Probably all statistics could be initialized like this? i.e., there is no need for checking mode?
         }
         else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             if (statmgr.getSettings().getHierSingleLabel()) {
@@ -232,6 +247,14 @@ public class ClusForest implements ClusModel, Serializable {
     	increaseNbNodes(nbNodes);
     	increaseNbLeaves(nbLeaves);    	
     }
+    
+    /**
+     * Set some additional model info (used in self-training, which wraps around ensembles)
+     * @param additionalInfo
+     */
+    public void setModelInfo(String additionalInfo) {
+        m_modelInfo = additionalInfo;
+    }
 
     public String getModelInfo() {
 //        int sumOfLeaves = 0;
@@ -261,7 +284,7 @@ public class ClusForest implements ClusModel, Serializable {
             }
         }
 
-        return result;
+        return m_modelInfo + result;
     }
 
 
@@ -310,11 +333,41 @@ public class ClusForest implements ClusModel, Serializable {
             votes.add(m_Forest.get(i).predictWeighted(tuple));
             // if (tuple.getWeight() != 1.0) System.out.println("Tuple "+tuple.getIndex()+" = "+tuple.getWeight());
         }
+      
+        m_Stat.reset();
+        //remember votes
+        m_Votes = votes;
         m_Stat.vote(votes);
         ClusEnsemblePredictionWriter.setVotes(votes);
         return m_Stat;
     }
 
+    //added 13/1/2014 by Jurica Levatic
+	/*
+     * Returns individual votes of base methods in ensemble for the latest prediction made
+     */
+    public ArrayList getVotes() {
+        return m_Votes;
+    }
+    
+    /**
+     * Votes from models for which the tuple was Out Of Bag.
+     *
+     * @param tuple
+     * @return ArrayList containing votes or null if tuple was not OOB for any of the models
+     */
+    public ArrayList getOOBVotes(DataTuple tuple) {
+        if (ClusOOBErrorEstimate.containsPredictionForTuple(tuple)) {
+            return (ArrayList) ClusOOBErrorEstimate.getVotesForTuple(tuple);
+        }
+
+        return null;
+    }
+
+    public boolean containsOOBForTuple(DataTuple tuple) {
+        return ClusOOBErrorEstimate.containsPredictionForTuple(tuple);
+    }
+    
     public ClusStatistic predictWeightedOOB(DataTuple tuple) {
 
         if (ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_HIERARCHICAL || ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_REGRESSION)
@@ -400,6 +453,106 @@ public class ClusForest implements ClusModel, Serializable {
         throw new RuntimeException("clus.ext.ensembles.ClusForest.predictWeightedOpt(DataTuple): unhandled ClusStatManager.getMode() case!");
     }
 
+    /**
+     * The same as predict weighted standard, but also calculates random forest proximities
+     */
+    public ClusStatistic predictWeightedStandardAndGetProximities(DataTuple tuple) {
+        m_Proximities = new HashMap<Integer, Double>();
+
+        ClusNode model;
+        ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
+        List<Integer> leafTuples;     
+        Integer tupleIndex = null;
+        double incrementValue = 1.0 / m_Forest.size(); //proximitiy is incremented in each step for this value, ensures proximities in [0,1]
+
+        for (int i = 0; i < m_Forest.size(); i++) {       
+            model = (ClusNode) m_Forest.get(i);
+            leafTuples = new LinkedList<Integer>();
+            votes.add(model.predictWeightedAndGetLeafTuples(tuple, leafTuples));
+
+            //calculate proximities
+            for (int j = 0; j < leafTuples.size(); j++) {
+                tupleIndex = leafTuples.get(j);
+                if(m_Proximities.containsKey(tupleIndex)) {
+                    m_Proximities.put(tupleIndex, m_Proximities.get(tupleIndex) + incrementValue);                   
+                }  
+                else {
+                    m_Proximities.put(tupleIndex, incrementValue);
+                }
+            }
+        }
+        //remember votes
+        m_Stat.reset();
+        m_Votes = votes;
+
+        m_Stat.vote(votes);
+        ClusEnsemblePredictionWriter.setVotes(votes);
+        return m_Stat;
+    }
+
+    /**
+     * The same as predict weighted OOB, but also calculates random forest proximities
+     */
+    public ClusStatistic predictWeightedOOBAndGetProximities(DataTuple tuple) {
+        m_Proximities = new HashMap<Integer, Double>();
+
+        ClusNode model;
+        ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
+        List<Integer> leafTuples;
+        double incrementValue = 1.0 / m_Forest.size(); //proximitiy is incremented in each step for this value, ensures proximities in [0,1]
+        Integer tupleIndex;
+        
+        for (int i = 0; i < m_Forest.size(); i++) {
+            model = (ClusNode) m_Forest.get(i);
+            
+            if (ClusOOBErrorEstimate.isOOBForTree(tuple, i+1)) { //get proximities only from trees where example was OOB, models are enumerated starting from 1, so we add 1               
+                leafTuples = new LinkedList<Integer>();
+                votes.add(model.predictWeightedAndGetLeafTuples(tuple, leafTuples));
+
+                //calculate proximities
+                for (int j = 0; j < leafTuples.size(); j++) {
+                    tupleIndex = leafTuples.get(j);
+                    if(m_Proximities.containsKey(tupleIndex)) {
+                        m_Proximities.put(tupleIndex, (double) m_Proximities.get(tupleIndex) + incrementValue);                   
+                    }  
+                    else {
+                        m_Proximities.put(tupleIndex, incrementValue);
+                    }
+                }
+            }
+        }
+        
+        //remember votes
+        m_Stat.reset();
+        m_Votes = votes;
+
+        m_Stat.vote(votes);
+        ClusEnsemblePredictionWriter.setVotes(votes);
+        return m_Stat;
+    }
+    
+    /**
+     * Store indices of tuples in leaf nodes. Used to calculate RForest
+     * proximities
+     * (https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm#prox)
+     *
+     * After initialization call
+     * predictWeightedStandardAndGetProximities(DataTuple t) to calculate
+     * proximities to the tuples initialized with this function.
+     *
+     * @param data
+     */
+    public void initializeProximities(DataTuple t) {
+        for (int j = 0; j < m_Forest.size(); j++) {
+            ((ClusNode) m_Forest.get(j)).incrementProximities(t);
+
+        }
+    }
+
+    public HashMap<Integer, Double> getProximities() {
+        return m_Proximities;
+    }
+    
     /** used for ROS ensembles */
     public ClusStatistic predictWeightedStandardSubspaceAveraging(DataTuple tuple) {
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
@@ -417,7 +570,7 @@ public class ClusForest implements ClusModel, Serializable {
         
         return predictWeightedOpt(tuple);
     }
-
+    
     public void printModel(PrintWriter wrt) {
         // This could be better organized
         if (Settings.isPrintEnsembleModels()) {

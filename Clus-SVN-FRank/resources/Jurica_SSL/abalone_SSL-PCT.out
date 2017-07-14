@@ -1,0 +1,242 @@
+Clus run abalone
+****************
+
+Date: 30.6.2017 17:28
+File: abalone_SSL-PCT.out
+Attributes: 9 (input: 8, output: 1)
+Missing values: No
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 1
+ResourceInfoLoaded = No
+
+[Data]
+File = abalone_percL=25_0_SLTrain.arff
+TestSet = abalone_percL=25_0_Test.arff
+PruneSet = None
+XVal = 10
+RemoveMissingTarget = No
+NormalizeData = None
+
+[Attributes]
+Target = 9
+Clustering = 1-9
+Descriptive = 1-8
+Key = None
+Disable = None
+Weights = Normalize
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = No
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WriteErrorFile = No
+WriteModelFile = No
+WritePredictions = {None}
+GzipOutput = No
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+OutputJSONModel = No
+OutputDatabaseQueries = No
+OutputClowdFlowsJSON = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+NominalSubsetTests = Yes
+
+[Tree]
+Heuristic = VarianceReduction
+PruningMethod = M5
+M5PruningMult = 2.0
+FTest = 1.0
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = {}
+MSENominal = No
+SplitSampling = None
+MissingClusteringAttrHandling = EstimateFromParentNode
+MissingTargetAttrHandling = ParentNode
+InductionOrder = DepthFirst
+EntropyType = StandardEntropy
+ConsiderUnlableInstancesInIGCalc = No
+
+[SemiSupervised]
+SemiSupervisedMethod = PCT
+StoppingCriteria = NoneAdded
+UnlabeledCriteria = Threshold
+ConfidenceThreshold = 0.8
+ConfidenceMeasure = Variance
+Iterations = 10
+K = 5
+UnlabeledData = abalone_percL=25_0_Unlabeled.arff
+PercentageLabeled = 5
+UseWeights = No
+AirbagTrials = 0
+ExhaustiveSearchThresholds = [0.5,0.6,0.7,0.8,0.9,0.99]
+OOBErrorCalculation = LabeledOnly
+Normalization = MinMaxNormalization
+Aggregation = Average
+CalibrateHmcThreshold = No
+PruningWhenTuning = No
+InternalFolds = 5
+WeightScoresFile = NO
+PossibleWeights = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 1.368 sec
+Pruning Time: 0.001 sec
+Model information
+     Default: Nodes = 1 (Leaves: 1)
+     Original: Nodes = 23 (Leaves: 12)
+     Pruned: Nodes = 23 (Leaves: 12)
+
+Training error
+--------------
+
+Number of examples: 4177
+Mean absolute error (MAE)
+   Default        : [∞]
+   Original       : [∞]
+   Pruned         : [∞]
+Mean squared error (MSE)
+   Default        : [13.2064]
+   Original       : [2.6]
+   Pruned         : [2.6]
+Root mean squared error (RMSE)
+   Default        : [3.6341]
+   Original       : [1.6125]
+   Pruned         : [1.6125]
+Weighted root mean squared error (RMSE) (Weights [12.651])
+   Default        : [12.9259]
+   Original       : [5.7353]
+   Pruned         : [5.7353]
+Root Relative Squared Error (RRMSE)
+   Default        : [1]
+   Original       : [0.4437]
+   Pruned         : [0.4437]
+Pearson correlation coefficient
+   Default        : [�], Avg r^2: �
+   Original       : [�], Avg r^2: �
+   Pruned         : [�], Avg r^2: �
+
+Testing error
+-------------
+
+Number of examples: 4152
+Mean absolute error (MAE)
+   Default        : [2.3602]
+   Original       : [2.8904]
+   Pruned         : [2.8904]
+Mean squared error (MSE)
+   Default        : [10.5163]
+   Original       : [16.6842]
+   Pruned         : [16.6842]
+Root mean squared error (RMSE)
+   Default        : [3.2429]
+   Original       : [4.0846]
+   Pruned         : [4.0846]
+Weighted root mean squared error (RMSE) (Weights [12.651])
+   Default        : [11.5346]
+   Original       : [14.5286]
+   Pruned         : [14.5286]
+Root Relative Squared Error (RRMSE)
+   Default        : [1.0068]
+   Original       : [1.2681]
+   Pruned         : [1.2681]
+Pearson correlation coefficient
+   Default        : [-0], Avg r^2: 0
+   Original       : [0.4212], Avg r^2: 0.1774
+   Pruned         : [0.4212], Avg r^2: 0.1774
+
+Default Model
+*************
+
+[9.56]: 4177
+
+Original Model
+**************
+
+A8 > 0.271
+└──yes: A4 > 0.185
+┆      └──yes: [18]: 394
+┆      └──no:  A6 > 0.494
+┆             └──yes: A1 = F
+┆             ┆      └──yes: [10.5]: 322
+┆             ┆      └──no:  [10.666667]: 361
+┆             └──no:  [14]: 564
+└──no:  A5 > 0.4255
+       └──yes: A5 > 0.6735
+       ┆      └──yes: A1 = M
+       ┆      ┆      └──yes: A5 > 0.8445
+       ┆      ┆      ┆      └──yes: [9]: 186
+       ┆      ┆      ┆      └──no:  [8.5]: 162
+       ┆      ┆      └──no:  [8]: 440
+       ┆      └──no:  A1 = F
+       ┆             └──yes: [?]: 190
+       ┆             └──no:  A3 > 0.365
+       ┆                    └──yes: [7.333333]: 349
+       ┆                    └──no:  [8]: 212
+       └──no:  A2 > 0.32
+              └──yes: [5.666667]: 715
+              └──no:  [8]: 282
+
+Pruned Model
+************
+
+A8 > 0.271
+└──yes: A4 > 0.185
+┆      └──yes: [18]: 394
+┆      └──no:  A6 > 0.494
+┆             └──yes: A1 = F
+┆             ┆      └──yes: [10.5]: 322
+┆             ┆      └──no:  [10.666667]: 361
+┆             └──no:  [14]: 564
+└──no:  A5 > 0.4255
+       └──yes: A5 > 0.6735
+       ┆      └──yes: A1 = M
+       ┆      ┆      └──yes: A5 > 0.8445
+       ┆      ┆      ┆      └──yes: [9]: 186
+       ┆      ┆      ┆      └──no:  [8.5]: 162
+       ┆      ┆      └──no:  [8]: 440
+       ┆      └──no:  A1 = F
+       ┆             └──yes: [?]: 190
+       ┆             └──no:  A3 > 0.365
+       ┆                    └──yes: [7.333333]: 349
+       ┆                    └──no:  [8]: 212
+       └──no:  A2 > 0.32
+              └──yes: [5.666667]: 715
+              └──no:  [8]: 282
+

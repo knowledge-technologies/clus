@@ -1,10 +1,13 @@
 
 package clus.ext.hierarchical;
 
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.zip.GZIPOutputStream;
 
 import clus.data.rows.DataTuple;
 import clus.error.BinaryPredictionList;
@@ -302,13 +305,26 @@ public class HierErrorMeasures extends ClusError {
 
 
     public void writeCSVFilesPR(String fname) throws IOException {
-        m_PRCurves = new PrintWriter(fname);
+    	if (Settings.isGzipOutput()) {
+            fname += ".gz";
+            m_PRCurves = new PrintWriter(new OutputStreamWriter(
+                    new GZIPOutputStream(new FileOutputStream(fname))));
+        } else {
+            m_PRCurves = new PrintWriter(fname);
+        }
         m_PRCurves.println("Class,Recall,Precision");
     }
 
 
     public void writeCSVFilesROC(String fname) throws IOException {
-        m_ROCCurves = new PrintWriter(fname);
+        if (Settings.isGzipOutput()) {
+            fname += ".gz";
+            m_ROCCurves = new PrintWriter(new OutputStreamWriter(
+                    new GZIPOutputStream(new FileOutputStream(fname))));
+        } else {
+            m_ROCCurves = new PrintWriter(fname);
+        }
+
         m_ROCCurves.println("Class,FP,TP");
     }
 
