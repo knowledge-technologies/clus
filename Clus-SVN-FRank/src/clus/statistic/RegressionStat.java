@@ -33,6 +33,7 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsTree;
 import clus.heuristic.GISHeuristic;
 import clus.util.ClusFormat;
 import clus.util.jeans.math.MathUtil;
@@ -48,6 +49,8 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     private RegressionStat m_Training;
 
     private ClusHMTRHierarchy m_HMTRHierarchy;
+
+    public RegressionStat m_ParentStat; //statistic of the parent node
 
     //daniela
     // matejp: removed static in INITIALIZE_PARTIAL_SUM, and made every field in this daniela block private
@@ -73,8 +76,6 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
     private boolean INITIALIZE_PARTIAL_SUM = true;
 
-   
-    
 
     public RegressionStat(Settings sett, NumericAttrType[] attrs) {
         this(sett, attrs, false);
@@ -154,6 +155,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         }
 
         res.m_Training = m_Training;
+        res.m_ParentStat = m_ParentStat;
         return res;
     }
 
@@ -169,6 +171,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         }
 
         res.m_Training = m_Training;
+        res.m_ParentStat = m_ParentStat;
         return res;
     }
 
@@ -190,6 +193,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     public void reset() {
         m_SumWeight = 0.0;
         m_NbExamples = 0;
+        m_SumWeightLabeled = 0.0;
         Arrays.fill(m_SumWeights, 0.0);
         Arrays.fill(m_SumValues, 0.0);
         Arrays.fill(m_SumSqValues, 0.0);
@@ -200,6 +204,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         RegressionStat or = (RegressionStat) other;
         m_SumWeight = or.m_SumWeight;
         m_NbExamples = or.m_NbExamples;
+        m_SumWeightLabeled = or.m_SumWeightLabeled;
         System.arraycopy(or.m_SumWeights, 0, m_SumWeights, 0, m_NbAttrs);
         System.arraycopy(or.m_SumValues, 0, m_SumValues, 0, m_NbAttrs);
         System.arraycopy(or.m_SumSqValues, 0, m_SumSqValues, 0, m_NbAttrs);
@@ -222,6 +227,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         RegressionStat or = (RegressionStat) other;
         m_SumWeight += or.m_SumWeight;
         m_NbExamples += or.m_NbExamples;
+        m_SumWeightLabeled += or.m_SumWeightLabeled;
         for (int i = 0; i < m_NbAttrs; i++) {
             m_SumWeights[i] += or.m_SumWeights[i];
             m_SumValues[i] += or.m_SumValues[i];
@@ -234,6 +240,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         RegressionStat or = (RegressionStat) other;
         m_SumWeight += scale * or.m_SumWeight;
         m_NbExamples += or.m_NbExamples;
+        m_SumWeightLabeled += scale * or.m_SumWeightLabeled;
         for (int i = 0; i < m_NbAttrs; i++) {
             m_SumWeights[i] += scale * or.m_SumWeights[i];
             m_SumValues[i] += scale * or.m_SumValues[i];
@@ -246,6 +253,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         RegressionStat or = (RegressionStat) other;
         m_SumWeight -= or.m_SumWeight;
         m_NbExamples -= or.m_NbExamples;
+        m_SumWeightLabeled -= or.m_SumWeightLabeled;
         for (int i = 0; i < m_NbAttrs; i++) {
             m_SumWeights[i] -= or.m_SumWeights[i];
             m_SumValues[i] -= or.m_SumValues[i];
@@ -258,6 +266,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         RegressionStat or = (RegressionStat) other;
         m_SumWeight = or.m_SumWeight - m_SumWeight;
         m_NbExamples = or.m_NbExamples - m_NbExamples;
+        m_SumWeightLabeled += or.m_SumWeightLabeled - m_SumWeightLabeled;
         for (int i = 0; i < m_NbAttrs; i++) {
             m_SumWeights[i] = or.m_SumWeights[i] - m_SumWeights[i];
             m_SumValues[i] = or.m_SumValues[i] - m_SumValues[i];
@@ -269,14 +278,19 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     public void updateWeighted(DataTuple tuple, double weight) {
         m_NbExamples++;
         m_SumWeight += weight;
+        boolean hasLabel = false;
         for (int i = 0; i < m_NbAttrs; i++) {
             double val = m_Attrs[i].getNumeric(tuple);
             if (val != Double.POSITIVE_INFINITY) {
                 m_SumWeights[i] += weight;
                 m_SumValues[i] += weight * val;
                 m_SumSqValues[i] += weight * val * val; // TODO speed up: one step less if we save weight * val
+                if (!hasLabel && m_Attrs[i].isTarget())
+                    hasLabel = true;
             }
         }
+        if (hasLabel)
+            m_SumWeightLabeled += weight;
     }
 
 
@@ -289,7 +303,31 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
 
     public double getMean(int i) {
-        return m_SumWeights[i] != 0.0 ? m_SumValues[i] / m_SumWeights[i] : 0.0;
+        //added by Jurica (if we call getMean() and m_SumWeights or m_SumValues are not initialized (e.g. after cloneSimple) it chrashes)
+        if (m_SumValues == null || m_SumWeights == null) { return m_Means[i]; }
+        // - end added by Jurica
+
+        //If divider zero, i.e., for i-th attribute we have no labeled examples or all missing values
+        if (m_SumWeights[i] == 0) {
+            switch (getSettings().getTree().getMissingTargetAttrHandling()) {
+                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
+                    if (m_Training == null)
+                        return Double.NaN; // for attribute i, all values are missing
+                    return m_Training.getMean(i);
+                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                    if (m_ParentStat == null)
+                        return Double.NaN; // for attribute i, all values are missing
+                    return m_ParentStat.getMean(i);
+                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_NONE:
+                    return 0;
+                default:
+                    if (m_Training == null)
+                        return Double.NaN; // for attribute i, all values are missing
+                    return m_Training.getMean(i);
+            }
+        }
+
+        return m_SumValues[i] / m_SumWeights[i];
     }
 
 
@@ -313,17 +351,94 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
 
 
+    /**
+     * The case where are examples have missing value for the i-th attribute, i.e., variance can not be calculated, so
+     * it is estimated
+     */
+    public double getEstimatedSVarS(int i) {
+        switch (getSettings().getTree().getMissingClusteringAttrHandling()) {
+            case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
+                if (m_Training == null)
+                    return Double.NaN;
+                return m_Training.getSVarS(i);
+            case SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                if (m_ParentStat == null)
+                    return Double.NaN; // the case if for attribute i all examples gave missing values (if there is no parent stat, it means we reached the root node)
+                return m_ParentStat.getSVarS(i);
+            case SettingsTree.MISSING_ATTRIBUTE_HANDLING_NONE:
+                return Double.NaN;
+            default:
+                if (m_Training == null)
+                    return Double.NaN;
+                return m_Training.getSVarS(i);
+        }
+    }
+
+
+    /**
+     * Should the variance be calculated, or estimated (for example if all examples have missing values)
+     * 
+     * @param k_tot
+     *        Total number of examples with non-missing values for i-th attribute
+     * @param n_tot
+     *        Total number of examples with non-missing values for all attributes
+     * @return
+     */
+    public boolean shouldEstimate(double k_tot, double n_tot) {
+        //Condition for the old variance equation
+        //return k_tot <= 1 && k_tot != n_tot || n_tot <= MathUtil.C1E_9; //k_tot == 1 is allowed only if k_tot==n_tot
+
+        //Condition for the new variance equation
+        return k_tot <= MathUtil.C1E_9;
+    }
+
+
     public double getSVarS(int i) {
         double n_tot = m_SumWeight;
         double k_tot = m_SumWeights[i];
         double sv_tot = m_SumValues[i];
         double ss_tot = m_SumSqValues[i];
-        if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
-            return m_Training.getSVarS(i);
-        }
-        else {
-            return (k_tot > 1.0) ? ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot / k_tot * sv_tot / k_tot : 0.0;
-        }
+
+        if (shouldEstimate(k_tot, n_tot))
+            return getEstimatedSVarS(i);
+
+        return getSVarS(n_tot, k_tot, sv_tot, ss_tot);
+
+        //if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
+        //    return m_Training.getSVarS(i);
+        //}
+        //else {
+        //    return (k_tot > 1.0) ? ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot / k_tot * sv_tot / k_tot : 0.0;
+        //}
+    }
+
+
+    public double getSVarSDiff(int i, RegressionStat or) {
+        double n_tot = m_SumWeight - or.m_SumWeight;
+        double k_tot = m_SumWeights[i] - or.m_SumWeights[i];
+        double sv_tot = m_SumValues[i] - or.m_SumValues[i];
+        double ss_tot = m_SumSqValues[i] - or.m_SumSqValues[i];
+
+        if (shouldEstimate(k_tot, n_tot))
+            return or.getEstimatedSVarS(i);
+
+        return getSVarS(n_tot, k_tot, sv_tot, ss_tot);
+    }
+
+
+    public double getSVarS(double n_tot, double k_tot, double sv_tot, double ss_tot) {
+        // TODO: Jurica: This is the new equation for variance, which we agreed
+        // upon meeting in Tomaz's office, below is the old "weird" equation. I
+        // did not manage to test new the equation, however, in supervised case
+        // it should be the same as the old one (i.e., if there is no missing values)
+        // FIXME: with the new equation n_tot is not needed anymore
+        return ss_tot - sv_tot * sv_tot / k_tot;
+
+        // Old equation
+        //if(k_tot == n_tot)
+        //	return ss_tot - sv_tot * sv_tot / n_tot;
+
+        //return ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot / k_tot * sv_tot / k_tot;
     }
 
 
@@ -335,22 +450,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 continue;
 
             cnt++;
-
-            double n_tot = m_SumWeight;
-            double k_tot = m_SumWeights[i];
-            double sv_tot = m_SumValues[i];
-            double ss_tot = m_SumSqValues[i];
-            if (k_tot == n_tot) {
-                result += (ss_tot - sv_tot * sv_tot / n_tot) * scale.getWeight(m_Attrs[i]);
-            }
-            else {
-                if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
-                    result += m_Training.getSVarS(i) * scale.getWeight(m_Attrs[i]);
-                }
-                else {
-                    result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot / k_tot * sv_tot / k_tot) * scale.getWeight(m_Attrs[i]);
-                }
-            }
+            result += getSVarS(i) * scale.getWeight(m_Attrs[i]);
         }
 
         return result / cnt;
@@ -363,31 +463,28 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         if (getSettings().getHMTR().isHMTREnabled())
             return getSVarSHMTR(scale);
 
-        double result = 0.0;
+        double result = 0.0, var;
+        int nbEffectiveAttrs = m_NbAttrs;
         for (int i = 0; i < m_NbAttrs; i++) {
-            double n_tot = m_SumWeight;
-            double k_tot = m_SumWeights[i];
-            double sv_tot = m_SumValues[i];
-            double ss_tot = m_SumSqValues[i];
-            if (k_tot == n_tot) {
-                result += (ss_tot - sv_tot * sv_tot / n_tot) * scale.getWeight(m_Attrs[i]);
+            var = getSVarS(i);
+            if (Double.isNaN(var)) {
+                nbEffectiveAttrs--;
             }
             else {
-                if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
-                    result += m_Training.getSVarS(i) * scale.getWeight(m_Attrs[i]);
-                }
-                else {
-                    result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot / k_tot * sv_tot / k_tot) * scale.getWeight(m_Attrs[i]);
-                }
+                result += var * scale.getWeight(m_Attrs[i]);
             }
         }
-        return result / m_NbAttrs;
+
+        if (nbEffectiveAttrs == 0) { return Double.POSITIVE_INFINITY; }
+
+        return result / nbEffectiveAttrs;
     }
 
 
     public double getSVarSHMTR(ClusAttributeWeights scale) {
 
         double result = 0.0;
+
         for (int i = 0; i < m_NbAttrs; i++) {
             double hmtrWeight = m_HMTRHierarchy.getWeight(m_Attrs[i].getName());
             double n_tot = m_SumWeight;
@@ -419,22 +516,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
                 continue;
 
             cnt++;
-
-            double n_tot = m_SumWeight - or.m_SumWeight;
-            double k_tot = m_SumWeights[i] - or.m_SumWeights[i];
-            double sv_tot = m_SumValues[i] - or.m_SumValues[i];
-            double ss_tot = m_SumSqValues[i] - or.m_SumSqValues[i];
-            if (k_tot == n_tot) {
-                result += (ss_tot - sv_tot * sv_tot / n_tot) * scale.getWeight(m_Attrs[i]);
-            }
-            else {
-                if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
-                    result += m_Training.getSVarS(i) * scale.getWeight(m_Attrs[i]);
-                }
-                else {
-                    result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot / k_tot * sv_tot / k_tot) * scale.getWeight(m_Attrs[i]);
-                }
-            }
+            result += getSVarSDiff(i, or) * scale.getWeight(m_Attrs[i]);
         }
         return result / cnt;
     }
@@ -472,26 +554,23 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         if (getSettings().getHMTR().isHMTREnabled())
             return getSVarSDiffHMTR(scale, other);
 
-        double result = 0.0;
+        double result = 0.0, var;
         RegressionStat or = (RegressionStat) other;
+
+        int nbEffectiveAttrs = m_NbAttrs;
         for (int i = 0; i < m_NbAttrs; i++) {
-            double n_tot = m_SumWeight - or.m_SumWeight;
-            double k_tot = m_SumWeights[i] - or.m_SumWeights[i];
-            double sv_tot = m_SumValues[i] - or.m_SumValues[i];
-            double ss_tot = m_SumSqValues[i] - or.m_SumSqValues[i];
-            if (k_tot == n_tot) {
-                result += (ss_tot - sv_tot * sv_tot / n_tot) * scale.getWeight(m_Attrs[i]);
+            var = getSVarSDiff(i, or);
+            if (Double.isNaN(var)) {
+                nbEffectiveAttrs--;
             }
             else {
-                if (k_tot <= MathUtil.C1E_9 && m_Training != null) {
-                    result += m_Training.getSVarS(i) * scale.getWeight(m_Attrs[i]);
-                }
-                else {
-                    result += (ss_tot * (n_tot - 1) / (k_tot - 1) - n_tot * sv_tot / k_tot * sv_tot / k_tot) * scale.getWeight(m_Attrs[i]);
-                }
+                result += var * scale.getWeight(m_Attrs[i]);
             }
         }
-        return result / m_NbAttrs;
+
+        if (nbEffectiveAttrs == 0) { return Double.POSITIVE_INFINITY; }
+
+        return result / nbEffectiveAttrs;
     }
 
 
@@ -573,14 +652,15 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         return result;
     }
 
-
-    @Override
-    public int getNbStatisticComponents() {
-        return m_SumWeights.length;
-    }
-
-
     // daniela
+    @Override
+	public int getNbStatisticComponents() {
+		return m_SumWeights.length;
+	}
+    // daniela
+    
+
+
     public void calcMeanSpatial(double[] means) {
         ClusSchema schema = m_TempData.getSchema();
         for (int k = 0; k < m_NbAttrs; k++) {
@@ -5161,4 +5241,34 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
     // end daniela
 
+
+    @Override
+    public void setParentStat(ClusStatistic parent) {
+        m_ParentStat = (RegressionStat) parent;
+    }
+
+
+    @Override
+    public double getTargetSumWeights() {
+        return m_SumWeightLabeled;
+    }
+
+
+    @Override
+    public boolean samePrediction(ClusStatistic other) {
+        RegressionStat rstat = (RegressionStat) other;
+
+        for (int i = 0; i < m_NbAttrs; i++) {
+            if (getMean(i) != rstat.getMean(i))
+                return false;
+        }
+
+        return true;
+    }
+
+
+    @Override
+    public ClusStatistic getParentStat() {
+        return m_ParentStat;
+    }
 }

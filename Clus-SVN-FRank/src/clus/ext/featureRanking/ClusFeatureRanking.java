@@ -566,7 +566,7 @@ public class ClusFeatureRanking {
             error.addError(new RMSError(error, num));
         }
         else if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            error.addError(new HierErrorMeasures(error, mgr.getHier(), sett.getHMLC().getRecallValues().getDoubleVector(), sett.getGeneral().getCompatibility(), SettingsHMLC.HIERMEASURE_POOLED_AUPRC, false));
+            error.addError(new HierErrorMeasures(error, mgr.getHier(), sett.getHMLC().getRecallValues().getDoubleVector(), sett.getGeneral().getCompatibility(), SettingsHMLC.HIERMEASURE_POOLED_AUPRC, false, getSettings().getOutput().isGzipOutput()));
         }
         else {
             System.err.println("Feature ranking with Random Forests is supported only for:");

@@ -29,6 +29,7 @@ import clus.data.rows.RowData;
 import clus.data.type.ClusAttrType;
 import clus.heuristic.ClusHeuristic;
 import clus.main.ClusStatManager;
+import clus.main.settings.Settings;
 import clus.model.test.InverseNumericTest;
 import clus.model.test.NodeTest;
 import clus.model.test.NumericTest;
@@ -69,10 +70,10 @@ public class TestAndHeuristic {
     // Data set
     public RowData m_Subset;
     
-    private int m_Verbose;
+    private Settings m_Sett;
     
-    public TestAndHeuristic(int verbosityLevel) {
-        m_Verbose = verbosityLevel;
+    public TestAndHeuristic(Settings sett) {
+        m_Sett = sett;
     }
 
 /***************************************************************************
@@ -162,7 +163,7 @@ public class TestAndHeuristic {
     }
 
     public CurrentBestTestAndHeuristic makeCurrentBesTestAndHeuristic() {
-    	CurrentBestTestAndHeuristic node = new CurrentBestTestAndHeuristic(m_Verbose);
+    	CurrentBestTestAndHeuristic node = new CurrentBestTestAndHeuristic(m_Sett);
     	
     	node.m_TotStat = this.m_TotStat;		// Points to total statistic of node
     	node.m_TotCorrStat = this.m_TotCorrStat;	// Corrected total statistic
@@ -329,14 +330,14 @@ public class TestAndHeuristic {
         // System.out.println(val);
         
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
-        if (m_Verbose >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (m_Sett.getGeneric().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
         //System.out.println(m_BestHeur);
         //System.out.println(heur);
         if (heur - ClusHeuristic.DELTA > m_BestHeur ) {
-            if (m_Verbose >= 2) System.err.println("Better.");
+            if (m_Sett.getGeneric().getVerbose() >= 2) System.err.println("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
-            if (m_Verbose >= 2) {
+            if (m_Sett.getGeneric().getVerbose() >= 2) {
                 System.err.println(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
             }
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
@@ -358,9 +359,9 @@ public class TestAndHeuristic {
      */
     public final void updateInverseNumeric(double val, ClusAttrType at) {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
-        if (m_Verbose >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (m_Sett.getGeneric().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
-            if (m_Verbose >= 2) System.err.println("Better.");
+            if (m_Sett.getGeneric().getVerbose() >= 2) System.err.println("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;

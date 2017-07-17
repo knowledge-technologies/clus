@@ -5,7 +5,7 @@ import clus.heuristic.ClusStopCriterion;
 import clus.statistic.ClusStatistic;
 import clus.statistic.CombStat;
 
-
+//TODO: Jurica: This was implemented in Clus by somebody else, I don't know where it is used, or what it does 
 public class SemiSupMinLabeledWeightStopCrit implements ClusStopCriterion {
 
     protected double m_MinWeight;

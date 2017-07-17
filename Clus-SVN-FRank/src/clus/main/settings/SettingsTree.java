@@ -77,6 +77,26 @@ public class SettingsTree implements ISettings {
 
     public static double ALPHA; // danielae
 
+    //added by Jurica Levatic, JSI
+    private INIFileNominal m_MissingClusteringAttrHandling; //determines how we handle the case where when searching evaluating candidate split all examples have only missing values for a clustering attriute, in one of the branches 
+    private final String[] MISSING_CLUSTERING_ATTR_HANDLING_TYPE = { "Ignore", "EstimateFromTrainingSet", "EstimateFromParentNode" };
+    private INIFileNominal m_MissingTargetAttrHandling; //determines how we calculate prototype (i.e., prediction) if all the tuple in leaf node have only missing values for target attriute 
+
+    private final String[] MISSING_TARGET_ATTR_HANDLING_TYPE = { "Zero", "DefaultModel", "ParentNode" };
+    public static final int MISSING_ATTRIBUTE_HANDLING_PARENT = 2; //variance and mean (i.e., prediction) will be estimated on the basis of the node's parent
+    public static final int MISSING_ATTRIBUTE_HANDLING_TRAINING = 1; //variance and mean (i.e., prediction) will be estimated on the basis of the root node (i.e., default model)
+    public static final int MISSING_ATTRIBUTE_HANDLING_NONE = 0; //variance will not be estimated, while mean (i.e., prediction) will be equal to zero
+
+
+    public int getMissingClusteringAttrHandling() {
+        return m_MissingClusteringAttrHandling.getValue();
+    }
+
+
+    public int getMissingTargetAttrHandling() {
+        return m_MissingTargetAttrHandling.getValue();
+    }
+
 
     public int getSpatialMatrix() {
         return m_SpatialMatrix.getValue();
@@ -351,17 +371,9 @@ public class SettingsTree implements ISettings {
     public final static int SPATIAL_MATRIX_EUCLIDEAN = 1;
     public final static int SPATIAL_MATRIX_MODIFIED = 2;
     public final static int SPATIAL_MATRIX_GAUSSIAN = 3;
-    
-    
-    private final String[] SPATIAL_MEASURE_TYPE = { 
-            "GlobalMoran", "GlobalGeary", "GlobalGetis", "LocalMoran",
-            "LocalGeary", "LocalGetis", "StandardizedGetis", "EquvalentI", 
-            "IwithNeighbours", "EquvalentIwithNeighbours", "GlobalMoranDistance", "GlobalGearyDistance", 
-            "CI", "MultiVariateMoranI", "CwithNeighbours", "Lee", 
-            "MultiIwithNeighbours", "CIwithNeighbours", "LeewithNeighbours", "Pearson", 
-            "CIDistance", "DH", "EquvalentIDistance", "PearsonDistance", 
-            "EquvalentG", "EquvalentGDistance", "EquvalentPDistance" };
-    
+
+    private final String[] SPATIAL_MEASURE_TYPE = { "GlobalMoran", "GlobalGeary", "GlobalGetis", "LocalMoran", "LocalGeary", "LocalGetis", "StandardizedGetis", "EquvalentI", "IwithNeighbours", "EquvalentIwithNeighbours", "GlobalMoranDistance", "GlobalGearyDistance", "CI", "MultiVariateMoranI", "CwithNeighbours", "Lee", "MultiIwithNeighbours", "CIwithNeighbours", "LeewithNeighbours", "Pearson", "CIDistance", "DH", "EquvalentIDistance", "PearsonDistance", "EquvalentG", "EquvalentGDistance", "EquvalentPDistance" };
+
     public final static int SPATIAL_MEASURE_GLOBAL_MORAN = 0;
     public final static int SPATIAL_MEASURE_GLOBAL_GEARY = 1;
     public final static int SPATIAL_MEASURE_GLOBAL_GETIS = 2;
@@ -389,11 +401,7 @@ public class SettingsTree implements ISettings {
     public final static int SPATIAL_MEASURE_EQUVALENT_G = 24;
     public final static int SPATIAL_MEASURE_EQUVALENT_G_DISTANCE = 25;
     public final static int SPATIAL_MEASURE_EQUVALENT_P_DISTANCE = 26;
-    
-    
-    
-    
-    
+
     public static int FTEST_LEVEL;
     public static double FTEST_VALUE;
     public static double MINIMAL_WEIGHT;
@@ -490,6 +498,10 @@ public class SettingsTree implements ISettings {
         m_SectionTree.addNode(m_TreeSplitSampling = new INIFileInt("SplitSampling", 0));
         m_TreeSplitSampling.setValueCheck(new IntRangeCheck(0, Integer.MAX_VALUE));
 
+        //added by Jurica Levatic, JSI
+        m_SectionTree.addNode(m_MissingClusteringAttrHandling = new INIFileNominal("MissingClusteringAttrHandling", MISSING_CLUSTERING_ATTR_HANDLING_TYPE, MISSING_ATTRIBUTE_HANDLING_PARENT));
+        m_SectionTree.addNode(m_MissingTargetAttrHandling = new INIFileNominal("MissingTargetAttrHandling", MISSING_TARGET_ATTR_HANDLING_TYPE, MISSING_ATTRIBUTE_HANDLING_PARENT));
+        
         // added by Eduardo Costa 06/06/2011
         m_SectionTree.addNode(m_InductionOrder = new INIFileNominal("InductionOrder", INDUCTION_ORDER, DEPTH_FIRST));
 

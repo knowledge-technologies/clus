@@ -173,6 +173,11 @@ public class NumericAttrType extends ClusAttrType {
         return new MySerializable();
     }
 
+    @Override
+    public void setToMissing(DataTuple tuple) {
+        setNumeric(tuple, MISSING);
+    }
+
     public class MySerializable extends ClusSerializable {
 
         public int m_NbZero, m_NbNeg, m_NbTotal;

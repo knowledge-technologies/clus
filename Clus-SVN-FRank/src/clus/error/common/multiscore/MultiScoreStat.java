@@ -148,6 +148,7 @@ public class MultiScoreStat extends ClusStatistic {
     public void subtractFromOther(ClusStatistic other) {
     }
 
+ 
 
     public void vote(ArrayList votes) {
         System.err.println(getClass().getName() + "vote (): Not implemented");
@@ -166,6 +167,18 @@ public class MultiScoreStat extends ClusStatistic {
     @Override
     public int getNbStatisticComponents() {
         throw new RuntimeException(getClass().getName() + "getNbStatisticComponents(): not implemented");
+    }
+
+
+    @Override
+    public void setParentStat(ClusStatistic parent) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+
+    @Override
+    public ClusStatistic getParentStat() {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
 }

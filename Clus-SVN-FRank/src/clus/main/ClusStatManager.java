@@ -94,9 +94,6 @@ import clus.error.mlc.OneError;
 import clus.error.mlc.RankingLoss;
 import clus.error.mlc.SubsetAccuracy;
 import clus.error.mlcForHmlc.MlcMeasuresForHmlc;
-import clus.error.sets.F1Score;
-import clus.error.sets.Precision;
-import clus.error.sets.Recall;
 import clus.ext.beamsearch.ClusBeamHeuristicError;
 import clus.ext.beamsearch.ClusBeamHeuristicMEstimate;
 import clus.ext.beamsearch.ClusBeamHeuristicMorishita;
@@ -159,11 +156,13 @@ import clus.pruning.SizeConstraintPruning;
 import clus.statistic.ClassificationStat;
 import clus.statistic.ClusStatistic;
 import clus.statistic.CombStat;
+import clus.statistic.CombStatClassRegHier;
 import clus.statistic.GeneticDistanceStat;
 import clus.statistic.RegressionStat;
 import clus.statistic.SumPairwiseDistancesStat;
 import clus.util.ClusException;
 import clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
+import clus.ext.semisupervised.Helper;
 
 
 /**
@@ -337,9 +336,24 @@ public class ClusStatManager implements Serializable {
         }
         else if (winfo.isVector()) {
             // Explicit vector of weights given
-            if (nbattr != winfo.getVectorLength()) { throw new ClusException("Number of attributes is " + nbattr + " but weight vector has only " + winfo.getVectorLength() + " components"); }
-            for (int i = 0; i < nbattr; i++) {
-                result.setWeight(i, winfo.getDouble(i));
+            if (getSettings().getHMLC().isHierAndClassAndReg()) {
+                int l = winfo.getVectorLength();
+                if (l + m_Hier.getTotal() != nbattr) { throw new ClusException("Number of attributes is " + (nbattr - m_Hier.getTotal())
+                        + " but weight vector has only "
+                        + l + " components"); }
+                for (int i = 0; i < l - 1; i++) { //the last attribute is dummy, i.e., it represents the hierarchy, so we skip it 
+                    result.setWeight(i, winfo.getDouble(i));
+                }
+                for (int i = winfo.getVectorLength(); i < nbattr; i++) {
+                    result.setWeight(i, winfo.getDouble(l - 1));
+                }
+
+            }
+            else {
+                if (nbattr != winfo.getVectorLength()) { throw new ClusException("Number of attributes is " + nbattr + " but weight vector has only " + winfo.getVectorLength() + " components"); }
+                for (int i = 0; i < nbattr; i++) {
+                    result.setWeight(i, winfo.getDouble(i));
+                }
             }
         }
         else {
@@ -383,18 +397,55 @@ public class ClusStatManager implements Serializable {
     public void initClusteringWeights() throws ClusException {
         if (getMode() == MODE_HIERARCHICAL) {
             int nb_attrs = m_Schema.getNbAttributes();
-            m_ClusteringWeights = new ClusAttributeWeights(nb_attrs + m_Hier.getTotal());
+
             double[] weights = m_Hier.getWeights();
             NumericAttrType[] dummy = m_Hier.getDummyAttrs();
+
+            double[] temp = null;
+            if (getSettings().getHMLC().isHierAndClassAndReg()) {
+                temp = ((ClusNormalizedAttributeWeights) m_ClusteringWeights).getNormalizationWeights();
+                double sum = Helper.sum(weights);
+                for (int i = 0; i < weights.length; i++) {
+                    weights[i] = weights[i] / sum; //normalization with sum of all weights, as Aljaž suggested
+                }
+            }
+
+            m_ClusteringWeights = new ClusAttributeWeights(nb_attrs + m_Hier.getTotal());
+
             for (int i = 0; i < weights.length; i++) {
                 m_ClusteringWeights.setWeight(dummy[i], weights[i]);
             }
-            return;
+            if (getSettings().getHMLC().isHierAndClassAndReg()) {
+                for (int i = 0; i < temp.length - 1; i++) {
+                    m_ClusteringWeights.setWeight(i, temp[i]);
+                }
+
+                m_ClusteringWeights = new ClusNormalizedAttributeWeights(m_ClusteringWeights);
+            }
+            else {
+                return;
+            }
         }
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
+
         initWeights((ClusNormalizedAttributeWeights) m_ClusteringWeights, num, nom, getSettings().getAttribute().getClusteringWeights());
         if (getSettings().getGeneric().getVerbose() > 1) {
+
+            /*
+             * if(getSettings().isSSLWeights()) { this shuold be automatically enabled
+             * ClusAttrType[] clustering = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
+             * double weight;
+             * for (int i = 0; i < clustering.length; i++) {
+             * ClusAttrType cr = clustering[i];
+             * weight = ((ClusNormalizedAttributeWeights) m_ClusteringWeights).getComposeWeight(cr);
+             * double nbAtts = m_Schema.getNbDescriptiveAttributes() + m_Schema.getNbTargetAttributes();
+             * double sslweight = cr.getStatus() == ClusAttrType.STATUS_TARGET ? weight * ( nbAtts /
+             * m_Schema.getNbTargetAttributes()) : weight * (nbAtts / m_Schema.getNbDescriptiveAttributes());
+             * m_ClusteringWeights.setWeight(cr, sslweight);
+             * }
+             * }
+             */
             System.out.println("Clustering: " + m_ClusteringWeights.getName(m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING)));
         }
     }
@@ -463,18 +514,30 @@ public class ClusStatManager implements Serializable {
         int nb_nom = m_Schema.getNbNominalAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
         int nb_num = m_Schema.getNbNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
         System.out.println("Clustering attributes check ==> #nominal: " + nb_nom + " #numeric: " + nb_num);
-        if (nb_nom > 0 && nb_num > 0) {
-            m_Mode = MODE_CLASSIFY_AND_REGRESSION;
+
+        if (m_Schema.hasAttributeType(ClusAttrType.ATTR_USE_TARGET, ClassesAttrType.THIS_TYPE)) {
+            m_Mode = MODE_HIERARCHICAL;
+            getSettings().getHMLC().setSectionHierarchicalEnabled(true);
             nb_types++;
+            if (nb_nom > 0 || nb_num > 0) {
+                getSettings().getHMLC().setIsHierAndClassAndReg(true); //FIXME: maybe new MODE should be introduced here?
+            }
         }
-        else if (nb_nom > 0) {
-            m_Mode = MODE_CLASSIFY;
-            nb_types++;
+        else {
+            if (nb_nom > 0 && nb_num > 0) {
+                m_Mode = MODE_CLASSIFY_AND_REGRESSION;
+                nb_types++;
+            }
+            else if (nb_nom > 0) {
+                m_Mode = MODE_CLASSIFY;
+                nb_types++;
+            }
+            else if (nb_num > 0) {
+                m_Mode = MODE_REGRESSION;
+                nb_types++;
+            }
         }
-        else if (nb_num > 0) {
-            m_Mode = MODE_REGRESSION;
-            nb_types++;
-        }
+
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
         TimeSeriesAttrType[] ts = m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
@@ -490,11 +553,6 @@ public class ClusStatManager implements Serializable {
         }
         getSettings().getMLC().setSectionMultiLabelEnabled(is_multilabel);
 
-        if (m_Schema.hasAttributeType(ClusAttrType.ATTR_USE_TARGET, ClassesAttrType.THIS_TYPE)) {
-            m_Mode = MODE_HIERARCHICAL;
-            getSettings().getHMLC().setSectionHierarchicalEnabled(true);
-            nb_types++;
-        }
         int nb_int = 0;
         if (nb_int > 0 || getSettings().getTree().checkHeuristic("SSPD")) {
             m_Mode = MODE_SSPD;
@@ -613,18 +671,23 @@ public class ClusStatManager implements Serializable {
         }
         switch (m_Mode) {
             case MODE_HIERARCHICAL:
+
+                WHTDStatistic clustering;
                 if (getSettings().getHMLC().getHierDistance() == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC induction
-                    setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility(), getSettings().getHMLC().getHierDistance()));
+                    //setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility(), getSettings().getHMLC().getHierDistance()));
+                    clustering = new WHTDStatistic(getSettings(), m_Hier, getCompatibility(), getSettings().getHMLC().getHierDistance());
                     setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility(), getSettings().getHMLC().getHierDistance()));
                 }
                 else {
                     if (getSettings().getHMLC().getHierDistance() == SettingsHMLC.HIERDIST_WEIGHTED_EUCLIDEAN) {
                         if (getSettings().getHMLC().getHierSingleLabel()) {
-                            setClusteringStatistic(new HierSingleLabelStat(getSettings(), m_Hier, getCompatibility()));
+                            //setClusteringStatistic(new HierSingleLabelStat(getSettings(), m_Hier, getCompatibility()));
+                            clustering = new HierSingleLabelStat(getSettings(), m_Hier, getCompatibility());
                             setTargetStatistic(new HierSingleLabelStat(getSettings(), m_Hier, getCompatibility()));
                         }
                         else {
-                            setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility()));
+                            //setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility()));
+                            clustering = new WHTDStatistic(getSettings(), m_Hier, getCompatibility());
                             setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility()));
                         }
                     }
@@ -633,9 +696,18 @@ public class ClusStatManager implements Serializable {
                         if (getSettings().getHMLC().getHierDistance() == SettingsHMLC.HIERDIST_JACCARD) {
                             dist = new HierJaccardDistance(m_Hier.getType());
                         }
-                        setClusteringStatistic(new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist, getCompatibility()));
+
+                        //setClusteringStatistic(new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist, getCompatibility()));
+                        clustering = new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist, getCompatibility());
                         setTargetStatistic(new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist, getCompatibility()));
                     }
+                }
+                if (getSettings().getHMLC().isHierAndClassAndReg()) {
+                    setClusteringStatistic(new CombStatClassRegHier(this, num3, nom3, clustering));
+                    m_StatisticAttrUse[ClusAttrType.ATTR_USE_ALL] = new CombStatClassRegHier(this, num3, nom3, (WHTDStatistic) clustering.cloneStat());
+                }
+                else {
+                    setClusteringStatistic(clustering);
                 }
                 break;
             case MODE_HIERARCHICAL_MTR:
@@ -1133,7 +1205,7 @@ public class ClusStatManager implements Serializable {
                 double[] recalls = getSettings().getHMLC().getRecallValues().getDoubleVector();
                 boolean wrCurves = getSettings().getOutput().isWriteCurves();
                 if (getSettings().getHMLC().isCalError()) {
-                    parent.addError(new HierErrorMeasures(parent, m_Hier, recalls, getSettings().getGeneral().getCompatibility(), -1, wrCurves));
+                    parent.addError(new HierErrorMeasures(parent, m_Hier, recalls, getSettings().getGeneral().getCompatibility(), -1, wrCurves, getSettings().getOutput().isGzipOutput()));
                     parent.addError(new MlcMeasuresForHmlc(parent, m_Hier));
                 }
                 break;
@@ -1280,6 +1352,7 @@ public class ClusStatManager implements Serializable {
         }
         INIFileNominalOrDoubleOrVector class_thr = getSettings().getHMLC().getClassificationThresholds();
         if (class_thr.hasVector()) { return new HierClassTresholdPruner(class_thr.getDoubleVector()); }
+
         if (m_Mode == MODE_REGRESSION) {
             double mult = sett.getM5PruningMult();
             if (sett.getPruningMethod() == SettingsTree.PRUNING_METHOD_M5_MULTI) { return new M5PrunerMulti(getClusteringWeights(), mult); }
@@ -1293,6 +1366,12 @@ public class ClusStatManager implements Serializable {
                 sett.setPruningMethod(SettingsTree.PRUNING_METHOD_C45);
                 return new C45Pruner();
             }
+            /**
+             * M5 pruning can also be used in classification, since it is
+             * defined by using variance (i.e.,getSVarS) and in terms of
+             * classification this is gini
+             */
+            if (sett.getPruningMethod() == SettingsTree.PRUNING_METHOD_M5) { return new M5Pruner(getClusteringWeights(), sett.getM5PruningMult()); }
         }
         else if (m_Mode == MODE_HIERARCHICAL) {
             if (sett.getPruningMethod() == SettingsTree.PRUNING_METHOD_M5) {
@@ -1302,6 +1381,10 @@ public class ClusStatManager implements Serializable {
         }
         else if (m_Mode == MODE_PHYLO) {
             if (sett.getPruningMethod() == SettingsTree.PRUNING_METHOD_ENCODING_COST) { return new EncodingCostPruning(); }
+        }
+        else if (m_Mode == MODE_CLASSIFY_AND_REGRESSION) {
+            if (sett.getPruningMethod() == SettingsTree.PRUNING_METHOD_M5) { return new M5Pruner(getClusteringWeights(), sett.getM5PruningMult()); }
+            if (sett.getPruningMethod() == SettingsTree.PRUNING_METHOD_C45) { return new C45Pruner(); }
         }
         sett.setPruningMethod(SettingsTree.PRUNING_METHOD_NONE);
         return new PruneTree();

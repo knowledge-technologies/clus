@@ -10,8 +10,6 @@ import clus.util.jeans.io.ini.INIFileSection;
 
 public class SettingsOutput implements ISettings {
 
-    
-
     /***********************************************************************
      * Section: Output *
      ***********************************************************************/
@@ -31,6 +29,7 @@ public class SettingsOutput implements ISettings {
     protected INIFileBool m_PrintModelAndExamples;
     /** Write test/train predictions to files */
     protected INIFileNominal m_WritePredictions;
+    protected INIFileBool m_GzipOutput; // added by Jurica Levatic JSI, July 2014
     protected INIFileBool m_WriteErrorFile;
     protected INIFileBool m_WriteModelFile;
     protected INIFileBool m_ModelIDFiles;
@@ -69,8 +68,6 @@ public class SettingsOutput implements ISettings {
     public void setOutTestError(boolean value) {
         m_OutTestErr.setValue(value);
     }
-
-
 
 
     public boolean isShowBranchFreq() {
@@ -238,6 +235,7 @@ public class SettingsOutput implements ISettings {
         output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false));
         output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
         output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
+        output.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));
         // If this option name is to be changed, it must also be changed in testsets/iris-classify.s
         // output.addNode(m_ModelIDFiles = new INIFileBool("WriteModelIDFiles", false));
         output.addNode(m_ModelIDFiles = new INIFileBool("ModelIDFiles", false));
@@ -250,10 +248,19 @@ public class SettingsOutput implements ISettings {
         return output;
 
     }
-    
-    
+
+
     public void setOutputClowdFlows(boolean value) {
         m_OutputClowdFlowsJSON.setValue(value);
     }
 
+
+    /**
+     * If set to Yes, the output files will be GZiped (including .out and .pred.arff files)
+     * 
+     * @return
+     */
+    public boolean isGzipOutput() {
+        return m_GzipOutput.getValue();
+    }
 }

@@ -44,6 +44,7 @@ import clus.heuristic.GISHeuristic;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
 import clus.main.settings.SettingsEnsemble;
+import clus.main.settings.SettingsTree;
 import clus.statistic.ClassificationStat.Distance;
 import clus.statistic.ClassificationStat.DistanceB;
 import clus.util.ClusFormat;
@@ -64,6 +65,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     private int m_NbAttrs; // daniela  // matejp: Inspect the code and you will see that m_NbAttrs = 0 for ever and ever
     public NominalAttrType[] m_Attrs;
     public ClassificationStat m_Training;
+    public ClassificationStat m_ParentStat; //statistic of the parent node
 
     // * Class counts with [Target index][Class]
     public double[][] m_ClassCounts;
@@ -222,6 +224,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     public ClusStatistic cloneStat() {
         ClassificationStat res = new ClassificationStat(m_Settings, m_Attrs);
         res.m_Training = m_Training;
+        res.m_ParentStat = m_ParentStat;
         if (m_Thresholds != null) {
             res.m_Thresholds = Arrays.copyOf(m_Thresholds, m_Thresholds.length);
         }
@@ -255,6 +258,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     public void reset() {
         m_NbExamples = 0;
         m_SumWeight = 0.0;
+        m_SumWeightLabeled = 0.0;
         Arrays.fill(m_SumWeights, 0.0);
         for (int i = 0; i < m_NbTarget; i++) {
             Arrays.fill(m_ClassCounts[i], 0.0);
@@ -287,6 +291,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     public void copy(ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight = or.m_SumWeight;
+        m_SumWeightLabeled = or.m_SumWeightLabeled;
         m_NbExamples = or.m_NbExamples;
         System.arraycopy(or.m_SumWeights, 0, m_SumWeights, 0, m_NbTarget);
         for (int i = 0; i < m_NbTarget; i++) {
@@ -338,6 +343,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     public void add(ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight += or.m_SumWeight;
+        m_SumWeightLabeled += or.m_SumWeightLabeled;
         m_NbExamples += or.m_NbExamples;
         for (int i = 0; i < m_NbTarget; i++) {
             double[] my = m_ClassCounts[i];
@@ -352,6 +358,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     public void addScaled(double scale, ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight += scale * or.m_SumWeight;
+        m_SumWeightLabeled += scale * or.m_SumWeightLabeled;
         m_NbExamples += or.m_NbExamples;
         for (int i = 0; i < m_NbTarget; i++) {
             double[] my = m_ClassCounts[i];
@@ -366,6 +373,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     public void subtractFromThis(ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight -= or.m_SumWeight;
+        m_SumWeightLabeled -= or.m_SumWeightLabeled;
         m_NbExamples -= or.m_NbExamples;
         for (int i = 0; i < m_NbTarget; i++) {
             double[] my = m_ClassCounts[i];
@@ -380,6 +388,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     public void subtractFromOther(ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight = or.m_SumWeight - m_SumWeight;
+        m_SumWeightLabeled = or.m_SumWeightLabeled - m_SumWeightLabeled;
         m_NbExamples = or.m_NbExamples - m_NbExamples;
         for (int i = 0; i < m_NbTarget; i++) {
             double[] my = m_ClassCounts[i];
@@ -399,14 +408,20 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     public void updateWeighted(DataTuple tuple, double weight) {
         m_NbExamples++;
         m_SumWeight += weight;
+        boolean hasLabel = false;
         for (int i = 0; i < m_NbTarget; i++) {
             int val = m_Attrs[i].getNominal(tuple);
             // System.out.println("val: "+ val);
             if (val != m_Attrs[i].getNbValues()) {
                 m_ClassCounts[i][val] += weight;
                 m_SumWeights[i] += weight;
+
+                if (!hasLabel && m_Attrs[i].isTarget())
+                    hasLabel = true;
             }
         }
+        if (hasLabel)
+            m_SumWeightLabeled += weight;
     }
 
 
@@ -441,7 +456,16 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         if (m_max <= MathUtil.C1E_9 && m_Training != null) {
             // no examples covered -> m_max = null -> use whole training set majority class
-            return m_Training.getMajorityClass(attr);
+            switch (getSettings().getTree().getMissingTargetAttrHandling()) {
+                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
+                    return m_Training.getMajorityClass(attr);
+                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                    return m_ParentStat.getMajorityClass(attr);
+                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_NONE:
+                    return 0;
+                default:
+                    return m_Training.getMajorityClass(attr);
+            }
         }
         else {
             if (m_Thresholds != null) { // IFF multi label
@@ -471,7 +495,16 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         if (m_max <= MathUtil.C1E_9 && m_Training != null) {
             // no examples covered -> m_max = null -> use whole training set majority class
-            return m_Training.getMajorityClass(attr);
+            switch (getSettings().getTree().getMissingTargetAttrHandling()) {
+                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
+                    return m_Training.getMajorityClass(attr);
+                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                    return m_ParentStat.getMajorityClass(attr);
+                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_NONE:
+                    return 0;
+                default:
+                    return m_Training.getMajorityClass(attr);
+            }
         }
         return m_class;
     }
@@ -673,7 +706,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         if (total <= MathUtil.C1E_9) {
             // no examples -> assume training set distribution
             // return m_Training.gini(attr); // gives error with HSC script
-            return 0.0;
+            //return 0.0;
+            return getEsimatedGini(attr);
         }
         else {
             // System.err.println(": here2");
@@ -692,7 +726,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double wDiff = m_SumWeights[attr] - other.m_SumWeights[attr];
         if (wDiff <= MathUtil.C1E_9) {
             // no examples -> assume training set distribution
-            return m_Training.gini(attr);
+            // return m_Training.gini(attr);
+            return other.getEsimatedGini(attr);
         }
         else {
             double sum = 0.0;
@@ -703,6 +738,34 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 sum += (diff / wDiff) * (diff / wDiff);
             }
             return 1.0 - sum;
+        }
+    }
+
+
+    /**
+     * If there is no examples for an attribute i, gini is estimated according to setting given in settings file
+     * 
+     * @param i
+     *        index of an attribute
+     * @return
+     */
+    public double getEsimatedGini(int i) {
+        switch (getSettings().getTree().getMissingClusteringAttrHandling()) {
+            case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
+                if (m_Training == null)
+                    return Double.NaN;
+                return m_Training.gini(i);
+            case SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                //System.out.println(this.getTotalWeight());
+                if (m_ParentStat == null)
+                    return Double.NaN; // the case if for attribute i all examples gave missing values (if there is no parent stat, it means we reached the root node)
+                return m_ParentStat.gini(i);
+            case SettingsTree.MISSING_ATTRIBUTE_HANDLING_NONE:
+                return Double.NaN;
+            default:
+                if (m_Training == null)
+                    return Double.NaN;
+                return m_Training.gini(i);
         }
     }
 
@@ -783,19 +846,28 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             return getSVarSTargetSubspace(scale);
 
         // System.err.println(": here");
-        double result = 0.0;
+        double result = 0.0, SVarS;
+        int nbEffectiveAttrs = m_NbTarget;
         //double sum = m_SumWeight;
         for (int i = 0; i < m_NbTarget; i++) {
-            // System.out.println(gini(i) + " " + scale.getWeight(m_Attrs[i]) + " " + sum);
-            result += getSVarS(i) * scale.getWeight(m_Attrs[i]);
+            SVarS = getSVarS(i);
+            if (Double.isNaN(SVarS)) {
+                nbEffectiveAttrs--;
+            }
+            else {
+                // System.out.println(gini(i) + " " + scale.getWeight(m_Attrs[i]) + " " + sum);
+                result += getSVarS(i) * scale.getWeight(m_Attrs[i]);
+            }
         }
-        return result / m_NbTarget;
+
+        if (nbEffectiveAttrs == 0) { return Double.POSITIVE_INFINITY; }
+
+        return result / nbEffectiveAttrs;
     }
 
 
     public double getSVarS(int i) {
-        double sumW = m_SumWeight;
-        return gini(i) * sumW;
+        return gini(i) * m_SumWeights[i];
     }
 
 
@@ -819,13 +891,24 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getSVarSDiffTargetSubspace(scale, other);
 
-        double result = 0.0;
+        ClassificationStat or = (ClassificationStat) other;
+        double result = 0.0, SVarSDiff;
         double sum = m_SumWeight - other.m_SumWeight;
+        int nbEffectiveAttrs = m_NbTarget;
         ClassificationStat cother = (ClassificationStat) other;
         for (int i = 0; i < m_NbTarget; i++) {
-            result += giniDifference(i, cother) * scale.getWeight(m_Attrs[i]) * sum;
+            SVarSDiff = giniDifference(i, cother);
+            if (Double.isNaN(SVarSDiff)) {
+                nbEffectiveAttrs--;
+            }
+            else {
+                result += SVarSDiff * scale.getWeight(m_Attrs[i]) * (m_SumWeights[i] - or.m_SumWeights[i]);
+            }
         }
-        return result / m_NbTarget;
+
+        if (nbEffectiveAttrs == 0) { return Double.POSITIVE_INFINITY; }
+
+        return result / nbEffectiveAttrs;
     }
 
 
@@ -1333,11 +1416,55 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             double total = 0.0;
             for (int k = 0; k < m_ClassCounts[i].length; k++)
                 total += m_ClassCounts[i][k]; // get the number of instances
-            result[i] = new double[m_ClassCounts[i].length];
-            for (int j = 0; j < result[i].length; j++)
-                result[i][j] = m_ClassCounts[i][j] / total;// store the frequencies
+
+            if (total == 0) //if there are no labeled examples in this node
+                result[i] = getEstimatedProbabilityPrediction(i);
+            else {
+                result[i] = new double[m_ClassCounts[i].length];
+                for (int j = 0; j < result[i].length; j++)
+                    result[i][j] = m_ClassCounts[i][j] / total;// store the frequencies
+            }
         }
         return result;
+    }
+
+
+    /**
+     * Probability prediction for i^th target
+     * 
+     * @param i
+     *        index of a target
+     * @return
+     */
+    public double[] getProbabilityPrediction(int i) {
+        double[] result = new double[m_ClassCounts[i].length];
+        double total = 0.0;
+
+        for (int k = 0; k < m_ClassCounts[i].length; k++)
+            total += m_ClassCounts[i][k]; // get the number of instances
+
+        if (total == 0) // if there are no labeled examples in this node
+            return getEstimatedProbabilityPrediction(i);
+
+        for (int j = 0; j < result.length; j++)
+            result[j] = m_ClassCounts[i][j] / total;// store the frequencies
+
+        return result;
+    }
+
+
+    public double[] getEstimatedProbabilityPrediction(int i) {
+        switch (getSettings().getTree().getMissingClusteringAttrHandling()) {
+            case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
+                return m_Training.getProbabilityPrediction(i);
+            case SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                return m_ParentStat.getProbabilityPrediction(i);
+            case SettingsTree.MISSING_ATTRIBUTE_HANDLING_NONE:
+                return new double[m_ClassCounts[i].length]; // only zeros
+            default:
+                return m_Training.getProbabilityPrediction(i);
+        }
+
     }
 
 
@@ -1357,6 +1484,25 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    /*
+     * Compute squared distance between each of the tuple's target attributes and this statistic's mean.
+     **/
+    public double[] getPointwiseSquaredDistance(ClusStatistic other) {
+        double[][] these = getProbabilityPrediction();
+        ClassificationStat o = (ClassificationStat) other;
+        double[][] others = o.getProbabilityPrediction();
+        double[] distances = new double[m_NbTarget];
+        for (int i = 0; i < m_NbTarget; i++) {//for each target
+            double distance = 0.0;
+            for (int j = 0; j < these[i].length; j++) {//for each class from the target
+                distance += (these[i][j] - others[i][j]) * (these[i][j] - others[i][j]);
+            }
+            distances[i] = distance / these[i].length;
+        }
+        return distances;
+    }
+
+
     public double getSumWeights(int attr) {
         return (m_SumWeights[attr]);
     }
@@ -1372,6 +1518,24 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     @Override
     public void setData(RowData data) {
         m_data = data;
+    }
+
+
+    @Override
+    public void setParentStat(ClusStatistic parent) {
+        m_ParentStat = (ClassificationStat) parent;
+    }
+
+
+    @Override
+    public double getTargetSumWeights() {
+        return m_SumWeightLabeled;
+    }
+
+
+    @Override
+    public ClusStatistic getParentStat() {
+        return m_ParentStat;
     }
 
 

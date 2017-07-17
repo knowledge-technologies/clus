@@ -81,12 +81,14 @@ public class Settings implements Serializable {
     private SettingsOptionTree m_SettOptionTree;
     private SettingsExperimental m_SettExperimental;
     private SettingsSIT m_SettSIT;
+    private SettingsSSL m_SettSSL;
 
 
     public Settings() {
         m_Ini = new INIFile();
 
-        m_SettGeneric = new SettingsGeneric();
+        m_SettOutput = new SettingsOutput();
+        m_SettGeneric = new SettingsGeneric(m_SettOutput);
         m_SettGeneral = new SettingsGeneral();
         m_SettData = new SettingsData();
         m_SettAttribute = new SettingsAttribute();
@@ -111,7 +113,8 @@ public class Settings implements Serializable {
         m_SettConstraints = new SettingsConstraints();
         m_SettMLC = new SettingsMLC(m_SettHMLC, m_SettRelief);
         m_SettHMTR = new SettingsHMTR(m_SettAttribute, m_SettGeneric);
-        m_SettOutput = new SettingsOutput();
+        
+        m_SettSSL = new SettingsSSL();
     }
 
 
@@ -244,13 +247,16 @@ public class Settings implements Serializable {
         return m_SettSIT;
     }
 
+    public SettingsSSL getSSL() {
+        return m_SettSSL;
+    }
 
     public void create() {
         // Initialize individual settings. Order of initialization is important (see dependencies in the constructor).
 
         ArrayList<INIFileSection> lst = new ArrayList<INIFileSection>();
 
-        Collections.addAll(lst, 
+        Collections.addAll(lst,
                 m_SettGeneral.create(),
                 m_SettData.create(),
                 m_SettAttribute.create(),
@@ -275,17 +281,18 @@ public class Settings implements Serializable {
                 m_SettKNNTree.create(),
                 m_SettOptionTree.create(),
                 m_SettExperimental.create(),
-                m_SettSIT.create());
+                m_SettSIT.create(),
+                m_SettSSL.create());
 
         for (INIFileSection sec : lst) {
             m_Ini.addNode(sec);
-        }        
+        }
     }
 
 
     public void initNamedValues() {
         m_SettConstraints.setTreeMaxDepthNamedValue(-1, "Infinity");
-        
+
         m_SettBeamSearch.m_TreeMaxSize.setNamedValue(-1, "Infinity");
 
         m_SettTree.setTreeSplitSamplingNamedValue(0, "None");
@@ -349,7 +356,7 @@ public class Settings implements Serializable {
         SettingsTree.MINIMAL_WEIGHT = m_SettModel.getMinimalWeight();
         SettingsTree.ONE_NOMINAL = (schema.getNbNominalTargetAttributes() == 1 && schema.getNbNumericTargetAttributes() == 0);
         SettingsTree.ALPHA = m_SettTree.getSpatialAlpha();
-        
+
         SettingsOutput.SHOW_UNKNOWN_FREQ = m_SettOutput.isShowUnknown();
         SettingsOutput.SHOW_BRANCH_FREQ = m_SettOutput.isShowBranchFreq();
 
@@ -361,20 +368,20 @@ public class Settings implements Serializable {
         SettingsBeamSearch.BEAM_SYNT_DIST_CONSTR = m_SettBeamSearch.hasBeamConstraintFile();
 
         SettingsGeneric.VERBOSE = m_SettGeneric.getVerbose();
-        
+
     }
 
 
     public void updateDisabledSettings() {
         int pruning = m_SettTree.getPruningMethod();
         int heur = m_SettTree.getHeuristic();
-        
+
         m_SettTree.setM5PruningMultEnabled(pruning == SettingsTree.PRUNING_METHOD_M5 || pruning == SettingsTree.PRUNING_METHOD_M5_MULTI);
         m_SettTree.set1SERuleEnabled(pruning == SettingsTree.PRUNING_METHOD_GAROFALAKIS_VSB);
         m_SettTree.setFTestEnabled(heur == SettingsTree.HEURISTIC_SSPD || heur == SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
-        
+
         m_SettData.setPruneSetMaxEnabled(!m_SettData.isPruneSetString(ISettings.NONE));
-        
+
         if (ResourceInfo.isLibLoaded())
             m_SettGeneral.m_ResourceInfoLoaded.setSingleValue(SettingsGeneral.RESOURCE_INFO_LOAD_YES);
         else

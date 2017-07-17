@@ -474,7 +474,33 @@ public class RowData extends ClusData implements MSortable, Serializable {
         MSorter.quickSort(this, 0, m_NbRows);
     }
 
-
+    /**
+     * Sorts RowData so that the labeled examples come first, unlabeled 
+     * second
+     */
+    public void sortLabeledFirst() {
+        boolean swapPerformed;
+        
+        for(int i = 0; i < m_Data.length; i++) {               
+            //if unlabeled example is found, we try to find labeled example after its position, and swap them.
+            if(m_Data[i].isUnlabeled()) {
+                swapPerformed = false;
+                for(int j = i + 1; j < m_Data.length; j++) {
+                    if(!m_Data[j].isUnlabeled()) {
+                        swap(i, j);
+                        swapPerformed = true;
+                        break;
+                    }
+                }
+                
+                if(!swapPerformed) {//if no swap was performed, then dataset is already sorted
+                    return;
+                }
+            }
+            
+        }
+    }
+    
     public double getDouble(int i) {
         return m_Data[i].getDoubleVal(m_Index);
     }
@@ -799,7 +825,23 @@ public class RowData extends ClusData implements MSortable, Serializable {
         m_Data[i] = tuple;
     }
 
-
+    /**
+     * Returns the number of unlabeled examples (example is considered unlabeled 
+     * if all of its target attributes are missing)
+     * @return 
+     */
+    public final int getNbUnlabeled() {
+        int nbUnlabeled = 0;
+        
+        for(int i = 0; i < m_Data.length; i++) {
+            if(m_Data[i].isUnlabeled()) {
+                nbUnlabeled++;
+            }
+        }
+        
+        return nbUnlabeled;
+    }
+    
     public final RowData applyWeighted(NodeTest test, int branch) {
         int nb = 0;
         for (int i = 0; i < m_NbRows; i++) {
@@ -962,7 +1004,6 @@ public class RowData extends ClusData implements MSortable, Serializable {
         m_Data = new DataTuple[nbrows];
         m_NbRows = nbrows;
     }
-
 
     public void showDebug(ClusSchema schema) {
         System.out.println("Data: " + m_NbRows + " Size: " + m_Data.length);

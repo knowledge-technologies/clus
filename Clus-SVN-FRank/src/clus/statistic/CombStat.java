@@ -55,7 +55,7 @@ public class CombStat extends ClusStatistic {
 
     protected RegressionStat m_RegStat;
     protected ClassificationStat m_ClassStat;
-    private ClusStatManager m_StatManager;
+    protected ClusStatManager m_StatManager;
 
 
     private CombStat(Settings sett) {
@@ -848,7 +848,8 @@ public class CombStat extends ClusStatistic {
         return m_ClassStat.getNominalPred();
     }
 
-     // TODO: This error assessment should be changed, I guess.
+
+    // TODO: This error assessment should be changed, I guess.
     public double getError(ClusAttributeWeights scale) {
         System.out.println("CombStat :getError");
         switch (m_StatManager.getMode()) {
@@ -883,5 +884,40 @@ public class CombStat extends ClusStatistic {
     @Override
     public int getNbStatisticComponents() {
         throw new RuntimeException("CombStat: getNbStatisticComponents() not implemented.");
+    }
+
+
+    @Override
+    public void setParentStat(ClusStatistic parent) {
+        CombStat cstat = (CombStat) parent;
+
+        getClassificationStat().setParentStat(cstat.getClassificationStat());
+        getRegressionStat().setParentStat(cstat.getRegressionStat());
+    }
+
+
+    /**
+     * Provides sum of weights of target attributes
+     * 
+     * @return sum of weights of target attributes, or NaN if statistic doesn't contain target attributes (i.e.,
+     *         unsupervised learning is performed)
+     */
+    @Override
+    public double getTargetSumWeights() {
+        return m_ClassStat.getTargetSumWeights() + m_RegStat.getTargetSumWeights();
+    }
+
+
+    @Override
+    public boolean samePrediction(ClusStatistic other) {
+        CombStat cstat = (CombStat) other;
+
+        return getClassificationStat().samePrediction(cstat.getClassificationStat()) && getRegressionStat().samePrediction(cstat.getRegressionStat());
+    }
+
+
+    @Override
+    public ClusStatistic getParentStat() {
+        return new CombStat(m_StatManager, (RegressionStat) m_RegStat.getParentStat(), (ClassificationStat) m_ClassStat.getParentStat());
     }
 }

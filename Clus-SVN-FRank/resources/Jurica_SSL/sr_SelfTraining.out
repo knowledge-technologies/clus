@@ -1,0 +1,1504 @@
+Clus run Dataset
+****************
+
+Date: 30.6.2017 18:29
+File: sr_SelfTraining.out
+Attributes: 17 (input: 16, output: 1)
+Missing values: No
+
+[General]
+Verbose = 0
+Compatibility = Latest
+RandomSeed = 1
+ResourceInfoLoaded = No
+
+[Data]
+File = sr_percL=100_0_SLTrain.arff
+TestSet = sr_percL=100_0_Test.arff
+PruneSet = None
+XVal = 10
+RemoveMissingTarget = No
+NormalizeData = None
+
+[Attributes]
+Target = 17
+Clustering = 17
+Descriptive = 1-16
+Key = None
+Disable = None
+Weights = Normalize
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = No
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WriteErrorFile = No
+WriteModelFile = No
+WritePredictions = {None}
+GzipOutput = No
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+OutputJSONModel = No
+OutputDatabaseQueries = No
+OutputClowdFlowsJSON = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+NominalSubsetTests = Yes
+
+[Tree]
+Heuristic = VarianceReduction
+PruningMethod = M5
+M5PruningMult = 2.0
+FTest = 1.0
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = {}
+MSENominal = No
+SplitSampling = None
+MissingClusteringAttrHandling = EstimateFromParentNode
+MissingTargetAttrHandling = ParentNode
+InductionOrder = DepthFirst
+EntropyType = StandardEntropy
+ConsiderUnlableInstancesInIGCalc = No
+
+[Hierarchical]
+Type = Tree
+Distance = WeightedEuclidean
+WType = ExpAvgParentWeight
+WParam = 0.75
+HSeparator = /
+EmptySetIndicator = ?
+OptimizeErrorMeasure = PooledAUPRC
+DefinitionFile = None
+NoRootPredictions = No
+PruneInSig = 0.0
+Bonferroni = No
+SingleLabel = No
+CalculateErrors = Yes
+ClassificationThreshold = None
+RecallValues = None
+EvalClasses = None
+MEstimate = No
+
+[Ensemble]
+Iterations = 50
+EnsembleMethod = RForest
+VotingType = ProbabilityDistribution
+SelectRandomSubspaces = 4
+SelectRandomTargetSubspaces = SQRT
+RandomOutputSelection = None
+PrintAllModels = No
+PrintAllModelFiles = No
+PrintAllModelInfo = No
+PrintPaths = No
+Optimize = No
+OOBestimate = Yes
+FeatureRanking = None
+FeatureRankingPerTarget = No
+SymbolicWeight = 1.0
+SortRankingByRelevance = Yes
+WriteEnsemblePredictions = No
+EnsembleRandomDepth = No
+BagSelection = -1
+BagSize = 0
+NumberOfThreads = 1
+
+[SemiSupervised]
+SemiSupervisedMethod = SelfTraining
+StoppingCriteria = NoneAdded
+UnlabeledCriteria = Threshold
+ConfidenceThreshold = 0.5
+ConfidenceMeasure = ClassesProbabilities
+Iterations = 10
+K = 5
+UnlabeledData = sr_percL=100_0_Unlabeled.arff
+PercentageLabeled = 5
+UseWeights = No
+AirbagTrials = 0
+ExhaustiveSearchThresholds = [0.5,0.6,0.7,0.8,0.9,0.99]
+OOBErrorCalculation = LabeledOnly
+Normalization = Ranking
+Aggregation = Average
+CalibrateHmcThreshold = No
+PruningWhenTuning = No
+InternalFolds = 5
+WeightScoresFile = NO
+PossibleWeights = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 38.265 sec
+Pruning Time: 0 sec
+Model information
+     Default: FOREST with 50 models (Total nodes: 3920 and leaves: 1985)
+
+     Original: Semi-supervised Self-training
+	 Iterations performed = 11
+	 Unlabeled examples added: 959
+	 Base model: FOREST with 50 models (Total nodes: 40932 and leaves: 20491)
+
+
+Training error
+--------------
+
+Number of examples: 1059
+Hierarchical error measures
+   Original: 
+      Average AUROC:            0.9999575519419198
+      Average AUPRC:            0.9997786255552736
+      Average AUPRC (weighted): 0.9995290213350682
+      Pooled AUPRC:             0.997443767337852
+      0: amphipoda, AUROC: 0.999905, AUPRC: 0.999965, Freq: 0.728045
+      1: amphipoda/amphipoda_gammarus, AUROC: 0.999897, AUPRC: 0.999962, Freq: 0.726157
+      2: amphipoda/amphipoda_gammarus/amphipoda_gammarus_fossarum, AUROC: 0.999875, AUPRC: 0.999953, Freq: 0.724268
+      4: amphipoda/amphipoda_gammarus/amphipoda_gammarus_roeseli, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      5: amphipoda/amphipoda_niphargus, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      6: amphipoda/amphipoda_synurella, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      7: amphipoda/amphipoda_synurella/amphipoda_synurella_ambulans, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      8: anthophyta, AUROC: 1, AUPRC: 1, Freq: 0.015109
+      9: anthophyta/anthophyta_ceratophyllum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      10: anthophyta/anthophyta_ceratophyllum/anthophyta_ceratophyllum_demersum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      11: anthophyta/anthophyta_elodea, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      12: anthophyta/anthophyta_elodea/anthophyta_elodea_canadensis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      13: anthophyta/anthophyta_myriophyllum, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      14: anthophyta/anthophyta_myriophyllum/anthophyta_myriophyllum_spicatum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      15: anthophyta/anthophyta_potamogeton, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      16: anthophyta/anthophyta_potamogeton/anthophyta_potamogeton_crispus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      17: bacillariophyta, AUROC: 1, AUPRC: 1, Freq: 0.999056
+      18: bacillariophyta/bacillariophyta_achnanthes, AUROC: 0.999388, AUPRC: 0.999744, Freq: 0.700661
+      20: bacillariophyta/bacillariophyta_achnanthes/bacillariophyta_achnanthes_hauckiana, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      21: bacillariophyta/bacillariophyta_achnanthes/bacillariophyta_achnanthes_lanceolata, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      22: bacillariophyta/bacillariophyta_achnanthes/bacillariophyta_achnanthes_minutissima, AUROC: 1, AUPRC: 1, Freq: 0.035883
+      23: bacillariophyta/bacillariophyta_amphipleura, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      24: bacillariophyta/bacillariophyta_amphipleura/bacillariophyta_amphipleura_pellucida, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      25: bacillariophyta/bacillariophyta_amphora, AUROC: 1, AUPRC: 1, Freq: 0.016053
+      26: bacillariophyta/bacillariophyta_amphora/bacillariophyta_amphora_ovalis, AUROC: 1, AUPRC: 1, Freq: 0.016053
+      27: bacillariophyta/bacillariophyta_amphora/bacillariophyta_amphora_ovalis/bacillariophyta_amphora_ovalis_vpediculus, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      28: bacillariophyta/bacillariophyta_asterionella, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      29: bacillariophyta/bacillariophyta_asterionella/bacillariophyta_asterionella_formosa, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      30: bacillariophyta/bacillariophyta_caloneis, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      31: bacillariophyta/bacillariophyta_caloneis/bacillariophyta_caloneis_alpestris, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      33: bacillariophyta/bacillariophyta_caloneis/bacillariophyta_caloneis_silicula, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      34: bacillariophyta/bacillariophyta_ceratoneis, AUROC: 0.999699, AUPRC: 0.996524, Freq: 0.084042
+      35: bacillariophyta/bacillariophyta_ceratoneis/bacillariophyta_ceratoneis_arcus, AUROC: 0.999699, AUPRC: 0.996524, Freq: 0.084042
+      36: bacillariophyta/bacillariophyta_cocconeis, AUROC: 0.999974, AUPRC: 0.999998, Freq: 0.926346
+      37: bacillariophyta/bacillariophyta_cocconeis/bacillariophyta_cocconeis_pediculus, AUROC: 1, AUPRC: 1, Freq: 0.044381
+      38: bacillariophyta/bacillariophyta_cocconeis/bacillariophyta_cocconeis_placentula, AUROC: 0.99946, AUPRC: 0.997135, Freq: 0.161473
+      39: bacillariophyta/bacillariophyta_cyclotella, AUROC: 0.999099, AUPRC: 0.998157, Freq: 0.322002
+      40: bacillariophyta/bacillariophyta_cyclotella/bacillariophyta_cyclotella_comta, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      41: bacillariophyta/bacillariophyta_cyclotella/bacillariophyta_cyclotella_meneghiniana, AUROC: 1, AUPRC: 1, Freq: 0.014164
+      42: bacillariophyta/bacillariophyta_cymatopleura, AUROC: 1, AUPRC: 1, Freq: 0.020774
+      43: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_elliptica, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      44: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_elliptica/bacillariophyta_cymatopleura_elliptica_velliptica, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      45: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_librilis, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      46: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_librilis/bacillariophyta_cymatopleura_librilis_vapiculata, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      47: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_solea, AUROC: 1, AUPRC: 1, Freq: 0.015109
+      48: bacillariophyta/bacillariophyta_cymbella, AUROC: 1, AUPRC: 1, Freq: 0.968839
+      49: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_affinis, AUROC: 1, AUPRC: 1, Freq: 0.01322
+      50: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_aspera, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      51: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_cesatii, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      52: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_cistula, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      53: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_delicatula, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      55: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_minuta, AUROC: 1, AUPRC: 1, Freq: 0.025496
+      57: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_prostrata, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      58: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_reindhartii, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      59: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_sinnuata, AUROC: 1, AUPRC: 1, Freq: 0.009443
+      60: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_tumida, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      61: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_ventricosa, AUROC: 0.998301, AUPRC: 0.995955, Freq: 0.305005
+      62: bacillariophyta/bacillariophyta_denticula, AUROC: 1, AUPRC: 1, Freq: 0.017941
+      63: bacillariophyta/bacillariophyta_denticula/bacillariophyta_denticula_elegans, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      64: bacillariophyta/bacillariophyta_denticula/bacillariophyta_denticula_tenuis, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      65: bacillariophyta/bacillariophyta_diatoma, AUROC: 0.999376, AUPRC: 0.999815, Freq: 0.769594
+      66: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_anceps, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      67: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_elongatum, AUROC: 1, AUPRC: 1, Freq: 0.015109
+      68: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_elongatum/bacillariophyta_diatoma_elongatum_vtennue, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      69: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_hiemale, AUROC: 0.999914, AUPRC: 0.997364, Freq: 0.032106
+      70: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_hiemale/bacillariophyta_diatoma_hiemale_vmesodon, AUROC: 0.999914, AUPRC: 0.997364, Freq: 0.032106
+      71: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_vulgare, AUROC: 0.999057, AUPRC: 0.999555, Freq: 0.677998
+      72: bacillariophyta/bacillariophyta_diploneis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      73: bacillariophyta/bacillariophyta_diploneis/bacillariophyta_diploneis_ovalis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      74: bacillariophyta/bacillariophyta_epithemia, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      75: bacillariophyta/bacillariophyta_epithemia/bacillariophyta_epithemia_sorex, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      77: bacillariophyta/bacillariophyta_eunotia, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      78: bacillariophyta/bacillariophyta_eunotia/bacillariophyta_eunotia_arcus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      79: bacillariophyta/bacillariophyta_fragilaria, AUROC: 0.999792, AUPRC: 0.998251, Freq: 0.116147
+      80: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_capucina, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      81: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_capucina/bacillariophyta_fragilaria_capucina_vlanceo, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      82: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_construens, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      83: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_crotonensis, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      84: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_pinnata, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      85: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_vaucheriae, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      86: bacillariophyta/bacillariophyta_frustulia, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      88: bacillariophyta/bacillariophyta_frustulia/bacillariophyta_frustulia_vulgaris, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      89: bacillariophyta/bacillariophyta_gomphonema, AUROC: 1, AUPRC: 1, Freq: 0.938621
+      90: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_acuminatum, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      91: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_angustatum, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      93: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_constrictum, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      94: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_intricatum, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      95: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_intricatum/bacillariophyta_gomphonema_intricatum_vpumilum, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      96: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_olivaceum, AUROC: 0.999295, AUPRC: 0.998325, Freq: 0.286119
+      97: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_parvulum, AUROC: 1, AUPRC: 1, Freq: 0.034939
+      98: bacillariophyta/bacillariophyta_gyrosigma, AUROC: 1, AUPRC: 1, Freq: 0.014164
+      99: bacillariophyta/bacillariophyta_gyrosigma/bacillariophyta_gyrosigma_acuminatum, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      100: bacillariophyta/bacillariophyta_gyrosigma/bacillariophyta_gyrosigma_attenuatum, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      101: bacillariophyta/bacillariophyta_gyrosigma/bacillariophyta_gyrosigma_scalproides, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      102: bacillariophyta/bacillariophyta_hantzschia, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      103: bacillariophyta/bacillariophyta_hantzschia/bacillariophyta_hantzschia_amphioxys, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      104: bacillariophyta/bacillariophyta_melosira, AUROC: 0.999761, AUPRC: 0.999612, Freq: 0.377715
+      106: bacillariophyta/bacillariophyta_melosira/bacillariophyta_melosira_granulata, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      107: bacillariophyta/bacillariophyta_melosira/bacillariophyta_melosira_varians, AUROC: 0.999761, AUPRC: 0.999612, Freq: 0.377715
+      108: bacillariophyta/bacillariophyta_meridion, AUROC: 0.999683, AUPRC: 0.997978, Freq: 0.133144
+      109: bacillariophyta/bacillariophyta_meridion/bacillariophyta_meridion_circulare, AUROC: 0.999683, AUPRC: 0.997978, Freq: 0.133144
+      110: bacillariophyta/bacillariophyta_navicula, AUROC: 0.99999, AUPRC: 0.999999, Freq: 0.904627
+      111: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_avenacea, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      112: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_bacillum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      113: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cryptocephala, AUROC: 0.999714, AUPRC: 0.998244, Freq: 0.141643
+      114: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cryptocephala/bacillariophyta_navicula_cryptocephala_vcryptoceph, AUROC: 0.999941, AUPRC: 0.999352, Freq: 0.082153
+      115: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cryptocephala/bacillariophyta_navicula_cryptocephala_vintermedia, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      116: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cryptocephala/bacillariophyta_navicula_cryptocephala_vveneta, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      117: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cuspidata, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      118: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cuspidata/bacillariophyta_navicula_cuspidata_vcuspidata, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      120: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_gastrum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      121: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_gracilis, AUROC: 1, AUPRC: 1, Freq: 0.027384
+      122: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_hungarica, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      124: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_pupula, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      125: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_radiosa, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      126: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_rhynchocephala, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      127: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_rhynchocephala/bacillariophyta_navicula_rhynchocephala_vrhynchoceph, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      128: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_viridula, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      129: bacillariophyta/bacillariophyta_neidium, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      130: bacillariophyta/bacillariophyta_neidium/bacillariophyta_neidium_dubium, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      131: bacillariophyta/bacillariophyta_nitzschia, AUROC: 1, AUPRC: 1, Freq: 0.984891
+      132: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_acicularis, AUROC: 0.99882, AUPRC: 0.997265, Freq: 0.295562
+      133: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_angustata, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      134: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_dissipata, AUROC: 1, AUPRC: 1, Freq: 0.01983
+      136: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_fonticola, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      137: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_hungarica, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      138: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_linearis, AUROC: 1, AUPRC: 1, Freq: 0.012276
+      139: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_palea, AUROC: 0.999663, AUPRC: 0.999785, Freq: 0.610009
+      140: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_paleacea, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      142: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_sigmoidea, AUROC: 1, AUPRC: 1, Freq: 0.015109
+      144: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_thermalis, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      145: bacillariophyta/bacillariophyta_pinnularia, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      146: bacillariophyta/bacillariophyta_pinnularia/bacillariophyta_pinnularia_viridis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      147: bacillariophyta/bacillariophyta_rhoicosphaenia, AUROC: 1, AUPRC: 1, Freq: 0.022663
+      148: bacillariophyta/bacillariophyta_rhoicosphaenia/bacillariophyta_rhoicosphaenia_curvata, AUROC: 1, AUPRC: 1, Freq: 0.022663
+      151: bacillariophyta/bacillariophyta_stauroneis, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      152: bacillariophyta/bacillariophyta_stauroneis/bacillariophyta_stauroneis_anceps, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      153: bacillariophyta/bacillariophyta_stauroneis/bacillariophyta_stauroneis_smithii, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      154: bacillariophyta/bacillariophyta_stephanodiscus, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      155: bacillariophyta/bacillariophyta_stephanodiscus/bacillariophyta_stephanodiscus_hantzschii, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      156: bacillariophyta/bacillariophyta_surirella, AUROC: 0.999944, AUPRC: 0.999438, Freq: 0.087819
+      157: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_angusta, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      158: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_biseriata, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      160: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_ovata, AUROC: 1, AUPRC: 1, Freq: 0.038716
+      161: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_robusta, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      162: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_spiralis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      163: bacillariophyta/bacillariophyta_synedra, AUROC: 0.999445, AUPRC: 0.999723, Freq: 0.66289
+      164: bacillariophyta/bacillariophyta_synedra/bacillariophyta_synedra_acus, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      166: bacillariophyta/bacillariophyta_synedra/bacillariophyta_synedra_ulna, AUROC: 0.999737, AUPRC: 0.999641, Freq: 0.423985
+      167: bacillariophyta/bacillariophyta_synedra/bacillariophyta_synedra_vaucheriae, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      168: bacillariophyta/bacillariophyta_tabellaria, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      169: bacillariophyta/bacillariophyta_tabellaria/bacillariophyta_tabellaria_fenestrata, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      171: bacteria, AUROC: 0.999515, AUPRC: 0.999364, Freq: 0.431539
+      172: bacteria/bacteria_beggiatoa, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      173: bacteria/bacteria_beggiatoa/bacteria_beggiatoa_alba, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      174: bacteria/bacteria_leptothrix, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      175: bacteria/bacteria_leptothrix/bacteria_leptothrix_ochracea, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      176: bacteria/bacteria_sphaerotilus, AUROC: 0.999492, AUPRC: 0.99915, Freq: 0.374882
+      177: bacteria/bacteria_sphaerotilus/bacteria_sphaerotilus_natans, AUROC: 0.999492, AUPRC: 0.99915, Freq: 0.374882
+      178: bacteria/bacteria_zooglea, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      179: bacteria/bacteria_zooglea/bacteria_zooglea_ramigera, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      180: bivalvia, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      181: bivalvia/bivalvia_pisidium, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      185: bryophyta, AUROC: 0.999574, AUPRC: 0.997295, Freq: 0.136922
+      186: bryophyta/bryophyta_cynclidotus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      188: bryophyta/bryophyta_fontinalis, AUROC: 0.999736, AUPRC: 0.996498, Freq: 0.068933
+      189: bryophyta/bryophyta_fontinalis/bryophyta_fontinalis_antipyretica, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      190: bryozoa, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      191: bryozoa/bryozoa_cristatella, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      192: bryozoa/bryozoa_cristatella/bryozoa_cristatella_muccedo, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      193: chlorophyta, AUROC: 1, AUPRC: 1, Freq: 0.990557
+      194: chlorophyta/chlorophyta_ankistrodesmus, AUROC: 1, AUPRC: 1, Freq: 0.009443
+      195: chlorophyta/chlorophyta_ankistrodesmus/chlorophyta_ankistrodesmus_convolutus, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      196: chlorophyta/chlorophyta_ankistrodesmus/chlorophyta_ankistrodesmus_falcatus, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      198: chlorophyta/chlorophyta_chaetophora, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      200: chlorophyta/chlorophyta_characium, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      201: chlorophyta/chlorophyta_characium/chlorophyta_characium_apiculatum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      202: chlorophyta/chlorophyta_characium/chlorophyta_characium_nasutum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      203: chlorophyta/chlorophyta_chlamydomonas, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      204: chlorophyta/chlorophyta_chlamydomonas/chlorophyta_chlamydomonas_ehrenbergii, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      205: chlorophyta/chlorophyta_chlorella, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      206: chlorophyta/chlorophyta_chlorella/chlorophyta_chlorella_vulgaris, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      207: chlorophyta/chlorophyta_cladophora, AUROC: 0.999346, AUPRC: 0.999765, Freq: 0.729934
+      208: chlorophyta/chlorophyta_cladophora/chlorophyta_cladophora_fracta, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      209: chlorophyta/chlorophyta_cladophora/chlorophyta_cladophora_glomerata, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      210: chlorophyta/chlorophyta_closterium, AUROC: 0.999916, AUPRC: 0.99953, Freq: 0.149197
+      211: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_acerosum, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      212: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_ehrenbergii, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      213: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_leibleinii, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      215: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_lunula, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      216: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_moniliferum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      217: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_parvulum, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      218: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_striolatum, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      220: chlorophyta/chlorophyta_coelastrum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      221: chlorophyta/chlorophyta_coelastrum/chlorophyta_coelastrum_microporum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      222: chlorophyta/chlorophyta_cosmarium, AUROC: 1, AUPRC: 1, Freq: 0.015109
+      223: chlorophyta/chlorophyta_cosmarium/chlorophyta_cosmarium_botrytis, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      225: chlorophyta/chlorophyta_cosmarium/chlorophyta_cosmarium_laeve, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      227: chlorophyta/chlorophyta_cosmarium/chlorophyta_cosmarium_praemorsum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      230: chlorophyta/chlorophyta_draparnaldia, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      231: chlorophyta/chlorophyta_draparnaldia/chlorophyta_draparnaldia_glomerata, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      232: chlorophyta/chlorophyta_gongrosira, AUROC: 1, AUPRC: 1, Freq: 0.030217
+      233: chlorophyta/chlorophyta_gongrosira/chlorophyta_gongrosira_debaryana, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      234: chlorophyta/chlorophyta_gongrosira/chlorophyta_gongrosira_incrustans, AUROC: 1, AUPRC: 1, Freq: 0.030217
+      235: chlorophyta/chlorophyta_hydrodictyon, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      236: chlorophyta/chlorophyta_hydrodictyon/chlorophyta_hydrodictyon_reticulatum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      237: chlorophyta/chlorophyta_kirchneriella, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      238: chlorophyta/chlorophyta_microspora, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      239: chlorophyta/chlorophyta_microspora/chlorophyta_microspora_amoena, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      241: chlorophyta/chlorophyta_microspora/chlorophyta_microspora_floccosa, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      242: chlorophyta/chlorophyta_microspora/chlorophyta_microspora_quadrata, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      243: chlorophyta/chlorophyta_mougeotia, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      244: chlorophyta/chlorophyta_oedogonium, AUROC: 0.999733, AUPRC: 0.999137, Freq: 0.230406
+      245: chlorophyta/chlorophyta_oedogonium/chlorophyta_oedogonium_capilare, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      246: chlorophyta/chlorophyta_pandorina, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      247: chlorophyta/chlorophyta_pandorina/chlorophyta_pandorina_morum, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      248: chlorophyta/chlorophyta_pediastrum, AUROC: 1, AUPRC: 1, Freq: 0.014164
+      249: chlorophyta/chlorophyta_pediastrum/chlorophyta_pediastrum_boryanum, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      250: chlorophyta/chlorophyta_pediastrum/chlorophyta_pediastrum_duplex, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      251: chlorophyta/chlorophyta_pediastrum/chlorophyta_pediastrum_tetras, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      252: chlorophyta/chlorophyta_pleurococcus, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      253: chlorophyta/chlorophyta_pleurococcus/chlorophyta_pleurococcus_olivaceum, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      255: chlorophyta/chlorophyta_scenedesmus, AUROC: 0.999206, AUPRC: 0.998268, Freq: 0.300283
+      256: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_acuminatus, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      257: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_acutus, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      258: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_bijugatus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      260: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_obliquus, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      261: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_quadricauda, AUROC: 0.999901, AUPRC: 0.999284, Freq: 0.122757
+      262: chlorophyta/chlorophyta_selenastrum, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      264: chlorophyta/chlorophyta_sphaerocystis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      265: chlorophyta/chlorophyta_sphaerocystis/chlorophyta_sphaerocystis_schroeteri, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      266: chlorophyta/chlorophyta_spirogyra, AUROC: 1, AUPRC: 1, Freq: 0.043437
+      267: chlorophyta/chlorophyta_staurastrum, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      269: chlorophyta/chlorophyta_stigeoclonium, AUROC: 0.999778, AUPRC: 0.996963, Freq: 0.068933
+      270: chlorophyta/chlorophyta_stigeoclonium/chlorophyta_stigeoclonium_tenue, AUROC: 0.999778, AUPRC: 0.996963, Freq: 0.068933
+      271: chlorophyta/chlorophyta_tetraedron, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      272: chlorophyta/chlorophyta_ulothrix, AUROC: 1, AUPRC: 1, Freq: 0.049103
+      274: chlorophyta/chlorophyta_ulothrix/chlorophyta_ulothrix_tenuissima, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      275: chlorophyta/chlorophyta_ulothrix/chlorophyta_ulothrix_zonatao, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      276: chlorophyta/chlorophyta_ulothrix/chlorophyta_ulothrix_zonatap, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      277: chlorophyta/chlorophyta_zygnema, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      278: chrysophyta, AUROC: 1, AUPRC: 1, Freq: 0.043437
+      279: chrysophyta/chrysophyta_dinobryon, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      280: chrysophyta/chrysophyta_dinobryon/chrysophyta_dinobryon_divergens, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      281: chrysophyta/chrysophyta_dinobryon/chrysophyta_dinobryon_sociale, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      282: chrysophyta/chrysophyta_hydrurus, AUROC: 0.999941, AUPRC: 0.998163, Freq: 0.031161
+      283: chrysophyta/chrysophyta_hydrurus/chrysophyta_hydrurus_foetidus, AUROC: 0.999939, AUPRC: 0.998046, Freq: 0.030217
+      284: ciliata, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      285: ciliata/ciliata_aspidisca, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      286: ciliata/ciliata_aspidisca/ciliata_aspidisca_costata, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      287: ciliata/ciliata_carchesium, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      288: ciliata/ciliata_vorticella, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      289: cladocera, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      293: coleoptera, AUROC: 0.999643, AUPRC: 0.999823, Freq: 0.666667
+      294: coleoptera/coleoptera_dryopidae, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      295: coleoptera/coleoptera_dytiscidae, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      296: coleoptera/coleoptera_elmidae, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      297: coleoptera/coleoptera_elmis, AUROC: 0.999455, AUPRC: 0.997335, Freq: 0.17186
+      298: coleoptera/coleoptera_esolus, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      299: coleoptera/coleoptera_gyrinidae, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      300: coleoptera/coleoptera_gyrinus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      301: coleoptera/coleoptera_haliplidae, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      302: coleoptera/coleoptera_haliplus, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      303: coleoptera/coleoptera_helodidae, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      304: coleoptera/coleoptera_hydraena, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      306: coleoptera/coleoptera_limnius, AUROC: 1, AUPRC: 1, Freq: 0.016997
+      307: coleoptera/coleoptera_normandia, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      308: coleoptera/coleoptera_oulimnius, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      309: coleoptera/coleoptera_riolus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      310: coleoptera/coleoptera_stenelmis, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      311: coleoptera/coleoptera_stenelmis/coleoptera_stenelmis_canaliculata, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      312: copepoda, AUROC: 1, AUPRC: 1, Freq: 0.009443
+      317: cyanophyta, AUROC: 1, AUPRC: 1, Freq: 0.976393
+      318: cyanophyta/cyanophyta_anabaena, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      319: cyanophyta/cyanophyta_anabaena/cyanophyta_anabaena_constricta, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      321: cyanophyta/cyanophyta_chamaesiphon, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      322: cyanophyta/cyanophyta_chamaesiphon/cyanophyta_chamaesiphon_confervicolus, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      324: cyanophyta/cyanophyta_chamaesiphon/cyanophyta_chamaesiphon_incrustans, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      325: cyanophyta/cyanophyta_chroococcus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      326: cyanophyta/cyanophyta_chroococcus/cyanophyta_chroococcus_giganteus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      329: cyanophyta/cyanophyta_dactylococcopsis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      331: cyanophyta/cyanophyta_dactylococcopsis/cyanophyta_dactylococcopsis_rhaphidioides, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      332: cyanophyta/cyanophyta_gloeocapsa, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      333: cyanophyta/cyanophyta_gloeotrichia, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      334: cyanophyta/cyanophyta_gomphosphaeria, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      335: cyanophyta/cyanophyta_gomphosphaeria/cyanophyta_gomphosphaeria_aponina, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      337: cyanophyta/cyanophyta_lyngbya, AUROC: 1, AUPRC: 1, Freq: 0.01983
+      338: cyanophyta/cyanophyta_lyngbya/cyanophyta_lyngbya_epiphytica, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      339: cyanophyta/cyanophyta_lyngbya/cyanophyta_lyngbya_kuetzingiana, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      340: cyanophyta/cyanophyta_lyngbya/cyanophyta_lyngbya_kuetzingii, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      341: cyanophyta/cyanophyta_lyngbya/cyanophyta_lyngbya_martensiana, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      343: cyanophyta/cyanophyta_merismopedia, AUROC: 1, AUPRC: 1, Freq: 0.015109
+      344: cyanophyta/cyanophyta_merismopedia/cyanophyta_merismopedia_elegans, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      345: cyanophyta/cyanophyta_merismopedia/cyanophyta_merismopedia_glauca, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      346: cyanophyta/cyanophyta_merismopedia/cyanophyta_merismopedia_punctata, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      347: cyanophyta/cyanophyta_nostoc, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      348: cyanophyta/cyanophyta_oscillatoria, AUROC: 1, AUPRC: 1, Freq: 0.08593
+      351: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_formosa, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      353: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_limosa, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      354: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_putrida, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      355: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_rubescens, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      358: cyanophyta/cyanophyta_phormidium, AUROC: 0.99961, AUPRC: 0.995034, Freq: 0.082153
+      359: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_ambiguum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      360: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_autumnale, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      362: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_favosum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      363: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_foveolarum, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      364: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_incrustatum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      369: cyanophyta/cyanophyta_plectonema, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      370: cyanophyta/cyanophyta_plectonema/cyanophyta_plectonema_radiosum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      372: cyanophyta/cyanophyta_pleurocapsa, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      373: cyanophyta/cyanophyta_pleurocapsa/cyanophyta_pleurocapsa_minor, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      375: cyanophyta/cyanophyta_rivularia, AUROC: 1, AUPRC: 1, Freq: 0.010387
+      379: cyanophyta/cyanophyta_tolypothrix, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      382: diptera, AUROC: 1, AUPRC: 1, Freq: 0.998111
+      384: diptera/diptera_antocha, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      385: diptera/diptera_antocha/diptera_antocha_vitripennis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      387: diptera/diptera_atherix, AUROC: 1, AUPRC: 1, Freq: 0.017941
+      388: diptera/diptera_atherix/diptera_atherix_ibis, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      392: diptera/diptera_ceratopogonidae, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      393: diptera/diptera_chironomidae, AUROC: 1, AUPRC: 1, Freq: 0.967894
+      394: diptera/diptera_chironomidae/diptera_chironomidae_rdeci, AUROC: 1, AUPRC: 1, Freq: 0.015109
+      395: diptera/diptera_chironomidae/diptera_chironomidae_zeleni, AUROC: 0.999816, AUPRC: 0.999712, Freq: 0.386213
+      396: diptera/diptera_chironomini, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      397: diptera/diptera_chironomus, AUROC: 0.999864, AUPRC: 0.998239, Freq: 0.070822
+      398: diptera/diptera_chironomus/diptera_chironomus_plumosus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      399: diptera/diptera_chironomus/diptera_chironomus_thummi, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      400: diptera/diptera_culex, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      402: diptera/diptera_dicranota, AUROC: 1, AUPRC: 1, Freq: 0.010387
+      403: diptera/diptera_empididae, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      404: diptera/diptera_eriocera, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      405: diptera/diptera_hemerodromia, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      406: diptera/diptera_hexatoma, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      407: diptera/diptera_limnophila, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      408: diptera/diptera_limnophila/diptera_limnophila_punctata, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      409: diptera/diptera_limnophora, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      410: diptera/diptera_limnophora/diptera_limnophora_riparia, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      411: diptera/diptera_limoniidae, AUROC: 1, AUPRC: 1, Freq: 0.012276
+      412: diptera/diptera_liponeura, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      413: diptera/diptera_melanochelia, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      415: diptera/diptera_orthocladiinae, AUROC: 1, AUPRC: 1, Freq: 0.101039
+      416: diptera/diptera_palpomyia, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      417: diptera/diptera_pedicia, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      418: diptera/diptera_pericoma, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      420: diptera/diptera_psychodidae, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      421: diptera/diptera_rheotanytarsus, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      423: diptera/diptera_simulium, AUROC: 1, AUPRC: 1, Freq: 0.076487
+      424: diptera/diptera_stratiomyidae, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      425: diptera/diptera_syrphidae, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      426: diptera/diptera_tabanidae, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      427: diptera/diptera_tabanus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      428: diptera/diptera_tanypodinae, AUROC: 1, AUPRC: 1, Freq: 0.014164
+      430: diptera/diptera_tanytarsini, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      431: diptera/diptera_tipula, AUROC: 1, AUPRC: 1, Freq: 0.012276
+      432: diptera/diptera_tipulidae, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      434: ephemeroptera, AUROC: 1, AUPRC: 1, Freq: 0.991501
+      435: ephemeroptera/ephemeroptera_acantrella, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      436: ephemeroptera/ephemeroptera_acantrella/ephemeroptera_acantrella_sinaica, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      437: ephemeroptera/ephemeroptera_baetidae, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      438: ephemeroptera/ephemeroptera_baetis, AUROC: 0.999775, AUPRC: 0.999976, Freq: 0.903683
+      439: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_alpinus, AUROC: 1, AUPRC: 1, Freq: 0.014164
+      440: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_fuscatus, AUROC: 1, AUPRC: 1, Freq: 0.01322
+      441: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_muticus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      442: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_rhodani, AUROC: 0.99957, AUPRC: 0.999128, Freq: 0.32389
+      443: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_scambus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      445: ephemeroptera/ephemeroptera_caenis, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      447: ephemeroptera/ephemeroptera_centroptilum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      448: ephemeroptera/ephemeroptera_centroptilum/ephemeroptera_centroptilum_luteolum, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      449: ephemeroptera/ephemeroptera_cleon, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      450: ephemeroptera/ephemeroptera_cleon/ephemeroptera_cleon_dipterum, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      451: ephemeroptera/ephemeroptera_ecdyonurus, AUROC: 0.99934, AUPRC: 0.999113, Freq: 0.422096
+      452: ephemeroptera/ephemeroptera_ecdyonurus/ephemeroptera_ecdyonurus_forcipula, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      454: ephemeroptera/ephemeroptera_ecdyonurus/ephemeroptera_ecdyonurus_venosus, AUROC: 1, AUPRC: 1, Freq: 0.024551
+      455: ephemeroptera/ephemeroptera_epeorus, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      457: ephemeroptera/ephemeroptera_epeorus/ephemeroptera_epeorus_sylvicola, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      458: ephemeroptera/ephemeroptera_ephemera, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      459: ephemeroptera/ephemeroptera_ephemera/ephemeroptera_ephemera_danica, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      460: ephemeroptera/ephemeroptera_ephemerella, AUROC: 0.999974, AUPRC: 0.999804, Freq: 0.117092
+      461: ephemeroptera/ephemeroptera_ephemerella/ephemeroptera_ephemerella_ignita, AUROC: 1, AUPRC: 1, Freq: 0.040604
+      462: ephemeroptera/ephemeroptera_ephemerella/ephemeroptera_ephemerella_major, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      463: ephemeroptera/ephemeroptera_ephemerella/ephemeroptera_ephemerella_notata, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      464: ephemeroptera/ephemeroptera_habroleptoides, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      465: ephemeroptera/ephemeroptera_habroleptoides/ephemeroptera_habroleptoides_modesta, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      466: ephemeroptera/ephemeroptera_habrophlebia, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      467: ephemeroptera/ephemeroptera_habrophlebia/ephemeroptera_habrophlebia_lauta, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      468: ephemeroptera/ephemeroptera_heptagenia, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      469: ephemeroptera/ephemeroptera_heptagenia/ephemeroptera_heptagenia_sulphurea, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      472: ephemeroptera/ephemeroptera_paraleptophlebia, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      473: ephemeroptera/ephemeroptera_paraleptophlebia/ephemeroptera_paraleptophlebia_cincta, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      474: ephemeroptera/ephemeroptera_potamanthus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      475: ephemeroptera/ephemeroptera_potamanthus/ephemeroptera_potamanthus_luteus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      477: ephemeroptera/ephemeroptera_rhithrogena, AUROC: 0.999939, AUPRC: 0.999313, Freq: 0.07932
+      478: ephemeroptera/ephemeroptera_rhithrogena/ephemeroptera_rhithrogena_semicolorata, AUROC: 1, AUPRC: 1, Freq: 0.010387
+      479: ephemeroptera/ephemeroptera_siphlonurus, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      480: ephemeroptera/ephemeroptera_siphlonurus/ephemeroptera_siphlonurus_aestivalis, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      482: ephemeroptera/ephemeroptera_torleya, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      483: euglenophyta, AUROC: 1, AUPRC: 1, Freq: 0.018886
+      484: euglenophyta/euglenophyta_euglena, AUROC: 0.99992, AUPRC: 0.993323, Freq: 0.011331
+      485: euglenophyta/euglenophyta_euglena/euglenophyta_euglena_viridis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      486: euglenophyta/euglenophyta_phacus, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      487: euglenophyta/euglenophyta_phacus/euglenophyta_phacus_pleuronectes, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      488: euglenophyta/euglenophyta_trachelomonas, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      491: gastropoda, AUROC: 0.999634, AUPRC: 0.999196, Freq: 0.298395
+      494: gastropoda/gastropoda_amphimelania, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      495: gastropoda/gastropoda_amphimelania/gastropoda_amphimelania_holandri, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      496: gastropoda/gastropoda_ancylus, AUROC: 1, AUPRC: 1, Freq: 0.017941
+      497: gastropoda/gastropoda_ancylus/gastropoda_ancylus_fluviatilis, AUROC: 1, AUPRC: 1, Freq: 0.017941
+      500: gastropoda/gastropoda_bythinella, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      502: gastropoda/gastropoda_bythinia, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      503: gastropoda/gastropoda_bythinia/gastropoda_bythinia_leachi, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      505: gastropoda/gastropoda_fagotia, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      506: gastropoda/gastropoda_fagotia/gastropoda_fagotia_esperi, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      507: gastropoda/gastropoda_gyraulus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      508: gastropoda/gastropoda_gyraulus/gastropoda_gyraulus_albus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      510: gastropoda/gastropoda_lymnaea, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      515: gastropoda/gastropoda_physa, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      516: gastropoda/gastropoda_physa/gastropoda_physa_fontinalis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      517: gastropoda/gastropoda_planorbis, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      518: gastropoda/gastropoda_planorbis/gastropoda_planorbis_carinatus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      519: gastropoda/gastropoda_planorbis/gastropoda_planorbis_planorbis, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      520: gastropoda/gastropoda_sadleriana, AUROC: 0.999907, AUPRC: 0.998691, Freq: 0.061379
+      521: gastropoda/gastropoda_sadleriana/gastropoda_sadleriana_fluminensis, AUROC: 0.999907, AUPRC: 0.998691, Freq: 0.061379
+      522: gastropoda/gastropoda_theodoxus, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      523: gastropoda/gastropoda_theodoxus/gastropoda_theodoxus_danubialis, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      527: hemiptera, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      528: hemiptera/hemiptera_aphelocherius, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      529: hemiptera/hemiptera_aphelocherius/hemiptera_aphelocherius_aestivalis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      533: hemiptera/hemiptera_micronecta, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      538: hirudinea, AUROC: 0.999703, AUPRC: 0.999535, Freq: 0.386213
+      539: hirudinea/hirudinea_erpobdella, AUROC: 0.999827, AUPRC: 0.999625, Freq: 0.315392
+      540: hirudinea/hirudinea_erpobdella/hirudinea_erpobdella_octoculata, AUROC: 0.999807, AUPRC: 0.999126, Freq: 0.187913
+      542: hirudinea/hirudinea_glossiphonia, AUROC: 1, AUPRC: 1, Freq: 0.008499
+      543: hirudinea/hirudinea_glossiphonia/hirudinea_glossiphonia_complanata, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      547: hirudinea/hirudinea_helobdella, AUROC: 1, AUPRC: 1, Freq: 0.009443
+      548: hirudinea/hirudinea_helobdella/hirudinea_helobdella_stagnalis, AUROC: 1, AUPRC: 1, Freq: 0.009443
+      551: hirudinea/hirudinea_piscicola, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      552: hirudinea/hirudinea_piscicola/hirudinea_piscicola_geometra, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      556: hydracarina, AUROC: 0.999818, AUPRC: 0.9979, Freq: 0.08593
+      557: hydrozoa, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      558: hydrozoa/hydrozoa_hydra, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      559: isopoda, AUROC: 0.999857, AUPRC: 0.995465, Freq: 0.032106
+      560: isopoda/isopoda_asellus, AUROC: 0.999857, AUPRC: 0.995465, Freq: 0.032106
+      561: isopoda/isopoda_asellus/isopoda_asellus_aquaticus, AUROC: 0.999857, AUPRC: 0.995465, Freq: 0.032106
+      563: megaloptera, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      564: megaloptera/megaloptera_sialis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      565: megaloptera/megaloptera_sialis/megaloptera_sialis_lutaria, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      566: mycophyta, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      567: mycophyta/mycophyta_asterothrix, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      568: mycophyta/mycophyta_asterothrix/mycophyta_asterothrix_rhaphidioides, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      572: mycophyta/mycophyta_tetracladium, AUROC: 1, AUPRC: 1, Freq: 0.005666
+      573: mycophyta/mycophyta_tetracladium/mycophyta_tetracladium_marchalianum, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      574: nematoda, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      575: nematomorpha, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      576: nematomorpha/nematomorpha_gordius, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      577: nematomorpha/nematomorpha_gordius/nematomorpha_gordius_aquaticus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      578: odonata, AUROC: 1, AUPRC: 1, Freq: 0.007554
+      579: odonata/odonata_calopteryx, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      580: odonata/odonata_calopteryx/odonata_calopteryx_splendens, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      582: odonata/odonata_gomphus, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      584: odonata/odonata_onychogomphus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      585: odonata/odonata_onychogomphus/odonata_onychogomphus_forcipatus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      588: oligochaeta, AUROC: 0.999858, AUPRC: 0.999992, Freq: 0.94712
+      589: oligochaeta/oligochaeta_branchiura, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      590: oligochaeta/oligochaeta_branchiura/oligochaeta_branchiura_sowerbyi, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      591: oligochaeta/oligochaeta_eiseniella, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      592: oligochaeta/oligochaeta_eiseniella/oligochaeta_eiseniella_tetraedra, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      594: oligochaeta/oligochaeta_haplotaxis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      595: oligochaeta/oligochaeta_haplotaxis/oligochaeta_haplotaxis_gordioides, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      598: oligochaeta/oligochaeta_lumbricidae, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      599: oligochaeta/oligochaeta_lumbriculidae, AUROC: 1, AUPRC: 1, Freq: 0.012276
+      600: oligochaeta/oligochaeta_lumbriculus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      601: oligochaeta/oligochaeta_lumbriculus/oligochaeta_lumbriculus_variegatus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      602: oligochaeta/oligochaeta_naididae, AUROC: 1, AUPRC: 1, Freq: 0.01322
+      603: oligochaeta/oligochaeta_nais, AUROC: 1, AUPRC: 1, Freq: 0.042493
+      604: oligochaeta/oligochaeta_rhynchelmis, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      605: oligochaeta/oligochaeta_stylaria, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      606: oligochaeta/oligochaeta_stylaria/oligochaeta_stylaria_lacustris, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      607: oligochaeta/oligochaeta_tubifex, AUROC: 0.999717, AUPRC: 0.998458, Freq: 0.156752
+      608: oligochaeta/oligochaeta_tubifex/oligochaeta_tubifex_tubifex, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      609: oligochaeta/oligochaeta_tubificidae, AUROC: 1, AUPRC: 1, Freq: 0.016997
+      610: ostracoda, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      611: pisces, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      612: pisces/pisces_cottus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      613: pisces/pisces_cottus/pisces_cottus_gobio, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      614: plecoptera, AUROC: 0.999578, AUPRC: 0.999533, Freq: 0.470255
+      615: plecoptera/plecoptera_amphinemura, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      616: plecoptera/plecoptera_amphinemura/plecoptera_amphinemura_triangularis, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      617: plecoptera/plecoptera_brachyptera, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      618: plecoptera/plecoptera_brachyptera/plecoptera_brachyptera_risi, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      619: plecoptera/plecoptera_capnia, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      620: plecoptera/plecoptera_chloroperla, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      621: plecoptera/plecoptera_dictiogenus, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      622: plecoptera/plecoptera_dictiogenus/plecoptera_dictiogenus_alpinus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      623: plecoptera/plecoptera_dictiogenus/plecoptera_dictiogenus_fontium, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      624: plecoptera/plecoptera_dinocras, AUROC: 1, AUPRC: 1, Freq: 0.00661
+      625: plecoptera/plecoptera_dinocras/plecoptera_dinocras_cephalotes, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      626: plecoptera/plecoptera_dinocras/plecoptera_dinocras_megacephala, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      627: plecoptera/plecoptera_isoperla, AUROC: 0.999967, AUPRC: 0.998831, Freq: 0.027384
+      628: plecoptera/plecoptera_isoperla/plecoptera_isoperla_difformis, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      630: plecoptera/plecoptera_isoperla/plecoptera_isoperla_rivulorum, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      631: plecoptera/plecoptera_leuctra, AUROC: 0.999507, AUPRC: 0.998785, Freq: 0.278565
+      632: plecoptera/plecoptera_nemoura, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      633: plecoptera/plecoptera_perla, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      634: plecoptera/plecoptera_perla/plecoptera_perla_marginata, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      635: plecoptera/plecoptera_perlodes, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      636: plecoptera/plecoptera_perlodes/plecoptera_perlodes_intricata, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      637: plecoptera/plecoptera_perlodidae, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      638: plecoptera/plecoptera_protonemura, AUROC: 0.999808, AUPRC: 0.98943, Freq: 0.018886
+      640: plecoptera/plecoptera_protonemura/plecoptera_protonemura_intricata, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      641: plecoptera/plecoptera_protonemura/plecoptera_protonemura_montana, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      642: plecoptera/plecoptera_rhabdiopteryx, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      643: plecoptera/plecoptera_taeniopteryx, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      645: pyrrhophyta, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      646: pyrrhophyta/pyrrhophyta_ceratium, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      647: pyrrhophyta/pyrrhophyta_ceratium/pyrrhophyta_ceratium_hirudinella, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      649: rhodophyta, AUROC: 0.999871, AUPRC: 0.999292, Freq: 0.154863
+      650: rhodophyta/rhodophyta_audouinella, AUROC: 0.999893, AUPRC: 0.999245, Freq: 0.123702
+      651: rhodophyta/rhodophyta_audouinella/rhodophyta_audouinella_chalybea, AUROC: 0.999871, AUPRC: 0.997894, Freq: 0.058546
+      652: rhodophyta/rhodophyta_audouinella/rhodophyta_audouinella_violacea, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      653: rhodophyta/rhodophyta_bangia, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      654: rhodophyta/rhodophyta_bangia/rhodophyta_bangia_atropurpurea, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      655: rhodophyta/rhodophyta_batrachospermum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      656: rhodophyta/rhodophyta_batrachospermum/rhodophyta_batrachospermum_moniliforme, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      659: rhyzopoda, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      660: rhyzopoda/rhyzopoda_amoeba, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      661: rhyzopoda/rhyzopoda_amoeba/rhyzopoda_amoeba_lymax, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      662: rhyzopoda/rhyzopoda_euglypha, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      663: rhyzopoda/rhyzopoda_euglypha/rhyzopoda_euglypha_alveolata, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      665: trichoptera, AUROC: 0.999854, AUPRC: 0.999959, Freq: 0.78187
+      668: trichoptera/trichoptera_beraeidae, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      669: trichoptera/trichoptera_beraeodes, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      670: trichoptera/trichoptera_brachycentridae, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      671: trichoptera/trichoptera_glossosoma, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      672: trichoptera/trichoptera_glossosomatidae, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      673: trichoptera/trichoptera_goera, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      674: trichoptera/trichoptera_goera/trichoptera_goera_pilosa, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      676: trichoptera/trichoptera_hydropsyche, AUROC: 0.999671, AUPRC: 0.99937, Freq: 0.338055
+      677: trichoptera/trichoptera_hydropsyche/trichoptera_hydropsyche_pellucidula, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      678: trichoptera/trichoptera_hydroptila, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      679: trichoptera/trichoptera_hydroptilidae, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      680: trichoptera/trichoptera_lepidostoma, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      681: trichoptera/trichoptera_lepidostoma/trichoptera_lepidostoma_hirtum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      682: trichoptera/trichoptera_lepidostomatidae, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      683: trichoptera/trichoptera_leptoceridae, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      684: trichoptera/trichoptera_limnephilidae, AUROC: 0.999767, AUPRC: 0.995261, Freq: 0.048159
+      685: trichoptera/trichoptera_limnephilus, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      686: trichoptera/trichoptera_odontoceridae, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      687: trichoptera/trichoptera_odontocerum, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      688: trichoptera/trichoptera_odontocerum/trichoptera_odontocerum_albicorne, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      689: trichoptera/trichoptera_philopotamidae, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      690: trichoptera/trichoptera_philopotamus, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      692: trichoptera/trichoptera_polycentropodidae, AUROC: 1, AUPRC: 1, Freq: 0.003777
+      693: trichoptera/trichoptera_polycentropus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      694: trichoptera/trichoptera_polycentropus/trichoptera_polycentropus_flavomaculatus, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      696: trichoptera/trichoptera_rhyacophila, AUROC: 0.999243, AUPRC: 0.998335, Freq: 0.312559
+      700: trichoptera/trichoptera_sericostoma, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      701: trichoptera/trichoptera_sericostomatidae, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      702: trichoptera/trichoptera_silo, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      703: turbellaria, AUROC: 0.999988, AUPRC: 0.999866, Freq: 0.081209
+      704: turbellaria/turbellaria_crenobia, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      705: turbellaria/turbellaria_crenobia/turbellaria_crenobia_alpina, AUROC: 1, AUPRC: 1, Freq: 0.004721
+      706: turbellaria/turbellaria_dendrocoelum, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      707: turbellaria/turbellaria_dendrocoelum/turbellaria_dendrocoelum_lacteum, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      708: turbellaria/turbellaria_dugesia, AUROC: 1, AUPRC: 1, Freq: 0.012276
+      709: turbellaria/turbellaria_dugesia/turbellaria_dugesia_lugubris, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      710: turbellaria/turbellaria_planaria, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      711: turbellaria/turbellaria_planaria/turbellaria_planaria_torva, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      712: turbellaria/turbellaria_polycelis, AUROC: 1, AUPRC: 1, Freq: 0.011331
+      713: turbellaria/turbellaria_polycelis/turbellaria_polycelis_felina, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      714: turbellaria/turbellaria_polycelis/turbellaria_polycelis_nigra, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      715: xanthophyta, AUROC: 0.999785, AUPRC: 0.998302, Freq: 0.11237
+      716: xanthophyta/xanthophyta_tribonema, AUROC: 0.999983, AUPRC: 0.999724, Freq: 0.056657
+      717: xanthophyta/xanthophyta_tribonema/xanthophyta_tribonema_aequale, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      718: xanthophyta/xanthophyta_tribonema/xanthophyta_tribonema_monochloron, AUROC: 1, AUPRC: 1, Freq: 0.000944
+      719: xanthophyta/xanthophyta_tribonema/xanthophyta_tribonema_viride, AUROC: 1, AUPRC: 1, Freq: 0.002833
+      720: xanthophyta/xanthophyta_tribonema/xanthophyta_tribonema_vulgare, AUROC: 1, AUPRC: 1, Freq: 0.001889
+      721: xanthophyta/xanthophyta_vaucheria, AUROC: 0.999937, AUPRC: 0.999235, Freq: 0.076487
+      722: xanthophyta/xanthophyta_vaucheria/xanthophyta_vaucheria_geminata, AUROC: 1, AUPRC: 1, Freq: 0.002833
+
+Testing error
+-------------
+
+Number of examples: 960
+Hierarchical error measures
+   Original: 
+      Average AUROC:            0.5548021700619116
+      Average AUPRC:            0.12332580544537843
+      Average AUPRC (weighted): 0.45023914981770186
+      Pooled AUPRC:             0.5112956605005501
+      0: amphipoda, AUROC: 0.682064, AUPRC: 0.764891, Freq: 0.61875
+      1: amphipoda/amphipoda_gammarus, AUROC: 0.682165, AUPRC: 0.764512, Freq: 0.6125
+      2: amphipoda/amphipoda_gammarus/amphipoda_gammarus_fossarum, AUROC: 0.664535, AUPRC: 0.728379, Freq: 0.588542
+      3: amphipoda/amphipoda_gammarus/amphipoda_gammarus_lacustris, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      4: amphipoda/amphipoda_gammarus/amphipoda_gammarus_roeseli, AUROC: 0.543163, AUPRC: 0.062792, Freq: 0.05
+      5: amphipoda/amphipoda_niphargus, AUROC: 0.695499, AUPRC: 0.142878, Freq: 0.039583
+      6: amphipoda/amphipoda_synurella, AUROC: 0.579176, AUPRC: 0.115292, Freq: 0.053125
+      7: amphipoda/amphipoda_synurella/amphipoda_synurella_ambulans, AUROC: 0.579176, AUPRC: 0.115292, Freq: 0.053125
+      8: anthophyta, AUROC: 0.567267, AUPRC: 0.187402, Freq: 0.134375
+      9: anthophyta/anthophyta_ceratophyllum, AUROC: 0.566908, AUPRC: 0.05138, Freq: 0.01875
+      10: anthophyta/anthophyta_ceratophyllum/anthophyta_ceratophyllum_demersum, AUROC: 0.566908, AUPRC: 0.05138, Freq: 0.01875
+      11: anthophyta/anthophyta_elodea, AUROC: 0.588288, AUPRC: 0.05705, Freq: 0.019792
+      12: anthophyta/anthophyta_elodea/anthophyta_elodea_canadensis, AUROC: 0.588288, AUPRC: 0.05705, Freq: 0.019792
+      13: anthophyta/anthophyta_myriophyllum, AUROC: 0.523429, AUPRC: 0.119782, Freq: 0.09375
+      14: anthophyta/anthophyta_myriophyllum/anthophyta_myriophyllum_spicatum, AUROC: 0.517027, AUPRC: 0.01769, Freq: 0.014583
+      15: anthophyta/anthophyta_potamogeton, AUROC: 0.548859, AUPRC: 0.035039, Freq: 0.027083
+      16: anthophyta/anthophyta_potamogeton/anthophyta_potamogeton_crispus, AUROC: 0.470126, AUPRC: 0.00528, Freq: 0.00625
+      17: bacillariophyta, AUROC: 0.480709, AUPRC: 0.998917, Freq: 0.998958
+      18: bacillariophyta/bacillariophyta_achnanthes, AUROC: 0.64038, AUPRC: 0.64892, Freq: 0.554167
+      19: bacillariophyta/bacillariophyta_achnanthes/bacillariophyta_achnanthes_flexella, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      20: bacillariophyta/bacillariophyta_achnanthes/bacillariophyta_achnanthes_hauckiana, AUROC: 0.451512, AUPRC: 0.000521, Freq: 0.001042
+      21: bacillariophyta/bacillariophyta_achnanthes/bacillariophyta_achnanthes_lanceolata, AUROC: 0.521361, AUPRC: 0.071846, Freq: 0.060417
+      22: bacillariophyta/bacillariophyta_achnanthes/bacillariophyta_achnanthes_minutissima, AUROC: 0.596445, AUPRC: 0.307014, Freq: 0.219792
+      23: bacillariophyta/bacillariophyta_amphipleura, AUROC: 0.526054, AUPRC: 0.013507, Freq: 0.009375
+      24: bacillariophyta/bacillariophyta_amphipleura/bacillariophyta_amphipleura_pellucida, AUROC: 0.526054, AUPRC: 0.013507, Freq: 0.009375
+      25: bacillariophyta/bacillariophyta_amphora, AUROC: 0.536798, AUPRC: 0.25203, Freq: 0.226042
+      26: bacillariophyta/bacillariophyta_amphora/bacillariophyta_amphora_ovalis, AUROC: 0.536798, AUPRC: 0.25203, Freq: 0.226042
+      27: bacillariophyta/bacillariophyta_amphora/bacillariophyta_amphora_ovalis/bacillariophyta_amphora_ovalis_vpediculus, AUROC: 0.522514, AUPRC: 0.060382, Freq: 0.046875
+      28: bacillariophyta/bacillariophyta_asterionella, AUROC: 0.619769, AUPRC: 0.099487, Freq: 0.029167
+      29: bacillariophyta/bacillariophyta_asterionella/bacillariophyta_asterionella_formosa, AUROC: 0.619769, AUPRC: 0.099487, Freq: 0.029167
+      30: bacillariophyta/bacillariophyta_caloneis, AUROC: 0.507798, AUPRC: 0.014792, Freq: 0.013542
+      31: bacillariophyta/bacillariophyta_caloneis/bacillariophyta_caloneis_alpestris, AUROC: 0.480689, AUPRC: 0.001524, Freq: 0.002083
+      32: bacillariophyta/bacillariophyta_caloneis/bacillariophyta_caloneis_amphisbaena, AUROC: 0.5, AUPRC: 0.008333, Freq: 0.008333
+      33: bacillariophyta/bacillariophyta_caloneis/bacillariophyta_caloneis_silicula, AUROC: 0.655869, AUPRC: 0.031854, Freq: 0.003125
+      34: bacillariophyta/bacillariophyta_ceratoneis, AUROC: 0.691992, AUPRC: 0.403895, Freq: 0.232292
+      35: bacillariophyta/bacillariophyta_ceratoneis/bacillariophyta_ceratoneis_arcus, AUROC: 0.691992, AUPRC: 0.403895, Freq: 0.232292
+      36: bacillariophyta/bacillariophyta_cocconeis, AUROC: 0.71195, AUPRC: 0.877893, Freq: 0.792708
+      37: bacillariophyta/bacillariophyta_cocconeis/bacillariophyta_cocconeis_pediculus, AUROC: 0.563024, AUPRC: 0.371543, Freq: 0.327083
+      38: bacillariophyta/bacillariophyta_cocconeis/bacillariophyta_cocconeis_placentula, AUROC: 0.576547, AUPRC: 0.470276, Freq: 0.413542
+      39: bacillariophyta/bacillariophyta_cyclotella, AUROC: 0.589344, AUPRC: 0.506671, Freq: 0.435417
+      40: bacillariophyta/bacillariophyta_cyclotella/bacillariophyta_cyclotella_comta, AUROC: 0.519574, AUPRC: 0.101893, Freq: 0.098958
+      41: bacillariophyta/bacillariophyta_cyclotella/bacillariophyta_cyclotella_meneghiniana, AUROC: 0.571698, AUPRC: 0.249367, Freq: 0.157292
+      42: bacillariophyta/bacillariophyta_cymatopleura, AUROC: 0.514233, AUPRC: 0.216466, Freq: 0.196875
+      43: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_elliptica, AUROC: 0.519601, AUPRC: 0.039467, Freq: 0.0375
+      44: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_elliptica/bacillariophyta_cymatopleura_elliptica_velliptica, AUROC: 0.484848, AUPRC: 0.002529, Freq: 0.003125
+      45: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_librilis, AUROC: 0.567042, AUPRC: 0.032122, Freq: 0.021875
+      46: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_librilis/bacillariophyta_cymatopleura_librilis_vapiculata, AUROC: 0.567042, AUPRC: 0.032122, Freq: 0.021875
+      47: bacillariophyta/bacillariophyta_cymatopleura/bacillariophyta_cymatopleura_solea, AUROC: 0.520911, AUPRC: 0.163756, Freq: 0.148958
+      48: bacillariophyta/bacillariophyta_cymbella, AUROC: 0.620167, AUPRC: 0.866019, Freq: 0.827083
+      49: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_affinis, AUROC: 0.529174, AUPRC: 0.191521, Freq: 0.169792
+      50: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_aspera, AUROC: 0.576316, AUPRC: 0.019252, Freq: 0.010417
+      51: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_cesatii, AUROC: 0.466075, AUPRC: 0.001496, Freq: 0.002083
+      52: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_cistula, AUROC: 0.443915, AUPRC: 0.01271, Freq: 0.015625
+      53: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_delicatula, AUROC: 0.480689, AUPRC: 0.001524, Freq: 0.002083
+      54: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_lanceolata, AUROC: 0.5, AUPRC: 0.026042, Freq: 0.026042
+      55: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_minuta, AUROC: 0.59583, AUPRC: 0.206375, Freq: 0.136458
+      56: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_naviculiformis, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      57: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_prostrata, AUROC: 0.486089, AUPRC: 0.062669, Freq: 0.064583
+      58: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_reindhartii, AUROC: 0.584921, AUPRC: 0.207018, Freq: 0.005208
+      59: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_sinnuata, AUROC: 0.527553, AUPRC: 0.183574, Freq: 0.16875
+      60: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_tumida, AUROC: 0.473573, AUPRC: 0.012781, Freq: 0.014583
+      61: bacillariophyta/bacillariophyta_cymbella/bacillariophyta_cymbella_ventricosa, AUROC: 0.585875, AUPRC: 0.536458, Freq: 0.435417
+      62: bacillariophyta/bacillariophyta_denticula, AUROC: 0.653844, AUPRC: 0.197457, Freq: 0.09375
+      63: bacillariophyta/bacillariophyta_denticula/bacillariophyta_denticula_elegans, AUROC: 0.659983, AUPRC: 0.156912, Freq: 0.059375
+      64: bacillariophyta/bacillariophyta_denticula/bacillariophyta_denticula_tenuis, AUROC: 0.503082, AUPRC: 0.031106, Freq: 0.03125
+      65: bacillariophyta/bacillariophyta_diatoma, AUROC: 0.646131, AUPRC: 0.774564, Freq: 0.69375
+      66: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_anceps, AUROC: 0.537942, AUPRC: 0.018442, Freq: 0.014583
+      67: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_elongatum, AUROC: 0.52434, AUPRC: 0.131296, Freq: 0.120833
+      68: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_elongatum/bacillariophyta_diatoma_elongatum_vtennue, AUROC: 0.497157, AUPRC: 0.048974, Freq: 0.048958
+      69: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_hiemale, AUROC: 0.709593, AUPRC: 0.339449, Freq: 0.15
+      70: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_hiemale/bacillariophyta_diatoma_hiemale_vmesodon, AUROC: 0.709593, AUPRC: 0.339449, Freq: 0.15
+      71: bacillariophyta/bacillariophyta_diatoma/bacillariophyta_diatoma_vulgare, AUROC: 0.639792, AUPRC: 0.713764, Freq: 0.616667
+      72: bacillariophyta/bacillariophyta_diploneis, AUROC: 0.480547, AUPRC: 0.008295, Freq: 0.009375
+      73: bacillariophyta/bacillariophyta_diploneis/bacillariophyta_diploneis_ovalis, AUROC: 0.480689, AUPRC: 0.001524, Freq: 0.002083
+      74: bacillariophyta/bacillariophyta_epithemia, AUROC: 0.552498, AUPRC: 0.074897, Freq: 0.029167
+      75: bacillariophyta/bacillariophyta_epithemia/bacillariophyta_epithemia_sorex, AUROC: 0.650296, AUPRC: 0.014217, Freq: 0.003125
+      76: bacillariophyta/bacillariophyta_epithemia/bacillariophyta_epithemia_zebra, AUROC: 0.5, AUPRC: 0.014583, Freq: 0.014583
+      77: bacillariophyta/bacillariophyta_eunotia, AUROC: 0.538282, AUPRC: 0.018254, Freq: 0.0125
+      78: bacillariophyta/bacillariophyta_eunotia/bacillariophyta_eunotia_arcus, AUROC: 0.614301, AUPRC: 0.023896, Freq: 0.007292
+      79: bacillariophyta/bacillariophyta_fragilaria, AUROC: 0.613088, AUPRC: 0.370162, Freq: 0.291667
+      80: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_capucina, AUROC: 0.512366, AUPRC: 0.087884, Freq: 0.073958
+      81: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_capucina/bacillariophyta_fragilaria_capucina_vlanceo, AUROC: 0.482255, AUPRC: 0.001527, Freq: 0.002083
+      82: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_construens, AUROC: 0.599033, AUPRC: 0.099973, Freq: 0.052083
+      83: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_crotonensis, AUROC: 0.553045, AUPRC: 0.113001, Freq: 0.085417
+      84: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_pinnata, AUROC: 0.483718, AUPRC: 0.007407, Freq: 0.008333
+      85: bacillariophyta/bacillariophyta_fragilaria/bacillariophyta_fragilaria_vaucheriae, AUROC: 0.542138, AUPRC: 0.031603, Freq: 0.01875
+      86: bacillariophyta/bacillariophyta_frustulia, AUROC: 0.519908, AUPRC: 0.037402, Freq: 0.030208
+      87: bacillariophyta/bacillariophyta_frustulia/bacillariophyta_frustulia_rhomboides, AUROC: 0.5, AUPRC: 0.007292, Freq: 0.007292
+      88: bacillariophyta/bacillariophyta_frustulia/bacillariophyta_frustulia_vulgaris, AUROC: 0.488515, AUPRC: 0.021375, Freq: 0.022917
+      89: bacillariophyta/bacillariophyta_gomphonema, AUROC: 0.588761, AUPRC: 0.726048, Freq: 0.678125
+      90: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_acuminatum, AUROC: 0.53014, AUPRC: 0.038462, Freq: 0.032292
+      91: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_angustatum, AUROC: 0.596111, AUPRC: 0.099562, Freq: 0.054167
+      92: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_augur, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      93: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_constrictum, AUROC: 0.458911, AUPRC: 0.020271, Freq: 0.023958
+      94: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_intricatum, AUROC: 0.562985, AUPRC: 0.12689, Freq: 0.101042
+      95: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_intricatum/bacillariophyta_gomphonema_intricatum_vpumilum, AUROC: 0.52359, AUPRC: 0.022934, Freq: 0.01875
+      96: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_olivaceum, AUROC: 0.659112, AUPRC: 0.529645, Freq: 0.384375
+      97: bacillariophyta/bacillariophyta_gomphonema/bacillariophyta_gomphonema_parvulum, AUROC: 0.563461, AUPRC: 0.184667, Freq: 0.151042
+      98: bacillariophyta/bacillariophyta_gyrosigma, AUROC: 0.581786, AUPRC: 0.285464, Freq: 0.217708
+      99: bacillariophyta/bacillariophyta_gyrosigma/bacillariophyta_gyrosigma_acuminatum, AUROC: 0.584086, AUPRC: 0.047598, Freq: 0.026042
+      100: bacillariophyta/bacillariophyta_gyrosigma/bacillariophyta_gyrosigma_attenuatum, AUROC: 0.549537, AUPRC: 0.135278, Freq: 0.103125
+      101: bacillariophyta/bacillariophyta_gyrosigma/bacillariophyta_gyrosigma_scalproides, AUROC: 0.520531, AUPRC: 0.108378, Freq: 0.086458
+      102: bacillariophyta/bacillariophyta_hantzschia, AUROC: 0.477804, AUPRC: 0.024253, Freq: 0.027083
+      103: bacillariophyta/bacillariophyta_hantzschia/bacillariophyta_hantzschia_amphioxys, AUROC: 0.484638, AUPRC: 0.020977, Freq: 0.022917
+      104: bacillariophyta/bacillariophyta_melosira, AUROC: 0.668544, AUPRC: 0.671597, Freq: 0.496875
+      105: bacillariophyta/bacillariophyta_melosira/bacillariophyta_melosira_arenaria, AUROC: 0.5, AUPRC: 0.008333, Freq: 0.008333
+      106: bacillariophyta/bacillariophyta_melosira/bacillariophyta_melosira_granulata, AUROC: 0.501344, AUPRC: 0.037346, Freq: 0.036458
+      107: bacillariophyta/bacillariophyta_melosira/bacillariophyta_melosira_varians, AUROC: 0.675453, AUPRC: 0.660109, Freq: 0.476042
+      108: bacillariophyta/bacillariophyta_meridion, AUROC: 0.667261, AUPRC: 0.417943, Freq: 0.24375
+      109: bacillariophyta/bacillariophyta_meridion/bacillariophyta_meridion_circulare, AUROC: 0.667261, AUPRC: 0.417943, Freq: 0.24375
+      110: bacillariophyta/bacillariophyta_navicula, AUROC: 0.681607, AUPRC: 0.870472, Freq: 0.794792
+      111: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_avenacea, AUROC: 0.546132, AUPRC: 0.132724, Freq: 0.109375
+      112: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_bacillum, AUROC: 0.509861, AUPRC: 0.023392, Freq: 0.022917
+      113: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cryptocephala, AUROC: 0.693144, AUPRC: 0.508153, Freq: 0.340625
+      114: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cryptocephala/bacillariophyta_navicula_cryptocephala_vcryptoceph, AUROC: 0.670454, AUPRC: 0.472019, Freq: 0.31875
+      115: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cryptocephala/bacillariophyta_navicula_cryptocephala_vintermedia, AUROC: 0.595332, AUPRC: 0.262577, Freq: 0.0125
+      116: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cryptocephala/bacillariophyta_navicula_cryptocephala_vveneta, AUROC: 0.543324, AUPRC: 0.055467, Freq: 0.020833
+      117: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cuspidata, AUROC: 0.550652, AUPRC: 0.049057, Freq: 0.034375
+      118: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_cuspidata/bacillariophyta_navicula_cuspidata_vcuspidata, AUROC: 0.550652, AUPRC: 0.049057, Freq: 0.034375
+      119: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_dicephala, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      120: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_gastrum, AUROC: 0.479581, AUPRC: 0.004444, Freq: 0.005208
+      121: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_gracilis, AUROC: 0.524663, AUPRC: 0.266912, Freq: 0.257292
+      122: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_hungarica, AUROC: 0.541203, AUPRC: 0.051127, Freq: 0.042708
+      123: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_placentula, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      124: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_pupula, AUROC: 0.475884, AUPRC: 0.056845, Freq: 0.063542
+      125: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_radiosa, AUROC: 0.475535, AUPRC: 0.053363, Freq: 0.058333
+      126: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_rhynchocephala, AUROC: 0.585921, AUPRC: 0.143084, Freq: 0.108333
+      127: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_rhynchocephala/bacillariophyta_navicula_rhynchocephala_vrhynchoceph, AUROC: 0.585921, AUPRC: 0.143084, Freq: 0.108333
+      128: bacillariophyta/bacillariophyta_navicula/bacillariophyta_navicula_viridula, AUROC: 0.489005, AUPRC: 0.00455, Freq: 0.005208
+      129: bacillariophyta/bacillariophyta_neidium, AUROC: 0.57947, AUPRC: 0.033324, Freq: 0.01875
+      130: bacillariophyta/bacillariophyta_neidium/bacillariophyta_neidium_dubium, AUROC: 0.516949, AUPRC: 0.018456, Freq: 0.016667
+      131: bacillariophyta/bacillariophyta_nitzschia, AUROC: 0.629589, AUPRC: 0.848461, Freq: 0.797917
+      132: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_acicularis, AUROC: 0.608237, AUPRC: 0.471831, Freq: 0.388542
+      133: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_angustata, AUROC: 0.471787, AUPRC: 0.00247, Freq: 0.003125
+      134: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_dissipata, AUROC: 0.525419, AUPRC: 0.233919, Freq: 0.207292
+      135: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_filiformis, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      136: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_fonticola, AUROC: 0.495, AUPRC: 0.029714, Freq: 0.03125
+      137: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_hungarica, AUROC: 0.688203, AUPRC: 0.035918, Freq: 0.007292
+      138: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_linearis, AUROC: 0.552006, AUPRC: 0.245082, Freq: 0.18125
+      139: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_palea, AUROC: 0.78159, AUPRC: 0.776584, Freq: 0.5625
+      140: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_paleacea, AUROC: 0.659004, AUPRC: 0.065372, Freq: 0.003125
+      141: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_pura, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      142: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_sigmoidea, AUROC: 0.524181, AUPRC: 0.189121, Freq: 0.163542
+      143: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_sinnuata, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      144: bacillariophyta/bacillariophyta_nitzschia/bacillariophyta_nitzschia_thermalis, AUROC: 0.461418, AUPRC: 0.000521, Freq: 0.001042
+      145: bacillariophyta/bacillariophyta_pinnularia, AUROC: 0.552437, AUPRC: 0.036919, Freq: 0.021875
+      146: bacillariophyta/bacillariophyta_pinnularia/bacillariophyta_pinnularia_viridis, AUROC: 0.488994, AUPRC: 0.005545, Freq: 0.00625
+      147: bacillariophyta/bacillariophyta_rhoicosphaenia, AUROC: 0.564811, AUPRC: 0.262066, Freq: 0.204167
+      148: bacillariophyta/bacillariophyta_rhoicosphaenia/bacillariophyta_rhoicosphaenia_curvata, AUROC: 0.564811, AUPRC: 0.262066, Freq: 0.204167
+      149: bacillariophyta/bacillariophyta_rhopalodia, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      150: bacillariophyta/bacillariophyta_rhopalodia/bacillariophyta_rhopalodia_gibba, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      151: bacillariophyta/bacillariophyta_stauroneis, AUROC: 0.491148, AUPRC: 0.02674, Freq: 0.028125
+      152: bacillariophyta/bacillariophyta_stauroneis/bacillariophyta_stauroneis_anceps, AUROC: 0.480126, AUPRC: 0.003482, Freq: 0.004167
+      153: bacillariophyta/bacillariophyta_stauroneis/bacillariophyta_stauroneis_smithii, AUROC: 0.469634, AUPRC: 0.004342, Freq: 0.005208
+      154: bacillariophyta/bacillariophyta_stephanodiscus, AUROC: 0.500612, AUPRC: 0.080854, Freq: 0.058333
+      155: bacillariophyta/bacillariophyta_stephanodiscus/bacillariophyta_stephanodiscus_hantzschii, AUROC: 0.543961, AUPRC: 0.073982, Freq: 0.03125
+      156: bacillariophyta/bacillariophyta_surirella, AUROC: 0.715604, AUPRC: 0.590595, Freq: 0.373958
+      157: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_angusta, AUROC: 0.519581, AUPRC: 0.053698, Freq: 0.035417
+      158: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_biseriata, AUROC: 0.48431, AUPRC: 0.003514, Freq: 0.004167
+      159: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_linearis, AUROC: 0.5, AUPRC: 0.009375, Freq: 0.009375
+      160: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_ovata, AUROC: 0.680393, AUPRC: 0.532987, Freq: 0.342708
+      161: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_robusta, AUROC: 0.564116, AUPRC: 0.010688, Freq: 0.00625
+      162: bacillariophyta/bacillariophyta_surirella/bacillariophyta_surirella_spiralis, AUROC: 0.608325, AUPRC: 0.022677, Freq: 0.008333
+      163: bacillariophyta/bacillariophyta_synedra, AUROC: 0.532478, AUPRC: 0.605082, Freq: 0.575
+      164: bacillariophyta/bacillariophyta_synedra/bacillariophyta_synedra_acus, AUROC: 0.577189, AUPRC: 0.088992, Freq: 0.065625
+      165: bacillariophyta/bacillariophyta_synedra/bacillariophyta_synedra_rumpens, AUROC: 0.5, AUPRC: 0.0125, Freq: 0.0125
+      166: bacillariophyta/bacillariophyta_synedra/bacillariophyta_synedra_ulna, AUROC: 0.54828, AUPRC: 0.485002, Freq: 0.451042
+      167: bacillariophyta/bacillariophyta_synedra/bacillariophyta_synedra_vaucheriae, AUROC: 0.525013, AUPRC: 0.072154, Freq: 0.065625
+      168: bacillariophyta/bacillariophyta_tabellaria, AUROC: 0.481412, AUPRC: 0.031134, Freq: 0.033333
+      169: bacillariophyta/bacillariophyta_tabellaria/bacillariophyta_tabellaria_fenestrata, AUROC: 0.513507, AUPRC: 0.014705, Freq: 0.011458
+      170: bacillariophyta/bacillariophyta_tabellaria/bacillariophyta_tabellaria_flocculosa, AUROC: 0.5, AUPRC: 0.023958, Freq: 0.023958
+      171: bacteria, AUROC: 0.760828, AUPRC: 0.668305, Freq: 0.41875
+      172: bacteria/bacteria_beggiatoa, AUROC: 0.638413, AUPRC: 0.051887, Freq: 0.013542
+      173: bacteria/bacteria_beggiatoa/bacteria_beggiatoa_alba, AUROC: 0.638413, AUPRC: 0.051887, Freq: 0.013542
+      174: bacteria/bacteria_leptothrix, AUROC: 0.488494, AUPRC: 0.003548, Freq: 0.004167
+      175: bacteria/bacteria_leptothrix/bacteria_leptothrix_ochracea, AUROC: 0.488494, AUPRC: 0.003548, Freq: 0.004167
+      176: bacteria/bacteria_sphaerotilus, AUROC: 0.760703, AUPRC: 0.680567, Freq: 0.408333
+      177: bacteria/bacteria_sphaerotilus/bacteria_sphaerotilus_natans, AUROC: 0.760703, AUPRC: 0.680567, Freq: 0.408333
+      178: bacteria/bacteria_zooglea, AUROC: 0.658889, AUPRC: 0.138915, Freq: 0.0625
+      179: bacteria/bacteria_zooglea/bacteria_zooglea_ramigera, AUROC: 0.651891, AUPRC: 0.127332, Freq: 0.059375
+      180: bivalvia, AUROC: 0.466589, AUPRC: 0.064441, Freq: 0.072917
+      181: bivalvia/bivalvia_pisidium, AUROC: 0.471572, AUPRC: 0.05898, Freq: 0.065625
+      182: bivalvia/bivalvia_sphaerium, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      183: bivalvia/bivalvia_unio, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      184: bivalvia/bivalvia_unio/bivalvia_unio_crassus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      185: bryophyta, AUROC: 0.672144, AUPRC: 0.543158, Freq: 0.326042
+      186: bryophyta/bryophyta_cynclidotus, AUROC: 0.463569, AUPRC: 0.01153, Freq: 0.013542
+      187: bryophyta/bryophyta_cynclidotus/bryophyta_cynclidotus_fontinaloides, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      188: bryophyta/bryophyta_fontinalis, AUROC: 0.670099, AUPRC: 0.399739, Freq: 0.213542
+      189: bryophyta/bryophyta_fontinalis/bryophyta_fontinalis_antipyretica, AUROC: 0.60885, AUPRC: 0.128158, Freq: 0.079167
+      190: bryozoa, AUROC: 0.523776, AUPRC: 0.010498, Freq: 0.009375
+      191: bryozoa/bryozoa_cristatella, AUROC: 0.484753, AUPRC: 0.008402, Freq: 0.009375
+      192: bryozoa/bryozoa_cristatella/bryozoa_cristatella_muccedo, AUROC: 0.484753, AUPRC: 0.008402, Freq: 0.009375
+      193: chlorophyta, AUROC: 0.601991, AUPRC: 0.950151, Freq: 0.9375
+      194: chlorophyta/chlorophyta_ankistrodesmus, AUROC: 0.572645, AUPRC: 0.160533, Freq: 0.116667
+      195: chlorophyta/chlorophyta_ankistrodesmus/chlorophyta_ankistrodesmus_convolutus, AUROC: 0.579939, AUPRC: 0.088371, Freq: 0.017708
+      196: chlorophyta/chlorophyta_ankistrodesmus/chlorophyta_ankistrodesmus_falcatus, AUROC: 0.566538, AUPRC: 0.133146, Freq: 0.096875
+      197: chlorophyta/chlorophyta_bulbochaete, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      198: chlorophyta/chlorophyta_chaetophora, AUROC: 0.574977, AUPRC: 0.02911, Freq: 0.014583
+      199: chlorophyta/chlorophyta_chaetophora/chlorophyta_chaetophora_elegans, AUROC: 0.5, AUPRC: 0.013542, Freq: 0.013542
+      200: chlorophyta/chlorophyta_characium, AUROC: 0.529915, AUPRC: 0.048909, Freq: 0.040625
+      201: chlorophyta/chlorophyta_characium/chlorophyta_characium_apiculatum, AUROC: 0.50963, AUPRC: 0.030407, Freq: 0.030208
+      202: chlorophyta/chlorophyta_characium/chlorophyta_characium_nasutum, AUROC: 0.480126, AUPRC: 0.003482, Freq: 0.004167
+      203: chlorophyta/chlorophyta_chlamydomonas, AUROC: 0.494968, AUPRC: 0.043025, Freq: 0.04375
+      204: chlorophyta/chlorophyta_chlamydomonas/chlorophyta_chlamydomonas_ehrenbergii, AUROC: 0.480167, AUPRC: 0.001523, Freq: 0.002083
+      205: chlorophyta/chlorophyta_chlorella, AUROC: 0.50381, AUPRC: 0.075161, Freq: 0.073958
+      206: chlorophyta/chlorophyta_chlorella/chlorophyta_chlorella_vulgaris, AUROC: 0.52604, AUPRC: 0.063562, Freq: 0.05625
+      207: chlorophyta/chlorophyta_cladophora, AUROC: 0.691684, AUPRC: 0.681147, Freq: 0.523958
+      208: chlorophyta/chlorophyta_cladophora/chlorophyta_cladophora_fracta, AUROC: 0.507209, AUPRC: 0.028637, Freq: 0.026042
+      209: chlorophyta/chlorophyta_cladophora/chlorophyta_cladophora_glomerata, AUROC: 0.581858, AUPRC: 0.114964, Freq: 0.08125
+      210: chlorophyta/chlorophyta_closterium, AUROC: 0.593495, AUPRC: 0.39394, Freq: 0.325
+      211: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_acerosum, AUROC: 0.597226, AUPRC: 0.035414, Freq: 0.016667
+      212: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_ehrenbergii, AUROC: 0.572798, AUPRC: 0.042527, Freq: 0.032292
+      213: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_leibleinii, AUROC: 0.563241, AUPRC: 0.086967, Freq: 0.064583
+      214: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_libellula, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      215: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_lunula, AUROC: 0.532599, AUPRC: 0.031477, Freq: 0.026042
+      216: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_moniliferum, AUROC: 0.551803, AUPRC: 0.032452, Freq: 0.021875
+      217: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_parvulum, AUROC: 0.534544, AUPRC: 0.020735, Freq: 0.014583
+      218: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_striolatum, AUROC: 0.680419, AUPRC: 0.105008, Freq: 0.005208
+      219: chlorophyta/chlorophyta_closterium/chlorophyta_closterium_venus, AUROC: 0.5, AUPRC: 0.0125, Freq: 0.0125
+      220: chlorophyta/chlorophyta_coelastrum, AUROC: 0.530175, AUPRC: 0.014265, Freq: 0.011458
+      221: chlorophyta/chlorophyta_coelastrum/chlorophyta_coelastrum_microporum, AUROC: 0.530175, AUPRC: 0.014265, Freq: 0.011458
+      222: chlorophyta/chlorophyta_cosmarium, AUROC: 0.594332, AUPRC: 0.244062, Freq: 0.173958
+      223: chlorophyta/chlorophyta_cosmarium/chlorophyta_cosmarium_botrytis, AUROC: 0.461296, AUPRC: 0.024147, Freq: 0.028125
+      224: chlorophyta/chlorophyta_cosmarium/chlorophyta_cosmarium_formosulum, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      225: chlorophyta/chlorophyta_cosmarium/chlorophyta_cosmarium_laeve, AUROC: 0.49109, AUPRC: 0.005578, Freq: 0.00625
+      226: chlorophyta/chlorophyta_cosmarium/chlorophyta_cosmarium_ochthodes, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      227: chlorophyta/chlorophyta_cosmarium/chlorophyta_cosmarium_praemorsum, AUROC: 0.535693, AUPRC: 0.011792, Freq: 0.009375
+      228: chlorophyta/chlorophyta_crucigenia, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      229: chlorophyta/chlorophyta_crucigenia/chlorophyta_crucigenia_tetrapedia, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      230: chlorophyta/chlorophyta_draparnaldia, AUROC: 0.74477, AUPRC: 0.409788, Freq: 0.004167
+      231: chlorophyta/chlorophyta_draparnaldia/chlorophyta_draparnaldia_glomerata, AUROC: 0.829676, AUPRC: 0.544172, Freq: 0.003125
+      232: chlorophyta/chlorophyta_gongrosira, AUROC: 0.54636, AUPRC: 0.319031, Freq: 0.26875
+      233: chlorophyta/chlorophyta_gongrosira/chlorophyta_gongrosira_debaryana, AUROC: 0.740344, AUPRC: 0.5071, Freq: 0.002083
+      234: chlorophyta/chlorophyta_gongrosira/chlorophyta_gongrosira_incrustans, AUROC: 0.546151, AUPRC: 0.316172, Freq: 0.266667
+      235: chlorophyta/chlorophyta_hydrodictyon, AUROC: 0.480105, AUPRC: 0.00445, Freq: 0.005208
+      236: chlorophyta/chlorophyta_hydrodictyon/chlorophyta_hydrodictyon_reticulatum, AUROC: 0.480105, AUPRC: 0.00445, Freq: 0.005208
+      237: chlorophyta/chlorophyta_kirchneriella, AUROC: 0.547956, AUPRC: 0.008042, Freq: 0.00625
+      238: chlorophyta/chlorophyta_microspora, AUROC: 0.570924, AUPRC: 0.180284, Freq: 0.119792
+      239: chlorophyta/chlorophyta_microspora/chlorophyta_microspora_amoena, AUROC: 0.545219, AUPRC: 0.049763, Freq: 0.026042
+      240: chlorophyta/chlorophyta_microspora/chlorophyta_microspora_elegans, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      241: chlorophyta/chlorophyta_microspora/chlorophyta_microspora_floccosa, AUROC: 0.580032, AUPRC: 0.027299, Freq: 0.017708
+      242: chlorophyta/chlorophyta_microspora/chlorophyta_microspora_quadrata, AUROC: 0.532309, AUPRC: 0.092417, Freq: 0.059375
+      243: chlorophyta/chlorophyta_mougeotia, AUROC: 0.596473, AUPRC: 0.152209, Freq: 0.092708
+      244: chlorophyta/chlorophyta_oedogonium, AUROC: 0.619269, AUPRC: 0.425328, Freq: 0.2875
+      245: chlorophyta/chlorophyta_oedogonium/chlorophyta_oedogonium_capilare, AUROC: 0.489028, AUPRC: 0.002549, Freq: 0.003125
+      246: chlorophyta/chlorophyta_pandorina, AUROC: 0.552342, AUPRC: 0.098223, Freq: 0.051042
+      247: chlorophyta/chlorophyta_pandorina/chlorophyta_pandorina_morum, AUROC: 0.552342, AUPRC: 0.098223, Freq: 0.051042
+      248: chlorophyta/chlorophyta_pediastrum, AUROC: 0.652321, AUPRC: 0.228981, Freq: 0.125
+      249: chlorophyta/chlorophyta_pediastrum/chlorophyta_pediastrum_boryanum, AUROC: 0.563206, AUPRC: 0.112121, Freq: 0.073958
+      250: chlorophyta/chlorophyta_pediastrum/chlorophyta_pediastrum_duplex, AUROC: 0.556382, AUPRC: 0.052679, Freq: 0.038542
+      251: chlorophyta/chlorophyta_pediastrum/chlorophyta_pediastrum_tetras, AUROC: 0.558829, AUPRC: 0.074417, Freq: 0.033333
+      252: chlorophyta/chlorophyta_pleurococcus, AUROC: 0.613077, AUPRC: 0.211764, Freq: 0.127083
+      253: chlorophyta/chlorophyta_pleurococcus/chlorophyta_pleurococcus_olivaceum, AUROC: 0.562431, AUPRC: 0.088451, Freq: 0.058333
+      254: chlorophyta/chlorophyta_pleurococcus/chlorophyta_pleurococcus_vulgaris, AUROC: 0.5, AUPRC: 0.017708, Freq: 0.017708
+      255: chlorophyta/chlorophyta_scenedesmus, AUROC: 0.658824, AUPRC: 0.520822, Freq: 0.34375
+      256: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_acuminatus, AUROC: 0.596575, AUPRC: 0.149087, Freq: 0.089583
+      257: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_acutus, AUROC: 0.526421, AUPRC: 0.073491, Freq: 0.064583
+      258: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_bijugatus, AUROC: 0.585805, AUPRC: 0.027638, Freq: 0.016667
+      259: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_ecornis, AUROC: 0.5, AUPRC: 0.028125, Freq: 0.028125
+      260: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_obliquus, AUROC: 0.560237, AUPRC: 0.159979, Freq: 0.119792
+      261: chlorophyta/chlorophyta_scenedesmus/chlorophyta_scenedesmus_quadricauda, AUROC: 0.645089, AUPRC: 0.33359, Freq: 0.229167
+      262: chlorophyta/chlorophyta_selenastrum, AUROC: 0.510401, AUPRC: 0.038024, Freq: 0.028125
+      263: chlorophyta/chlorophyta_selenastrum/chlorophyta_selenastrum_gracile, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      264: chlorophyta/chlorophyta_sphaerocystis, AUROC: 0.482777, AUPRC: 0.001528, Freq: 0.002083
+      265: chlorophyta/chlorophyta_sphaerocystis/chlorophyta_sphaerocystis_schroeteri, AUROC: 0.482777, AUPRC: 0.001528, Freq: 0.002083
+      266: chlorophyta/chlorophyta_spirogyra, AUROC: 0.608577, AUPRC: 0.276409, Freq: 0.203125
+      267: chlorophyta/chlorophyta_staurastrum, AUROC: 0.581922, AUPRC: 0.055814, Freq: 0.023958
+      268: chlorophyta/chlorophyta_staurastrum/chlorophyta_staurastrum_punctulatum, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      269: chlorophyta/chlorophyta_stigeoclonium, AUROC: 0.671932, AUPRC: 0.391669, Freq: 0.219792
+      270: chlorophyta/chlorophyta_stigeoclonium/chlorophyta_stigeoclonium_tenue, AUROC: 0.682793, AUPRC: 0.381762, Freq: 0.207292
+      271: chlorophyta/chlorophyta_tetraedron, AUROC: 0.539194, AUPRC: 0.040629, Freq: 0.03125
+      272: chlorophyta/chlorophyta_ulothrix, AUROC: 0.554286, AUPRC: 0.355436, Freq: 0.316667
+      273: chlorophyta/chlorophyta_ulothrix/chlorophyta_ulothrix_subtilissima, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      274: chlorophyta/chlorophyta_ulothrix/chlorophyta_ulothrix_tenuissima, AUROC: 0.521807, AUPRC: 0.068046, Freq: 0.066667
+      275: chlorophyta/chlorophyta_ulothrix/chlorophyta_ulothrix_zonatao, AUROC: 0.567129, AUPRC: 0.074167, Freq: 0.061458
+      276: chlorophyta/chlorophyta_ulothrix/chlorophyta_ulothrix_zonatap, AUROC: 0.498333, AUPRC: 0.086839, Freq: 0.067708
+      277: chlorophyta/chlorophyta_zygnema, AUROC: 0.613239, AUPRC: 0.183922, Freq: 0.059375
+      278: chrysophyta, AUROC: 0.717622, AUPRC: 0.377059, Freq: 0.154167
+      279: chrysophyta/chrysophyta_dinobryon, AUROC: 0.617114, AUPRC: 0.077443, Freq: 0.027083
+      280: chrysophyta/chrysophyta_dinobryon/chrysophyta_dinobryon_divergens, AUROC: 0.481073, AUPRC: 0.008308, Freq: 0.009375
+      281: chrysophyta/chrysophyta_dinobryon/chrysophyta_dinobryon_sociale, AUROC: 0.574249, AUPRC: 0.037344, Freq: 0.00625
+      282: chrysophyta/chrysophyta_hydrurus, AUROC: 0.712013, AUPRC: 0.339923, Freq: 0.128125
+      283: chrysophyta/chrysophyta_hydrurus/chrysophyta_hydrurus_foetidus, AUROC: 0.714257, AUPRC: 0.347742, Freq: 0.128125
+      284: ciliata, AUROC: 0.553463, AUPRC: 0.077833, Freq: 0.053125
+      285: ciliata/ciliata_aspidisca, AUROC: 0.480608, AUPRC: 0.00542, Freq: 0.00625
+      286: ciliata/ciliata_aspidisca/ciliata_aspidisca_costata, AUROC: 0.480608, AUPRC: 0.00542, Freq: 0.00625
+      287: ciliata/ciliata_carchesium, AUROC: 0.535908, AUPRC: 0.029619, Freq: 0.022917
+      288: ciliata/ciliata_vorticella, AUROC: 0.517072, AUPRC: 0.042532, Freq: 0.035417
+      289: cladocera, AUROC: 0.49585, AUPRC: 0.046097, Freq: 0.047917
+      290: cladocera/cladocera_daphnia, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      291: cladocera/cladocera_eurycercus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      292: cladocera/cladocera_eurycercus/cladocera_eurycercus_lamellatus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      293: coleoptera, AUROC: 0.708917, AUPRC: 0.688628, Freq: 0.538542
+      294: coleoptera/coleoptera_dryopidae, AUROC: 0.48382, AUPRC: 0.00153, Freq: 0.002083
+      295: coleoptera/coleoptera_dytiscidae, AUROC: 0.530015, AUPRC: 0.066786, Freq: 0.058333
+      296: coleoptera/coleoptera_elmidae, AUROC: 0.526464, AUPRC: 0.068427, Freq: 0.060417
+      297: coleoptera/coleoptera_elmis, AUROC: 0.744731, AUPRC: 0.628707, Freq: 0.333333
+      298: coleoptera/coleoptera_esolus, AUROC: 0.588282, AUPRC: 0.113844, Freq: 0.040625
+      299: coleoptera/coleoptera_gyrinidae, AUROC: 0.48411, AUPRC: 0.015139, Freq: 0.016667
+      300: coleoptera/coleoptera_gyrinus, AUROC: 0.522458, AUPRC: 0.03468, Freq: 0.025
+      301: coleoptera/coleoptera_haliplidae, AUROC: 0.510521, AUPRC: 0.028005, Freq: 0.027083
+      302: coleoptera/coleoptera_haliplus, AUROC: 0.582575, AUPRC: 0.028022, Freq: 0.015625
+      303: coleoptera/coleoptera_helodidae, AUROC: 0.482632, AUPRC: 0.009309, Freq: 0.010417
+      304: coleoptera/coleoptera_hydraena, AUROC: 0.675944, AUPRC: 0.03538, Freq: 0.015625
+      305: coleoptera/coleoptera_hydrophilidae, AUROC: 0.5, AUPRC: 0.007292, Freq: 0.007292
+      306: coleoptera/coleoptera_limnius, AUROC: 0.583171, AUPRC: 0.173914, Freq: 0.114583
+      307: coleoptera/coleoptera_normandia, AUROC: 0.484864, AUPRC: 0.001532, Freq: 0.002083
+      308: coleoptera/coleoptera_oulimnius, AUROC: 0.599629, AUPRC: 0.101658, Freq: 0.036458
+      309: coleoptera/coleoptera_riolus, AUROC: 0.482777, AUPRC: 0.001528, Freq: 0.002083
+      310: coleoptera/coleoptera_stenelmis, AUROC: 0.539653, AUPRC: 0.010641, Freq: 0.008333
+      311: coleoptera/coleoptera_stenelmis/coleoptera_stenelmis_canaliculata, AUROC: 0.539653, AUPRC: 0.010641, Freq: 0.008333
+      312: copepoda, AUROC: 0.556412, AUPRC: 0.134924, Freq: 0.1
+      313: copepoda/copepoda_eucyclops, AUROC: 0.5, AUPRC: 0.0125, Freq: 0.0125
+      314: copepoda/copepoda_eucyclops/copepoda_eucyclops_serrulatus, AUROC: 0.5, AUPRC: 0.0125, Freq: 0.0125
+      315: copepoda/copepoda_macrocyclops, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      316: copepoda/copepoda_macrocyclops/copepoda_macrocyclops_albidus, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      317: cyanophyta, AUROC: 0.519309, AUPRC: 0.747018, Freq: 0.733333
+      318: cyanophyta/cyanophyta_anabaena, AUROC: 0.54071, AUPRC: 0.038967, Freq: 0.025
+      319: cyanophyta/cyanophyta_anabaena/cyanophyta_anabaena_constricta, AUROC: 0.590864, AUPRC: 0.035831, Freq: 0.015625
+      320: cyanophyta/cyanophyta_calothrix, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      321: cyanophyta/cyanophyta_chamaesiphon, AUROC: 0.531776, AUPRC: 0.175436, Freq: 0.146875
+      322: cyanophyta/cyanophyta_chamaesiphon/cyanophyta_chamaesiphon_confervicolus, AUROC: 0.522974, AUPRC: 0.142445, Freq: 0.1125
+      323: cyanophyta/cyanophyta_chamaesiphon/cyanophyta_chamaesiphon_fuscus, AUROC: 0.5, AUPRC: 0.016667, Freq: 0.016667
+      324: cyanophyta/cyanophyta_chamaesiphon/cyanophyta_chamaesiphon_incrustans, AUROC: 0.456499, AUPRC: 0.005117, Freq: 0.00625
+      325: cyanophyta/cyanophyta_chroococcus, AUROC: 0.541001, AUPRC: 0.064669, Freq: 0.039583
+      326: cyanophyta/cyanophyta_chroococcus/cyanophyta_chroococcus_giganteus, AUROC: 0.587958, AUPRC: 0.019338, Freq: 0.005208
+      327: cyanophyta/cyanophyta_chroococcus/cyanophyta_chroococcus_minutus, AUROC: 0.5, AUPRC: 0.007292, Freq: 0.007292
+      328: cyanophyta/cyanophyta_chroococcus/cyanophyta_chroococcus_turgidus, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      329: cyanophyta/cyanophyta_dactylococcopsis, AUROC: 0.488285, AUPRC: 0.02026, Freq: 0.021875
+      330: cyanophyta/cyanophyta_dactylococcopsis/cyanophyta_dactylococcopsis_acicularis, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      331: cyanophyta/cyanophyta_dactylococcopsis/cyanophyta_dactylococcopsis_rhaphidioides, AUROC: 0.488335, AUPRC: 0.01635, Freq: 0.017708
+      332: cyanophyta/cyanophyta_gloeocapsa, AUROC: 0.614409, AUPRC: 0.039217, Freq: 0.004167
+      333: cyanophyta/cyanophyta_gloeotrichia, AUROC: 0.469697, AUPRC: 0.002461, Freq: 0.003125
+      334: cyanophyta/cyanophyta_gomphosphaeria, AUROC: 0.58911, AUPRC: 0.04156, Freq: 0.005208
+      335: cyanophyta/cyanophyta_gomphosphaeria/cyanophyta_gomphosphaeria_aponina, AUROC: 0.58911, AUPRC: 0.04156, Freq: 0.005208
+      336: cyanophyta/cyanophyta_homoeothrix, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      337: cyanophyta/cyanophyta_lyngbya, AUROC: 0.568775, AUPRC: 0.305911, Freq: 0.260417
+      338: cyanophyta/cyanophyta_lyngbya/cyanophyta_lyngbya_epiphytica, AUROC: 0.519311, AUPRC: 0.039198, Freq: 0.035417
+      339: cyanophyta/cyanophyta_lyngbya/cyanophyta_lyngbya_kuetzingiana, AUROC: 0.596834, AUPRC: 0.088491, Freq: 0.026042
+      340: cyanophyta/cyanophyta_lyngbya/cyanophyta_lyngbya_kuetzingii, AUROC: 0.568373, AUPRC: 0.054393, Freq: 0.039583
+      341: cyanophyta/cyanophyta_lyngbya/cyanophyta_lyngbya_martensiana, AUROC: 0.562485, AUPRC: 0.101145, Freq: 0.079167
+      342: cyanophyta/cyanophyta_lyngbya/cyanophyta_lyngbya_purpurascens, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      343: cyanophyta/cyanophyta_merismopedia, AUROC: 0.58376, AUPRC: 0.218871, Freq: 0.154167
+      344: cyanophyta/cyanophyta_merismopedia/cyanophyta_merismopedia_elegans, AUROC: 0.478992, AUPRC: 0.007306, Freq: 0.008333
+      345: cyanophyta/cyanophyta_merismopedia/cyanophyta_merismopedia_glauca, AUROC: 0.564765, AUPRC: 0.172659, Freq: 0.119792
+      346: cyanophyta/cyanophyta_merismopedia/cyanophyta_merismopedia_punctata, AUROC: 0.487903, AUPRC: 0.031724, Freq: 0.03125
+      347: cyanophyta/cyanophyta_nostoc, AUROC: 0.649908, AUPRC: 0.044179, Freq: 0.022917
+      348: cyanophyta/cyanophyta_oscillatoria, AUROC: 0.51877, AUPRC: 0.306678, Freq: 0.26875
+      349: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_anguina, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      350: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_brevis, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      351: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_formosa, AUROC: 0.472309, AUPRC: 0.002473, Freq: 0.003125
+      352: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_irrigua, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      353: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_limosa, AUROC: 0.500851, AUPRC: 0.060136, Freq: 0.060417
+      354: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_putrida, AUROC: 0.561535, AUPRC: 0.152688, Freq: 0.007292
+      355: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_rubescens, AUROC: 0.483804, AUPRC: 0.002524, Freq: 0.003125
+      356: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_splendida, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      357: cyanophyta/cyanophyta_oscillatoria/cyanophyta_oscillatoria_tenuis, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      358: cyanophyta/cyanophyta_phormidium, AUROC: 0.498794, AUPRC: 0.429255, Freq: 0.423958
+      359: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_ambiguum, AUROC: 0.55089, AUPRC: 0.007097, Freq: 0.005208
+      360: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_autumnale, AUROC: 0.479422, AUPRC: 0.057426, Freq: 0.063542
+      361: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_corium, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      362: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_favosum, AUROC: 0.483299, AUPRC: 0.001529, Freq: 0.002083
+      363: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_foveolarum, AUROC: 0.580176, AUPRC: 0.094278, Freq: 0.0625
+      364: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_incrustatum, AUROC: 0.654638, AUPRC: 0.102802, Freq: 0.015625
+      365: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_inundatum, AUROC: 0.5, AUPRC: 0.015625, Freq: 0.015625
+      366: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_papyraceum, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      367: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_retzii, AUROC: 0.5, AUPRC: 0.008333, Freq: 0.008333
+      368: cyanophyta/cyanophyta_phormidium/cyanophyta_phormidium_uncinatum, AUROC: 0.5, AUPRC: 0.019792, Freq: 0.019792
+      369: cyanophyta/cyanophyta_plectonema, AUROC: 0.555833, AUPRC: 0.080261, Freq: 0.0625
+      370: cyanophyta/cyanophyta_plectonema/cyanophyta_plectonema_radiosum, AUROC: 0.481152, AUPRC: 0.004461, Freq: 0.005208
+      371: cyanophyta/cyanophyta_plectonema/cyanophyta_plectonema_tomasinianum, AUROC: 0.5, AUPRC: 0.0125, Freq: 0.0125
+      372: cyanophyta/cyanophyta_pleurocapsa, AUROC: 0.52478, AUPRC: 0.105305, Freq: 0.091667
+      373: cyanophyta/cyanophyta_pleurocapsa/cyanophyta_pleurocapsa_minor, AUROC: 0.510386, AUPRC: 0.038001, Freq: 0.035417
+      374: cyanophyta/cyanophyta_pleurocapsa/cyanophyta_pleurocapsa_montana, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      375: cyanophyta/cyanophyta_rivularia, AUROC: 0.607756, AUPRC: 0.131411, Freq: 0.085417
+      376: cyanophyta/cyanophyta_rivularia/cyanophyta_rivularia_biasolettiana, AUROC: 0.5, AUPRC: 0.010417, Freq: 0.010417
+      377: cyanophyta/cyanophyta_rivularia/cyanophyta_rivularia_haematites, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      378: cyanophyta/cyanophyta_spirulina, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      379: cyanophyta/cyanophyta_tolypothrix, AUROC: 0.61489, AUPRC: 0.043863, Freq: 0.008333
+      380: cyanophyta/cyanophyta_tolypothrix/cyanophyta_tolypothrix_distorta, AUROC: 0.5, AUPRC: 0.008333, Freq: 0.008333
+      381: decapoda, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      382: diptera, AUROC: 0.508236, AUPRC: 0.976454, Freq: 0.976042
+      383: diptera/diptera_anthomyidae, AUROC: 0.5, AUPRC: 0.013542, Freq: 0.013542
+      384: diptera/diptera_antocha, AUROC: 0.503214, AUPRC: 0.129575, Freq: 0.103125
+      385: diptera/diptera_antocha/diptera_antocha_vitripennis, AUROC: 0.481211, AUPRC: 0.001525, Freq: 0.002083
+      386: diptera/diptera_atalanta, AUROC: 0.5, AUPRC: 0.022917, Freq: 0.022917
+      387: diptera/diptera_atherix, AUROC: 0.635377, AUPRC: 0.186456, Freq: 0.125
+      388: diptera/diptera_atherix/diptera_atherix_ibis, AUROC: 0.672823, AUPRC: 0.060734, Freq: 0.023958
+      389: diptera/diptera_atherix/diptera_atherix_marginata, AUROC: 0.5, AUPRC: 0.015625, Freq: 0.015625
+      390: diptera/diptera_bezzia, AUROC: 0.5, AUPRC: 0.020833, Freq: 0.020833
+      391: diptera/diptera_blepharocera, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      392: diptera/diptera_ceratopogonidae, AUROC: 0.477647, AUPRC: 0.023308, Freq: 0.026042
+      393: diptera/diptera_chironomidae, AUROC: 0.570364, AUPRC: 0.815873, Freq: 0.783333
+      394: diptera/diptera_chironomidae/diptera_chironomidae_rdeci, AUROC: 0.539344, AUPRC: 0.198427, Freq: 0.151042
+      395: diptera/diptera_chironomidae/diptera_chironomidae_zeleni, AUROC: 0.493449, AUPRC: 0.511522, Freq: 0.514583
+      396: diptera/diptera_chironomini, AUROC: 0.548984, AUPRC: 0.032524, Freq: 0.026042
+      397: diptera/diptera_chironomus, AUROC: 0.805849, AUPRC: 0.467991, Freq: 0.088542
+      398: diptera/diptera_chironomus/diptera_chironomus_plumosus, AUROC: 0.487958, AUPRC: 0.004538, Freq: 0.005208
+      399: diptera/diptera_chironomus/diptera_chironomus_thummi, AUROC: 0.605715, AUPRC: 0.110875, Freq: 0.051042
+      400: diptera/diptera_culex, AUROC: 0.650993, AUPRC: 0.024761, Freq: 0.003125
+      401: diptera/diptera_culicidae, AUROC: 0.5, AUPRC: 0.007292, Freq: 0.007292
+      402: diptera/diptera_dicranota, AUROC: 0.598985, AUPRC: 0.197763, Freq: 0.133333
+      403: diptera/diptera_empididae, AUROC: 0.437469, AUPRC: 0.022135, Freq: 0.027083
+      404: diptera/diptera_eriocera, AUROC: 0.567174, AUPRC: 0.063984, Freq: 0.039583
+      405: diptera/diptera_hemerodromia, AUROC: 0.548348, AUPRC: 0.043349, Freq: 0.034375
+      406: diptera/diptera_hexatoma, AUROC: 0.641591, AUPRC: 0.056077, Freq: 0.019792
+      407: diptera/diptera_limnophila, AUROC: 0.558325, AUPRC: 0.007037, Freq: 0.005208
+      408: diptera/diptera_limnophila/diptera_limnophila_punctata, AUROC: 0.558325, AUPRC: 0.007037, Freq: 0.005208
+      409: diptera/diptera_limnophora, AUROC: 0.469312, AUPRC: 0.013541, Freq: 0.015625
+      410: diptera/diptera_limnophora/diptera_limnophora_riparia, AUROC: 0.488959, AUPRC: 0.008515, Freq: 0.009375
+      411: diptera/diptera_limoniidae, AUROC: 0.563052, AUPRC: 0.144254, Freq: 0.085417
+      412: diptera/diptera_liponeura, AUROC: 0.583597, AUPRC: 0.100976, Freq: 0.0125
+      413: diptera/diptera_melanochelia, AUROC: 0.489282, AUPRC: 0.026633, Freq: 0.028125
+      414: diptera/diptera_molophilus, AUROC: 0.5, AUPRC: 0.008333, Freq: 0.008333
+      415: diptera/diptera_orthocladiinae, AUROC: 0.606375, AUPRC: 0.309178, Freq: 0.221875
+      416: diptera/diptera_palpomyia, AUROC: 0.483281, AUPRC: 0.002522, Freq: 0.003125
+      417: diptera/diptera_pedicia, AUROC: 0.513369, AUPRC: 0.089872, Freq: 0.082292
+      418: diptera/diptera_pericoma, AUROC: 0.474292, AUPRC: 0.006274, Freq: 0.007292
+      419: diptera/diptera_psychoda, AUROC: 0.5, AUPRC: 0.008333, Freq: 0.008333
+      420: diptera/diptera_psychodidae, AUROC: 0.487727, AUPRC: 0.022224, Freq: 0.023958
+      421: diptera/diptera_rheotanytarsus, AUROC: 0.528262, AUPRC: 0.040791, Freq: 0.03125
+      422: diptera/diptera_simuliidae, AUROC: 0.5, AUPRC: 0.007292, Freq: 0.007292
+      423: diptera/diptera_simulium, AUROC: 0.562776, AUPRC: 0.430761, Freq: 0.36875
+      424: diptera/diptera_stratiomyidae, AUROC: 0.589286, AUPRC: 0.032994, Freq: 0.014583
+      425: diptera/diptera_syrphidae, AUROC: 0.605126, AUPRC: 0.010732, Freq: 0.004167
+      426: diptera/diptera_tabanidae, AUROC: 0.518964, AUPRC: 0.04223, Freq: 0.025
+      427: diptera/diptera_tabanus, AUROC: 0.457537, AUPRC: 0.015778, Freq: 0.01875
+      428: diptera/diptera_tanypodinae, AUROC: 0.569045, AUPRC: 0.142439, Freq: 0.113542
+      429: diptera/diptera_tanypus, AUROC: 0.5, AUPRC: 0.007292, Freq: 0.007292
+      430: diptera/diptera_tanytarsini, AUROC: 0.540148, AUPRC: 0.091089, Freq: 0.047917
+      431: diptera/diptera_tipula, AUROC: 0.492765, AUPRC: 0.071228, Freq: 0.076042
+      432: diptera/diptera_tipulidae, AUROC: 0.524715, AUPRC: 0.053622, Freq: 0.041667
+      433: diptera/diptera_wiedemannia, AUROC: 0.5, AUPRC: 0.007292, Freq: 0.007292
+      434: ephemeroptera, AUROC: 0.592146, AUPRC: 0.854234, Freq: 0.823958
+      435: ephemeroptera/ephemeroptera_acantrella, AUROC: 0.529081, AUPRC: 0.008299, Freq: 0.007292
+      436: ephemeroptera/ephemeroptera_acantrella/ephemeroptera_acantrella_sinaica, AUROC: 0.529081, AUPRC: 0.008299, Freq: 0.007292
+      437: ephemeroptera/ephemeroptera_baetidae, AUROC: 0.536835, AUPRC: 0.110959, Freq: 0.095833
+      438: ephemeroptera/ephemeroptera_baetis, AUROC: 0.621186, AUPRC: 0.712858, Freq: 0.646875
+      439: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_alpinus, AUROC: 0.623884, AUPRC: 0.213328, Freq: 0.116667
+      440: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_fuscatus, AUROC: 0.543113, AUPRC: 0.115765, Freq: 0.101042
+      441: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_muticus, AUROC: 0.479079, AUPRC: 0.003474, Freq: 0.004167
+      442: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_rhodani, AUROC: 0.648501, AUPRC: 0.485247, Freq: 0.313542
+      443: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_scambus, AUROC: 0.489451, AUPRC: 0.011493, Freq: 0.0125
+      444: ephemeroptera/ephemeroptera_baetis/ephemeroptera_baetis_vernus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      445: ephemeroptera/ephemeroptera_caenis, AUROC: 0.592585, AUPRC: 0.088493, Freq: 0.05
+      446: ephemeroptera/ephemeroptera_caenis/ephemeroptera_caenis_horaria, AUROC: 0.5, AUPRC: 0.008333, Freq: 0.008333
+      447: ephemeroptera/ephemeroptera_centroptilum, AUROC: 0.468818, AUPRC: 0.017245, Freq: 0.019792
+      448: ephemeroptera/ephemeroptera_centroptilum/ephemeroptera_centroptilum_luteolum, AUROC: 0.487667, AUPRC: 0.018419, Freq: 0.019792
+      449: ephemeroptera/ephemeroptera_cleon, AUROC: 0.563464, AUPRC: 0.045879, Freq: 0.011458
+      450: ephemeroptera/ephemeroptera_cleon/ephemeroptera_cleon_dipterum, AUROC: 0.476915, AUPRC: 0.006318, Freq: 0.007292
+      451: ephemeroptera/ephemeroptera_ecdyonurus, AUROC: 0.745681, AUPRC: 0.603119, Freq: 0.34375
+      452: ephemeroptera/ephemeroptera_ecdyonurus/ephemeroptera_ecdyonurus_forcipula, AUROC: 0.481112, AUPRC: 0.00639, Freq: 0.007292
+      453: ephemeroptera/ephemeroptera_ecdyonurus/ephemeroptera_ecdyonurus_torrentis, AUROC: 0.5, AUPRC: 0.009375, Freq: 0.009375
+      454: ephemeroptera/ephemeroptera_ecdyonurus/ephemeroptera_ecdyonurus_venosus, AUROC: 0.674959, AUPRC: 0.274992, Freq: 0.161458
+      455: ephemeroptera/ephemeroptera_epeorus, AUROC: 0.60667, AUPRC: 0.134377, Freq: 0.067708
+      456: ephemeroptera/ephemeroptera_epeorus/ephemeroptera_epeorus_alpicola, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      457: ephemeroptera/ephemeroptera_epeorus/ephemeroptera_epeorus_sylvicola, AUROC: 0.60256, AUPRC: 0.096845, Freq: 0.035417
+      458: ephemeroptera/ephemeroptera_ephemera, AUROC: 0.583868, AUPRC: 0.083705, Freq: 0.052083
+      459: ephemeroptera/ephemeroptera_ephemera/ephemeroptera_ephemera_danica, AUROC: 0.570717, AUPRC: 0.109919, Freq: 0.026042
+      460: ephemeroptera/ephemeroptera_ephemerella, AUROC: 0.650536, AUPRC: 0.478448, Freq: 0.354167
+      461: ephemeroptera/ephemeroptera_ephemerella/ephemeroptera_ephemerella_ignita, AUROC: 0.589658, AUPRC: 0.25512, Freq: 0.190625
+      462: ephemeroptera/ephemeroptera_ephemerella/ephemeroptera_ephemerella_major, AUROC: 0.606005, AUPRC: 0.115719, Freq: 0.039583
+      463: ephemeroptera/ephemeroptera_ephemerella/ephemeroptera_ephemerella_notata, AUROC: 0.481695, AUPRC: 0.003494, Freq: 0.004167
+      464: ephemeroptera/ephemeroptera_habroleptoides, AUROC: 0.628029, AUPRC: 0.044671, Freq: 0.022917
+      465: ephemeroptera/ephemeroptera_habroleptoides/ephemeroptera_habroleptoides_modesta, AUROC: 0.765734, AUPRC: 0.051334, Freq: 0.011458
+      466: ephemeroptera/ephemeroptera_habrophlebia, AUROC: 0.511911, AUPRC: 0.058878, Freq: 0.058333
+      467: ephemeroptera/ephemeroptera_habrophlebia/ephemeroptera_habrophlebia_lauta, AUROC: 0.52357, AUPRC: 0.018565, Freq: 0.016667
+      468: ephemeroptera/ephemeroptera_heptagenia, AUROC: 0.505713, AUPRC: 0.062735, Freq: 0.05625
+      469: ephemeroptera/ephemeroptera_heptagenia/ephemeroptera_heptagenia_sulphurea, AUROC: 0.486952, AUPRC: 0.027222, Freq: 0.029167
+      470: ephemeroptera/ephemeroptera_oligoneuriella, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      471: ephemeroptera/ephemeroptera_oligoneuriella/ephemeroptera_oligoneuriella_rhenana, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      472: ephemeroptera/ephemeroptera_paraleptophlebia, AUROC: 0.595725, AUPRC: 0.094095, Freq: 0.065625
+      473: ephemeroptera/ephemeroptera_paraleptophlebia/ephemeroptera_paraleptophlebia_cincta, AUROC: 0.483176, AUPRC: 0.008361, Freq: 0.009375
+      474: ephemeroptera/ephemeroptera_potamanthus, AUROC: 0.56181, AUPRC: 0.051488, Freq: 0.027083
+      475: ephemeroptera/ephemeroptera_potamanthus/ephemeroptera_potamanthus_luteus, AUROC: 0.56181, AUPRC: 0.051488, Freq: 0.027083
+      476: ephemeroptera/ephemeroptera_procleon, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      477: ephemeroptera/ephemeroptera_rhithrogena, AUROC: 0.719332, AUPRC: 0.353345, Freq: 0.114583
+      478: ephemeroptera/ephemeroptera_rhithrogena/ephemeroptera_rhithrogena_semicolorata, AUROC: 0.653011, AUPRC: 0.18078, Freq: 0.052083
+      479: ephemeroptera/ephemeroptera_siphlonurus, AUROC: 0.564753, AUPRC: 0.073904, Freq: 0.05625
+      480: ephemeroptera/ephemeroptera_siphlonurus/ephemeroptera_siphlonurus_aestivalis, AUROC: 0.594156, AUPRC: 0.110736, Freq: 0.014583
+      481: ephemeroptera/ephemeroptera_siphlonurus/ephemeroptera_siphlonurus_lacustris, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      482: ephemeroptera/ephemeroptera_torleya, AUROC: 0.644549, AUPRC: 0.011965, Freq: 0.003125
+      483: euglenophyta, AUROC: 0.673652, AUPRC: 0.32788, Freq: 0.114583
+      484: euglenophyta/euglenophyta_euglena, AUROC: 0.643734, AUPRC: 0.244966, Freq: 0.095833
+      485: euglenophyta/euglenophyta_euglena/euglenophyta_euglena_viridis, AUROC: 0.576213, AUPRC: 0.053644, Freq: 0.0125
+      486: euglenophyta/euglenophyta_phacus, AUROC: 0.694624, AUPRC: 0.113739, Freq: 0.03125
+      487: euglenophyta/euglenophyta_phacus/euglenophyta_phacus_pleuronectes, AUROC: 0.484864, AUPRC: 0.001532, Freq: 0.002083
+      488: euglenophyta/euglenophyta_trachelomonas, AUROC: 0.480063, AUPRC: 0.006372, Freq: 0.007292
+      489: euglenophyta/euglenophyta_trachelomonas/euglenophyta_trachelomonas_volvocina, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      490: flagellata, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      491: gastropoda, AUROC: 0.654803, AUPRC: 0.609343, Freq: 0.445833
+      492: gastropoda/gastropoda_acroloxus, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      493: gastropoda/gastropoda_acroloxus/gastropoda_acroloxus_lacustris, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      494: gastropoda/gastropoda_amphimelania, AUROC: 0.641841, AUPRC: 0.065, Freq: 0.038542
+      495: gastropoda/gastropoda_amphimelania/gastropoda_amphimelania_holandri, AUROC: 0.635221, AUPRC: 0.0622, Freq: 0.0375
+      496: gastropoda/gastropoda_ancylus, AUROC: 0.558274, AUPRC: 0.252087, Freq: 0.221875
+      497: gastropoda/gastropoda_ancylus/gastropoda_ancylus_fluviatilis, AUROC: 0.558274, AUPRC: 0.252087, Freq: 0.221875
+      498: gastropoda/gastropoda_bathyomphalus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      499: gastropoda/gastropoda_bathyomphalus/gastropoda_bathyomphalus_contortus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      500: gastropoda/gastropoda_bythinella, AUROC: 0.651712, AUPRC: 0.04984, Freq: 0.009375
+      501: gastropoda/gastropoda_bythinella/gastropoda_bythinella_schmidti, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      502: gastropoda/gastropoda_bythinia, AUROC: 0.551089, AUPRC: 0.082214, Freq: 0.047917
+      503: gastropoda/gastropoda_bythinia/gastropoda_bythinia_leachi, AUROC: 0.489005, AUPRC: 0.00455, Freq: 0.005208
+      504: gastropoda/gastropoda_bythinia/gastropoda_bythinia_tentaculata, AUROC: 0.5, AUPRC: 0.011458, Freq: 0.011458
+      505: gastropoda/gastropoda_fagotia, AUROC: 0.547033, AUPRC: 0.023163, Freq: 0.01875
+      506: gastropoda/gastropoda_fagotia/gastropoda_fagotia_esperi, AUROC: 0.547033, AUPRC: 0.023163, Freq: 0.01875
+      507: gastropoda/gastropoda_gyraulus, AUROC: 0.478145, AUPRC: 0.020486, Freq: 0.022917
+      508: gastropoda/gastropoda_gyraulus/gastropoda_gyraulus_albus, AUROC: 0.478421, AUPRC: 0.009191, Freq: 0.010417
+      509: gastropoda/gastropoda_gyraulus/gastropoda_gyraulus_crista, AUROC: 0.5, AUPRC: 0.0125, Freq: 0.0125
+      510: gastropoda/gastropoda_lymnaea, AUROC: 0.578718, AUPRC: 0.21593, Freq: 0.163542
+      511: gastropoda/gastropoda_lymnaea/gastropoda_lymnaea_auricularia, AUROC: 0.5, AUPRC: 0.0125, Freq: 0.0125
+      512: gastropoda/gastropoda_lymnaea/gastropoda_lymnaea_ovata, AUROC: 0.5, AUPRC: 0.022917, Freq: 0.022917
+      513: gastropoda/gastropoda_lymnaea/gastropoda_lymnaea_peregra, AUROC: 0.5, AUPRC: 0.022917, Freq: 0.022917
+      514: gastropoda/gastropoda_lymnaea/gastropoda_lymnaea_stagnalis, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      515: gastropoda/gastropoda_physa, AUROC: 0.522903, AUPRC: 0.037719, Freq: 0.03125
+      516: gastropoda/gastropoda_physa/gastropoda_physa_fontinalis, AUROC: 0.524056, AUPRC: 0.036903, Freq: 0.030208
+      517: gastropoda/gastropoda_planorbis, AUROC: 0.653933, AUPRC: 0.127417, Freq: 0.015625
+      518: gastropoda/gastropoda_planorbis/gastropoda_planorbis_carinatus, AUROC: 0.538614, AUPRC: 0.016436, Freq: 0.009375
+      519: gastropoda/gastropoda_planorbis/gastropoda_planorbis_planorbis, AUROC: 0.473931, AUPRC: 0.000521, Freq: 0.001042
+      520: gastropoda/gastropoda_sadleriana, AUROC: 0.790236, AUPRC: 0.455871, Freq: 0.11875
+      521: gastropoda/gastropoda_sadleriana/gastropoda_sadleriana_fluminensis, AUROC: 0.805571, AUPRC: 0.44344, Freq: 0.105208
+      522: gastropoda/gastropoda_theodoxus, AUROC: 0.653906, AUPRC: 0.158569, Freq: 0.061458
+      523: gastropoda/gastropoda_theodoxus/gastropoda_theodoxus_danubialis, AUROC: 0.652183, AUPRC: 0.152664, Freq: 0.059375
+      524: gastropoda/gastropoda_valvata, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      525: gastropoda/gastropoda_viviparus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      526: gastropoda/gastropoda_viviparus/gastropoda_viviparus_viviparus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      527: hemiptera, AUROC: 0.487666, AUPRC: 0.09206, Freq: 0.096875
+      528: hemiptera/hemiptera_aphelocherius, AUROC: 0.549872, AUPRC: 0.042569, Freq: 0.030208
+      529: hemiptera/hemiptera_aphelocherius/hemiptera_aphelocherius_aestivalis, AUROC: 0.549872, AUPRC: 0.042569, Freq: 0.030208
+      530: hemiptera/hemiptera_corixa, AUROC: 0.5, AUPRC: 0.022917, Freq: 0.022917
+      531: hemiptera/hemiptera_corixidae, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      532: hemiptera/hemiptera_gerris, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      533: hemiptera/hemiptera_micronecta, AUROC: 0.456712, AUPRC: 0.007873, Freq: 0.009375
+      534: hemiptera/hemiptera_naucoris, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      535: hemiptera/hemiptera_nepa, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      536: hemiptera/hemiptera_notonecta, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      537: hemiptera/hemiptera_sigara, AUROC: 0.5, AUPRC: 0.022917, Freq: 0.022917
+      538: hirudinea, AUROC: 0.725825, AUPRC: 0.620916, Freq: 0.405208
+      539: hirudinea/hirudinea_erpobdella, AUROC: 0.74699, AUPRC: 0.555699, Freq: 0.325
+      540: hirudinea/hirudinea_erpobdella/hirudinea_erpobdella_octoculata, AUROC: 0.727174, AUPRC: 0.487205, Freq: 0.283333
+      541: hirudinea/hirudinea_erpobdella/hirudinea_erpobdella_testacea, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      542: hirudinea/hirudinea_glossiphonia, AUROC: 0.583216, AUPRC: 0.210025, Freq: 0.122917
+      543: hirudinea/hirudinea_glossiphonia/hirudinea_glossiphonia_complanata, AUROC: 0.5785, AUPRC: 0.155739, Freq: 0.096875
+      544: hirudinea/hirudinea_glossiphonia/hirudinea_glossiphonia_heteroclita, AUROC: 0.5, AUPRC: 0.010417, Freq: 0.010417
+      545: hirudinea/hirudinea_haemopis, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      546: hirudinea/hirudinea_haemopis/hirudinea_haemopis_sanguisuga, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+      547: hirudinea/hirudinea_helobdella, AUROC: 0.585337, AUPRC: 0.199052, Freq: 0.104167
+      548: hirudinea/hirudinea_helobdella/hirudinea_helobdella_stagnalis, AUROC: 0.585337, AUPRC: 0.199052, Freq: 0.104167
+      549: hirudinea/hirudinea_hemiclepsis, AUROC: 0.5, AUPRC: 0.01875, Freq: 0.01875
+      550: hirudinea/hirudinea_hemiclepsis/hirudinea_hemiclepsis_marginata, AUROC: 0.5, AUPRC: 0.01875, Freq: 0.01875
+      551: hirudinea/hirudinea_piscicola, AUROC: 0.531571, AUPRC: 0.02604, Freq: 0.022917
+      552: hirudinea/hirudinea_piscicola/hirudinea_piscicola_geometra, AUROC: 0.531571, AUPRC: 0.02604, Freq: 0.022917
+      553: hirudinea/hirudinea_theromyzon, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      554: hirudinea/hirudinea_theromyzon/hirudinea_theromyzon_tessulatum, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      555: hirudinea/hirudinea_trocheta, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      556: hydracarina, AUROC: 0.589104, AUPRC: 0.380309, Freq: 0.302083
+      557: hydrozoa, AUROC: 0.550149, AUPRC: 0.079582, Freq: 0.05625
+      558: hydrozoa/hydrozoa_hydra, AUROC: 0.550149, AUPRC: 0.079582, Freq: 0.05625
+      559: isopoda, AUROC: 0.688563, AUPRC: 0.385091, Freq: 0.194792
+      560: isopoda/isopoda_asellus, AUROC: 0.688563, AUPRC: 0.385091, Freq: 0.194792
+      561: isopoda/isopoda_asellus/isopoda_asellus_aquaticus, AUROC: 0.688563, AUPRC: 0.385091, Freq: 0.194792
+      562: lepidoptera, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      563: megaloptera, AUROC: 0.573361, AUPRC: 0.061281, Freq: 0.023958
+      564: megaloptera/megaloptera_sialis, AUROC: 0.581698, AUPRC: 0.062491, Freq: 0.021875
+      565: megaloptera/megaloptera_sialis/megaloptera_sialis_lutaria, AUROC: 0.567071, AUPRC: 0.021536, Freq: 0.0125
+      566: mycophyta, AUROC: 0.541657, AUPRC: 0.12884, Freq: 0.110417
+      567: mycophyta/mycophyta_asterothrix, AUROC: 0.514582, AUPRC: 0.045728, Freq: 0.038542
+      568: mycophyta/mycophyta_asterothrix/mycophyta_asterothrix_rhaphidioides, AUROC: 0.514582, AUPRC: 0.045728, Freq: 0.038542
+      569: mycophyta/mycophyta_fussarium, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      570: mycophyta/mycophyta_leptomitus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      571: mycophyta/mycophyta_leptomitus/mycophyta_leptomitus_lacteus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      572: mycophyta/mycophyta_tetracladium, AUROC: 0.552034, AUPRC: 0.075938, Freq: 0.063542
+      573: mycophyta/mycophyta_tetracladium/mycophyta_tetracladium_marchalianum, AUROC: 0.566075, AUPRC: 0.053607, Freq: 0.039583
+      574: nematoda, AUROC: 0.491157, AUPRC: 0.128145, Freq: 0.123958
+      575: nematomorpha, AUROC: 0.570147, AUPRC: 0.026232, Freq: 0.016667
+      576: nematomorpha/nematomorpha_gordius, AUROC: 0.570147, AUPRC: 0.026232, Freq: 0.016667
+      577: nematomorpha/nematomorpha_gordius/nematomorpha_gordius_aquaticus, AUROC: 0.570147, AUPRC: 0.026232, Freq: 0.016667
+      578: odonata, AUROC: 0.62678, AUPRC: 0.160138, Freq: 0.0875
+      579: odonata/odonata_calopteryx, AUROC: 0.58444, AUPRC: 0.040491, Freq: 0.022917
+      580: odonata/odonata_calopteryx/odonata_calopteryx_splendens, AUROC: 0.566125, AUPRC: 0.016045, Freq: 0.00625
+      581: odonata/odonata_coenagrion, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      582: odonata/odonata_gomphus, AUROC: 0.65084, AUPRC: 0.077973, Freq: 0.027083
+      583: odonata/odonata_gomphus/odonata_gomphus_vulgatissimus, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      584: odonata/odonata_onychogomphus, AUROC: 0.504282, AUPRC: 0.070099, Freq: 0.020833
+      585: odonata/odonata_onychogomphus/odonata_onychogomphus_forcipatus, AUROC: 0.515592, AUPRC: 0.085943, Freq: 0.014583
+      586: odonata/odonata_platycnemis, AUROC: 0.5, AUPRC: 0.014583, Freq: 0.014583
+      587: odonata/odonata_platycnemis/odonata_platycnemis_pennipes, AUROC: 0.5, AUPRC: 0.014583, Freq: 0.014583
+      588: oligochaeta, AUROC: 0.596401, AUPRC: 0.837711, Freq: 0.802083
+      589: oligochaeta/oligochaeta_branchiura, AUROC: 0.482759, AUPRC: 0.00252, Freq: 0.003125
+      590: oligochaeta/oligochaeta_branchiura/oligochaeta_branchiura_sowerbyi, AUROC: 0.482759, AUPRC: 0.00252, Freq: 0.003125
+      591: oligochaeta/oligochaeta_eiseniella, AUROC: 0.53749, AUPRC: 0.291057, Freq: 0.242708
+      592: oligochaeta/oligochaeta_eiseniella/oligochaeta_eiseniella_tetraedra, AUROC: 0.53749, AUPRC: 0.291057, Freq: 0.242708
+      593: oligochaeta/oligochaeta_enchytraeidae, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      594: oligochaeta/oligochaeta_haplotaxis, AUROC: 0.491109, AUPRC: 0.003569, Freq: 0.004167
+      595: oligochaeta/oligochaeta_haplotaxis/oligochaeta_haplotaxis_gordioides, AUROC: 0.491109, AUPRC: 0.003569, Freq: 0.004167
+      596: oligochaeta/oligochaeta_limnodrilus, AUROC: 0.5, AUPRC: 0.019792, Freq: 0.019792
+      597: oligochaeta/oligochaeta_limnodrilus/oligochaeta_limnodrilus_hoffmeisteri, AUROC: 0.5, AUPRC: 0.009375, Freq: 0.009375
+      598: oligochaeta/oligochaeta_lumbricidae, AUROC: 0.548691, AUPRC: 0.050972, Freq: 0.034375
+      599: oligochaeta/oligochaeta_lumbriculidae, AUROC: 0.581128, AUPRC: 0.197076, Freq: 0.159375
+      600: oligochaeta/oligochaeta_lumbriculus, AUROC: 0.496813, AUPRC: 0.037399, Freq: 0.034375
+      601: oligochaeta/oligochaeta_lumbriculus/oligochaeta_lumbriculus_variegatus, AUROC: 0.496813, AUPRC: 0.037399, Freq: 0.034375
+      602: oligochaeta/oligochaeta_naididae, AUROC: 0.536238, AUPRC: 0.164076, Freq: 0.140625
+      603: oligochaeta/oligochaeta_nais, AUROC: 0.571075, AUPRC: 0.333508, Freq: 0.285417
+      604: oligochaeta/oligochaeta_rhynchelmis, AUROC: 0.481403, AUPRC: 0.017857, Freq: 0.019792
+      605: oligochaeta/oligochaeta_stylaria, AUROC: 0.543562, AUPRC: 0.09108, Freq: 0.060417
+      606: oligochaeta/oligochaeta_stylaria/oligochaeta_stylaria_lacustris, AUROC: 0.544455, AUPRC: 0.06984, Freq: 0.055208
+      607: oligochaeta/oligochaeta_tubifex, AUROC: 0.738472, AUPRC: 0.604921, Freq: 0.31875
+      608: oligochaeta/oligochaeta_tubifex/oligochaeta_tubifex_tubifex, AUROC: 0.537872, AUPRC: 0.035724, Freq: 0.020833
+      609: oligochaeta/oligochaeta_tubificidae, AUROC: 0.497804, AUPRC: 0.148288, Freq: 0.1375
+      610: ostracoda, AUROC: 0.462286, AUPRC: 0.031218, Freq: 0.036458
+      611: pisces, AUROC: 0.581253, AUPRC: 0.09909, Freq: 0.075
+      612: pisces/pisces_cottus, AUROC: 0.540376, AUPRC: 0.010824, Freq: 0.008333
+      613: pisces/pisces_cottus/pisces_cottus_gobio, AUROC: 0.540376, AUPRC: 0.010824, Freq: 0.008333
+      614: plecoptera, AUROC: 0.759809, AUPRC: 0.735312, Freq: 0.486458
+      615: plecoptera/plecoptera_amphinemura, AUROC: 0.720561, AUPRC: 0.227407, Freq: 0.045833
+      616: plecoptera/plecoptera_amphinemura/plecoptera_amphinemura_triangularis, AUROC: 0.715873, AUPRC: 0.020271, Freq: 0.004167
+      617: plecoptera/plecoptera_brachyptera, AUROC: 0.542917, AUPRC: 0.081752, Freq: 0.059375
+      618: plecoptera/plecoptera_brachyptera/plecoptera_brachyptera_risi, AUROC: 0.450578, AUPRC: 0.007681, Freq: 0.009375
+      619: plecoptera/plecoptera_capnia, AUROC: 0.592704, AUPRC: 0.04617, Freq: 0.004167
+      620: plecoptera/plecoptera_chloroperla, AUROC: 0.544807, AUPRC: 0.014552, Freq: 0.009375
+      621: plecoptera/plecoptera_dictiogenus, AUROC: 0.550466, AUPRC: 0.057322, Freq: 0.042708
+      622: plecoptera/plecoptera_dictiogenus/plecoptera_dictiogenus_alpinus, AUROC: 0.57267, AUPRC: 0.010344, Freq: 0.005208
+      623: plecoptera/plecoptera_dictiogenus/plecoptera_dictiogenus_fontium, AUROC: 0.48426, AUPRC: 0.006447, Freq: 0.007292
+      624: plecoptera/plecoptera_dinocras, AUROC: 0.592366, AUPRC: 0.084398, Freq: 0.053125
+      625: plecoptera/plecoptera_dinocras/plecoptera_dinocras_cephalotes, AUROC: 0.484144, AUPRC: 0.013215, Freq: 0.014583
+      626: plecoptera/plecoptera_dinocras/plecoptera_dinocras_megacephala, AUROC: 0.539745, AUPRC: 0.007825, Freq: 0.00625
+      627: plecoptera/plecoptera_isoperla, AUROC: 0.735088, AUPRC: 0.202809, Freq: 0.070833
+      628: plecoptera/plecoptera_isoperla/plecoptera_isoperla_difformis, AUROC: 0.463504, AUPRC: 0.000521, Freq: 0.001042
+      629: plecoptera/plecoptera_isoperla/plecoptera_isoperla_grammatica, AUROC: 0.5, AUPRC: 0.01875, Freq: 0.01875
+      630: plecoptera/plecoptera_isoperla/plecoptera_isoperla_rivulorum, AUROC: 0.859015, AUPRC: 0.074584, Freq: 0.00625
+      631: plecoptera/plecoptera_leuctra, AUROC: 0.702842, AUPRC: 0.480066, Freq: 0.33125
+      632: plecoptera/plecoptera_nemoura, AUROC: 0.637297, AUPRC: 0.125096, Freq: 0.052083
+      633: plecoptera/plecoptera_perla, AUROC: 0.51813, AUPRC: 0.088719, Freq: 0.0625
+      634: plecoptera/plecoptera_perla/plecoptera_perla_marginata, AUROC: 0.518419, AUPRC: 0.034936, Freq: 0.028125
+      635: plecoptera/plecoptera_perlodes, AUROC: 0.571864, AUPRC: 0.046891, Freq: 0.03125
+      636: plecoptera/plecoptera_perlodes/plecoptera_perlodes_intricata, AUROC: 0.481172, AUPRC: 0.00349, Freq: 0.004167
+      637: plecoptera/plecoptera_perlodidae, AUROC: 0.623014, AUPRC: 0.033924, Freq: 0.016667
+      638: plecoptera/plecoptera_protonemura, AUROC: 0.688409, AUPRC: 0.24881, Freq: 0.102083
+      639: plecoptera/plecoptera_protonemura/plecoptera_protonemura_auberti, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      640: plecoptera/plecoptera_protonemura/plecoptera_protonemura_intricata, AUROC: 0.730167, AUPRC: 0.01619, Freq: 0.002083
+      641: plecoptera/plecoptera_protonemura/plecoptera_protonemura_montana, AUROC: 0.489551, AUPRC: 0.002552, Freq: 0.003125
+      642: plecoptera/plecoptera_rhabdiopteryx, AUROC: 0.646813, AUPRC: 0.012302, Freq: 0.003125
+      643: plecoptera/plecoptera_taeniopteryx, AUROC: 0.6918, AUPRC: 0.047277, Freq: 0.007292
+      644: plecoptera/plecoptera_taeniopteryx/plecoptera_taeniopteryx_hubaulti, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      645: pyrrhophyta, AUROC: 0.65843, AUPRC: 0.207562, Freq: 0.009375
+      646: pyrrhophyta/pyrrhophyta_ceratium, AUROC: 0.868332, AUPRC: 0.448735, Freq: 0.004167
+      647: pyrrhophyta/pyrrhophyta_ceratium/pyrrhophyta_ceratium_hirudinella, AUROC: 0.868332, AUPRC: 0.448735, Freq: 0.004167
+      648: pyrrhophyta/pyrrhophyta_cryptomonas, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      649: rhodophyta, AUROC: 0.656944, AUPRC: 0.4816, Freq: 0.289583
+      650: rhodophyta/rhodophyta_audouinella, AUROC: 0.646541, AUPRC: 0.434593, Freq: 0.260417
+      651: rhodophyta/rhodophyta_audouinella/rhodophyta_audouinella_chalybea, AUROC: 0.60167, AUPRC: 0.347498, Freq: 0.242708
+      652: rhodophyta/rhodophyta_audouinella/rhodophyta_audouinella_violacea, AUROC: 0.645322, AUPRC: 0.069353, Freq: 0.027083
+      653: rhodophyta/rhodophyta_bangia, AUROC: 0.584268, AUPRC: 0.033324, Freq: 0.015625
+      654: rhodophyta/rhodophyta_bangia/rhodophyta_bangia_atropurpurea, AUROC: 0.584268, AUPRC: 0.033324, Freq: 0.015625
+      655: rhodophyta/rhodophyta_batrachospermum, AUROC: 0.548561, AUPRC: 0.093232, Freq: 0.046875
+      656: rhodophyta/rhodophyta_batrachospermum/rhodophyta_batrachospermum_moniliforme, AUROC: 0.507842, AUPRC: 0.024874, Freq: 0.023958
+      657: rhodophyta/rhodophyta_lemanea, AUROC: 0.5, AUPRC: 0.008333, Freq: 0.008333
+      658: rhodophyta/rhodophyta_lemanea/rhodophyta_lemanea_fluviatilis, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      659: rhyzopoda, AUROC: 0.494252, AUPRC: 0.029334, Freq: 0.029167
+      660: rhyzopoda/rhyzopoda_amoeba, AUROC: 0.448222, AUPRC: 0.003268, Freq: 0.004167
+      661: rhyzopoda/rhyzopoda_amoeba/rhyzopoda_amoeba_lymax, AUROC: 0.448222, AUPRC: 0.003268, Freq: 0.004167
+      662: rhyzopoda/rhyzopoda_euglypha, AUROC: 0.520722, AUPRC: 0.030875, Freq: 0.025
+      663: rhyzopoda/rhyzopoda_euglypha/rhyzopoda_euglypha_alveolata, AUROC: 0.520722, AUPRC: 0.030875, Freq: 0.025
+      664: rotatoria, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      665: trichoptera, AUROC: 0.714981, AUPRC: 0.820516, Freq: 0.7125
+      666: trichoptera/trichoptera_anabolia, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      667: trichoptera/trichoptera_anabolia/trichoptera_anabolia_furcata, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      668: trichoptera/trichoptera_beraeidae, AUROC: 0.543755, AUPRC: 0.011345, Freq: 0.009375
+      669: trichoptera/trichoptera_beraeodes, AUROC: 0.481191, AUPRC: 0.002512, Freq: 0.003125
+      670: trichoptera/trichoptera_brachycentridae, AUROC: 0.65442, AUPRC: 0.104453, Freq: 0.017708
+      671: trichoptera/trichoptera_glossosoma, AUROC: 0.655224, AUPRC: 0.06289, Freq: 0.016667
+      672: trichoptera/trichoptera_glossosomatidae, AUROC: 0.562971, AUPRC: 0.042458, Freq: 0.033333
+      673: trichoptera/trichoptera_goera, AUROC: 0.479409, AUPRC: 0.012064, Freq: 0.013542
+      674: trichoptera/trichoptera_goera/trichoptera_goera_pilosa, AUROC: 0.479409, AUPRC: 0.012064, Freq: 0.013542
+      675: trichoptera/trichoptera_goeridae, AUROC: 0.5, AUPRC: 0.005208, Freq: 0.005208
+      676: trichoptera/trichoptera_hydropsyche, AUROC: 0.631006, AUPRC: 0.56011, Freq: 0.459375
+      677: trichoptera/trichoptera_hydropsyche/trichoptera_hydropsyche_pellucidula, AUROC: 0.481462, AUPRC: 0.015004, Freq: 0.016667
+      678: trichoptera/trichoptera_hydroptila, AUROC: 0.510978, AUPRC: 0.033216, Freq: 0.033333
+      679: trichoptera/trichoptera_hydroptilidae, AUROC: 0.558429, AUPRC: 0.008367, Freq: 0.005208
+      680: trichoptera/trichoptera_lepidostoma, AUROC: 0.631346, AUPRC: 0.137633, Freq: 0.013542
+      681: trichoptera/trichoptera_lepidostoma/trichoptera_lepidostoma_hirtum, AUROC: 0.573876, AUPRC: 0.007353, Freq: 0.004167
+      682: trichoptera/trichoptera_lepidostomatidae, AUROC: 0.456522, AUPRC: 0.014856, Freq: 0.017708
+      683: trichoptera/trichoptera_leptoceridae, AUROC: 0.502835, AUPRC: 0.033447, Freq: 0.022917
+      684: trichoptera/trichoptera_limnephilidae, AUROC: 0.69885, AUPRC: 0.379756, Freq: 0.203125
+      685: trichoptera/trichoptera_limnephilus, AUROC: 0.537637, AUPRC: 0.023727, Freq: 0.015625
+      686: trichoptera/trichoptera_odontoceridae, AUROC: 0.481132, AUPRC: 0.005427, Freq: 0.00625
+      687: trichoptera/trichoptera_odontocerum, AUROC: 0.624, AUPRC: 0.054911, Freq: 0.019792
+      688: trichoptera/trichoptera_odontocerum/trichoptera_odontocerum_albicorne, AUROC: 0.624, AUPRC: 0.054911, Freq: 0.019792
+      689: trichoptera/trichoptera_philopotamidae, AUROC: 0.541604, AUPRC: 0.022833, Freq: 0.014583
+      690: trichoptera/trichoptera_philopotamus, AUROC: 0.545526, AUPRC: 0.015757, Freq: 0.010417
+      691: trichoptera/trichoptera_plectrocnemia, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      692: trichoptera/trichoptera_polycentropodidae, AUROC: 0.527838, AUPRC: 0.046822, Freq: 0.0375
+      693: trichoptera/trichoptera_polycentropus, AUROC: 0.513855, AUPRC: 0.043819, Freq: 0.032292
+      694: trichoptera/trichoptera_polycentropus/trichoptera_polycentropus_flavomaculatus, AUROC: 0.53234, AUPRC: 0.039856, Freq: 0.020833
+      695: trichoptera/trichoptera_psychomyidae, AUROC: 0.5, AUPRC: 0.020833, Freq: 0.020833
+      696: trichoptera/trichoptera_rhyacophila, AUROC: 0.759782, AUPRC: 0.57838, Freq: 0.321875
+      697: trichoptera/trichoptera_rhyacophila/trichoptera_rhyacophila_dorsalis, AUROC: 0.5, AUPRC: 0.004167, Freq: 0.004167
+      698: trichoptera/trichoptera_rhyacophila/trichoptera_rhyacophila_fasciata, AUROC: 0.5, AUPRC: 0.003125, Freq: 0.003125
+      699: trichoptera/trichoptera_rhyacophila/trichoptera_rhyacophila_tristis, AUROC: 0.5, AUPRC: 0.008333, Freq: 0.008333
+      700: trichoptera/trichoptera_sericostoma, AUROC: 0.55587, AUPRC: 0.066269, Freq: 0.044792
+      701: trichoptera/trichoptera_sericostomatidae, AUROC: 0.508334, AUPRC: 0.033323, Freq: 0.032292
+      702: trichoptera/trichoptera_silo, AUROC: 0.536005, AUPRC: 0.02785, Freq: 0.022917
+      703: turbellaria, AUROC: 0.611329, AUPRC: 0.445711, Freq: 0.323958
+      704: turbellaria/turbellaria_crenobia, AUROC: 0.823343, AUPRC: 0.139281, Freq: 0.022917
+      705: turbellaria/turbellaria_crenobia/turbellaria_crenobia_alpina, AUROC: 0.823343, AUPRC: 0.139281, Freq: 0.022917
+      706: turbellaria/turbellaria_dendrocoelum, AUROC: 0.575753, AUPRC: 0.11914, Freq: 0.080208
+      707: turbellaria/turbellaria_dendrocoelum/turbellaria_dendrocoelum_lacteum, AUROC: 0.575753, AUPRC: 0.11914, Freq: 0.080208
+      708: turbellaria/turbellaria_dugesia, AUROC: 0.582759, AUPRC: 0.120681, Freq: 0.094792
+      709: turbellaria/turbellaria_dugesia/turbellaria_dugesia_lugubris, AUROC: 0.490666, AUPRC: 0.028338, Freq: 0.030208
+      710: turbellaria/turbellaria_planaria, AUROC: 0.512824, AUPRC: 0.05686, Freq: 0.054167
+      711: turbellaria/turbellaria_planaria/turbellaria_planaria_torva, AUROC: 0.512824, AUPRC: 0.05686, Freq: 0.054167
+      712: turbellaria/turbellaria_polycelis, AUROC: 0.613754, AUPRC: 0.158365, Freq: 0.091667
+      713: turbellaria/turbellaria_polycelis/turbellaria_polycelis_felina, AUROC: 0.814002, AUPRC: 0.041879, Freq: 0.003125
+      714: turbellaria/turbellaria_polycelis/turbellaria_polycelis_nigra, AUROC: 0.537833, AUPRC: 0.023008, Freq: 0.017708
+      715: xanthophyta, AUROC: 0.659735, AUPRC: 0.56505, Freq: 0.309375
+      716: xanthophyta/xanthophyta_tribonema, AUROC: 0.786666, AUPRC: 0.491251, Freq: 0.1375
+      717: xanthophyta/xanthophyta_tribonema/xanthophyta_tribonema_aequale, AUROC: 0.518723, AUPRC: 0.015028, Freq: 0.013542
+      718: xanthophyta/xanthophyta_tribonema/xanthophyta_tribonema_monochloron, AUROC: 0.482049, AUPRC: 0.012166, Freq: 0.013542
+      719: xanthophyta/xanthophyta_tribonema/xanthophyta_tribonema_viride, AUROC: 0.538898, AUPRC: 0.01543, Freq: 0.0125
+      720: xanthophyta/xanthophyta_tribonema/xanthophyta_tribonema_vulgare, AUROC: 0.570899, AUPRC: 0.041907, Freq: 0.015625
+      721: xanthophyta/xanthophyta_vaucheria, AUROC: 0.68006, AUPRC: 0.492928, Freq: 0.252083
+      722: xanthophyta/xanthophyta_vaucheria/xanthophyta_vaucheria_geminata, AUROC: 0.519093, AUPRC: 0.026808, Freq: 0.022917
+      723: xanthophyta/xanthophyta_vaucheria/xanthophyta_vaucheria_sessilis, AUROC: 0.5, AUPRC: 0.00625, Freq: 0.00625
+
+Default Model
+*************
+
+Forest with 50 models
+
+Original Model
+**************
+
+Forest with 50 models
+

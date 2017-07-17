@@ -1,0 +1,204 @@
+Clus run abalone
+****************
+
+Date: 30.6.2017 17:28
+File: abalone_SSL-RF.out
+Attributes: 9 (input: 8, output: 1)
+Missing values: No
+
+[General]
+Verbose = 1
+Compatibility = Latest
+RandomSeed = 1
+ResourceInfoLoaded = No
+
+[Data]
+File = abalone_percL=25_0_SLTrain.arff
+TestSet = abalone_percL=25_0_Test.arff
+PruneSet = None
+XVal = 10
+RemoveMissingTarget = No
+NormalizeData = None
+
+[Attributes]
+Target = 9
+Clustering = 1-9
+Descriptive = 1-8
+Key = None
+Disable = None
+Weights = Normalize
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Output]
+ShowModels = {Default, Pruned, Others}
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = No
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = {Count}
+PrintModelAndExamples = No
+WriteErrorFile = No
+WriteModelFile = No
+WritePredictions = {None}
+GzipOutput = No
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+OutputJSONModel = No
+OutputDatabaseQueries = No
+OutputClowdFlowsJSON = No
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 10
+ClassWeights = 0.0
+NominalSubsetTests = Yes
+
+[Tree]
+Heuristic = VarianceReduction
+PruningMethod = M5
+M5PruningMult = 2.0
+FTest = 1.0
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = {}
+MSENominal = No
+SplitSampling = None
+MissingClusteringAttrHandling = EstimateFromParentNode
+MissingTargetAttrHandling = ParentNode
+InductionOrder = DepthFirst
+EntropyType = StandardEntropy
+ConsiderUnlableInstancesInIGCalc = No
+
+[Ensemble]
+Iterations = 10
+EnsembleMethod = RForest
+VotingType = ProbabilityDistribution
+SelectRandomSubspaces = 3
+SelectRandomTargetSubspaces = SQRT
+RandomOutputSelection = None
+PrintAllModels = No
+PrintAllModelFiles = No
+PrintAllModelInfo = No
+PrintPaths = No
+Optimize = No
+OOBestimate = No
+FeatureRanking = None
+FeatureRankingPerTarget = No
+SymbolicWeight = 1.0
+SortRankingByRelevance = Yes
+WriteEnsemblePredictions = No
+EnsembleRandomDepth = No
+BagSelection = -1
+BagSize = 0
+NumberOfThreads = 1
+
+[SemiSupervised]
+SemiSupervisedMethod = PCT
+StoppingCriteria = NoneAdded
+UnlabeledCriteria = Threshold
+ConfidenceThreshold = 0.8
+ConfidenceMeasure = Variance
+Iterations = 10
+K = 5
+UnlabeledData = abalone_percL=25_0_Unlabeled.arff
+PercentageLabeled = 5
+UseWeights = No
+AirbagTrials = 0
+ExhaustiveSearchThresholds = [0.5,0.6,0.7,0.8,0.9,0.99]
+OOBErrorCalculation = LabeledOnly
+Normalization = MinMaxNormalization
+Aggregation = Average
+CalibrateHmcThreshold = No
+PruningWhenTuning = No
+InternalFolds = 5
+WeightScoresFile = NO
+PossibleWeights = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 4.599 sec
+Pruning Time: 0 sec
+Model information
+     Original: FOREST with 10 models (Total nodes: 180 and leaves: 95)
+
+
+Training error
+--------------
+
+Number of examples: 0
+Coverage:
+  Default: 0
+  Original: 4177
+Mean absolute error (MAE)
+   Default        : [0]
+   Original       : [∞]
+Mean squared error (MSE)
+   Default        : [0]
+   Original       : [4.4147]
+Root mean squared error (RMSE)
+   Default        : [0]
+   Original       : [2.1011]
+Weighted root mean squared error (RMSE) (Weights [12.651])
+   Default        : [0]
+   Original       : [7.4734]
+Root Relative Squared Error (RRMSE)
+   Default        : [�]
+   Original       : [0.5782]
+Pearson correlation coefficient
+   Default        : [�], Avg r^2: �
+   Original       : [�], Avg r^2: �
+
+Testing error
+-------------
+
+Number of examples: 0
+Coverage:
+  Default: 0
+  Original: 4152
+Mean absolute error (MAE)
+   Default        : [0]
+   Original       : [2.0879]
+Mean squared error (MSE)
+   Default        : [0]
+   Original       : [8.4959]
+Root mean squared error (RMSE)
+   Default        : [0]
+   Original       : [2.9148]
+Weighted root mean squared error (RMSE) (Weights [12.651])
+   Default        : [0]
+   Original       : [10.3675]
+Root Relative Squared Error (RRMSE)
+   Default        : [�]
+   Original       : [0.9049]
+Pearson correlation coefficient
+   Default        : [�], Avg r^2: �
+   Original       : [0.5054], Avg r^2: 0.2555
+
+Original Model
+**************
+
+Forest with 10 models
+

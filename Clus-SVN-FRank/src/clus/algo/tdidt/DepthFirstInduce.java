@@ -42,6 +42,7 @@ import clus.ext.hierarchical.WHTDStatistic;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsAttribute;
 import clus.main.settings.SettingsEnsemble;
 import clus.main.settings.SettingsGeneric;
 import clus.main.settings.SettingsTree;
@@ -117,7 +118,10 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public boolean initSelectorAndStopCrit(ClusNode node, RowData data) {
         int max = getSettings().getConstraints().getTreeMaxDepth();
         if (max != -1 && node.getLevel() >= max) { return true; }
-        m_find_MinMax.initSelectorAndStopCrit(node.getClusteringStat(), data); // daniela
+        m_find_MinMax.initSelectorAndStopCrit(node.getClusteringStat(), data); // daniela   
+        if (node.getTargetStat().getTargetSumWeights() <= getSettings().getModel().getMinimalWeight()) { // FIXME: not sure how to deal with partially labeled data, should we allow split if, for example, only one target has labels?  
+            return true;
+        }
         return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
     }
 
@@ -260,13 +264,13 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
-    	if(rnd == null){
-    	 // rnd may be null due to some calls of induce that do not support parallelisation yet
-    		ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
-    	}
+        if (rnd == null) {
+            // rnd may be null due to some calls of induce that do not support parallelisation yet
+            ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
+        }
 
         // System.out.println("nonsparse induce");
-    	
+
         // Initialize selector and perform various stopping criteria
         if (initSelectorAndStopCrit(node, data)) {
             makeLeaf(node);
@@ -275,35 +279,41 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         // Find best test
 
         // long start_time = System.currentTimeMillis();
+        //if all values are missing for some attribute, statistic of parent node are used for estimation of heuristic score and prototype calculation. Needed for SSL-PCTs
+        if (getSettings().getTree().getMissingClusteringAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT) {
+            m_FindBestTest.setParentStatsToChildren();
+        }
 
         ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
         boolean isDaniela = !getSettings().getAttribute().isNullGIS();
-        if (isDaniela){
+        if (isDaniela) {
             // daniela
             //only for every binary attribute or, as some say, samo za site binarni atr
-            double globalMax=Double.NEGATIVE_INFINITY, globalMin=Double.POSITIVE_INFINITY;
+            double globalMax = Double.NEGATIVE_INFINITY, globalMin = Double.POSITIVE_INFINITY;
             m_find_MinMax.resetMinMax();
             for (int i = 0; i < attrs.length; i++) {
                 ClusAttrType at = attrs[i];
-                if (at instanceof NominalAttrType && ((NominalAttrType)at).getNbValues()==2){ 
-                    m_find_MinMax.rememberMinMax((NominalAttrType)at, data);
-                    if (m_find_MinMax.hMaxB>globalMax) globalMax=m_find_MinMax.hMaxB;
-                    if (m_find_MinMax.hMinB<globalMin) globalMin=m_find_MinMax.hMinB;
+                if (at instanceof NominalAttrType && ((NominalAttrType) at).getNbValues() == 2) {
+                    m_find_MinMax.rememberMinMax((NominalAttrType) at, data);
+                    if (m_find_MinMax.hMaxB > globalMax)
+                        globalMax = m_find_MinMax.hMaxB;
+                    if (m_find_MinMax.hMinB < globalMin)
+                        globalMin = m_find_MinMax.hMinB;
                 }
             }
             // daniela end
-        }      
+        }
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
 
-            if (isDaniela){
+            if (isDaniela) {
                 // daniela
-                RegressionStat.INITIALIZEPARTIALSUM=true;      // This way the first time a split threshold of the current
-                ClassificationStat.INITIALIZEPARTIALSUM=true;  // attribute is evaluated, the corresponding partial sums of
-                WHTDStatistic.INITIALIZEPARTIALSUM=true;       // Optimized Moran I would be computed
+                RegressionStat.INITIALIZEPARTIALSUM = true; // This way the first time a split threshold of the current
+                ClassificationStat.INITIALIZEPARTIALSUM = true; // attribute is evaluated, the corresponding partial sums of
+                WHTDStatistic.INITIALIZEPARTIALSUM = true; // Optimized Moran I would be computed
                 // daniela end
             }
-            
+
             if ((getSettings().getEnsemble().isEnsembleMode()) && (getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_EXTRA_TREES)) {
 
                 if (at.isNominal()) { // at instanceof NominalAttrType
@@ -332,6 +342,11 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         if (best.hasBestTest()) {
             // start_time = System.currentTimeMillis();
 
+            //if all values are missing for some attribute, statistic of parent node are used for estimation of heuristic score and prototype calculation. Needed for SSL-PCTs
+            if (getSettings().getTree().getMissingClusteringAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT) {
+                m_FindBestTest.setParentStatsToThis(node.getClusteringStat());
+            }
+
             node.testToNode(best);
             // Output best test
             if (getSettings().getGeneric().getVerbose() > 0)
@@ -357,6 +372,14 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 node.setChild(child, j);
                 child.initClusteringStat(m_StatManager, m_Root.getClusteringStat(), subsets[j]);
                 child.initTargetStat(m_StatManager, m_Root.getTargetStat(), subsets[j]);
+
+                //added by Jurica Levatic, JSI. Needed for SSL-PCTs
+                if (getSettings().getTree().getMissingClusteringAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT
+                        || getSettings().getTree().getMissingTargetAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT) {
+                    child.getClusteringStat().setParentStat(node.getClusteringStat());
+                    child.getTargetStat().setParentStat(node.getTargetStat());
+                }
+
                 induce(child, subsets[j], rnd);
             }
         }
@@ -484,7 +507,15 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             m_Root = new ClusNode();
             m_Root.initClusteringStat(m_StatManager, data);
             m_Root.initTargetStat(m_StatManager, data);
-            m_Root.getClusteringStat().showRootInfo();
+            /*
+             * if ensembles mode is used we don't write root info (i.e., hierarchy.txt file),
+             * otherwise this file is written for every tree, which is not conveniet because the file can be huge,
+             * root info is instead written only once in <code>ClusEnsembleInduce</code>
+             * added by Jurica Levatic, June, 2014
+             */
+            if (!m_Schema.getSettings().getEnsemble().isEnsembleMode()) {
+                m_Root.getClusteringStat().showRootInfo();
+            }
             initSelectorAndSplit(m_Root.getClusteringStat());
             setInitialData(m_Root.getClusteringStat(), data);
             // Induce the tree

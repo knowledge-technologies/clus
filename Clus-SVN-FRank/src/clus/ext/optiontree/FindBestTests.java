@@ -89,7 +89,7 @@ public class FindBestTests {
         
         SubsetSplit split = new SubsetSplit();
         split.initialize(m_StatManager);
-        TestAndHeuristic tnh = new TestAndHeuristic(getSettings().getGeneric().getVerbose());
+        TestAndHeuristic tnh = new TestAndHeuristic(getSettings());
         tnh.create(m_StatManager, m_MaxStats);
         tnh.initTestSelector(totstat, data);
         tnh.setInitialData(totstat, data);
@@ -130,7 +130,7 @@ public class FindBestTests {
 
         //System.out.println("Adding num test");
         
-        TestAndHeuristic tnh = new TestAndHeuristic(getSettings().getGeneric().getVerbose());
+        TestAndHeuristic tnh = new TestAndHeuristic(getSettings());
         tnh.create(m_StatManager, m_MaxStats);
         tnh.initTestSelector(totstat, data);
         tnh.setInitialData(totstat, data);

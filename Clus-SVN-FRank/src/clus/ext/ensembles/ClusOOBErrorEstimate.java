@@ -2,6 +2,7 @@
 package clus.ext.ensembles;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -15,6 +16,8 @@ import clus.main.ClusOutput;
 import clus.main.ClusRun;
 import clus.main.ClusStatManager;
 import clus.main.settings.Settings;
+import clus.main.settings.SettingsEnsemble;
+import clus.main.settings.SettingsSSL;
 import clus.model.ClusModel;
 import clus.model.ClusModelInfo;
 import clus.model.processor.ModelProcessorCollection;
@@ -32,7 +35,8 @@ public class ClusOOBErrorEstimate {
     static boolean m_OOBCalculation;
     int m_Mode;
     Settings m_Settings;
-
+    static HashMap m_OOBVotes; //individual votes for the OOB examples (we need this for automatic selection of threshold for SSL self-training)
+    static HashMap OOBMapping; //to store which examples are OOB in which trees
     static ClusReadWriteLock m_LockPredictions = new ClusReadWriteLock();
     static ClusReadWriteLock m_LockUsage = new ClusReadWriteLock();
     static ClusReadWriteLock m_LockCalculation = new ClusReadWriteLock();
@@ -44,6 +48,8 @@ public class ClusOOBErrorEstimate {
         m_OOBCalculation = false;
         m_Mode = mode;
         m_Settings = sett;
+        m_OOBVotes = new HashMap();
+        OOBMapping = new HashMap();
     }
 
 
@@ -81,6 +87,11 @@ public class ClusOOBErrorEstimate {
     }
 
 
+    public static ArrayList getVotesForTuple(DataTuple tuple) {
+        return (ArrayList) m_OOBVotes.get(tuple.hashCode());
+    }
+
+
     public synchronized void postProcessForestForOOBEstimate(ClusRun cr, OOBSelection oob_total, RowData all_data, Clus cl, String addname) throws ClusException, IOException {
         Settings sett = cr.getStatManager().getSettings();
         ClusSchema schema = all_data.getSchema();
@@ -108,15 +119,45 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public synchronized void updateOOBTuples(OOBSelection oob_sel, RowData train_data, ClusModel model) throws IOException, ClusException {
+    /*
+     * public synchronized void updateOOBTuples(OOBSelection oob_sel, RowData train_data, ClusModel model) throws
+     * IOException, ClusException {
+     * for (int i = 0; i < train_data.getNbRows(); i++) {
+     * if (oob_sel.isSelected(i)) {
+     * DataTuple tuple = train_data.getTuple(i);
+     * if (existsOOBtuple(tuple))
+     * updateOOBTuple(tuple, model);
+     * else
+     * addOOBTuple(tuple, model);
+     * }
+     * }
+     * }
+     */
+
+    public synchronized void updateOOBTuples(OOBSelection oob_sel, RowData train_data, ClusModel model, int modelNo) throws IOException, ClusException {
         for (int i = 0; i < train_data.getNbRows(); i++) {
             if (oob_sel.isSelected(i)) {
                 DataTuple tuple = train_data.getTuple(i);
-                if (existsOOBtuple(tuple))
+                if (existsOOBtuple(tuple)) {
                     updateOOBTuple(tuple, model);
-                else
+                }
+                else {
                     addOOBTuple(tuple, model);
+                }
+                updateOOBMapping(tuple, modelNo);
             }
+        }
+    }
+
+
+    public synchronized void updateOOBMapping(DataTuple tuple, int treeNumber) {
+        if (OOBMapping.containsKey(treeNumber)) {
+            ((ArrayList) OOBMapping.get(treeNumber)).add(tuple.hashCode());
+        }
+        else {
+            ArrayList hashCodes = new ArrayList();
+            hashCodes.add(tuple.hashCode());
+            OOBMapping.put(treeNumber, hashCodes);
         }
     }
 
@@ -138,40 +179,45 @@ public class ClusOOBErrorEstimate {
     public void addOOBTuple(DataTuple tuple, ClusModel model) {
         putToOOBUsage(tuple, 1); // m_OOBUsage.put(tuple.hashCode(), 1);
 
-        if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
-            // for HMC we store the averages
-            WHTDStatistic stat = (WHTDStatistic) model.predictWeighted(tuple);
-            put1DArrayToOOBPredictions(tuple, stat.getNumericPred());// m_OOBPredictions.put(tuple.hashCode(),stat.getNumericPred());
-        }
+        ClusStatistic stat = model.predictWeighted(tuple);
 
-        if (m_Mode == ClusStatManager.MODE_REGRESSION) {
-            // for Regression we store the averages
-            RegressionStat stat = (RegressionStat) model.predictWeighted(tuple);
-            put1DArrayToOOBPredictions(tuple, stat.getNumericPred());// m_OOBPredictions.put(tuple.hashCode(),
-                                                                     // stat.getNumericPred());
-        }
+        switch (m_Mode) {
+            case ClusStatManager.MODE_HIERARCHICAL:
+                // for HMC we store the averages
+                put1DArrayToOOBPredictions(tuple, ((WHTDStatistic) stat).getNumericPred());// m_OOBPredictions.put(tuple.hashCode(),stat.getNumericPred());
+                break;
 
-        if (m_Mode == ClusStatManager.MODE_CLASSIFY) {
-            // this should have a [][].for each attribute we store: Majority: the winning class, for Probability
-            // distribution, the class distribution
-            ClassificationStat stat = (ClassificationStat) model.predictWeighted(tuple);
-            switch (getSettings().getEnsemble().getClassificationVoteType()) {// default is Majority Vote
-                case 0:
-                    // m_OOBPredictions.put(tuple.hashCode(),
-                    // ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
-                    put2DArrayToOOBPredictions(tuple, ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));//
-                    break;
-                case 1:
+            case ClusStatManager.MODE_REGRESSION:
+                // for Regression we store the averages
+                put1DArrayToOOBPredictions(tuple, ((RegressionStat) stat).getNumericPred());// m_OOBPredictions.put(tuple.hashCode(),
+                // stat.getNumericPred());
+                break;
+
+            case ClusStatManager.MODE_CLASSIFY:
+                // this should have a [][].for each attribute we store: Majority: the winning class, for Probability
+                // distribution, the class distribution
+
+                if (getSettings().getEnsemble().getClassificationVoteType() == SettingsEnsemble.VOTING_TYPE_PROBAB_DISTR) {
                     // m_OOBPredictions.put(tuple.hashCode(),
                     // ClusEnsembleInduceOptimization.transformToProbabilityDistribution(stat.m_ClassCounts));
-                    put2DArrayToOOBPredictions(tuple, ClusEnsembleInduceOptimization.transformToProbabilityDistribution(stat.m_ClassCounts));
-                    break;
-                default:
+                    put2DArrayToOOBPredictions(tuple, ClusEnsembleInduceOptimization.transformToProbabilityDistribution(((ClassificationStat) stat).m_ClassCounts));
+                }
+                else {
+                    // default is Majority Vote
                     // m_OOBPredictions.put(tuple.hashCode(),
                     // ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
-                    put2DArrayToOOBPredictions(tuple, ClusEnsembleInduceOptimization.transformToMajority(stat.m_ClassCounts));
-                    break;
-            }
+                    put2DArrayToOOBPredictions(tuple, ClusEnsembleInduceOptimization.transformToMajority(((ClassificationStat) stat).m_ClassCounts));//
+                }
+                break;
+        }
+
+        //store votes (we need this for automatic selection of threshold for SSL self-training)
+        //FIXME: call of static Settings, should be refactored to avoid this 
+        if (getSettings().getSSL().getUnlabeledCriteria() == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOB
+                || getSettings().getSSL().getUnlabeledCriteria() == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOBINITIAL) {
+            ArrayList votes = new ArrayList();
+            votes.add(stat);
+            m_OOBVotes.put(tuple.hashCode(), votes);
         }
     }
 
@@ -180,46 +226,53 @@ public class ClusOOBErrorEstimate {
         Integer used = getFromOOBUsage(tuple); // m_OOBUsage.get(tuple.hashCode());
         used = used.intValue() + 1;
         putToOOBUsage(tuple, used); // m_OOBUsage.put(tuple.hashCode(), used);
+        ClusStatistic stat = model.predictWeighted(tuple);
+        double[] predictions, avg_predictions;
 
-        if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
-            // the HMC and Regression have the same voting scheme: average
-            WHTDStatistic stat = (WHTDStatistic) model.predictWeighted(tuple);
-            double[] predictions = stat.getNumericPred();
-            double[] avg_predictions = get1DArrayFromOOBPredictions(tuple); // (double[])m_OOBPredictions.get(tuple.hashCode());
-            avg_predictions = ClusEnsembleInduceOptimization.incrementPredictions(avg_predictions, predictions, used.doubleValue());
-            put1DArrayToOOBPredictions(tuple, avg_predictions); // m_OOBPredictions.put(tuple.hashCode(),
-                                                                // avg_predictions);
+        switch (m_Mode) {
+            case ClusStatManager.MODE_HIERARCHICAL:
+                // the HMC and Regression have the same voting scheme: average
+                predictions = ((WHTDStatistic) stat).getNumericPred();
+                avg_predictions = get1DArrayFromOOBPredictions(tuple); // (double[])m_OOBPredictions.get(tuple.hashCode());
+                avg_predictions = ClusEnsembleInduceOptimization.incrementPredictions(avg_predictions, predictions, used.doubleValue());
+                put1DArrayToOOBPredictions(tuple, avg_predictions); // m_OOBPredictions.put(tuple.hashCode(),
+                                                                    // avg_predictions);
+                break;
+
+            case ClusStatManager.MODE_REGRESSION:
+                // the HMC and Regression have the same voting scheme: average
+                predictions = ((RegressionStat) stat).getNumericPred();
+                avg_predictions = get1DArrayFromOOBPredictions(tuple); // (double[])m_OOBPredictions.get(tuple.hashCode());
+                avg_predictions = ClusEnsembleInduceOptimization.incrementPredictions(avg_predictions, predictions, used.doubleValue());
+                put1DArrayToOOBPredictions(tuple, avg_predictions); // m_OOBPredictions.put(tuple.hashCode(),
+                                                                    // avg_predictions);
+
+                break;
+            case ClusStatManager.MODE_CLASSIFY:
+                // implement just addition!!!! and then
+                ClassificationStat statc = (ClassificationStat) stat;
+                double[][] preds = statc.m_ClassCounts.clone();
+
+                if (getSettings().getEnsemble().getClassificationVoteType() == SettingsEnsemble.VOTING_TYPE_PROBAB_DISTR) {
+                    preds = ClusEnsembleInduceOptimization.transformToProbabilityDistribution(preds);
+                }
+                else {
+                    // default is Majority Vote
+                    preds = ClusEnsembleInduceOptimization.transformToMajority(preds);
+                }
+               
+                double[][] sum_predictions = get2DArrayFromOOBPredictions(tuple); // (double[][])m_OOBPredictions.get(tuple.hashCode());
+                sum_predictions = ClusEnsembleInduceOptimization.incrementPredictions(sum_predictions, preds);
+                put2DArrayToOOBPredictions(tuple, sum_predictions);// m_OOBPredictions.put(tuple.hashCode(),
+                                                                   // sum_predictions);
+                break;
         }
 
-        if (m_Mode == ClusStatManager.MODE_REGRESSION) {
-            // the HMC and Regression have the same voting scheme: average
-            RegressionStat stat = (RegressionStat) model.predictWeighted(tuple);
-            double[] predictions = stat.getNumericPred();
-            double[] avg_predictions = get1DArrayFromOOBPredictions(tuple); // (double[])m_OOBPredictions.get(tuple.hashCode());
-            avg_predictions = ClusEnsembleInduceOptimization.incrementPredictions(avg_predictions, predictions, used.doubleValue());
-            put1DArrayToOOBPredictions(tuple, avg_predictions); // m_OOBPredictions.put(tuple.hashCode(),
-                                                                // avg_predictions);
-        }
-
-        if (m_Mode == ClusStatManager.MODE_CLASSIFY) {
-            // implement just addition!!!! and then
-            ClassificationStat stat = (ClassificationStat) model.predictWeighted(tuple);
-            double[][] predictions = stat.m_ClassCounts.clone();
-            switch (getSettings().getEnsemble().getClassificationVoteType()) {// default is Majority Vote
-                case 0:
-                    predictions = ClusEnsembleInduceOptimization.transformToMajority(predictions);
-                    break;
-                case 1:
-                    predictions = ClusEnsembleInduceOptimization.transformToProbabilityDistribution(predictions);
-                    break;
-                default:
-                    predictions = ClusEnsembleInduceOptimization.transformToMajority(predictions);
-                    break;
-            }
-            double[][] sum_predictions = get2DArrayFromOOBPredictions(tuple); // (double[][])m_OOBPredictions.get(tuple.hashCode());
-            sum_predictions = ClusEnsembleInduceOptimization.incrementPredictions(sum_predictions, predictions);
-            put2DArrayToOOBPredictions(tuple, sum_predictions);// m_OOBPredictions.put(tuple.hashCode(),
-                                                               // sum_predictions);
+        //store votes (we need this for automatic selection of threshold for SSL self-training)
+        //FIXME: call of static Settings, should be refactored to avoid this
+        if (getSettings().getSSL().getUnlabeledCriteria() == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOB 
+                || getSettings().getSSL().getUnlabeledCriteria() == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOBINITIAL) {
+            ((ArrayList) m_OOBVotes.get(tuple.hashCode())).add(stat);
         }
     }
 
@@ -257,6 +310,28 @@ public class ClusOOBErrorEstimate {
             }
         }
         cr.termModelProcessors(type);
+    }
+
+
+    /**
+     * Returns true is a given tuple is OOB for a tree in random forest with a
+     * specified number
+     *
+     * @param treeNumber
+     * @return
+     */
+    public static boolean isOOBForTree(DataTuple tuple, int treeNumber) {
+        boolean isOOB;
+        m_LockUsage.readingLock();
+        if (!OOBMapping.containsKey(treeNumber)) {
+            isOOB = false;
+            m_LockUsage.readingUnlock();
+            return isOOB;
+        }
+
+        isOOB = ((ArrayList) OOBMapping.get(treeNumber)).contains(tuple.hashCode());
+        m_LockUsage.readingUnlock();
+        return isOOB;
     }
 
     // NONSTATIC GETTERS, SETTERS and 'CHECKERS' for

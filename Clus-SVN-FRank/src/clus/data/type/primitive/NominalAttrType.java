@@ -261,6 +261,12 @@ public class NominalAttrType extends ClusAttrType {
         wrt.print(getTypeString());
     }
 
+
+    @Override
+    public void setToMissing(DataTuple tuple) {
+        setNominal(tuple, m_NbValues + 1);
+    }
+
     public class MySerializable extends ClusSerializable {
 
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
@@ -288,4 +294,5 @@ public class NominalAttrType extends ClusAttrType {
     public boolean isNominal() {
         return true;
     }
+
 }

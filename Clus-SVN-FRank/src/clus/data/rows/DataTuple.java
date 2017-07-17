@@ -195,7 +195,53 @@ public class DataTuple implements Serializable {
         // return -1;
     }
 
-
+    /**
+     * Returns the number of missing values among target attributes 
+     * @return 
+     */
+    public final int getNbMissingTargets() {
+        ClusAttrType[] targets = m_Schema.getTargetAttributes();
+        
+        int missingNb = 0;
+        
+        for(int i = 0; i < targets.length; i++) {
+            if(targets[i].isMissing(this)) {
+                missingNb++;
+            }
+        }
+        
+        return missingNb;
+    }
+    
+    /**
+     * DataTuple is considered unlabeled if it has missing values for all 
+     * of its target attributes
+     * @return 
+     */
+    public final boolean isUnlabeled() {
+       return getNbMissingTargets() == m_Schema.getTargetAttributes().length;
+    }
+    
+    /**
+     * Set all target values to missing
+     */
+    public final void makeUnlabeled() {
+    	ClusAttrType[] targets = m_Schema.getTargetAttributes();
+  
+        for(int i = 0; i < targets.length; i++) {
+            targets[i].setToMissing(this);
+        }
+    }
+    
+    /**
+     * DataTuple is considered partially unlabeled if it has missing values 
+     * for any of its target attributes
+     * @return 
+     */
+    public final boolean isPartiallyLabeled() {
+        return getNbMissingTargets() > 0;
+    }
+    
     /**
      * Checks if the numeric attribute at a specified location is missing.
      * 
@@ -278,6 +324,41 @@ public class DataTuple implements Serializable {
         wrt.println();
     }
 
+    /**
+     * Writes tuple's descriptive attributes in comma separated format
+     * @param wrt 
+     */
+    public void writeDescriptive(PrintWriter wrt) {
+        int aidx = 0;
+	ClusSchema schema = getSchema();
+	for (int i = 0; i < schema.getNbAttributes(); i++) {
+		ClusAttrType type = schema.getAttrType(i);
+		if (!type.isDisabled() && type.isDescriptive()) {
+			if (aidx != 0) wrt.print(",");
+			wrt.print(type.getString(this));
+			aidx++;
+		}
+	}
+	wrt.println();
+    }
+    
+    /**
+     * Writes tuple's target attributes in comma separated format
+     * @param wrt 
+     */
+    public void writeTarget(PrintWriter wrt) {
+        int aidx = 0;
+	ClusSchema schema = getSchema();
+	for (int i = 0; i < schema.getNbAttributes(); i++) {
+		ClusAttrType type = schema.getAttrType(i);
+		if (!type.isDisabled() && type.isTarget()) {
+			if (aidx != 0) wrt.print(",");
+			wrt.print(type.getString(this));
+			aidx++;
+		}
+	}
+	wrt.println();
+    }
 
     public String toString() {
         int aidx = 0;

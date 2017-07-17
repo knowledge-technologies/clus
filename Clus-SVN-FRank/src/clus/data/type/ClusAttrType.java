@@ -182,6 +182,10 @@ public abstract class ClusAttrType implements Serializable, Comparable {
         m_NbMissing = nb;
     }
 
+    public void setToMissing(DataTuple t)
+    {
+        throw new RuntimeException("clus.data.type.ClusAttrType.setToMissing(DataTuple) is not implemented!");
+    }
 
     public String getName() {
         return m_Name;
@@ -287,6 +291,7 @@ public abstract class ClusAttrType implements Serializable, Comparable {
 
 
     public boolean isMissing(DataTuple tuple) {
+        System.err.println("Calling clus.data.type.ClusAttrType.isMissing(DataTuple) which is not implemented.");
         return true;
     }
 
