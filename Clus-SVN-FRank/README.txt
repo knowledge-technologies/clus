@@ -20,4 +20,4 @@ Clus Documentation
 
 The Clus documentation is available in the file:
 
-Clus/docs/manual/clus-manual.pdf
+ClusProject/docs/manual/clus-manual.pdf
