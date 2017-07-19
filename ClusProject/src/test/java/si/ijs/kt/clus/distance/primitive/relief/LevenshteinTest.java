@@ -2,7 +2,9 @@
 package si.ijs.kt.clus.distance.primitive.relief;
 
 import static org.junit.Assert.assertEquals;
+
 import java.util.Arrays;
+
 import org.junit.Test;
 
 
