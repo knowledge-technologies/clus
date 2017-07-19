@@ -54,7 +54,10 @@ public class LevenshteinTest {
                 // ?e?uli?ka
                 // e?uli?ka
                 // -======== --> 1
-                new Object[] { "?e?uli?ka", "e?uli?ka", 1 }, };
+                new Object[] { "?e?uli?ka", "e?uli?ka", 1 },
+                
+                new Object[] {"Mama", "Raca", 2}
+                };
         for (int i = 0; i < listOfExamples.length; i++) {
             String a = (String) listOfExamples[i][0], b = (String) listOfExamples[i][1];
             Levenshtein lev = new Levenshtein(a, b);
