@@ -109,6 +109,7 @@ public class SettingsEnsemble implements ISettings {
 
     public void setEnsembleMode(boolean value) {
         m_EnsembleMode = value;
+        setSectionEnsembleEnabled(value);
     }
 
 

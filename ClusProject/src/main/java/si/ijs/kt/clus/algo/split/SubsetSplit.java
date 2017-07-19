@@ -321,35 +321,10 @@ public class SubsetSplit extends NominalSplit {
             showTest(type, isin, -1, bheur, m_MStat, m_PStat); // <--- showTest(type, isin, -1, bheur, m_MStat, CStat);
             pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight; // <--- CStat.m_SumWeight / m_MStat.m_SumWeight;
 
-            boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency); // <---
-                                                                                                                                                                                                                                                          // boolean
-                                                                                                                                                                                                                                                          // acc_test
-                                                                                                                                                                                                                                                          // =
-                                                                                                                                                                                                                                                          // node.m_IsAcceptable
-                                                                                                                                                                                                                                                          // &&
-                                                                                                                                                                                                                                                          // (m_MStat.m_SumWeight
-                                                                                                                                                                                                                                                          // >=
-                                                                                                                                                                                                                                                          // 4.0)
-                                                                                                                                                                                                                                                          // &&
-                                                                                                                                                                                                                                                          // (CStat.m_SumWeight
-                                                                                                                                                                                                                                                          // >=
-                                                                                                                                                                                                                                                          // 2.0)
-                                                                                                                                                                                                                                                          // &&
-                                                                                                                                                                                                                                                          // ((m_MStat.m_SumWeight
-                                                                                                                                                                                                                                                          // -
-                                                                                                                                                                                                                                                          // CStat.m_SumWeight)
-                                                                                                                                                                                                                                                          // >=
-                                                                                                                                                                                                                                                          // 2.0)
-                                                                                                                                                                                                                                                          // &&
-                                                                                                                                                                                                                                                          // (pos_freq
-                                                                                                                                                                                                                                                          // >
-                                                                                                                                                                                                                                                          // minAllowedFrequency)
-                                                                                                                                                                                                                                                          // &&
-                                                                                                                                                                                                                                                          // (pos_freq
-                                                                                                                                                                                                                                                          // <
-                                                                                                                                                                                                                                                          // 1.0
-                                                                                                                                                                                                                                                          // -
-                                                                                                                                                                                                                                                          // minAllowedFrequency);
+            boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
+            // <---
+            // boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0)             &&             (CStat.m_SumWeight              >=             2.0)             &&              ((m_MStat.m_SumWeight              -              CStat.m_SumWeight)               >=              2.0)              &&              (pos_freq              >              minAllowedFrequency)              &&              (pos_freq              <              1.0              -             minAllowedFrequency);
+
             if (acc_test) {// select only meaningful splits
                 found_test = true;
             }
@@ -364,8 +339,8 @@ public class SubsetSplit extends NominalSplit {
             int count = 0; // allow for nbTries opportunities to select a valid random test... otherwise assign worst
                            // split score
             int nbTries = 10;
-            boolean select = true;
-            while (!found_test && count < nbTries && select) {
+            //    boolean select = true;
+            while (!found_test && count < nbTries) { // && select) {
                 count++;
                 // random selection of a subset of classes
                 int sum = 0;
@@ -374,30 +349,36 @@ public class SubsetSplit extends NominalSplit {
                     if (isin[i])
                         sum++;
                 }
-                if (!((sum == 0) || (sum == nbvalues))) {
-                    card = sum;
-                    select = false;
+
+                card = sum;
+                
+                //if (!((sum == 0) || (sum == nbvalues))) {
+                if (sum == 0 || sum == nbvalues) {
+                    //card = sum;
+                    // select = false;
                 }
-                m_PStat.reset();
-                for (int j = 0; j < nbvalues; j++) {
-                    if (isin[j]) {// if selected
-                        m_PStat.add(node.m_TestStat[j]);
+                else {
+                    m_PStat.reset();
+                    for (int j = 0; j < nbvalues; j++) {
+                        if (isin[j]) {// if selected
+                            m_PStat.add(node.m_TestStat[j]);
+                        }
                     }
-                }
-                pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;
+                    pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;
 
-                node.checkAcceptable(m_MStat, m_PStat);
-                boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
-                // node.getStat(i);
+                    node.checkAcceptable(m_MStat, m_PStat);
+                    boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
+                    // node.getStat(i);
 
-                // acc_test = acc_test && node.getHeuristic().stopCriterion(node.getTotStat(), m_PStat, m_MStat);
+                    // acc_test = acc_test && node.getHeuristic().stopCriterion(node.getTotStat(), m_PStat, m_MStat);
 
-                // if (((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) > 0) && (m_PStat.m_SumWeight > 0)){//select
-                // only meaningful splits
-                // found_test = true;
-                // }
-                if (acc_test) {// select only meaningful splits
-                    found_test = true;
+                    // if (((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) > 0) && (m_PStat.m_SumWeight > 0)){//select
+                    // only meaningful splits
+                    // found_test = true;
+                    // }
+                    if (acc_test) {// select only meaningful splits
+                        found_test = true;
+                    }
                 }
             }
 
