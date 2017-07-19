@@ -296,8 +296,8 @@ public class FindBestTest {
         }
 
         double prev = Double.NaN;
-        boolean isDaniela = !data.getSchema().getSettings().getAttribute().isNullGIS();
-        if (isDaniela) { // handle Daniela
+        boolean isGIS = !data.getSchema().getSettings().getAttribute().isNullGIS();
+        if (isGIS) { // handle Daniela
             // daniela
             ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
             ((ClusStatistic) m_BestTest.m_TotCorrStat).setData(sample);
@@ -375,7 +375,7 @@ public class FindBestTest {
         ////			m_BestTest.m_Heuristic.setSplitStatSVarS(tot_corr_SVarS);
         //		}
 
-        if (isDaniela) {
+        if (isGIS) {
             for (int i = pos; i < nb_rows; i++) {
                 tuple = sample.getTuple(indicesSorted[i]);
                 double value = at.getNumeric(tuple);

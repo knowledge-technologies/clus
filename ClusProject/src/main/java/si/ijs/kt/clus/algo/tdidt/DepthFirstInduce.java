@@ -57,21 +57,21 @@ import si.ijs.kt.clus.util.ClusRandomNonstatic;
 public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     protected FindBestTest m_FindBestTest;
-    protected FindBestTest m_find_MinMax; // daniela
+    protected FindBestTest m_Find_MinMax; // daniela
     protected ClusNode m_Root;
 
 
     public DepthFirstInduce(ClusSchema schema, Settings sett) throws ClusException, IOException {
         super(schema, sett);
         m_FindBestTest = new FindBestTest(getStatManager());
-        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
+        m_Find_MinMax = new FindBestTest(getStatManager()); // daniela
     }
 
 
     public DepthFirstInduce(ClusInductionAlgorithm other) {
         super(other);
         m_FindBestTest = new FindBestTest(getStatManager());
-        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
+        m_Find_MinMax = new FindBestTest(getStatManager()); // daniela
     }
 
 
@@ -87,7 +87,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public DepthFirstInduce(ClusInductionAlgorithm other, ClusStatManager mgr, boolean parallelism) {
         super(other, mgr);
         m_FindBestTest = new FindBestTest(getStatManager());
-        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
+        m_Find_MinMax = new FindBestTest(getStatManager()); // daniela
 
     }
 
@@ -95,7 +95,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public DepthFirstInduce(ClusInductionAlgorithm other, NominalSplit split) {
         super(other);
         m_FindBestTest = new FindBestTest(getStatManager(), split);
-        m_find_MinMax = new FindBestTest(getStatManager()); // daniela
+        m_Find_MinMax = new FindBestTest(getStatManager()); // daniela
     }
 
 
@@ -117,8 +117,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public boolean initSelectorAndStopCrit(ClusNode node, RowData data) {
         int max = getSettings().getConstraints().getTreeMaxDepth();
         if (max != -1 && node.getLevel() >= max) { return true; }
-        m_find_MinMax.initSelectorAndStopCrit(node.getClusteringStat(), data); // daniela   
-        if (node.getTargetStat().getTargetSumWeights() <= getSettings().getModel().getMinimalWeight()) { // FIXME: not sure how to deal with partially labeled data, should we allow split if, for example, only one target has labels?  
+        m_Find_MinMax.initSelectorAndStopCrit(node.getClusteringStat(), data); // daniela   
+        if (node.getTargetStat().getTargetSumWeights() < 2 * getSettings().getModel().getMinimalWeight()) { // FIXME: not sure how to deal with partially labeled data, should we allow split if, for example, only one target has labels?  
             return true;
         }
         return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
@@ -284,20 +284,20 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         }
 
         ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
-        boolean isDaniela = !getSettings().getAttribute().isNullGIS();
-        if (isDaniela) {
+        boolean isGIS = !getSettings().getAttribute().isNullGIS();
+        if (isGIS) {
             // daniela
             //only for every binary attribute or, as some say, samo za site binarni atr
             double globalMax = Double.NEGATIVE_INFINITY, globalMin = Double.POSITIVE_INFINITY;
-            m_find_MinMax.resetMinMax();
+            m_Find_MinMax.resetMinMax();
             for (int i = 0; i < attrs.length; i++) {
                 ClusAttrType at = attrs[i];
                 if (at instanceof NominalAttrType && ((NominalAttrType) at).getNbValues() == 2) {
-                    m_find_MinMax.rememberMinMax((NominalAttrType) at, data);
-                    if (m_find_MinMax.hMaxB > globalMax)
-                        globalMax = m_find_MinMax.hMaxB;
-                    if (m_find_MinMax.hMinB < globalMin)
-                        globalMin = m_find_MinMax.hMinB;
+                    m_Find_MinMax.rememberMinMax((NominalAttrType) at, data);
+                    if (m_Find_MinMax.hMaxB > globalMax)
+                        globalMax = m_Find_MinMax.hMaxB;
+                    if (m_Find_MinMax.hMinB < globalMin)
+                        globalMin = m_Find_MinMax.hMinB;
                 }
             }
             // daniela end
@@ -305,7 +305,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
 
-            if (isDaniela) {
+            if (isGIS) {
                 // daniela
                 RegressionStat.INITIALIZEPARTIALSUM = true; // This way the first time a split threshold of the current
                 ClassificationStat.INITIALIZEPARTIALSUM = true; // attribute is evaluated, the corresponding partial sums of
@@ -484,13 +484,13 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     public void initSelectorAndSplit(ClusStatistic stat) throws ClusException {
         m_FindBestTest.initSelectorAndSplit(stat);
-        m_find_MinMax.initSelectorAndSplit(stat); // daniela
+        m_Find_MinMax.initSelectorAndSplit(stat); // daniela
     }
 
 
     public void setInitialData(ClusStatistic stat, RowData data) throws ClusException {
         m_FindBestTest.setInitialData(stat, data);
-        m_find_MinMax.setInitialData(stat, data); // daniela
+        m_Find_MinMax.setInitialData(stat, data); // daniela
     }
 
 

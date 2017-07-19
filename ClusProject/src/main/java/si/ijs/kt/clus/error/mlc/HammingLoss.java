@@ -92,7 +92,7 @@ public class HammingLoss extends ClusNominalError {
 
 
     public String getName() {
-        return "MlcMeasuresForHmlc";
+        return "HammingLoss";
     }
 
 
