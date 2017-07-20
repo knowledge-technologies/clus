@@ -80,7 +80,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
         if (getSettings().getEnsemble().isEnsembleMode() && ((getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_RFOREST)
-                || (getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_NOBAGRFOREST))) {
+                || (getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_RFOREST_NO_BOOTSTRAP))) {
             induceRandomForest(node, data, rnd);
         }
         else {

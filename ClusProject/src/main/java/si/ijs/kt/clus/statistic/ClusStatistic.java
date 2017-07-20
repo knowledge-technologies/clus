@@ -34,7 +34,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
-import si.ijs.kt.clus.ext.ensemble.ClusEnsembleROSInfo;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.ClusFormat;

@@ -296,7 +296,6 @@ public class ClusModelInfo implements Serializable {
         return clone;
     }
 
-
     public final void setModel(ClusModel model) {
         m_Model = model;
     }

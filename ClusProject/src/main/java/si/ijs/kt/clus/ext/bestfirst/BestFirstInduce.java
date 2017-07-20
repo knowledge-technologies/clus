@@ -118,7 +118,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
                     return ClusEnsembleInduce.getRandomSubspaces();
                 case SettingsEnsemble.ENSEMBLE_BAGSUBSPACES:
                     return ClusEnsembleInduce.getRandomSubspaces();
-                case SettingsEnsemble.ENSEMBLE_NOBAGRFOREST:
+                case SettingsEnsemble.ENSEMBLE_RFOREST_NO_BOOTSTRAP:
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
                     //ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), null);
                     ClusEnsembleInduce.setRandomSubspaces(ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandom.RANDOM_SELECTION, null));

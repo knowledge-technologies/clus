@@ -1,12 +1,12 @@
 
-package si.ijs.kt.clus.ext.ensemble;
+package si.ijs.kt.clus.ext.ensemble.ros;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
-
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.main.settings.Settings;
 import weka.core.Utils;
 
 
@@ -16,22 +16,23 @@ import weka.core.Utils;
  */
 public class ClusEnsembleROSInfo implements Serializable {
 
-    private static final long serialVersionUID = -8192393874827673204L;
-    ArrayList<int[]> m_AllSubspaces;
-    double[] m_Coverage; // how many times a target was used (per-target)
-    int[] m_CoverageOpt; // used when running ROS ensembles are running in optimized mode (this is a per-target counter)
-    double m_AverageTargetsUsed; // average number of targets used in the ensemble
-    
-    ClusSchema m_Schema;
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
+    private ArrayList<int[]> m_AllSubspaces;
+    private double[] m_Coverage; // how many times a target was used (per-target)
+    private int[] m_CoverageOpt; // used when running ROS ensembles are running in optimized mode (this is a per-target counter)
+    private double m_AverageTargetsUsed; // average number of targets used in the ensemble
+    private ClusSchema m_Schema;
 
 
     public ClusEnsembleROSInfo(ClusSchema schema, ArrayList<int[]> info) {
         m_AllSubspaces = info;
         m_Schema = schema;
         calculateCoverage();
-        
+
         m_CoverageOpt = new int[m_Schema.getNbTargetAttributes()];
-        for (int i = 0; i < m_CoverageOpt.length; i++) m_CoverageOpt[i] = 0;
+        for (int i = 0; i < m_CoverageOpt.length; i++)
+            m_CoverageOpt[i] = 0;
     }
 
 
@@ -62,7 +63,7 @@ public class ClusEnsembleROSInfo implements Serializable {
     }
 
 
-    void calculateCoverage() {
+    private void calculateCoverage() {
         m_Coverage = new double[m_Schema.getNbTargetAttributes()];
         Arrays.fill(m_Coverage, 0.0);
 
@@ -154,16 +155,36 @@ public class ClusEnsembleROSInfo implements Serializable {
         }
         return cnt;
     }
-    
+
+
     /** Used when ensembles run in optimized mode */
     public void incrementCoverageOpt(int[] enabled) {
         for (int b = 0; b < enabled.length; b++) {
-            if (enabled[b] == 1) m_CoverageOpt[b]++;
+            if (enabled[b] == 1)
+                m_CoverageOpt[b]++;
         }
     }
-    
+
+
     /** Used when ensembles run in optimized mode */
     public int getCoverageOpt(int target) {
         return m_CoverageOpt[target];
+    }
+
+
+    /** Returns a trimmed variant of current object, containing only {@code numberOfSubspaces} ROS subspaces */
+    public ClusEnsembleROSInfo getTrimmedInfo(int numberOfSubspaces) {
+
+        if (numberOfSubspaces == m_AllSubspaces.size())
+            return this;
+
+        ArrayList<int[]> ary = new ArrayList<int[]>();
+        for (int i = 0; i < numberOfSubspaces; i++) {
+            ary.add(m_AllSubspaces.get(i));
+        }
+
+        ClusEnsembleROSInfo copy = new ClusEnsembleROSInfo(this.m_Schema, ary);
+
+        return copy;
     }
 }

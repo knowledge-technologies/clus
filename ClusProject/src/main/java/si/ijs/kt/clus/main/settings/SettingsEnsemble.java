@@ -26,7 +26,7 @@ public class SettingsEnsemble implements ISettings {
     public final static int ENSEMBLE_BAGSUBSPACES = 3;
     /** Bagging of subspaces */
     public final static int ENSEMBLE_BOOSTING = 4;
-    public final static int ENSEMBLE_NOBAGRFOREST = 5;
+    public final static int ENSEMBLE_RFOREST_NO_BOOTSTRAP = 5;
     public final static int ENSEMBLE_PERT = 6;
     public final static int ENSEMBLE_EXTRA_TREES = 7;
 

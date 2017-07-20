@@ -500,7 +500,14 @@ public class Clus implements CMDLineArgsProvider {
             clss.printInfo();
             System.out.println();
         }
+        
+        
         clss.induceAll(cr);
+
+        // induce default model
+        ClusModelInfo def_info = cr.addModelInfo("Default");
+        def_info.setModel(ClusDecisionTree.induceDefault(cr));
+
         if (getSettings().getGeneric().getVerbose() > 0) {
             System.out.println();
         }

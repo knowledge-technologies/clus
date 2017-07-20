@@ -185,7 +185,7 @@ public class ClusOutput {
         String cpu = ResourceInfo.isLibLoaded() ? " (CPU)" : "";
         m_Writer.println("Induction Time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec" + parallelTime + cpu);
         m_Writer.println("Pruning Time: " + ClusFormat.FOUR_AFTER_DOT.format(tpru) + " sec" + cpu);
-        m_Writer.println("Model information");
+        m_Writer.println("Model information:");
         for (int i = 0; i < cr.getNbModels(); i++) {
             ClusModelInfo mi = cr.getModelInfo(i);
             if (mi != null) {

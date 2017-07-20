@@ -153,7 +153,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     selected = ClusEnsembleInduce.getRandomSubspaces();
                     break;
-                case SettingsEnsemble.ENSEMBLE_NOBAGRFOREST:
+                case SettingsEnsemble.ENSEMBLE_RFOREST_NO_BOOTSTRAP:
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);

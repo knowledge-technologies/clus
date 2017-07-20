@@ -7,6 +7,7 @@ import java.util.HashMap;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.TupleIterator;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsEnsemble;
 import si.ijs.kt.clus.model.ClusModel;

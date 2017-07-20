@@ -52,6 +52,8 @@ import si.ijs.kt.clus.error.common.ComponentError;
 import si.ijs.kt.clus.ext.ensemble.callable.InduceExtraTreeCallable;
 import si.ijs.kt.clus.ext.ensemble.callable.InduceOneBagCallable;
 import si.ijs.kt.clus.ext.ensemble.container.OneBagResults;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROS;
 import si.ijs.kt.clus.ext.featureRanking.ClusEnsembleFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
@@ -85,25 +87,24 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     Clus m_BagClus;
     static ClusAttrType[] m_RandomSubspaces; // TODO: this field should be removed in the future
-    ClusForest m_OForest;// Forest with the original models
-
+    //ClusForest m_OForest;// Forest with the original models
     ClusForest[] m_OForests;
 
-    ClusForest m_DForest;
+    //ClusForest m_DForest;
     static int m_Mode;
 
     // Memory optimization
     private static boolean m_OptMode;
-    private ClusEnsembleInduceOptimization m_Optimization;
+    //private ClusEnsembleInduceOptimization m_Optimization;
     private ClusEnsembleInduceOptimization[] m_Optimizations;
 
     // Output ensemble at different values
     int[] m_OutEnsembleAt;// sorted values (ascending)!
     static int m_NbMaxBags;
 
-    // members for target subspacing
+    // members for ROS ensembles (target subspacing)
     static int m_EnsembleROSScope;
-    ClusEnsembleROSInfo m_EnsembleROSInfo;
+    ClusEnsembleROSInfo m_EnsembleROSInfo = null;
 
     // Out-Of-Bag Error Estimate
     ClusOOBErrorEstimate m_OOBEstimation;
@@ -325,7 +326,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         System.out.println("Out-Of-Bag Estimate of the error = " + set.shouldEstimateOOB());
         System.out.println("Perform Feature Ranking = " + m_FeatRank);
 
-        prepareROSEnsemble();
+        if (set.isEnsembleROSEnabled()) {
+            m_EnsembleROSInfo = ClusROS.prepareROSEnsembleInfo(getSettings(), getSchema());
+        }
 
         // initialise ranking stuff here: we need stat manager with clustering statistics != null
         //        m_FeatureRanking = new ClusEnsembleFeatureRanking();
@@ -356,18 +359,21 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             m_FeatureRankings[forest].initializeAttributes(schema.getDescriptiveAttributes(), nbRankings);
         }
 
-        m_OForest = new ClusForest(getStatManager(), m_Optimization);
-        m_OForest.setEnsembleROSInfo(m_EnsembleROSInfo);
+        //m_OForest = new ClusForest(getStatManager(), m_Optimization);
+        //m_OForest.setEnsembleROSInfo(m_EnsembleROSInfo); // TODO: this should be removed; we use m_OForests from now on
 
         // TODO: do we need m_OForest and m_OForests ? this should just be m_OForests
         m_OForests = new ClusForest[m_OutEnsembleAt.length];
         m_Optimizations = new ClusEnsembleInduceOptimization[m_OForests.length];
         for (int i = 0; i < m_OForests.length; i++) {
             m_OForests[i] = new ClusForest(getStatManager(), m_Optimizations[i]);
-            m_OForests[i].setEnsembleROSInfo(m_EnsembleROSInfo);
+
+            if (set.isEnsembleROSEnabled()) {
+                m_OForests[i].setEnsembleROSInfo(m_EnsembleROSInfo.getTrimmedInfo(m_OutEnsembleAt[i]));
+            }
         }
 
-        m_DForest = new ClusForest(getStatManager(), m_Optimization);
+        //m_DForest = new ClusForest(getStatManager(), m_Optimization);
         TupleIterator train_iterator = null; // = train set iterator
         TupleIterator test_iterator = null; // = test set iterator      
 
@@ -376,16 +382,17 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             if (cr.getTestIter() != null) {
                 test_iterator = cr.getTestSet().getIterator();
             }
-            m_Optimization = initializeOptimization(train_iterator, test_iterator);
-            m_Optimization.initPredictions(m_OForest.getStat(), m_EnsembleROSInfo);
-            m_OForest.setOptimization(m_Optimization);
+            //m_Optimization = initializeOptimization(train_iterator, test_iterator);
+            //m_Optimization.initPredictions(m_OForest.getStat(), m_EnsembleROSInfo); // TODO: this should be removed!
+            //m_OForest.setOptimization(m_Optimization);
+
             for (int i = 0; i < m_Optimizations.length; i++) {
                 m_Optimizations[i] = initializeOptimization(train_iterator, test_iterator);
-                m_Optimizations[i].initPredictions(m_OForests[i].getStat(), m_EnsembleROSInfo);
+                m_Optimizations[i].initPredictions(m_OForests[i].getStat(), m_EnsembleROSInfo.getTrimmedInfo(m_OutEnsembleAt[i]));
                 m_OForests[i].setOptimization(m_Optimizations[i]);
             }
 
-            m_DForest.setOptimization(m_Optimization);
+            //m_DForest.setOptimization(m_Optimizations);
         }
 
         switch (set.getEnsembleMethod()) {
@@ -409,9 +416,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 induceBaggingSubspaces(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_NOBAGRFOREST: { // RForest without bagging (setting: RFeatSelection)
-                System.out.println("Ensemble Method: Random Forest without Bagging");
-                induceRForestNoBagging(cr); // TODO: martinb has a problem with the name of this method
+            case SettingsEnsemble.ENSEMBLE_RFOREST_NO_BOOTSTRAP: { // RForest without bootstrapping (setting: RFeatSelection)
+                System.out.println("Ensemble Method: Random Forest without bootstrapping");
+                induceRForestNoBootstrap(cr); // TODO: martinb has a problem with the name of this method
                 break;
             }
             case SettingsEnsemble.ENSEMBLE_PERT: { // PERT in combination with bagging
@@ -432,7 +439,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             }
         }
         if (m_OptMode) {
-            m_Optimization.roundPredictions();
+            //m_Optimization.roundPredictions();
             for (int i = 0; i < m_Optimizations.length; i++) {
                 m_Optimizations[i].roundPredictions();
             }
@@ -467,7 +474,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     // this ensemble method builds random forests (i.e. chooses the best test from a subset of attributes at each node),
     // but does not construct bootstrap replicates of the dataset
-    public void induceRForestNoBagging(ClusRun cr) throws ClusException, IOException {
+    public void induceRForestNoBootstrap(ClusRun cr) throws ClusException, IOException {
         long summ_time = 0; // = ResourceInfo.getTime();
 
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
@@ -499,12 +506,17 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
             summ_time += ResourceInfo.getTime() - one_bag_time;
 
-            m_OForest.updateCounts((ClusNode) model);
+            //m_OForest.updateCounts((ClusNode) model);
             if (m_OptMode) {
-                m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
+                //m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
+
+                updatePredictionsForTuples(model, train_iterator, test_iterator, i);
             }
             else {
-                m_OForest.addModelToForest(model);
+                //m_OForest.addModelToForest(model);
+
+                addModelToForests(model, i);
+
                 // ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
                 // m_DForest.addModelToForest(defmod);
             }
@@ -529,9 +541,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
         TupleIterator test_iterator = m_OptMode ? cr.getTestIter() : null; // = test set iterator
 
-        m_OForest.setEnsembleROSInfo(m_EnsembleROSInfo); // TODO: is this (together with the following lines) necessary? see the same lines in induceAll ...
+        //m_OForest.setEnsembleROSInfo(m_EnsembleROSInfos[m_OForests.length]); // TODO: this should be removed
         for (int i = 0; i < m_OForests.length; i++) {
-            m_OForests[i].setEnsembleROSInfo(m_EnsembleROSInfo);
+            m_OForests[i].setEnsembleROSInfo(m_EnsembleROSInfo.getTrimmedInfo(m_OutEnsembleAt[i]));
         }
 
         Random bagSeedGenerator = new Random(getSettings().getGeneral().getRandomSeed());
@@ -559,18 +571,20 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             ind.initialize();
             crSingle.getStatManager().initClusteringWeights();
 
-            initializeROS(crSingle.getStatManager(), i); // this needs to be changed for parallel
-                                                         // implementation
+            initializeROS(crSingle.getStatManager(), i); // this needs to be changed for parallel implementation
 
             ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
             // summ_time += ResourceInfo.getTime() - one_bag_time;
 
-            m_OForest.updateCounts((ClusNode) model);
+            //m_OForest.updateCounts((ClusNode) model);
             if (m_OptMode) {
-                m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
+                //m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
+                updatePredictionsForTuples(model, train_iterator, test_iterator, i);
             }
             else {
-                m_OForest.addModelToForest(model);
+                addModelToForests(model, i);
+
+                //m_OForest.addModelToForest(model);
                 // ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
                 // m_DForest.addModelToForest(defmod);
             }
@@ -614,7 +628,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         // - end added by Jurica
 
-        m_OForest.setEnsembleROSInfo(m_EnsembleROSInfo);
+        //        for (int i = 0; i < m_OForests.length; i++) {
+        //            m_OForests[i].setEnsembleROSInfo(m_EnsembleROSInfo.getTrimmedInfo(m_OutEnsembleAt[i]));
+        //        }
 
         // We store the old maxDepth to this if needed. Thus we get the right depth to .out files etc.
         int origMaxDepth = -1;
@@ -712,7 +728,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             try {
                 OneBagResults results = future.get();
                 if (!m_OptMode) {
-                    updateForests(results.getModel(), i);
+                    addModelToForests(results.getModel(), i);
                 }
                 if (sett.shouldPerformRanking()) {
                     updateFeatureRankings(i, results.getFimportances());
@@ -759,107 +775,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    /**
-     * Method for generating ROS ensemble subspaces
-     * 
-     * @param ClusSchema
-     *        schema
-     * @param sizeOfSubspace
-     *        size of subspace
-     * @return ClusEnsembleROSInfo object with created subspaces
-     */
-    ClusEnsembleROSInfo generateROSEnsembleSubspaces(ClusSchema schema, int sizeOfSubspace) {
-        int cnt = m_NbMaxBags;
-        int[] enabled;
-        ArrayList<int[]> subspaces = new ArrayList<int[]>();
-
-        boolean isRandom = sizeOfSubspace <= 0;
-        int subspaceCount = sizeOfSubspace;
-
-        // find indices of target and clustering attributes
-        int[] targetIDs = new int[schema.getNbTargetAttributes()];
-        int[] clusteringIDs = new int[schema.getNbAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING)];
-
-        ClusAttrType[] targets = schema.getTargetAttributes();
-        ClusAttrType[] clustering = schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
-
-        for (int t = 0; t < targetIDs.length; t++)
-            targetIDs[t] = targets[t].getIndex();
-        for (int t = 0; t < clusteringIDs.length; t++)
-            clusteringIDs[t] = clustering[t].getIndex();
-
-        // create subspaces
-        while (cnt > 1) {
-            enabled = new int[schema.getNbAttributes()];
-
-            // enable all attributes
-            Arrays.fill(enabled, 1);
-
-            // disable all targets
-            for (int i = 0; i < targets.length; i++)
-                enabled[targets[i].getIndex()] = 0;
-
-            // if number of randomly selected targets should also be randomized
-            if (isRandom)
-                subspaceCount = ClusRandom.nextInt(ClusRandom.RANDOM_ENSEMBLE_ROS_SUBSPACE_SIZE_SELECTION, 1, targets.length); // use a separate randomizer for randomized target subspace size selection
-
-            // randomly select targets
-            ClusAttrType[] selected = selectRandomSubspaces(targets, subspaceCount, ClusRandom.RANDOM_ENSEMBLE_ROS, null); // inject ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING randomizer
-
-            // enable selected targets
-            for (int i = 0; i < selected.length; i++)
-                enabled[selected[i].getIndex()] = 1;
-
-            // safety check: check if at least one target attr is enabled
-            int sum = 0;
-            for (int a = 0; a < targetIDs.length; a++)
-                sum += enabled[targetIDs[a]];
-            if (sum > 0) {
-                // check if at least one clustering attr is enabled
-                sum = 0;
-                for (int a = 0; a < clusteringIDs.length; a++)
-                    sum += enabled[clusteringIDs[a]];
-                if (sum > 0) {
-                    subspaces.add(enabled); // subspace meets the criteria, add it to the list
-                    cnt--;
-                }
-            }
-        }
-
-        // create one MT model for all targets
-        enabled = new int[schema.getNbAttributes()];
-        Arrays.fill(enabled, 1); // enable all attributes
-        subspaces.add(enabled);
-
-        return new ClusEnsembleROSInfo(schema, subspaces);
-    }
-
-
-    /**
-     * Preparation for ROS ensembles
-     */
-    void prepareROSEnsemble() {
-        SettingsEnsemble sett = getSettings().getEnsemble();
-
-        if (sett.isEnsembleROSEnabled()) {
-            int method = sett.getEnsembleMethod();
-            if (method != SettingsEnsemble.ENSEMBLE_BAGGING
-                    && method != SettingsEnsemble.ENSEMBLE_RFOREST
-                    && method != SettingsEnsemble.ENSEMBLE_RSUBSPACES
-                    && method != SettingsEnsemble.ENSEMBLE_EXTRA_TREES)
-
-                throw new RuntimeException("ROS extension is not implemented for the selected ensemble method!");
-
-            if (getSettings().getGeneric().getVerbose() > 1)
-                System.out.println("ROS: creating target subspaces.");
-
-            int subspaceSize = sett.calculateNbRandomAttrSelected(getSchema(), 2);
-
-            m_EnsembleROSInfo = generateROSEnsembleSubspaces(getSchema(), subspaceSize);
-        }
-    }
-
-
     void initializeROS(ClusStatManager mgr, int bagNo) throws ClusException {
         if (mgr.getSettings().getEnsemble().isEnsembleROSEnabled()) {
 
@@ -876,7 +791,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             // push to already initialized heuristic
             h.setClusteringWeightsEnabledAttributes(enabled);
 
-            // display info of the targets, that are being used
+            // display info about used targets
             if (getSettings().getGeneric().getVerbose() > 0) {
                 int[] trgts = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(bagNo - 1));
 
@@ -1059,12 +974,16 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 ClusModel orig_bag_model = io.getModel("Original");
                 if (orig_bag_model == null) { throw new ClusException(cr.getStatManager().getSettings().getGeneric().getAppName() + "_bag" + i + ".model file does not contain model named 'Original'"); }
 
-                m_OForest.updateCounts((ClusNode) orig_bag_model);
+                //m_OForest.updateCounts((ClusNode) orig_bag_model);
+                updateCounts((ClusNode) orig_bag_model, i);
+
                 if (m_OptMode) {
-                    m_Optimization.updatePredictionsForTuples(orig_bag_model, train_iterator, test_iterator);
+                    //m_Optimization.updatePredictionsForTuples(orig_bag_model, train_iterator, test_iterator);
+                    updatePredictionsForTuples(orig_bag_model, train_iterator, test_iterator, i);
                 }
                 else {
-                    m_OForest.addModelToForest(orig_bag_model);
+                    //m_OForest.addModelToForest(orig_bag_model);
+                    addModelToForests(orig_bag_model, i);
                 }
                 if (getSettings().getEnsemble().shouldEstimateOOB()) { // OOB estimate is on
                     // the same bags will be generated for the corresponding models!!!
@@ -1151,7 +1070,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
             summ_time += ResourceInfo.getTime() - one_bag_time;
 
-            m_OForest.updateCounts((ClusNode) model);
+            //m_OForest.updateCounts((ClusNode) model);
+            updateCounts((ClusNode) model, i);
+
             if (getSettings().getEnsemble().shouldEstimateOOB()) { // OOB estimate is on
                 oob_sel = new OOBSelection(msel);
                 if (i == 1)
@@ -1162,12 +1083,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             }
 
             if (m_OptMode) {
-                m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
+                //m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
+                updatePredictionsForTuples(model, train_iterator, test_iterator, i);
             }
             else {
-                m_OForest.addModelToForest(model);
+                //m_OForest.addModelToForest(model);
+                addModelToForests(model, i);
                 ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
-                m_DForest.addModelToForest(defmod);
+                //  m_DForest.addModelToForest(defmod);
             }
 
             if (checkToOutEnsemble(i)) {
@@ -1228,7 +1151,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 OneBagResults results = future.get();
 
                 if (!m_OptMode) {
-                    updateForests(results.getModel(), i);
+                    addModelToForests(results.getModel(), i);
                 }
                 if (getSettings().getEnsemble().shouldPerformRanking()) {
                     // m_FeatureRanking.putAttributesInfos(results.getFimportances());
@@ -1359,13 +1282,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     public void postProcessForest(ClusRun cr) throws ClusException {
-        ClusModelInfo def_info = cr.addModelInfo("Default");
-        if (m_OptMode)
-            m_DForest = null;
-        def_info.setModel(ClusDecisionTree.induceDefault(cr));
+  //      ClusModelInfo def_info = cr.addModelInfo("Default");
+        //if (m_OptMode)
+        //    m_DForest = null;
 
-        ClusModelInfo orig_info = cr.addModelInfo("Original");
-        orig_info.setModel(m_OForest);
+//        def_info.setModel(ClusDecisionTree.induceDefault(cr));
+
+        //        ClusModelInfo orig_info = cr.addModelInfo("Original");
+        //        orig_info.setModel(m_OForest);
 
         String partialForestName = "Forest with %d trees";
 
@@ -1380,13 +1304,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             double[] thresholds = getSettings().getHMLC().getClassificationThresholds().getDoubleVector();
             // setting the printing preferences in the HMC mode
 
-            m_OForest.setPrintModels(getSettings().getEnsemble().isPrintEnsembleModels());
+            //m_OForest.setPrintModels(getSettings().getEnsemble().isPrintEnsembleModels());
             for (int i = 0; i < m_OForests.length; i++) {
                 m_OForests[i].setPrintModels(getSettings().getEnsemble().isPrintEnsembleModels());
             }
 
-            if (!m_OptMode)
-                m_DForest.setPrintModels(getSettings().getEnsemble().isPrintEnsembleModels());
+            //if (!m_OptMode) m_DForest.setPrintModels(getSettings().getEnsemble().isPrintEnsembleModels());
+
             if (thresholds != null) {
                 for (int forest = 0; forest < m_OForests.length; forest++) {
                     for (int i = 0; i < thresholds.length; i++) {
@@ -1404,8 +1328,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         // If we want to convert trees to rules but not use
         // any of the rule learning tehniques anymore (if CoveringMethod != RulesFromTree)
-        if (getSettings().getTree().rulesFromTree() != SettingsOutput.CONVERT_RULES_NONE && getSettings().getRules().getCoveringMethod() != SettingsRules.COVERING_METHOD_RULES_FROM_TREE) {
-            m_OForest.convertToRules(cr, false);
+        if (getSettings().getTree().rulesFromTree() != SettingsOutput.CONVERT_RULES_NONE
+                && getSettings().getRules().getCoveringMethod() != SettingsRules.COVERING_METHOD_RULES_FROM_TREE) {
+            //m_OForest.convertToRules(cr, false);
+            for (int i = 0; i < m_OForests.length; i++) {
+                m_OForests[i].convertToRules(cr, false);
+            }
         }
     }
 
@@ -1561,10 +1489,16 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * @param treeNumber
      */
     private void updateCounts(ClusNode model, int treeNumber) {
-        int[] additionalModelsNodesLeaves = m_OForest.updateCounts((ClusNode) model);
+        
+        //models, nodes, leaves };
+        
+        
+        int[] additionalModelsNodesLeaves =  ClusForest.countNodesLeaves(model); // m_OForest.updateCounts((ClusNode) model);     
+        
+        
         for (int ii = m_OForests.length - 1; ii >= 0; ii--) {
             if (getNbTrees(ii) >= treeNumber) {
-                m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);
+                m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);                
             }
             else {
                 break;
@@ -1594,13 +1528,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     /**
-     * Updates the forests by adding a new tree.
+     * Adds model to forests.
      * 
      * @param model
      * @param treeNumber
      */
-    private void updateForests(ClusModel model, int treeNumber) {
-        m_OForest.addModelToForest(model);
+    private void addModelToForests(ClusModel model, int treeNumber) {
+        //m_OForest.addModelToForest(model);
         for (int forest = m_OForests.length - 1; forest >= 0; forest--) {
             if (getNbTrees(forest) >= treeNumber) {
                 m_OForests[forest].addModelToForest(model);
@@ -1633,7 +1567,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     private void updatePredictionsForTuples(ClusModel model, TupleIterator train_iterator, TupleIterator test_iterator, int treeNumber) throws IOException, ClusException {
-        m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
+        //m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
         for (int forest = m_OForests.length - 1; forest >= 0; forest--) {
             if (getNbTrees(forest) >= treeNumber) {
                 m_Optimizations[forest].updatePredictionsForTuples(model, train_iterator, test_iterator);

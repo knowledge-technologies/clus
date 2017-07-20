@@ -41,6 +41,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.ext.hierarchical.HierClassTresholdPruner;
 import si.ijs.kt.clus.ext.hierarchical.HierSingleLabelStat;
 import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
@@ -78,7 +79,7 @@ public class ClusForest implements ClusModel, Serializable {
     private int m_NbNodes = 0;
     /** The sum of leaves over the trees in the forest */
     private int m_NbLeaves = 0;
-    ClusEnsembleROSInfo m_TargetSubspaceInfo; // Info about target subspacing method
+    ClusEnsembleROSInfo m_TargetSubspaceInfo = null; // ROS ensembles (info about target subspacing)
 
     //added 13/1/2014 by Jurica Levatic
     /** Individual votes of trees in ensemble, used for calculation of confidence of predictions in self-training */
@@ -260,11 +261,11 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public int[] updateCounts(ClusNode model) {
+    public static int[] countNodesLeaves(ClusNode model) {
         int models = 1;
         int nodes = model.getNbNodes();
         int leaves = model.getNbLeaves();
-        updateCounts(models, nodes, leaves);
+        //updateCounts(models, nodes, leaves);
         return new int[] { models, nodes, leaves };
     }
 
