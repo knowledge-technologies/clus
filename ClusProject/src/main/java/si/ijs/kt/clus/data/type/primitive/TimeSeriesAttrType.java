@@ -119,7 +119,7 @@ public class TimeSeriesAttrType extends ClusAttrType {
             if (str == null)
                 return false;
             TimeSeries value = new TimeSeries(str);
-            tuple.setObjectVal(value, 0);
+            tuple.setObjectVal(value, getArrayIndex());
             if (m_Length != -1) {
                 if (m_Length != value.length())
                     m_isEqualLength = false;

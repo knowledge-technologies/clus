@@ -41,6 +41,9 @@ public class ClusReader {
     StringBuffer m_Scratch = new StringBuffer();
     Settings m_Settings;
     boolean m_IsClosed;
+    
+    public static final int CHAR_NL = 10; // new line, i.e., \n
+    public static final int CHAR_CR = 13; // carriage return, i.e, \r
 
 
     public ClusReader(String fname, Settings sett) throws IOException {
@@ -145,7 +148,7 @@ public class ClusReader {
     public boolean isEol() throws IOException {
         Reader reader = m_Token.getReader();
         int ch = getNextChar(reader);
-        if (ch == 10 || ch == 13)
+        if (ch == CHAR_NL || ch == CHAR_CR)
             return true;
         setLastChar(ch);
         return false;
@@ -210,7 +213,7 @@ public class ClusReader {
         Reader reader = m_Token.getReader();
         int ch = getNextChar(reader);
         while (ch != -1) {
-            if (ch == 10 || ch == 13) {
+            if (ch == CHAR_NL || ch == CHAR_CR) {
                 m_Attr = 0;
                 m_Row++;
                 break;
@@ -221,7 +224,7 @@ public class ClusReader {
             else if (ch != ' ' && ch != '\t' && allowall == false) {
                 int cnt = 0;
                 StringBuffer err = new StringBuffer();
-                while (ch != 10 && ch != 13 && cnt < 100) {
+                while (ch != CHAR_NL && ch != CHAR_CR && cnt < 100) {
                     err.append((char) ch);
                     ch = getNextChar(reader);
                     cnt++;
@@ -237,8 +240,8 @@ public class ClusReader {
         Reader reader = m_Token.getReader();
         int ch = getNextChar(reader);
         while (ch != -1) {
-            if (ch == 10 || ch == 13) {
-                setLastChar(13);
+            if (ch == CHAR_NL || ch == CHAR_CR) {
+                setLastChar(CHAR_CR);
                 break;
             }
             ch = reader.read();
@@ -256,14 +259,14 @@ public class ClusReader {
                 readTillEol();
                 break;
             }
-            if (ch != '\t' && ch != 10 && ch != 13) {
+            if (ch != '\t' && ch != CHAR_NL && ch != CHAR_CR) {
                 m_Scratch.append((char) ch);
                 if (ch != ' ')
                     nb++;
                 if (nb == 1 && ch == '\"') {
                     ch = reader.read();
                     // Add support for escaped quotes, i.e., '\"'?
-                    while (ch != -1 && ch != 10 && ch != 13 && ch != '\"') {
+                    while (ch != -1 && ch != CHAR_NL && ch != CHAR_CR && ch != '\"') {
                         m_Scratch.append((char) ch);
                         ch = reader.read();
                     }
@@ -272,8 +275,8 @@ public class ClusReader {
                 }
             }
             else {
-                if (ch == 10 || ch == 13)
-                    setLastChar(13);
+                if (ch == CHAR_NL || ch == CHAR_CR)
+                    setLastChar(CHAR_CR);
                 if (nb > 0)
                     break;
             }
@@ -310,15 +313,15 @@ public class ClusReader {
         m_Scratch.setLength(0);
         int ch = getNextChar(reader);
         while (ch != -1 && ch != ',' && ch != '}') {
-            if (ch != ' ' && ch != '\t' && ch != 10 && ch != 13) {
+            if (ch != ' ' && ch != '\t' && ch != CHAR_NL && ch != CHAR_CR) {
                 if (ch != '\'' && ch != '"') {
                     m_Scratch.append((char) ch);
                     nb++;
                 }
             }
             else {
-                if (ch == 10 || ch == 13)
-                    setLastChar(13);
+                if (ch == CHAR_NL || ch == CHAR_CR)
+                    setLastChar(CHAR_CR);
                 if (nb > 0)
                     break;
             }
@@ -378,7 +381,7 @@ public class ClusReader {
         m_Scratch.setLength(0);
         int ch = getNextChar(reader);
         //while ((ch == ' ' || ch == '\t') && ch != -1) {
-        while ((ch == ' ' || ch == '\t' || ch == 10 || ch == 13) && ch != -1) {
+        while ((ch == ' ' || ch == '\t' || ch == CHAR_NL || ch == CHAR_CR) && ch != -1) {
             ch = getNextChar(reader);
         }
         if (ch != '[') {
@@ -394,8 +397,8 @@ public class ClusReader {
             }
             if (ch == ']') {
                 ch = getNextChar(reader); // eat the ,
-                if (ch == 10 || ch == 13)
-                    setLastChar(13);
+                if (ch == CHAR_NL || ch == CHAR_CR)
+                    setLastChar(CHAR_CR);
                 break;
             }
             ch = getNextChar(reader);
@@ -416,7 +419,7 @@ public class ClusReader {
         m_Scratch.setLength(0);
         int open = 0;
         int ch = getNextChar(reader);
-        while ((ch == ' ' || ch == '\t' || ch == 10 || ch == 13) && ch != -1) {
+        while ((ch == ' ' || ch == '\t' || ch == CHAR_NL || ch == CHAR_CR) && ch != -1) {
             ch = getNextChar(reader);
         }
         if (ch != '{') {
@@ -439,8 +442,8 @@ public class ClusReader {
             }
             if (ch == '}' && open == 0) {
                 ch = getNextChar(reader); //eat the ,
-                if (ch == 10 || ch == 13)
-                    setLastChar(13);
+                if (ch == CHAR_NL || ch == CHAR_CR)
+                    setLastChar(CHAR_CR);
                 break;
             }
             ch = getNextChar(reader);
@@ -461,7 +464,7 @@ public class ClusReader {
         m_Scratch.setLength(0);
         int open = 0;
         int ch = getNextChar(reader);
-        while ((ch == ' ' || ch == '\t' || ch == 10 || ch == 13) && ch != -1) {
+        while ((ch == ' ' || ch == '\t' || ch == CHAR_NL || ch == CHAR_CR) && ch != -1) {
             ch = getNextChar(reader);
         }
         if (ch != '[') {
@@ -484,8 +487,8 @@ public class ClusReader {
             }
             if (ch == ']' && open == 0) {
                 ch = getNextChar(reader); //eat the ,
-                if (ch == 10 || ch == 13)
-                    setLastChar(13);
+                if (ch == CHAR_NL || ch == CHAR_CR)
+                    setLastChar(CHAR_CR);
                 break;
             }
             ch = getNextChar(reader);
@@ -514,7 +517,7 @@ public class ClusReader {
         Reader reader = m_Token.getReader();
         int ch = getNextChar(reader);
         while (ch != -1 && ch != ',' && ch != '}') {
-            if (ch != ' ' && ch != '\t' && ch != 10 && ch != 13) {
+            if (ch != ' ' && ch != '\t' && ch != CHAR_NL && ch != CHAR_CR) {
                 if (ch == '[') {
                     is_ts = true;
                     break;
@@ -522,8 +525,8 @@ public class ClusReader {
                 nb++;
             }
             else {
-                if (ch == 10 || ch == 13)
-                    setLastChar(13);
+                if (ch == CHAR_NL || ch == CHAR_CR)
+                    setLastChar(CHAR_CR);
                 if (nb > 0)
                     break;
             }
@@ -531,12 +534,12 @@ public class ClusReader {
         }
         int prev = ch;
         while (ch != -1 && prev != ']' && is_ts) {
-            if (ch != ' ' && ch != '\t' && ch != 10 && ch != 13) {
+            if (ch != ' ' && ch != '\t' && ch != CHAR_NL && ch != CHAR_CR) {
                 nb++;
             }
             else {
-                if (ch == 10 || ch == 13)
-                    setLastChar(13);
+                if (ch == CHAR_NL || ch == CHAR_CR)
+                    setLastChar(CHAR_CR);
                 if (nb > 0)
                     break;
             }
@@ -565,8 +568,8 @@ public class ClusReader {
                 if (ch == ',') {
                     break;
                 }
-                if (ch == 10 || ch == 13) {
-                    setLastChar(13);
+                if (ch == CHAR_NL || ch == CHAR_CR) {
+                    setLastChar(CHAR_CR);
                     if (nb > 0)
                         break;
                 }
@@ -598,7 +601,7 @@ public class ClusReader {
         Reader reader = m_Token.getReader();
         int ch = reader.read();
         while (ch != -1) {
-            if (ch == 10 || ch == 13) {
+            if (ch == CHAR_NL || ch == CHAR_CR) {
                 if (nbchars > 0)
                     nbrows++;
                 nbchars = 0;
