@@ -312,7 +312,7 @@ public class ClusForest implements ClusModel, Serializable {
             targetSubspaces = indent + m_TargetSubspaceInfo.getAverageNumberOfTargetsUsedInfo() + indent + m_TargetSubspaceInfo.getCoverageInfo() + indent + m_TargetSubspaceInfo.getCoverageNormalizedInfo();
         }
 
-        String result = String.format("FOREST with %d models (Total nodes: %d and leaves: %d)%s\n", getNbModels(), getNbNodes(), getNbLeaves(), targetSubspaces);
+        String result = String.format("FOREST with %d models (Total nodes: %d and leaves: %d)%s", getNbModels(), getNbNodes(), getNbLeaves(), targetSubspaces);
 
         if (getSettings().getEnsemble().isPrintEnsembleModelInfo()) {
             for (int i = 0; i < getNbModels(); i++) {

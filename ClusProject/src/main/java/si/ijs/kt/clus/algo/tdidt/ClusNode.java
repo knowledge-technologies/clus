@@ -1308,10 +1308,10 @@ public class ClusNode extends MyNode implements ClusModel {
         if(thresholds != null){
             writer.print("[");
             for (int i = 0; i < thresholds.length; i++) {
-                writer.print(ClusFormat.FOUR_AFTER_DOT.format(thresholds[i]) + (i == thresholds.length - 1 ? "]\n" : ", "));
+                writer.print(ClusFormat.FOUR_AFTER_DOT.format(thresholds[i]) + (i == thresholds.length - 1 ? "]" + System.lineSeparator() : ", "));
             }
         } else{
-            writer.print("null\n");
+            writer.print("null" + System.lineSeparator());
         }
 
     }

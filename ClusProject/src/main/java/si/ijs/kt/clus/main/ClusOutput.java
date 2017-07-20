@@ -65,6 +65,7 @@ public class ClusOutput {
     protected Settings m_Sett2;
     protected StringWriter m_StrWrt;
 
+
     public ClusOutput(String fname, ClusSchema schema, Settings sett) throws IOException {
         m_Schema = schema;
         m_Sett = sett;
@@ -206,14 +207,13 @@ public class ClusOutput {
 
         // print multi-label thresholds
         if (cr.getStatManager().getSettings().getMLC().shouldShowThresholds()) {
-
             String mlThresholdsTitle = "MultiLabelThresholds:";
-            m_Writer.println(mlThresholdsTitle);
+            m_Writer.println(System.lineSeparator() + mlThresholdsTitle);
             m_Writer.println(StringUtils.makeString('-', mlThresholdsTitle.length()));
             for (int i = 0; i < cr.getNbModels(); i++) {
                 ClusModel root = (ClusModel) models.get(i);
                 String modelName = cr.getModelInfo(i).getName();
-                if(cr.getStatManager().getSettings().getMLC().shouldShowThresholds(modelName)){
+                if (cr.getStatManager().getSettings().getMLC().shouldShowThresholds(modelName)) {
                     if (root instanceof ClusForest) {
                         m_Writer.println(modelName);
                         ClusForest forest = (ClusForest) root;
@@ -222,7 +222,8 @@ public class ClusOutput {
                             ((ClusNode) forest.getModel(tree)).printMultiLabelThresholds(m_Writer, tree);
                         }
                         m_Writer.println();
-                    } else if (root instanceof ClusNode) {
+                    }
+                    else if (root instanceof ClusNode) {
                         m_Writer.println(modelName);
                         ((ClusNode) root).printMultiLabelThresholds(m_Writer, -1);
                         m_Writer.println();
