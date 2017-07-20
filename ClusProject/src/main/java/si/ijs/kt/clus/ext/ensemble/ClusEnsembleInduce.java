@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.ext.ensembles;
+package si.ijs.kt.clus.ext.ensemble;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -49,9 +49,9 @@ import si.ijs.kt.clus.data.rows.TupleIterator;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.error.common.ComponentError;
-import si.ijs.kt.clus.ext.ensembles.containers.OneBagResults;
-import si.ijs.kt.clus.ext.ensembles.induceCallables.InduceExtraTreeCallable;
-import si.ijs.kt.clus.ext.ensembles.induceCallables.InduceOneBagCallable;
+import si.ijs.kt.clus.ext.ensemble.callable.InduceExtraTreeCallable;
+import si.ijs.kt.clus.ext.ensemble.callable.InduceOneBagCallable;
+import si.ijs.kt.clus.ext.ensemble.container.OneBagResults;
 import si.ijs.kt.clus.ext.featureRanking.ClusEnsembleFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;

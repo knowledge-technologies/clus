@@ -3,7 +3,7 @@ package si.ijs.kt.clus.ext.semisupervised.confidence.classification;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
-import si.ijs.kt.clus.ext.ensembles.ClusForest;
+import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.semisupervised.Helper;
 import si.ijs.kt.clus.ext.semisupervised.confidence.PredictionConfidence;
 import si.ijs.kt.clus.main.ClusStatManager;

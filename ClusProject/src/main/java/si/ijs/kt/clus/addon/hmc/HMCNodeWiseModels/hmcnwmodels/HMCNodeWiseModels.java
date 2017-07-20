@@ -40,7 +40,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.SparseDataTuple;
 import si.ijs.kt.clus.data.rows.TupleIterator;
 import si.ijs.kt.clus.data.type.ClusAttrType;
-import si.ijs.kt.clus.ext.ensembles.ClusEnsembleClassifier;
+import si.ijs.kt.clus.ext.ensemble.ClusEnsembleClassifier;
 import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
 import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
 import si.ijs.kt.clus.ext.hierarchical.ClassesAttrType;

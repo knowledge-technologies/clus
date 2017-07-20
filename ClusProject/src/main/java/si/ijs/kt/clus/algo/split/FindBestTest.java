@@ -31,7 +31,7 @@ import si.ijs.kt.clus.data.rows.RowDataSortHelper;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
-import si.ijs.kt.clus.ext.ensembles.ClusEnsembleInduce;
+import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.heuristic.GISHeuristic;
 import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicCompatibility;

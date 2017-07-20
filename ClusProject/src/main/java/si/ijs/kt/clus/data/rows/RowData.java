@@ -40,7 +40,7 @@ import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
-import si.ijs.kt.clus.ext.ensembles.ClusEnsembleInduce;
+import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.test.ClusRuleConstraintInduceTest;
 import si.ijs.kt.clus.model.test.NodeTest;

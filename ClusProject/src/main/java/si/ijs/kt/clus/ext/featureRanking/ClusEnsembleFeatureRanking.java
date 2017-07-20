@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.ext.ensembles.containers.NodeDepthPair;
+import si.ijs.kt.clus.ext.ensemble.container.NodeDepthPair;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;

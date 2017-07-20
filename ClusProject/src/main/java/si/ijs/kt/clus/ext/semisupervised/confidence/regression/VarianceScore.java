@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Map;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
-import si.ijs.kt.clus.ext.ensembles.ClusForest;
+import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.ext.semisupervised.Helper;
 import si.ijs.kt.clus.ext.semisupervised.confidence.PredictionConfidence;
