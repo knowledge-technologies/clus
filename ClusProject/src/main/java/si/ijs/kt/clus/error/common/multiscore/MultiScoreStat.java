@@ -28,7 +28,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.data.cols.ColTarget;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.SparseDataTuple;
-import si.ijs.kt.clus.ext.ensembles.ClusEnsembleROSInfo;
+import si.ijs.kt.clus.ext.ensemble.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;

@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.ext.ensembles.containers;
+package si.ijs.kt.clus.ext.ensemble.container;
 
 import java.util.HashMap;
 

@@ -9,7 +9,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataPreprocs;
 import si.ijs.kt.clus.data.rows.DataTuple;
-import si.ijs.kt.clus.ext.ensembles.ClusForest;
+import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;

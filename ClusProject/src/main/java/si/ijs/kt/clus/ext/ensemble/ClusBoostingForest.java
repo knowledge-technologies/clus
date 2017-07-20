@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.ext.ensembles;
+package si.ijs.kt.clus.ext.ensemble;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -6,7 +6,7 @@ import java.util.Map;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.ext.ensembles.ClusForest;
+import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.semisupervised.confidence.aggregation.Aggregation;
 import si.ijs.kt.clus.ext.semisupervised.confidence.aggregation.Average;
 import si.ijs.kt.clus.ext.semisupervised.confidence.aggregation.AverageHMC;

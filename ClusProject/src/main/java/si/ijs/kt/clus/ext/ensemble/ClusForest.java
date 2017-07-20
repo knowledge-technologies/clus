@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.ext.ensembles;
+package si.ijs.kt.clus.ext.ensemble;
 
 import java.io.File;
 import java.io.FileOutputStream;

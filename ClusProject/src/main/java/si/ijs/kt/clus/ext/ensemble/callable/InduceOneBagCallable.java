@@ -1,11 +1,11 @@
 
-package si.ijs.kt.clus.ext.ensembles.induceCallables;
+package si.ijs.kt.clus.ext.ensemble.callable;
 
 import java.util.concurrent.Callable;
 
 import si.ijs.kt.clus.data.rows.TupleIterator;
-import si.ijs.kt.clus.ext.ensembles.ClusEnsembleInduce;
-import si.ijs.kt.clus.ext.ensembles.containers.OneBagResults;
+import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
+import si.ijs.kt.clus.ext.ensemble.container.OneBagResults;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.selection.BaggingSelection;

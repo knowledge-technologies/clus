@@ -32,7 +32,7 @@ import si.ijs.kt.clus.algo.tdidt.ClusDecisionTree;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.ext.ensembles.ClusForest;
+import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
