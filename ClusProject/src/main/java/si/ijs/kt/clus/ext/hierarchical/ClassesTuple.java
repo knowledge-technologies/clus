@@ -195,7 +195,7 @@ public class ClassesTuple implements Serializable {
     }
 
 
-    public final void addIntermediateElems(ClassHierarchy hier, boolean[] alllabels, ArrayList added) {
+    public final void addIntermediateElems(ClassHierarchy hier, boolean[] alllabels, ArrayList<ClassesValue> added) {
         fillBoolArrayNodeAndAncestors(alllabels);
         for (int i = 0; i < hier.getTotal(); i++) {
             if (alllabels[i]) {

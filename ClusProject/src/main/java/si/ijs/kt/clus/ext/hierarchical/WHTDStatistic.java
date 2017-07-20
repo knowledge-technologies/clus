@@ -298,7 +298,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         // Same tuple with intermediate elements indicated as such
         // Useful for printing the tree without the intermediate classes
         ClassesTuple printTuple = m_Hier.getTuple(m_DiscrMean);
-        ArrayList added = new ArrayList();
+        ArrayList<ClassesValue> added = new ArrayList<ClassesValue>();
         boolean[] interms = new boolean[m_Hier.getTotal()];
         printTuple.addIntermediateElems(m_Hier, interms, added);
         return printTuple;
@@ -930,9 +930,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         int N = 0;
         int NR = m_data.getNbRows();
         double I = 0;
-        double avgik = 0.0;
-        double avgikR = 0.0;
-        double num, den, numR, denR, ikk, ikkR, W, WR = 0.0;
+//        double avgik = 0.0;
+//        double avgikR = 0.0;
+        double num, den, numR, denR, ikk, ikkR; //, W, WR = 0.0;
         int vkupenBrojElementiVoOvojSplit = N - M;
         int vkupenBrojElementiVoCelataSuma = NR;
         M = prevIndex;
@@ -1386,7 +1386,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double downsumR = 0.0;
         int M = 0;
         int N = m_data.getNbRows();
-        long NR = m_data.getNbRows();
+//        long NR = m_data.getNbRows();
         if (splitIndex > 0) {
             N = splitIndex;
         }
@@ -1580,7 +1580,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double downsumR = 0.0;
         int M = 0;
         int N = m_data.getNbRows();
-        long NR = m_data.getNbRows();
+//        long NR = m_data.getNbRows();
         if (splitIndex > 0) {
             N = splitIndex;
         }
@@ -2257,7 +2257,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double I = 0;
         double avgik = 0.0;
         double avgikR = 0.0;
-        double num, den, numR, denR, ikk, ikkR, W, WR = 0.0;
+        double num, den, numR, denR; //, ikk, ikkR, W, WR = 0.0;
         int vkupenBrojElementiVoOvojSplit = N - M;
         int vkupenBrojElementiVoCelataSuma = NR;
         M = prevIndex;
@@ -2536,18 +2536,22 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         vkupenBrojElementiVoOvojSplit = N;
         num = (vkupenBrojElementiVoOvojSplit - 1) * previousSumWXX[0];
         den = 2 * previousSumW[0] * previousSumX2[0];
-        if (den != 0 && num != 0 && !flagLeftAllEqual)
-            ikk = num / den;
-        else
-            ikk = 0;
+        if (den != 0 && num != 0 && !flagLeftAllEqual){
+//            ikk = num / den;
+        }
+        else{
+//            ikk = 0;
+        }
 
         vkupenBrojElementiVoOvojSplit = NR - N;
         numR = (vkupenBrojElementiVoOvojSplit - 1) * previousSumWXXR[0];
         denR = 2 * previousSumWR[0] * previousSumX2R[0];
-        if (denR != 0 && numR != 0 && !flagRightAllEqual)
-            ikkR = numR / denR;
-        else
-            ikkR = 0;
+        if (denR != 0 && numR != 0 && !flagRightAllEqual){
+//            ikkR = numR / denR;
+        }
+        else{
+//            ikkR = 0;
+        }
 
         //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
         //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+den+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
@@ -2618,7 +2622,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(m_Hier.getType().getArrayIndex());
         tp.fillBoolArrayNodeAndAncestors(actual);
         for (int i = 0; i < m_Hier.getTotal(); i++) {
-            NumericAttrType type = getAttribute(i);
+//            NumericAttrType type = getAttribute(i);
             double actual_zo = actual[i] ? 1.0 : 0.0;
             double dist = actual_zo - m_Means[i];
             distances[i] = dist * dist * m_Hier.m_Weights[i];
@@ -2802,7 +2806,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
-    public void vote(ArrayList votes) {
+    public void vote(ArrayList<ClusStatistic> votes) {
         reset();
         m_Means = new double[m_NbAttrs];
         WHTDStatistic vote;

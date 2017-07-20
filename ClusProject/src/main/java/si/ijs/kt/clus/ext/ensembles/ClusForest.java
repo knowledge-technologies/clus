@@ -44,6 +44,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.ext.hierarchical.HierClassTresholdPruner;
 import si.ijs.kt.clus.ext.hierarchical.HierSingleLabelStat;
 import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
+import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -81,7 +82,7 @@ public class ClusForest implements ClusModel, Serializable {
 
     //added 13/1/2014 by Jurica Levatic
     /** Individual votes of trees in ensemble, used for calculation of confidence of predictions in self-training */
-    ArrayList m_Votes;
+    ArrayList<ClusStatistic> m_Votes;
     /**
      * // FIXME: A little hack to manipulate model info from outside, this should be implemented otherwise (e.g.,
      * ClusModel for Self-training which wraps around this model)
@@ -386,7 +387,7 @@ public class ClusForest implements ClusModel, Serializable {
     /*
      * Returns individual votes of base methods in ensemble for the latest prediction made
      */
-    public ArrayList getVotes() {
+    public ArrayList<ClusStatistic> getVotes() {
         return m_Votes;
     }
 
@@ -793,12 +794,12 @@ public class ClusForest implements ClusModel, Serializable {
     /**
      * Return the list of decision trees = the ensemble.
      */
-    public ArrayList getModels() {
+    public ArrayList<ClusModel> getModels() {
         return m_Forest;
     }
 
 
-    public void setModels(ArrayList models) {
+    public void setModels(ArrayList<ClusModel> models) {
         m_Forest = models;
     }
 

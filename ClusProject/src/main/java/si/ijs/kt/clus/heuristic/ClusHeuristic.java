@@ -157,7 +157,7 @@ public abstract class ClusHeuristic {
     }
 
 
-    /*
+    /**
      * Flag that indicates whether the corresponding split is acceptable. The flag will only be checked after the best
      * test was chosen.
      * Useful e.g. if you want to find the best split according to the heuristic, but only keep that split if it is

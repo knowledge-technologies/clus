@@ -32,7 +32,8 @@ public class HierJaccardDistance extends ClusDistance {
 
 
     public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {
-        return Double.POSITIVE_INFINITY;
+        throw new RuntimeException("Double.POSITIVE_INFINITY is not supposed to be returned, is it?");
+        // return Double.POSITIVE_INFINITY;
     }
 
 

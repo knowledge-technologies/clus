@@ -68,7 +68,7 @@ public class CurrentBestTestAndHeuristic {
     public double m_BestHeur;
     public double m_UnknownFreq;
     public ClusAttrType m_SplitAttr;
-    public ArrayList m_AlternativeBest = new ArrayList();
+    private ArrayList<NodeTest> m_AlternativeBest = new ArrayList<NodeTest>();
     public boolean m_IsAcceptable = true;
 
     // Cache for numeric attributes
@@ -76,7 +76,7 @@ public class CurrentBestTestAndHeuristic {
     public double m_PosFreq;
 
     // Data set
-    private RowData m_Subset;
+//    private RowData m_Subset;
     // daniela
     public double m_BestI;
     public double m_BestC;
@@ -89,10 +89,10 @@ public class CurrentBestTestAndHeuristic {
     public double hMin = Double.POSITIVE_INFINITY;
     public double hMax = Double.NEGATIVE_INFINITY;
 
-    private static final int GIS_NOT_CHECKED = -1;
-    private static final int GIS_NO = 0;
-    private static final int GIS_YES = 1;
-    private int isGIS = GIS_NOT_CHECKED;
+//    private static final int GIS_NOT_CHECKED = -1;
+//    private static final int GIS_NO = 0;
+//    private static final int GIS_YES = 1;
+//    private int isGIS = GIS_NOT_CHECKED;
     // daniela end
 
 
@@ -155,7 +155,7 @@ public class CurrentBestTestAndHeuristic {
             m_TestStat[i].setSDataSize(subset.getNbRows());
         }
         m_Heuristic.setData(subset);
-        m_Subset = subset;
+//        m_Subset = subset;
     }
 
 
@@ -300,7 +300,7 @@ public class CurrentBestTestAndHeuristic {
     }
 
 
-    public final ArrayList getAlternativeBest() {
+    public final ArrayList<NodeTest> getAlternativeBest() {
         return m_AlternativeBest;
     }
 

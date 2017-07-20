@@ -55,7 +55,7 @@ public class FindBestTest {
     protected int m_MaxStats;
 
     // daniela
-    private RowData m_NodeData;
+//    private RowData m_NodeData;
     public double hMaxB = Double.NEGATIVE_INFINITY;
     public double hMinB = Double.POSITIVE_INFINITY;
     // daniela end
