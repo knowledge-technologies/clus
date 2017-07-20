@@ -120,7 +120,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
      */
     public void updateWeighted(DataTuple tuple, int idx) {
         super.updateWeighted(tuple, idx);
-        TimeSeries newTimeSeries = new TimeSeries((TimeSeries) tuple.m_Objects[0]);
+        TimeSeries newTimeSeries = new TimeSeries((TimeSeries) tuple.m_Objects[m_Attr.getArrayIndex()]); // new TimeSeries((TimeSeries) tuple.m_Objects[0]);
         newTimeSeries.setTSWeight(tuple.getWeight());
         m_TimeSeriesStack.add(newTimeSeries);
     }
