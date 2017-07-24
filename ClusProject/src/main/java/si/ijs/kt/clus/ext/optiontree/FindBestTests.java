@@ -40,6 +40,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
 
 public class FindBestTests {
@@ -80,9 +81,9 @@ public class FindBestTests {
         return getStatManager().getSettings();
     }
 
-    public void addBestNominalTest(NominalAttrType at, RowData data, ClusStatistic totstat) throws ClusException {
+    public void addBestNominalTest(NominalAttrType at, RowData data, ClusStatistic totstat, ClusRandomNonstatic rnd) throws ClusException {
         // Reset positive statistic
-        RowData sample = createSample(data);
+        RowData sample = createSample(data, rnd);
         int nbvalues = at.getNbValues();
         
         //System.out.println("Adding nom test");
@@ -124,8 +125,8 @@ public class FindBestTests {
         m_Tests.add(tnh);
     }
 
-    public void addBestNumericTest(ClusAttrType at, RowData data, ClusStatistic totstat) throws ClusException{
-        RowData sample = createSample(data);
+    public void addBestNumericTest(ClusAttrType at, RowData data, ClusStatistic totstat, ClusRandomNonstatic rnd) throws ClusException{
+        RowData sample = createSample(data, rnd);
         DataTuple tuple;
 
         //System.out.println("Adding num test");
@@ -200,8 +201,18 @@ public class FindBestTests {
         }
     }
     
-    private RowData createSample(RowData original) {
-        return original.sample(getSettings().getTree().getTreeSplitSampling(), new ClusRandomNonstatic(getSettings().getGeneral().getRandomSeed()));
+    private RowData createSample(RowData original, ClusRandomNonstatic rnd) {
+        int N = getSettings().getTree().getTreeSplitSampling();
+        if (N == 0) {
+            return original.sample(N, rnd);
+        }
+        else {
+            String message = String.format("The value of SplitSampling = %d will result in wrong results.\n"
+                    + "Use SplitSampling = 0 or correct the code.", N);
+            throw new RuntimeException(message);
+        }
+        
+        // return original.sample(getSettings().getTree().getTreeSplitSampling(), new ClusRandomNonstatic(getSettings().getGeneral().getRandomSeed()));
     }
 
     public void sort() {

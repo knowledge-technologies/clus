@@ -833,7 +833,10 @@ public class Clus implements CMDLineArgsProvider {
         else if (num.length != 0) {
             error.addError(new PearsonCorrelation(error, num));
         }
-        else if (ts.length != 0) { throw new RuntimeException("There are some time series targets, no numeric targets, but we try to perform the step\nerror.addError(new PearsonCorrelation(error, num))."); }
+        else if (ts.length != 0) { 
+            throw new RuntimeException("There are some time series targets, no numeric targets, but we try to perform the step\nerror.addError(new PearsonCorrelation(error, num)).");
+        }
+        
         /* attach model to given schema */
         schema.attachModel(model);
         /* iterate over tuples and compute error */

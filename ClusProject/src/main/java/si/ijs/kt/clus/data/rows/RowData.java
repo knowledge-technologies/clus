@@ -1221,7 +1221,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
      * @throws IllegalArgumentException
      *         if N < 0
      */
-    public RowData sample2(int N, ClusRandomNonstatic rnd) {
+    /*    public RowData sample2(int N, ClusRandomNonstatic rnd) {
         if (N < 0)
             throw new IllegalArgumentException("N should be larger than or equal to zero");
         int nbRows = getNbRows();
@@ -1237,7 +1237,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         }
         return new RowData(res, getSchema().cloneSchema());
     }
-
+*/
 
     // Be careful when using this method! Current use in FindBestTest is wrong in the case when N != 0:
     // this is used for finding the best test. However, if N != 0 (otherwise we simply return all the data),

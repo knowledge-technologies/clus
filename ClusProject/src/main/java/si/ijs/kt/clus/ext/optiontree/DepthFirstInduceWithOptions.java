@@ -41,6 +41,7 @@ import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.ClusRandomNonstatic;
 
 
 public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
@@ -87,6 +88,8 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
             return;
         }
 
+        ClusRandomNonstatic rnd = new ClusRandomNonstatic(getSettings().getGeneral().getRandomSeed());
+        
         m_FindBestTests = new FindBestTests(m_StatManager);
         initSelectorAndSplit(m_Root.getClusteringStat());
         setInitialData(m_Root.getClusteringStat(), data);
@@ -95,9 +98,9 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
             if (at instanceof NominalAttrType)
-                m_FindBestTests.addBestNominalTest((NominalAttrType) at, data, node.getClusteringStat());
+                m_FindBestTests.addBestNominalTest((NominalAttrType) at, data, node.getClusteringStat(), rnd);
             else if (at instanceof NumericAttrType)
-                m_FindBestTests.addBestNumericTest((NumericAttrType) at, data, node.getClusteringStat());
+                m_FindBestTests.addBestNumericTest((NumericAttrType) at, data, node.getClusteringStat(), rnd);
         }
 
         m_FindBestTests.sort();
