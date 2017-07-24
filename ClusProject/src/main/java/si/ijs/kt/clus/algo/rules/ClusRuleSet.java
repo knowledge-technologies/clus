@@ -457,7 +457,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
                 }
             }
         }
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Rules left: " + getModelSize() + " out of " + nb_rules);
         return nb_rules - 1;
     }
@@ -1263,7 +1263,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      * Makes the targets more equal from gradient point of view when average is considered.
      */
     private void shiftRulePredictions(double[] defaultPred) {
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Shifting rule predictions according to the default prediction.");
         for (int iRule = 1; iRule < getModelSize(); iRule++) {
             ClusRule rule = getRule(iRule);
@@ -1293,7 +1293,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
     // private void omitRulePredictions(double[] stdDevs) {
     private void omitRulePredictions() {
 
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Omitting rule predictions for optimization.");
 
         // It depends on inner normalization if rule0 is omitted
@@ -1377,7 +1377,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      * Does not touch linear terms.
      */
     private void weightGeneralityForPredictions(int nbOfExamples) {
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Scaling the rule predictions for generalization weighting.");
         for (int iRule = 0; iRule < getModelSize(); iRule++) {
             ClusRule rule = getRule(iRule);
@@ -1459,7 +1459,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      * return Default prediction. This may be removed from other base predictors.
      */
     public double[] addDefaultRuleToRuleSet() {
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Adding default rule explicitly to rule set.");
         ClusRule defaultRuleForEnsembles = new ClusRule(m_StatManager);
 
@@ -1497,7 +1497,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      */
     // private void addLinearTermsToRuleSet(double[] mins, double[] maxs, double[] means, double[] stdDevs) {
     private void addLinearTermsToRuleSet() {
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Adding linear terms as rules.");
 
         int nbTargets = (m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET)).getNbAttributes();
@@ -1516,7 +1516,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
             }
         }
 
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("\tAdded " + nbDescrAttr + " linear terms for each target, total " + nbDescrAttr * nbTargets + " terms.");
     }
 
@@ -1552,7 +1552,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
             // addSingleLinearTerm(int iDescriptDim, int iTargetDim)
         }
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("\tAdded " + addedTerms + " linear terms explicitly to the set.");
 
         ClusRuleLinearTerm.DeleteImplicitLinearTerms(); // Not needed anymore

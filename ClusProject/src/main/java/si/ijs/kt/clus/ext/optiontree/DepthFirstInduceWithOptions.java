@@ -127,7 +127,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
 
             node.testToNode(best);
             // Output best test
-            if (getSettings().getGeneric().getVerbose() > 0)
+            if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();
@@ -155,7 +155,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
             ClusOptionNode optionNode = new ClusOptionNode();
             optionNode.setStatManager(m_StatManager);
 
-            if (getSettings().getGeneric().getVerbose() > 0)
+            if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("New option node.");
 
             if (node != m_Root) {
@@ -177,7 +177,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
                 optionNode.setHeuristicRatio(i, tnh.getHeuristicValue() / bestTest.getHeuristicValue());
                 newNode.testToNode(tnh);
 
-                if (getSettings().getGeneric().getVerbose() > 0)
+                if (getSettings().getGeneral().getVerbose() > 0)
                     System.out.println("Test: " + newNode.getTestString() + " -> " + tnh.getHeuristicValue());
 
                 newNode.setTest(tnh.updateTest());

@@ -8,7 +8,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public class SettingsOutput implements ISettings {
+public class SettingsOutput implements SettingsBase {
 
     /***********************************************************************
      * Section: Output *

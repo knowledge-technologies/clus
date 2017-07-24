@@ -480,7 +480,7 @@ public class OptXValIndOV extends OptXValInduce {
                 // Show best test
                 if (stest != null)
                     stest.sortIntervals();
-                if (getSettings().getGeneric().getVerbose() > 0)
+                if (getSettings().getGeneral().getVerbose() > 0)
                     ngrp.println();
                 ngrps.insertBefore(ngrp);
                 nb_groups++;

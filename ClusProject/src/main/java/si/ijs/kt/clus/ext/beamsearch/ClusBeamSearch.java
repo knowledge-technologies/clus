@@ -50,7 +50,7 @@ import si.ijs.kt.clus.ext.constraint.ClusConstraintFile;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.ISettings;
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBeamSearch;
 import si.ijs.kt.clus.main.settings.SettingsTree;
@@ -170,7 +170,7 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
         /* Has syntactic constraints? */
         ClusNode root = null;
         String constr_file = sett.getConstraints().getConstraintFile();
-        if (StringUtils.unCaseCompare(constr_file, ISettings.NONE)) {
+        if (StringUtils.unCaseCompare(constr_file, SettingsBase.NONE)) {
             root = new ClusNode();
             root.setClusteringStat(stat);
         }
@@ -232,7 +232,7 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
                 ClusNode ref_leaf = (ClusNode) leaf.cloneNode();
                 ref_leaf.testToNode(sel);
                 // output best test
-                if (getSettings().getGeneric().getVerbose() > 0)
+                if (getSettings().getGeneral().getVerbose() > 0)
                     System.out.println("Test: " + ref_leaf.getTestString() + " -> " + sel.m_BestHeur + " (" + ref_leaf.getTest().getPosFreq() + ")");
                 // create child nodes
                 ClusStatManager mgr = m_Induce.getStatManager();

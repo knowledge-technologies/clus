@@ -90,7 +90,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
 
 
     private final void showFold(int i) {
-        if (getSettings().getGeneric().getVerbose() > 1) {
+        if (getSettings().getGeneral().getVerbose() > 1) {
             if (i != 0)
                 System.out.print(" ");
             System.out.print(String.valueOf(i + 1));
@@ -137,7 +137,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
 
 
     public double doParamXVal(RowData trset, RowData pruneset) throws ClusException, IOException, InterruptedException {
-        int prevVerb = getSettings().getGeneric().enableVerbose(0);
+        int prevVerb = getSettings().getGeneral().enableVerbose(0);
         ClusStatManager mgr = getStatManager();
         ClusSummary summ = new ClusSummary();
         summ.setStatManager(getStatManager());
@@ -171,13 +171,13 @@ public class CDTTuneFTest extends ClusDecisionTree {
                 summ.addSummary(cr);
             }
             avgSize /= nbfolds;
-            if (getSettings().getGeneric().getVerbose() > 1)
+            if (getSettings().getGeneral().getVerbose() > 1)
                 System.out.println();
         }
         ClusModelInfo mi = summ.getModelInfo(ClusModel.ORIGINAL);
-        getSettings().getGeneric().enableVerbose(prevVerb);
+        getSettings().getGeneral().enableVerbose(prevVerb);
         ClusError err = mi.getTestError().getFirstError();
-        if (getSettings().getGeneric().getVerbose() > 1) {
+        if (getSettings().getGeneral().getVerbose() > 1) {
             PrintWriter wrt = new PrintWriter(new OutputStreamWriter(System.out));
             wrt.print("Size: " + avgSize + ", ");
             wrt.print("Error: ");
@@ -193,21 +193,21 @@ public class CDTTuneFTest extends ClusDecisionTree {
         boolean low = createTuneError(getStatManager()).getFirstError().shouldBeLow();
         double best_error = low ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
         for (int i = 0; i < m_FTests.length; i++) {
-            getSettings().getTree().setFTest(m_FTests[i], getSettings().getGeneric().getVerbose());
-            if (getSettings().getGeneric().getVerbose() > 0)
+            getSettings().getTree().setFTest(m_FTests[i], getSettings().getGeneral().getVerbose());
+            if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Try for F-test value = " + m_FTests[i]);
             double err = doParamXVal(trset, pruneset);
-            if (getSettings().getGeneric().getVerbose() > 1)
+            if (getSettings().getGeneral().getVerbose() > 1)
                 System.out.print("-> " + err);
             if (low) {
                 if (err < best_error - 1e-16) {
                     best_error = err;
                     best_value = i;
-                    if (getSettings().getGeneric().getVerbose() > 1)
+                    if (getSettings().getGeneral().getVerbose() > 1)
                         System.out.println(" *");
                 }
                 else {
-                    if (getSettings().getGeneric().getVerbose() > 1)
+                    if (getSettings().getGeneral().getVerbose() > 1)
                         System.out.println();
                 }
             }
@@ -215,19 +215,19 @@ public class CDTTuneFTest extends ClusDecisionTree {
                 if (err > best_error + 1e-16) {
                     best_error = err;
                     best_value = i;
-                    if (getSettings().getGeneric().getVerbose() > 1)
+                    if (getSettings().getGeneral().getVerbose() > 1)
                         System.out.println(" *");
                 }
                 else {
-                    if (getSettings().getGeneric().getVerbose() > 1)
+                    if (getSettings().getGeneral().getVerbose() > 1)
                         System.out.println();
                 }
             }
-            if (getSettings().getGeneric().getVerbose() > 0)
+            if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println();
         }
-        getSettings().getTree().setFTest(m_FTests[best_value], getSettings().getGeneric().getVerbose());
-        if (getSettings().getGeneric().getVerbose() > 0)
+        getSettings().getTree().setFTest(m_FTests[best_value], getSettings().getGeneral().getVerbose());
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Best F-test value is: " + m_FTests[best_value]);
     }
 

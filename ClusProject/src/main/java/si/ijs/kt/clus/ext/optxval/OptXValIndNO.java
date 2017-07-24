@@ -72,7 +72,7 @@ public class OptXValIndNO extends OptXValInduce {
                     }
                 }
                 // Show best test
-                if (getSettings().getGeneric().getVerbose() > 0)
+                if (getSettings().getGeneral().getVerbose() > 0)
                     ngrp.println();
                 ngrps.insertBefore(ngrp);
                 nb_groups++;

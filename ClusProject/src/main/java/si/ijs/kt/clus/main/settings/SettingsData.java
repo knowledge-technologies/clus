@@ -10,7 +10,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrInt;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsData implements ISettings {
+public class SettingsData implements SettingsBase {
 
     /***********************************************************************
      * Section: Data *

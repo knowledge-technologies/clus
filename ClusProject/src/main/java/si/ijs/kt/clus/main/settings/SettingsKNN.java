@@ -5,7 +5,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 
-public class SettingsKNN implements ISettings {
+public class SettingsKNN implements SettingsBase {
 
     /***********************************************************************
      * Section: KNN *

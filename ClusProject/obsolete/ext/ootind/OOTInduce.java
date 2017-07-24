@@ -298,7 +298,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
             }
             m_PosStat[i] = m_TestStat[i][0];
             // Create test selectors for each fold :-)
-            CurrentBestTestAndHeuristic sel = m_Selector[i] = new CurrentBestTestAndHeuristic(getSettings().getGeneric().getVerbose());
+            CurrentBestTestAndHeuristic sel = m_Selector[i] = new CurrentBestTestAndHeuristic(getSettings().getGeneral().getVerbose());
             sel.m_Heuristic = m_Heuristic;
         }
         // Initialize test selector for depth first (1opt)

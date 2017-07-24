@@ -32,22 +32,10 @@ public class SettingsGeneric {
     protected String m_DirName;
     protected String m_Suffix = "";
 
-    public static int VERBOSE = 1; // TODO: migrate to Log4J
     public static boolean EXACT_TIME = false;
 
 
-    public int getVerbose() {
-        return VERBOSE;
-    }
-
-
-    public int enableVerbose(int talk) {
-
-        int prev = VERBOSE;
-        VERBOSE = talk;
-        return prev;
-    }
-
+  
 
     public Date getDate() {
         return m_Date;

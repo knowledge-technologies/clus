@@ -73,7 +73,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
         double ss_pos = pstat.getSVarS(m_ClusteringWeights);
         double ss_neg = tstat.getSVarSDiff(m_ClusteringWeights, pstat);
         double value = FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
-        if (getSettings().getGeneric().getVerbose() >= 10) {
+        if (getSettings().getGeneral().getVerbose() >= 10) {
             System.out.println("TOT: " + tstat.getDebugString());
             System.out.println("POS: " + pstat.getDebugString());
             System.out.println("-> (" + ss_tot + ", " + ss_pos + ", " + ss_neg + ") " + value);

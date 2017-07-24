@@ -12,7 +12,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
 
-public class SettingsEnsemble implements ISettings {
+public class SettingsEnsemble implements SettingsBase {
 
     /***********************************************************************
      * Section: Ensemble methods *

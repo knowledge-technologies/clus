@@ -4,7 +4,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
-public class SettingsExperimental implements ISettings {
+public class SettingsExperimental implements SettingsBase {
 
     /***********************************************************************
      * Cross-validaiton *

@@ -76,7 +76,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
 
 
     public ClusError doParamXVal(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
-        int prevVerb = getSettings().getGeneric().enableVerbose(0);
+        int prevVerb = getSettings().getGeneral().enableVerbose(0);
         ClusStatManager mgr = getStatManager();
         ClusSummary summ = new ClusSummary();
         summ.setTestError(createTuneError(mgr));
@@ -97,7 +97,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
 
         }
         ClusModelInfo mi = summ.getModelInfo(ClusModel.PRUNED);
-        getSettings().getGeneric().enableVerbose(prevVerb);
+        getSettings().getGeneral().enableVerbose(prevVerb);
 
         ClusErrorList err_list = mi.getTestError();
         ClusError err = err_list.getFirstError();

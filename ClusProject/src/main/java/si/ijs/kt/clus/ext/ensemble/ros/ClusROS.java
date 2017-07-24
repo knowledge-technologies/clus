@@ -110,7 +110,7 @@ public class ClusROS {
         int[] sizes = sett.getNbBaggingSets().getIntVectorSorted();
         int maxEnsembleSize = sizes[sizes.length - 1];
 
-        if (settMain.getGeneric().getVerbose() > 0)
+        if (settMain.getGeneral().getVerbose() > 0)
             System.out.println(String.format("ROS: creating %s target subspaces.", maxEnsembleSize));
 
         return generateROSEnsembleSubspaces(schema, subspaceSize, maxEnsembleSize);

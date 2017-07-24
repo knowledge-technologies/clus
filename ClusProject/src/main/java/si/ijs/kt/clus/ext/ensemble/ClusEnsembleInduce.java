@@ -63,6 +63,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.SettingsGeneric;
 import si.ijs.kt.clus.main.settings.SettingsMLC;
 import si.ijs.kt.clus.main.settings.SettingsOutput;
@@ -320,7 +321,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
 
         SettingsEnsemble set = getSettings().getEnsemble();
-        SettingsGeneric setg = getSettings().getGeneric();
+        SettingsGeneral setg = getSettings().getGeneral();
 
         System.out.println("Memory And Time Optimization = " + m_OptMode);
         System.out.println("Out-Of-Bag Estimate of the error = " + set.shouldEstimateOOB());
@@ -487,7 +488,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         for (int i = 1; i <= m_NbMaxBags; i++) {
             long one_bag_time = ResourceInfo.getTime();
-            if (getSettings().getGeneric().getVerbose() > 0)
+            if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Bag: " + i);
 
             ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
@@ -553,7 +554,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         for (int i = 1; i <= m_NbMaxBags; i++) {
             long one_bag_time = ResourceInfo.getTime();
-            if (getSettings().getGeneric().getVerbose() > 0)
+            if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Bag: " + i);
 
             ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
@@ -792,7 +793,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             h.setClusteringWeightsEnabledAttributes(enabled);
 
             // display info about used targets
-            if (getSettings().getGeneric().getVerbose() > 0) {
+            if (getSettings().getGeneral().getVerbose() > 0) {
                 int[] trgts = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(bagNo - 1));
 
                 if (trgts.length > 15) {
@@ -809,7 +810,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
         long one_bag_time = ResourceInfo.getTime();
         SettingsEnsemble sett = cr.getStatManager().getSettings().getEnsemble();
-        SettingsGeneric setg = cr.getStatManager().getSettings().getGeneric();
+        SettingsGeneral setg = cr.getStatManager().getSettings().getGeneral();
 
         if (setg.getVerbose() > 0)
             System.out.println("Bag: " + i);
@@ -1046,7 +1047,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         for (int i = 1; i <= m_NbMaxBags; i++) {
             long one_bag_time = ResourceInfo.getTime();
-            if (getSettings().getGeneric().getVerbose() > 0)
+            if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Bag: " + i);
 
             ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
@@ -1178,7 +1179,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
         long one_bag_time = ResourceInfo.getTime();
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Bag: " + i);
 
         ClusRun crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());

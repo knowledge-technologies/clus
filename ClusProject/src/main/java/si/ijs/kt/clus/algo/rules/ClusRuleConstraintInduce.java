@@ -187,7 +187,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             System.out.println("Best test: " + m_BestTest);
             if (m_BestTest != null && m_BestHeur != Double.NEGATIVE_INFINITY) {
                 ClusRuleConstraintInduceTest test = m_BestTest;
-                if (getSettings().getGeneric().getVerbose() > 0)
+                if (getSettings().getGeneral().getVerbose() > 0)
                     System.out.println("  Test: " + test.getString() + " -> " + m_BestHeur);
                 RowData subset;
                 if (test.isSmallerThanTest())
@@ -229,7 +229,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             ClusBeamModel model = (ClusBeamModel) models.get(i);
             if (!(model.isRefined() || model.isFinished())) {
                 // System.out.println("Refine "+model.toString());
-                // if (getSettings().getGeneric().getVerbose() > 0) System.out.println(" Refine: model " + i);
+                // if (getSettings().getGeneral().getVerbose() > 0) System.out.println(" Refine: model " + i);
                 refineModel(model, beam, i);
                 model.setRefined(true);
                 model.setParentModelIndex(-1);
@@ -242,7 +242,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         ClusBeam beam = initializeBeam(data);
         int i = 0;
         while (true) {
-            if (getSettings().getGeneric().getVerbose() > 0) {
+            if (getSettings().getGeneral().getVerbose() > 0) {
                 System.out.println("Step: " + i);
             }
             else {
@@ -293,7 +293,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         int i = 0;
         System.out.print("Step: ");
         while (true) {
-            if (getSettings().getGeneric().getVerbose() > 0) {
+            if (getSettings().getGeneral().getVerbose() > 0) {
                 System.out.println("Step: " + i);
             }
             else {
@@ -687,7 +687,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             }
             if (sel.hasBestTest()) {
                 NodeTest test = sel.updateTest();
-                if (getSettings().getGeneric().getVerbose() > 0)
+                if (getSettings().getGeneral().getVerbose() > 0)
                     System.out.println("  Test: " + test.getString() + " -> " + sel.m_BestHeur);
                 result.addTest(test);
                 // data = data.applyWeighted(test, ClusNode.YES);

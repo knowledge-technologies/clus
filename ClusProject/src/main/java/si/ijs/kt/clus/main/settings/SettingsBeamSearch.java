@@ -10,7 +10,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsBeamSearch implements ISettings {
+public class SettingsBeamSearch implements SettingsBase {
 
 
     /***********************************************************************

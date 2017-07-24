@@ -11,7 +11,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrDouble;
 
 
-public class SettingsSSL implements ISettings {
+public class SettingsSSL implements SettingsBase {
 
     private INIFileSection m_SectionSSL;
     private boolean m_SemiSupervisedMode = false;

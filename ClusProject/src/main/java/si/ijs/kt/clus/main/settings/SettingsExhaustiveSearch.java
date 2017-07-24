@@ -4,7 +4,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
-public class SettingsExhaustiveSearch implements ISettings {
+public class SettingsExhaustiveSearch implements SettingsBase {
 
     /***********************************************************************
      * Section: Exhaustive search *

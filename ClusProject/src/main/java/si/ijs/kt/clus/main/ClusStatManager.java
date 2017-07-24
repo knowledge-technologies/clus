@@ -315,7 +315,7 @@ public class ClusStatManager implements Serializable {
             double non_target_weight = winfo.getDouble(SettingsAttribute.NON_TARGET_WEIGHT);
             double num_weight = winfo.getDouble(SettingsAttribute.NUMERIC_WEIGHT);
             double nom_weight = winfo.getDouble(SettingsAttribute.NOMINAL_WEIGHT);
-            if (getSettings().getGeneric().getVerbose() >= 2) {
+            if (getSettings().getGeneral().getVerbose() >= 2) {
                 System.out.println("  Target weight     = " + target_weight);
                 System.out.println("  Non target weight = " + non_target_weight);
                 System.out.println("  Numeric weight    = " + num_weight);
@@ -386,7 +386,7 @@ public class ClusStatManager implements Serializable {
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_ALL);
         initWeights(m_DispersionWeights, num, nom, getSettings().getRules().getDispersionWeights());
-        if (getSettings().getGeneric().getVerbose() >= 1 && (isRuleInduceOnly() || isTreeToRuleInduce()) && getSettings().getRules().computeDispersion()) {
+        if (getSettings().getGeneral().getVerbose() >= 1 && (isRuleInduceOnly() || isTreeToRuleInduce()) && getSettings().getRules().computeDispersion()) {
             System.out.println("Dispersion:   " + m_DispersionWeights.getName(m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_ALL)));
         }
     }
@@ -428,7 +428,7 @@ public class ClusStatManager implements Serializable {
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
 
         initWeights((ClusNormalizedAttributeWeights) m_ClusteringWeights, num, nom, getSettings().getAttribute().getClusteringWeights());
-        if (getSettings().getGeneric().getVerbose() > 1) {
+        if (getSettings().getGeneral().getVerbose() > 1) {
 
             /*
              * if(getSettings().isSSLWeights()) { this shuold be automatically enabled
@@ -710,11 +710,11 @@ public class ClusStatManager implements Serializable {
                 break;
             case MODE_HIERARCHICAL_MTR:
                 if (getSettings().getHMTR().getHMTRDistance().getValue() == SettingsHMTR.HMTR_HIERDIST_WEIGHTED_EUCLIDEAN) {
-                    if (getSettings().getGeneric().getVerbose() > 0)
+                    if (getSettings().getGeneral().getVerbose() > 0)
                         System.out.println("HMTR - Euclidean distance");
                 }
                 else if (getSettings().getHMTR().getHMTRDistance().getValue() == SettingsHMTR.HMTR_HIERDIST_JACCARD) {
-                    if (getSettings().getGeneric().getVerbose() > 0)
+                    if (getSettings().getGeneral().getVerbose() > 0)
                         System.out.println("HMTR - Jaccard distance");
                 }
                 m_HMTRHier = m_Schema.getHMTRHierarchy();

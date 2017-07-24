@@ -9,7 +9,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsILevelC implements ISettings {
+public class SettingsILevelC implements SettingsBase {
 
     /***********************************************************************
      * Section: Instance level constraints *

@@ -8,13 +8,13 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsGeneral implements ISettings {
+public class SettingsGeneral implements SettingsBase {
 
     /***********************************************************************
      * Section: General *
      ***********************************************************************/
 
-    INIFileInt m_Verbose;
+    INIFileInt m_Verbose;// TODO: migrate to Log4J
     INIFileNominal m_Compatibility;
     INIFileString m_RandomSeed;
     INIFileNominal m_ResourceInfoLoaded;
@@ -22,6 +22,18 @@ public class SettingsGeneral implements ISettings {
 
     public int getCompatibility() {
         return m_Compatibility.getValue();
+    }
+
+
+    public int getVerbose() {
+        return m_Verbose.getValue();
+    }
+
+
+    public int enableVerbose(int talk) {
+        int prev = m_Verbose.getValue();
+        m_Verbose.setValue(talk);
+        return prev;
     }
 
 

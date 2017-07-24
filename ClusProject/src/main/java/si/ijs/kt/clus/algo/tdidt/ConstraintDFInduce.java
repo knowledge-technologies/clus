@@ -84,7 +84,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
             CurrentBestTestAndHeuristic best = m_FindBestTest.getBestTest();
             if (best.hasBestTest()) {
                 node.testToNode(best);
-                if (getSettings().getGeneric().getVerbose() > 0)
+                if (getSettings().getGeneral().getVerbose() > 0)
                     System.out.println("Fill in Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             }
             else {

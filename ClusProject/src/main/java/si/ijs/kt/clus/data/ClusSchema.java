@@ -827,7 +827,7 @@ public class ClusSchema implements Serializable {
                 }
             }
             m_NonSparse = vectorToAttrArray(nonSparse);
-            if (getSettings().getGeneric().getVerbose() > 0)
+            if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Number of sparse attributes: " + nbSparse);
             addRowsIndex();
             m_IsSparse = true;
@@ -836,7 +836,7 @@ public class ClusSchema implements Serializable {
 
 
     public void printInfo() {
-        if (getSettings().getGeneric().getVerbose() >= 1) {
+        if (getSettings().getGeneral().getVerbose() >= 1) {
             System.out.println("Space required by nominal attributes: " + m_NbVt[ClusAttrType.VALUE_TYPE_INT] * 4 + " bytes/tuple regular, " + m_NbVt[ClusAttrType.VALUE_TYPE_BITWISEINT] * 4 + " bytes/tuple bitwise");
         }
     }

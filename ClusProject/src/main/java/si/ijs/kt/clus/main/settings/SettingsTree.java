@@ -11,7 +11,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
 
-public class SettingsTree implements ISettings {
+public class SettingsTree implements SettingsBase {
 
     /***********************************************************************
      * Section: Tree *

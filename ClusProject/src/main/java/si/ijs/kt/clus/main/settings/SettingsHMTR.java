@@ -14,15 +14,15 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 
-public class SettingsHMTR implements ISettings {
+public class SettingsHMTR implements SettingsBase {
 
     SettingsAttribute m_SettAttribute;
-    SettingsGeneric m_SettGeneric;
+    SettingsGeneral m_SettGeneral;
 
 
-    public SettingsHMTR(SettingsAttribute settAttribute, SettingsGeneric settGeneric) {
+    public SettingsHMTR(SettingsAttribute settAttribute, SettingsGeneral settGeneral) {
         m_SettAttribute = settAttribute;
-        m_SettGeneric = settGeneric;
+        m_SettGeneral = settGeneral;
     }
 
     /***********************************************************************
@@ -145,7 +145,7 @@ public class SettingsHMTR implements ISettings {
 
             }
 
-            if (m_SettGeneric.getVerbose() > 0)
+            if (m_SettGeneral.getVerbose() > 0)
                 System.out.print("Aggregate attributes (a.k.a. not present in the database): ");
 
             String comma = "";

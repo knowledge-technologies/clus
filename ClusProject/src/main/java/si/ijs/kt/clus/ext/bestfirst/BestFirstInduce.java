@@ -290,7 +290,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
         RowData data = subsets.get(bestTestIndex);
 
         // Output best test
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Test: " + node.getTestString() + " -> " + node.getTest().getHeuristicValue());
 
         // Extending the node

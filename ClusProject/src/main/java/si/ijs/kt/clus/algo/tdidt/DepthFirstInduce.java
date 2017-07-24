@@ -348,7 +348,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
             node.testToNode(best);
             // Output best test
-            if (getSettings().getGeneric().getVerbose() > 1)
+            if (getSettings().getGeneral().getVerbose() > 1)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
 
             // Create children
@@ -427,7 +427,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
      * // start_time = System.currentTimeMillis();
      * node.testToNode(best);
      * // Output best test
-     * if (getSettings().getGeneric().getVerbose() > 0) System.out.println("Test: "+node.getTestString()+" -> "
+     * if (getSettings().getGeneral().getVerbose() > 0) System.out.println("Test: "+node.getTestString()+" -> "
      * +best.getHeuristicValue());
      * // Create children
      * int arity = node.updateArity();

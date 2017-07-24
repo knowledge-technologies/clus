@@ -330,14 +330,14 @@ public class TestAndHeuristic {
         // System.out.println(val);
         
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
-        if (m_Sett.getGeneric().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
         //System.out.println(m_BestHeur);
         //System.out.println(heur);
         if (heur - ClusHeuristic.DELTA > m_BestHeur ) {
-            if (m_Sett.getGeneric().getVerbose() >= 2) System.err.println("Better.");
+            if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
-            if (m_Sett.getGeneric().getVerbose() >= 2) {
+            if (m_Sett.getGeneral().getVerbose() >= 2) {
                 System.err.println(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
             }
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
@@ -359,9 +359,9 @@ public class TestAndHeuristic {
      */
     public final void updateInverseNumeric(double val, ClusAttrType at) {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
-        if (m_Sett.getGeneric().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
-            if (m_Sett.getGeneric().getVerbose() >= 2) System.err.println("Better.");
+            if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;

@@ -9,7 +9,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
-public class SettingsHMLC implements ISettings {
+public class SettingsHMLC implements SettingsBase {
     /***********************************************************************
      * Section: Hierarchical multi-label classification *
      ***********************************************************************/

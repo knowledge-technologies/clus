@@ -5,7 +5,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public class SettingsNominal implements ISettings {
+public class SettingsNominal implements SettingsBase {
 
     /***********************************************************************
      * Section: Nominal - Should move? *

@@ -113,7 +113,7 @@ public abstract class ClusInductionAlgorithmType {
         cr.setPruneTime(ResourceInfo.getTime() - done_time);
         postProcess(cr);
         
-        if (getSettings().getGeneric().getVerbose() > 0) {
+        if (getSettings().getGeneral().getVerbose() > 0) {
             
             String parallelTime = "";
             if (getSettings().getEnsemble().isEnsembleWithParallelExecution()){

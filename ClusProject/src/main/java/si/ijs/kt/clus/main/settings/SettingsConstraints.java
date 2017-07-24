@@ -7,7 +7,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
-public class SettingsConstraints implements ISettings {
+public class SettingsConstraints implements SettingsBase {
     
     /***********************************************************************
      * Section: Constraints *

@@ -121,7 +121,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         CurrentBestTestAndHeuristic sel = m_FindBestTest.getBestTest();
         ClusAttrType[] attrs = data.getSchema().getDescriptiveAttributes();
         for (int i = 0; i < attrs.length; i++) {
-            // if (getSettings().getGeneric().getVerbose() > 1) System.out.print("\n Ref.Attribute: " + attrs[i].getName() + ": ");
+            // if (getSettings().getGeneral().getVerbose() > 1) System.out.print("\n Ref.Attribute: " + attrs[i].getName() + ": ");
             sel.resetBestTest();
             double beam_min_value = beam.getMinValue();
             sel.setBestHeur(beam_min_value);
@@ -132,7 +132,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                 m_FindBestTest.findNumeric((NumericAttrType) at, data);
             if (sel.hasBestTest()) {
                 NodeTest test = sel.updateTest();
-                if (getSettings().getGeneric().getVerbose() > 0)
+                if (getSettings().getGeneral().getVerbose() > 0)
                     System.out.println("  Test: " + test.getString() + " -> " + sel.m_BestHeur);
                 // RowData subset = data.applyWeighted(test, ClusNode.YES);
                 RowData subset = data.apply(test, ClusNode.YES);
@@ -140,7 +140,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                 ref_rule.addTest(test);
                 ref_rule.setVisitor(subset);
                 ref_rule.setClusteringStat(createTotalClusteringStat(subset));
-                // if (getSettings().getGeneric().getVerbose() > 0) System.out.println(" Sanity.check.val: " + sel.m_BestHeur);
+                // if (getSettings().getGeneral().getVerbose() > 0) System.out.println(" Sanity.check.val: " + sel.m_BestHeur);
                 if (getSettings().getRules().isHeurRuleDist()) {
                     int[] subset_idx = new int[subset.getNbRows()];
                     for (int j = 0; j < subset_idx.length; j++) {
@@ -152,7 +152,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                 // Do a sanity check only for exact (non-approximative) heuristics
                 if (getSettings().getTimeSeries().isTimeSeriesProtoComlexityExact()) {
                     new_heur = sanityCheck(sel.m_BestHeur, ref_rule);
-                    // if (getSettings().getGeneric().getVerbose() > 0) System.out.println(" Sanity.check.exp: " + new_heur);
+                    // if (getSettings().getGeneral().getVerbose() > 0) System.out.println(" Sanity.check.exp: " + new_heur);
                 }
                 else {
                     new_heur = sel.m_BestHeur;
@@ -175,7 +175,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         for (int i = 0; i < models.size(); i++) {
             ClusBeamModel model = (ClusBeamModel) models.get(i);
             if (!(model.isRefined() || model.isFinished())) {
-                // if (getSettings().getGeneric().getVerbose() > 0) System.out.println(" Refine: model " + i);
+                // if (getSettings().getGeneral().getVerbose() > 0) System.out.println(" Refine: model " + i);
                 refineModel(model, beam, i);
                 model.setRefined(true);
                 model.setParentModelIndex(-1);
@@ -189,7 +189,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         int i = 0;
         System.out.print("Step: ");
         while (true) {
-            if (getSettings().getGeneric().getVerbose() > 0) {
+            if (getSettings().getGeneral().getVerbose() > 0) {
                 System.out.println("Step: " + i);
             }
             else {
@@ -239,7 +239,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         int i = 0;
         System.out.print("Step: ");
         while (true) {
-            if (getSettings().getGeneric().getVerbose() > 0) {
+            if (getSettings().getGeneral().getVerbose() > 0) {
                 System.out.println("Step: " + i);
             }
             else {
@@ -950,7 +950,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         OptProbl.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
         ArrayList weights = null;
 
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Preparing for optimization.");
 
         // Find the rule weights with optimization algorithm.
@@ -964,7 +964,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             weights = CallExternGD.main(getStatManager(), param, rset);
         }
 
-        if (getSettings().getGeneric().getVerbose() > 0 && getSettings().getRules().getRulePredictionMethod() != SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY)
+        if (getSettings().getGeneral().getVerbose() > 0 && getSettings().getRules().getRulePredictionMethod() != SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY)
             System.out.println("Preparations ended. Starting optimization.");
 
         if (getSettings().getRules().getRulePredictionMethod() != SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY) {
@@ -994,7 +994,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 
                     ArrayList<Double> newWeights = gdalg.optimize();
 
-                    if (getSettings().getGeneric().getVerbose() > 0)
+                    if (getSettings().getGeneral().getVerbose() > 0)
                         System.err.print("\nThe T value " + (firstTVal + iRun * interTVal) + " has a test fitness: " + gdalg.getBestFitness());
 
                     if (gdalg.getBestFitness() < minFitness) {
@@ -1005,14 +1005,14 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                         rset.m_optWeightBestTValue = firstTVal + iRun * interTVal;
                         rset.m_optWeightBestFitness = minFitness;
 
-                        if (getSettings().getGeneric().getVerbose() > 0)
+                        if (getSettings().getGeneral().getVerbose() > 0)
                             System.err.print(" - best so far!");
 
                         // If fitness increasing, check if we are stopping early
                     }
                     else if (getSettings().getRules().getOptGDEarlyTTryStop() && gdalg.getBestFitness() > getSettings().getRules().getOptGDEarlyStopTreshold() * minFitness) {
 
-                        if (getSettings().getGeneric().getVerbose() > 0)
+                        if (getSettings().getGeneral().getVerbose() > 0)
                             System.err.print(" - early T value stop reached.");
 
                         break;
@@ -1036,7 +1036,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             optAlg.postProcess(rset);
 
         // Print weights of all terms
-        if (getSettings().getGeneric().getVerbose() > 0) {
+        if (getSettings().getGeneral().getVerbose() > 0) {
             System.out.print("\nThe weights for rules:");
             for (int j = 0; j < weights.size(); j++) {
                 System.out.print(((Double) weights.get(j)).doubleValue() + "; ");
@@ -1193,7 +1193,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             }
             if (sel.hasBestTest()) {
                 NodeTest test = sel.updateTest();
-                if (getSettings().getGeneric().getVerbose() > 0)
+                if (getSettings().getGeneral().getVerbose() > 0)
                     System.out.println("  Test: " + test.getString() + " -> " + sel.m_BestHeur);
                 result.addTest(test);
                 // data = data.applyWeighted(test, ClusNode.YES);

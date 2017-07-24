@@ -7,7 +7,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public class SettingsMLC implements ISettings {
+public class SettingsMLC implements SettingsBase {
 
     SettingsHMLC m_SettHMLC;
     SettingsRelief m_SettRelief;

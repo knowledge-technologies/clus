@@ -9,7 +9,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 
-public class SettingsRelief implements ISettings {
+public class SettingsRelief implements SettingsBase {
 
     /***********************************************************************
      * Section: Relief *

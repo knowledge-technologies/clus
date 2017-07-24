@@ -27,21 +27,21 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 
     public DepthFirstInduceSparse(ClusSchema schema, Settings sett) throws ClusException, IOException {
         super(schema, sett);
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Sparse implementation");
     }
 
 
     public DepthFirstInduceSparse(ClusInductionAlgorithm other) {
         super(other);
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Sparse implementation");
     }
 
 
     public DepthFirstInduceSparse(ClusInductionAlgorithm other, NominalSplit split) {
         super(other);
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Sparse implementation");
     }
 
@@ -57,7 +57,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
      */
     public DepthFirstInduceSparse(ClusInductionAlgorithm other, ClusStatManager mgr, boolean parallelism) {
         super(other, mgr, parallelism);
-        if (getSettings().getGeneric().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Sparse implementation");
     }
 
@@ -147,7 +147,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         if (best.hasBestTest()) {
             node.testToNode(best);
             // Output best test
-            if (getSettings().getGeneric().getVerbose() > 1)
+            if (getSettings().getGeneral().getVerbose() > 1)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();
@@ -259,7 +259,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         if (best.hasBestTest()) {
             node.testToNode(best);
             // Output best test
-            if (getSettings().getGeneric().getVerbose() > 1)
+            if (getSettings().getGeneral().getVerbose() > 1)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();

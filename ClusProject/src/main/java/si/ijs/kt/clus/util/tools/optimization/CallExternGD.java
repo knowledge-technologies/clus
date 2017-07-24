@@ -209,7 +209,7 @@ public class CallExternGD {
 //// The last one is so called intercept. Should be added to all predictions
 //// Because of this we add a rule with prediction 1 and always true condition.
 //// Thus the last weight will be for this.
-// if (getSettings().getGeneric().getVerbose() > 0) System.out.println("Adding intercept rule created by binary explicitly to rule set.");
+// if (getSettings().getGeneral().getVerbose() > 0) System.out.println("Adding intercept rule created by binary explicitly to rule set.");
 // ClusRule interceptRule = new ClusRule(m_StatManager);
 // interceptRule.m_TargetStat = getStatManager().createTargetStat();
 // if (!(interceptRule.m_TargetStat instanceof RegressionStat))

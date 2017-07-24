@@ -4,7 +4,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
-public class SettingsSIT implements ISettings {
+public class SettingsSIT implements SettingsBase {
     /***********************************************************************
      * Section: Selective inductive transfer *
      ***********************************************************************/

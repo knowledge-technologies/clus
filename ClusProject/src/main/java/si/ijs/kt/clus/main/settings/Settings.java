@@ -112,7 +112,7 @@ public class Settings implements Serializable {
         m_SettExperimental = new SettingsExperimental();
         m_SettConstraints = new SettingsConstraints();
         m_SettMLC = new SettingsMLC(m_SettHMLC, m_SettRelief);
-        m_SettHMTR = new SettingsHMTR(m_SettAttribute, m_SettGeneric);
+        m_SettHMTR = new SettingsHMTR(m_SettAttribute, m_SettGeneral);
         
         m_SettSSL = new SettingsSSL();
     }
@@ -337,7 +337,7 @@ public class Settings implements Serializable {
             String disarg = cargs.getOptionValue("disable");
             String orig = m_SettAttribute.getDisabled();
 
-            if (StringUtils.unCaseCompare(orig, ISettings.NONE)) {
+            if (StringUtils.unCaseCompare(orig, SettingsBase.NONE)) {
                 m_SettAttribute.setDisabled(disarg);
             }
             else {
@@ -345,13 +345,13 @@ public class Settings implements Serializable {
             }
         }
         if (cargs.hasOption("silent")) {
-            SettingsGeneric.VERBOSE = 0;
+            m_SettGeneral.enableVerbose(0);
         }
     }
 
 
     public void update(ClusSchema schema) {
-        m_SettTree.setFTest(m_SettTree.getFTest(), m_SettGeneric.getVerbose());
+        m_SettTree.setFTest(m_SettTree.getFTest(), m_SettGeneral.getVerbose());
 
         SettingsTree.MINIMAL_WEIGHT = m_SettModel.getMinimalWeight();
         SettingsTree.ONE_NOMINAL = (schema.getNbNominalTargetAttributes() == 1 && schema.getNbNumericTargetAttributes() == 0);
@@ -366,9 +366,6 @@ public class Settings implements Serializable {
         SettingsBeamSearch.BEAM_WIDTH = m_SettBeamSearch.getBeamWidth();
         SettingsBeamSearch.BEAM_SIMILARITY = m_SettBeamSearch.getBeamSimilarity();
         SettingsBeamSearch.BEAM_SYNT_DIST_CONSTR = m_SettBeamSearch.hasBeamConstraintFile();
-
-        SettingsGeneric.VERBOSE = m_SettGeneric.getVerbose();
-
     }
 
 
@@ -380,7 +377,7 @@ public class Settings implements Serializable {
         m_SettTree.set1SERuleEnabled(pruning == SettingsTree.PRUNING_METHOD_GAROFALAKIS_VSB);
         m_SettTree.setFTestEnabled(heur == SettingsTree.HEURISTIC_SSPD || heur == SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
 
-        m_SettData.setPruneSetMaxEnabled(!m_SettData.isPruneSetString(ISettings.NONE));
+        m_SettData.setPruneSetMaxEnabled(!m_SettData.isPruneSetString(SettingsBase.NONE));
 
         if (ResourceInfo.isLibLoaded())
             m_SettGeneral.m_ResourceInfoLoaded.setSingleValue(SettingsGeneral.RESOURCE_INFO_LOAD_YES);

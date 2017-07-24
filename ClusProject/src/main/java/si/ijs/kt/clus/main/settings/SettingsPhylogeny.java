@@ -7,7 +7,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 
-public class SettingsPhylogeny implements ISettings {
+public class SettingsPhylogeny implements SettingsBase {
 
     /***********************************************************************
      * Section: Phylogeny *

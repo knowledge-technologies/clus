@@ -2,7 +2,7 @@ package si.ijs.kt.clus.main.settings;
 
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
-public class SettingsDistances implements ISettings {
+public class SettingsDistances implements SettingsBase {
 
     /***********************************************************************
      * Section: Distances *

@@ -102,7 +102,7 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
         }
         int[] outputEnsembleAt = getSettings().getEnsemble().getNbBaggingSets().getIntVectorSorted();
         int nbTrees = outputEnsembleAt[outputEnsembleAt.length - 1];
-        int verbose = getSettings().getGeneric().getVerbose();
+        int verbose = getSettings().getGeneral().getVerbose();
         for (int i = 0; i < nbTrees; i++) {
             if (verbose != 0) {
                 System.out.println();

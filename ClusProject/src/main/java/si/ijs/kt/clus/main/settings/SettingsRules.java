@@ -9,7 +9,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrInt;
 
 
-public class SettingsRules implements ISettings {
+public class SettingsRules implements SettingsBase {
 
     /***********************************************************************
      * Section: Rules *

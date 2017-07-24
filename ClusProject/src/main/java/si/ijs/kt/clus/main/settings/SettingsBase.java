@@ -7,7 +7,7 @@ import java.nio.charset.StandardCharsets;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public interface ISettings {
+public interface SettingsBase {
 
     
     /***********************************************************************

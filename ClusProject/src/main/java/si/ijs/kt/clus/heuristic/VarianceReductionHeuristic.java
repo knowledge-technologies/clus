@@ -65,7 +65,7 @@ public class VarianceReductionHeuristic extends ClusHeuristic {
         m_NegStat.subtractFromThis(pstat);
         double ss_neg = m_NegStat.getSVarS(m_ClusteringWeights, m_Data);
         double value = FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
-        if (getSettings().getGeneric().getVerbose() >= 10) {
+        if (getSettings().getGeneral().getVerbose() >= 10) {
             System.out.println("TOT: " + tstat.getDebugString());
             System.out.println("POS: " + pstat.getDebugString());
             System.out.println("NEG: " + m_NegStat.getDebugString());

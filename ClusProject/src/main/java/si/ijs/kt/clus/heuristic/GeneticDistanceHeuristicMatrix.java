@@ -585,7 +585,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         // LARGE threshold means SMALL trees
         if (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsRootStop() > 0) {
             if (m_SumEntropyWithin / m_RootSumEntropyWithin < m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsRootStop()) {
-                if (m_RootData.getSchema().getSettings().getGeneric().getVerbose() > 2) {
+                if (m_RootData.getSchema().getSettings().getGeneral().getVerbose() > 2) {
                     System.out.println("STOP: entropy at current node = " + m_SumEntropyWithin + ", at root = " + m_RootSumEntropyWithin);
                 }
                 return false;
@@ -596,7 +596,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         // LARGE threshold means SMALL trees
         if (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsRootStop() > 0) {
             if (m_AvgAllDistances / m_RootAvgAllDistances < m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsRootStop()) {
-                if (m_RootData.getSchema().getSettings().getGeneric().getVerbose() > 2) {
+                if (m_RootData.getSchema().getSettings().getGeneral().getVerbose() > 2) {
                     System.out.println("STOP: AvgPWDistance at current node = " + m_AvgAllDistances + ", at root = " + m_RootAvgAllDistances);
                 }
                 return false;
@@ -612,7 +612,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             double poswithin = getAvgPWDistancesWithin(posindices);
             double negwithin = getAvgPWDistancesWithin(negindices);
             if ((((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) / m_AvgAllDistances) > m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsParentStop()) {
-                if (m_RootData.getSchema().getSettings().getGeneric().getVerbose() > 2) {
+                if (m_RootData.getSchema().getSettings().getGeneral().getVerbose() > 2) {
                     System.out.println("STOP: weighted sum of AvgPWDistances in children = " + ((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) + ", AvgPWDistance at node = " + m_AvgAllDistances);
                 }
                 return false;
@@ -628,7 +628,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             double poswithin = getSumOfEntropyWithin(posindices);
             double negwithin = getSumOfEntropyWithin(negindices);
             if ((((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) / m_SumEntropyWithin) > m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsParentStop()) {
-                if (m_RootData.getSchema().getSettings().getGeneric().getVerbose() > 2) {
+                if (m_RootData.getSchema().getSettings().getGeneral().getVerbose() > 2) {
                     System.out.println("STOP: weighted sum of SumEntropies in children = " + ((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) + ", SumEntropies at node = " + m_SumEntropyWithin);
                 }
                 return false;

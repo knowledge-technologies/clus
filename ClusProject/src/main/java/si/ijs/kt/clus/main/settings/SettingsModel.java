@@ -7,7 +7,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
-public class SettingsModel implements ISettings {
+public class SettingsModel implements SettingsBase {
     /***********************************************************************
      * Section: Model *
      ***********************************************************************/

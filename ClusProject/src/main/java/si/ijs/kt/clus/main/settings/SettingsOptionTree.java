@@ -6,7 +6,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.range.DoubleRangeCheck;
 import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
-public class SettingsOptionTree implements ISettings {
+public class SettingsOptionTree implements SettingsBase {
     /***********************************************************************
      * Section: Option tree
      ***********************************************************************/

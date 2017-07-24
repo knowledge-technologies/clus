@@ -5,7 +5,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public class SettingsTimeSeries implements ISettings {
+public class SettingsTimeSeries implements SettingsBase {
 
     /***********************************************************************
      * Section: Time series *

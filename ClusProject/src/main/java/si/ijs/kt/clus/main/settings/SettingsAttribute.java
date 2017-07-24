@@ -8,7 +8,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsAttribute implements ISettings {
+public class SettingsAttribute implements SettingsBase {
 
     /***********************************************************************
      * Section: Attribute *

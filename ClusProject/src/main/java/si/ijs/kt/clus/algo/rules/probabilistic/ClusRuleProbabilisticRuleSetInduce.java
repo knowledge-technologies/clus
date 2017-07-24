@@ -450,7 +450,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         // split the learning data into train and validation set
         splitData(validationRatio);
 
-        int tmpVerbose = getSettings().getGeneric().enableVerbose(0);
+        int tmpVerbose = getSettings().getGeneral().enableVerbose(0);
 
         int generatingMode = getSettings().getRules().getInitialRuleGeneratingMethod();
 
@@ -470,7 +470,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         }
 
         // return VERBOSE to its initial value
-        getSettings().getGeneric().enableVerbose(tmpVerbose);
+        getSettings().getGeneral().enableVerbose(tmpVerbose);
 
         if (initialRules.getModelSize() == 0) { throw new RuntimeException(
                 String.format("No rules have been induced! Decrease validation set size (current value: %s).", getSettings().getRules().getValidationSetPercentage())); }

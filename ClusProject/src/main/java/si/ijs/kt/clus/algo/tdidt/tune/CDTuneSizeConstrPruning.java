@@ -329,7 +329,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
 
 
     public void findBestSize(ClusData trset) throws ClusException, IOException, InterruptedException {
-        int prevVerb = getSettings().getGeneric().enableVerbose(0);
+        int prevVerb = getSettings().getGeneral().enableVerbose(0);
         ClusStatManager mgr = getStatManager();
         ClusSummary summ = new ClusSummary();
         ClusErrorList errorpar = mgr.createDefaultError();
@@ -416,7 +416,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
         // Write dat file
         setFinalResult(graph, optimalSize, maxsize);
         getSettings().getConstraints().setSizeConstraintPruning(optimalSize);
-        getSettings().getGeneric().enableVerbose(prevVerb);
+        getSettings().getGeneral().enableVerbose(prevVerb);
     }
 
 
@@ -472,7 +472,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
             m_Class.induceAll(cr);
             getSettings().getConstraints().setSizeConstraintPruning(m_OrigSize);
             long time = (System.currentTimeMillis() - start_time);
-            if (getSettings().getGeneric().getVerbose() > 0)
+            if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Time: " + (double) time / 1000 + " sec");
             cr.setInductionTime(time);
         }

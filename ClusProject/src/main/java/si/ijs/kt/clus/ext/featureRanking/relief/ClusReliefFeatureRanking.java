@@ -937,7 +937,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
     private void printProgress(int iteration) {
         double proportion = 100 * (double) (iteration + 1) / ((double) m_MaxNbIterations);
-        int verbosity = getSettings().getGeneric().getVerbose();
+        int verbosity = getSettings().getGeneral().getVerbose();
         if (verbosity > 0 && verbosity < 3) {
             while (m_Percents < proportion && m_Percents < 100) {
                 System.out.print(".");
@@ -1026,7 +1026,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param verboseLevel
      */
     private void printMessage(String message, int verboseLevel) {
-        if (getSettings().getGeneric().getVerbose() >= verboseLevel) {
+        if (getSettings().getGeneral().getVerbose() >= verboseLevel) {
             System.out.println(message);
         }
     }
