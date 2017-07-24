@@ -3,3 +3,5 @@
 *.synctex.gz
 *.pdf
 *.iml
+*.toc
+*.out
