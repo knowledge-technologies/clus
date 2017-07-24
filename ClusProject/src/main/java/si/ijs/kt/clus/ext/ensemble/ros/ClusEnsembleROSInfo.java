@@ -4,6 +4,7 @@ package si.ijs.kt.clus.ext.ensemble.ros;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
