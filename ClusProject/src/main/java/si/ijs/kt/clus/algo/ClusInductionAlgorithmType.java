@@ -25,11 +25,13 @@ package si.ijs.kt.clus.algo;
 import java.io.IOException;
 
 import si.ijs.kt.clus.Clus;
+import si.ijs.kt.clus.algo.tdidt.ClusDecisionTree;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
+import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
@@ -103,6 +105,11 @@ public abstract class ClusInductionAlgorithmType {
      * @throws InterruptedException
      */
     public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
+        
+        // induce default model
+        ClusModelInfo def_info = cr.addModelInfo(ClusModel.DEFAULT);
+        def_info.setModel(ClusDecisionTree.induceDefault(cr));
+
         long start_time = ResourceInfo.getTime();
         getInduce().induceAll(cr); // Train the algorithms of this type.
         long done_time = ResourceInfo.getTime();

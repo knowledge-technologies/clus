@@ -341,15 +341,22 @@ public class ClusErrorList implements Serializable {
     }
 
 
-
-
     public void showError(ClusModelInfoList models, int type, String bName, PrintWriter out, Settings sett) throws IOException {
         // public void showError(ClusModelInfoList models, int type, PrintWriter out) throws IOException {
         int nb = m_Error.size();
         ClusModelInfo definf = models.getModelInfo(ClusModel.DEFAULT);
+        if (definf == null) { 
+            System.err.println("DEFAULT model is null!");
+            return;
+        }
+        
         ClusErrorList defpar = definf.getError(type);
         out.println("Number of examples: " + defpar.getNbExamples());
-        if (sett.getHMTR().isSectionHMTREnabled()) out.println("HMTR weight: " + sett.getHMTR().getHMTRHierarchyWeight().getStringValue());
+
+        if (sett.getHMTR().isSectionHMTREnabled()) {
+            out.println("HMTR weight: " + sett.getHMTR().getHMTRHierarchyWeight().getStringValue());
+        }
+
         int nb_models = models.getNbModels();
         if (!checkCoverage(models, type, defpar.getNbExamples())) {
             out.println("Coverage:");
@@ -362,12 +369,12 @@ public class ClusErrorList implements Serializable {
             }
         }
         for (int i = 0; i < nb; i++) {
-            if(sett.getHMTR().isSectionHMTREnabled() &&  i==(nb/2)) {
+            if (sett.getHMTR().isSectionHMTREnabled() && i == (nb / 2)) {
                 out.println();
-                out.println("\t***** HMTR leaves only w = " + sett.getHMTR().getHMTRHierarchyWeight().getStringValue()+" *****");
+                out.println("\t***** HMTR leaves only w = " + sett.getHMTR().getHMTRHierarchyWeight().getStringValue() + " *****");
                 out.println();
             }
-            
+
             ClusError err1 = getError(i);
             boolean has_models = false;
             for (int j = 0; j < nb_models; j++) {
@@ -462,6 +469,5 @@ public class ClusErrorList implements Serializable {
         return ClusFormat.FOUR_AFTER_DOT;
         // return NumberFormat.getInstance();
     }
-
 
 }

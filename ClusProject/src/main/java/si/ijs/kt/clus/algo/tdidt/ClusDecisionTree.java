@@ -82,12 +82,13 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
         }
     }
 
-
+    /*
+     * @Deprecated // this should not be used for default model induction
     public final static ClusNode pruneToRoot(ClusNode orig) {
         ClusNode pruned = (ClusNode) orig.cloneNode();
         pruned.makeLeaf();
         return pruned;
-    }
+    }*/
 
 
     public static ClusModel induceDefault(ClusRun cr) {
@@ -150,11 +151,14 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
      *
      */
     public void postProcess(ClusRun cr) throws ClusException, IOException {
-        ClusNode orig = (ClusNode) cr.getModel(ClusModel.ORIGINAL);
-        ClusModelInfo orig_info = cr.getModelInfo(ClusModel.ORIGINAL);
-        ClusNode defmod = pruneToRoot(orig);
-        ClusModelInfo def_info = cr.addModelInfo(ClusModel.DEFAULT);
-        def_info.setModel(defmod);
+        // martinb; we dont want two different default model induction techniques; we either use ClusDecisionTree.induceDefault(ClusRun) or pruneToRoot(..)
+        //ClusModelInfo orig_info = cr.getModelInfo(ClusModel.ORIGINAL);
+        //ClusNode orig = (ClusNode) cr.getModel(ClusModel.ORIGINAL);
+        //ClusNode defmod = pruneToRoot(orig); 
+
+        //ClusModelInfo def_info = cr.addModelInfo(ClusModel.DEFAULT);
+        //def_info.setModel(induceDefault(cr));
+
         if (getSettings().getTree().rulesFromTree() != SettingsOutput.CONVERT_RULES_NONE) {
             ClusModelInfo model = cr.getModelInfoFallback(ClusModel.PRUNED, ClusModel.ORIGINAL);
             convertToRules(cr, model);

@@ -64,7 +64,6 @@ import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.SettingsGeneral;
-import si.ijs.kt.clus.main.settings.SettingsGeneric;
 import si.ijs.kt.clus.main.settings.SettingsMLC;
 import si.ijs.kt.clus.main.settings.SettingsOutput;
 import si.ijs.kt.clus.main.settings.SettingsRules;
@@ -1283,11 +1282,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     public void postProcessForest(ClusRun cr) throws ClusException {
-  //      ClusModelInfo def_info = cr.addModelInfo("Default");
+        //      ClusModelInfo def_info = cr.addModelInfo("Default");
         //if (m_OptMode)
         //    m_DForest = null;
 
-//        def_info.setModel(ClusDecisionTree.induceDefault(cr));
+        //        def_info.setModel(ClusDecisionTree.induceDefault(cr));
 
         //        ClusModelInfo orig_info = cr.addModelInfo("Original");
         //        orig_info.setModel(m_OForest);
@@ -1490,16 +1489,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * @param treeNumber
      */
     private void updateCounts(ClusNode model, int treeNumber) {
-        
+
         //models, nodes, leaves };
-        
-        
-        int[] additionalModelsNodesLeaves =  ClusForest.countNodesLeaves(model); // m_OForest.updateCounts((ClusNode) model);     
-        
-        
+
+        int[] additionalModelsNodesLeaves = ClusForest.countNodesLeaves(model); // m_OForest.updateCounts((ClusNode) model);     
+
         for (int ii = m_OForests.length - 1; ii >= 0; ii--) {
             if (getNbTrees(ii) >= treeNumber) {
-                m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);                
+                m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);
             }
             else {
                 break;

@@ -500,17 +500,8 @@ public class Clus implements CMDLineArgsProvider {
             clss.printInfo();
             System.out.println();
         }
-        
-        
+
         clss.induceAll(cr);
-
-        // induce default model
-        ClusModelInfo def_info = cr.addModelInfo("Default");
-        def_info.setModel(ClusDecisionTree.induceDefault(cr));
-
-        if (getSettings().getGeneral().getVerbose() > 0) {
-            System.out.println();
-        }
     }
 
 
@@ -994,7 +985,7 @@ public class Clus implements CMDLineArgsProvider {
             calcError(cr.getTrainIter(), ClusModelInfo.TRAIN_ERR, cr, ens_pred);
         }
         if (m_Sett.getOutput().isOutTestError() && cr.getTestIter() != null) {
-            cr.getTestSet();  // this properly initialises the test set iterator if this was not done previously
+            cr.getTestSet(); // this properly initialises the test set iterator if this was not done previously
             if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Computing testing error");
             calcError(cr.getTestIter(), ClusModelInfo.TEST_ERR, cr, ens_pred);
