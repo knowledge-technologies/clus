@@ -234,6 +234,10 @@ public class Clus implements CMDLineArgsProvider {
             CriterionBasedSelection.clearMissingFlagTargetAttrs(m_Schema);
         }
 
+        // Set XVal field in Settings
+        if (isxval)
+            getSettings().getExperimental().IS_XVAL = true;
+        
         // Create induce
         m_Induce = clss.createInduce(m_Schema, m_Sett, cargs);
 
@@ -247,9 +251,7 @@ public class Clus implements CMDLineArgsProvider {
         // trees as a covering method.
         if (!m_Induce.getStatManager().isRuleInduceOnly())
             getSettings().getRules().disableRuleInduceParams();
-        // Set XVal field in Settings
-        if (isxval)
-            getSettings().getExperimental().IS_XVAL = true;
+
 
         preprocess(); // necessary in order to link the labels to the class
                       // hierarchy in HMC (needs to be before
