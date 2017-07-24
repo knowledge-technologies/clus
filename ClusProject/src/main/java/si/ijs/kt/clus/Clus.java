@@ -993,11 +993,11 @@ public class Clus implements CMDLineArgsProvider {
                 System.out.println("Computing training error");
             calcError(cr.getTrainIter(), ClusModelInfo.TRAIN_ERR, cr, ens_pred);
         }
-        TupleIterator tsiter = cr.getTestIter();
-        if (m_Sett.getOutput().isOutTestError() && tsiter != null) {
+        if (m_Sett.getOutput().isOutTestError() && cr.getTestIter() != null) {
+            cr.getTestSet();  // this properly initialises the test set iterator if this was not done previously
             if (getSettings().getGeneric().getVerbose() > 0)
                 System.out.println("Computing testing error");
-            calcError(tsiter, ClusModelInfo.TEST_ERR, cr, ens_pred);
+            calcError(cr.getTestIter(), ClusModelInfo.TEST_ERR, cr, ens_pred);
         }
         if (m_Sett.getOutput().isOutValidError() && cr.getPruneSet() != null) {
             if (getSettings().getGeneric().getVerbose() > 0)
