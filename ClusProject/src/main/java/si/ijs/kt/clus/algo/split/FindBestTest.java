@@ -382,7 +382,7 @@ public class FindBestTest {
                 if (value != prev) {
                     m_BestTest.updateNumericGIS(value, at, indicesSorted);
                     prev = value;
-                    ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(i); // daniela; matejp removed casting to ClusStatistic (this can be also done elsewhere)
+                    ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(i); // daniela
                 }
                 m_BestTest.m_PosStat.updateWeighted(tuple, i);
                 ((ClusStatistic) m_BestTest.m_PosStat).setSplitIndex(i + 1); // daniela

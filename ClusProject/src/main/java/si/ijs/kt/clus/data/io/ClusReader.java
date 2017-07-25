@@ -213,7 +213,7 @@ public class ClusReader {
         Reader reader = m_Token.getReader();
         int ch = getNextChar(reader);
         while (ch != -1) {
-            if (ch == CHAR_NL || ch == CHAR_CR) {
+            if (ch == CHAR_NL) {  // matejp: Unix of Windows, NL is the last char in the line, removed || ch == CHAR_CR
                 m_Attr = 0;
                 m_Row++;
                 break;
@@ -221,7 +221,7 @@ public class ClusReader {
             else if (ch == '%') {
                 allowall = true;
             }
-            else if (ch != ' ' && ch != '\t' && allowall == false) {
+            else if (ch != ' ' && ch != '\t' && allowall == false && ch != CHAR_CR) { // matejp: added ch != CHAR_CR
                 int cnt = 0;
                 StringBuffer err = new StringBuffer();
                 while (ch != CHAR_NL && ch != CHAR_CR && cnt < 100) {
@@ -241,7 +241,7 @@ public class ClusReader {
         int ch = getNextChar(reader);
         while (ch != -1) {
             if (ch == CHAR_NL || ch == CHAR_CR) {
-                setLastChar(CHAR_CR);
+                setLastChar(ch); // matejp CHAR_CR
                 break;
             }
             ch = reader.read();
@@ -276,7 +276,7 @@ public class ClusReader {
             }
             else {
                 if (ch == CHAR_NL || ch == CHAR_CR)
-                    setLastChar(CHAR_CR);
+                    setLastChar(CHAR_CR); // matejp: CHAR_CR --> ch?
                 if (nb > 0)
                     break;
             }
@@ -321,7 +321,7 @@ public class ClusReader {
             }
             else {
                 if (ch == CHAR_NL || ch == CHAR_CR)
-                    setLastChar(CHAR_CR);
+                    setLastChar(ch); // CHAR_CR
                 if (nb > 0)
                     break;
             }
@@ -398,7 +398,7 @@ public class ClusReader {
             if (ch == ']') {
                 ch = getNextChar(reader); // eat the ,
                 if (ch == CHAR_NL || ch == CHAR_CR)
-                    setLastChar(CHAR_CR);
+                    setLastChar(ch); // matejp CHAR_CR --> ch
                 break;
             }
             ch = getNextChar(reader);
@@ -443,7 +443,7 @@ public class ClusReader {
             if (ch == '}' && open == 0) {
                 ch = getNextChar(reader); //eat the ,
                 if (ch == CHAR_NL || ch == CHAR_CR)
-                    setLastChar(CHAR_CR);
+                    setLastChar(CHAR_CR); // matejp: CHAR_CR --> ch?
                 break;
             }
             ch = getNextChar(reader);
@@ -488,7 +488,7 @@ public class ClusReader {
             if (ch == ']' && open == 0) {
                 ch = getNextChar(reader); //eat the ,
                 if (ch == CHAR_NL || ch == CHAR_CR)
-                    setLastChar(CHAR_CR);
+                    setLastChar(CHAR_CR); // matejp: CHAR_CR --> ch?
                 break;
             }
             ch = getNextChar(reader);
@@ -526,7 +526,7 @@ public class ClusReader {
             }
             else {
                 if (ch == CHAR_NL || ch == CHAR_CR)
-                    setLastChar(CHAR_CR);
+                    setLastChar(CHAR_CR); // matejp: CHAR_CR --> ch?
                 if (nb > 0)
                     break;
             }
@@ -539,7 +539,7 @@ public class ClusReader {
             }
             else {
                 if (ch == CHAR_NL || ch == CHAR_CR)
-                    setLastChar(CHAR_CR);
+                    setLastChar(CHAR_CR); // matejp: CHAR_CR --> ch?
                 if (nb > 0)
                     break;
             }
@@ -569,7 +569,7 @@ public class ClusReader {
                     break;
                 }
                 if (ch == CHAR_NL || ch == CHAR_CR) {
-                    setLastChar(CHAR_CR);
+                    setLastChar(CHAR_CR); // matejp: CHAR_CR --> ch?
                     if (nb > 0)
                         break;
                 }
