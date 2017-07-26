@@ -388,7 +388,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
             for (int i = 0; i < m_Optimizations.length; i++) {
                 m_Optimizations[i] = initializeOptimization(train_iterator, test_iterator);
-                m_Optimizations[i].initPredictions(m_OForests[i].getStat(), m_EnsembleROSInfo.getTrimmedInfo(m_OutEnsembleAt[i]));
+                ClusEnsembleROSInfo trimmed_info = set.isEnsembleROSEnabled() ? m_EnsembleROSInfo.getTrimmedInfo(m_OutEnsembleAt[i]) : null;
+                m_Optimizations[i].initPredictions(m_OForests[i].getStat(), trimmed_info);
                 m_OForests[i].setOptimization(m_Optimizations[i]);
             }
 
