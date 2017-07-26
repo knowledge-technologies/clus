@@ -26,8 +26,16 @@ public class RowDataTest extends BaseTestCase {
     public void smartSortTest() throws IOException, ClusException {
 
         // tests
-        String[] settingsFiles = new String[] { String.format("%s/smartSort/easy.s", m_DataFolder), String.format("%s/smartSort/missing.s", m_DataFolder), String.format("%s/smartSort/sparse.s", m_DataFolder), String.format("%s/smartSort/sparseMissing.s", m_DataFolder), String.format("%s/smartSort/soil_qualityTrain.s", m_DataFolder)
-        };
+        String[] settingsFiles = new String[] { String.format("%s/smartSort/easy.s", m_DataFolder),
+                                                String.format("%s/smartSort/missing.s", m_DataFolder),
+                                                String.format("%s/smartSort/soil_qualityTrain.s", m_DataFolder),
+                                                
+                                                String.format("%s/smartSort/sparsePositive.s", m_DataFolder),
+                                                String.format("%s/smartSort/sparseMissing.s", m_DataFolder),                                                
+                                                String.format("%s/smartSort/sparseNegative.s", m_DataFolder),
+                                                String.format("%s/smartSort/sparseMissingNegative.s", m_DataFolder),
+                                                String.format("%s/smartSort/sparse.s", m_DataFolder)
+                                              };
         String[] firstArgs = new String[settingsFiles.length];
         Arrays.fill(firstArgs, "-silent");
 
@@ -45,6 +53,7 @@ public class RowDataTest extends BaseTestCase {
 				{6, 5, 1, 4, 3, 0, 2},
 				{0, 1, 2, 3, 4, 5, 6}
 			},
+			loadSmartSortSolution(String.format("%s/smartSort/soil_qualityTrainSolution.txt", m_DataFolder)),
 			{
 				{29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, 0},
 				{9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29},
@@ -54,8 +63,22 @@ public class RowDataTest extends BaseTestCase {
 				{3, 20, 28, 14, 29, 27, 24, 23, 22, 21, 25, 19, 18, 17, 15, 13, 12, 11, 10, 9, 7, 6, 5, 4, 2, 1, 0, 8, 16, 26},
 				{9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29},
 				{18, 12, 1, 16, 28, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29}
+			},			
+			{
+			    {29, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28},
+			    {0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 9},
+			    {0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 28, 1, 16, 12}			    
 			},
-			loadSmartSortSolution(String.format("%s/smartSort/soil_qualityTrainSolution.txt", m_DataFolder))
+			{
+			    {3, 20, 28, 8, 16, 26, 0, 1, 2, 4, 5, 6, 7, 9, 10, 11, 12, 13, 15, 17, 18, 19, 25, 21, 22, 23, 24, 27, 29, 14},
+			    {9, 0, 1, 2, 3, 4, 5, 6, 7, 8, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29},
+			    {18, 0, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 13, 14, 15, 17, 19, 20, 21, 22, 23, 24, 25, 26, 27, 29, 28, 1, 16, 12}
+			},
+			{
+			    {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10},
+			    {7, 0, 1, 2, 3, 4, 6, 8, 9, 10, 5},
+			    {9, 1, 10, 0, 2, 3, 4, 5, 6, 8, 7}
+			}			
 		};
 		//@formatter:on
 
@@ -66,8 +89,9 @@ public class RowDataTest extends BaseTestCase {
                 for (int attr = 0; attr < attrs.length; attr++) {
                     NumericAttrType at = (NumericAttrType) data.m_Schema.getAttrType(attr);
                     Integer[] sortedByAt = data.smartSort(at);
+                    String sFile = settingsFiles[i].substring(settingsFiles[i].lastIndexOf("/") + 1, settingsFiles[i].length());
                     assertArrayEquals(
-                            String.format("Sorted arrays should be equal: test => (%d, %d, %d)", i, repeat, at.getIndex()),
+                            String.format("Sorted arrays should be equal: test => (sFile, repetition, attribute) = (%s, %d, %d)", sFile, repeat, at.getIndex()),
                             solutions[i][at.getIndex()],
                             sortedByAt);
                 }

@@ -175,7 +175,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
                 for (int i = 0; i < attrs.length; i++) {
                     ClusAttrType at = (ClusAttrType) attrs[i];
                     if (at.isSparse()) {
-                        ArrayList<SparseDataTuple> newExampleList = ((SparseNumericAttrType) at).pruneExampleList(subsets[j]);
+                        ArrayList<SparseDataTuple> newExampleList = ((SparseNumericAttrType) at).pruneExampleList(subsets[j]); // TODO: inefficient? (quadratic time of pruneExampleList?)
                         double exampleWeight = getExampleWeight(newExampleList);
                         if (exampleWeight >= getSettings().getModel().getMinimalWeight()) {
                             attrList.add(at);

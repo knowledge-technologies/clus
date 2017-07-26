@@ -213,7 +213,7 @@ public class ClusReader {
         Reader reader = m_Token.getReader();
         int ch = getNextChar(reader);
         while (ch != -1) {
-            if (ch == CHAR_NL) {  // matejp: Unix of Windows, NL is the last char in the line, removed || ch == CHAR_CR
+            if (ch == CHAR_NL) {  // matejp: Unix or Windows, NL is the last char in the line, removed || ch == CHAR_CR
                 m_Attr = 0;
                 m_Row++;
                 break;
@@ -569,7 +569,7 @@ public class ClusReader {
                     break;
                 }
                 if (ch == CHAR_NL || ch == CHAR_CR) {
-                    setLastChar(CHAR_CR); // matejp: CHAR_CR --> ch?
+                    setLastChar(ch); // matejp: CHAR_CR --> ch
                     if (nb > 0)
                         break;
                 }

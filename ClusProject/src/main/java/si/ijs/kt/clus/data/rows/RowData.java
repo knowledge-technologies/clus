@@ -561,6 +561,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         ArrayList<Integer> missing = new ArrayList<Integer>();
         ArrayList<Integer> zero = new ArrayList<Integer>();
         final ArrayList<Integer> other = new ArrayList<Integer>();
+        int nbPos = 0;
         for (int i = 0; i < m_NbRows; i++) {
             double featureValue = at.getNumeric(m_Data[i]);
             if (featureValue == 0.0) {
@@ -569,12 +570,19 @@ public class RowData extends ClusData implements MSortable, Serializable {
             else if (featureValue == NumericAttrType.MISSING) {
                 missing.add(i);
             }
-            else if (featureValue > 0.0) {
+//            else if (featureValue > 0.0) {
+//                other.add(i);
+//            }
+//            else {
+//                System.err.println("Sparse attribute has negative value!");
+//                System.exit(-1);
+//            }
+            else{
+                if (featureValue > 0.0){
+                    nbPos++;
+                }
                 other.add(i);
-            }
-            else {
-                System.err.println("Sparse attribute has negative value!");
-                System.exit(-1);
+                
             }
         }
         // sort other
@@ -585,7 +593,6 @@ public class RowData extends ClusData implements MSortable, Serializable {
             temp[i] = i;
         }
         Arrays.sort(temp, new Comparator<Integer>() {
-
             @Override
             public int compare(Integer o1, Integer o2) {
                 return Double.compare(featureVector[o2], featureVector[o1]); // we sort in decreasing order!
@@ -594,21 +601,28 @@ public class RowData extends ClusData implements MSortable, Serializable {
         // join instances again
         Integer[] indices = new Integer[m_Data.length];
         int nbMiss = missing.size(), nbOther = other.size(), nbZero = zero.size();
-        int pos = 0;
+        int position = 0;
+        // missing
         for (int i = 0; i < nbMiss; i++) {
-            indices[pos++] = missing.get(i);
+            indices[position++] = missing.get(i);
         }
-        for (int i = 0; i < nbOther; i++) {
-            indices[pos++] = other.get(temp[i]);
+        // positive
+        for (int i = 0; i < nbPos; i++) {
+            indices[position++] = other.get(temp[i]);
         }
+        // zero
         for (int i = 0; i < nbZero; i++) {
-            indices[pos++] = zero.get(i);
+            indices[position++] = zero.get(i);
+        }
+        // negative
+        for (int i = nbPos; i < nbOther; i++){
+            indices[position++] = other.get(temp[i]);
         }
         m_SortedInstances.put(at, indices);
 
         return indices;
     }
-
+    
 
     public DataTuple findTupleByKey(String key_value) {
         ClusAttrType[] key = getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_KEY);
