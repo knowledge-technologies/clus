@@ -30,6 +30,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.SparseNumericAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 
 public class SparseDataTuple extends DataTuple {
@@ -49,7 +50,7 @@ public class SparseDataTuple extends DataTuple {
 
 
     public void setDoubleValueSparse(Double val, Integer index) {
-        if (Math.abs(val) > 0.00000001) {
+        if (Math.abs(val) > MathUtil.C1E_9) {
             m_Map.put(index, val);
         }
         else if (m_Map.containsKey(index)) {

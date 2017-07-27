@@ -21,6 +21,7 @@ import si.ijs.kt.clus.main.settings.SettingsTree;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
+import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 
 public class DepthFirstInduceSparse extends DepthFirstInduce {
@@ -175,8 +176,9 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
                 for (int i = 0; i < attrs.length; i++) {
                     ClusAttrType at = (ClusAttrType) attrs[i];
                     if (at.isSparse()) {
-                        ArrayList<SparseDataTuple> newExampleList = ((SparseNumericAttrType) at).pruneExampleList(subsets[j]); // TODO: inefficient? (quadratic time of pruneExampleList?)
-                        double exampleWeight = getExampleWeight(newExampleList);
+                        // ArrayList<SparseDataTuple> newExampleList = ((SparseNumericAttrType) at).pruneExampleList(subsets[j]); // TODO: inefficient? (quadratic time of pruneExampleList?)
+                        // double exampleWeight = getExampleWeight(newExampleList);
+                        double exampleWeight = getExampleWeight(subsets[j],(SparseNumericAttrType) at);
                         if (exampleWeight >= getSettings().getModel().getMinimalWeight()) {
                             attrList.add(at);
                             // examplelistList.add(newExampleList);
@@ -197,12 +199,23 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         }
     }
 
-
+    @Deprecated
     public double getExampleWeight(ArrayList examples) {
         double weight = 0.0;
         for (int i = 0; i < examples.size(); i++) {
             SparseDataTuple tup = (SparseDataTuple) examples.get(i);
             weight += tup.getWeight();
+        }
+        return weight;
+    }
+    
+    public double getExampleWeight(RowData subset, SparseNumericAttrType attr){
+        double weight = 0.0;
+        for(int i = 0; i < subset.getNbRows(); i++){
+            SparseDataTuple tup = (SparseDataTuple) subset.getTuple(i);
+            if(Math.abs(attr.getNumeric(tup)) > MathUtil.C1E_9){
+                weight += tup.getWeight();
+            }
         }
         return weight;
     }

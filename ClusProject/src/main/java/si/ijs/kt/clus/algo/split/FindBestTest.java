@@ -286,8 +286,10 @@ public class FindBestTest {
         int nb_rows = sample.getNbRows();
         // Copy total statistic into corrected total
         m_BestTest.copyTotal();
-        if (at.hasMissing()) {
-            // Because of sorting, all missing values are in the front :-)
+     
+        if (at.isMissing(sample.getTuple(indicesSorted[pos]))) { // at.hasMissing()
+            //  matejp: changed if-condition since sparse attributes do not detect missing values in the reading phase
+            //  The conditions are equivalent since all missing values are in the front because of sorting        
             while (pos < nb_rows && at.isMissing(tuple = sample.getTuple(indicesSorted[pos]))) {
                 m_BestTest.m_MissingStat.updateWeighted(tuple, indicesSorted[pos]);
                 pos++;

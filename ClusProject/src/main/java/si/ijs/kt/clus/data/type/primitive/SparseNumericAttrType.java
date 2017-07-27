@@ -85,7 +85,7 @@ public class SparseNumericAttrType extends NumericAttrType {
         m_ExampleWeight += tuple.getWeight();
     }
 
-
+    @Deprecated
     public ArrayList<SparseDataTuple> pruneExampleList(RowData data) {
         ArrayList<SparseDataTuple> dataList = data.toArrayList();
         ArrayList<SparseDataTuple> newExamples = new ArrayList<SparseDataTuple>();

@@ -276,7 +276,7 @@ public class ClusReader {
             }
             else {
                 if (ch == CHAR_NL || ch == CHAR_CR)
-                    setLastChar(CHAR_CR); // matejp: CHAR_CR --> ch?
+                    setLastChar(ch); // matejp: CHAR_CR --> ch
                 if (nb > 0)
                     break;
             }
