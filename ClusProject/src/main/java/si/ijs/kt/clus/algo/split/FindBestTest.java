@@ -299,78 +299,14 @@ public class FindBestTest {
 
         double prev = Double.NaN;
         boolean isGIS = !data.getSchema().getSettings().getAttribute().isNullGIS();
-        if (isGIS) { // handle Daniela
-            // daniela
-            ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
-            ((ClusStatistic) m_BestTest.m_TotCorrStat).setData(sample);
-            ((ClusStatistic) m_BestTest.m_TotCorrStat).setSplitIndex(sample.getNbRows());
-            ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
-            ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
-            ((ClusStatistic) m_BestTest.m_TotCorrStat).initializeSum();
-            //for scaling of h -regression (daniela)
-            if ((m_BestTest.m_Heuristic instanceof GISHeuristic || m_BestTest.m_Heuristic instanceof VarianceReductionHeuristicCompatibility) && (SettingsTree.ALPHA != 1.0)) {
-                for (int i = pos; i < nb_rows; i++) {
-                    tuple = sample.getTuple(indicesSorted[i]); // every such tuple is positive or, as some people say, sekoj vakov tuple pripaga vo positive
-                    double value = at.getNumeric(tuple);
-                    if (value != prev) {
-                        if (value != Double.NaN) {
-                            m_BestTest.calculateHMinMax(value, at);
-                            //System.out.println(at +" za: "+m_BestTest.hMax+"-->"+m_BestTest.hMin);
-                        }
-                        prev = value;
-                        ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(i);
-                    }
-                    m_BestTest.m_PosStat.updateWeighted(tuple, i);
-                    ((ClusStatistic) m_BestTest.m_PosStat).setSplitIndex(i + 1); //add Daniela
-                }
-                prev = Double.NaN;
-                ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
-                ((ClusStatistic) m_BestTest.m_TotCorrStat).setData(sample);
-                ((ClusStatistic) m_BestTest.m_TotCorrStat).setSplitIndex(sample.getNbRows());
-                ((ClusStatistic) m_BestTest.m_PosStat).reset();
-                ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
-                ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
-            }
-            //end for scaling of h -regression (daniela)
-
-            //daniela generateMatrix for each attribute gisheuristic
-            try {
-                ClusHeuristic m_Heuristic = m_StatManager.getHeuristic();
-                //System.out.println(m_Heuristic);
-                if (SettingsTree.ALPHA != 1.0 && m_Heuristic instanceof VarianceReductionHeuristicCompatibility) {
-                    VarianceReductionHeuristicCompatibility gisHeuristic = (VarianceReductionHeuristicCompatibility) m_Heuristic;
-                    ClusAttrType[] arr = at.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_GIS); //numeric and string GIS
-                    if (arr.length == 1) {
-                        gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
-                    }
-                    else {
-                        gisHeuristic.generateMatrix(sample); // 2 coordinates 
-                    }
-                }
-
-                if (m_Heuristic instanceof GISHeuristic && SettingsTree.ALPHA != 1.0) {
-                    GISHeuristic gisHeuristic = (GISHeuristic) m_Heuristic;
-                    ClusAttrType[] arr = at.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_GIS); //numeric and string GIS
-                    if (arr.length == 1) {
-                        gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
-                    }
-                    else {
-                        gisHeuristic.generateMatrix(sample, indicesSorted); // 2 coordinates 
-                    }
-                }
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-                System.out.println("Error calculating GISHEuristics!");
-                System.exit(1);
-            }
-            // daniela end
-        }
+        if(isGIS){
+            gisMatrixForFindNumberic(sample, nb_rows, pos, indicesSorted, at); // matejp: moved to a separate method for readability
+        }        
 
         double minValue = (pos < nb_rows) ? at.getNumeric(sample.getTuple(indicesSorted[nb_rows - 1])) : Double.NaN;
         boolean isSparseAtr = at.isSparse();
 
-        double tot_corr_SVarS = 0.0; // does not matter to which value we choose;
+        double tot_corr_SVarS = 0.0; // does not matter which value we choose;
         //        boolean isEfficient = m_BestTest.m_Heuristic.isEfficient();
         //		if(isEfficient){
         //			tot_corr_SVarS = m_BestTest.m_TotCorrStat.getSVarS(m_BestTest.m_Heuristic.getClusteringAttributeWeights());
@@ -407,6 +343,75 @@ public class FindBestTest {
                     break;
                 }
             }
+        }
+    }
+    
+    private void gisMatrixForFindNumberic(RowData sample, int nb_rows, int pos, Integer[] indicesSorted, NumericAttrType at){
+        DataTuple tuple;
+        double prev = Double.NaN;
+        // daniela
+        ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
+        ((ClusStatistic) m_BestTest.m_TotCorrStat).setData(sample);
+        ((ClusStatistic) m_BestTest.m_TotCorrStat).setSplitIndex(sample.getNbRows());
+        ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
+        ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
+        ((ClusStatistic) m_BestTest.m_TotCorrStat).initializeSum();
+        //for scaling of h -regression (daniela)
+        if ((m_BestTest.m_Heuristic instanceof GISHeuristic || m_BestTest.m_Heuristic instanceof VarianceReductionHeuristicCompatibility) && (SettingsTree.ALPHA != 1.0)) {
+            for (int i = pos; i < nb_rows; i++) {
+                tuple = sample.getTuple(indicesSorted[i]); // every such tuple is positive or, as some people say, sekoj vakov tuple pripaga vo positive
+                double value = at.getNumeric(tuple);
+                if (value != prev) {
+                    if (value != Double.NaN) {
+                        m_BestTest.calculateHMinMax(value, at);
+                        //System.out.println(at +" za: "+m_BestTest.hMax+"-->"+m_BestTest.hMin);
+                    }
+                    prev = value;
+                    ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(i);
+                }
+                m_BestTest.m_PosStat.updateWeighted(tuple, i);
+                ((ClusStatistic) m_BestTest.m_PosStat).setSplitIndex(i + 1); //add Daniela
+            }
+            prev = Double.NaN;
+            ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
+            ((ClusStatistic) m_BestTest.m_TotCorrStat).setData(sample);
+            ((ClusStatistic) m_BestTest.m_TotCorrStat).setSplitIndex(sample.getNbRows());
+            ((ClusStatistic) m_BestTest.m_PosStat).reset();
+            ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
+            ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
+        }
+        //end for scaling of h -regression
+
+        //daniela generateMatrix for each attribute gisheuristic
+        try {
+            ClusHeuristic m_Heuristic = m_StatManager.getHeuristic();
+            //System.out.println(m_Heuristic);
+            if (SettingsTree.ALPHA != 1.0 && m_Heuristic instanceof VarianceReductionHeuristicCompatibility) {
+                VarianceReductionHeuristicCompatibility gisHeuristic = (VarianceReductionHeuristicCompatibility) m_Heuristic;
+                ClusAttrType[] arr = at.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_GIS); //numeric and string GIS
+                if (arr.length == 1) {
+                    gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
+                }
+                else {
+                    gisHeuristic.generateMatrix(sample); // 2 coordinates 
+                }
+            }
+
+            if (m_Heuristic instanceof GISHeuristic && SettingsTree.ALPHA != 1.0) {
+                GISHeuristic gisHeuristic = (GISHeuristic) m_Heuristic;
+                ClusAttrType[] arr = at.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_GIS); //numeric and string GIS
+                if (arr.length == 1) {
+                    gisHeuristic.readMatrixFromFile(sample); // 1 coordinate and a distance.csv file associated
+                }
+                else {
+                    gisHeuristic.generateMatrix(sample, indicesSorted); // 2 coordinates 
+                }
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            System.out.println("Error calculating GISHEuristics!");
+            System.exit(1);
         }
     }
 
