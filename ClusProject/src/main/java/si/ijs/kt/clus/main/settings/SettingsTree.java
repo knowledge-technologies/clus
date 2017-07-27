@@ -66,16 +66,22 @@ public class SettingsTree implements SettingsBase {
     /** Do we transform leaves or all nodes of tree to rules */
     private INIFileNominal m_RulesFromTree;
     private INIFileNominal m_TreeOptimize;
-
+    // daniela
     private INIFileNominal m_SpatialMatrix;
     private INIFileNominal m_SpatialMeasure;
     private INIFileDouble m_Bandwidth;
     private INIFileBool m_Longlat;
     private INIFileDouble m_NeighCount;
     private INIFileDouble m_SpatialAlpha;
+    // end daniela
     private INIFileInt m_TreeSplitSampling; // Amount of datapoints to include for calculating split heuristic.  Datapoints will be selected randomly.
+    
+    private INIFileNominal m_SplitPosition;
+    private static final String[] SPLIT_POSITIONS = {"Exact", "Middle"};
+    public static final int SPLIT_POSITION_EXACT = 0;
+    public static final int SPLIT_POSITION_MIDDLE = 1;
 
-    public static double ALPHA; // danielae
+    public static double ALPHA; // daniela
 
     //added by Jurica Levatic, JSI
     private INIFileNominal m_MissingClusteringAttrHandling; //determines how we handle the case where when searching evaluating candidate split all examples have only missing values for a clustering attriute, in one of the branches 
@@ -87,7 +93,10 @@ public class SettingsTree implements SettingsBase {
     public static final int MISSING_ATTRIBUTE_HANDLING_TRAINING = 1; //variance and mean (i.e., prediction) will be estimated on the basis of the root node (i.e., default model)
     public static final int MISSING_ATTRIBUTE_HANDLING_NONE = 0; //variance will not be estimated, while mean (i.e., prediction) will be equal to zero
 
-
+    public int getSplitPosition(){
+        return m_SplitPosition.getValue();
+    }
+    
     public int getMissingClusteringAttrHandling() {
         return m_MissingClusteringAttrHandling.getValue();
     }
@@ -515,6 +524,8 @@ public class SettingsTree implements SettingsBase {
         m_SectionTree.addNode(m_Longlat = new INIFileBool("Longlat", false));
         m_SectionTree.addNode(m_NeighCount = new INIFileDouble("NumNeightbours", 0.0));
         m_SectionTree.addNode(m_SpatialAlpha = new INIFileDouble("Alpha", 1.0));
+        
+        m_SectionTree.addNode(m_SplitPosition = new INIFileNominal("SplitPosition", SPLIT_POSITIONS, SPLIT_POSITION_EXACT));
 
         return m_SectionTree;
     }

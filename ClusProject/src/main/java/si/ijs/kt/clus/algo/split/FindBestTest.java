@@ -312,7 +312,7 @@ public class FindBestTest {
         //			tot_corr_SVarS = m_BestTest.m_TotCorrStat.getSVarS(m_BestTest.m_Heuristic.getClusteringAttributeWeights());
         ////			m_BestTest.m_Heuristic.setSplitStatSVarS(tot_corr_SVarS);
         //		}
-
+        boolean middleSplits = data.getSchema().getSettings().getTree().getSplitPosition() == SettingsTree.SPLIT_POSITION_MIDDLE;
         if (isGIS) {
             for (int i = pos; i < nb_rows; i++) {
                 tuple = sample.getTuple(indicesSorted[i]);
@@ -334,8 +334,12 @@ public class FindBestTest {
                 tuple = sample.getTuple(indicesSorted[i]);
                 double value = at.getNumeric(tuple);
                 if (value != prev) {
-                    m_BestTest.updateNumeric(value, at, tot_corr_SVarS, false); // isEfficient  //splitting point is at the exact attribute value
-                    //m_BestTest.updateNumeric((value + prev)/2, at, tot_corr_SVarS, false); //FIXME: splitting point is in the middle of two values -> this is maybe better?
+                    double middle = prev + (value - prev) / 2;  // numerically more stable version for (value + prev) / 2
+                    if(middleSplits && isFinite(middle)){ // choose the splitting point: in the middle or the exact attribute value
+                        m_BestTest.updateNumeric(middle, at, tot_corr_SVarS, false); // isEfficient  
+                    } else{
+                        m_BestTest.updateNumeric(value, at, tot_corr_SVarS, false);
+                    }
                     prev = value;
                 }
                 m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]);
@@ -652,5 +656,17 @@ public class FindBestTest {
     public void setParentStatsToThis(ClusStatistic stat) {
         m_BestTest.setParentStatsToTotal(stat);
     }
+    
+    /**
+     * Checks whether the argument is neither NaN nor Infinity. See Double.isFinite(double) in Java8.
+     * @param value
+     * @return
+     */
+    private static boolean isFinite(double value){
+        // Java8: return Double.isFinite(v);
+        return !Double.isNaN(value) && !Double.isInfinite(value);
+    }
+    
+    
 
 }
