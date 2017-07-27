@@ -406,7 +406,7 @@ public class ClusNode extends MyNode implements ClusModel {
                 double middle = lower + (upper - lower) / 2;
                 int nbRelevantLabels = countTrueRelevant();
                 int nbPredictedRelevantNow = -1;
-                while (upper - lower > 0.0005) {// && nbPredictedRelevantBefore != nbPredictedRelevantNow){
+                while (upper - lower > 0.0005) {
                     middle = lower + (upper - lower) / 2;
                     updateThresholds(middle);
                     updateTree();
@@ -426,15 +426,20 @@ public class ClusNode extends MyNode implements ClusModel {
                     // to optimal value and the tree is updated accordingly
                 }
                 else {
-                    updateThresholds(lower);
-                    updateTree();
-                    int lowerCount = countPredictedRelevant(); // > nbRelevantLabels
-                    updateThresholds(upper);
-                    updateTree();
-                    int upperCount = countPredictedRelevant(); // < nbRelevantLabels
-                    double opti = lowerCount - nbRelevantLabels < nbRelevantLabels - upperCount ? lower : upper;
-
-                    updateThresholds(opti);
+                    double defaultThreshold = 0.5;  // try the default threshold also: typically, this seems to be at least a close to optimal value
+                    double[] candidates = new double[]{defaultThreshold, lower, upper}; // default the first: we want to choose it if nothing is strictly better
+                    int optimalDiff = Integer.MAX_VALUE;
+                    double optimalThreshold = -10.0;
+                    for(double candidate : candidates){
+                        updateThresholds(candidate);
+                        int currentCount = countPredictedRelevant();
+                        int currentDiff = Math.abs(currentCount - nbRelevantLabels);
+                        if (currentDiff < optimalDiff){
+                            optimalThreshold = candidate;
+                            optimalDiff = currentDiff;
+                        }
+                    }
+                    updateThresholds(optimalThreshold);
                     updateTree();
                 }
             }

@@ -69,11 +69,19 @@ public class MlcMeasuresForHmlc extends ClusError {
 
         }
 
-
+        /**
+         * Will update the statistics for all submeasures. The thresholds from threshold optimisation
+         * are currently
+         * <ul>
+         *   <li>taken into account when a tree is built</li>
+         *   <li>ignored when a forest is built (thresholds have no influence on voting)</li>
+         * </ul>
+         */
         public void addExample(DataTuple tuple, ClusStatistic pred) {
             ClassesTuple tp = (ClassesTuple) tuple.getObjVal(m_Hier.getType().getArrayIndex());
             boolean[] actual = tp.getVectorBooleanNodeAndAncestors(m_Hier);
-            double[] predicted = ((WHTDStatistic) pred).getNumericPred(); // percentages
+            double[] predicted = ((WHTDStatistic) pred).getNumericPred(); // proportions
+            double[] thresholds = ((WHTDStatistic) pred).getThresholds();
             
             boolean[] actualFiltered = new boolean[m_DimEval];
             double[] predictedFiltered = new double[m_DimEval]; 
@@ -83,7 +91,8 @@ public class MlcMeasuresForHmlc extends ClusError {
                 if(m_EvalClass[i]){
                     actualFiltered[index] = actual[i];
                     predictedFiltered[index] = predicted[i];
-                    predictedThresholdedFiltered[index] = predicted[i] >= MAJORITY_PROPORTION;
+                    double threshold = thresholds == null ? MAJORITY_PROPORTION : thresholds[i];
+                    predictedThresholdedFiltered[index] = predicted[i] >= threshold;
                     index++;
                 }
             }           
