@@ -1,8 +1,14 @@
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
-public class SettingsDistances implements SettingsBase {
+public class SettingsDistances extends SettingsBase {
+
+    public SettingsDistances(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
 
     /***********************************************************************
      * Section: Distances *
@@ -24,6 +30,12 @@ public class SettingsDistances implements SettingsBase {
         m_SectionDistances.setEnabled(false);
         
         return m_SectionDistances;
+    }
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

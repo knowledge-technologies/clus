@@ -91,12 +91,12 @@ import si.ijs.kt.clus.main.ClusStat;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsData;
-import si.ijs.kt.clus.main.settings.SettingsGeneral;
-import si.ijs.kt.clus.main.settings.SettingsGeneric;
-import si.ijs.kt.clus.main.settings.SettingsHMTR;
-import si.ijs.kt.clus.main.settings.SettingsSSL;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsData;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
+import si.ijs.kt.clus.main.settings.section.SettingsHMTR;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
@@ -164,7 +164,7 @@ public class Clus implements CMDLineArgsProvider {
         m_CmdLine = cargs;
         m_Classifier = clss;
         // Load resource info (this measures among others CPU time on Linux)
-        boolean test = m_Sett.getGeneral().getResourceInfoLoaded() == SettingsGeneral.RESOURCE_INFO_LOAD_TEST;
+        boolean test = m_Sett.getGeneral().getResourceInfoLoadedValue() == SettingsGeneral.RESOURCE_INFO_LOAD_TEST;
         ResourceInfo.loadLibrary(test);
 
         // Load settings file

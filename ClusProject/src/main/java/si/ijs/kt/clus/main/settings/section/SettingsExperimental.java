@@ -1,10 +1,17 @@
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
-public class SettingsExperimental implements SettingsBase {
+public class SettingsExperimental extends SettingsBase {
+
+    public SettingsExperimental(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
 
     /***********************************************************************
      * Cross-validaiton *
@@ -39,6 +46,13 @@ public class SettingsExperimental implements SettingsBase {
         exper.setEnabled(false);
         
         return exper;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

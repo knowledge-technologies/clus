@@ -15,7 +15,7 @@ import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.pruning.PruneTree;
 import si.ijs.kt.clus.selection.RandomSelection;

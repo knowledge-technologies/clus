@@ -34,7 +34,7 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.util.ClusFormat;
 
 

@@ -3,7 +3,7 @@ package si.ijs.kt.clus.ext.semisupervised;
 
 import si.ijs.kt.clus.heuristic.ClusHeuristicImpl;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;

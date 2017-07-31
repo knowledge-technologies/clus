@@ -1,5 +1,6 @@
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
@@ -9,7 +10,12 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrInt;
 
 
-public class SettingsRules implements SettingsBase {
+public class SettingsRules extends SettingsBase {
+
+    public SettingsRules(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
 
     /***********************************************************************
      * Section: Rules *
@@ -959,5 +965,12 @@ public class SettingsRules implements SettingsBase {
         m_SectionRules.setEnabled(false);
 
         return m_SectionRules;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 }

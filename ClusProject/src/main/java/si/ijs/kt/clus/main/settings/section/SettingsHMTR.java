@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
 import java.util.ArrayList;
 
@@ -8,19 +8,22 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRNode;
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 
-public class SettingsHMTR implements SettingsBase {
+public class SettingsHMTR extends SettingsBase {
 
     SettingsAttribute m_SettAttribute;
     SettingsGeneral m_SettGeneral;
 
 
-    public SettingsHMTR(SettingsAttribute settAttribute, SettingsGeneral settGeneral) {
+    public SettingsHMTR(int position, SettingsAttribute settAttribute, SettingsGeneral settGeneral) {
+        super(position);
+
         m_SettAttribute = settAttribute;
         m_SettGeneral = settGeneral;
     }
@@ -175,6 +178,13 @@ public class SettingsHMTR implements SettingsBase {
             m_SettAttribute.setTarget(targets);
             schema.setNbHMTR(numAggregates);
         }
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+
     }
 
 }

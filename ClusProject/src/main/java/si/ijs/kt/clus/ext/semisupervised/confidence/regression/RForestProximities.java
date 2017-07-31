@@ -13,7 +13,7 @@ import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.hierarchical.HierErrorMeasures;
 import si.ijs.kt.clus.ext.semisupervised.confidence.PredictionConfidence;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.util.ClusException;
 

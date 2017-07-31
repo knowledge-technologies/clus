@@ -28,7 +28,7 @@ import si.ijs.kt.clus.ext.featureRanking.FindNeighboursCallable;
 import si.ijs.kt.clus.ext.hierarchical.ClassesAttrType;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTimeSeries;
+import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 

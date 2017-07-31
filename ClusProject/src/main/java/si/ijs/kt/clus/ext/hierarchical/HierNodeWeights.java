@@ -24,7 +24,7 @@ package si.ijs.kt.clus.ext.hierarchical;
 
 import java.util.ArrayList;
 
-import si.ijs.kt.clus.main.settings.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 
 
 public class HierNodeWeights {

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 import org.apache.commons.math3.distribution.FDistribution;
 
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.util.ClusFormat;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 

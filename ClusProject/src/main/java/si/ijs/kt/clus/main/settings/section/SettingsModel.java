@@ -1,5 +1,7 @@
-package si.ijs.kt.clus.main.settings;
 
+package si.ijs.kt.clus.main.settings.section;
+
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
@@ -7,7 +9,9 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
-public class SettingsModel implements SettingsBase {
+
+public class SettingsModel extends SettingsBase {
+
     /***********************************************************************
      * Section: Model *
      ***********************************************************************/
@@ -18,6 +22,12 @@ public class SettingsModel implements SettingsBase {
     protected INIFileString m_TuneFolds;
     protected INIFileNominalOrDoubleOrVector m_ClassWeight;
     protected INIFileBool m_NominalSubsetTests;
+
+
+    public SettingsModel(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
 
 
     public double getMinimalWeight() {
@@ -66,6 +76,13 @@ public class SettingsModel implements SettingsBase {
         model.addNode(m_NominalSubsetTests = new INIFileBool("NominalSubsetTests", true));
         
         return model;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+
     }
 
 }

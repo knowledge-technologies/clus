@@ -28,9 +28,37 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
+import si.ijs.kt.clus.main.settings.section.SettingsAttribute;
+import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
+import si.ijs.kt.clus.main.settings.section.SettingsConstraints;
+import si.ijs.kt.clus.main.settings.section.SettingsData;
+import si.ijs.kt.clus.main.settings.section.SettingsDistances;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsExhaustiveSearch;
+import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMTR;
+import si.ijs.kt.clus.main.settings.section.SettingsILevelC;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
+import si.ijs.kt.clus.main.settings.section.SettingsKNNTree;
+import si.ijs.kt.clus.main.settings.section.SettingsMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsModel;
+import si.ijs.kt.clus.main.settings.section.SettingsNominal;
+import si.ijs.kt.clus.main.settings.section.SettingsOptionTree;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput;
+import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny;
+import si.ijs.kt.clus.main.settings.section.SettingsRelief;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsSIT;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFile;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
@@ -53,8 +81,12 @@ public class Settings implements Serializable {
     /***********************************************************************
      * Create the settings structure *
      ***********************************************************************/
-    private INIFile m_Ini;
+    private INIFile m_Ini; // main INI file structure
+    private ArrayList<SettingsBase> m_Sections; // list of all settings classes
 
+    /**
+     * Individual settings classes
+     */
     private SettingsGeneric m_SettGeneric;
     private SettingsGeneral m_SettGeneral;
     private SettingsData m_SettData;
@@ -86,35 +118,66 @@ public class Settings implements Serializable {
 
     public Settings() {
         m_Ini = new INIFile();
+        m_Sections = new ArrayList<SettingsBase>();
 
-        m_SettOutput = new SettingsOutput();
+        // Initialize individual settings. Order of initialization is important (see dependencies in the constructors).
+        m_SettOutput = new SettingsOutput(27);
         m_SettGeneric = new SettingsGeneric(m_SettOutput);
-        m_SettGeneral = new SettingsGeneral();
-        m_SettData = new SettingsData();
-        m_SettAttribute = new SettingsAttribute();
-        m_SettNominal = new SettingsNominal();
-        m_SettModel = new SettingsModel();
-        m_SettTree = new SettingsTree();
-        m_SettRules = new SettingsRules();
-        m_SettHMLC = new SettingsHMLC();
-        m_SettILevelC = new SettingsILevelC();
-        m_SettBeamSearch = new SettingsBeamSearch();
-        m_SettExhaustiveSearch = new SettingsExhaustiveSearch();
-        m_SettTimeSeries = new SettingsTimeSeries();
-        m_SettPhylogeny = new SettingsPhylogeny();
-        m_SettRelief = new SettingsRelief();
-        m_SettDistances = new SettingsDistances();
-        m_SettEnsemble = new SettingsEnsemble();
-        m_SettKNN = new SettingsKNN();
-        m_SettKNNTree = new SettingsKNNTree();
-        m_SettOptionTree = new SettingsOptionTree();
-        m_SettSIT = new SettingsSIT();
-        m_SettExperimental = new SettingsExperimental();
-        m_SettConstraints = new SettingsConstraints();
-        m_SettMLC = new SettingsMLC(m_SettHMLC, m_SettRelief);
-        m_SettHMTR = new SettingsHMTR(m_SettAttribute, m_SettGeneral);
-        
-        m_SettSSL = new SettingsSSL();
+        m_SettGeneral = new SettingsGeneral(1);
+        m_SettData = new SettingsData(2);
+        m_SettAttribute = new SettingsAttribute(3);
+        m_SettNominal = new SettingsNominal(7);
+        m_SettModel = new SettingsModel(9);
+        m_SettTree = new SettingsTree(10);
+        m_SettRules = new SettingsRules(11);
+        m_SettHMLC = new SettingsHMLC(13);
+        m_SettILevelC = new SettingsILevelC(16);
+        m_SettBeamSearch = new SettingsBeamSearch(17);
+        m_SettExhaustiveSearch = new SettingsExhaustiveSearch(18);
+        m_SettTimeSeries = new SettingsTimeSeries(8);
+        m_SettPhylogeny = new SettingsPhylogeny(19);
+        m_SettRelief = new SettingsRelief(20);
+        m_SettDistances = new SettingsDistances(4);
+        m_SettEnsemble = new SettingsEnsemble(21);
+        m_SettKNN = new SettingsKNN(22);
+        m_SettKNNTree = new SettingsKNNTree(23);
+        m_SettOptionTree = new SettingsOptionTree(15);
+        m_SettSIT = new SettingsSIT(24);
+        m_SettExperimental = new SettingsExperimental(26);
+        m_SettConstraints = new SettingsConstraints(5);
+        m_SettMLC = new SettingsMLC(12, m_SettHMLC, m_SettRelief);
+        m_SettHMTR = new SettingsHMTR(14, m_SettAttribute, m_SettGeneral);
+        m_SettSSL = new SettingsSSL(25);
+
+        // store all settings classes in m_Sections
+        Collections.addAll(m_Sections,
+                m_SettGeneral,
+                m_SettData,
+                m_SettAttribute,
+                m_SettConstraints,
+                m_SettOutput,
+                m_SettNominal,
+                m_SettModel,
+                m_SettTree,
+                m_SettRules,
+                m_SettMLC,
+                m_SettHMLC,
+                m_SettHMTR,
+                m_SettILevelC,
+                m_SettBeamSearch,
+                m_SettExhaustiveSearch,
+                m_SettTimeSeries,
+                m_SettPhylogeny,
+                m_SettRelief,
+                m_SettDistances,
+                m_SettEnsemble,
+                m_SettKNN,
+                m_SettKNNTree,
+                m_SettOptionTree,
+                m_SettExperimental,
+                m_SettSIT,
+                m_SettSSL);
+
     }
 
 
@@ -247,55 +310,37 @@ public class Settings implements Serializable {
         return m_SettSIT;
     }
 
+
     public SettingsSSL getSSL() {
         return m_SettSSL;
     }
 
+
+    /**
+     * This method creates INI sections and stores them in the m_Ini structure
+     */
     public void create() {
-        // Initialize individual settings. Order of initialization is important (see dependencies in the constructor).
 
-        ArrayList<INIFileSection> lst = new ArrayList<INIFileSection>();
+        // sort the sections so that they will be listed correctly in the INI file
+        Collections.sort(m_Sections, new Comparator<SettingsBase>() {
 
-        Collections.addAll(lst,
-                m_SettGeneral.create(),
-                m_SettData.create(),
-                m_SettAttribute.create(),
-                m_SettConstraints.create(),
-                m_SettOutput.create(),
-                m_SettNominal.create(),
-                m_SettModel.create(),
-                m_SettTree.create(),
-                m_SettRules.create(),
-                m_SettMLC.create(),
-                m_SettHMLC.create(),
-                m_SettHMTR.create(),
-                m_SettILevelC.create(),
-                m_SettBeamSearch.create(),
-                m_SettExhaustiveSearch.create(),
-                m_SettTimeSeries.create(),
-                m_SettPhylogeny.create(),
-                m_SettRelief.create(),
-                m_SettDistances.create(),
-                m_SettEnsemble.create(),
-                m_SettKNN.create(),
-                m_SettKNNTree.create(),
-                m_SettOptionTree.create(),
-                m_SettExperimental.create(),
-                m_SettSIT.create(),
-                m_SettSSL.create());
+            @Override
+            public int compare(SettingsBase p1, SettingsBase p2) {
+                return p1.getPosition() - p2.getPosition();
+            }
+        });
 
-        for (INIFileSection sec : lst) {
-            m_Ini.addNode(sec);
+        // create sections and add them to INI structure
+        for (SettingsBase sec : m_Sections) {
+            m_Ini.addNode(sec.create());
         }
     }
 
 
     public void initNamedValues() {
-        m_SettConstraints.setTreeMaxDepthNamedValue(-1, "Infinity");
-
-        m_SettBeamSearch.m_TreeMaxSize.setNamedValue(-1, "Infinity");
-
-        m_SettTree.setTreeSplitSamplingNamedValue(0, "None");
+        for (SettingsBase sec : m_Sections) {
+            sec.initNamedValues();
+        }
     }
 
 
@@ -303,7 +348,7 @@ public class Settings implements Serializable {
         if (m_SettTree.checkHeuristic("SSPD")) {
             schema.addAttrType(new IntegerAttrType("SSPD"));
             int nb = schema.getNbAttributes();
-            m_SettAttribute.m_Target.setValue(String.valueOf(nb));
+            m_SettAttribute.setTarget(String.valueOf(nb));
         }
     }
 
@@ -380,9 +425,9 @@ public class Settings implements Serializable {
         m_SettData.setPruneSetMaxEnabled(!m_SettData.isPruneSetString(SettingsBase.NONE));
 
         if (ResourceInfo.isLibLoaded())
-            m_SettGeneral.m_ResourceInfoLoaded.setSingleValue(SettingsGeneral.RESOURCE_INFO_LOAD_YES);
+            m_SettGeneral.getResourceInfoLoaded().setSingleValue(SettingsGeneral.RESOURCE_INFO_LOAD_YES);
         else
-            m_SettGeneral.m_ResourceInfoLoaded.setSingleValue(SettingsGeneral.RESOURCE_INFO_LOAD_NO);
+            m_SettGeneral.getResourceInfoLoaded().setSingleValue(SettingsGeneral.RESOURCE_INFO_LOAD_NO);
     }
 
 

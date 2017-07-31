@@ -1,11 +1,18 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public class SettingsTimeSeries implements SettingsBase {
+public class SettingsTimeSeries extends SettingsBase {
+
+    public SettingsTimeSeries(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
 
     /***********************************************************************
      * Section: Time series *
@@ -78,6 +85,13 @@ public class SettingsTimeSeries implements SettingsBase {
         setSectionTimeSeriesEnabled(false); // disabled by default
 
         return m_SectionTimeSeries;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

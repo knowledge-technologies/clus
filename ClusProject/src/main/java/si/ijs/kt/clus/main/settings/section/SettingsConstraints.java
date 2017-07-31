@@ -1,5 +1,6 @@
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
@@ -7,8 +8,14 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
-public class SettingsConstraints implements SettingsBase {
+public class SettingsConstraints extends SettingsBase {
     
+    public SettingsConstraints(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
+
     /***********************************************************************
      * Section: Constraints *
      ***********************************************************************/
@@ -38,10 +45,7 @@ public class SettingsConstraints implements SettingsBase {
     public String getConstraintFile() {
         return m_SyntacticConstrFile.getValue();
     }
-
-    public void setTreeMaxDepthNamedValue(int value, String name) {
-        m_TreeMaxDepth.setNamedValue(value, name);
-    }
+ 
 
     public int getMaxSize() {
         return getSizeConstraintPruning(0);
@@ -126,4 +130,8 @@ public class SettingsConstraints implements SettingsBase {
         
     }
 
+    @Override
+    public void initNamedValues() {
+        m_TreeMaxDepth.setNamedValue(-1, INFINITY_STRING);
+    }
 }

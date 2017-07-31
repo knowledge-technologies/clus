@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
 import java.io.File;
 import java.io.FileNotFoundException;

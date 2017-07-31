@@ -1,12 +1,22 @@
-package si.ijs.kt.clus.main.settings;
 
+package si.ijs.kt.clus.main.settings.section;
+
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.range.DoubleRangeCheck;
 import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
-public class SettingsOptionTree implements SettingsBase {
+
+public class SettingsOptionTree extends SettingsBase {
+
+    public SettingsOptionTree(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
+
     /***********************************************************************
      * Section: Option tree
      ***********************************************************************/
@@ -66,8 +76,15 @@ public class SettingsOptionTree implements SettingsBase {
         m_optionDecayFactor.setValueCheck(new DoubleRangeCheck(0.0, 1.0));
         m_optionEpsilon.setValueCheck(new DoubleRangeCheck(0.0, 1.0));
         m_SectionOptionTree.setEnabled(false);
-        
+
         return m_SectionOptionTree;
+
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
         
     }
 

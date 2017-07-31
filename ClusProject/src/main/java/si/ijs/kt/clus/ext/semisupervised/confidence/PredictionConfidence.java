@@ -18,7 +18,7 @@ import si.ijs.kt.clus.ext.semisupervised.confidence.normalization.Normalization;
 import si.ijs.kt.clus.ext.semisupervised.confidence.normalization.Ranking;
 import si.ijs.kt.clus.ext.semisupervised.confidence.normalization.Standardization;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.util.ClusException;
 

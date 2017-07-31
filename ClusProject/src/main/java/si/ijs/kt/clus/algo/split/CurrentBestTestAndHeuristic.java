@@ -34,7 +34,7 @@ import si.ijs.kt.clus.heuristic.GISHeuristic;
 import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicCompatibility;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.test.InverseNumericTest;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.NumericTest;

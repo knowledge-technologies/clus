@@ -19,7 +19,7 @@ import si.ijs.kt.clus.ext.hierarchical.HierErrorMeasures;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.RandomSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;

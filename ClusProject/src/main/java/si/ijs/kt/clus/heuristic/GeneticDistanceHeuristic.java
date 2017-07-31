@@ -3,7 +3,7 @@ package si.ijs.kt.clus.heuristic;
 
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsPhylogeny;
+import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.GeneticDistanceStat;
 

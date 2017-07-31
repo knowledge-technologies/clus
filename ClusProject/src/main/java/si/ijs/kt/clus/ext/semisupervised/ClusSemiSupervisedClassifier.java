@@ -9,7 +9,7 @@ import si.ijs.kt.clus.algo.tdidt.ClusDecisionTree;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.util.ClusException;

@@ -15,8 +15,8 @@ import si.ijs.kt.clus.error.ROCAndPRCurve;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsGeneral;
-import si.ijs.kt.clus.main.settings.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusFormat;
 

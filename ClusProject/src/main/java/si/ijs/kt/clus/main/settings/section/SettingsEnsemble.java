@@ -1,7 +1,8 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.data.ClusSchema;
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
@@ -12,7 +13,14 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
 
-public class SettingsEnsemble implements SettingsBase {
+public class SettingsEnsemble extends SettingsBase {
+
+    public SettingsEnsemble(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
+
 
     /***********************************************************************
      * Section: Ensemble methods *
@@ -151,7 +159,8 @@ public class SettingsEnsemble implements SettingsBase {
 
 
     public boolean isEnsembleROSEnabled() {
-        return getEnsembleROSScope() != ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE;
+        return (getEnsembleROSScope() != ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) 
+                && isEnsembleMode();
     }
 
 
@@ -446,6 +455,13 @@ public class SettingsEnsemble implements SettingsBase {
         m_SectionEnsembles.setEnabled(false);
 
         return m_SectionEnsembles;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

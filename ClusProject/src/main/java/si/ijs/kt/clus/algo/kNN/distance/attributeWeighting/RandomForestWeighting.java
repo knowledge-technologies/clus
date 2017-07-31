@@ -35,7 +35,7 @@ import si.ijs.kt.clus.ext.ensemble.ClusEnsembleClassifier;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.util.ClusRandom;
 
 

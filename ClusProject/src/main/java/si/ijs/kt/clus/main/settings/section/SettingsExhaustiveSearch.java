@@ -1,10 +1,17 @@
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
-public class SettingsExhaustiveSearch implements SettingsBase {
+public class SettingsExhaustiveSearch extends SettingsBase {
+
+    public SettingsExhaustiveSearch(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
 
     /***********************************************************************
      * Section: Exhaustive search *
@@ -47,6 +54,13 @@ public class SettingsExhaustiveSearch implements SettingsBase {
         m_SectionExhaustive.setEnabled(false);
         
         return m_SectionExhaustive;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

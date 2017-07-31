@@ -1,6 +1,7 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
@@ -8,7 +9,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsGeneral implements SettingsBase {
+public class SettingsGeneral extends SettingsBase {
 
     /***********************************************************************
      * Section: General *
@@ -19,6 +20,9 @@ public class SettingsGeneral implements SettingsBase {
     INIFileString m_RandomSeed;
     INIFileNominal m_ResourceInfoLoaded;
 
+    public SettingsGeneral(int position) {
+        super(position);
+    }
 
     public int getCompatibility() {
         return m_Compatibility.getValue();
@@ -48,10 +52,14 @@ public class SettingsGeneral implements SettingsBase {
     }
 
 
-    public int getResourceInfoLoaded() {
+    public int getResourceInfoLoadedValue() {
         return m_ResourceInfoLoaded.getValue();
     }
 
+    public INIFileNominal getResourceInfoLoaded() {
+        return m_ResourceInfoLoaded;
+    }
+    
     /***********************************************************************
      * Section: General - Compatibility mode *
      ***********************************************************************/
@@ -82,6 +90,12 @@ public class SettingsGeneral implements SettingsBase {
         settings.addNode(m_ResourceInfoLoaded = new INIFileNominal("ResourceInfoLoaded", RESOURCE_INFO_LOAD, 1));
 
         return settings;
+    }
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

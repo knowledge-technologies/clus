@@ -37,7 +37,7 @@ public class INIFileSection extends INIFileNode {
 
     protected Hashtable m_hEntries = new Hashtable();
     protected Vector m_hEntryList = new Vector();
-
+    protected int m_Index = 1; // index of this section in the INI file
 
     public INIFileSection(String name) {
         super(name);

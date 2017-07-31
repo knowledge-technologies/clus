@@ -1,18 +1,22 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public class SettingsMLC implements SettingsBase {
+public class SettingsMLC extends SettingsBase {
 
     SettingsHMLC m_SettHMLC;
     SettingsRelief m_SettRelief;
 
-    public SettingsMLC(SettingsHMLC settHMLC, SettingsRelief settRelief) {
+
+    public SettingsMLC(int position, SettingsHMLC settHMLC, SettingsRelief settRelief) {
+        super(position);
+        
         m_SettHMLC = settHMLC;
         m_SettRelief = settRelief;
     }
@@ -109,27 +113,35 @@ public class SettingsMLC implements SettingsBase {
         }
     }
 
-    public boolean shouldShowThresholds(){
-        if(m_SettRelief.isRelief()){
+
+    public boolean shouldShowThresholds() {
+        if (m_SettRelief.isRelief()) {
             return false;
-        } else if (shouldRunThresholdOptimization()){
+        }
+        else if (shouldRunThresholdOptimization()) {
             return true;
-        } else if (m_SectionMultiLabel.isEnabled()){
+        }
+        else if (m_SectionMultiLabel.isEnabled()) {
             return true;
-        } else {
+        }
+        else {
             return false;
         }
     }
-    
-    public boolean shouldShowThresholds(String modelName){
-        if (modelName.equals("Default") || modelName.equals("Original") || modelName.equals("Pruned")){
+
+
+    public boolean shouldShowThresholds(String modelName) {
+        if (modelName.equals("Default") || modelName.equals("Original") || modelName.equals("Pruned")) {
             return true;
-        } else if (modelName.startsWith("Forest with ") && !modelName.contains("trees(T = ")){
+        }
+        else if (modelName.startsWith("Forest with ") && !modelName.contains("trees(T = ")) {
             return true;
-        } else{
+        }
+        else {
             return false;
         }
     }
+
 
     @Override
     public INIFileSection create() {
@@ -142,6 +154,13 @@ public class SettingsMLC implements SettingsBase {
         m_MultiLabelRankingMeasure.setNominal(MULTILABEL_MEASURES_HAMMINGLOSS);
 
         return m_SectionMultiLabel;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+
     }
 
 }
