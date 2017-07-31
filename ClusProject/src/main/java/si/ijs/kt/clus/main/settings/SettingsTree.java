@@ -489,7 +489,7 @@ public class SettingsTree implements SettingsBase {
         m_SectionTree = new INIFileSection("Tree");
         m_SectionTree.addNode(m_Heuristic = new INIFileNominal("Heuristic", HEURISTICS, HEURISTIC_DEFAULT));
 
-        m_SectionTree.addNode(m_HeuristicComplexity = new INIFileNominal("HeuristicComlexity", HEURISTIC_COMPLEXITY, 0));
+        m_SectionTree.addNode(m_HeuristicComplexity = new INIFileNominal("HeuristicComplexity", HEURISTIC_COMPLEXITY, 0));
         m_SectionTree.addNode(m_SetDistance = new INIFileNominal("SetDistance", SETDISTANCES, SETDISTANCES_GSM));
         m_SectionTree.addNode(m_TupleDistance = new INIFileNominal("TupleDistance", TUPLEDISTANCES, TUPLEDISTANCES_EUCLIDEAN));
         m_SectionTree.addNode(m_TSDistance = new INIFileNominal("TSDistance", TIME_SERIES_DISTANCE_MEASURE, TIME_SERIES_DISTANCE_MEASURE_DTW));
