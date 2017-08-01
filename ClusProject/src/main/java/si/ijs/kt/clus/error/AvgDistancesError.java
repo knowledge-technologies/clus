@@ -30,6 +30,7 @@ import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class AvgDistancesError extends ClusError { // does not implements ComponentError
@@ -46,22 +47,26 @@ public class AvgDistancesError extends ClusError { // does not implements Compon
     }
 
 
+    @Override
     public void reset() {
         m_SumErr = 0.0;
     }
 
 
+    @Override
     public void add(ClusError other) {
         AvgDistancesError oe = (AvgDistancesError) other;
         m_SumErr += oe.m_SumErr;
     }
 
 
-    public void addExample(DataTuple tuple, ClusStatistic pred) {
+    @Override
+    public void addExample(DataTuple tuple, ClusStatistic pred) throws ClusException {
         m_SumErr += m_Distance.calcDistanceToCentroid(tuple, pred);
     }
 
 
+    @Override
     public double getModelErrorAdditive() {
         // return squared error not divided by the number of examples
         // optimized, e.g., by size constraint pruning
@@ -69,25 +74,30 @@ public class AvgDistancesError extends ClusError { // does not implements Compon
     }
 
 
+    @Override
     public double getModelError() {
         return getModelErrorComponent(0);
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return true;
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new AvgDistancesError(par, m_Distance);
     }
 
 
+    @Override
     public void showModelError(PrintWriter wrt, int detail) {
         StringBuffer res = new StringBuffer();
         res.append(String.valueOf(getModelError()));
@@ -95,11 +105,13 @@ public class AvgDistancesError extends ClusError { // does not implements Compon
     }
 
 
+    @Override
     public String getName() {
         return "AvgDistancesError";
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         int nb = getNbExamples();
         double err = nb != 0 ? m_SumErr / nb : 0.0;

@@ -53,11 +53,13 @@ public class MultiScoreStat extends ClusStatistic {
     }
 
 
+    @Override
     public String getArrayOfStatistic() {
         return null;
     }
 
 
+    @Override
     public String getString(StatisticPrintInfo info) {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
@@ -80,21 +82,25 @@ public class MultiScoreStat extends ClusStatistic {
     }
 
 
+    @Override
     public String getPredictedClassName(int idx) {
         return "";
     }
 
 
+    @Override
     public double[] getNumericPred() {
         return m_MeanValues;
     }
 
 
+    @Override
     public int[] getNominalPred() {
         return m_Score;
     }
 
 
+    @Override
     public boolean samePrediction(ClusStatistic other) {
         MultiScoreStat or = (MultiScoreStat) other;
         for (int i = 0; i < m_NbTarget; i++)
@@ -104,57 +110,70 @@ public class MultiScoreStat extends ClusStatistic {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         return null;
     }
 
 
+    @Override
     public void update(ColTarget target, int idx) {
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) {
     }
 
 
+    @Override
     public void calcMean() {
     }
 
 
+    @Override
     public void reset() {
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
     }
 
 
+    @Override
     public void addScaled(double scale, ClusStatistic other) {
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
     }
 
  
 
+    @Override
     public void vote(ArrayList votes) {
         System.err.println(getClass().getName() + "vote (): Not implemented");
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         System.err.println(getClass().getName() + "vote (): Not implemented");
     }

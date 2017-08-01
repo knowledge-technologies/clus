@@ -223,6 +223,7 @@ public abstract class NodeTest implements Serializable {
     public abstract boolean equals(NodeTest test);
 
 
+    @Override
     public int hashCode() {
         return 1111;
     }
@@ -347,6 +348,7 @@ public abstract class NodeTest implements Serializable {
 
 
     // Get string representation of test
+    @Override
     public final String toString() {
         return getString();
     }

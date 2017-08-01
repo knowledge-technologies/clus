@@ -26,6 +26,7 @@ import java.util.LinkedList;
 
 import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
 import si.ijs.kt.clus.data.rows.DataTuple;
+import si.ijs.kt.clus.util.ClusException;
 
 
 /**
@@ -64,6 +65,7 @@ public abstract class DistanceWeighting {
      * 
      * @param el
      * @return weight
+     * @throws ClusException 
      */
-    public abstract double weight(DataTuple el);
+    public abstract double weight(DataTuple el) throws ClusException;
 }

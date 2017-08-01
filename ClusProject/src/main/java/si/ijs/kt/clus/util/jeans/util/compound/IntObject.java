@@ -54,6 +54,7 @@ public class IntObject implements Comparable {
     }
 
 
+    @Override
     public int compareTo(Object o) {
         IntObject ot = (IntObject) o;
         if (m_Int == ot.m_Int)

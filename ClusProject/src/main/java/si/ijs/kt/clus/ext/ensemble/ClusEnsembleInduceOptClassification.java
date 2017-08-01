@@ -30,6 +30,7 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     }
 
 
+    @Override
     public void initPredictions(ClusStatistic stat, ClusEnsembleROSInfo ensembleROSInfo) {
         ClassificationStat nstat = (ClassificationStat) stat;
         m_AvgPredictions = new double[m_TuplePositions.size()][nstat.getNbAttributes()][]; // m_HashCodeTuple.length
@@ -41,7 +42,8 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     }
 
 
-    public synchronized void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException {
+    @Override
+    public synchronized void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException, InterruptedException {
         m_NbUpdatesLock.writingLock();
         m_AvgPredictionsLock.writingLock();
         m_NbUpdates++;
@@ -107,7 +109,7 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     }
 
 
-    private void updateTuplesWithModel(TupleIterator iterator, ClusModel model) throws IOException, ClusException {
+    private void updateTuplesWithModel(TupleIterator iterator, ClusModel model) throws IOException, ClusException, InterruptedException {
         if (iterator != null) {
             iterator.init();
             DataTuple tuple = iterator.readTuple();
@@ -149,6 +151,7 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     }
 
 
+    @Override
     public int getPredictionLength(int tuple) {
         return m_AvgPredictions[tuple].length;
     }
@@ -159,6 +162,7 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     }
 
 
+    @Override
     public void roundPredictions() {
         //System.err.println("Rounding up predictions!");
         for (int i = 0; i < m_AvgPredictions.length; i++) {

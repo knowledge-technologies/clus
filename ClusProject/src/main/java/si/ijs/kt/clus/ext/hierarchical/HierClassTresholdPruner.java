@@ -42,16 +42,19 @@ public class HierClassTresholdPruner extends PruneTree {
     }
 
 
+    @Override
     public void prune(ClusNode node) throws ClusException {
         prune(0, node);
     }
 
 
+    @Override
     public int getNbResults() {
         return m_Thresholds.length;
     }
 
 
+    @Override
     public String getPrunedName(int i) {
         return "T(" + m_Thresholds[i] + ")";
     }
@@ -62,11 +65,13 @@ public class HierClassTresholdPruner extends PruneTree {
     }
 
 
+    @Override
     public void updatePrunedModelInfo(ClusModelInfo info) {
         info.setShouldWritePredictions(false);
     }
 
 
+    @Override
     public void prune(int result, ClusNode node) throws ClusException {
         pruneRecursive(node, m_Thresholds[result]);
     }

@@ -76,16 +76,19 @@ public class ImageViewer extends Canvas {
     }
 
 
+    @Override
     public Dimension getPreferredSize() {
         return size;
     }
 
 
+    @Override
     public void paint(Graphics g) {
         update(g);
     }
 
 
+    @Override
     public void update(Graphics g) {
         Dimension d = getSize();
         int width = image.getWidth(this);

@@ -30,11 +30,13 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         return new ClusBeamSimClassStat(m_Settings, m_Attrs, m_Beam);
     }
 
 
+    @Override
     public void reset() {
         super.reset();
         for (int i = 0; i < m_NbTarget; i++) {
@@ -46,6 +48,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         super.copy(other);
         ClusBeamSimClassStat or = (ClusBeamSimClassStat) other;
@@ -62,6 +65,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
         super.addPrediction(other, weight);
         ClusBeamSimClassStat or = (ClusBeamSimClassStat) other;
@@ -78,6 +82,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
         super.add(other);
         ClusBeamSimClassStat or = (ClusBeamSimClassStat) other;
@@ -94,6 +99,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
         super.subtractFromThis(other);
         ClusBeamSimClassStat or = (ClusBeamSimClassStat) other;
@@ -110,6 +116,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
         super.subtractFromOther(other);
         ClusBeamSimClassStat or = (ClusBeamSimClassStat) other;
@@ -126,6 +133,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         updateWeighted(tuple, tuple.getWeight());
     }
@@ -136,6 +144,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, double weight) {
         super.updateWeighted(tuple, weight);
         ArrayList<ClusBeamModel> models = m_Beam.toArray();
@@ -161,6 +170,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public double getSVarS(ClusAttributeWeights scale) {
         double result = super.getSVarS(scale);
         double similarity = 0.0;
@@ -214,6 +224,7 @@ public class ClusBeamSimClassStat extends ClassificationStat {
     }
 
 
+    @Override
     public void setBeam(ClusBeam beam) {
         m_Beam = beam;
     }

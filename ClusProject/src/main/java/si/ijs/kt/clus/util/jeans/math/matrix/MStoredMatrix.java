@@ -36,6 +36,7 @@ public class MStoredMatrix extends MMatrix {
     }
 
 
+    @Override
     public final double get(int r, int c) {
         if (c > r)
             return m_Data[c][r];
@@ -44,11 +45,13 @@ public class MStoredMatrix extends MMatrix {
     }
 
 
+    @Override
     public final int getRows() {
         return m_Rows;
     }
 
 
+    @Override
     public final int getCols() {
         return m_Cols;
     }

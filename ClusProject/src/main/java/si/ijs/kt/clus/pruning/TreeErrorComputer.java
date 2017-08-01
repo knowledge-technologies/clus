@@ -36,6 +36,7 @@ import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.processor.ClusModelProcessor;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class TreeErrorComputer extends ClusModelProcessor {
@@ -51,24 +52,27 @@ public class TreeErrorComputer extends ClusModelProcessor {
     }
 
 
-    public void modelUpdate(DataTuple tuple, ClusModel model) throws IOException {
+    @Override
+    public void modelUpdate(DataTuple tuple, ClusModel model) throws IOException, ClusException {
         ClusNode tree = (ClusNode) model;
         ErrorVisitor visitor = (ErrorVisitor) tree.getVisitor();
         visitor.testerr.addExample(tuple, tree.getTargetStat());
     }
 
 
+    @Override
     public boolean needsModelUpdate() {
         return true;
     }
 
 
+    @Override
     public boolean needsInternalNodes() {
         return true;
     }
 
 
-    public static ClusError computeErrorOptimized(ClusNode tree, RowData test, ClusErrorList error, boolean miss) {
+    public static ClusError computeErrorOptimized(ClusNode tree, RowData test, ClusErrorList error, boolean miss) throws ClusException {
         error.reset();
         error.setNbExamples(test.getNbRows());
         ClusError child_err = error.getFirstError().getErrorClone();
@@ -77,7 +81,7 @@ public class TreeErrorComputer extends ClusModelProcessor {
     }
 
 
-    public static void computeErrorOptimized(ClusNode tree, RowData test, ClusError error, boolean miss) {
+    public static void computeErrorOptimized(ClusNode tree, RowData test, ClusError error, boolean miss) throws ClusException {
         // if (miss) {
         computeErrorStandard(tree, test, error);
         // } else {
@@ -90,7 +94,7 @@ public class TreeErrorComputer extends ClusModelProcessor {
     }
 
 
-    public static ClusError computeClusteringErrorStandard(ClusNode tree, RowData test, ClusErrorList error) {
+    public static ClusError computeClusteringErrorStandard(ClusNode tree, RowData test, ClusErrorList error) throws ClusException {
         error.reset();
         error.setNbExamples(test.getNbRows());
         ClusError child_err = error.getFirstError().getErrorClone();
@@ -99,7 +103,7 @@ public class TreeErrorComputer extends ClusModelProcessor {
     }
 
 
-    public static void computeClusteringErrorStandard(ClusNode tree, RowData test, ClusError error) {
+    public static void computeClusteringErrorStandard(ClusNode tree, RowData test, ClusError error) throws ClusException {
         for (int i = 0; i < test.getNbRows(); i++) {
             DataTuple tuple = test.getTuple(i);
             ClusStatistic pred = tree.clusterWeighted(tuple);
@@ -108,7 +112,7 @@ public class TreeErrorComputer extends ClusModelProcessor {
     }
 
 
-    public static void computeErrorStandard(ClusNode tree, RowData test, ClusError error) {
+    public static void computeErrorStandard(ClusNode tree, RowData test, ClusError error) throws ClusException {
         for (int i = 0; i < test.getNbRows(); i++) {
             DataTuple tuple = test.getTuple(i);
             ClusStatistic pred = tree.predictWeighted(tuple);
@@ -117,7 +121,7 @@ public class TreeErrorComputer extends ClusModelProcessor {
     }
 
 
-    public static void computeErrorNode(ClusNode node, RowData test, ClusError error) {
+    public static void computeErrorNode(ClusNode node, RowData test, ClusError error) throws ClusException {
         ClusStatistic pred = node.getTargetStat();
         for (int i = 0; i < test.getNbRows(); i++) {
             DataTuple tuple = test.getTuple(i);
@@ -126,7 +130,7 @@ public class TreeErrorComputer extends ClusModelProcessor {
     }
 
 
-    public static void initializeTestErrorsData(ClusNode tree, RowData test, ClusError error) throws IOException {
+    public static void initializeTestErrorsData(ClusNode tree, RowData test, ClusError error) throws IOException, ClusException {
         TreeErrorComputer comp = new TreeErrorComputer();
         initializeTestErrors(tree, error);
         for (int i = 0; i < test.getNbRows(); i++) {

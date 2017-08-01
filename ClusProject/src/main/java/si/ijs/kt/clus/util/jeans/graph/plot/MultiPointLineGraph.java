@@ -92,6 +92,7 @@ public class MultiPointLineGraph extends JComponent {
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         // Init graphcs
         super.paintComponent(g);
@@ -181,7 +182,7 @@ public class MultiPointLineGraph extends JComponent {
 
     public int calcX(int num, float xmin, float xmax, int min, int max) {
         float xp = (xdata[num] - xmin) / (xmax - xmin) * (max - min);
-        return (int) Math.round(xp) + min;
+        return Math.round(xp) + min;
     }
 
 

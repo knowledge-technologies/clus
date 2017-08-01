@@ -163,9 +163,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
     @Override
     public ClusModel induceSingleUnpruned(ClusRun cr)
-            throws ClusException,
-            IOException,
-            InterruptedException {
+            throws Exception {
 
         partitionData(cr); //set training set, unlabeled set and testing set (if needed) 
 
@@ -698,8 +696,10 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
      *        Example which should be processed
      * @param index
      *        Index of the example in the unlabeled set
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    private void processUnlabeledExample(DataTuple t, int index) {
+    private void processUnlabeledExample(DataTuple t, int index) throws ClusException, InterruptedException {
 
         ClusStatistic stat = m_Model.predictWeighted(t); //model.predictWeighted(tuple);
 
@@ -727,11 +727,13 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
     }
 
 
+    @Override
     public ClusSchema getSchema() {
         return m_Induce.getSchema();
     }
 
 
+    @Override
     public ClusStatManager getStatManager() {
         return m_Induce.getStatManager();
     }
@@ -742,11 +744,13 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
      *
      * @return The settings object.
      */
+    @Override
     public Settings getSettings() {
         return getStatManager().getSettings();
     }
 
 
+    @Override
     public void getPreprocs(DataPreprocs pps) {
         getStatManager().getPreprocs(pps);
     }

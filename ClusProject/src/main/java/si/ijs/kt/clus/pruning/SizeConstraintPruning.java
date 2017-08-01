@@ -60,6 +60,7 @@ public class SizeConstraintPruning extends PruneTree {
     }
 
 
+    @Override
     public void setTrainingData(RowData data) {
         m_Data = data;
     }
@@ -70,7 +71,7 @@ public class SizeConstraintPruning extends PruneTree {
     }
 
 
-    public void pruneInitialize(ClusNode node, int size) {
+    public void pruneInitialize(ClusNode node, int size) throws ClusException {
         recursiveInitialize(node, size);
         // compute error for each internal node and leaf
         if (isUsingAdditiveError()) {
@@ -88,21 +89,25 @@ public class SizeConstraintPruning extends PruneTree {
     }
 
 
+    @Override
     public void prune(ClusNode node) throws ClusException {
         prune(0, node);
     }
 
 
+    @Override
     public int getNbResults() {
         return Math.max(1, m_MaxSize.length);
     }
 
 
+    @Override
     public String getPrunedName(int i) {
         return "S(" + m_MaxSize[i] + ")";
     }
 
 
+    @Override
     public void prune(int result, ClusNode node) throws ClusException {
         if (m_MaxError == null) {
             int size = m_MaxSize[result];
@@ -123,6 +128,7 @@ public class SizeConstraintPruning extends PruneTree {
     }
 
 
+    @Override
     public void sequenceInitialize(ClusNode node) {
         int max_size = node.getNbNodes();
         int abs_max = getMaxSize();
@@ -137,12 +143,14 @@ public class SizeConstraintPruning extends PruneTree {
     }
 
 
+    @Override
     public void sequenceReset() {
         m_CrIndex = m_MaxIndex;
     }
 
 
-    public ClusNode sequenceNext() {
+    @Override
+    public ClusNode sequenceNext() throws ClusException {
         if (m_CrIndex > 0) {
             ClusNode cloned = getOriginalTree().cloneTreeWithVisitors();
             pruneExecute(cloned, m_CrIndex);
@@ -155,6 +163,7 @@ public class SizeConstraintPruning extends PruneTree {
     }
 
 
+    @Override
     public void sequenceToElemK(ClusNode node, int k) {
         pruneExecute(node, m_MaxIndex - 2 * k);
     }
@@ -211,7 +220,7 @@ public class SizeConstraintPruning extends PruneTree {
     }
 
 
-    private void recursiveInitializeError(ClusNode node, RowData data) {
+    private void recursiveInitializeError(ClusNode node, RowData data) throws ClusException {
         // get visitor and error measure
         SizeConstraintVisitor visitor = (SizeConstraintVisitor) node.getVisitor();
         ClusErrorList parent = getAdditiveError();

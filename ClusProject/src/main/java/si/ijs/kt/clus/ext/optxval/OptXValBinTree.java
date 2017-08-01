@@ -79,7 +79,7 @@ public class OptXValBinTree extends MyNode {
 
 
     private void getTimes(double[] arr, int depth) {
-        arr[depth] += (double) m_Time;
+        arr[depth] += m_Time;
         for (int j = 0; j < getNbChildren(); j++) {
             OptXValBinTree tree = (OptXValBinTree) getChild(j);
             tree.getTimes(arr, depth + 1);

@@ -42,10 +42,10 @@ public class ClusBeamSyntacticConstraint {
     ArrayList<ClusStatistic> m_ConstraintPredictions;
 
 
-    public ClusBeamSyntacticConstraint(ClusRun run) throws ClusException, IOException {
+    public ClusBeamSyntacticConstraint(ClusRun run) throws ClusException, IOException, InterruptedException {
         initializeConstraint(run);
         ClusStatManager mgr = run.getStatManager();
-        (mgr.getSchema()).attachModel((ClusModel) m_Constraint);
+        (mgr.getSchema()).attachModel(m_Constraint);
         createConstrStat(m_Constraint, mgr, (RowData) run.getTrainingSet());
         setConstraintPredictions(getPredictions(run));
         // m_Constraint.printTree();
@@ -62,7 +62,7 @@ public class ClusBeamSyntacticConstraint {
     }
 
 
-    public void createConstrStat(ClusNode node, ClusStatManager mgr, RowData data) {
+    public void createConstrStat(ClusNode node, ClusStatManager mgr, RowData data) throws ClusException {
         if (node.getTest() == null)
             node.makeLeaf();
         else {
@@ -83,8 +83,10 @@ public class ClusBeamSyntacticConstraint {
      * 
      * @param run
      * @return predictions
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    public ArrayList<ClusStatistic> getPredictions(ClusRun run) {
+    public ArrayList<ClusStatistic> getPredictions(ClusRun run) throws ClusException, InterruptedException {
         DataTuple tuple;
         RowData train = (RowData) run.getTrainingSet();
         ArrayList<ClusStatistic> predictions = new ArrayList<ClusStatistic>();

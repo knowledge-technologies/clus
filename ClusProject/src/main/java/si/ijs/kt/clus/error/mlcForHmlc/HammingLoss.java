@@ -9,10 +9,12 @@ public class HammingLoss implements MlcHmlcSubError{
         m_NbKnown = 0;
     }
     
+    @Override
     public double compute(int dimensions){
         return ((double) m_NbWrong) / m_NbKnown / dimensions;
     }
     
+    @Override
     public void addExample(boolean[] actual, double[] predicted, boolean[] predictedThresholded){
         for(int i = 0; i < actual.length; i++){
             if(actual[i] != predictedThresholded[i]){
@@ -22,6 +24,7 @@ public class HammingLoss implements MlcHmlcSubError{
         m_NbKnown++;
     }
     
+    @Override
     public String getName(){
         return "HammingLoss";
     }

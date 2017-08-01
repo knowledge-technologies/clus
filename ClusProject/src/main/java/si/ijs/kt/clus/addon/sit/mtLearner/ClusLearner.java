@@ -23,6 +23,7 @@ public class ClusLearner extends MTLearnerImpl {
     protected ClusSchema m_Schema;
 
 
+    @Override
     public void init(RowData data, Settings sett) {
         m_Schema = data.getSchema().cloneSchema();
         RowData mydata = new RowData(data);
@@ -39,6 +40,7 @@ public class ClusLearner extends MTLearnerImpl {
     }
 
 
+    @Override
     protected RowData[] LearnModel(TargetSet targets, RowData train, RowData test) {
         try {
             ClusSchema schema = m_Clus.getSchema();
@@ -86,6 +88,7 @@ public class ClusLearner extends MTLearnerImpl {
     }
 
 
+    @Override
     public String getName() {
         return "ClusLearner";
     }

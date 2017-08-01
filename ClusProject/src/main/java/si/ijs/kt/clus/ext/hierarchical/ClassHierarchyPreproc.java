@@ -65,11 +65,13 @@ public class ClassHierarchyPreproc implements TuplePreproc {
     }
 
 
+    @Override
     public int getNbPasses() {
         return isSinglePass() ? 1 : 2;
     }
 
 
+    @Override
     public void preproc(int pass, DataTuple tuple) throws ClusException {
         ClassesTuple ct = (ClassesTuple) tuple.getObjVal(m_Type.getArrayIndex());
         if (!isSinglePass() && pass == 0) {
@@ -83,6 +85,7 @@ public class ClassHierarchyPreproc implements TuplePreproc {
     }
 
 
+    @Override
     public void preprocSingle(DataTuple tuple) throws ClusException {
         ClassesTuple ct = (ClassesTuple) tuple.getObjVal(m_Type.getArrayIndex());
         ct.addHierarchyIndices(getHier());
@@ -91,6 +94,7 @@ public class ClassHierarchyPreproc implements TuplePreproc {
     }
 
 
+    @Override
     public void done(int pass) throws ClusException {
         if (pass > 0)
             return;

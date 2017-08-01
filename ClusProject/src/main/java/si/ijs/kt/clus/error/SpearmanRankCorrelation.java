@@ -45,6 +45,7 @@ public class SpearmanRankCorrelation extends ClusNumericError {
     }
 
 
+    @Override
     public void addExample(DataTuple real, DataTuple pred) {
         double[] double_real = new double[m_Dim];
         double[] double_pred = new double[m_Dim];
@@ -207,7 +208,8 @@ public class SpearmanRankCorrelation extends ClusNumericError {
     }
 
 
-	public boolean shouldBeLow() {//previously, this method was in ClusError and returned true
+	@Override
+    public boolean shouldBeLow() {//previously, this method was in ClusError and returned true
 		return false;
 	}
 

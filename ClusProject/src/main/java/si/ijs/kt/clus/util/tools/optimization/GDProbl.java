@@ -922,7 +922,7 @@ public class GDProbl extends OptProbl {
             int avgNbLeaves = (int) (Math.pow(2, avgDepth)); // The root depth is 0, thus not avgDepth-1.
             // int terminalNodes = (int)
             // (2+Math.floor((double)(2-avgNbLeaves)/Math.log(avgNbLeaves-2)*Math.log(unifRand)));
-            double terminalNodes = 2 + (double) (2 - avgNbLeaves) / Math.log(avgNbLeaves - 2) * Math.log(unifRand);
+            double terminalNodes = 2 + (2 - avgNbLeaves) / Math.log(avgNbLeaves - 2) * Math.log(unifRand);
             maxDepths = (int) Math.ceil(Math.log(terminalNodes) / Math.log(2.0)); // Binary logarithm. Root
         }
         // turha.add(new Integer(maxDepths));
@@ -938,7 +938,7 @@ public class GDProbl extends OptProbl {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         wrt.print("Iteration " + iterNro + ":");
         for (int i = 0; i < m_gradients.length; i++) {
-            wrt.print(fr.format((double) m_gradients[i]) + "\t");
+            wrt.print(fr.format(m_gradients[i]) + "\t");
         }
         wrt.print("\n");
     }

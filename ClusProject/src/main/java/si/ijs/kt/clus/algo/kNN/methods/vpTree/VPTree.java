@@ -33,6 +33,7 @@ import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
+import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.util.ClusException;
 
@@ -56,8 +57,9 @@ public class VPTree extends SearchAlgorithm {
     }
 
 
-    public void build() throws ClusException, IOException {
-        RowData data = getRun().getDataSet(ClusRun.TRAINSET);
+    @Override
+    public void build() throws ClusException, IOException, InterruptedException {
+        RowData data = getRun().getDataSet(ClusModelInfoList.TRAINSET);
         LinkedList<VPItem> list = new LinkedList<VPItem>();
         for (DataTuple tuple : data.getData()) // data.m_Data
             list.add(new VPItem(tuple));
@@ -72,8 +74,9 @@ public class VPTree extends SearchAlgorithm {
      * @param list
      *        list of all points in space.
      * @return
+     * @throws ClusException 
      */
-    private VPNode recursiveBuild(LinkedList<VPItem> list) {
+    private VPNode recursiveBuild(LinkedList<VPItem> list) throws ClusException {
         if (list.isEmpty())
             return null;
         VPNode node;
@@ -192,7 +195,8 @@ public class VPTree extends SearchAlgorithm {
     }
 
 
-    public LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) {
+    @Override
+    public LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) throws ClusException {
         m_NbNeighbors = k;
         m_Tau = Double.MAX_VALUE;
         m_Stack = new NNStack(m_NbNeighbors);
@@ -201,10 +205,10 @@ public class VPTree extends SearchAlgorithm {
     }
 
 
-    private void search(VPNode n, DataTuple q) {
+    private void search(VPNode n, DataTuple q) throws ClusException {
         if (n == null)
             return;
-        VPTree.operationsCount[VPTree.ALG_VP]++;
+        SearchAlgorithm.operationsCount[SearchAlgorithm.ALG_VP]++;
         double x = getDistance().calcDistance(n.getVPItem().getTuple(), q);
         m_Stack.addToStack(n.getVPItem().getTuple(), x);
         m_Tau = m_Stack.getWorstNearestDistance();

@@ -60,16 +60,19 @@ public class SubsetTest extends NodeTest {
     }
 
 
+    @Override
     public ClusAttrType getType() {
         return m_Type;
     }
 
 
+    @Override
     public void setType(ClusAttrType type) {
         m_Type = (NominalAttrType) type;
     }
 
 
+    @Override
     public String getString() {
         if (m_Values.length == 1) {
             return m_Type.getName() + " = " + m_Type.getValue(m_Values[0]);
@@ -94,6 +97,7 @@ public class SubsetTest extends NodeTest {
     }
 
 
+    @Override
     public String getPythonString() {
         if (m_Values.length == 1) {
             return m_Type.getName() + " == '" + m_Type.getValue(m_Values[0]) + "'";
@@ -118,6 +122,7 @@ public class SubsetTest extends NodeTest {
     }
 
 
+    @Override
     public boolean hasConstants() {
         return m_Values.length > 0;
     }
@@ -138,6 +143,7 @@ public class SubsetTest extends NodeTest {
     }
 
 
+    @Override
     public boolean equals(NodeTest test) {
         // Other test is of different type
         if (m_Type != test.getType())
@@ -156,6 +162,7 @@ public class SubsetTest extends NodeTest {
     }
 
 
+    @Override
     public int hashCode() {
         int code = m_Type.getIndex() * 1000;
         for (int i = 0; i < m_Values.length; i++) {
@@ -165,6 +172,7 @@ public class SubsetTest extends NodeTest {
     }
 
 
+    @Override
     public int nominalPredict(int value) {
         // Missing value
         if (value == m_MissIndex)
@@ -177,6 +185,7 @@ public class SubsetTest extends NodeTest {
     }
 
 
+    @Override
     public int nominalPredictWeighted(int value) {
         // Missing value
         if (value == m_MissIndex)
@@ -189,12 +198,14 @@ public class SubsetTest extends NodeTest {
     }
 
 
+    @Override
     public int predictWeighted(DataTuple tuple) {
         int val = m_Type.getNominal(tuple);
         return nominalPredictWeighted(val);
     }
 
 
+    @Override
     public NodeTest getBranchTest(int i) {
         if (i == ClusNode.YES) {
             return this;
@@ -215,6 +226,7 @@ public class SubsetTest extends NodeTest {
     }
 
 
+    @Override
     public NodeTest simplifyConjunction(NodeTest other) {
         if (getType() != other.getType()) {
             return null;

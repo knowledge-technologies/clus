@@ -66,11 +66,13 @@ public class WindowClosingListener extends WindowAdapter implements ActionListen
     }
 
 
+    @Override
     public void windowClosing(WindowEvent e) {
         doClose();
     }
 
 
+    @Override
     public void actionPerformed(ActionEvent e) {
         doClose();
     }

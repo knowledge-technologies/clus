@@ -46,12 +46,12 @@ public class ClusSemiSupervisedClassifier extends ClusInductionAlgorithmType {
     }
 
     @Override
-    public void pruneAll(ClusRun cr) throws ClusException, IOException {
+    public void pruneAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
         m_clss.pruneAll(cr);
     }
     
     @Override
-    public void postProcess(ClusRun cr) throws ClusException, IOException {
+    public void postProcess(ClusRun cr) throws ClusException, IOException, InterruptedException {
         cr.addModelInfo(ClusModel.DEFAULT);
         ClusModelInfo def_info = cr.getModelInfo(ClusModel.DEFAULT);
         def_info.setModel(ClusDecisionTree.induceDefault(cr));
@@ -74,6 +74,7 @@ public class ClusSemiSupervisedClassifier extends ClusInductionAlgorithmType {
     //		{
     //			m_clss.induceAll(cr);	
     //		}
+    @Override
     public void printInfo() {
         Settings sett = getSettings();
         System.out.println("SSL Metohd: " + sett.getSSL().getSemiSupervisedMethodName(sett.getSSL().getSemiSupervisedMethod()));

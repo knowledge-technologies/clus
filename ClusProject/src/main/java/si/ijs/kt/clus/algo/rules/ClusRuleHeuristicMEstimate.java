@@ -45,6 +45,7 @@ public class ClusRuleHeuristicMEstimate extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double n_pos = c_pstat.m_SumWeight;
         // Acceptable?
@@ -56,12 +57,14 @@ public class ClusRuleHeuristicMEstimate extends ClusHeuristic {
     }
 
 
+    @Override
     public void setRootStatistic(ClusStatistic stat) {
         m_Prior = (stat.getTotalWeight() - stat.getError()) / stat.getTotalWeight();
         System.out.println("Setting prior: " + m_Prior);
     }
 
 
+    @Override
     public String getName() {
         return "Rule Heuristic (M-Estimate, M = " + m_MValue + ")";
     }

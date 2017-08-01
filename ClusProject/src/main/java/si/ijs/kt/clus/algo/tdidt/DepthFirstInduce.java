@@ -99,6 +99,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     }
 
 
+    @Override
     public void initialize() throws ClusException, IOException {
         super.initialize();
     }
@@ -192,7 +193,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         String alternativeString = new String(); // this will contain the string of alternative tests (regular and
                                                  // opposite), sorted according to position
         for (int k = 0; k < alternatives.size(); k++) {
-            NodeTest nt = (NodeTest) alternatives.get(k);
+            NodeTest nt = alternatives.get(k);
             int altarity = nt.updateArity();
             // remove alternatives that have different arity than besttest
             if (altarity != arity) {
@@ -262,7 +263,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) {
+    public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws Exception {
         if (rnd == null) {
             // rnd may be null due to some calls of induce that do not support parallelisation yet
             ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
@@ -307,7 +308,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
             if (isGIS) {
                 // daniela
-                RegressionStat.INITIALIZEPARTIALSUM = true; // This way the first time a split threshold of the current
+                ClusStatistic.INITIALIZEPARTIALSUM = true; // This way the first time a split threshold of the current
                 ClassificationStat.INITIALIZEPARTIALSUM = true; // attribute is evaluated, the corresponding partial sums of
                 WHTDStatistic.INITIALIZEPARTIALSUM = true; // Optimized Moran I would be computed
                 // daniela end
@@ -459,7 +460,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 
     @Deprecated
-    public void rankFeatures(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws IOException {
+    public void rankFeatures(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws Exception {
         // Find best test
         PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream("ranking.csv")));
         ClusAttrType[] attrs = getDescriptiveAttributes(rnd);
@@ -499,7 +500,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusNode induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) throws ClusException, IOException {
+    public ClusNode induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) throws Exception {
         m_Root = null;
         while (true) {
             // Init root node
@@ -541,13 +542,13 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusModel induceSingleUnpruned(ClusRun cr, ClusRandomNonstatic rnd) throws ClusException, IOException {
+    public ClusModel induceSingleUnpruned(ClusRun cr, ClusRandomNonstatic rnd) throws Exception {
         return induceSingleUnpruned((RowData) cr.getTrainingSet(), rnd);
     }
 
 
     @Override
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
         int threads = getSettings().getEnsemble().getNumberOfThreads();
         if (threads != 1) {
             String warning = String.format("Potential WARNING:\n" + "It seems that you are trying"

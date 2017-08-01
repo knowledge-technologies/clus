@@ -16,6 +16,7 @@ public abstract class FastClonerCustomCollection<T extends Collection> implement
     public abstract T getInstance(T o);
 
 
+    @Override
     public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
         final T c = getInstance((T) t);
         final T l = (T) t;

@@ -105,6 +105,7 @@ public class CurrentBestTestAndHeuristic {
      * Reset
      ***************************************************************************/
 
+    @Override
     public String toString() {
         return m_PosStat.getString2();
     }
@@ -319,10 +320,11 @@ public class CurrentBestTestAndHeuristic {
 
     /***************************************************************************
      * Numeric splits
+     * @throws ClusException 
      ***************************************************************************/
 
     // Where is this used?
-    public final void updateNumeric(double val, ClusStatistic pos, ClusAttrType at) {
+    public final void updateNumeric(double val, ClusStatistic pos, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, pos, m_MissingStat);
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             double tot_w = getTotWeight();
@@ -338,7 +340,7 @@ public class CurrentBestTestAndHeuristic {
 
 
     // daniela
-    public final void calcMinMax(ClusAttrType at, double value) {
+    public final void calcMinMax(ClusAttrType at, double value) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= 2)
             System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
@@ -362,7 +364,7 @@ public class CurrentBestTestAndHeuristic {
 
 
     // min max Heur, scaling of H
-    public final void calculateHMinMax(double val, ClusAttrType at) {
+    public final void calculateHMinMax(double val, ClusAttrType at) throws ClusException {
         double heur;
         heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (heur == Double.POSITIVE_INFINITY || heur == Double.NEGATIVE_INFINITY)
@@ -383,8 +385,9 @@ public class CurrentBestTestAndHeuristic {
      * @param val
      * @param at
      * @param permutation
+     * @throws Exception 
      */
-    public final void updateNumericGIS(double val, ClusAttrType at, Integer[] permutation) {
+    public final void updateNumericGIS(double val, ClusAttrType at, Integer[] permutation) throws Exception {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= 2)
             System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
@@ -447,7 +450,7 @@ public class CurrentBestTestAndHeuristic {
     }
 
 
-    public final void updateNumeric(double val, ClusAttrType at, double ss_tot, boolean isEfficient) {
+    public final void updateNumeric(double val, ClusAttrType at, double ss_tot, boolean isEfficient) throws ClusException {
         double heur = isEfficient ? m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat, ss_tot) : m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         //      System.out.println(t1 - t0);
         if (m_Sett.getGeneral().getVerbose() >= 2)
@@ -473,7 +476,7 @@ public class CurrentBestTestAndHeuristic {
     }
 
 
-    public final void updateNumeric(double val, ClusAttrType at) {
+    public final void updateNumeric(double val, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
 
         if (m_Sett.getGeneral().getVerbose() >= 2)
@@ -506,8 +509,9 @@ public class CurrentBestTestAndHeuristic {
      *        Split value.
      * @param at
      *        Attribute
+     * @throws ClusException 
      */
-    public final void updateInverseNumeric(double val, ClusAttrType at) {
+    public final void updateInverseNumeric(double val, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= 2)
             System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
@@ -528,14 +532,15 @@ public class CurrentBestTestAndHeuristic {
 
     /***************************************************************************
      * Heuristics
+     * @throws ClusException 
      ***************************************************************************/
 
-    public final double calcHeuristic(ClusStatistic stat) {
+    public final double calcHeuristic(ClusStatistic stat) throws ClusException {
         return m_Heuristic.calcHeuristic(m_TotStat, stat, m_MissingStat);
     }
 
 
-    public final double calcHeuristic(ClusStatistic tot, ClusStatistic pos) {
+    public final double calcHeuristic(ClusStatistic tot, ClusStatistic pos) throws ClusException {
         if (m_Sett.getTree().getMissingClusteringAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT) {
             tot.setParentStat(m_TotStat.getParentStat());
             pos.setParentStat(m_PosStat.getParentStat());

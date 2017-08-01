@@ -48,6 +48,7 @@ public class ClusRuleHeuristicError extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double n_pos = c_pstat.m_SumWeight;
         // Acceptable?
@@ -63,6 +64,7 @@ public class ClusRuleHeuristicError extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return "Rule Heuristic (Reduced Error)";
     }

@@ -47,7 +47,7 @@ public class ClusRulesForAttrs {
     double m_SigLevel = 0.05;
 
 
-    public ClusRuleSet constructRules(ClusRun cr) throws IOException, ClusException {
+    public ClusRuleSet constructRules(ClusRun cr) throws IOException, ClusException, InterruptedException {
         ClusStatManager mgr = cr.getStatManager();
         ClusRuleSet res = new ClusRuleSet(mgr);
         RowData train = (RowData) cr.getTrainingSet();

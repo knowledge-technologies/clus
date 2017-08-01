@@ -42,6 +42,7 @@ public class C45Pruner extends PruneTree {
     double m_ZScore = 0.0;
 
 
+    @Override
     public void prune(ClusNode node) throws ClusException {
         m_ZScore = computeZScore();
         node.safePrune();
@@ -53,6 +54,7 @@ public class C45Pruner extends PruneTree {
     }
 
 
+    @Override
     public int getNbResults() {
         return 1;
     }
@@ -114,7 +116,7 @@ public class C45Pruner extends PruneTree {
     }
 
 
-    public double getEstimatedErrorsForBranch(ClusNode node, RowData data) {
+    public double getEstimatedErrorsForBranch(ClusNode node, RowData data) throws ClusException {
         if (node.atBottomLevel()) {
             ClassificationStat stat = (ClassificationStat) node.getTargetStat().cloneStat();
             data.calcTotalStatBitVector(stat);
@@ -179,6 +181,7 @@ public class C45Pruner extends PruneTree {
     }
 
 
+    @Override
     public void setTrainingData(RowData data) {
         m_TrainingData = data;
     }

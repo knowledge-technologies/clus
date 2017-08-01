@@ -69,6 +69,7 @@ public class AmandaRule extends ClusRule {
     }
 
 
+    @Override
     public boolean covers(DataTuple tuple) {
         for (int i = 0; i < getModelSize(); i++) {
             NodeTest test = getTest(i);

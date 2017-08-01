@@ -198,6 +198,7 @@ public class ComponentMediator {
 
     private class MyActionListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             Component source = (Component) evt.getSource();
             ComponentWrapper wrapper = getWrapper(source);

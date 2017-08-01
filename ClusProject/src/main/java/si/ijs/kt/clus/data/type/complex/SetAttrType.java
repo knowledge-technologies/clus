@@ -76,22 +76,26 @@ public class SetAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusAttrType cloneType() {
         SetAttrType tsat = new SetAttrType(m_Name);
         return tsat;
     }
 
 
+    @Override
     public int getTypeIndex() {
         return THIS_TYPE;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_OBJECT;
     }
 
 
+    @Override
     public String getTypeName() {
         return THIS_TYPE_NAME;
     }
@@ -107,12 +111,14 @@ public class SetAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public String getString(DataTuple tuple) {
         Set ts_data = (Set) tuple.getObjVal(getArrayIndex());
         return ts_data.toString();
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
@@ -123,16 +129,19 @@ public class SetAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public void writeARFFType(PrintWriter wrt) throws ClusException {
         wrt.print("Set");
     }
 
 
+    @Override
     public void setTypeDefinition(String typeDefinition) {
         this.typeDefinition = typeDefinition;
     }
 
 
+    @Override
     public String getTypeDefinition() {
         return typeDefinition;
     }
@@ -163,6 +172,7 @@ public class SetAttrType extends ClusAttrType {
         }
 
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             String str = data.readSet();
             if (str == null)

@@ -53,6 +53,7 @@ public class RandomForestWeighting extends AttributeWeighting {
     }
 
 
+    @Override
     public double getWeight(ClusAttrType attr) {
         return m_Weights[attr.getIndex()];
     }
@@ -63,6 +64,7 @@ public class RandomForestWeighting extends AttributeWeighting {
             PrintStream oldOut = System.out;
             PrintStream ps = new PrintStream(new OutputStream() {
 
+                @Override
                 public void write(int arg0) throws IOException {
                 }
             });

@@ -44,6 +44,7 @@ public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
     }
 
 
+    @Override
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
         if (sett.getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_BOOSTING) {
             return new ClusBoostingInduce(schema, sett);
@@ -54,17 +55,20 @@ public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
     }
 
 
+    @Override
     public ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException {
         // TODO Auto-generated method stub
         return null;
     }
 
 
+    @Override
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
         // TODO Auto-generated method stub
     }
 
 
+    @Override
     public void printInfo() {
         System.out.println("Ensemble Classifier");
     }

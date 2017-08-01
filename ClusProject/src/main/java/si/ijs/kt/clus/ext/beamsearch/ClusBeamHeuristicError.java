@@ -41,6 +41,7 @@ public class ClusBeamHeuristicError extends ClusBeamHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double n_tot = c_tstat.m_SumWeight;
         double n_pos = c_pstat.m_SumWeight;
@@ -66,6 +67,7 @@ public class ClusBeamHeuristicError extends ClusBeamHeuristic {
     }
 
 
+    @Override
     public double estimateBeamMeasure(ClusNode tree) {
         if (tree.atBottomLevel()) {
             ClusStatistic total = tree.getClusteringStat();
@@ -82,11 +84,13 @@ public class ClusBeamHeuristicError extends ClusBeamHeuristic {
     }
 
 
+    @Override
     public double computeLeafAdd(ClusNode leaf) {
         return -leaf.getClusteringStat().getError() / m_NbTrain;
     }
 
 
+    @Override
     public String getName() {
         return "Beam Heuristic (Reduced Error)" + getAttrHeuristicString();
     }

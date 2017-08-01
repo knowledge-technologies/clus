@@ -42,6 +42,7 @@ public class MDouble extends MNumber {
     }
 
 
+    @Override
     public int getLevel() {
         return 2;
     }
@@ -62,26 +63,31 @@ public class MDouble extends MNumber {
     }
 
 
+    @Override
     public MNumber doAdd(MNumber other) {
         return new MDouble(value + ((MDouble) other).value);
     }
 
 
+    @Override
     public MNumber doSubstract(MNumber other) {
         return new MDouble(value - ((MDouble) other).value);
     }
 
 
+    @Override
     public MNumber doMultiply(MNumber other) {
         return new MDouble(value * ((MDouble) other).value);
     }
 
 
+    @Override
     public MNumber doDivide(MNumber other) {
         return new MDouble(value / ((MDouble) other).value);
     }
 
 
+    @Override
     public MNumber convertTo(MNumber other) {
         if (other instanceof MDouble)
             return this;
@@ -94,11 +100,13 @@ public class MDouble extends MNumber {
     }
 
 
+    @Override
     public double getDouble() {
         return value;
     }
 
 
+    @Override
     public String toString() {
         return String.valueOf(value);
     }

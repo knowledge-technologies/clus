@@ -154,11 +154,13 @@ public class INIFileArray extends INIFileEntry {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         return new INIFileArray(getName(), getType());
     }
 
 
+    @Override
     public void build(MStreamTokenizer tokens) throws IOException {
         tokens.readChar('{');
         removeAllElements();
@@ -195,6 +197,7 @@ public class INIFileArray extends INIFileEntry {
     }
 
 
+    @Override
     public void setValue(String value) {
     }
 
@@ -207,6 +210,7 @@ public class INIFileArray extends INIFileEntry {
     }
 
 
+    @Override
     public String getStringValue() {
         StringBuffer buffer = new StringBuffer("{");
         for (int idx = 0; idx < m_hValue.size(); idx++) {

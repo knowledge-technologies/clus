@@ -31,6 +31,7 @@ import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
+import si.ijs.kt.clus.main.ClusModelInfoList;
 // import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.util.ClusException;
@@ -61,9 +62,11 @@ public class KDTree extends SearchAlgorithm {
      * 
      * @throws clus.util.ClusException
      * @throws java.io.IOException
+     * @throws InterruptedException 
      */
-    public void build() throws ClusException, IOException {
-        RowData data = getRun().getDataSet(ClusRun.TRAINSET);
+    @Override
+    public void build() throws ClusException, IOException, InterruptedException {
+        RowData data = getRun().getDataSet(ClusModelInfoList.TRAINSET);
         // copy tuples into LinkedList for easier manipulation
         LinkedList<DataTuple> tuples = new LinkedList<DataTuple>();
         for (DataTuple tuple : data.getData()) // instead of m_Data
@@ -81,8 +84,10 @@ public class KDTree extends SearchAlgorithm {
      * 
      * @param tuple
      * @return
+     * @throws ClusException 
      */
-    public LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) {
+    @Override
+    public LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) throws ClusException {
         m_kNeighbors = k;
         m_Stack = new NNStack(m_kNeighbors);
         m_Root.find(tuple);
@@ -105,6 +110,7 @@ public class KDTree extends SearchAlgorithm {
     }
 
 
+    @Override
     public ClusRun getRun() {
         return m_Run;
     }

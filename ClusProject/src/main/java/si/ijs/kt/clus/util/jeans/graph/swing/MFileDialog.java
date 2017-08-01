@@ -154,6 +154,7 @@ public class MFileDialog extends JDialog implements MCallback {
     }
 
 
+    @Override
     public void callBack(Object result, int type) {
         switch (type) {
             case MFileSystem.OP_RELOAD:
@@ -167,6 +168,7 @@ public class MFileDialog extends JDialog implements MCallback {
     }
 
 
+    @Override
     public void dispose() {
         for (int i = 0; i < 5; i++) {
             TableColumn column = m_hFileTable.getColumnModel().getColumn(i);
@@ -290,6 +292,7 @@ public class MFileDialog extends JDialog implements MCallback {
 
     public class MyDirMouseListener extends MouseAdapter {
 
+        @Override
         public void mouseClicked(MouseEvent e) {
             if (e.getClickCount() == 2)
                 chSelectedDir();
@@ -298,6 +301,7 @@ public class MFileDialog extends JDialog implements MCallback {
 
     public class MyDirKeyListener extends KeyAdapter {
 
+        @Override
         public void keyReleased(KeyEvent e) {
             int keycode = e.getKeyCode();
             if (keycode == KeyEvent.VK_RIGHT || keycode == KeyEvent.VK_ENTER) {
@@ -338,6 +342,7 @@ public class MFileDialog extends JDialog implements MCallback {
 
     public class OkListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             m_hOnOK.actionPerformed(e);
         }
@@ -345,6 +350,7 @@ public class MFileDialog extends JDialog implements MCallback {
 
     public class MySelectionListener implements ListSelectionListener {
 
+        @Override
         public void valueChanged(ListSelectionEvent e) {
             if (e.getValueIsAdjusting())
                 return;
@@ -355,6 +361,7 @@ public class MFileDialog extends JDialog implements MCallback {
 
     public class MyFocusListener extends FocusAdapter {
 
+        @Override
         public void focusGained(FocusEvent e) {
             m_hFileTable.setColumnSelectionInterval(1, 1);
             ListSelectionModel lsm = m_hFileTable.getSelectionModel();
@@ -372,6 +379,7 @@ public class MFileDialog extends JDialog implements MCallback {
         }
 
 
+        @Override
         public boolean isManagingFocus() {
             return true;
         }
@@ -387,6 +395,7 @@ public class MFileDialog extends JDialog implements MCallback {
         }
 
 
+        @Override
         public boolean isManagingFocus() {
             return false;
         }
@@ -399,11 +408,13 @@ public class MFileDialog extends JDialog implements MCallback {
         protected int m_iPrevSize;
 
 
+        @Override
         public Object getElementAt(int index) {
             return m_hFileSystem.getDirectoryAt(index);
         }
 
 
+        @Override
         public int getSize() {
             return m_hFileSystem == null ? 0 : m_hFileSystem.getNbDirectories();
         }
@@ -430,21 +441,25 @@ public class MFileDialog extends JDialog implements MCallback {
         final String[] columnNames = { "", "Name", "Time", "Date", "Size" };
 
 
+        @Override
         public int getColumnCount() {
             return columnNames.length;
         }
 
 
+        @Override
         public int getRowCount() {
             return m_hFileSystem == null ? 0 : m_hFileSystem.getNbFiles();
         }
 
 
+        @Override
         public String getColumnName(int col) {
             return columnNames[col];
         }
 
 
+        @Override
         public Object getValueAt(int row, int col) {
             MFileEntry entry = m_hFileSystem.getFileAt(row);
             if (col == 0) {
@@ -467,6 +482,7 @@ public class MFileDialog extends JDialog implements MCallback {
         }
 
 
+        @Override
         public Class getColumnClass(int col) {
             if (col == 0)
                 return ImageIcon.class;
@@ -475,6 +491,7 @@ public class MFileDialog extends JDialog implements MCallback {
         }
 
 
+        @Override
         public boolean isCellEditable(int row, int col) {
             if (col == 1)
                 return true;
@@ -483,6 +500,7 @@ public class MFileDialog extends JDialog implements MCallback {
         }
 
 
+        @Override
         public void setValueAt(Object value, int row, int col) {
             // data[row][col] = value;
             fireTableCellUpdated(row, col);
@@ -532,6 +550,7 @@ public class MFileDialog extends JDialog implements MCallback {
         }
 
 
+        @Override
         public void tableChanged(TableModelEvent e) {
             reallocateIndexes();
             fireTableChanged(e);
@@ -539,7 +558,7 @@ public class MFileDialog extends JDialog implements MCallback {
 
 
         public void sort() {
-            shuttlesort((int[]) indexes.clone(), indexes, 0, indexes.length);
+            shuttlesort(indexes.clone(), indexes, 0, indexes.length);
         }
 
 
@@ -565,36 +584,43 @@ public class MFileDialog extends JDialog implements MCallback {
         }
 
 
+        @Override
         public Object getValueAt(int aRow, int aColumn) {
             return model.getValueAt(indexes[aRow], aColumn);
         }
 
 
+        @Override
         public void setValueAt(Object aValue, int aRow, int aColumn) {
             model.setValueAt(aValue, indexes[aRow], aColumn);
         }
 
 
+        @Override
         public int getRowCount() {
             return (model == null) ? 0 : model.getRowCount();
         }
 
 
+        @Override
         public int getColumnCount() {
             return (model == null) ? 0 : model.getColumnCount();
         }
 
 
+        @Override
         public String getColumnName(int aColumn) {
             return model.getColumnName(aColumn);
         }
 
 
+        @Override
         public Class getColumnClass(int aColumn) {
             return model.getColumnClass(aColumn);
         }
 
 
+        @Override
         public boolean isCellEditable(int row, int column) {
             return model.isCellEditable(row, column);
         }
@@ -614,6 +640,7 @@ public class MFileDialog extends JDialog implements MCallback {
 
         public class MyMouseListener extends MouseAdapter {
 
+            @Override
             public void mouseClicked(MouseEvent e) {
                 TableColumnModel columnModel = m_hFileTable.getColumnModel();
                 int viewColumn = columnModel.getColumnIndexAtX(e.getX());

@@ -120,7 +120,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
     public abstract void initPredictions(ClusStatistic stat, ClusEnsembleROSInfo ensembleROSInfo);
 
 
-    public abstract void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException;
+    public abstract void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException, InterruptedException;
     //@Deprecated
     //public abstract void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException;
     //@Deprecated

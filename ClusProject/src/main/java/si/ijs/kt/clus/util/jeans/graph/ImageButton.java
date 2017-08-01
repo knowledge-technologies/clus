@@ -302,6 +302,7 @@ public class ImageButton extends Canvas {
     /**
      * Returns the parameter String of this button.
      */
+    @Override
     protected String paramString() {
         return super.paramString() + ",label=" + label;
     }
@@ -313,6 +314,7 @@ public class ImageButton extends Canvas {
      * 
      * @return true if image has changed; false otherwise.
      */
+    @Override
     public boolean imageUpdate(Image img, int flags, int x, int y, int w, int h) {
         boolean ok = (img == image);
         if (ok && (flags & (HEIGHT | WIDTH)) != 0) {
@@ -342,6 +344,7 @@ public class ImageButton extends Canvas {
      * @param g
      *        the specified Graphics window
      */
+    @Override
     public void paint(Graphics g) {
         Dimension size = getSize();
         if (isVisible()) {
@@ -505,6 +508,7 @@ public class ImageButton extends Canvas {
      * @see #minimumSize
      * @see LayoutManager
      */
+    @Override
     public Dimension getPreferredSize() {
         return getMinimumSize();
     }
@@ -516,6 +520,7 @@ public class ImageButton extends Canvas {
      * @see #preferredSize
      * @see LayoutManager
      */
+    @Override
     public synchronized Dimension getMinimumSize() {
         Dimension d = new Dimension();
         Dimension labelDimension = new Dimension();
@@ -550,6 +555,7 @@ public class ImageButton extends Canvas {
     }
 
 
+    @Override
     public synchronized void setEnabled(boolean enable) {
         if (this.enable != enable) {
             this.enable = enable;
@@ -574,6 +580,7 @@ public class ImageButton extends Canvas {
 
     private class CBMouseListener extends MouseAdapter {
 
+        @Override
         public void mouseExited(MouseEvent e) {
             if (selected) {
                 // mark as un-selected and repaint
@@ -583,6 +590,7 @@ public class ImageButton extends Canvas {
         }
 
 
+        @Override
         public void mousePressed(MouseEvent e) {
             if (enable) {
                 selected = true;
@@ -591,6 +599,7 @@ public class ImageButton extends Canvas {
         }
 
 
+        @Override
         public void mouseReleased(MouseEvent e) {
             if (selected) {
                 // mark as un-selected and repaint

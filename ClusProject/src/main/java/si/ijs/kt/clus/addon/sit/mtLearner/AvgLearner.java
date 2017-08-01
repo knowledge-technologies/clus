@@ -26,6 +26,7 @@ public class AvgLearner extends MTLearnerImpl {
      **********************************/
 
     // the actual LearnModel function
+    @Override
     protected RowData[] LearnModel(TargetSet targets, RowData train, RowData test) {
         ClusSchema schema = m_Data.getSchema();
         // schema.getNbNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
@@ -60,6 +61,7 @@ public class AvgLearner extends MTLearnerImpl {
     }
 
 
+    @Override
     public String getName() {
         return "AvgLearner";
     }

@@ -60,13 +60,13 @@ public class SparseDataTuple extends DataTuple {
 
 
     public double getDoubleValueSparse(int index) {
-        Double value = (Double) m_Map.get(new Integer(index));
+        Double value = m_Map.get(new Integer(index));
         return value != null ? value.doubleValue() : 0.0;
     }
 
 
     public double getDoubleValueSparse(Integer index) {
-        Double value = (Double) m_Map.get(index);
+        Double value = m_Map.get(index);
         return value != null ? value.doubleValue() : 0.0;
     }
 
@@ -86,6 +86,7 @@ public class SparseDataTuple extends DataTuple {
     }
 
 
+    @Override
     public final SparseDataTuple cloneTuple() {
         SparseDataTuple res = new SparseDataTuple();
         cloneTuple(res);
@@ -98,6 +99,7 @@ public class SparseDataTuple extends DataTuple {
     }
 
 
+    @Override
     public SparseDataTuple deepCloneTuple() {
         SparseDataTuple res = new SparseDataTuple();
         if (m_Ints != null) {
@@ -125,6 +127,7 @@ public class SparseDataTuple extends DataTuple {
     }
 
 
+    @Override
     public void writeTuple(PrintWriter wrt) {
         ClusSchema schema = getSchema();
         int aidx = 0;

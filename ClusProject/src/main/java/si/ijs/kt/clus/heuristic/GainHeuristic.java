@@ -47,6 +47,7 @@ public class GainHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         // Acceptable?
         if (stopCriterion(c_tstat, c_pstat, missing)) { return Double.NEGATIVE_INFINITY; }
@@ -98,6 +99,7 @@ public class GainHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic[] c_pstat, int nbsplit) {
         // Acceptable?
         if (stopCriterion(c_tstat, c_pstat, nbsplit)) { return Double.NEGATIVE_INFINITY; }
@@ -133,6 +135,7 @@ public class GainHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return m_GainRatio ? "Gainratio" : "Gain";
     }

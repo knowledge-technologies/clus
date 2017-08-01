@@ -33,7 +33,7 @@ public class HierWeightSPath implements HierBasicDistance {
         this.fac = fac;
         m_Weights = new double[depth];
         for (int i = 0; i < depth; i++) {
-            m_Weights[i] = Math.pow(fac, (double) i);
+            m_Weights[i] = Math.pow(fac, i);
         }
     }
 
@@ -48,11 +48,13 @@ public class HierWeightSPath implements HierBasicDistance {
     }
 
 
+    @Override
     public double getVirtualRootWeight() {
         return m_RootDelta;
     }
 
 
+    @Override
     public double calcDistance(ClassTerm t1, ClassTerm t2) {
         double distance = 0.0;
         int d1 = t1.getLevel();

@@ -55,11 +55,13 @@ public class FileTupleIterator extends TupleIterator {
     }
 
 
+    @Override
     public final ClusSchema getSchema() {
         return m_Data.getSchema();
     }
 
 
+    @Override
     public void init() throws IOException, ClusException {
         ClusSchema schema = getSchema();
         m_View = schema.createNormalView();
@@ -67,6 +69,7 @@ public class FileTupleIterator extends TupleIterator {
     }
 
 
+    @Override
     public final DataTuple readTuple() throws IOException, ClusException {
         DataTuple tuple = m_View.readDataTuple(m_Reader, m_Data.getSchema());
         preprocTuple(tuple);
@@ -74,6 +77,7 @@ public class FileTupleIterator extends TupleIterator {
     }
 
 
+    @Override
     public final void close() throws IOException {
         ClusSchema schema = m_Data.getSchema();
         schema.setReader(false);

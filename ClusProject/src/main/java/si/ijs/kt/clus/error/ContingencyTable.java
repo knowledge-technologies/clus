@@ -56,6 +56,7 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
     }
 
 
+    @Override
     public boolean isMultiLine() {
         return true;
     }
@@ -99,7 +100,7 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
         for (int i = 0; i < size; i++) {
             for (int j = 0; j < size; j++) {
                 double eij = (double) ri[i] * cj[j] / nb;
-                double err = (double) table[i][j] - eij;
+                double err = table[i][j] - eij;
                 if (err != 0.0)
                     xsquare += err * err / eij;
             }
@@ -126,6 +127,7 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         return calcAccuracy(i);
     }
@@ -150,6 +152,7 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
     }
 
 
+    @Override
     public void add(ClusError other) {
         ContingencyTable cont = (ContingencyTable) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -165,6 +168,7 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         if (detail == DETAIL_VERY_SMALL) {
             out.print(getPrefix() + "[");
@@ -315,16 +319,19 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
     }
 
 
+    @Override
     public String getName() {
         return "Classification Error";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new ContingencyTable(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred();
         for (int i = 0; i < m_Dim; i++) {
@@ -333,12 +340,14 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
     // FIXME: do we still need these (?):
 
+    @Override
     public double get_error_classif() {
         // System.out.println("nb of examples : "+getNbExamples());
         // System.out.println("nb of correctly classify examples : "+calcNbCorrect(m_ContTable[0]));
@@ -351,27 +360,32 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
     }
 
 
+    @Override
     public double get_accuracy() {
         return calcAccuracy(0);
     }
 
 
+    @Override
     public double get_precision() {
         return 0.0;
     }
 
 
+    @Override
     public double get_recall() {
         return 0.0;
     }
 
 
+    @Override
     public double get_auc() {
         return 0.0;
     }
 
 
-	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+	@Override
+    public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
 		return false;
 	}
 }

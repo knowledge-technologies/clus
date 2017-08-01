@@ -43,6 +43,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
@@ -176,6 +177,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void setTrainingStat(ClusStatistic train) {
         m_Training = (ClassificationStat) train;
     }
@@ -207,6 +209,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public int getNbNominalAttributes() {
         return m_NbTarget;
     }
@@ -217,6 +220,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         ClassificationStat res = new ClassificationStat(m_Settings, m_Attrs);
         res.m_Training = m_Training;
@@ -251,6 +255,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void reset() {
         m_NbExamples = 0;
         m_SumWeight = 0.0;
@@ -266,6 +271,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
      * Resets the SumWeight and majority class count to weight and all other
      * class counts to zero.
      */
+    @Override
     public void resetToSimple(double weight) {
         m_NbExamples = 0;
         m_SumWeight = weight;
@@ -284,6 +290,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight = or.m_SumWeight;
@@ -300,6 +307,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     /**
      * Used for combining weighted predictions.
      */
+    @Override
     public ClassificationStat normalizedCopy() {
         ClassificationStat copy = (ClassificationStat) cloneStat();
         copy.copy(this);
@@ -314,6 +322,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public boolean samePrediction(ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         for (int i = 0; i < m_NbTarget; i++)
@@ -323,6 +332,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight += weight * or.m_SumWeight;
@@ -336,6 +346,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight += or.m_SumWeight;
@@ -351,6 +362,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void addScaled(double scale, ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight += scale * or.m_SumWeight;
@@ -366,6 +378,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight -= or.m_SumWeight;
@@ -381,6 +394,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
         ClassificationStat or = (ClassificationStat) other;
         m_SumWeight = or.m_SumWeight - m_SumWeight;
@@ -396,11 +410,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         updateWeighted(tuple, tuple.getWeight());
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, double weight) {
         m_NbExamples++;
         m_SumWeight += weight;
@@ -767,6 +783,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     // ERROR
+    @Override
     public double getError(ClusAttributeWeights scale) {
         if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getErrorTargetSubspace(scale);
@@ -795,6 +812,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public double getErrorRel() {
         // System.out.println("ClassificationStat getErrorRel");
         // System.out.println("ClassificationStat nb example in the leaf "+m_SumWeight);
@@ -802,6 +820,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public double getErrorDiff(ClusAttributeWeights scale, ClusStatistic other) {
         if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getErrorDiffTargetSubspace(scale, other);
@@ -837,6 +856,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     // VARIANCE REDUCTION
+    @Override
     public double getSVarS(ClusAttributeWeights scale) {
         if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getSVarSTargetSubspace(scale);
@@ -862,6 +882,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public double getSVarS(int i) {
         return gini(i) * m_SumWeights[i];
     }
@@ -883,6 +904,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
         if (getSettings().getEnsemble().isEnsembleROSEnabled())
             return getSVarSDiffTargetSubspace(scale, other);
@@ -955,6 +977,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void calcMean() {
         m_MajorityClasses = new int[m_NbTarget];
         for (int i = 0; i < m_NbTarget; i++) {
@@ -993,6 +1016,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     /**
      * Currently only used to compute the default dispersion within rule heuristics.
      */
+    @Override
     public double getDispersion(ClusAttributeWeights scale, RowData data) {
         System.err.println(getClass().getName() + ": getDispersion(): Not yet implemented!");
         return Double.POSITIVE_INFINITY;
@@ -1055,16 +1079,19 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public double[] getNumericPred() {
         return null;
     }
 
 
+    @Override
     public int[] getNominalPred() {
         return m_MajorityClasses;
     }
 
 
+    @Override
     public String getString2() {
         StringBuffer buf = new StringBuffer();
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
@@ -1075,6 +1102,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public String getArrayOfStatistic() {
         StringBuffer buf = new StringBuffer();
         if (m_MajorityClasses != null) {
@@ -1094,6 +1122,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     /**
      * Prints the statistics - predictions : weighted sum of all examples
      */
+    @Override
     public String getString(StatisticPrintInfo info) {
         StringBuffer buf = new StringBuffer();
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
@@ -1144,6 +1173,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void addPredictWriterSchema(String prefix, ClusSchema schema) {
         for (int i = 0; i < m_NbTarget; i++) {
             ClusAttrType type = m_Attrs[i].cloneType();
@@ -1160,6 +1190,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public String getPredictWriterString() {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < m_NbTarget; i++) {
@@ -1187,12 +1218,14 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public double getCount(int idx, int cls) {
         return m_ClassCounts[idx][cls];
     }
 
 
     // changed elisa 13/06/2007, changed back by celine 16/12/2008
+    @Override
     public String getPredictedClassName(int idx) {
         // return m_Attrs[idx].getName()+" = "+m_Attrs[idx].getValue(m_MajorityClasses[idx]);
         return m_Attrs[idx].getValue(getMajorityClass(idx));
@@ -1209,11 +1242,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public String getSimpleString() {
         return getClassString() + " : " + super.getSimpleString();
     }
 
 
+    @Override
     public String getClassString() {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < m_NbTarget; i++) {
@@ -1268,11 +1303,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public String toString() {
         return getString();
     }
 
 
+    @Override
     public void printDistribution(PrintWriter wrt) throws IOException {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         for (int i = 0; i < m_Attrs.length; i++) {
@@ -1291,6 +1328,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void predictTuple(DataTuple prediction) {
         for (int i = 0; i < m_NbTarget; i++) {
             NominalAttrType type = m_Attrs[i];
@@ -1299,6 +1337,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes) {
 
         switch (getSettings().getEnsemble().getClassificationVoteType()) {
@@ -1314,6 +1353,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         switch (getSettings().getEnsemble().getClassificationVoteType()) {
             case SettingsEnsemble.VOTING_TYPE_MAJORITY:
@@ -1402,6 +1442,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public ClassificationStat getClassificationStat() {
         return this;
     }
@@ -1465,6 +1506,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public double getSquaredDistance(ClusStatistic other) {
         double[][] these = getProbabilityPrediction();
         ClassificationStat o = (ClassificationStat) other;
@@ -1536,6 +1578,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void setSplitIndex(int i) {
         splitIndex = i;
     }
@@ -1546,6 +1589,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void setPrevIndex(int i) {
         prevIndex = i;
     }
@@ -1556,6 +1600,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
+    @Override
     public void initializeSum() {
         Arrays.fill(previousSumX, 0.0);
         Arrays.fill(previousSumXR, 0.0);
@@ -1575,7 +1620,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     }
 
 
-    public double calcPDistance(Integer[] permutation) {
+    @Override
+    public double calcPDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         int M = 0;
@@ -1693,14 +1739,14 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double I = (IL + IR * (N - M)) / m_data.getNbRows();//System.out.println("Join Moran I: "+I);
         double scaledI = 1 + I;
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
-    public double calcPtotal(Integer[] permutation) {
+    @Override
+    public double calcPtotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -1814,18 +1860,17 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double I = (IL + IR * (N - M)) / m_data.getNbRows();//System.out.println("Join Moran I: "+I);
         double scaledI = 1 + I;
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
-    public double calcMultiIwithNeighbours(Integer[] permutation) {
+    @Override
+    public double calcMultiIwithNeighbours(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         if (schema.getNbTargetAttributes() == 1) {
-            System.out.println("Error calculating Bivariate Heuristics with only one target!");
-            System.exit(1);
+            throw new ClusException("Error calculating Bivariate Heuristics with only one target!");
         }
         int M = 0;
         int N = m_data.getNbRows();
@@ -2064,18 +2109,17 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
         double scaledI = 1 + I; //scale I [0,2]
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
-    public double calcBivariateLee(Integer[] permutation) {
+    @Override
+    public double calcBivariateLee(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         if (schema.getNbTargetAttributes() == 1) {
-            System.out.println("Error calculating Bivariate Heuristics with only one target!");
-            System.exit(1);
+            throw new ClusException("Error calculating Bivariate Heuristics with only one target!");
         }
         int M = 0;
         int N = m_data.getNbRows();
@@ -2232,18 +2276,17 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         //System.out.println("Join Moran I: "+I);
         double scaledI = 1 + I; //scale I [0,2]
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
-    public double calcLeewithNeighbours(Integer[] permutation) {
+    @Override
+    public double calcLeewithNeighbours(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         if (schema.getNbTargetAttributes() == 1) {
-            System.out.println("Error calculating Bivariate Heuristics with only one target!");
-            System.exit(1);
+            throw new ClusException("Error calculating Bivariate Heuristics with only one target!");
         }
         int M = 0;
         int N = m_data.getNbRows();
@@ -2502,18 +2545,17 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
         double scaledI = 1 + I; //scale I [0,2]
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
-    public double calcMutivariateItotal(Integer[] permutation) {
+    @Override
+    public double calcMutivariateItotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         if (schema.getNbTargetAttributes() == 1) {
-            System.out.println("Error calculating Bivariate Heuristics with only one target!");
-            System.exit(1);
+            throw new ClusException("Error calculating Bivariate Heuristics with only one target!");
         }
         int M = 0;
         int N = m_data.getNbRows();
@@ -2654,15 +2696,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         //scale I [0,2]
         double scaledI = 1 + I;
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //Connectivity Index (CI) for Graph Data with a distance file
-    public double calcCItotalD(Integer[] permutation) {
+    @Override
+    public double calcCItotalD(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         double num, den;
         ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
@@ -2769,15 +2811,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         //System.out.println("Join Moran I: "+I+" eLeft: "+(NR-(N-M))+" eRight: "+(N-M)+" "+IL+" "+IR);     
         double scaledI = 1 + I;
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //Connectivity Index (CI) for Graph Data 
-    public double calcCItotal(Integer[] permutation) {
+    @Override
+    public double calcCItotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -2878,27 +2920,18 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         //scale I [0,2]
         double scaledI = 1 + I;
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
-    public double calcEquvalentPDistance(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
-    }
+   
 
 
     //Connectivity Index (CI) for Graph Data with neigh.
-    public double calcCIwithNeighbours(Integer[] permutation) {
+    @Override
+    public double calcCIwithNeighbours(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -3141,15 +3174,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
         double scaledI = 1 + I; //scale I [0,2]
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //Geary C wit neigh.
-    public double calcCwithNeighbourstotal(Integer[] permutation) {
+    @Override
+    public double calcCwithNeighbourstotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -3384,15 +3417,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double I = 2 - ((IL + IR * (N - M)) / m_data.getNbRows());//scaledG=2-G [0,2] 
         //System.out.println("Join Geary G: "+I);       
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
     }
 
 
     //Moran Global I with neigh.
-    public double calcIwithNeighbourstotal(Integer[] permutation) {
+    @Override
+    public double calcIwithNeighbourstotal(Integer[] permutation) throws ClusException {
         //calcLeewithNeighbours
         ClusSchema schema = m_data.getSchema();
         int M = 0;
@@ -3632,15 +3665,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
         double scaledI = 1 + I; //scale I [0,2]
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //calculate EquvalentI with neighbours
-    public double calcEquvalentIwithNeighbourstotal(Integer[] permutation) {
+    @Override
+    public double calcEquvalentIwithNeighbourstotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         double[] a = new double[schema.getNbTargetAttributes()];
         double[] b = new double[schema.getNbTargetAttributes()];
@@ -3761,8 +3794,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double scaledI = 1 - I;
         //System.out.println("scaledI: "+scaledI+"I: "+I);
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
@@ -3770,7 +3802,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     //calculate Equvalent Geary C with Distance file
-    public double calcEquvalentGDistance(Integer[] permutation) {
+    @Override
+    public double calcEquvalentGDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         double[] ikk = new double[schema.getNbTargetAttributes()];
         double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -4095,15 +4128,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         N = splitIndex;
         double scaledI = 2 - I;
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         //System.out.println(scaledI);
         return scaledI;
     }
 
 
-    public double calcEquvalentIDistance(Integer[] permutation) {
+    @Override
+    public double calcEquvalentIDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         double[] ikk = new double[schema.getNbTargetAttributes()];
         double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -4395,15 +4428,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         N = splitIndex;
         double scaledI = 1 + I;
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
     //calculate EquvalentI to Global Moran I -Annalisa
 
 
-    public double calcEquvalentGtotal(Integer[] permutation) {
+    @Override
+    public double calcEquvalentGtotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         double[] ikk = new double[schema.getNbTargetAttributes()];
         double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -4656,15 +4689,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         N = splitIndex;
         double scaledI = 2 - I;
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         //System.out.println(scaledI);
         return scaledI;
     }
 
 
-    public double calcEquvalentItotal(Integer[] permutation) {
+    @Override
+    public double calcEquvalentItotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         double[] ikk = new double[schema.getNbTargetAttributes()];
         double[] ikkR = new double[schema.getNbTargetAttributes()];
@@ -4927,14 +4960,14 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double scaledI = 1 + I;
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
-    public double calcGtotal(Integer[] permutation) {
+    @Override
+    public double calcGtotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -5074,160 +5107,17 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         //System.out.println("Join Geary G: "+I);
 
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
 
     }
 
 
-    //global I nominal extended from binary
-    /*
-     * public double calcItotal() {
-     * ClusSchema schema = m_data.getSchema();
-     * //temp_data=m_data;
-     * int M = 0;
-     * int N = m_data.getNbRows();
-     * long NR = m_data.getNbRows();
-     * if (splitIndex>0){
-     * N=splitIndex;
-     * }else{
-     * M=-splitIndex;
-     * }
-     * //left
-     * double avgik = 0; //Double.NEGATIVE_INFINITY;
-     * double W = 0.0;
-     * for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
-     * NominalAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-     * int nbvalues = type.getNbValues();
-     * double[] num = new double[nbvalues]; double[] den = new double[nbvalues];
-     * double[] means = new double[nbvalues]; Arrays.fill(means, 0.0);
-     * double[] upsum = new double[nbvalues];
-     * double[] downsum = new double[nbvalues];
-     * double[] ikk = new double[nbvalues];
-     * for (int i = M; i < N; i++) {
-     * DataTuple exi = m_data.getTuple(permutation[i]);
-     * int xi = type.getNominal(exi);
-     * for (int j=0; j<nbvalues; j++)
-     * if (xi==j)
-     * means[j] += 1/(N-M);
-     * }
-     * for (int i = M; i <N; i++) {
-     * DataTuple exi = m_data.getTuple(permutation[i]);
-     * int xi = type.getNominal(exi);
-     * for (int j =M; j < N; j++) {
-     * DataTuple exj = m_data.getTuple(j);
-     * int xj = type.getNominal(exj);
-     * if(xi!=xj) break;
-     * else {
-     * for (int m=0; m<nbvalues; m++){
-     * if (xi==m) {
-     * double w=0;
-     * long indexI=i;
-     * long indexJ=j;
-     * if (i!=j){
-     * if (i>j){
-     * indexI=j;
-     * indexJ=i;
-     * }
-     * long indexMap = indexI*(NR)+indexJ;
-     * Double temp= GISHeuristic.m_distances.get(indexMap);
-     * if (temp!=null) w=temp; else w=0;
-     * upsum[m] += w*(xi-means[m])*(xj-means[m]);
-     * W+=w;
-     * } else{upsum[m] += (xi-means[m])*(xi-means[m]); W+=1;}
-     * downsum[m]+=((xi-means[m])*(xi-means[m]));
-     * }
-     * }
-     * }
-     * }
-     * for (int m=0; m<nbvalues; m++){
-     * num[m]=((N-M+0.0)*upsum[m]);
-     * den[m]=(W*downsum[m]);
-     * if (num[m]!=0.0 && den[m]!=0.0){
-     * ikk[m]=num[m]/den[m];
-     * }else ikk[m] = 0;
-     * avgik+=ikk[m];
-     * }
-     * avgik/=nbvalues;
-     * }
-     * }
-     * avgik/=schema.getNbTargetAttributes();
-     * //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W);
-     * double IL=avgik*(N-M);
-     * //right side
-     * double avgikR = 0;
-     * double WR = 0.0;
-     * for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
-     * NominalAttrType type = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)[k];
-     * int nbvalues = type.getNbValues();
-     * double[] numR = new double[nbvalues]; double[] denR = new double[nbvalues];
-     * double[] meansR = new double[nbvalues]; Arrays.fill(meansR, 0.0);
-     * double[] upsumR = new double[nbvalues];
-     * double[] downsumR = new double[nbvalues];
-     * double[] ikkR = new double[nbvalues];
-     * for (int i = M; i < N; i++) {
-     * DataTuple exi = m_data.getTuple(permutation[i]);
-     * int xi = type.getNominal(exi);
-     * for (int j=0; j<nbvalues; j++)
-     * if (xi==j) meansR[j] += 1/(N-M);
-     * }
-     * for (int i = M; i <N; i++) {
-     * DataTuple exi = m_data.getTuple(permutation[i]);
-     * int xi = type.getNominal(exi);
-     * for (int j =M; j < N; j++) {
-     * DataTuple exj = m_data.getTuple(j);
-     * int xj = type.getNominal(exj);
-     * if(xi!=xj) break;
-     * else {
-     * for (int m=0; m<nbvalues; m++){
-     * if (xi==m) {
-     * double w=0;
-     * long indexI=i;
-     * long indexJ=j;
-     * if (i!=j){
-     * if (i>j){
-     * indexI=j;
-     * indexJ=i;
-     * }
-     * long indexMap = indexI*(NR)+indexJ;
-     * Double temp= GISHeuristic.m_distances.get(indexMap);
-     * if (temp!=null) w=temp; else w=0;
-     * upsumR[m] += w*(xi-meansR[m])*(xj-meansR[m]);
-     * WR+=w;
-     * } else{upsumR[m] += (xi-meansR[m])*(xi-meansR[m]); WR+=1;}
-     * downsumR[m]+=((xi-meansR[m])*(xi-meansR[m]));
-     * }
-     * }
-     * }
-     * }
-     * for (int m=0; m<nbvalues; m++){
-     * numR[m]=((N-M+0.0)*upsumR[m]);
-     * denR[m]=(W*downsumR[m]);
-     * if (numR[m]!=0.0 && denR[m]!=0.0){
-     * ikkR[m]=numR[m]/denR[m];
-     * }else ikkR[m] = 0;
-     * avgikR+=ikkR[m];
-     * }
-     * avgikR/=nbvalues;
-     * }
-     * }
-     * avgikR/=schema.getNbTargetAttributes();
-     * //System.out.println("Right Moran I: "+avgikR+"ex: "+(N-M)+"W "+WR);
-     * double IR=avgikR; //end right side
-     * double I=(IL+IR*(N-M))/m_data.getNbRows();
-     * double scaledI=1+I;
-     * //System.out.println(scaledI);
-     * if (Double.isNaN(I)){
-     * System.out.println("err!");
-     * System.exit(-1);
-     * }
-     * return scaledI;
-     * }
-     */
+    
     // global I calculation with a separate distance file
-    public double calcItotalD(Integer[] permutation) {
+    @Override
+    public double calcItotalD(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         double num, den;
         double avgik = 0;
@@ -5375,15 +5265,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double I = (IL + IR * (N - M)) / m_data.getNbRows();
         double scaledI = 1 + I;
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     // global I
-    public double calcItotal(Integer[] permutation) { // matejp: all indices of tuples must be replaced by the corresponding permutation[tuple index]
+    @Override
+    public double calcItotal(Integer[] permutation) throws ClusException { // matejp: all indices of tuples must be replaced by the corresponding permutation[tuple index]
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -5529,8 +5419,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         //System.out.println("Join Geary G: "+I);
 
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
 
@@ -5538,7 +5427,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     // global C calculation with a separate distance file
-    public double calcGtotalD(Integer[] permutation) {
+    @Override
+    public double calcGtotalD(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -5691,8 +5581,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         //System.out.println("Join Geary G: "+I);
 
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
 
@@ -5700,7 +5589,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     // global Getis
-    public double calcGetisTotal(Integer[] permutation) {
+    @Override
+    public double calcGetisTotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -5756,15 +5646,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double I = avgik;
         //System.out.println("Moran I:"+ikk[0]+" "+means[0]);   //I for each target     
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
     }
 
 
     //local Moran I calculation
-    public double calcLISAtotal(Integer[] permutation) {
+    @Override
+    public double calcLISAtotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -5848,15 +5738,15 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         // System.out.println("Moran I:"+ikk[0]+" "+ikk[1]);    //I for each target     
         //System.out.println(W+" I1: "+upsum[0]+" "+downsum[0]+" "+ikk[0]+" "+means[0]);
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
     }
 
 
     //local Geary C
-    public double calcGLocalTotal(Integer[] permutation) {
+    @Override
+    public double calcGLocalTotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -5934,8 +5824,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double I = avgik;
         //System.out.println("Geary C:"+ikk[0]+","+ikk[1]); 
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
 
@@ -5943,7 +5832,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     //local Getis
-    public double calcLocalGetisTotal(Integer[] permutation) {
+    @Override
+    public double calcLocalGetisTotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -6013,8 +5903,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         double I = avgik;
         //System.out.println("Local Getis:"+ikk[0]+","+ikk[1]); 
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
 
@@ -6022,7 +5911,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
 
     //local Getis calculation=standardized z    
-    public double calcGETIStotal(Integer[] permutation) {
+    @Override
+    public double calcGETIStotal(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         int M = 0;
         int N = m_data.getNbRows();
@@ -6107,8 +5997,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
         //System.out.println("Geary C:"+ikk[0]+","+ikk[1]); 
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
 

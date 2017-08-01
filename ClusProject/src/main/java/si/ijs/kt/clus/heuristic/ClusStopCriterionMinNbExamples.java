@@ -14,6 +14,7 @@ public class ClusStopCriterionMinNbExamples implements ClusStopCriterion {
     }
 
 
+    @Override
     public boolean stopCriterion(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         int n_pos = pstat.getNbExamples();
         int n_neg = tstat.getNbExamples() - n_pos;
@@ -21,6 +22,7 @@ public class ClusStopCriterionMinNbExamples implements ClusStopCriterion {
     }
 
 
+    @Override
     public boolean stopCriterion(ClusStatistic tstat, ClusStatistic[] pstat, int nbsplit) {
         for (int i = 0; i < nbsplit; i++) {
             if (pstat[i].getNbExamples() < m_MinExamples) { return true; }

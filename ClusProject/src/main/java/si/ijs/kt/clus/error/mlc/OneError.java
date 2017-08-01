@@ -59,17 +59,20 @@ public class OneError extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return true;
     }
 
 
+    @Override
     public void reset() {
         m_NbWrong = 0;
         m_NbKnown = 0;
     }
 
 
+    @Override
     public void add(ClusError other) {
         OneError oe = (OneError) other;
         m_NbWrong += oe.m_NbWrong;
@@ -87,26 +90,31 @@ public class OneError extends ClusNominalError {
     // }
 
 
+    @Override
     public double getModelError() {
         return ((double) m_NbWrong) / m_NbKnown;
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         return "OneError";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new OneError(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred(); // Codomain is {"1", "0"} - see clus.data.type.NominalAtterType
                                                  // constructor
@@ -133,6 +141,7 @@ public class OneError extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         try {
             throw new Exception("OneError.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
@@ -145,6 +154,7 @@ public class OneError extends ClusNominalError {
 
 
     // NEDOTAKNJENO
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 

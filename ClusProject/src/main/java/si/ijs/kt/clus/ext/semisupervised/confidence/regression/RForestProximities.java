@@ -46,8 +46,10 @@ public class RForestProximities extends PredictionConfidence {
      *
      * @param model
      * @return
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    private double[] calculateExpectedError(ClusModel model) {
+    private double[] calculateExpectedError(ClusModel model) throws ClusException, InterruptedException {
 
         HashMap<Integer, Double> proximities = ((ClusForest) model).getProximities();
         //double sumProximities = 0;
@@ -96,21 +98,21 @@ public class RForestProximities extends PredictionConfidence {
     }
 
     @Override
-    public double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) {
+    public double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) throws ClusException, InterruptedException {
         ((ClusForest) model).predictWeightedStandardAndGetProximities(tuple);
 
         return calculateExpectedError(model);
     }
 
     @Override
-    public double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple) {
-        ((ClusForest) model).predictWeightedOOBAndGetProximities(tuple);
+    public double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple) throws ClusException, InterruptedException {
+        model.predictWeightedOOBAndGetProximities(tuple);
 
         return calculateExpectedError(model);
     }
 
     @Override
-    public void calculateConfidenceScores(ClusModel model, RowData unlabeledData) throws ClusException {
+    public void calculateConfidenceScores(ClusModel model, RowData unlabeledData) throws ClusException, InterruptedException {
 
         //initialize proximities
         if (!proximitiesInitialized) { //avoid initializing proximities twice for the same mode (e.g., if calculateOOBConfidenceScores was called before this)
@@ -125,11 +127,11 @@ public class RForestProximities extends PredictionConfidence {
     }
 
     @Override
-    public void calculateOOBConfidenceScores(ClusForest model, RowData data) throws ClusException {
+    public void calculateOOBConfidenceScores(ClusForest model, RowData data) throws ClusException, InterruptedException {
         //initialize proximities
         if (!proximitiesInitialized) { //avoid initializing proximities twice for the same mode (e.g., if calculateOOBConfidenceScores was called before this)
             for (int j = 0; j < m_origLabeledMax; j++) {
-                ((ClusForest) model).initializeProximities(m_trainingSet.getTuple(j));
+                model.initializeProximities(m_trainingSet.getTuple(j));
             }
         }
 

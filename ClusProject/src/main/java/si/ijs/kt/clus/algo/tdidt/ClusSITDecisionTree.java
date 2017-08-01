@@ -41,6 +41,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     }
 
 
+    @Override
     public void printInfo() {
         System.out.println("---------SIT---------");
         System.out.println("Heuristic: " + getStatManager().getHeuristicName());
@@ -75,7 +76,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     }
 
 
-    public ClusError doParamXVal(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
+    public ClusError doParamXVal(ClusData trset, ClusData pruneset) throws Exception {
         int prevVerb = getSettings().getGeneral().enableVerbose(0);
         ClusStatManager mgr = getStatManager();
         ClusSummary summ = new ClusSummary();
@@ -132,11 +133,11 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     }
 
 
-    private double addBestSupportTasks(double[] weights, int emc, int[] support_range, ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
+    private double addBestSupportTasks(double[] weights, int emc, int[] support_range, ClusData trset, ClusData pruneset) throws Exception {
 
         ClusStatManager mgr = getStatManager();
         // variables for holding the current best found weights/err
-        double[] best_weights = (double[]) weights.clone();
+        double[] best_weights = weights.clone();
 
         ClusError err = doParamXVal(trset, pruneset);
         double best_err = err.getModelErrorComponent(emc);
@@ -149,7 +150,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         System.out.println();
 
         for (int i = support_range[0]; i <= support_range[1]; i++) {
-            mgr.getClusteringWeights().m_Weights = (double[]) weights.clone();
+            mgr.getClusteringWeights().m_Weights = weights.clone();
 
             if (mgr.getClusteringWeights().m_Weights[i] != 1) {
                 mgr.getClusteringWeights().m_Weights[i] = 1;
@@ -166,7 +167,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                 System.out.println("Correlation: " + err.getModelErrorComponent(emc));
                 if (err.getModelErrorComponent(emc) > best_err) {
                     best_err = err.getModelErrorComponent(emc);
-                    best_weights = (double[]) mgr.getClusteringWeights().m_Weights.clone();
+                    best_weights = mgr.getClusteringWeights().m_Weights.clone();
                 }
                 System.out.println();
 
@@ -188,11 +189,11 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     }
 
 
-    private double substractBestSupportTasks(double[] weights, int emc, int[] support_range, ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
+    private double substractBestSupportTasks(double[] weights, int emc, int[] support_range, ClusData trset, ClusData pruneset) throws Exception {
 
         ClusStatManager mgr = getStatManager();
         // variables for holding the current best found weights/err
-        double[] best_weights = (double[]) weights.clone();
+        double[] best_weights = weights.clone();
 
         ClusError err = doParamXVal(trset, pruneset);
         double best_err = err.getModelErrorComponent(emc);
@@ -205,7 +206,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         System.out.println();
 
         for (int i = support_range[0]; i <= support_range[1]; i++) {
-            mgr.getClusteringWeights().m_Weights = (double[]) weights.clone();
+            mgr.getClusteringWeights().m_Weights = weights.clone();
 
             if (mgr.getClusteringWeights().m_Weights[i] != 0) {
                 mgr.getClusteringWeights().m_Weights[i] = 0;
@@ -222,7 +223,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                 System.out.println("Correlation: " + err.getModelErrorComponent(emc));
                 if (err.getModelErrorComponent(emc) > best_err) {
                     best_err = err.getModelErrorComponent(emc);
-                    best_weights = (double[]) mgr.getClusteringWeights().m_Weights.clone();
+                    best_weights = mgr.getClusteringWeights().m_Weights.clone();
                 }
                 System.out.println();
 
@@ -244,7 +245,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     }
 
 
-    public void findBestSupportTasks(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
+    public void findBestSupportTasks(ClusData trset, ClusData pruneset) throws Exception {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
         int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
@@ -263,16 +264,16 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         // set all weights to 0, except the main_target
         resetWeights(main_target);
         double[] weights = mgr.getClusteringWeights().m_Weights;
-        double best_err = addBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
+        double best_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
 
         if (recursive) {
             System.out.println("\n---recursive sit---");
             weights = mgr.getClusteringWeights().m_Weights;
-            double new_err = addBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
+            double new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
             while (new_err > best_err) {
                 best_err = new_err;
                 weights = mgr.getClusteringWeights().m_Weights;
-                new_err = addBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
+                new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
             }
         }
 
@@ -281,7 +282,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     }
 
 
-    public void twoSidedSit(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
+    public void twoSidedSit(ClusData trset, ClusData pruneset) throws Exception {
         ClusStatManager mgr = getStatManager();
         SettingsSIT settings = mgr.getSettings().getSIT();
         int main_target = new Integer(settings.getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
@@ -320,22 +321,22 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             best_err = MT_err;
             System.out.println("\n---recursive sub sit---");
             weights = mgr.getClusteringWeights().m_Weights;
-            double new_err = substractBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
+            double new_err = substractBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
             while (new_err > best_err) {
                 best_err = new_err;
                 weights = mgr.getClusteringWeights().m_Weights;
-                new_err = substractBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
+                new_err = substractBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
             }
         }
         else {
             System.out.println("\n---recursive add sit---");
             resetWeights(main_target);
             weights = mgr.getClusteringWeights().m_Weights;
-            double new_err = addBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
+            double new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
             while (new_err > best_err) {
                 best_err = new_err;
                 weights = mgr.getClusteringWeights().m_Weights;
-                new_err = addBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
+                new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
             }
         }
 
@@ -344,7 +345,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     }
 
 
-    public void superSit(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
+    public void superSit(ClusData trset, ClusData pruneset) throws Exception {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
         int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
@@ -394,20 +395,20 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         System.out.println("\n---recursive sit---");
 
         weights = starting_weights;
-        double new_err = addBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
-        new_err = substractBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
+        double new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
+        new_err = substractBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
         while (new_err > best_err) {
             best_err = new_err;
 
             weights = mgr.getClusteringWeights().m_Weights;
-            new_err = addBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
-            new_err = substractBestSupportTasks((double[]) weights.clone(), emc, support_range, trset, pruneset);
+            new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
+            new_err = substractBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
         }
         System.out.println();
     }
 
 
-    public void sweepSit(ClusData trset, ClusData pruneset) throws ClusException, IOException, InterruptedException {
+    public void sweepSit(ClusData trset, ClusData pruneset) throws Exception {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
         int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
@@ -505,7 +506,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     }
 
 
-    public void exhaustiveSearch(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    public void exhaustiveSearch(ClusRun cr) throws Exception {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
         // int main_target = new Integer(settings.getMainTarget())-1;////we try to optimize for this target. Index! 0 =
@@ -551,7 +552,8 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     }
 
 
-    public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    @Override
+    public void induceAll(ClusRun cr) throws Exception {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
 

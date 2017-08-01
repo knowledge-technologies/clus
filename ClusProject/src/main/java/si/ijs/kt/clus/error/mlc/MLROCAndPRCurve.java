@@ -80,6 +80,7 @@ public abstract class MLROCAndPRCurve extends ClusNominalError { // does not imp
     	return m_ClassWisePredictions;
     }
 
+    @Override
     public void add(ClusError other) {
         MLROCAndPRCurve castedOther = (MLROCAndPRCurve) other;
         BinaryPredictionList[] otherCWP = castedOther.getClassWisePredictions();
@@ -88,11 +89,13 @@ public abstract class MLROCAndPRCurve extends ClusNominalError { // does not imp
         }
     }
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         m_AreaROC = -1.0;
         m_AreaPR = -1.0;
@@ -139,6 +142,7 @@ public abstract class MLROCAndPRCurve extends ClusNominalError { // does not imp
 //        return getModelErrorComponent(i);
 //    }
 
+    @Override
     public double getModelError() {
         throw new RuntimeException("This must be implemented by a subclas.");
     }
@@ -220,6 +224,7 @@ public abstract class MLROCAndPRCurve extends ClusNominalError { // does not imp
     }
 
 
+    @Override
     public abstract void showModelError(PrintWriter out, int detail);
     // NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
     // computeAll();
@@ -247,11 +252,13 @@ public abstract class MLROCAndPRCurve extends ClusNominalError { // does not imp
     // }
     // }
 
+    @Override
     public String getName() {
         return "MLROCAndPRCurve";
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         double[][] probabilities = ((ClassificationStat) pred).getProbabilityPrediction(); // probabilities[i][0] =
                                                                                            // P(label_i is relevant for
@@ -268,16 +275,19 @@ public abstract class MLROCAndPRCurve extends ClusNominalError { // does not imp
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         throw new RuntimeException("Not implemented!");
     }
 
 
     // NEDOTAKNJENO
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public abstract ClusError getErrorClone(ClusErrorList par);
 
 }

@@ -26,6 +26,7 @@ public class GeneticSearch extends SearchAlgorithmImpl {
     final protected int MAX_ALLOWED_EVOLUTIONS = 50;
 
 
+    @Override
     public TargetSet search(ClusAttrType mainTarget, TargetSet candidates) {
         // create the configuration, nothing fancy for now
         Configuration.reset();
@@ -95,6 +96,7 @@ public class GeneticSearch extends SearchAlgorithmImpl {
     }
 
 
+    @Override
     public String getName() {
         return "GeneticSearch";
     }

@@ -37,16 +37,19 @@ public class NArySplit extends NominalSplit {
     ClusStatistic m_MStat;
 
 
+    @Override
     public void initialize(ClusStatManager manager) {
         m_MStat = manager.createClusteringStat();
     }
 
 
+    @Override
     public void setSDataSize(int size) {
         m_MStat.setSDataSize(size);
     }
 
 
+    @Override
     public void findSplit(CurrentBestTestAndHeuristic node, NominalAttrType type) {
         double unk_freq = 0.0;
         int nbvalues = type.getNbValues();
@@ -72,6 +75,7 @@ public class NArySplit extends NominalSplit {
     }
 
 
+    @Override
     public void findRandomSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rn) {
         try {
             throw new ClusException("Not implemented yet!");
@@ -82,6 +86,7 @@ public class NArySplit extends NominalSplit {
     }
 
 
+    @Override
     public void findExtraTreeSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rn) {
         try {
             throw new ClusException("Not implemented yet!");

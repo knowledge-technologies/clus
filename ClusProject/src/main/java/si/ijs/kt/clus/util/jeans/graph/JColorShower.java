@@ -73,6 +73,7 @@ public class JColorShower extends Component {
     }
 
 
+    @Override
     public void paint(Graphics g) {
         Dimension size = getSize();
         int xpos = size.width / 2 - dim.width / 2;
@@ -84,6 +85,7 @@ public class JColorShower extends Component {
     }
 
 
+    @Override
     public Dimension getPreferredSize() {
         return dim;
     }

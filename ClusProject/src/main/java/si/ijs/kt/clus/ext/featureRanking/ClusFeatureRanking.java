@@ -67,6 +67,7 @@ import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
 public class ClusFeatureRanking {
@@ -195,7 +196,7 @@ public class ClusFeatureRanking {
     public String writeRow(ArrayList<String> attributes, double value) {
         String output = "";
         for (int i = 0; i < attributes.size(); i++) {
-            String attr = (String) attributes.get(i);
+            String attr = attributes.get(i);
             attr = attr.replaceAll("\\[", "");
             attr = attr.replaceAll("\\]", "");
             output += attr + "\t[" + value + "]\n"; // added [ and ] to make fimps look the same, when #rankings == 1 or #rankings > 1.
@@ -327,7 +328,7 @@ public class ClusFeatureRanking {
             ArrayList<String> attrs = sorted.get(score);
             for (int i = 0; i < attrs.size(); i++) {
                 JsonObject elm = new JsonObject();
-                elm.addProperty("attributeName", (String) attrs.get(i));
+                elm.addProperty("attributeName", attrs.get(i));
                 elm.addProperty("ordering", count);
                 elm.addProperty("importance", score);
                 count++;
@@ -358,8 +359,9 @@ public class ClusFeatureRanking {
      * @param position
      *        position at which the attribute whose values are being shuffled, is
      * @return
+     * @throws ClusException 
      */
-    public RowData createRandomizedOOBdata(OOBSelection selection, RowData data, int type, int position, int seed) {
+    public RowData createRandomizedOOBdata(OOBSelection selection, RowData data, int type, int position, int seed) throws ClusException {
         RowData result = data;
         Random rndm = new Random(seed);
         for (int i = 0; i < result.getNbRows() - 1; i++) {
@@ -392,8 +394,7 @@ public class ClusFeatureRanking {
                     second.setDoubleVal(swap, position);
                 }
                 else {
-                    System.err.println("Error while making the random permutations for feature ranking!");
-                    System.exit(-1);
+                    throw new ClusException("Error while making the random permutations for feature ranking!");
                 }
             }
         }
@@ -446,8 +447,9 @@ public class ClusFeatureRanking {
      *         also per target calculations for {@code Err}
      *         in the positions i > 0.
      * @throws ClusException
+     * @throws InterruptedException 
      */
-    public double[][][] calcAverageErrors(RowData data, ClusModel model, ClusStatManager mgr) throws ClusException {
+    public double[][][] calcAverageErrors(RowData data, ClusModel model, ClusStatManager mgr) throws ClusException, InterruptedException {
         ClusSchema schema = data.getSchema();
         ClusErrorList error = computeErrorList(schema, mgr);
         /* attach model to given schema */
@@ -573,7 +575,7 @@ public class ClusFeatureRanking {
             System.err.println("- multi-target classification (multi-label classification)");
             System.err.println("- multi-target regression");
             System.err.println("- hierarchical multi-label classification");
-            System.exit(-1);
+            throw new NotImplementedException();
         }
         return error;
     }
@@ -591,7 +593,7 @@ public class ClusFeatureRanking {
     }
 
 
-    public double[] getAttributeInfo(String attribute) {
+    public double[] getAttributeInfo(String attribute) throws InterruptedException {
         m_Lock.readingLock();
         double[] info = Arrays.copyOf(m_AllAttributes.get(attribute), m_AllAttributes.get(attribute).length);
         m_Lock.readingUnlock();

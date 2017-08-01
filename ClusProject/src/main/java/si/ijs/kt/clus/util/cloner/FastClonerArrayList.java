@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class FastClonerArrayList implements IFastCloner {
 
+    @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
         final ArrayList al = (ArrayList) t;

@@ -129,6 +129,7 @@ public class MBarPlot extends JComponent {
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         // Init graphcs
         super.paintComponent(g);
@@ -339,6 +340,6 @@ public class MBarPlot extends JComponent {
 
     public int calc(float val, float min, float max, int imin, int imax) {
         float p = (val - min) / (max - min) * (imax - imin);
-        return (int) Math.round(p) + imin;
+        return Math.round(p) + imin;
     }
 }

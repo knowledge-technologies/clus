@@ -60,7 +60,7 @@ public class OptXValIndOV extends OptXValInduce {
     }
 
 
-    public final void findNominalOV(NominalAttrType at, OptXValGroup grp) {
+    public final void findNominalOV(NominalAttrType at, OptXValGroup grp) throws ClusException {
         // Reset positive statistic
         int nbvalues = at.getNbValues();
         int statsize = nbvalues + at.intHasMissing();
@@ -132,7 +132,7 @@ public class OptXValIndOV extends OptXValInduce {
     }
 
 
-    public final void findNumericOV(NumericAttrType at, OptXValGroup grp) {
+    public final void findNumericOV(NumericAttrType at, OptXValGroup grp) throws ClusException {
         // Sort data
         DataTuple tuple;
         RowData data = grp.getData();
@@ -490,7 +490,7 @@ public class OptXValIndOV extends OptXValInduce {
     }
 
 
-    public final void findBestTestOV(OptXValGroup mgrp) {
+    public final void findBestTestOV(OptXValGroup mgrp) throws ClusException {
         // First make nodes
         mgrp.makeNodes();
         // For each attribute
@@ -508,7 +508,7 @@ public class OptXValIndOV extends OptXValInduce {
     }
 
 
-    public final void xvalInduce(OptXValNode node, OptXValGroup mgrp) {
+    public final void xvalInduce(OptXValNode node, OptXValGroup mgrp) throws Exception {
         long t0;
         if (Debug.debug == 1) {
             t0 = ResourceInfo.getCPUTime();
@@ -650,7 +650,8 @@ public class OptXValIndOV extends OptXValInduce {
     }
 
 
-    public OptXValNode xvalInduce(OptXValGroup mgrp) {
+    @Override
+    public OptXValNode xvalInduce(OptXValGroup mgrp) throws Exception {
         createExtraStats();
         OptXValNode root = new OptXValNode();
         xvalInduce(root, mgrp);

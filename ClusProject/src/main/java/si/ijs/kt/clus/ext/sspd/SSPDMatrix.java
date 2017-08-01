@@ -79,6 +79,7 @@ public class SSPDMatrix extends ClusDistance {
     }
 
 
+    @Override
     public double calcDistance(DataTuple t1, DataTuple t2) {
         int idx = m_Target.getArrayIndex();
         int i1 = t1.getIntVal(idx);
@@ -87,6 +88,7 @@ public class SSPDMatrix extends ClusDistance {
     }
 
 
+    @Override
     public String getDistanceName() {
         return "SSPD Matrix";
     }

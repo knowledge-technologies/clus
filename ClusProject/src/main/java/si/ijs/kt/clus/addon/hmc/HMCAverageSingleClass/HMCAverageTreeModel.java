@@ -58,6 +58,7 @@ public class HMCAverageTreeModel implements ClusModel {
     }
 
 
+    @Override
     public ClusStatistic predictWeighted(DataTuple tuple) {
         WHTDStatistic stat = (WHTDStatistic) m_Target.cloneSimple();
         stat.setMeans(m_PredProb[m_DataSet][tuple.getIndex()]);
@@ -65,35 +66,42 @@ public class HMCAverageTreeModel implements ClusModel {
     }
 
 
+    @Override
     public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
     }
 
 
+    @Override
     public int getModelSize() {
         return 0;
     }
 
 
+    @Override
     public String getModelInfo() {
         return "Combined model with " + m_Trees + " trees with " + m_TotSize + " nodes";
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt) {
         wrt.println(getModelInfo());
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         printModel(wrt);
     }
 
 
+    @Override
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
         printModel(wrt);
     }
 
 
+    @Override
     public void printModelToPythonScript(PrintWriter wrt) {
     }
 
@@ -113,24 +121,29 @@ public class HMCAverageTreeModel implements ClusModel {
     }
 
 
+    @Override
     public void attachModel(HashMap table) throws ClusException {
     }
 
 
+    @Override
     public ClusModel prune(int prunetype) {
         return this;
     }
 
 
+    @Override
     public int getID() {
         return 0;
     }
 
 
+    @Override
     public void retrieveStatistics(ArrayList stats) {
     }
 
 
+    @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int a, int b, boolean ex) {
     }
 

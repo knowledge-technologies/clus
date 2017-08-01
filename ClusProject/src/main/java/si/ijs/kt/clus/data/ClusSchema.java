@@ -156,13 +156,13 @@ public class ClusSchema implements Serializable {
 
 
     public final ClusAttrType getAttrType(int idx) {
-        return (ClusAttrType) m_Attr.get(idx);
+        return m_Attr.get(idx);
     }
 
 
     public final ClusAttrType getAttrType(String name) {
         for (int j = 0; j < m_NbAttrs; j++) {
-            ClusAttrType attr = (ClusAttrType) m_Attr.get(j);
+            ClusAttrType attr = m_Attr.get(j);
             if (name.equals(attr.getName()))
                 return attr;
         }
@@ -330,7 +330,7 @@ public class ClusSchema implements Serializable {
 
     public final boolean hasMissing() {
         for (int j = 0; j < m_NbAttrs; j++) {
-            ClusAttrType attr = (ClusAttrType) m_Attr.get(j);
+            ClusAttrType attr = m_Attr.get(j);
             if (attr.hasMissing())
                 return true;
         }
@@ -342,10 +342,10 @@ public class ClusSchema implements Serializable {
         int nb_miss = 0;
         ClusAttrType[] attrs = getDescriptiveAttributes();
         for (int j = 0; j < attrs.length; j++) {
-            ClusAttrType at = (ClusAttrType) attrs[j];
+            ClusAttrType at = attrs[j];
             nb_miss += at.getNbMissing();
         }
-        return (double) nb_miss;
+        return nb_miss;
     }
 
 
@@ -564,7 +564,7 @@ public class ClusSchema implements Serializable {
         System.out.println("Nb obj: " + getNbObjects());
         System.out.println("Idx   Name                          Descr Status    Ref   Type             Sparse Missing");
         for (int j = 0; j < m_NbAttrs; j++) {
-            ClusAttrType at = (ClusAttrType) m_Attr.get(j);
+            ClusAttrType at = m_Attr.get(j);
             System.out.print(StringUtils.printInt(j + 1, 6));
             System.out.print(StringUtils.printStrMax(at.getName(), 29));
             if (at.isDescriptive())
@@ -620,7 +620,7 @@ public class ClusSchema implements Serializable {
 
     public final void setReader(boolean start_stop) {
         for (int j = 0; j < m_NbAttrs; j++) {
-            ClusAttrType attr = (ClusAttrType) m_Attr.get(j);
+            ClusAttrType attr = m_Attr.get(j);
             if (attr.getStatus() != ClusAttrType.STATUS_DISABLED)
                 attr.setReader(start_stop);
         }
@@ -629,7 +629,7 @@ public class ClusSchema implements Serializable {
 
     public final void getPreprocs(DataPreprocs pps, boolean single) {
         for (int j = 0; j < m_NbAttrs; j++) {
-            ClusAttrType attr = (ClusAttrType) m_Attr.get(j);
+            ClusAttrType attr = m_Attr.get(j);
             if (attr.getStatus() != ClusAttrType.STATUS_DISABLED)
                 attr.getPreprocs(pps, single);
         }
@@ -659,7 +659,7 @@ public class ClusSchema implements Serializable {
     public final void setTestSet(int id) {
         if (id != -1) {
             System.out.println("Setting test set ID: " + id);
-            ClusAttrType type = (ClusAttrType) m_Attr.get(id);
+            ClusAttrType type = m_Attr.get(id);
             m_Attr.set(id, m_TSAttr = new IndexAttrType(type.getName()));
         }
     }
@@ -674,7 +674,7 @@ public class ClusSchema implements Serializable {
     public final HashMap<String, ClusAttrType> buildAttributeHash() throws ClusException {
         HashMap<String, ClusAttrType> hash = new HashMap<String, ClusAttrType>();
         for (int j = 0; j < m_NbAttrs; j++) {
-            ClusAttrType at = (ClusAttrType) m_Attr.get(j);
+            ClusAttrType at = m_Attr.get(j);
             if (hash.containsKey(at.getName())) {
                 throw new ClusException("Duplicate attribute name: '" + at.getName() + "'");
             }
@@ -706,7 +706,7 @@ public class ClusSchema implements Serializable {
     private void addColsIndex() {
         int idx = 0;
         for (int j = 0; j < m_NbAttrs; j++) {
-            ClusAttrType at = (ClusAttrType) m_Attr.get(j);
+            ClusAttrType at = m_Attr.get(j);
             if (at.getStatus() == ClusAttrType.STATUS_NORMAL)
                 at.setArrayIndex(idx++);
         }
@@ -848,7 +848,7 @@ public class ClusSchema implements Serializable {
         int bitPosition = 0; // for BitwiseNominalAttrType
         int nbBitwise = 0;
         for (int j = 0; j < m_NbAttrs; j++) {
-            ClusAttrType at = (ClusAttrType) m_Attr.get(j);
+            ClusAttrType at = m_Attr.get(j);
             int vtype = at.getValueType();
             if (vtype == ClusAttrType.VALUE_TYPE_NONE || at.getStatus() == ClusAttrType.STATUS_DISABLED) {
                 at.setArrayIndex(-1);
@@ -931,6 +931,7 @@ public class ClusSchema implements Serializable {
     }
 
 
+    @Override
     public String toString() {
         int aidx = 0;
         StringBuffer buf = new StringBuffer();

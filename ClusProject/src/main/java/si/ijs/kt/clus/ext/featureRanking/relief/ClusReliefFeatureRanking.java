@@ -354,7 +354,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @throws InterruptedException
      * @throws ExecutionException
      */
-    public void calculateReliefImportance(RowData data) throws ClusException, InterruptedException {
+    public void calculateReliefImportance(RowData data) throws ClusException, InterruptedException, ExecutionException {
 
         DataTuple tuple;
 
@@ -363,14 +363,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
         int[] theOrder = randomPermutation(m_NbExamples);
 
-        try {
-            printMessage("Calculating nearest neighbours ...", 1);
-            computeNearestNeighbours(theOrder);
-        }
-        catch (ExecutionException e) {
-            e.printStackTrace();
-            System.exit(-1);
-        }
+        printMessage("Calculating nearest neighbours ...", 1);
+        computeNearestNeighbours(theOrder);
 
         int insufficientNbNeighbours = 0;
         int numIterInd = 0;
@@ -936,7 +930,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
 
     private void printProgress(int iteration) {
-        double proportion = 100 * (double) (iteration + 1) / ((double) m_MaxNbIterations);
+        double proportion = 100 * (double) (iteration + 1) / (m_MaxNbIterations);
         int verbosity = getSettings().getGeneral().getVerbose();
         if (verbosity > 0 && verbosity < 3) {
             while (m_Percents < proportion && m_Percents < 100) {

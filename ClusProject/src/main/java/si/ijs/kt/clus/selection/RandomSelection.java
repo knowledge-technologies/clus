@@ -35,7 +35,7 @@ public class RandomSelection extends ClusSelection {
     public RandomSelection(int nbrows, double sel) {
         super(nbrows);
         m_Seed = 0; // default seed is 0
-        makeSelection(nbrows, (int) Math.round((double) sel * nbrows));
+        makeSelection(nbrows, (int) Math.round(sel * nbrows));
     }
 
 
@@ -48,7 +48,7 @@ public class RandomSelection extends ClusSelection {
     public RandomSelection(int nbrows, double sel, int randomSeed) {
 		super(nbrows);
 		m_Seed = randomSeed;
-		makeSelection(nbrows, (int)Math.round((double)sel*nbrows));
+		makeSelection(nbrows, (int)Math.round(sel*nbrows));
 	}
         
         public RandomSelection(int nbrows, int nbsel, int randomSeed) {
@@ -61,11 +61,13 @@ public class RandomSelection extends ClusSelection {
     	m_Seed = seed;
     }
         
+    @Override
     public int getNbSelected() {
         return m_NbSelected;
     }
 
 
+    @Override
     public boolean isSelected(int row) {
         return m_Selection[row];
     }

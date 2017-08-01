@@ -56,6 +56,7 @@ public class ExtensionFilter implements FilenameFilter {
      *
      * @returns true if the given File is accepted.
      */
+    @Override
     public boolean accept(File dir, String name) {
         String fileext = FileUtil.getExtension(name);
         return (fileext != null) && fileext.equals(extension);

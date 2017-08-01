@@ -55,11 +55,13 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         return new RegressionStatBinaryNomiss(this.m_Settings, m_Attrs, false);
     }
 
 
+    @Override
     public ClusStatistic cloneSimple() {
         return new RegressionStatBinaryNomiss(this.m_Settings, m_Attrs, true);
     }
@@ -69,16 +71,18 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
      * Clone this statistic by taking the given weight into account.
      * This is used for example to get the weighted prediction of default rule.
      */
+    @Override
     public ClusStatistic copyNormalizedWeighted(double weight) {
         // RegressionStat newStat = (RegressionStat) cloneSimple();
-        RegressionStatBinaryNomiss newStat = (RegressionStatBinaryNomiss) normalizedCopy();
+        RegressionStatBinaryNomiss newStat = normalizedCopy();
         for (int iTarget = 0; iTarget < newStat.getNbAttributes(); iTarget++) {
             newStat.m_Means[iTarget] = weight * newStat.m_Means[iTarget];
         }
-        return (ClusStatistic) newStat;
+        return newStat;
     }
 
 
+    @Override
     public void reset() {
         m_SumWeight = 0.0;
         m_NbExamples = 0;
@@ -86,6 +90,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         RegressionStatBinaryNomiss or = (RegressionStatBinaryNomiss) other;
         m_SumWeight = or.m_SumWeight;
@@ -97,6 +102,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     /**
      * Used for combining weighted predictions.
      */
+    @Override
     public RegressionStatBinaryNomiss normalizedCopy() {
         RegressionStatBinaryNomiss copy = (RegressionStatBinaryNomiss) cloneSimple();
         copy.m_NbExamples = 0;
@@ -106,6 +112,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
         RegressionStatBinaryNomiss or = (RegressionStatBinaryNomiss) other;
         m_SumWeight += or.m_SumWeight;
@@ -116,6 +123,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public void addScaled(double scale, ClusStatistic other) {
         RegressionStatBinaryNomiss or = (RegressionStatBinaryNomiss) other;
         m_SumWeight += scale * or.m_SumWeight;
@@ -126,6 +134,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
         RegressionStatBinaryNomiss or = (RegressionStatBinaryNomiss) other;
         m_SumWeight -= or.m_SumWeight;
@@ -136,6 +145,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
         RegressionStatBinaryNomiss or = (RegressionStatBinaryNomiss) other;
         m_SumWeight = or.m_SumWeight - m_SumWeight;
@@ -146,6 +156,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public void calcMean(double[] means) {
         for (int i = 0; i < m_NbAttrs; i++) {
             means[i] = getMean(i);
@@ -153,12 +164,14 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public double getMean(int i) {
         // If divider zero, return zero
         return m_SumWeight != 0.0 ? m_SumValues[i] / m_SumWeight : 0.0;
     }
 
 
+    @Override
     public double getSVarS(int i) {
         double n_tot = m_SumWeight;
         double sv_tot = m_SumValues[i];
@@ -166,6 +179,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public double getSVarS(ClusAttributeWeights scale) {
         double result = 0.0, sv_tot;
         double n_tot = m_SumWeight;
@@ -181,6 +195,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     }
 
 
+    @Override
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
 		double result = 0.0, sv_tot;
 		RegressionStatBinaryNomiss or = (RegressionStatBinaryNomiss) other;
@@ -219,6 +234,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
 		}
 	}
     
+    @Override
     public String getString(StatisticPrintInfo info) {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();

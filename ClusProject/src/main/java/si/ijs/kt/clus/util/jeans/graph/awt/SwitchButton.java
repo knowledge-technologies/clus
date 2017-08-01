@@ -43,6 +43,7 @@ public class SwitchButton extends Button implements ActionListener {
     }
 
 
+    @Override
     public void actionPerformed(ActionEvent evt) {
         setState(!state);
     }

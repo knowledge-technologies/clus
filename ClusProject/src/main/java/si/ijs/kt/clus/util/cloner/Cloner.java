@@ -126,6 +126,7 @@ public class Cloner {
 
     private IDeepCloner deepCloner = new IDeepCloner() {
 
+        @Override
         public <T> T deepClone(T o, Map<Object, Object> clones) {
             try {
                 return cloneInternal(o, clones);
@@ -676,11 +677,13 @@ public class Cloner {
         if (dumpClonedClasses) {
             dumpCloned = new IDumpCloned() {
 
+                @Override
                 public void startCloning(Class<?> clz) {
                     System.out.println("clone>" + clz);
                 }
 
 
+                @Override
                 public void cloning(Field field, Class<?> clz) {
                     System.out.println("cloned field>" + field + "  -- of class " + clz);
                 }

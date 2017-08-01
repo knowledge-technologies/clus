@@ -46,6 +46,7 @@ public class INIFile extends INIFileSection {
     }
 
 
+    @Override
     public void addNode(INIFileNode entry) {
         m_hEntries.put(entry.getName(), entry);
         m_hEntryList.addElement(entry);
@@ -107,6 +108,7 @@ public class INIFile extends INIFileSection {
     }
 
 
+    @Override
     public void save(PrintWriter writer) throws IOException {
         for (Enumeration e = getNodes(); e.hasMoreElements();) {
             INIFileNode section = (INIFileNode) e.nextElement();

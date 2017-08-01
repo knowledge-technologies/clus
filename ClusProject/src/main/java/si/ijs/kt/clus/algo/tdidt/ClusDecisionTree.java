@@ -54,12 +54,14 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
     }
 
 
+    @Override
     public void printInfo() {
         System.out.println("TDIDT");
         System.out.println("Heuristic: " + getStatManager().getHeuristicName());
     }
 
 
+    @Override
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
 
         if (sett.getConstraints().hasConstraintFile()) {
@@ -91,7 +93,7 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
     }*/
 
 
-    public static ClusModel induceDefault(ClusRun cr) {
+    public static ClusModel induceDefault(ClusRun cr) throws ClusException, InterruptedException {
         ClusNode node = new ClusNode();
         RowData data = (RowData) cr.getTrainingSet();
         node.initTargetStat(cr.getStatManager(), data);
@@ -109,8 +111,9 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
      *        ClusModelInfo to convert to rules (default, pruned, original).
      * @throws ClusException
      * @throws IOException
+     * @throws InterruptedException 
      */
-    public void convertToRules(ClusRun cr, ClusModelInfo model) throws ClusException, IOException {
+    public void convertToRules(ClusRun cr, ClusModelInfo model) throws ClusException, IOException, InterruptedException {
         ClusNode tree_root = (ClusNode) model.getModel();
         ClusRulesFromTree rft = new ClusRulesFromTree(true, getSettings().getTree().rulesFromTree());
         ClusRuleSet rule_set = null;
@@ -124,7 +127,8 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
     }
 
 
-    public void pruneAll(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public void pruneAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
         ClusNode orig = (ClusNode) cr.getModel(ClusModel.ORIGINAL);
         orig.numberTree();
         PruneTree pruner = getStatManager().getTreePruner(cr.getPruneSet());
@@ -137,7 +141,8 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
     }
 
 
-    public final ClusModel pruneSingle(ClusModel orig, ClusRun cr) throws ClusException {
+    @Override
+    public final ClusModel pruneSingle(ClusModel orig, ClusRun cr) throws ClusException, InterruptedException {
         ClusNode pruned = (ClusNode) ((ClusNode) orig).cloneTree();
         PruneTree pruner = getStatManager().getTreePruner(cr.getPruneSet());
         pruner.setTrainingData((RowData) cr.getTrainingSet());
@@ -148,9 +153,11 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
 
     /**
      * Post processing decision tree. E.g. converting to rules.
+     * @throws InterruptedException 
      *
      */
-    public void postProcess(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public void postProcess(ClusRun cr) throws ClusException, IOException, InterruptedException {
         if (getSettings().getTree().rulesFromTree() != SettingsOutput.CONVERT_RULES_NONE) {
             ClusModelInfo model = cr.getModelInfoFallback(ClusModel.PRUNED, ClusModel.ORIGINAL);
             convertToRules(cr, model);

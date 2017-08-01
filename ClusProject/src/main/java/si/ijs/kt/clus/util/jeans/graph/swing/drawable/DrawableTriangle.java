@@ -48,6 +48,7 @@ public class DrawableTriangle extends Drawable {
     }
 
 
+    @Override
     public void draw(Graphics2D g, DrawableCanvas canvas, int xofs, int yofs) {
         drawTriangle(g, xp - xofs, yp - yofs, wd, hi);
     }

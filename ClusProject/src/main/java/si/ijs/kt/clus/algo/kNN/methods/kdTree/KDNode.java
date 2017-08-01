@@ -25,10 +25,13 @@ package si.ijs.kt.clus.algo.kNN.methods.kdTree;
 import java.util.Comparator;
 import java.util.LinkedList;
 
+import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
+import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
+import si.ijs.kt.clus.util.ClusException;
 
 
 /**
@@ -85,7 +88,7 @@ public class KDNode {
      */
     protected void build(int limitRepetitions) {
         try {
-            if (m_Tuples.size() <= m_Tree.getMaxTuples() || limitRepetitions >= m_Tree.getRun().getDataSet(ClusRun.TRAINSET).m_Schema.getNbDescriptiveAttributes()) {
+            if (m_Tuples.size() <= m_Tree.getMaxTuples() || limitRepetitions >= m_Tree.getRun().getDataSet(ClusModelInfoList.TRAINSET).m_Schema.getNbDescriptiveAttributes()) {
                 // Leaf reached.
             }
             else {
@@ -137,8 +140,9 @@ public class KDNode {
      * 
      * @param tuple
      * @return
+     * @throws ClusException 
      */
-    public void find(DataTuple tuple) {
+    public void find(DataTuple tuple) throws ClusException {
         KDNode.m_Tuple = tuple;
         find();
     }
@@ -146,9 +150,10 @@ public class KDNode {
 
     /**
      * Private recursive function for finding kNN.
+     * @throws ClusException 
      */
-    private void find() {
-        KDTree.operationsCount[KDTree.ALG_KD]++;
+    private void find() throws ClusException {
+        SearchAlgorithm.operationsCount[SearchAlgorithm.ALG_KD]++;
         // If node is leaf?
         if (this.isLeaf()) {
             for (DataTuple t : m_Tuples)
@@ -239,6 +244,7 @@ class SortByAxis implements Comparator {
     }
 
 
+    @Override
     public int compare(Object arg0, Object arg1) {
         DataTuple a = (DataTuple) arg0;
         DataTuple b = (DataTuple) arg1;

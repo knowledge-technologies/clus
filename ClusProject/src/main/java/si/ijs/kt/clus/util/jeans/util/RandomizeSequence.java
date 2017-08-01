@@ -87,6 +87,6 @@ public class RandomizeSequence {
 
 
     public static int random(int max) {
-        return (int) Math.floor(((double) max * Math.random()));
+        return (int) Math.floor((max * Math.random()));
     }
 }

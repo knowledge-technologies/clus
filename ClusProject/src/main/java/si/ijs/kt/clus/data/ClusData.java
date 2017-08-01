@@ -69,7 +69,7 @@ public abstract class ClusData {
     public abstract void calcTotalStat(ClusStatistic stat);
 
 
-    public abstract void calcError(ClusNode node, ClusErrorList par);
+    public abstract void calcError(ClusNode node, ClusErrorList par) throws ClusException;
 
 
     public abstract double[] getNumeric(int idx);

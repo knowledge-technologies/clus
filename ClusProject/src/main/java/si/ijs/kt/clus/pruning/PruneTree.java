@@ -88,7 +88,7 @@ public class PruneTree {
     }
 
 
-    public ClusNode sequenceNext() {
+    public ClusNode sequenceNext() throws ClusException {
         return null;
     }
 

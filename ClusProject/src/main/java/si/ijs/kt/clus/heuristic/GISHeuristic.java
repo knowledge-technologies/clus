@@ -20,6 +20,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 
@@ -54,6 +55,7 @@ public class GISHeuristic extends ClusHeuristic {
     //private static double m_W;
     //public double m_I;
 
+    @Override
     public void setData(RowData data) {
         m_Data = data;
         m_DataIndices = constructIndexVector(m_Data);
@@ -66,6 +68,7 @@ public class GISHeuristic extends ClusHeuristic {
      * }
      */
     // executed once, when splitting the root node
+    @Override
     public void setInitialData(ClusStatistic stat, RowData data) {
         m_Data = data;
         m_Data.addIndices();
@@ -324,10 +327,10 @@ public class GISHeuristic extends ClusHeuristic {
     }
 
 
-    public double calcI(ClusStatistic t_stat, ClusStatistic p_stat, ClusStatistic missing, Integer[] permutation) {
+    public double calcI(ClusStatistic t_stat, ClusStatistic p_stat, ClusStatistic missing, Integer[] permutation) throws Exception {
         //try{
         //ClusStatistic tstat = (ClusStatistic)t_stat;
-        ClusStatistic pstat = (ClusStatistic) p_stat;
+        ClusStatistic pstat = p_stat;
         // Acceptable?
         if (stopCriterion(t_stat, p_stat, missing)) { return Double.NEGATIVE_INFINITY; }
 
@@ -434,6 +437,7 @@ public class GISHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double value = 0.0;
         if (c_tstat instanceof ClassificationStat) {
@@ -489,6 +493,7 @@ public class GISHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic[] c_pstat, int nbsplit) {
         if (stopCriterion(c_tstat, c_pstat, nbsplit))
             return Double.NEGATIVE_INFINITY;
@@ -565,6 +570,7 @@ public class GISHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return "GISHeuristic";
     }

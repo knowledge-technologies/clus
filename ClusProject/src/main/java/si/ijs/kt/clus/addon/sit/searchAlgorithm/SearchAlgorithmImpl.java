@@ -9,6 +9,7 @@ import si.ijs.kt.clus.addon.sit.mtLearner.MTLearner;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusException;
 
 
 /**
@@ -24,17 +25,19 @@ public abstract class SearchAlgorithmImpl implements SearchAlgorithm {
     protected Settings m_Sett;
 
 
+    @Override
     public void setMTLearner(MTLearner learner) {
         this.learner = learner;
     }
 
 
+    @Override
     public void setSettings(Settings s) {
         this.m_Sett = s;
     }
 
 
-    protected double eval(TargetSet tset, ClusAttrType mainTarget) {
+    protected double eval(TargetSet tset, ClusAttrType mainTarget) throws ClusException {
         // create a few folds
         // int nbFolds = 23;
         int nbFolds = learner.initLOOXVal();

@@ -32,6 +32,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.processor.ClusModelProcessor;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class ClusCalcRuleErrorProc extends ClusModelProcessor {
@@ -46,13 +47,15 @@ public class ClusCalcRuleErrorProc extends ClusModelProcessor {
     }
 
 
-    public void modelUpdate(DataTuple tuple, ClusModel model) throws IOException {
+    @Override
+    public void modelUpdate(DataTuple tuple, ClusModel model) throws IOException, ClusException {
         ClusRule rule = (ClusRule) model;
         ClusErrorList error = rule.getError(m_Subset);
         error.addExample(tuple, rule.getTargetStat());
     }
 
 
+    @Override
     public void terminate(ClusModel model) throws IOException {
         ClusRuleSet set = (ClusRuleSet) model;
         for (int i = 0; i < set.getModelSize(); i++) {
@@ -62,6 +65,7 @@ public class ClusCalcRuleErrorProc extends ClusModelProcessor {
     }
 
 
+    @Override
     public boolean needsModelUpdate() {
         return true;
     }

@@ -41,6 +41,7 @@ public class StringPainter implements Painter {
     }
 
 
+    @Override
     public void paint(Graphics graph, Canvas canvas) {
         Dimension dim = cnv.getBufferSize();
         cnv.setFont(graph, dim.width, string);

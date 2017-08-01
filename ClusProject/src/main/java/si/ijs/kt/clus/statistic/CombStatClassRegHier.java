@@ -44,6 +44,7 @@ public class CombStatClassRegHier extends CombStat {
     }
 
 
+    @Override
     public ClusStatistic cloneSimple() {
         return new CombStatClassRegHier(m_StatManager, (RegressionStat) m_RegStat.cloneSimple(), (ClassificationStat) m_ClassStat.cloneSimple(), (WHTDStatistic) m_HierStat.cloneSimple());
     }

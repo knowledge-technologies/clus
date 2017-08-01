@@ -38,6 +38,7 @@ public class DrawableImage extends Drawable {
     }
 
 
+    @Override
     public Rectangle getBoundRect(DrawableProvider prov) {
         if (wd == -1 || hi == -1) {
             wd = image.getWidth(prov.getDCanvas());
@@ -47,6 +48,7 @@ public class DrawableImage extends Drawable {
     }
 
 
+    @Override
     public void draw(DrawableProvider prov, int xofs, int yofs) {
         Graphics g = prov.getDGraphics();
         int xpos = xp - xofs;

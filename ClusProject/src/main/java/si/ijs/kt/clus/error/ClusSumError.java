@@ -8,6 +8,7 @@ import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class ClusSumError extends ClusError {
@@ -22,6 +23,7 @@ public class ClusSumError extends ClusError {
     }
 
 
+    @Override
     public double getModelError() {
         int dim = 0;
         double result = 0.0;
@@ -34,6 +36,7 @@ public class ClusSumError extends ClusError {
     }
 
 
+    @Override
     public void reset() {
         for (int i = 0; i < m_Errors.size(); i++) {
             ClusError err = (ClusError) m_Errors.get(i);
@@ -42,6 +45,7 @@ public class ClusSumError extends ClusError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         ClusSumError others = (ClusSumError) other;
         for (int i = 0; i < m_Errors.size(); i++) {
@@ -51,7 +55,8 @@ public class ClusSumError extends ClusError {
     }
 
 
-    public void addExample(DataTuple tuple, ClusStatistic pred) {
+    @Override
+    public void addExample(DataTuple tuple, ClusStatistic pred) throws ClusException {
         // this can be made more general
         CombStat stat = (CombStat) pred;
         getComponent(0).addExample(tuple, stat.getRegressionStat());
@@ -59,13 +64,15 @@ public class ClusSumError extends ClusError {
     }
 
 
+    @Override
     public double computeLeafError(ClusStatistic stat) {
         CombStat cstat = (CombStat) stat;
         return getComponent(0).computeLeafError(cstat.getRegressionStat()) + getComponent(1).computeLeafError(cstat.getClassificationStat());
     }
 
 
-    public void addExample(DataTuple real, DataTuple pred) {
+    @Override
+    public void addExample(DataTuple real, DataTuple pred) throws ClusException {
         for (int i = 0; i < m_Errors.size(); i++) {
             ClusError err = (ClusError) m_Errors.get(i);
             err.addExample(real, pred);
@@ -73,6 +80,7 @@ public class ClusSumError extends ClusError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
         for (int i = 0; i < m_Errors.size(); i++) {
             ClusError err = (ClusError) m_Errors.get(i);
@@ -81,6 +89,7 @@ public class ClusSumError extends ClusError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         ClusSumError result = new ClusSumError(par);
         for (int i = 0; i < m_Errors.size(); i++) {
@@ -91,6 +100,7 @@ public class ClusSumError extends ClusError {
     }
 
 
+    @Override
     public String getName() {
         StringBuffer name = new StringBuffer();
         for (int i = 0; i < m_Errors.size(); i++) {
@@ -113,7 +123,8 @@ public class ClusSumError extends ClusError {
     }
 
 
-	public boolean shouldBeLow() {
+	@Override
+    public boolean shouldBeLow() {
 		return true;
 	}
 }

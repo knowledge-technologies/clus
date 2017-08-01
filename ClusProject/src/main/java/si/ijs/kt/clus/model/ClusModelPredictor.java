@@ -10,7 +10,7 @@ import si.ijs.kt.clus.util.ClusException;
 
 public class ClusModelPredictor {
 
-    public static RowData predict(ClusModel model, RowData test) throws ClusException {
+    public static RowData predict(ClusModel model, RowData test) throws ClusException, InterruptedException {
         ClusSchema schema = test.getSchema();
         schema.attachModel(model);
         RowData predictions = new RowData(schema, test.getNbRows());
@@ -24,7 +24,7 @@ public class ClusModelPredictor {
     }
 
 
-    public static DataTuple predict(ClusModel model, DataTuple test) throws ClusException {
+    public static DataTuple predict(ClusModel model, DataTuple test) throws ClusException, InterruptedException {
         ClusSchema schema = test.getSchema();
         schema.attachModel(model);
         DataTuple prediction = new DataTuple(schema);

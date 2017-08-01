@@ -13,6 +13,7 @@ public class NearestNeighbour {
         m_targetDistance = tarDist;
     }
     
+    @Override
     public String toString() {
         //return String.format("(ind: %d; descr. dist: %.4f; tar. dist: %.4f)", m_indexInDataSet, m_descriptiveDistance, m_targetDistance);
     	return String.format("NN(%d)", m_indexInDataSet);
@@ -26,6 +27,7 @@ public class NearestNeighbour {
     	return m_targetDistance;
     }
     
+    @Override
     public boolean equals(Object other){
     	if(other instanceof NearestNeighbour){
     		return this.m_indexInDataSet == ((NearestNeighbour) other).m_indexInDataSet;

@@ -80,6 +80,7 @@ public class TestAndHeuristic {
  * Reset
  ***************************************************************************/
 
+    @Override
     public String toString() {
         return m_PosStat.getString2();
     }
@@ -305,10 +306,11 @@ public class TestAndHeuristic {
 
 /***************************************************************************
  * Numeric splits
+ * @throws ClusException 
  ***************************************************************************/
 
     // Where is this used?
-    public final void updateNumeric(double val, ClusStatistic pos, ClusAttrType at) {
+    public final void updateNumeric(double val, ClusStatistic pos, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, pos, m_MissingStat);
         //System.out.println(heur);
         //System.out.println(m_BestHeur);
@@ -325,7 +327,7 @@ public class TestAndHeuristic {
         }
     }
 
-    public final void updateNumeric(double val, ClusAttrType at) {
+    public final void updateNumeric(double val, ClusAttrType at) throws ClusException {
         //System.out.println(m_Heuristic == null);
         // System.out.println(val);
         
@@ -356,8 +358,9 @@ public class TestAndHeuristic {
      * Take the inverse test '<=' instead of the default '>'.
      * @param val Split value.
      * @param at Attribute
+     * @throws ClusException 
      */
-    public final void updateInverseNumeric(double val, ClusAttrType at) {
+    public final void updateInverseNumeric(double val, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
@@ -377,13 +380,14 @@ public class TestAndHeuristic {
 
 /***************************************************************************
  * Heuristics
+ * @throws ClusException 
  ***************************************************************************/
 
-    public final double calcHeuristic(ClusStatistic stat) {
+    public final double calcHeuristic(ClusStatistic stat) throws ClusException {
         return m_Heuristic.calcHeuristic(m_TotStat, stat, m_MissingStat);
     }
 
-    public final double calcHeuristic(ClusStatistic tot, ClusStatistic pos) {
+    public final double calcHeuristic(ClusStatistic tot, ClusStatistic pos) throws ClusException {
         return m_Heuristic.calcHeuristic(tot, pos, m_MissingStat);
     }
 

@@ -54,10 +54,12 @@ public class ClusSplitNode extends MyNode {
     private int m_ID;    
     private NodeTest m_Test;    
     
+    @Override
     public int getID() {
         return m_ID;
     }
     
+    @Override
     public final int getMaxLeafDepth() {
         int nb = getNbChildren();
         if (nb == 0) {
@@ -65,13 +67,14 @@ public class ClusSplitNode extends MyNode {
         } else {
             int max = 0;
             for (int i = 0; i < nb; i++) {
-                MyNode node = (MyNode)getChild(i);
+                MyNode node = getChild(i);
                 max = Math.max(max, node.getMaxLeafDepth());
             }
             return max + 1;
         }
     }
     
+    @Override
     public final int getLevel() {
         int depth = 0;
         Node node = getParent();
@@ -83,23 +86,24 @@ public class ClusSplitNode extends MyNode {
     }
 
 
-    public ClusStatistic predictWeighted(DataTuple tuple) {
+    @Override
+    public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException, InterruptedException {
         if (atBottomLevel()) {
         	getTargetStat().calcMean();
             return getTargetStat();
         } else {
             int n_idx = m_Test.predictWeighted(tuple);
             if (n_idx != -1) {
-                MyNode info = (MyNode) getChild(n_idx);
+                MyNode info = getChild(n_idx);
                 return info.predictWeighted(tuple);
             } else {
                 int nb_c = getNbChildren();
-                MyNode ch_0 = (MyNode) getChild(0);
+                MyNode ch_0 = getChild(0);
                 ClusStatistic ch_0s = ch_0.predictWeighted(tuple);
                 ClusStatistic stat = ch_0s.cloneSimple();
                 stat.addPrediction(ch_0s, m_Test.getProportion(0));
                 for (int i = 1; i < nb_c; i++) {
-                    MyNode ch_i = (MyNode) getChild(i);
+                    MyNode ch_i = getChild(i);
                     ClusStatistic ch_is = ch_i.predictWeighted(tuple);
                     stat.addPrediction(ch_is, m_Test.getProportion(i));
                 }
@@ -109,6 +113,7 @@ public class ClusSplitNode extends MyNode {
         }
     }
     
+    @Override
     public String getModelInfo() {
         return "Nodes = "+getNbNodes()+" (Leaves: "+getNbLeaves()+", OptionNodes: "+getNbOptionNodes()+", Options: "+getNbOptions()+")";
     }
@@ -131,22 +136,27 @@ public class ClusSplitNode extends MyNode {
 
     // FIXME - what for NominalTests with only two possible outcomes?
 
+    @Override
     public void printModel(PrintWriter wrt) {
         printTree(wrt, StatisticPrintInfo.getInstance(), "");
     }
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         printTree(wrt, info, "");
     }
 
+    @Override
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
         printTree(wrt, info, "", examples);
     }
 
+    @Override
     public void printModelToPythonScript(PrintWriter wrt){
         printTreeToPythonScript(wrt, "\t");
     }
 
+    @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive){
         int lastmodel = cr.getNbModels()-1;
         System.out.println("The number of models to print is:"+lastmodel);
@@ -204,6 +214,7 @@ public class ClusSplitNode extends MyNode {
         printTree( writer,  info,  prefix, null);
     }
 
+    @Override
     public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix, RowData examples) {
         int arity = getNbChildren();
         if (arity > 0) {
@@ -233,7 +244,7 @@ public class ClusSplitNode extends MyNode {
             } else {
                 writer.println(m_Test.getTestString());
                 for (int i = 0; i < arity; i++) {
-                    MyNode child = (MyNode)getChild(i);
+                    MyNode child = getChild(i);
                     String branchlabel = m_Test.getBranchLabel(i);
                     RowData examplesi = null;
                     if (examples!=null){
@@ -270,6 +281,7 @@ public class ClusSplitNode extends MyNode {
     }
     
     /*to print the tree directly into an IDB : Elisa Fromont 13/06/2007*/
+    @Override
     public final void printTreeInDatabase(PrintWriter writer, String tabitem[], int tabexist[], int cpt, String typetree) {
         int arity = getNbChildren();
         if (arity > 0) {
@@ -300,7 +312,7 @@ public class ClusSplitNode extends MyNode {
                 //Has not been modified for database purpose yet !!!!!!
                 writer.println("arity-delta different 2");
                 for (int i = 0; i < arity; i++) {
-                    MyNode child = (MyNode)getChild(i);
+                    MyNode child = getChild(i);
                     String branchlabel = m_Test.getBranchLabel(i);
                     writer.print("+--" + branchlabel + ": ");
                     if (i != arity-1) {
@@ -359,6 +371,7 @@ public class ClusSplitNode extends MyNode {
         }
     }
 
+    @Override
     public String toString() {
         try{
             if (hasBestTest()) return getTestString();
@@ -367,6 +380,7 @@ public class ClusSplitNode extends MyNode {
         catch(Exception e){return "null clusnode ";}
     }
     
+    @Override
     public void makeLeaf() {
         m_Test = null;
         cleanup();
@@ -386,6 +400,7 @@ public class ClusSplitNode extends MyNode {
      * Inspectors concerning statistics
      ***************************************************************************/
 
+    @Override
     public MyNode cloneNode() {
         ClusSplitNode clone = new ClusSplitNode();
         clone.m_Test = m_Test;
@@ -426,6 +441,7 @@ public class ClusSplitNode extends MyNode {
         return m_Test;
     }
 
+    @Override
     public int getModelSize() {
         return getNbNodes();
     }

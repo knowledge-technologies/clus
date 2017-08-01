@@ -78,11 +78,13 @@ public abstract class BufferCanvas extends Canvas {
     }
 
 
+    @Override
     public Dimension getPreferredSize() {
         return getMinimumSize();
     }
 
 
+    @Override
     public Dimension getMinimumSize() {
         return minSize;
     }
@@ -111,11 +113,13 @@ public abstract class BufferCanvas extends Canvas {
     }
 
 
+    @Override
     public void paint(Graphics g) {
         update(g);
     }
 
 
+    @Override
     public void update(Graphics g) {
         reSize(getSize());
         g.drawImage(bufImg, 0, 0, this);

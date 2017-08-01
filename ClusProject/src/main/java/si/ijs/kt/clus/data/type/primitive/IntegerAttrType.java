@@ -45,6 +45,7 @@ public class IntegerAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusAttrType cloneType() {
         IntegerAttrType at = new IntegerAttrType(m_Name);
         cloneType(at);
@@ -52,26 +53,31 @@ public class IntegerAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public int getTypeIndex() {
         return THIS_TYPE;
     }
 
 
+    @Override
     public String getTypeName() {
         return THIS_TYPE_NAME;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_INT;
     }
 
 
+    @Override
     public String getString(DataTuple tuple) {
         return String.valueOf(tuple.m_Ints[m_ArrayIndex]);
     }
 
 
+    @Override
     public int compareValue(DataTuple t1, DataTuple t2) {
         int s1 = t1.m_Ints[m_ArrayIndex];
         int s2 = t2.m_Ints[m_ArrayIndex];
@@ -79,6 +85,7 @@ public class IntegerAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
@@ -95,6 +102,7 @@ public class IntegerAttrType extends ClusAttrType {
         protected int m_Index;
 
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             tuple.setIntVal(m_Index++, getArrayIndex());
             return true;

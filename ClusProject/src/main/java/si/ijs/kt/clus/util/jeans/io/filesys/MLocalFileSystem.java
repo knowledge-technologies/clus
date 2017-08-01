@@ -66,23 +66,27 @@ public class MLocalFileSystem extends MFileSystem {
     }
 
 
+    @Override
     public InputStream openFile(MFileEntry ent) throws FileNotFoundException, IOException {
         String path = m_hDir.getCanonicalPath();
         return new FileInputStream(path + File.separator + ent.getName());
     }
 
 
+    @Override
     public OutputStream openOutputStream(String name) throws IOException {
         String path = m_hDir.getCanonicalPath();
         return new FileOutputStream(path + File.separator + name);
     }
 
 
+    @Override
     public void doReload() {
         doLoad();
     }
 
 
+    @Override
     public void doChdir(String str) {
         try {
             String newPath = null;

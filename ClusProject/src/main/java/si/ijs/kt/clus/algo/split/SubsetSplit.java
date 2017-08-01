@@ -32,6 +32,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny;
 import si.ijs.kt.clus.model.test.SubsetTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class SubsetSplit extends NominalSplit {
@@ -40,6 +41,7 @@ public class SubsetSplit extends NominalSplit {
     ClusStatManager m_StatManager;
 
 
+    @Override
     public void initialize(ClusStatManager manager) {
         m_PStat = manager.createClusteringStat();
         m_CStat = m_PStat.cloneStat();
@@ -48,6 +50,7 @@ public class SubsetSplit extends NominalSplit {
     }
 
 
+    @Override
     public void setSDataSize(int size) {
         m_PStat.setSDataSize(size);
         m_CStat.setSDataSize(size);
@@ -60,7 +63,7 @@ public class SubsetSplit extends NominalSplit {
     }
 
 
-    public void showTest(NominalAttrType type, boolean[] isin, int add, double mheur, ClusStatistic tot, ClusStatistic pos) {
+    public void showTest(NominalAttrType type, boolean[] isin, int add, double mheur, ClusStatistic tot, ClusStatistic pos) throws ClusException {
         int count = 0;
         // System.out.print(type.getName()+ " in {");
         for (int i = 0; i < type.getNbValues(); i++) {
@@ -77,7 +80,8 @@ public class SubsetSplit extends NominalSplit {
     }
 
 
-    public void findSplit(CurrentBestTestAndHeuristic node, NominalAttrType type) {
+    @Override
+    public void findSplit(CurrentBestTestAndHeuristic node, NominalAttrType type) throws ClusException {
         // System.out.println("find split for attr: " + type);
         double unk_freq = 0.0;
         int nbvalues = type.getNbValues();
@@ -237,7 +241,8 @@ public class SubsetSplit extends NominalSplit {
     }
 
 
-    public void findRandomSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rn) {
+    @Override
+    public void findRandomSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rn) throws ClusException {
         double unk_freq = 0.0;
         int nbvalues = type.getNbValues();
         boolean isin[] = new boolean[nbvalues];
@@ -284,7 +289,8 @@ public class SubsetSplit extends NominalSplit {
     }
 
 
-    public void findExtraTreeSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rnd) {
+    @Override
+    public void findExtraTreeSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rnd) throws ClusException {
         // System.out.println("find split for attr: " + type);
         double minAllowedFrequency = 0.01;
         double unk_freq = 0.0;
@@ -332,8 +338,7 @@ public class SubsetSplit extends NominalSplit {
         }
         else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence() == SettingsPhylogeny.PHYLOGENY_SEQUENCE_DNA)) {
             System.err.println("Extra-Tree split selection not implemented for Phylogentic trees.");
-            System.err.println("Error while searching for a random split in: " + getClass().getName());
-            System.exit(-1);
+            throw new ClusException("Error while searching for a random split in: " + getClass().getName());
         }
         else {
             int count = 0; // allow for nbTries opportunities to select a valid random test... otherwise assign worst

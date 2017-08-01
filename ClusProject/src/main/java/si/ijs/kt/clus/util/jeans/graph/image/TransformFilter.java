@@ -59,6 +59,7 @@ public class TransformFilter extends ImageFilter {
     }
 
 
+    @Override
     public void setDimensions(int width, int height) {
         if (type == Rot90 || type == Rot270) {
             srcH = dstW = height;
@@ -73,16 +74,19 @@ public class TransformFilter extends ImageFilter {
     }
 
 
+    @Override
     public void setColorModel(ColorModel model) {
         consumer.setColorModel(defaultRGB);
     }
 
 
+    @Override
     public void setHints(int hintflags) {
         consumer.setHints(TOPDOWNLEFTRIGHT | COMPLETESCANLINES | SINGLEPASS | (hintflags & SINGLEFRAME));
     }
 
 
+    @Override
     public void setPixels(int x, int y, int w, int h, ColorModel model, byte pixels[], int off, int scansize) {
         int srcoff = off;
         int dstoff = y * srcW + x;
@@ -96,6 +100,7 @@ public class TransformFilter extends ImageFilter {
     }
 
 
+    @Override
     public void setPixels(int x, int y, int w, int h, ColorModel model, int pixels[], int off, int scansize) {
         int srcoff = off;
         int dstoff = y * srcW + x;
@@ -214,6 +219,7 @@ public class TransformFilter extends ImageFilter {
     }
 
 
+    @Override
     public void imageComplete(int status) {
         if (status == IMAGEERROR || status == IMAGEABORTED) {
             consumer.imageComplete(status);

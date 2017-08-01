@@ -67,6 +67,7 @@ public class TextScroller extends BufferCanvas implements DrawableProvider {
     }
 
 
+    @Override
     public void paintIt(Graphics g, Dimension d) {
         this.d = d;
         updateRegion(bufGrp, border, d.height - border, d.width - 2 * border);
@@ -94,16 +95,19 @@ public class TextScroller extends BufferCanvas implements DrawableProvider {
     }
 
 
+    @Override
     public Graphics getDGraphics() {
         return bufGrp;
     }
 
 
+    @Override
     public Canvas getDCanvas() {
         return this;
     }
 
 
+    @Override
     public FontMetrics getDMetrics(Font font) {
         return toolkit.getFontMetrics(font);
     }
@@ -216,6 +220,7 @@ public class TextScroller extends BufferCanvas implements DrawableProvider {
 
     private class ScrollThread extends Thread {
 
+        @Override
         public void run() {
             try {
                 Thread.sleep(init_delay);

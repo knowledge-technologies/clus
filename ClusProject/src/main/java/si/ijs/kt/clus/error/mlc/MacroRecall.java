@@ -54,17 +54,20 @@ public class MacroRecall extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         Arrays.fill(m_NbTruePositives, 0);
         Arrays.fill(m_NbFalseNegatives, 0);
     }
 
 
+    @Override
     public void add(ClusError other) {
         MacroRecall mr = (MacroRecall) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -84,11 +87,13 @@ public class MacroRecall extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         return ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalseNegatives[i]);
     }
 
 
+    @Override
     public double getModelError() {
         double avg = 0.0;
         for (int i = 0; i < m_Dim; i++) {
@@ -98,6 +103,7 @@ public class MacroRecall extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         String[] componentErrors = new String[m_Dim];
         for (int i = 0; i < m_Dim; i++) {
@@ -107,16 +113,19 @@ public class MacroRecall extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public String getName() {
         return "MacroRecall";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MacroRecall(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
@@ -136,6 +145,7 @@ public class MacroRecall extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         NominalAttrType attr;
         for (int i = 0; i < m_Dim; i++) {
@@ -154,6 +164,7 @@ public class MacroRecall extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 }

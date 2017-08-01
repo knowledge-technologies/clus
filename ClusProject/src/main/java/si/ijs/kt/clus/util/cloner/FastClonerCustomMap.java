@@ -13,6 +13,7 @@ import java.util.Set;
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public abstract class FastClonerCustomMap<T extends Map> implements IFastCloner {
 
+    @Override
     public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
         final T m = (T) t;
         final T result = getInstance((T) t);

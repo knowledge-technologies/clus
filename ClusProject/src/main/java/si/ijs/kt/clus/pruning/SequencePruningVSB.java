@@ -29,6 +29,7 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
 
 
@@ -50,6 +51,7 @@ public class SequencePruningVSB extends PruneTree {
     }
 
 
+    @Override
     public int getNbResults() {
         return 1;
     }
@@ -92,7 +94,8 @@ public class SequencePruningVSB extends PruneTree {
     }
 
 
-    public void prune(ClusNode node) {
+    @Override
+    public void prune(ClusNode node) throws ClusException {
         PruneTree pruner = getSequencePruner();
         pruner.sequenceInitialize(node);
         // Optimization if data set has missing values

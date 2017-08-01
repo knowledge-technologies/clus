@@ -134,6 +134,7 @@ public class NominalAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusAttrType cloneType() {
         NominalAttrType at = new NominalAttrType(m_Name, m_Values);
         cloneType(at);
@@ -141,16 +142,19 @@ public class NominalAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public int getTypeIndex() {
         return THIS_TYPE;
     }
 
 
+    @Override
     public String getTypeName() {
         return THIS_TYPE_NAME;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_INT;
     }
@@ -184,6 +188,7 @@ public class NominalAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public int getMaxNbStats() {
         // Add one for missing value index
         return m_NbValues + 1;
@@ -219,17 +224,20 @@ public class NominalAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public String getString(DataTuple tuple) {
         int idx = this.getNominal(tuple);
         return idx >= m_NbValues ? "?" : m_Values[idx];
     }
 
 
+    @Override
     public boolean isMissing(DataTuple tuple) {
         return this.getNominal(tuple) >= m_NbValues;
     }
 
 
+    @Override
     public int getNominal(DataTuple tuple) {
         return tuple.getIntVal(m_ArrayIndex);
     }
@@ -240,6 +248,7 @@ public class NominalAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public int compareValue(DataTuple t1, DataTuple t2) {
         int i1 = this.getNominal(t1);
         int i2 = this.getNominal(t2);
@@ -247,16 +256,19 @@ public class NominalAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusAttribute createTargetAttr(ColTarget target) {
         return new NominalTarget(target, this, getArrayIndex());
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
 
 
+    @Override
     public void writeARFFType(PrintWriter wrt) throws ClusException {
         wrt.print(getTypeString());
     }
@@ -269,6 +281,7 @@ public class NominalAttrType extends ClusAttrType {
 
     public class MySerializable extends ClusSerializable {
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             String value = data.readString();
             if (value == null)
@@ -278,7 +291,7 @@ public class NominalAttrType extends ClusAttrType {
                 setNominal(tuple, getNbValues());
             }
             else {
-                Integer i = (Integer) getValueIndex(value);
+                Integer i = getValueIndex(value);
                 if (i != null) {
                     setNominal(tuple, i.intValue());
                 }
@@ -291,6 +304,7 @@ public class NominalAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public boolean isNominal() {
         return true;
     }

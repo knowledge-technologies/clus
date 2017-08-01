@@ -44,11 +44,13 @@ public class RRMSError extends MSError {
     }
 
 
+    @Override
     public void reset() {
         super.reset();
     }
 
 
+    @Override
     public void add(ClusError other) {
         super.add(other);
         RRMSError castedOther = (RRMSError) other;
@@ -59,31 +61,37 @@ public class RRMSError extends MSError {
     }
 
 
+    @Override
     public void addExample(double[] real, double[] predicted) {
         super.addExample(real, predicted, true);
     }
 
 
+    @Override
     public void addExample(double[] real, boolean[] predicted) {
         super.addExample(real, predicted, true);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         super.addExample(tuple, pred, true);
     }
 
 
+    @Override
     public void addExample(DataTuple real, DataTuple pred) {
         super.addExample(real, pred, true);
     }
 
 
+    @Override
     public void showSummaryError(PrintWriter out, boolean detail) {
         showModelError(out, detail ? 1 : 0);
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
@@ -106,11 +114,13 @@ public class RRMSError extends MSError {
     }
 
 
+    @Override
     public String getName() {
         return "Root Relative Squared Error (RRMSE)";
     }
 
 
+    @Override
     public double getModelError() {
         double sum = 0.0;
         for (int i = 0; i < m_Attrs.length; i++) {
@@ -120,6 +130,7 @@ public class RRMSError extends MSError {
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         double modelError = super.getModelErrorComponent(i);
         double defaultModelError = (m_SumSquaredTrueValues[i] - m_SumTrueValues[i] * m_SumTrueValues[i] / m_nbEx[i]) / m_nbEx[i];
@@ -128,6 +139,7 @@ public class RRMSError extends MSError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new RRMSError(par, m_Attrs, m_Weights, m_PrintAllComps);
     }

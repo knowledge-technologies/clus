@@ -61,6 +61,7 @@ public class INIFileNominalOrDoubleOrVector extends INIFileEntry {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         return new INIFileNominalOrDoubleOrVector(getName(), getType());
     }
@@ -170,6 +171,7 @@ public class INIFileNominalOrDoubleOrVector extends INIFileEntry {
     }
 
 
+    @Override
     public void build(MStreamTokenizer tokens) throws IOException {
         m_Type.setReader(true);
         setNominal(-1); // Do not forget to reset.
@@ -241,6 +243,7 @@ public class INIFileNominalOrDoubleOrVector extends INIFileEntry {
     }
 
 
+    @Override
     public void setValue(String value) throws IOException {
         build(new MStreamTokenizer(new StringReader(value)));
     }
@@ -254,6 +257,7 @@ public class INIFileNominalOrDoubleOrVector extends INIFileEntry {
     }
 
 
+    @Override
     public String getStringValue() {
         if (hasArrayIndexNames()) {
             StringBuffer buf = new StringBuffer();

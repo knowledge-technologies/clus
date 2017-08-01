@@ -45,7 +45,7 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
             double[][] importances = partialImportances.get(current_attribute);
             int permutationSeed = rnd.nextInt(ClusRandomNonstatic.RANDOM_SEED);
             RowData permuted = createRandomizedOOBdata(oob_sel, (RowData) tdata.selectFrom(oob_sel, rnd), (int) type, (int) position, permutationSeed);
-            double[][][] permuted_oob_errs = calcAverageErrors((RowData) permuted, model, mgr);
+            double[][][] permuted_oob_errs = calcAverageErrors(permuted, model, mgr);
             for (int i = 0; i < oob_errs.length; i++) {
             	for(int j = 0; j < oob_errs[i][0].length; j++){
             		double oobE = oob_errs[i][0][j];

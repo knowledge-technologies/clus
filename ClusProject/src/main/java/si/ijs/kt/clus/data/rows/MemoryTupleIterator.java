@@ -46,6 +46,7 @@ public class MemoryTupleIterator extends TupleIterator {
     }
 
 
+    @Override
     public void init() throws IOException, ClusException {
         m_Index = 0;
     }
@@ -56,16 +57,19 @@ public class MemoryTupleIterator extends TupleIterator {
     }
 
 
+    @Override
     public final ClusSchema getSchema() {
         return m_Data.getSchema();
     }
 
 
+    @Override
     public final ClusData getData() {
         return m_Data;
     }
 
 
+    @Override
     public final DataTuple readTuple() throws ClusException {
         if (m_Index >= m_Data.getNbRows())
             return null;

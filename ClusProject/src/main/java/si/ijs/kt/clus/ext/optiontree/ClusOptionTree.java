@@ -36,6 +36,7 @@ import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
 public class ClusOptionTree extends ClusInductionAlgorithmType {
 
+    @Override
     public void printInfo() {
         System.out.println("TDIOT");
         System.out.println("Heuristic: " + getStatManager().getHeuristicName());

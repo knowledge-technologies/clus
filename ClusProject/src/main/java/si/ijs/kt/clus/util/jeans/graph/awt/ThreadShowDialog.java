@@ -35,6 +35,7 @@ public class ThreadShowDialog extends Thread {
     }
 
 
+    @Override
     public void run() {
         m_dialog.setVisible(true);
     }

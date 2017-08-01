@@ -54,29 +54,34 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
     }
 
 
+    @Override
     public void initializeHeuristic() {
         m_Search.initializeHeuristic();
     }
 
 
+    @Override
     public boolean isModelWriter() {
         return true;
     }
 
 
-    public void writeModel(ClusModelCollectionIO strm) throws IOException {
+    @Override
+    public void writeModel(ClusModelCollectionIO strm) throws IOException, ClusException {
         m_Search.writeModel(strm);
     }
 
 
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
         ClusNode root = m_Search.beamSearch(cr);
         root.updateTree();
         return root;
     }
 
 
-    public void induceAll(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public void induceAll(ClusRun cr) throws Exception {
         m_Search.beamSearch(cr);
         ClusModelInfo def_model = cr.addModelInfo(ClusModel.DEFAULT);
         def_model.setModel(ClusDecisionTree.induceDefault(cr));
@@ -103,7 +108,7 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
             model_info.setName("Beam " + (i + 1));
             model_info.clearAll();
             if (toForest)
-                bForest.addModelToForest((ClusModel) tree);
+                bForest.addModelToForest(tree);
         }
         if (toForest) {
             ClusModelInfo forest_info = cr.addModelInfo(lst.size() + 1);
@@ -122,8 +127,9 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
      * @param arr
      *        - List with the beam
      * @throws ClusException
+     * @throws InterruptedException 
      */
-    public void postPruneBeamModels(ClusRun cr, ArrayList arr) throws ClusException {
+    public void postPruneBeamModels(ClusRun cr, ArrayList arr) throws ClusException, InterruptedException {
         updateAllPredictions(arr);
         for (int i = 0; i < arr.size(); i++) {
             PruneTree pruner = getStatManager().getTreePruner(null);
@@ -134,7 +140,7 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void updateAllPredictions(ArrayList arr) {
+    public void updateAllPredictions(ArrayList arr) throws ClusException {
         for (int i = 0; i < arr.size(); i++) {
             ClusNode tree = (ClusNode) ((ClusBeamModel) arr.get(i)).getModel();
             tree.updateTree();
@@ -155,8 +161,9 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
      * @throws ClusException
      * @throws ClusException
      * @throws IOException
+     * @throws InterruptedException 
      */
-    public void sortModels(ClusRun cr, ArrayList arr) throws ClusException, IOException {
+    public void sortModels(ClusRun cr, ArrayList arr) throws ClusException, IOException, InterruptedException {
         // if (cr.getStatManager().getSettings().getBeamTreeMaxSize() <= -1) {
         // postPruneBeamModels(cr, arr);
         // }

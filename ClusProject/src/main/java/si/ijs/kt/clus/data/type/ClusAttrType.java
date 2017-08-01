@@ -330,6 +330,7 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     }
 
 
+    @Override
     public String toString() {
         return getName();
     }
@@ -373,6 +374,7 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     /**
      * Compares to ClusAttrTypes based on index, allowing them to be sorted.
      */
+    @Override
     public int compareTo(Object o) {
         ClusAttrType c = (ClusAttrType) o;
 

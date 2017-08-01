@@ -57,7 +57,7 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
     }
 
 
-    public double[] computeNormalizedLoss(RowData trainData, ClusNode tree) {
+    public double[] computeNormalizedLoss(RowData trainData, ClusNode tree) throws ClusException {
         ClusAttributeWeights weights = getStatManager().getClusteringWeights();
         double[] L = new double[trainData.getNbRows()];
         for (int i = 0; i < trainData.getNbRows(); i++) {
@@ -90,7 +90,7 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusBoostingForest induceSingleUnprunedBoosting(ClusRun cr) throws ClusException, IOException {
+    public ClusBoostingForest induceSingleUnprunedBoosting(ClusRun cr) throws Exception {
         ClusBoostingForest result = new ClusBoostingForest(getStatManager());
         RowData trainData = ((RowData) cr.getTrainingSet()).shallowCloneData();
         DepthFirstInduce tdidt;
@@ -125,12 +125,14 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
         return induceSingleUnprunedBoosting(cr);
     }
 
 
-    public void induceAll(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public void induceAll(ClusRun cr) throws Exception {
         ClusBoostingForest model = induceSingleUnprunedBoosting(cr);
         ClusModelInfo default_model = cr.addModelInfo(ClusModel.DEFAULT);
         ClusModel def = ClusDecisionTree.induceDefault(cr);

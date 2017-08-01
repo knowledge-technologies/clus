@@ -148,7 +148,7 @@ public class ColTarget {
         int s_subset = 0;
         double[][] data = m_Numeric;
         m_Numeric = new double[nb_new][];
-        double[][] subset = ((ColTarget) target).m_Numeric;
+        double[][] subset = target.m_Numeric;
         for (int i = 0; i < nb_new; i++) {
             if (sel.isSelected(i))
                 m_Numeric[i] = subset[s_subset++];
@@ -165,7 +165,7 @@ public class ColTarget {
         int s_subset = 0;
         int[][] data = m_Nominal;
         m_Nominal = new int[nb_new][];
-        int[][] subset = ((ColTarget) target).m_Nominal;
+        int[][] subset = target.m_Nominal;
         for (int i = 0; i < nb_new; i++) {
             if (sel.isSelected(i))
                 m_Nominal[i] = subset[s_subset++];

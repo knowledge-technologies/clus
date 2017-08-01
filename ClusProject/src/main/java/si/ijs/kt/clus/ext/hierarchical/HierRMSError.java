@@ -60,6 +60,7 @@ public class HierRMSError extends MSError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         if (pred == null)
             return;
@@ -78,6 +79,7 @@ public class HierRMSError extends MSError {
     }
 
 
+    @Override
     public double getModelError() {
         if (m_Root)
             return Math.sqrt(super.getModelError());
@@ -86,6 +88,7 @@ public class HierRMSError extends MSError {
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         if (m_Root)
             return Math.sqrt(super.getModelErrorComponent(i));
@@ -94,6 +97,7 @@ public class HierRMSError extends MSError {
     }
 
 
+    @Override
     public String getName() {
         String root = m_Root ? "RMSE" : "MSE";
         String proto = m_ContPred ? "with continuous predictions" : "with discrete predictions";
@@ -104,6 +108,7 @@ public class HierRMSError extends MSError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new HierRMSError(par, m_Weights, m_PrintAllComps, m_Root, m_ContPred, m_Hier);
     }

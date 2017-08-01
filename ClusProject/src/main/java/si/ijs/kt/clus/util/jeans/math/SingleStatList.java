@@ -47,6 +47,7 @@ public class SingleStatList extends SingleStat {
     }
 
 
+    @Override
     public void reset() {
         super.reset();
         for (int i = 0; i < m_Values.length; i++) {
@@ -56,6 +57,7 @@ public class SingleStatList extends SingleStat {
     }
 
 
+    @Override
     public void addFloat(double value) {
         super.addFloat(value);
         m_Values[m_Idx++] = value;

@@ -66,7 +66,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
     }
 
 	@Override
-	public ClusModel induceSingleUnpruned(ClusRun crOriginal) throws ClusException, IOException, InterruptedException {
+	public ClusModel induceSingleUnpruned(ClusRun crOriginal) throws Exception {
 
     	ClusRun cr = new ClusRun(crOriginal);
     	cr.setTrainingSet(crOriginal.getTrainingSet().cloneData());
@@ -246,7 +246,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 	/**
 	 * Set training set and unlabeled set
 	 */
-	public void partitionData(ClusRun cr) throws IOException, ClusException {
+	public void partitionData(ClusRun cr) throws IOException, ClusException, InterruptedException {
 		m_UnlabeledData = cr.getUnlabeledSet();
 		m_TrainingSet = new RowData(cr.getStatManager().getSchema());
 	

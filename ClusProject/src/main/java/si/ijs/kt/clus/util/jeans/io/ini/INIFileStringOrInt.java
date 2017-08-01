@@ -45,6 +45,7 @@ public class INIFileStringOrInt extends INIFileEntry {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         return new INIFileStringOrInt(getName(), getValue());
     }
@@ -90,6 +91,7 @@ public class INIFileStringOrInt extends INIFileEntry {
     }
 
 
+    @Override
     public void setValue(String value) {
         if (isInt(value)) {
             m_Int = Integer.parseInt(value);
@@ -102,6 +104,7 @@ public class INIFileStringOrInt extends INIFileEntry {
     }
 
 
+    @Override
     public String getStringValue() {
         if (m_IsInt) {
             return String.valueOf(m_Int);

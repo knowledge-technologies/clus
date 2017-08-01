@@ -40,6 +40,7 @@ public class INIFileString extends INIFileEntry {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         return new INIFileString(getName(), getValue());
     }
@@ -50,11 +51,13 @@ public class INIFileString extends INIFileEntry {
     }
 
 
+    @Override
     public void setValue(String value) {
         m_Value = value;
     }
 
 
+    @Override
     public String getStringValue() {
         return getValue();
     }

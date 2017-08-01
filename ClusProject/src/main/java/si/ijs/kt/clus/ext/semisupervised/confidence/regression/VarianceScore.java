@@ -35,7 +35,7 @@ public class VarianceScore extends PredictionConfidence {
     }
 
     @Override
-    public double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) {
+    public double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) throws ClusException, InterruptedException {
 
         model.predictWeighted(tuple);
 
@@ -44,7 +44,7 @@ public class VarianceScore extends PredictionConfidence {
     }
 
     @Override
-    public double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple) {
+    public double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple) throws InterruptedException {
         return processVotes(model.getOOBVotes(tuple));
     }
 

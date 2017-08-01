@@ -25,6 +25,7 @@ package si.ijs.kt.clus.distance.primitive.timeseries;
 import si.ijs.kt.clus.data.type.primitive.TimeSeriesAttrType;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class TSCTimeSeriesDist extends TimeSeriesDist {
@@ -37,7 +38,8 @@ public class TSCTimeSeriesDist extends TimeSeriesDist {
     }
 
 
-    public double calcDistance(TimeSeries t1, TimeSeries t2) {
+    @Override
+    public double calcDistance(TimeSeries t1, TimeSeries t2) throws ClusException {
         // this calculates the Correlation coefficient of two TimeSeries
         // the two TimeSeries have same length
         double[] ts1 = t1.getValues();
@@ -48,12 +50,10 @@ public class TSCTimeSeriesDist extends TimeSeriesDist {
         double sum_ts1_sqr = 0;
         double sum_ts2_sqr = 0;
         double sum_ts1_ts2 = 0;
-        if (ts1.length != ts2.length) {
-            System.err.println("TimeSeriesCorrelation applies only to Time Series with equal length");
-            // throw new ArrayIndexOutOfBoundsException("TimeSeriesCorrelation applies only to Time Series with equal
-            // length");
-            System.exit(1);
-        }
+
+        if (ts1.length != ts2.length)
+            throw new ClusException("TimeSeriesCorrelation applies only to Time Series with equal length");
+
         for (int k = 0; k < ts1.length; k++) {
             sum_ts1_ts2 += (ts1[k] - mean_ts1) * (ts2[k] - mean_ts2);
             sum_ts1_sqr += Math.pow((ts1[k] - mean_ts1), 2);
@@ -99,6 +99,7 @@ public class TSCTimeSeriesDist extends TimeSeriesDist {
     }
 
 
+    @Override
     public String getDistanceName() {
         return "TSCTimeSeriesDist";
     }

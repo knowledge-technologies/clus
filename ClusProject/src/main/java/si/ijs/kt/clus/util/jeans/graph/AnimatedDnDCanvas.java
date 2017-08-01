@@ -89,6 +89,7 @@ public abstract class AnimatedDnDCanvas extends DragNDropCanvas {
     }
 
 
+    @Override
     public synchronized void update(Graphics g) {
         reSize(getSize());
         if (isAnimated()) {
@@ -114,6 +115,7 @@ public abstract class AnimatedDnDCanvas extends DragNDropCanvas {
     }
 
 
+    @Override
     public synchronized void redraw() {
         m_draw_hint = HINT_ALL;
         m_back_update = true;
@@ -149,6 +151,7 @@ public abstract class AnimatedDnDCanvas extends DragNDropCanvas {
     }
 
 
+    @Override
     public void reSize(Dimension d) {
         if ((bufGrp == null) || (d.width != bufSiz.width) || (d.height != bufSiz.height)) {
             if (d.width == 0 || d.height == 0)
@@ -169,6 +172,7 @@ public abstract class AnimatedDnDCanvas extends DragNDropCanvas {
     }
 
 
+    @Override
     public void paintIt(Graphics g, Dimension d) {
         // Not used anymore
     }
@@ -201,6 +205,7 @@ public abstract class AnimatedDnDCanvas extends DragNDropCanvas {
         }
 
 
+        @Override
         public void run() {
             try {
                 while (m_animator != null) {

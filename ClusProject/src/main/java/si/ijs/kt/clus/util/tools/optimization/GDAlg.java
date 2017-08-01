@@ -134,6 +134,7 @@ public class GDAlg extends OptAlg {
      * 
      * @throws Exception
      */
+    @Override
     public ArrayList<Double> optimize() {
 
         if (getSettings().getGeneral().getVerbose() > 0)
@@ -471,6 +472,7 @@ public class GDAlg extends OptAlg {
     }
 
 
+    @Override
     public void postProcess(ClusRuleSet rset) {
         m_GDProbl.changeRuleSetToUndoNormNormalization(rset);
     }

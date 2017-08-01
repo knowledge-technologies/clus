@@ -34,11 +34,13 @@ public class BitMapSelection extends ClusSelection {
     }
 
 
+    @Override
     public int getNbSelected() {
         return m_NbSelected;
     }
 
 
+    @Override
     public boolean isSelected(int row) {
         return m_Selection[row];
     }

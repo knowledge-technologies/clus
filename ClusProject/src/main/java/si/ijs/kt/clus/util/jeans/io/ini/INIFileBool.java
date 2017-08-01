@@ -49,6 +49,7 @@ public class INIFileBool extends INIFileEntry {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         return new INIFileBool(getName(), getValue());
     }
@@ -59,6 +60,7 @@ public class INIFileBool extends INIFileEntry {
     }
 
 
+    @Override
     public void setValue(String value) {
         setValue(StringUtils.getBoolean(value) == 1);
     }
@@ -69,6 +71,7 @@ public class INIFileBool extends INIFileEntry {
     }
 
 
+    @Override
     public String getStringValue() {
         if (m_Value)
             return "Yes";

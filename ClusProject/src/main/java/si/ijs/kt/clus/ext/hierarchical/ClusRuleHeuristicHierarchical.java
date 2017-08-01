@@ -27,6 +27,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
      * This heuristic calculates:
      * ( |S|.Var(S) - |Sr|.Var(Sr) ) . Coverage(r)
      */
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
 
         double n_pos = c_pstat.m_SumWeight;
@@ -62,6 +63,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return "RuleHeuristicHierarchical";
     }

@@ -49,6 +49,7 @@ public class M5PrunerMulti extends PruneTree {
     }
 
 
+    @Override
     public void prune(ClusNode node) {
         // ClusNode orig = null;
         // orig = (ClusNode)node.cloneTree();
@@ -60,6 +61,7 @@ public class M5PrunerMulti extends PruneTree {
     }
 
 
+    @Override
     public int getNbResults() {
         return 1;
     }
@@ -68,7 +70,7 @@ public class M5PrunerMulti extends PruneTree {
     private double pruningFactor(double num_instances, int num_params) {
         if (num_instances <= num_params) { return 10.0; // Caution says Yong in his code
         }
-        return ((double) (num_instances + m_PruningMult * num_params) / (double) (num_instances - num_params));
+        return ((num_instances + m_PruningMult * num_params) / (num_instances - num_params));
     }
 
 
@@ -133,6 +135,7 @@ public class M5PrunerMulti extends PruneTree {
     }
 
 
+    @Override
     public void setTrainingData(RowData data) {
         m_TrainingData = data;
     }

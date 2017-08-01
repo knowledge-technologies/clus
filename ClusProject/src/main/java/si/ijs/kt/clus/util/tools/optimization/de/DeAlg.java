@@ -73,6 +73,7 @@ public class DeAlg extends OptAlg {
     }
 
 
+    @Override
     public ArrayList<Double> optimize() {
         int num_eval;
         System.out.print("\nDifferential evolution: Optimizing rule weights (" + getSettings().getRules().getOptDENumEval() + ") ");
@@ -83,10 +84,10 @@ public class DeAlg extends OptAlg {
             m_Pop.createFirstPop();
             num_eval = m_Pop.evaluatePop(0);
             m_Best = new DeInd();
-            m_Best.copy((DeInd) m_Pop.m_Inds.get(0));
+            m_Best.copy(m_Pop.m_Inds.get(0));
             for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
-                checkIfBest((DeInd) m_Pop.m_Inds.get(i));
-                OutputLog((DeInd) m_Pop.m_Inds.get(i), i, wrt_log);
+                checkIfBest(m_Pop.m_Inds.get(i));
+                OutputLog(m_Pop.m_Inds.get(i), i, wrt_log);
             }
             OutputPop();
             // The while loop is over number of individual evaluations, not separate iterations!
@@ -99,11 +100,11 @@ public class DeAlg extends OptAlg {
                 for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
                     candidate.setGenes(m_Pop.getCandidate(i)); // Get a crossed over candidate.
                     num_eval = candidate.evaluate(m_DeProbl, num_eval);
-                    checkIfBest((DeInd) m_Pop.m_Inds.get(i));
+                    checkIfBest(m_Pop.m_Inds.get(i));
                     OutputLog(candidate, num_eval, wrt_log);
                     // Smaller fitness is better
-                    if (candidate.m_Fitness < ((DeInd) m_Pop.m_Inds.get(i)).m_Fitness) {
-                        ((DeInd) m_Pop.m_Inds.get(i)).copy(candidate);
+                    if (candidate.m_Fitness < m_Pop.m_Inds.get(i).m_Fitness) {
+                        m_Pop.m_Inds.get(i).copy(candidate);
                     }
                 }
             }

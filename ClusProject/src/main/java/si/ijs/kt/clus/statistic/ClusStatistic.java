@@ -27,6 +27,8 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.NotImplementedException;
+
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.cols.ColTarget;
@@ -37,6 +39,7 @@ import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 
 
@@ -122,11 +125,14 @@ public abstract class ClusStatistic implements Serializable {
     public void setTrainingStat(ClusStatistic train) {
     }
 
+
     public abstract void setParentStat(ClusStatistic parent);
-    
+
+
     public abstract ClusStatistic getParentStat();
 
-    public void optimizePreCalc(RowData data) { // only clus.statistic.SumPairwiseDistancesStat actually has its own implementation of the method
+
+    public void optimizePreCalc(RowData data) throws ClusException { // only clus.statistic.SumPairwiseDistancesStat actually has its own implementation of the method
     }
 
 
@@ -151,7 +157,7 @@ public abstract class ClusStatistic implements Serializable {
     }
 
 
-    public abstract void calcMean();
+    public abstract void calcMean() throws ClusException;
 
 
     public abstract String getString(StatisticPrintInfo info);
@@ -163,7 +169,7 @@ public abstract class ClusStatistic implements Serializable {
     public abstract String getArrayOfStatistic();
 
 
-    public void computePrediction() {
+    public void computePrediction() throws ClusException {
         calcMean();
     }
 
@@ -215,13 +221,7 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public void setData(RowData data) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        throw new NotImplementedException();
     }
 
 
@@ -236,31 +236,22 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public void initializeSum() {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        throw new NotImplementedException();
     }
 
 
     public double[] getNumericPred() {
-        System.err.println(getClass().getName() + ": getNumericPred(): Not yet implemented");
-        return null;
+        throw new NotImplementedException();
     }
 
 
     public TimeSeries getTimeSeriesPred() {
-        System.err.println(getClass().getName() + ": getTimeSeriesPred(): Not yet implemented");
-        return null;
+        throw new NotImplementedException();
     }
 
 
     public int[] getNominalPred() {
-        System.err.println(getClass().getName() + ": getNominalPred(): Not yet implemented");
-        return null;
+        throw new NotImplementedException();
     }
 
 
@@ -283,14 +274,18 @@ public abstract class ClusStatistic implements Serializable {
         return m_SumWeight;
     }
 
+
     /**
      * Provides sum of weights of target attributes
-     * @return sum of weights of target attributes, or NaN if statistic doesn't contain target attributes (i.e., unsupervised learning is performed)
+     * 
+     * @return sum of weights of target attributes, or NaN if statistic doesn't contain target attributes (i.e.,
+     *         unsupervised learning is performed)
      */
     public double getTargetSumWeights() {
-    	System.err.println(getClass().getName()+": getTargetSumWeights(): Not yet implemented");
+        System.err.println(getClass().getName() + ": getTargetSumWeights(): Not yet implemented");
         return getTotalWeight();
     }
+
 
     public int getNbExamples() {
         return m_NbExamples;
@@ -303,8 +298,7 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public boolean samePrediction(ClusStatistic other) {
-    	System.err.println(getClass().getName()+": samePrediction(ClusStatistic other): Not yet implemented");
-        return false;
+        throw new NotImplementedException();
     }
 
 
@@ -336,14 +330,12 @@ public abstract class ClusStatistic implements Serializable {
 
     public double getError(ClusAttributeWeights scale) {
         // System.out.println("ClusStatistic :getError");
-        System.err.println(getClass().getName() + ": getError(): Not yet implemented");
-        return Double.POSITIVE_INFINITY;
+        throw new NotImplementedException();
     }
 
 
     public double getErrorDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        System.err.println(getClass().getName() + ": getErrorDiff(): Not yet implemented");
-        return Double.POSITIVE_INFINITY;
+        throw new NotImplementedException();
     }
 
 
@@ -353,18 +345,16 @@ public abstract class ClusStatistic implements Serializable {
      **/
 
     public double getSVarS(ClusAttributeWeights scale) {
-        System.err.println(getClass().getName() + ": getSS(): Not yet implemented");
-        return Double.POSITIVE_INFINITY;
+        throw new NotImplementedException();
     }
 
 
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        System.err.println(getClass().getName() + ": getSSDiff(): Not yet implemented");
-        return Double.POSITIVE_INFINITY;
+        throw new NotImplementedException();
     }
 
 
-    public double getSVarS(ClusAttributeWeights scale, RowData data) {
+    public double getSVarS(ClusAttributeWeights scale, RowData data) throws ClusException {
         return getSVarS(scale);
     }
 
@@ -374,15 +364,17 @@ public abstract class ClusStatistic implements Serializable {
     }
 
 
-    public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights) {
+    public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights) throws ClusException {
         return Double.POSITIVE_INFINITY;
     }
 
 
     /**
      * Currently only used to compute the default dispersion within rule heuristics.
+     * 
+     * @throws ClusException
      */
-    public double getDispersion(ClusAttributeWeights scale, RowData data) {
+    public double getDispersion(ClusAttributeWeights scale, RowData data) throws ClusException {
         System.err.println(getClass().getName() + ": getDispersion(): Not implemented here!");
         return Double.POSITIVE_INFINITY;
     }
@@ -404,6 +396,7 @@ public abstract class ClusStatistic implements Serializable {
     }
 
 
+    @Override
     public String toString() {
         return getString();
     }
@@ -419,7 +412,7 @@ public abstract class ClusStatistic implements Serializable {
     }
 
 
-    public static void calcMeans(ClusStatistic[] stats) {
+    public static void calcMeans(ClusStatistic[] stats) throws ClusException {
         for (int i = 0; i < stats.length; i++) {
             stats[i].calcMean();
         }
@@ -435,7 +428,7 @@ public abstract class ClusStatistic implements Serializable {
     }
 
 
-    public String getPredictWriterString(DataTuple tuple) {
+    public String getPredictWriterString(DataTuple tuple) throws ClusException {
         return getPredictWriterString();
     }
 
@@ -511,327 +504,138 @@ public abstract class ClusStatistic implements Serializable {
 
 
     //daniela
-    public double calcItotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcItotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcEquvalentIDistance(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcEquvalentIDistance(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcGtotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcGtotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcGetisTotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcGetisTotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcLISAtotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcLISAtotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcGLocalTotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcGLocalTotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcLocalGetisTotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcLocalGetisTotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcGETIStotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcGETIStotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcEquvalentItotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcEquvalentItotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcIwithNeighbourstotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcIwithNeighbourstotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcEquvalentIwithNeighbourstotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcEquvalentIwithNeighbourstotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcEquvalentGDistance(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcEquvalentGDistance(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcEquvalentPDistance(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcEquvalentPDistance(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcEquvalentGtotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcEquvalentGtotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcItotalD(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcItotalD(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcPDistance(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcPDistance(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcGtotalD(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcGtotalD(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcCItotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcCItotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcMutivariateItotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcMutivariateItotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcCwithNeighbourstotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcCwithNeighbourstotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcBivariateLee(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcBivariateLee(Integer[] permutation) throws Exception {
+        throw new NotImplementedException();
     }
 
 
-    public double calcMultiIwithNeighbours(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcMultiIwithNeighbours(Integer[] permutation) throws Exception {
+        throw new NotImplementedException();
     }
 
 
-    public double calcCIwithNeighbours(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcCIwithNeighbours(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcLeewithNeighbours(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcLeewithNeighbours(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcPtotal(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcPtotal(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcCItotalD(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+    public double calcCItotalD(Integer[] permutation) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
     public double calcDHtotalD(Integer[] permutation) {
-        try {
-            throw new Exception("This method shoud be implemented. Exiting...");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        return 0;
+        throw new NotImplementedException();
     }
     //end daniela
 }

@@ -83,7 +83,8 @@ public class ClusNode extends MyNode implements ClusModel {
     // - end added by Jurica
 
 
-    public MyNode cloneNode() {
+    @Override
+    public MyNode cloneNode() throws ClusException {
         ClusNode clone = new ClusNode();
         clone.m_Test = m_Test;
         clone.m_ClusteringStat = m_ClusteringStat;
@@ -142,14 +143,14 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public ClusNode cloneNodeWithVisitor() {
+    public ClusNode cloneNodeWithVisitor() throws ClusException {
         ClusNode clone = (ClusNode) cloneNode();
         clone.setVisitor(getVisitor());
         return clone;
     }
 
 
-    public final ClusNode cloneTreeWithVisitors(ClusNode n1, ClusNode n2) {
+    public final ClusNode cloneTreeWithVisitors(ClusNode n1, ClusNode n2) throws ClusException {
         if (n1 == this) {
             return n2;
         }
@@ -167,7 +168,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final ClusNode cloneTreeWithVisitors() {
+    public final ClusNode cloneTreeWithVisitors() throws ClusException {
         ClusNode clone = (ClusNode) cloneNode();
         clone.setVisitor(getVisitor());
         int arity = getNbChildren();
@@ -245,11 +246,13 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public final int getID() {
         return m_ID;
     }
 
 
+    @Override
     public boolean equals(Object other) {
         ClusNode o = (ClusNode) other;
         if (m_Test != null && o.m_Test != null) {
@@ -269,6 +272,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public int hashCode() {
         int hashCode = 1234;
         if (m_Test != null) {
@@ -314,11 +318,13 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public int getModelSize() {
         return getNbNodes();
     }
 
 
+    @Override
     public String getModelInfo() {
         return "Nodes = " + getNbNodes() + " (Leaves: " + getNbLeaves() + ")";
     }
@@ -378,7 +384,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final void computePrediction() {
+    public final void computePrediction() throws ClusException {
         if (getClusteringStat() != null) {
             getClusteringStat().calcMean();
         }
@@ -395,7 +401,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final ClusNode afterInduce(ClusStatManager mgr) {
+    public final ClusNode afterInduce(ClusStatManager mgr) throws ClusException {
         if (mgr == null) throw new RuntimeException("ClusStatManager = null.");
 
         // treshold optimization
@@ -411,7 +417,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
     
-    private void optimizeTresholds() {
+    private void optimizeTresholds() throws ClusException {
         double lower = 0.0, upper = 1.0;
         double middle = lower + (upper - lower) / 2;
         int nbRelevantLabels = countTrueRelevant();
@@ -553,7 +559,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final void updateTree() {
+    public final void updateTree() throws ClusException {
         cleanup();
         computePrediction();
         int nb_c = getNbChildren();
@@ -567,14 +573,14 @@ public class ClusNode extends MyNode implements ClusModel {
     public void setAlternatives(ArrayList<NodeTest> alt) {
         m_Alternatives = new NodeTest[alt.size()];
         for (int i = 0; i < alt.size(); i++)
-            m_Alternatives[i] = (NodeTest) alt.get(i);
+            m_Alternatives[i] = alt.get(i);
     }
 
 
     public void setOppositeAlternatives(ArrayList<NodeTest> alt) {
         m_OppositeAlternatives = new NodeTest[alt.size()];
         for (int i = 0; i < alt.size(); i++)
-            m_OppositeAlternatives[i] = (NodeTest) alt.get(i);
+            m_OppositeAlternatives[i] = alt.get(i);
     }
 
 
@@ -668,7 +674,8 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public ClusModel prune(int prunetype) {
+    @Override
+    public ClusModel prune(int prunetype) throws ClusException {
         if (prunetype == PRUNE_INVALID) {
             ClusNode pruned = (ClusNode) cloneTree();
             pruned.pruneInvalid();
@@ -695,6 +702,7 @@ public class ClusNode extends MyNode implements ClusModel {
      * Code to attach another dataset to the tree
      ***************************************************************************/
 
+    @Override
     public final void attachModel(HashMap table) throws ClusException {
         int nb_c = getNbChildren();
         if (nb_c > 0)
@@ -708,9 +716,11 @@ public class ClusNode extends MyNode implements ClusModel {
 
     /***************************************************************************
      * Code for making predictions
+     * @throws ClusException 
      ***************************************************************************/
 
-    public ClusStatistic predictWeighted(DataTuple tuple) {
+    @Override
+    public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException {
         if (atBottomLevel()) {
             return getTargetStat();
         }
@@ -738,7 +748,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public ClusStatistic clusterWeighted(DataTuple tuple) {
+    public ClusStatistic clusterWeighted(DataTuple tuple) throws ClusException {
         if (atBottomLevel()) {
             return getClusteringStat();
         }
@@ -807,8 +817,9 @@ public class ClusNode extends MyNode implements ClusModel {
      *        hash codes of tuples which are in the same leaf where
      *        the tuple ended will be stored in this variable.
      * @return
+     * @throws ClusException 
      */
-    public ClusStatistic predictWeightedAndGetLeafTuples(DataTuple tuple, List<Integer> leafTuples) {
+    public ClusStatistic predictWeightedAndGetLeafTuples(DataTuple tuple, List<Integer> leafTuples) throws ClusException {
         if (atBottomLevel()) {
             if (this.m_LeafTuples != null) {
                 leafTuples.addAll(this.m_LeafTuples);
@@ -840,7 +851,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final void applyModelProcessor(DataTuple tuple, ClusModelProcessor proc) throws IOException {
+    public final void applyModelProcessor(DataTuple tuple, ClusModelProcessor proc) throws IOException, ClusException {
         int nb_c = getNbChildren();
         if (nb_c == 0 || proc.needsInternalNodes())
             proc.modelUpdate(tuple, this);
@@ -861,7 +872,8 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
+    @Override
+    public final void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException, ClusException {
         int nb_c = getNbChildren();
         for (int i = 0; i < mproc.size(); i++) {
             ClusModelProcessor proc = (ClusModelProcessor) mproc.elementAt(i);
@@ -887,35 +899,36 @@ public class ClusNode extends MyNode implements ClusModel {
 
     /***************************************************************************
      * Change the total statistic of the tree?
+     * @throws ClusException 
      ***************************************************************************/
 
-    public final void initTargetStat(ClusStatManager smgr, RowData subset) {
+    public final void initTargetStat(ClusStatManager smgr, RowData subset) throws ClusException {
         m_TargetStat = smgr.createTargetStat();
         subset.calcTotalStatBitVector(m_TargetStat);
     }
 
 
-    public final void initClusteringStat(ClusStatManager smgr, RowData subset) {
+    public final void initClusteringStat(ClusStatManager smgr, RowData subset) throws ClusException {
         m_ClusteringStat = smgr.createClusteringStat();
         subset.calcTotalStatBitVector(m_ClusteringStat);
     }
 
 
-    public final void initTargetStat(ClusStatManager smgr, ClusStatistic train, RowData subset) {
+    public final void initTargetStat(ClusStatManager smgr, ClusStatistic train, RowData subset) throws ClusException {
         m_TargetStat = smgr.createTargetStat();
         m_TargetStat.setTrainingStat(train);
         subset.calcTotalStatBitVector(m_TargetStat);
     }
 
 
-    public final void initClusteringStat(ClusStatManager smgr, ClusStatistic train, RowData subset) {
+    public final void initClusteringStat(ClusStatManager smgr, ClusStatistic train, RowData subset) throws ClusException {
         m_ClusteringStat = smgr.createClusteringStat();
         m_ClusteringStat.setTrainingStat(train);
         subset.calcTotalStatBitVector(m_ClusteringStat);
     }
 
 
-    public final void reInitTargetStat(RowData subset) {
+    public final void reInitTargetStat(RowData subset) throws ClusException {
         if (m_TargetStat != null) {
             m_TargetStat.reset();
             subset.calcTotalStatBitVector(m_TargetStat);
@@ -934,7 +947,7 @@ public class ClusNode extends MyNode implements ClusModel {
      * }
      */
 
-    public final void reInitClusteringStat(RowData subset) {
+    public final void reInitClusteringStat(RowData subset) throws ClusException {
         if (m_ClusteringStat != null) {
             m_ClusteringStat.reset();
             subset.calcTotalStatBitVector(m_ClusteringStat);
@@ -1003,7 +1016,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final void addChildStats() {
+    public final void addChildStats() throws ClusException {
         int nb_c = getNbChildren();
         if (nb_c > 0) {
             ClusNode ch0 = (ClusNode) getChild(0);
@@ -1135,21 +1148,25 @@ public class ClusNode extends MyNode implements ClusModel {
 
     // FIXME - what for NominalTests with only two possible outcomes?
 
+    @Override
     public void printModel(PrintWriter wrt) {
         printTree(wrt, StatisticPrintInfo.getInstance(), "");
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         printTree(wrt, info, "");
     }
 
 
+    @Override
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
         printTree(wrt, info, "", examples, true);
     }
 
 
+    @Override
     public void printModelToPythonScript(PrintWriter wrt) {
         // changed tab to 4 spaces
         printTreeToPythonScript(wrt, "    ");
@@ -1263,6 +1280,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive) {
         int lastmodel = cr.getNbModels() - 1;
         System.out.println("The number of models to print is:" + lastmodel);
@@ -1621,6 +1639,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public String toString() {
         try {
             if (hasBestTest())
@@ -1642,6 +1661,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public void retrieveStatistics(ArrayList list) {
         if (m_ClusteringStat != null)
             list.add(m_ClusteringStat);
@@ -1670,7 +1690,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public void adaptToData(RowData data) {
+    public void adaptToData(RowData data) throws ClusException {
         // sort data into tree
         NodeTest tst = getTest();
         for (int i = 0; i < getNbChildren(); i++) {

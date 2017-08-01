@@ -29,6 +29,7 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
     }
 
 
+    @Override
     public void initPredictions(ClusStatistic stat, ClusEnsembleROSInfo ensembleROSInfo) {
         m_AvgPredictions = new double[m_TuplePositions.size()][stat.getNbAttributes()]; // m_HashCodeTuple.length
 
@@ -36,7 +37,8 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
     }
 
 
-    public synchronized void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException {
+    @Override
+    public synchronized void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException, InterruptedException {
         m_NbUpdatesLock.writingLock();
         m_AvgPredictionsLock.writingLock();
         m_NbUpdates++;
@@ -46,9 +48,7 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
             int[] enabledTargets = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(m_NbUpdates - 1)); // model (m_NbUpdates-1) uses enabledTargets
             m_EnsembleROSInfo.incrementCoverageOpt(enabledTargets);
 
-            System.err.println("TODO: ROS not implemented for optimized ensembles for MTR");
-            System.exit(-1);
-
+            throw new ClusException("TODO: ROS not implemented for optimized ensembles for MTR");
         }
 
         if (train != null) {
@@ -138,6 +138,7 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
     //    }
 
 
+    @Override
     public int getPredictionLength(int tuple) {
         return m_AvgPredictions[tuple].length;
     }
@@ -148,6 +149,7 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
     }
 
 
+    @Override
     public void roundPredictions() {
         // System.out.println("Rounding up predictions!");
         for (int i = 0; i < m_AvgPredictions.length; i++) {

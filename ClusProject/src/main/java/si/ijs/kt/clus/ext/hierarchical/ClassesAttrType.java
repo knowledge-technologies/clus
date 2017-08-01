@@ -86,6 +86,7 @@ public class ClassesAttrType extends ClusAttrType {
         return this.getValue(tuple).getNbClasses() == 0;
     }
     
+    @Override
     public ClusAttrType cloneType() {
         ClassesAttrType at = new ClassesAttrType(m_Name, m_Hier);
         cloneType(at);
@@ -93,16 +94,19 @@ public class ClassesAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public int getTypeIndex() {
         return THIS_TYPE;
     }
 
 
+    @Override
     public String getTypeName() {
         return THIS_TYPE_NAME;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_OBJECT;
     }
@@ -126,6 +130,7 @@ public class ClassesAttrType extends ClusAttrType {
 		}	
 	}
 
+    @Override
     public void updatePredictWriterSchema(ClusSchema schema) {
         String name = getName();
         schema.addAttrType(new StringAttrType(name + "-a"));
@@ -138,6 +143,7 @@ public class ClassesAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public String getPredictionWriterString(DataTuple tuple) {
         StringBuffer buf = new StringBuffer();
         buf.append(getString(tuple));
@@ -147,6 +153,7 @@ public class ClassesAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public String getString(DataTuple tuple) {
         ClassesTuple ct = (ClassesTuple) tuple.m_Objects[m_ArrayIndex];
         return ct.toStringData(m_Hier);
@@ -166,11 +173,13 @@ public class ClassesAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
 
 
+    @Override
     public void getPreprocs(DataPreprocs pps, boolean single) {
         // this builds the hierarchy based on the data
         // and adds intermediate class nodes to each example
@@ -178,6 +187,7 @@ public class ClassesAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public void initializeBeforeLoadingData() throws IOException, ClusException {
         if (isDisabled()) {
             // No need to initialize class hierarchy of disabled attributes
@@ -208,6 +218,7 @@ public class ClassesAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public void initializeFrom(ClusAttrType other_type) {
         ClassesAttrType other = (ClassesAttrType) other_type;
         m_Hier = other.getHier();
@@ -224,6 +235,7 @@ public class ClassesAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public void writeARFFType(PrintWriter wrt) throws ClusException {
         ArrayList list;
         if (getSettings().getHMLC().getHierType() == SettingsHMLC.HIERTYPE_DAG) {
@@ -242,6 +254,7 @@ public class ClassesAttrType extends ClusAttrType {
 
     public class MySerializable extends ClusSerializable {
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             String val = data.readString();
             if (val == null)

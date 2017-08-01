@@ -27,11 +27,13 @@ import si.ijs.kt.clus.util.jeans.math.MNumber;
 
 public class DifferenceExpression extends BinaryExpression {
 
+    @Override
     public Expression createSimilarExpression() {
         return new DifferenceExpression();
     }
 
 
+    @Override
     public MNumber getValue() {
         return leftexpr.getValue().substract(rightexpr.getValue());
     }

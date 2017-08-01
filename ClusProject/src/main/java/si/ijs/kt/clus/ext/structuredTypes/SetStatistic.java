@@ -37,6 +37,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 
 public class SetStatistic extends SumPairwiseDistancesStat {
@@ -61,20 +62,23 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 		m_Attr = attr;
 	}
 
-	public ClusStatistic cloneStat() {
+	@Override
+    public ClusStatistic cloneStat() {
 		SetStatistic stat = new SetStatistic(getSettings(), m_Attr, m_Distance, m_Efficiency);
 		stat.cloneFrom(this);
 		return stat;
 	}
 
-	public ClusStatistic cloneSimple() {
+	@Override
+    public ClusStatistic cloneSimple() {
 		SetStatistic stat = new SetStatistic(getSettings(), m_Attr, m_Distance, m_Efficiency);
 		stat.m_RepresentativeMean = new Set(m_RepresentativeMean.size());
 		stat.m_RepresentativeMedoid = new Set(m_RepresentativeMedoid.size());
 		return stat;
 	}
 
-	public void copy(ClusStatistic other) {
+	@Override
+    public void copy(ClusStatistic other) {
 		SetStatistic or = (SetStatistic)other;
 		super.copy(or);
 		//m_Value = or.m_Value;
@@ -89,7 +93,8 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 	/**
 	 * Used for combining weighted predictions.
 	 */
-	public SetStatistic normalizedCopy() {
+	@Override
+    public SetStatistic normalizedCopy() {
 		SetStatistic copy = (SetStatistic)cloneSimple();
 		copy.m_NbExamples = 0;
 		copy.m_SumWeight = 1;
@@ -99,7 +104,8 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 		return copy;
 	}
 
-	public void addPrediction(ClusStatistic other, double weight) {
+	@Override
+    public void addPrediction(ClusStatistic other, double weight) {
 		SetStatistic or = (SetStatistic)other;
 		m_SumWeight += weight*or.m_SumWeight;
 		Set pred = new Set(or.getSetPred());
@@ -110,7 +116,8 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 	/*
 	 * Add a weighted time series to the statistic.
 	 */
-	public void updateWeighted(DataTuple tuple, int idx){
+	@Override
+    public void updateWeighted(DataTuple tuple, int idx){
 		super.updateWeighted(tuple,idx);
 		
 	    Set newSet = new Set((Set)tuple.m_Objects[this.getAttribute().getIndex()]);
@@ -119,7 +126,7 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 	    
 	}
 
-	public double calcDistance(Set ts1, Set ts2) {
+	public double calcDistance(Set ts1, Set ts2) throws ClusException {
 		SetDistance dist = (SetDistance)getDistance();
 		return dist.calcDistance(ts1, ts2);
 	}
@@ -127,12 +134,15 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 
 	/**
 	 * Currently only used to compute the default dispersion within rule heuristics.
+	 * @throws ClusException 
 	 */
-	public double getDispersion(ClusAttributeWeights scale, RowData data) {
+	@Override
+    public double getDispersion(ClusAttributeWeights scale, RowData data) throws ClusException {
 		return getSVarS(scale, data);
 	}
 
-	public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights) {
+	@Override
+    public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights) throws ClusException {
 		int idx = m_Attr.getIndex();
 		Set actual = (Set)tuple.getObjVal(0);
 		return calcDistance(m_RepresentativeMean, actual) * weights.getWeight(idx);
@@ -147,31 +157,32 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 		}
 	}
 
-	public void calcSumAndSumSqDistances(Set prototype) {
+	public void calcSumAndSumSqDistances(Set prototype) throws ClusException {
 		m_AvgDistances = 0.0;
 		int count = m_SetStack.size();
 		for (int i = 0; i < count; i++){
-			double dist = calcDistance(prototype,(Set)m_SetStack.get(i));
+			double dist = calcDistance(prototype,m_SetStack.get(i));
 			m_AvgDistances += dist;
 		}
 		m_AvgDistances /= count;
 	}
 
 
-	public void calcMean() {
+	@Override
+    public void calcMean() throws ClusException {
 		// Medoid
 		m_RepresentativeMedoid = null;
 		double minDistance = Double.POSITIVE_INFINITY;
 		for(int i=0; i<m_SetStack.size(); i++){
 			double crDistance = 0.0;
-			Set t1 = (Set)m_SetStack.get(i);
+			Set t1 = m_SetStack.get(i);
 			for (int j=0; j<m_SetStack.size(); j++){
-				Set t2 = (Set)m_SetStack.get(j);
+				Set t2 = m_SetStack.get(j);
 				double dist = calcDistance(t1, t2);
 				crDistance += dist * t2.getSetWeight();
 			}
 			if (crDistance<minDistance) {
-				m_RepresentativeMedoid = (Set)m_SetStack.get(i);
+				m_RepresentativeMedoid = m_SetStack.get(i);
 				minDistance = crDistance;
 			}
 		}
@@ -179,7 +190,7 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 		
 		double sumwi = 0.0;
 		for(int j=0; j<m_SetStack.size(); j++){
-			Set t1 = (Set)m_SetStack.get(j);
+			Set t1 = m_SetStack.get(j);
 			sumwi += t1.getSetWeight();
 		}
 		double diff = Math.abs(m_SumWeight-sumwi);
@@ -190,7 +201,8 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 		
 	}
 
-	public void reset() {
+	@Override
+    public void reset() {
 		super.reset();
 		m_SetStack.clear();
 	}
@@ -200,7 +212,8 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 	 * for printing in the nodes
 	 * @see clus.statistic.ClusStatistic#getString(clus.statistic.StatisticPrintInfo)
 	 */
-	public String getString(StatisticPrintInfo info){
+	@Override
+    public String getString(StatisticPrintInfo info){
 		NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
 		StringBuffer buf = new StringBuffer();
 		if (m_RepresentativeMean!=null){
@@ -235,14 +248,16 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 		return buf.toString();
 	}
 
-	public void addPredictWriterSchema(String prefix, ClusSchema schema) {
+	@Override
+    public void addPredictWriterSchema(String prefix, ClusSchema schema) {
 		schema.addAttrType(new SetAttrType(prefix+"-p-Set"));
 		schema.addAttrType(new NumericAttrType(prefix+"-p-Distance"));
 		schema.addAttrType(new NumericAttrType(prefix+"-p-Size"));
 		schema.addAttrType(new NumericAttrType(prefix+"-p-AvgDist"));
 	}
 
-	public String getPredictWriterString(DataTuple tuple) {
+	@Override
+    public String getPredictWriterString(DataTuple tuple) throws ClusException {
 		StringBuffer buf = new StringBuffer();
 		buf.append(m_RepresentativeMedoid.toString());
 		double dist = calcDistanceToCentroid(tuple);

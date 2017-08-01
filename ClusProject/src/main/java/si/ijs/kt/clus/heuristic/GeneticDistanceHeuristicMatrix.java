@@ -43,6 +43,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     }
 
     // executed once, when splitting the root node
+    @Override
     public void setInitialData(ClusStatistic stat, RowData data) {
         m_RootData = data;
         m_RootData.addIndices();
@@ -137,6 +138,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 
 
     // executed each time a node has to be split
+    @Override
     public void setData(RowData data) {
         m_Data = data;
         // if (data.getNbRows() > 2) {
@@ -299,6 +301,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         switch (getSettings().getPhylogeny().getPhylogenyCriterion()) {
             case SettingsPhylogeny.PHYLOGENY_CRITERION_BRANCHLENGTHS:
@@ -312,6 +315,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic[] array_stat, int nbsplit) {
         ClusStatistic p_stat = array_stat[0];
         ClusStatistic part_stat = array_stat[1];
@@ -337,7 +341,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         // first create all needed statistics and data
         GeneticDistanceStat tstat = (GeneticDistanceStat) c_tstat;
         GeneticDistanceStat pstat = (GeneticDistanceStat) c_pstat;
-        GeneticDistanceStat nstat = (GeneticDistanceStat) tstat.cloneStat();
+        GeneticDistanceStat nstat = tstat.cloneStat();
         nstat.copy(tstat);
         nstat.subtractFromThis(pstat);
 
@@ -365,7 +369,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         // first create all needed statistics and data
         GeneticDistanceStat tstat = (GeneticDistanceStat) c_tstat;
         GeneticDistanceStat pstat = (GeneticDistanceStat) c_pstat;
-        GeneticDistanceStat nstat = (GeneticDistanceStat) tstat.cloneStat();
+        GeneticDistanceStat nstat = tstat.cloneStat();
         nstat.copy(tstat);
         nstat.subtractFromThis(pstat);
 
@@ -408,7 +412,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 
         int[] part1posindices = constructIndexVector(m_Data, partition);
 
-        GeneticDistanceStat p2stat = (GeneticDistanceStat) pstat.cloneStat();
+        GeneticDistanceStat p2stat = pstat.cloneStat();
         p2stat.copy(pstat);
         p2stat.subtractFromThis(partition);
 
@@ -447,7 +451,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         GeneticDistanceStat tstat = (GeneticDistanceStat) c_tstat;
         GeneticDistanceStat pstat = (GeneticDistanceStat) c_pstat;
 
-        GeneticDistanceStat nstat = (GeneticDistanceStat) tstat.cloneStat();
+        GeneticDistanceStat nstat = tstat.cloneStat();
         nstat.copy(tstat);
         nstat.subtractFromThis(pstat);
 
@@ -570,11 +574,12 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     }
 
 
+    @Override
     public boolean isAcceptable(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         GeneticDistanceStat tstat = (GeneticDistanceStat) c_tstat;
         GeneticDistanceStat pstat = (GeneticDistanceStat) c_pstat;
 
-        GeneticDistanceStat nstat = (GeneticDistanceStat) tstat.cloneStat();
+        GeneticDistanceStat nstat = tstat.cloneStat();
         nstat.copy(tstat);
         nstat.subtractFromThis(pstat);
 
@@ -639,6 +644,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     }
 
 
+    @Override
     public String getName() {
         switch (getSettings().getPhylogeny().getPhylogenyCriterion()) {
             case SettingsPhylogeny.PHYLOGENY_CRITERION_BRANCHLENGTHS:

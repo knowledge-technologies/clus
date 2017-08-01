@@ -59,6 +59,7 @@ public class MessageComponent extends JComponent {
     }
 
 
+    @Override
     public Dimension getPreferredSize() {
         FontMetrics fm = getGraphics().getFontMetrics();
         Insets insets = getInsets();
@@ -84,6 +85,7 @@ public class MessageComponent extends JComponent {
     }
 
 
+    @Override
     public void removeAll() {
         messages.removeAllElements();
         m_offs = 0;
@@ -130,6 +132,7 @@ public class MessageComponent extends JComponent {
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Insets insets = getInsets();

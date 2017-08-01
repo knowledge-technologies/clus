@@ -72,6 +72,7 @@ public class SimpleHighlighter extends SyntaxHighlighter {
     }
 
 
+    @Override
     public Color getColor(String token) {
         if (token.length() > 0) {
             int ch = token.charAt(0);
@@ -94,11 +95,13 @@ public class SimpleHighlighter extends SyntaxHighlighter {
     }
 
 
+    @Override
     public Color getColor() {
         return m_color;
     }
 
 
+    @Override
     public void parseString(String strg) {
         m_tokens.setString(strg);
         m_newColor = m_default_color;
@@ -106,6 +109,7 @@ public class SimpleHighlighter extends SyntaxHighlighter {
     }
 
 
+    @Override
     public String getColorToken() {
         m_color = m_newColor;
         while (true) {

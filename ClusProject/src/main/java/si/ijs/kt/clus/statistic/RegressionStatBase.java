@@ -73,6 +73,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public int getNbAttributes() {
         return m_NbAttrs;
     }
@@ -88,6 +89,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
         RegressionStatBase or = (RegressionStatBase) other;
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -96,11 +98,13 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         updateWeighted(tuple, tuple.getWeight());
     }
 
 
+    @Override
     public void computePrediction() {
         // do not need to call calcMean() here
     }
@@ -109,6 +113,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     public abstract void calcMean(double[] means);
 
 
+    @Override
     public void calcMean() {
         if (m_Means == null) {
             m_Means = new double[m_NbAttrs];
@@ -166,6 +171,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     /**
      * Currently only used to compute the default dispersion within rule heuristics.
      */
+    @Override
     public double getDispersion(ClusAttributeWeights scale, RowData data) {
         System.err.println(getClass().getName() + ": getDispersion(): Not yet implemented!");
         return Double.POSITIVE_INFINITY;
@@ -221,26 +227,31 @@ public abstract class RegressionStatBase extends ClusStatistic {
     /**
      * @return Array for all the attributes.
      */
+    @Override
     public double[] getNumericPred() {
         return m_Means;
     }
 
 
+    @Override
     public String getPredictedClassName(int idx) {
         return "";
     }
 
 
+    @Override
     public int getNbNumericAttributes() {
         return m_NbAttrs;
     }
 
 
+    @Override
     public double getError(ClusAttributeWeights scale) {
         return getSVarS(scale);
     }
 
 
+    @Override
     public double getErrorDiff(ClusAttributeWeights scale, ClusStatistic other) {
         return getSVarSDiff(scale, other);
     }
@@ -267,6 +278,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     /*
      * Compute squared Euclidean distance between tuple's target attributes and this statistic's mean.
      **/
+    @Override
     public double getSquaredDistance(DataTuple tuple, ClusAttributeWeights weights) {
         double sum = 0.0;
         for (int i = 0; i < getNbAttributes(); i++) {
@@ -290,6 +302,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
    		return distances;
    	}
 
+    @Override
     public String getArrayOfStatistic() {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
@@ -304,6 +317,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public String getPredictString() {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -315,6 +329,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public String getDebugString() {
         NumberFormat fr = ClusFormat.THREE_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
@@ -336,6 +351,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public void printDistribution(PrintWriter wrt) throws IOException {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         for (int i = 0; i < m_Attrs.length; i++) {
@@ -349,6 +365,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public void addPredictWriterSchema(String prefix, ClusSchema schema) {
         for (int i = 0; i < m_NbAttrs; i++) {
             ClusAttrType type = m_Attrs[i].cloneType();
@@ -358,6 +375,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public String getPredictWriterString() {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -374,6 +392,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public void predictTuple(DataTuple prediction) {
         for (int i = 0; i < m_NbAttrs; i++) {
             NumericAttrType type = m_Attrs[i];
@@ -382,6 +401,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes) {
         reset();
         m_Means = new double[m_NbAttrs];
@@ -395,6 +415,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         reset();
         m_Means = new double[m_NbAttrs];

@@ -2,6 +2,7 @@
 package si.ijs.kt.clus.ext.featureRanking.relief;
 
 import java.io.IOException;
+import java.util.concurrent.ExecutionException;
 
 import si.ijs.kt.clus.algo.ClusInductionAlgorithm;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
@@ -31,7 +32,7 @@ public class ReliefInduce extends ClusInductionAlgorithm {
 
 
     @Override
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException, ExecutionException {
     	int[] nbNeighbours = cr.getStatManager().getSettings().getRelief().getReliefNbNeighboursValue();
     	int[] nbIterations = cr.getStatManager().getSettings().getRelief().getReliefNbIterationsValue(cr.getTrainingSet().getNbRows());
     	boolean shouldWeight = cr.getStatManager().getSettings().getRelief().getReliefWeightNeighbours();

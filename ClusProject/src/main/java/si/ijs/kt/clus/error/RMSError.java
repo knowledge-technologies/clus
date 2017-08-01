@@ -52,6 +52,7 @@ public class RMSError extends MSError {
     }
 
 
+    @Override
     public double getModelError() {
     	double sum = 0.0;
     	for(int i = 0; i < m_Attrs.length; i++){
@@ -61,17 +62,20 @@ public class RMSError extends MSError {
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         return Math.sqrt(super.getModelErrorComponent(i));
     }
 
 
+    @Override
     public void showSummaryError(PrintWriter out, boolean detail) {
         NumberFormat fr = getFormat();
         out.println(getPrefix() + "Mean over components RMSE: " + fr.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         if (m_Weights == null)
             return "Root mean squared error (RMSE)";
@@ -80,6 +84,7 @@ public class RMSError extends MSError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new RMSError(par, m_Attrs, m_Weights, m_PrintAllComps);
     }

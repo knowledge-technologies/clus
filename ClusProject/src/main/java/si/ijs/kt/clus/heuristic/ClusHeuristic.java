@@ -26,6 +26,7 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public abstract class ClusHeuristic {
@@ -76,8 +77,9 @@ public abstract class ClusHeuristic {
      * @param missing
      * @param ss_tot
      * @return
+     * @throws ClusException 
      */
-    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot) {
+    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot) throws ClusException {
         return calcHeuristic(tstat, pstat, missing);
     }
 
@@ -104,7 +106,7 @@ public abstract class ClusHeuristic {
     }
 
 
-    public abstract double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing);
+    public abstract double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) throws ClusException;
 
 
     public abstract String getName();

@@ -116,6 +116,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    @Override
     public String toString() {
         return toString("");
     }
@@ -388,6 +389,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    @Override
     public ClusData cloneData() {
         RowData res = new RowData(m_Schema, m_NbRows);
         System.arraycopy(m_Data, 0, res.m_Data, 0, m_NbRows);
@@ -430,8 +432,9 @@ public class RowData extends ClusData implements MSortable, Serializable {
      * 
      * @param at
      * @param helper
+     * @throws ClusException
      */
-    public void sortSparse(NumericAttrType at, RowDataSortHelper helper) {
+    public void sortSparse(NumericAttrType at, RowDataSortHelper helper) throws ClusException {
         int nbmiss = 0, nbzero = 0, nbother = 0;
         helper.resize(m_NbRows + 1);
         DataTuple[] missing = helper.missing;
@@ -449,8 +452,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
                 other[nbother++].set(data, m_Data[i]);
             }
             else {
-                System.err.println("Sparse attribute has negative value!");
-                System.exit(-1);
+                throw new ClusException("Sparse attribute has negative value!");
             }
         }
         // long start_time = ResourceInfo.getTime();
@@ -476,33 +478,36 @@ public class RowData extends ClusData implements MSortable, Serializable {
         MSorter.quickSort(this, 0, m_NbRows);
     }
 
+
     /**
-     * Sorts RowData so that the labeled examples come first, unlabeled 
+     * Sorts RowData so that the labeled examples come first, unlabeled
      * second
      */
     public void sortLabeledFirst() {
         boolean swapPerformed;
-        
-        for(int i = 0; i < m_Data.length; i++) {               
+
+        for (int i = 0; i < m_Data.length; i++) {
             //if unlabeled example is found, we try to find labeled example after its position, and swap them.
-            if(m_Data[i].isUnlabeled()) {
+            if (m_Data[i].isUnlabeled()) {
                 swapPerformed = false;
-                for(int j = i + 1; j < m_Data.length; j++) {
-                    if(!m_Data[j].isUnlabeled()) {
+                for (int j = i + 1; j < m_Data.length; j++) {
+                    if (!m_Data[j].isUnlabeled()) {
                         swap(i, j);
                         swapPerformed = true;
                         break;
                     }
                 }
-                
-                if(!swapPerformed) {//if no swap was performed, then dataset is already sorted
+
+                if (!swapPerformed) {//if no swap was performed, then dataset is already sorted
                     return;
                 }
             }
-            
+
         }
     }
-    
+
+
+    @Override
     public double getDouble(int i) {
         return m_Data[i].getDoubleVal(m_Index);
     }
@@ -513,6 +518,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    @Override
     public void swap(int i, int j) {
         DataTuple temp = m_Data[i];
         m_Data[i] = m_Data[j];
@@ -570,19 +576,12 @@ public class RowData extends ClusData implements MSortable, Serializable {
             else if (featureValue == NumericAttrType.MISSING) {
                 missing.add(i);
             }
-//            else if (featureValue > 0.0) {
-//                other.add(i);
-//            }
-//            else {
-//                System.err.println("Sparse attribute has negative value!");
-//                System.exit(-1);
-//            }
-            else{
-                if (featureValue > 0.0){
+            else {
+                if (featureValue > 0.0) {
                     nbPos++;
                 }
                 other.add(i);
-                
+
             }
         }
         // sort other
@@ -593,6 +592,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
             temp[i] = i;
         }
         Arrays.sort(temp, new Comparator<Integer>() {
+
             @Override
             public int compare(Integer o1, Integer o2) {
                 return Double.compare(featureVector[o2], featureVector[o1]); // we sort in decreasing order!
@@ -615,14 +615,14 @@ public class RowData extends ClusData implements MSortable, Serializable {
             indices[position++] = zero.get(i);
         }
         // negative
-        for (int i = nbPos; i < nbOther; i++){
+        for (int i = nbPos; i < nbOther; i++) {
             indices[position++] = other.get(temp[i]);
         }
         m_SortedInstances.put(at, indices);
 
         return indices;
     }
-    
+
 
     public DataTuple findTupleByKey(String key_value) {
         ClusAttrType[] key = getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_KEY);
@@ -639,6 +639,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 
 
     // Does not change original distribution
+    @Override
     public ClusData selectFrom(ClusSelection sel, ClusRandomNonstatic rnd) {
         int nbsel = sel.getNbSelected();
         RowData res = new RowData(m_Schema, nbsel);
@@ -658,6 +659,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    @Override
     public ClusData select(ClusSelection sel) {
         int s_data = 0;
         int s_subset = 0;
@@ -727,6 +729,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    @Override
     public void insert(ClusData data, ClusSelection sel) {
         int s_data = 0;
         int s_subset = 0;
@@ -841,23 +844,26 @@ public class RowData extends ClusData implements MSortable, Serializable {
         m_Data[i] = tuple;
     }
 
+
     /**
-     * Returns the number of unlabeled examples (example is considered unlabeled 
+     * Returns the number of unlabeled examples (example is considered unlabeled
      * if all of its target attributes are missing)
-     * @return 
+     * 
+     * @return
      */
     public final int getNbUnlabeled() {
         int nbUnlabeled = 0;
-        
-        for(int i = 0; i < m_Data.length; i++) {
-            if(m_Data[i].isUnlabeled()) {
+
+        for (int i = 0; i < m_Data.length; i++) {
+            if (m_Data[i].isUnlabeled()) {
                 nbUnlabeled++;
             }
         }
-        
+
         return nbUnlabeled;
     }
-    
+
+
     public final RowData applyWeighted(NodeTest test, int branch) {
         int nb = 0;
         for (int i = 0; i < m_NbRows; i++) {
@@ -1008,6 +1014,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    @Override
     public void resize(int nbrows) {
         m_Data = new DataTuple[nbrows];
         for (int i = 0; i < nbrows; i++)
@@ -1020,6 +1027,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         m_Data = new DataTuple[nbrows];
         m_NbRows = nbrows;
     }
+
 
     public void showDebug(ClusSchema schema) {
         System.out.println("Data: " + m_NbRows + " Size: " + m_Data.length);
@@ -1044,17 +1052,19 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    @Override
     public void attach(ClusNode node) {
     }
 
 
-    public synchronized void calcTotalStatBitVector(ClusStatistic stat) {
+    public synchronized void calcTotalStatBitVector(ClusStatistic stat) throws ClusException {
         stat.setSDataSize(getNbRows());
         calcTotalStat(stat);
         stat.optimizePreCalc(this);
     }
 
 
+    @Override
     public void calcTotalStat(ClusStatistic stat) {
         for (int i = 0; i < m_NbRows; i++) {
             stat.updateWeighted(m_Data[i], i);
@@ -1111,7 +1121,8 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    public void calcError(ClusNode node, ClusErrorList par) {
+    @Override
+    public void calcError(ClusNode node, ClusErrorList par) throws ClusException {
         for (int i = 0; i < m_NbRows; i++) {
             DataTuple tuple = getTuple(i);
             ClusStatistic stat = node.predictWeighted(tuple);
@@ -1120,6 +1131,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    @Override
     public void preprocess(int pass, DataPreprocs pps) throws ClusException {
         for (int i = 0; i < m_NbRows; i++) {
             DataTuple tuple = m_Data[i];
@@ -1149,11 +1161,13 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    @Override
     public double[] getNumeric(int idx) {
         return m_Data[idx].m_Doubles;
     }
 
 
+    @Override
     public int[] getNominal(int idx) {
         return m_Data[idx].m_Ints;
     }
@@ -1235,23 +1249,24 @@ public class RowData extends ClusData implements MSortable, Serializable {
      * @throws IllegalArgumentException
      *         if N < 0
      */
-    /*    public RowData sample2(int N, ClusRandomNonstatic rnd) {
-        if (N < 0)
-            throw new IllegalArgumentException("N should be larger than or equal to zero");
-        int nbRows = getNbRows();
-        if (N == 0)
-            return new RowData(this);
-        ArrayList<DataTuple> res = new ArrayList<DataTuple>();
-        // sample with replacement
-        int i;
-        for (int size = 0; size < N; size++) {
-            i = rnd.nextInt(ClusRandomNonstatic.RANDOM_SAMPLE, nbRows); // <---- i =
-                                                                        // ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE,nbRows);
-            res.add(getTuple(i));
-        }
-        return new RowData(res, getSchema().cloneSchema());
-    }
-*/
+    /*
+     * public RowData sample2(int N, ClusRandomNonstatic rnd) {
+     * if (N < 0)
+     * throw new IllegalArgumentException("N should be larger than or equal to zero");
+     * int nbRows = getNbRows();
+     * if (N == 0)
+     * return new RowData(this);
+     * ArrayList<DataTuple> res = new ArrayList<DataTuple>();
+     * // sample with replacement
+     * int i;
+     * for (int size = 0; size < N; size++) {
+     * i = rnd.nextInt(ClusRandomNonstatic.RANDOM_SAMPLE, nbRows); // <---- i =
+     * // ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE,nbRows);
+     * res.add(getTuple(i));
+     * }
+     * return new RowData(res, getSchema().cloneSchema());
+     * }
+     */
 
     // Be careful when using this method! Current use in FindBestTest is wrong in the case when N != 0:
     // this is used for finding the best test. However, if N != 0 (otherwise we simply return all the data),

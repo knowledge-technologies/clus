@@ -34,21 +34,25 @@ import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 public class BasicExampleCollector extends ClusModelProcessor {
 
+    @Override
     public boolean needsModelUpdate() {
         return true;
     }
 
 
+    @Override
     public void initialize(ClusModel model, ClusSchema schema) {
         ClusNode root = (ClusNode) model;
         recursiveInitialize(root);
     }
 
 
+    @Override
     public void terminate(ClusModel model) throws IOException {
     }
 
 
+    @Override
     public void modelUpdate(DataTuple tuple, ClusModel model) {
         ClusNode node = (ClusNode) model;
         MyArray visitor = (MyArray) node.getVisitor();

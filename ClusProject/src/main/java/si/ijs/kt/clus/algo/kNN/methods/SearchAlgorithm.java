@@ -54,8 +54,9 @@ public abstract class SearchAlgorithm {
 
     /**
      * Building search structure on known samples.
+     * @throws InterruptedException 
      */
-    public abstract void build() throws ClusException, IOException;
+    public abstract void build() throws ClusException, IOException, InterruptedException;
 
 
     /**
@@ -66,8 +67,9 @@ public abstract class SearchAlgorithm {
      * @param tuple
      *        sample to be classified
      * @return
+     * @throws ClusException 
      */
-    public abstract LinkedList<DataTuple> returnNNs(DataTuple tuple, int k);
+    public abstract LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) throws ClusException;
 
 
     /**

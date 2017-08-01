@@ -17,6 +17,7 @@ public abstract class ClusHeuristicImpl extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         m_NegStat.copy(tstat);
         m_NegStat.subtractFromThis(pstat);

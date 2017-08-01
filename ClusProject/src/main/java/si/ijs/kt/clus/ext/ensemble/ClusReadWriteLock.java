@@ -24,21 +24,19 @@ package si.ijs.kt.clus.ext.ensemble;
 
 import java.io.Serializable;
 
+import si.ijs.kt.clus.util.ClusException;
+
+
 public class ClusReadWriteLock implements Serializable {
 
-	private int m_NbReaders = 0;
+    private int m_NbReaders = 0;
     private int m_NbWriters = 0;
     private int m_NbWriteRequests = 0;
 
 
-    public synchronized void readingLock() {
+    public synchronized void readingLock() throws InterruptedException {
         while (m_NbWriters > 0 || m_NbWriteRequests > 0) {
-            try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
+            wait();
         }
         m_NbReaders++;
     }
@@ -50,15 +48,10 @@ public class ClusReadWriteLock implements Serializable {
     }
 
 
-    public synchronized void writingLock() {
+    public synchronized void writingLock() throws InterruptedException {
         m_NbWriteRequests++;
         while (m_NbReaders > 0 || m_NbWriters > 0) {
-            try {
-				wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-				System.exit(-1);
-			}
+            wait();
         }
         m_NbWriteRequests--;
         m_NbWriters++;

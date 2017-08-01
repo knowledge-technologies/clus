@@ -65,7 +65,7 @@ public abstract class ClusModelInfoList implements Serializable {
     public ClusModelInfo getModelInfo(int i) {
         if (i >= m_Models.size())
             return null;
-        return (ClusModelInfo) m_Models.get(i);
+        return m_Models.get(i);
     }
 
 
@@ -130,7 +130,7 @@ public abstract class ClusModelInfoList implements Serializable {
 
     public void showModelInfos() {
         for (int i = 0; i < getNbModels(); i++) {
-            ClusModelInfo info = (ClusModelInfo) getModelInfo(i);
+            ClusModelInfo info = getModelInfo(i);
             System.out.println("Model " + i + " name: '" + info.getName() + "'");
         }
     }
@@ -191,7 +191,7 @@ public abstract class ClusModelInfoList implements Serializable {
     public ClusModelInfo addModelInfo(int i) {
         while (i >= m_Models.size())
             m_Models.add(null);
-        ClusModelInfo inf = (ClusModelInfo) m_Models.get(i);
+        ClusModelInfo inf = m_Models.get(i);
         if (inf == null) {
             inf = initModelInfo(i);
             m_Models.set(i, inf);
@@ -211,7 +211,7 @@ public abstract class ClusModelInfoList implements Serializable {
     public ClusModelInfo addModelInfo(int i, String model_name) {
         while (i >= m_Models.size())
             m_Models.add(null);
-        ClusModelInfo inf = (ClusModelInfo) m_Models.get(i);
+        ClusModelInfo inf = m_Models.get(i);
         if (inf == null) {
             inf = initModelInfo(i, model_name);
             m_Models.set(i, inf);
@@ -258,7 +258,7 @@ public abstract class ClusModelInfoList implements Serializable {
     }
 
 
-    public void checkModelInfo() {
+    public void checkModelInfo() throws ClusException {
         int nb_models = getNbModels();
         for (int i = 0; i < nb_models; i++) {
             ClusModelInfo my = getModelInfo(i);

@@ -49,16 +49,19 @@ public class INIFileSection extends INIFileNode {
     }
 
 
+    @Override
     public boolean isSectionGroup() {
         return false;
     }
 
 
+    @Override
     public boolean isSection() {
         return true;
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         INIFileSection sec = new INIFileSection(getName());
         for (Enumeration e = getNodes(); e.hasMoreElements();) {
@@ -251,6 +254,7 @@ public class INIFileSection extends INIFileNode {
     }
 
 
+    @Override
     public void save(PrintWriter writer) throws IOException {
         save(null, writer);
     }

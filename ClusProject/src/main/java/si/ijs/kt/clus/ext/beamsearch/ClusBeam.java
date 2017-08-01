@@ -355,7 +355,7 @@ public class ClusBeam {
         ClusBeamModel bmodel;
         for (int k = 0; k < arr.size(); k++) {
             bmodel = (ClusBeamModel) arr.get(k);
-            if (((ClusNode) bmodel.getModel()).equals(((ClusNode) model.getModel())))
+            if (((ClusNode) bmodel.getModel()).equals((model.getModel())))
                 return true;
         }
         return false;

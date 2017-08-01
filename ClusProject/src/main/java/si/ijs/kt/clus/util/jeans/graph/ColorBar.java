@@ -113,6 +113,7 @@ public class ColorBar extends Panel {
 
     private class CAdjustmentListener implements AdjustmentListener {
 
+        @Override
         public void adjustmentValueChanged(AdjustmentEvent e) {
             int val = sbCol.getValue();
             saveValue(val);
@@ -123,6 +124,7 @@ public class ColorBar extends Panel {
 
     private class CActionListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent ev) {
             TextField fld = (TextField) ev.getSource();
             try {

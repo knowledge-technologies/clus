@@ -107,7 +107,7 @@ public class FindBestTest {
 
 
     // daniela
-    public void rememberMinMax(NominalAttrType at, RowData data) {
+    public void rememberMinMax(NominalAttrType at, RowData data) throws ClusException {
         findNominal(at, data, null);
         ClusStatistic m_CStat = m_StatManager.createClusteringStat();
         m_CStat.add(m_BestTest.m_TestStat[0]);
@@ -125,7 +125,7 @@ public class FindBestTest {
     // daniela end
 
 
-    public void findNominal(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) {
+    public void findNominal(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) throws ClusException {
         // long start_time = System.currentTimeMillis();
         RowData sample = createSample(data, rnd);
         int nbvalues = at.getNbValues();
@@ -162,22 +162,21 @@ public class FindBestTest {
             }
             catch (Exception e) {
                 e.printStackTrace();
-                System.out.println("Error calculating GISHEuristics!");
-                System.exit(1);
+                throw new ClusException("Error calculating GISHEuristics!"); // this try/catch block is weird
             }
 
-            ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
-            ((ClusStatistic) m_BestTest.m_TotStat).setData(sample);
-            ((ClusStatistic) m_BestTest.m_TotStat).setSplitIndex(sample.getNbRows());
-            ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
-            ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
+            m_BestTest.m_PosStat.setData(sample);
+            m_BestTest.m_TotStat.setData(sample);
+            m_BestTest.m_TotStat.setSplitIndex(sample.getNbRows());
+            m_BestTest.m_PosStat.setPrevIndex(0);
+            m_BestTest.m_PosStat.initializeSum();
 
             for (int i = 0; i < nb_rows; i++) {
                 DataTuple tuple = sample.getTuple(i);
                 int value = at.getNominal(tuple);
-                ((ClusStatistic) m_BestTest.m_TestStat[value]).setData(sample);
-                ((ClusStatistic) m_BestTest.m_TestStat[value]).initializeSum();
-                ((ClusStatistic) m_BestTest.m_TestStat[value]).setPrevIndex(0);
+                m_BestTest.m_TestStat[value].setData(sample);
+                m_BestTest.m_TestStat[value].initializeSum();
+                m_BestTest.m_TestStat[value].setPrevIndex(0);
             }
             // daniela end
         }
@@ -203,7 +202,7 @@ public class FindBestTest {
                 DataTuple tuple = sample.getTuple(i);
                 int value = at.getNominal(tuple);
                 m_BestTest.m_TestStat[value].updateWeighted(tuple, i);
-                ((ClusStatistic) m_BestTest.m_TestStat[value]).setSplitIndex(i + 1); // daniela
+                m_BestTest.m_TestStat[value].setSplitIndex(i + 1); // daniela
             }
         }
 
@@ -244,7 +243,7 @@ public class FindBestTest {
     // m_Split.findRandomSplit(m_BestTest, at, rn);
     // }
 
-    public void findNominalExtraTree(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) {
+    public void findNominalExtraTree(NominalAttrType at, RowData data, ClusRandomNonstatic rnd) throws ClusException {
         Random rn;
         if (rnd == null) {
             rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
@@ -269,7 +268,7 @@ public class FindBestTest {
     }
 
 
-    public void findNumeric(NumericAttrType at, RowData data, ClusRandomNonstatic rnd) {
+    public void findNumeric(NumericAttrType at, RowData data, ClusRandomNonstatic rnd) throws Exception {
         RowData sample = createSample(data, rnd);
         DataTuple tuple;
         //        if (at.isSparse()) {
@@ -320,10 +319,10 @@ public class FindBestTest {
                 if (value != prev) {
                     m_BestTest.updateNumericGIS(value, at, indicesSorted);
                     prev = value;
-                    ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(i); // daniela
+                    m_BestTest.m_PosStat.setPrevIndex(i); // daniela
                 }
                 m_BestTest.m_PosStat.updateWeighted(tuple, i);
-                ((ClusStatistic) m_BestTest.m_PosStat).setSplitIndex(i + 1); // daniela
+                m_BestTest.m_PosStat.setSplitIndex(i + 1); // daniela
                 if (isSparseAtr && value == minValue) {
                     break;
                 }
@@ -350,16 +349,16 @@ public class FindBestTest {
         }
     }
     
-    private void gisMatrixForFindNumberic(RowData sample, int nb_rows, int pos, Integer[] indicesSorted, NumericAttrType at){
+    private void gisMatrixForFindNumberic(RowData sample, int nb_rows, int pos, Integer[] indicesSorted, NumericAttrType at) throws ClusException{
         DataTuple tuple;
         double prev = Double.NaN;
         // daniela
-        ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
-        ((ClusStatistic) m_BestTest.m_TotCorrStat).setData(sample);
-        ((ClusStatistic) m_BestTest.m_TotCorrStat).setSplitIndex(sample.getNbRows());
-        ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
-        ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
-        ((ClusStatistic) m_BestTest.m_TotCorrStat).initializeSum();
+        m_BestTest.m_PosStat.setData(sample);
+        m_BestTest.m_TotCorrStat.setData(sample);
+        m_BestTest.m_TotCorrStat.setSplitIndex(sample.getNbRows());
+        m_BestTest.m_PosStat.setPrevIndex(0);
+        m_BestTest.m_PosStat.initializeSum();
+        m_BestTest.m_TotCorrStat.initializeSum();
         //for scaling of h -regression (daniela)
         if ((m_BestTest.m_Heuristic instanceof GISHeuristic || m_BestTest.m_Heuristic instanceof VarianceReductionHeuristicCompatibility) && (SettingsTree.ALPHA != 1.0)) {
             for (int i = pos; i < nb_rows; i++) {
@@ -371,18 +370,18 @@ public class FindBestTest {
                         //System.out.println(at +" za: "+m_BestTest.hMax+"-->"+m_BestTest.hMin);
                     }
                     prev = value;
-                    ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(i);
+                    m_BestTest.m_PosStat.setPrevIndex(i);
                 }
                 m_BestTest.m_PosStat.updateWeighted(tuple, i);
-                ((ClusStatistic) m_BestTest.m_PosStat).setSplitIndex(i + 1); //add Daniela
+                m_BestTest.m_PosStat.setSplitIndex(i + 1); //add Daniela
             }
             prev = Double.NaN;
-            ((ClusStatistic) m_BestTest.m_PosStat).setData(sample);
-            ((ClusStatistic) m_BestTest.m_TotCorrStat).setData(sample);
-            ((ClusStatistic) m_BestTest.m_TotCorrStat).setSplitIndex(sample.getNbRows());
-            ((ClusStatistic) m_BestTest.m_PosStat).reset();
-            ((ClusStatistic) m_BestTest.m_PosStat).setPrevIndex(0);
-            ((ClusStatistic) m_BestTest.m_PosStat).initializeSum();
+            m_BestTest.m_PosStat.setData(sample);
+            m_BestTest.m_TotCorrStat.setData(sample);
+            m_BestTest.m_TotCorrStat.setSplitIndex(sample.getNbRows());
+            m_BestTest.m_PosStat.reset();
+            m_BestTest.m_PosStat.setPrevIndex(0);
+            m_BestTest.m_PosStat.initializeSum();
         }
         //end for scaling of h -regression
 
@@ -414,13 +413,12 @@ public class FindBestTest {
         }
         catch (Exception e) {
             e.printStackTrace();
-            System.out.println("Error calculating GISHEuristics!");
-            System.exit(1);
+            throw new ClusException("Error calculating GISHEuristics!"); // this try/catch block is weird
         }
     }
 
 
-    public void findNumericExtraTree(NumericAttrType at, RowData orig_data, ClusRandomNonstatic rnd) {
+    public void findNumericExtraTree(NumericAttrType at, RowData orig_data, ClusRandomNonstatic rnd) throws ClusException {
         // TODO: if this method gets completed, sampling of the RowDatas must be included as well
 
         Random rn;

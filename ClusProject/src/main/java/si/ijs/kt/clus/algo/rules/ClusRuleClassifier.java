@@ -52,6 +52,7 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
     }
 
 
+    @Override
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
 
         // Compute the normalization information here if needed. We can here use the whole data set
@@ -67,17 +68,17 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
 
         ClusInductionAlgorithm induce;
         if (sett.getRules().getCoveringMethod() == SettingsRules.COVERING_METHOD_RULES_FROM_TREE) {
-            induce = (ClusInductionAlgorithm) new ClusRuleFromTreeInduce(schema, sett, getClus());
+            induce = new ClusRuleFromTreeInduce(schema, sett, getClus());
         }
         else {
             if (sett.getRules().getCoveringMethod() == SettingsRules.COVERING_METHOD_SAMPLED_RULE_SET) {
-                induce = (ClusInductionAlgorithm) new ClusRuleProbabilisticRuleSetInduce(schema, sett, getClus());
+                induce = new ClusRuleProbabilisticRuleSetInduce(schema, sett, getClus());
             }
             else if (sett.getILevelC().isSectionILevelCEnabled()) {
-                induce = (ClusInductionAlgorithm) new ClusRuleConstraintInduce(schema, sett);
+                induce = new ClusRuleConstraintInduce(schema, sett);
             }
             else {
-                induce = (ClusInductionAlgorithm) new ClusRuleInduce(schema, sett);
+                induce = new ClusRuleInduce(schema, sett);
             }
             induce.getStatManager().setRuleInduceOnly(true); // Tells that the rule is the way to go
         }
@@ -86,6 +87,7 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
     }
 
 
+    @Override
     public void printInfo() {
         if (getSettings().getRules().getCoveringMethod() == SettingsRules.COVERING_METHOD_SAMPLED_RULE_SET) {
             String s = "";
@@ -112,16 +114,19 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
     }
 
 
+    @Override
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
     }
 
 
+    @Override
     public ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException {
         return model;
     }
 
 
-    public void postProcess(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public void postProcess(ClusRun cr) throws ClusException, IOException, InterruptedException {
         // For RulesFromTree the default is already an ensemble.
         if (getSettings().getRules().getCoveringMethod() != SettingsRules.COVERING_METHOD_RULES_FROM_TREE &&
                 getSettings().getRules().getCoveringMethod() != SettingsRules.COVERING_METHOD_SAMPLED_RULE_SET) {

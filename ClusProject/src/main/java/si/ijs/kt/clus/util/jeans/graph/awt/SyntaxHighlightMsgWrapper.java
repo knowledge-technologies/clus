@@ -39,6 +39,7 @@ public class SyntaxHighlightMsgWrapper extends MessageWrapper {
     }
 
 
+    @Override
     public void drawWrapped(Graphics g, int xpos, int ypos) {
         int nb = getNbLines();
         if (nb != 0) {

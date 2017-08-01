@@ -79,11 +79,13 @@ public class CDTTuneFTest extends ClusDecisionTree {
     }
 
 
+    @Override
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
         return m_Class.createInduce(schema, sett, cargs);
     }
 
 
+    @Override
     public void printInfo() {
         System.out.println("TDIDT (Tuning F-Test)");
         System.out.println("Heuristic: " + getStatManager().getHeuristicName());
@@ -120,7 +122,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
     }
 
 
-    public final ClusRun partitionDataBasic(ClusData data, ClusSelection sel, ClusSummary summary, int idx) throws IOException, ClusException {
+    public final ClusRun partitionDataBasic(ClusData data, ClusSelection sel, ClusSummary summary, int idx) throws IOException, ClusException, InterruptedException {
         ClusRun cr = new ClusRun(data.cloneData(), summary);
         if (sel != null) {
             if (sel.changesDistribution()) {
@@ -137,7 +139,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
     }
 
 
-    public double doParamXVal(RowData trset, RowData pruneset) throws ClusException, IOException, InterruptedException {
+    public double doParamXVal(RowData trset, RowData pruneset) throws Exception {
         int prevVerb = getSettings().getGeneral().enableVerbose(0);
         ClusStatManager mgr = getStatManager();
         ClusSummary summ = new ClusSummary();
@@ -189,7 +191,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
     }
 
 
-    public void findBestFTest(RowData trset, RowData pruneset) throws ClusException, IOException, InterruptedException {
+    public void findBestFTest(RowData trset, RowData pruneset) throws Exception {
         int best_value = 0;
         boolean low = createTuneError(getStatManager()).getFirstError().shouldBeLow();
         double best_error = low ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
@@ -233,6 +235,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
     }
 
 
+    @Override
     public void induceAll(ClusRun cr) throws ClusException, IOException {
         try {
             // Find optimal F-test value
@@ -253,6 +256,10 @@ public class CDTTuneFTest extends ClusDecisionTree {
         }
         catch (InterruptedException e) {
             System.err.println("InterruptedException: " + e);
+        }
+        catch (Exception e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
     }
 }

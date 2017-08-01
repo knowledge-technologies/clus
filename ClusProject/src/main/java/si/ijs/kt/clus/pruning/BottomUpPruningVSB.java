@@ -28,6 +28,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class BottomUpPruningVSB extends PruneTree {
@@ -44,17 +45,19 @@ public class BottomUpPruningVSB extends PruneTree {
     }
 
 
+    @Override
     public int getNbResults() {
         return 1;
     }
 
 
-    public void prune(ClusNode node) {
+    @Override
+    public void prune(ClusNode node) throws ClusException {
         prune(node, m_Data);
     }
 
 
-    public void prune(ClusNode node, RowData data) {
+    public void prune(ClusNode node, RowData data) throws ClusException {
         if (!node.atBottomLevel()) {
             int arity = node.getNbChildren();
             for (int i = 0; i < arity; i++) {

@@ -37,6 +37,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStat;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValSelection;
 import si.ijs.kt.clus.util.ClusException;
@@ -59,7 +60,8 @@ public class OptXVal {
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
         schema.addIndices(ClusSchema.ROWS);
         int nb_num = schema.getNbNumericDescriptiveAttributes();
-        if (sett.getExperimental().XVAL_OVERLAP && nb_num > 0)
+        sett.getExperimental();
+        if (SettingsExperimental.XVAL_OVERLAP && nb_num > 0)
             return new OptXValIndOV(schema, sett);
         else
             return new OptXValIndNO(schema, sett);
@@ -102,7 +104,7 @@ public class OptXVal {
     }
 
 
-    public final void xvalRun(String appname, Date date) throws IOException, ClusException {
+    public final void xvalRun(String appname, Date date) throws Exception {
         Settings sett = m_Clus.getSettings();
         ClusSchema schema = m_Clus.getSchema();
         RowData set = m_Clus.getRowDataClone();
@@ -153,7 +155,8 @@ public class OptXVal {
         output = new ClusOutput(appname + ".xval", schema, sett);
         output.writeHeader();
         
-        if (sett.getExperimental().SHOW_XVAL_FOREST)
+        sett.getExperimental();
+        if (SettingsExperimental.SHOW_XVAL_FOREST)
             showForest(output.getWriter(), root);
         for (int i = 0; i < sel.getNbFolds(); i++) {
             XValSelection msel = new XValSelection(sel, i);

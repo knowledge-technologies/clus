@@ -62,17 +62,20 @@ public class RankingLoss extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return true;
     }
 
 
+    @Override
     public void reset() {
         m_NonnormalisedLoss = 0.0;
         m_NbKnown = 0;
     }
 
 
+    @Override
     public void add(ClusError other) {
         RankingLoss rl = (RankingLoss) other;
         m_NonnormalisedLoss += rl.m_NonnormalisedLoss;
@@ -90,26 +93,31 @@ public class RankingLoss extends ClusNominalError {
     // }
 
 
+    @Override
     public double getModelError() {
         return m_NonnormalisedLoss / m_NbKnown;
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         return "RankingLoss";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new RankingLoss(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         final double[] scores = ((ClassificationStat) pred).calcScores();
         int wrongPairs = 0;
@@ -149,6 +157,7 @@ public class RankingLoss extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         try {
             throw new Exception("RankingLoss.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
@@ -161,6 +170,7 @@ public class RankingLoss extends ClusNominalError {
 
 
     // NEDOTAKNJENO
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 

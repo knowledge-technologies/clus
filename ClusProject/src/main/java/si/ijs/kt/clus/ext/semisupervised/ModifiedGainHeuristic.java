@@ -16,6 +16,7 @@ public class ModifiedGainHeuristic extends ClusHeuristicImpl {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic c_nstat, ClusStatistic missing) {
         ClassificationStat tstat = (ClassificationStat) c_tstat;
         ClassificationStat pstat = (ClassificationStat) c_pstat;
@@ -45,6 +46,7 @@ public class ModifiedGainHeuristic extends ClusHeuristicImpl {
     }
 
 
+    @Override
     public String getName() {
         return "Gain modified for semi-supervised learning";
     }

@@ -30,6 +30,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 public abstract class MyNode implements Node, Serializable, ClusModel {
@@ -48,7 +49,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
 
     public final MyNode getRoot() {
         if (m_Parent == null) return this;
-        else return ((MyNode)m_Parent).getRoot();
+        else return m_Parent.getRoot();
     }
 
     public final int indexOf(MyNode child) {
@@ -74,23 +75,23 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
     	m_StatManager = smgr;
     }
     
-    public final void initTargetStat(ClusStatManager smgr, RowData subset) {
+    public final void initTargetStat(ClusStatManager smgr, RowData subset) throws ClusException {
         m_TargetStat = smgr.createTargetStat();
         subset.calcTotalStatBitVector(m_TargetStat);
     }
 
-    public final void initClusteringStat(ClusStatManager smgr, RowData subset) {
+    public final void initClusteringStat(ClusStatManager smgr, RowData subset) throws ClusException {
         m_ClusteringStat = smgr.createClusteringStat();
         subset.calcTotalStatBitVector(m_ClusteringStat);
     }
 
-    public final void initTargetStat(ClusStatManager smgr, ClusStatistic train, RowData subset) {
+    public final void initTargetStat(ClusStatManager smgr, ClusStatistic train, RowData subset) throws ClusException {
         m_TargetStat = smgr.createTargetStat();
         m_TargetStat.setTrainingStat(train);
         subset.calcTotalStatBitVector(m_TargetStat);
     }
 
-    public final void initClusteringStat(ClusStatManager smgr, ClusStatistic train, RowData subset) {
+    public final void initClusteringStat(ClusStatManager smgr, ClusStatistic train, RowData subset) throws ClusException {
         m_ClusteringStat = smgr.createClusteringStat();
         m_ClusteringStat.setTrainingStat(train);
         subset.calcTotalStatBitVector(m_ClusteringStat);
@@ -136,7 +137,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
     }
 
     public final void removeChild(int idx) {
-        MyNode child = (MyNode)getChild(idx);
+        MyNode child = getChild(idx);
         if (child != null) child.setParent(null);
         m_Children.removeElementAt(idx);
     }
@@ -150,6 +151,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
         m_Children.removeAllElements();
     }
 
+    @Override
     public final MyNode getParent() {
         return m_Parent;
     }
@@ -158,6 +160,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
         m_Parent = parent;
     }
 
+    @Override
     public final MyNode getChild(int idx) {
         return (MyNode) m_Children.elementAt(idx);
     }
@@ -174,6 +177,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
         m_Children.setElementAt(node, idx);
     }
 
+    @Override
     public final int getNbChildren() {
         return m_Children.size();
     }
@@ -182,10 +186,12 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
         m_Children.setSize(nb);
     }
 
+    @Override
     public final boolean atTopLevel() {
         return m_Parent == null;
     }
 
+    @Override
     public final boolean atBottomLevel() {
         return m_Children.size() == 0;
     }
@@ -195,7 +201,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
         int arity = getNbChildren();
         clone.setNbChildren(arity);
         for (int i = 0; i < arity; i++) {
-            MyNode node = (MyNode)getChild(i);
+            MyNode node = getChild(i);
             clone.setChild(node.cloneTree(), i);
         }
         return clone;
@@ -209,7 +215,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
             int arity = getNbChildren();
             clone.setNbChildren(arity);
             for (int i = 0; i < arity; i++) {
-                MyNode node = (MyNode)getChild(i);
+                MyNode node = getChild(i);
                 clone.setChild(node.cloneTree(n1, n2), i);
             }
             return clone;
@@ -287,16 +293,18 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
 //        }
 //    }
 
+    @Override
     public int getNbNodes() {
         int count = 1;
         int nb = getNbChildren();
         for (int i = 0; i < nb; i++) {
-            MyNode node = (MyNode)getChild(i);
+            MyNode node = getChild(i);
             count += node.getNbNodes();
         }
         return count;
     }
     
+    @Override
     public int getNbLeaves() {
         int nb = getNbChildren();
         if (nb == 0) {
@@ -304,7 +312,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
         } else {
             int count = 0;
             for (int i = 0; i < nb; i++) {
-                MyNode node = (MyNode)getChild(i);
+                MyNode node = getChild(i);
                 count += node.getNbLeaves();
             }
             return count;
@@ -319,7 +327,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
         } else {
         	int count = 0;
         	for (int i = 0; i < nb; i++) {
-                MyNode node = (MyNode) getChild(i);
+                MyNode node = getChild(i);
                 count += node.getNbOptionNodes();
             }
             return count + (this instanceof ClusOptionNode ? 1 : 0);
@@ -334,7 +342,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
         } else {
         	int count = 0;
         	for (int i = 0; i < nb; i++) {
-                MyNode node = (MyNode) getChild(i);
+                MyNode node = getChild(i);
                 count += node.getNbOptions();
             }
             return count + (this instanceof ClusOptionNode ? this.getNbChildren() : 0);
@@ -350,12 +358,12 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
     		if (this instanceof ClusSplitNode) {
     			count = 1;
     			for (int i = 0; i < nb; i++) {
-    				MyNode node = (MyNode) getChild(i);
+    				MyNode node = getChild(i);
     				count *= node.getNbTrees();
     			}
     		} else if (this instanceof ClusOptionNode) {
     			for (int i = 0; i < nb; i++) {
-    				MyNode node = (MyNode) getChild(i);
+    				MyNode node = getChild(i);
     				count += node.getNbTrees();
     			}
 
@@ -364,6 +372,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
     	}
     }
     
+    @Override
     public String getModelInfo() {
         return "Nodes = "+getNbNodes()+" (Leaves: "+getNbLeaves()+", OptionNodes: "+getNbOptionNodes()+", EmbededTrees: "+getNbTrees()+")";
     }

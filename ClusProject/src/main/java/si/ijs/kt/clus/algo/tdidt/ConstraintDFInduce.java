@@ -64,7 +64,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
     }
 
 
-    public void fillInStatsAndTests(ClusNode node, RowData data) {
+    public void fillInStatsAndTests(ClusNode node, RowData data) throws Exception {
         NodeTest test = node.getTest();
         if (test == null) {
             // No test, so this is a leaf node
@@ -125,7 +125,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
     }
 
 
-    public void induceRecursive(ClusNode node, RowData data) {
+    public void induceRecursive(ClusNode node, RowData data) throws Exception {
         if (node.atBottomLevel()) {
             induce(node, data, null); // PARALELNO: TODO ...
         }
@@ -140,7 +140,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
     }
 
 
-    public ClusNode createRootNode(RowData data, ClusStatistic cstat, ClusStatistic tstat) {
+    public ClusNode createRootNode(RowData data, ClusStatistic cstat, ClusStatistic tstat) throws Exception {
         ClusConstraintFile file = ClusConstraintFile.getInstance();
         ClusNode root = file.getClone(m_ConstrFile);
         root.setClusteringStat(cstat);
@@ -150,7 +150,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
     }
 
 
-    public ClusNode fillInInTree(RowData data, ClusNode tree, ClusStatistic cstat, ClusStatistic tstat) {
+    public ClusNode fillInInTree(RowData data, ClusNode tree, ClusStatistic cstat, ClusStatistic tstat) throws Exception {
         ClusNode root = tree.cloneTreeWithVisitors();
         root.setClusteringStat(cstat);
         root.setTargetStat(tstat);
@@ -159,7 +159,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
     }
 
 
-    public ClusNode fillInInduce(ClusRun cr, ClusNode node, MultiScore score) throws ClusException {
+    public ClusNode fillInInduce(ClusRun cr, ClusNode node, MultiScore score) throws Exception {
         RowData data = (RowData) cr.getTrainingSet();
         ClusStatistic cstat = createTotalClusteringStat(data);
         ClusStatistic tstat = createTotalTargetStat(data);
@@ -188,7 +188,8 @@ public class ConstraintDFInduce extends DepthFirstInduce {
      * }
      */
 
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
         RowData data = (RowData) cr.getTrainingSet();
         ClusStatistic cstat = createTotalClusteringStat(data);
         ClusStatistic tstat = createTotalTargetStat(data);

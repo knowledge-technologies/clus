@@ -49,17 +49,20 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
     }
 
 
+    @Override
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
         ClusInductionAlgorithm induce = new ClusInductionAlgorithmImpl(schema, sett);
         return induce;
     }
 
 
+    @Override
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
 
     }
 
 
+    @Override
     public ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException {
         return model;
     }
@@ -71,7 +74,8 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
         }
 
 
-        public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+        @Override
+        public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
 
             String[] ks = getSettings().getKNN().getKNNk().split(",");
             String[] distWeight = getSettings().getKNN().getKNNDistanceWeight().split(",");
@@ -126,8 +130,10 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
      * 
      * @param cr
      * @return
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    public static ClusModel induceDefaultModel(ClusRun cr) {
+    public static ClusModel induceDefaultModel(ClusRun cr) throws ClusException, InterruptedException {
         ClusNode node = new ClusNode();
         RowData data = (RowData) cr.getTrainingSet();
         node.initTargetStat(cr.getStatManager(), data);

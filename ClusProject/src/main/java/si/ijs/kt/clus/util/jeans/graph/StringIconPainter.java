@@ -69,6 +69,7 @@ public class StringIconPainter implements Painter {
     }
 
 
+    @Override
     public void paint(Graphics graph, Canvas canvas) {
         Dimension dim = cnv.getBufferSize();
         int iw = icon.getWidth(canvas);

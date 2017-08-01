@@ -58,6 +58,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
     }
 
 
+    @Override
     public void initialize() throws ClusException, IOException {
         super.initialize();
     }
@@ -68,7 +69,8 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
     }
 
 
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
         return induceSingleUnpruned((RowData) cr.getTrainingSet());
     }
 
@@ -100,7 +102,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
             if (at instanceof NominalAttrType)
                 m_FindBestTests.addBestNominalTest((NominalAttrType) at, data, node.getClusteringStat(), rnd);
             else if (at instanceof NumericAttrType)
-                m_FindBestTests.addBestNumericTest((NumericAttrType) at, data, node.getClusteringStat(), rnd);
+                m_FindBestTests.addBestNumericTest(at, data, node.getClusteringStat(), rnd);
         }
 
         m_FindBestTests.sort();
@@ -232,7 +234,8 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
     }
 
 
-    public void induceAll(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
         ClusModelInfo def_info = cr.addModelInfo(ClusModel.DEFAULT);
         def_info.setModel(ClusDecisionTree.induceDefault(cr));
 

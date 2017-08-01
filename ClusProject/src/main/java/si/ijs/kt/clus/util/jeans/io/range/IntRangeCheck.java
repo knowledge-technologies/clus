@@ -37,12 +37,14 @@ public class IntRangeCheck implements ValueCheck, Serializable {
     }
 
 
+    @Override
     public boolean checkValue(Object value) {
         int number = ((Integer) value).intValue();
         return number >= m_MinInt && number <= m_MaxInt;
     }
 
 
+    @Override
     public String getString(String name, Object value) {
         return name + " = " + value + " out of range [" + m_MinInt + ", " + m_MaxInt + "]";
     }

@@ -79,7 +79,7 @@ public class HierNodeWeights {
         int nb_done = 0;
         while (nb_done < hier.getTotal()) {
             for (int i = todo.size() - 1; i >= 0; i--) {
-                ClassTerm term = (ClassTerm) todo.get(i);
+                ClassTerm term = todo.get(i);
                 if (allParentsOk(term, weight_computed)) {
                     int maxDepth = 0;
                     int minDepth = Integer.MAX_VALUE;
@@ -198,6 +198,6 @@ public class HierNodeWeights {
 
 
     private final static double calcExponentialDepthWeight(int depth, double w0) {
-        return Math.pow(w0, (double) depth);
+        return Math.pow(w0, depth);
     }
 }

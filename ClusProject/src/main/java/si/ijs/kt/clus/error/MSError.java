@@ -77,6 +77,7 @@ public class MSError extends ClusNumericError implements ComponentError {
     }
 
     
+    @Override
     public void reset() {
         for (int i = 0; i < m_Dim; i++) {
             m_SumErr[i] = 0.0;
@@ -89,11 +90,13 @@ public class MSError extends ClusNumericError implements ComponentError {
     }
 
 
+    @Override
     public void setWeights(ClusAttributeWeights weights) {
         m_Weights = weights;
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
 
         // int nb = getNbExamples();
@@ -108,6 +111,7 @@ public class MSError extends ClusNumericError implements ComponentError {
     }
 
 
+    @Override
     public double getModelError() {
         double ss_tree = 0.0;
         int nb = 0;
@@ -129,6 +133,7 @@ public class MSError extends ClusNumericError implements ComponentError {
     }
 
 
+    @Override
     public double getModelErrorStandardError() {
         double sum_err = 0.0;
         double sum_sq_err = 0.0;
@@ -179,6 +184,7 @@ public class MSError extends ClusNumericError implements ComponentError {
         }
     }
 
+    @Override
     public void addExample(double[] real, double[] predicted) {
     	addExample(real, predicted, false);
     }
@@ -222,6 +228,7 @@ public class MSError extends ClusNumericError implements ComponentError {
         }
     }
     
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
     	addExample(tuple, pred, false);
     }
@@ -244,15 +251,18 @@ public class MSError extends ClusNumericError implements ComponentError {
         }
     }
     
+    @Override
     public void addExample(DataTuple real, DataTuple pred) {
         addExample(real, pred, false);
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public void add(ClusError other) {
         MSError oe = (MSError) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -263,6 +273,7 @@ public class MSError extends ClusNumericError implements ComponentError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
@@ -291,6 +302,7 @@ public class MSError extends ClusNumericError implements ComponentError {
     }
 
 
+    @Override
     public String getName() {
         if (m_Weights == null)
             return "Mean squared error (MSE)";
@@ -299,18 +311,21 @@ public class MSError extends ClusNumericError implements ComponentError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MSError(par, m_Attrs, m_Weights, m_PrintAllComps);
     }
 
 
+    @Override
     public double computeLeafError(ClusStatistic stat) {
         RegressionStat rstat = (RegressionStat) stat;
         return rstat.getSVarS(m_Weights) * rstat.getNbAttributes();
     }
 
 
-	public boolean shouldBeLow() {
+	@Override
+    public boolean shouldBeLow() {
 		return true;
 	}
 }

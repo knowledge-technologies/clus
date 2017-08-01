@@ -158,7 +158,7 @@ public class FTest {
         FTEST_LIMIT = limit;
         FTEST_VALUE = new double[values.size() + 3];
         for (int i = 0; i < values.size(); i++) {
-            FTEST_VALUE[i + 3] = ((Double) values.get(i)).doubleValue();
+            FTEST_VALUE[i + 3] = values.get(i).doubleValue();
         }
     }
 
@@ -175,7 +175,7 @@ public class FTest {
             return false; // added to avoid 0/0; SST = 0 => no improvement possible
         if (ssr == 0.0)
             return true; // avoid x/0; SSR = 0 => F is infinite
-        double f = (double) df * (sst - ssr) / ssr;
+        double f = df * (sst - ssr) / ssr;
         double cf = getCriticalF(level, df);
         return f > cf;
     }

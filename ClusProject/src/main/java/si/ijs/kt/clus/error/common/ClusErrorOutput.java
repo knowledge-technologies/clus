@@ -30,6 +30,7 @@ public class ClusErrorOutput extends ClusOutput {
     }
 
 
+    @Override
     public void writeHeader() throws IOException {
         m_Writer.println("@relation experiment");
         m_Writer.println("@attribute Dataset {" + m_Sett.getData().getDataFile() + "}");
@@ -132,7 +133,7 @@ public class ClusErrorOutput extends ClusOutput {
         // m_Writer.println("@attribute nrSupportTargets numeric");
         m_Writer.print("," + supportTargetCounter);
         // induction time
-        m_Writer.print("," + ClusFormat.FOUR_AFTER_DOT.format((double) cr.getInductionTime() / 1000.0));
+        m_Writer.print("," + ClusFormat.FOUR_AFTER_DOT.format(cr.getInductionTime() / 1000.0));
 
         m_Writer.println();
         m_Writer.flush();

@@ -67,6 +67,7 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(m_Hier.getType().getArrayIndex());
         double[] predarr = ((WHTDStatistic) pred).getNumericPred();
@@ -77,6 +78,7 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(m_Hier.getType().getArrayIndex());
         boolean[] actual = tp.getVectorBooleanNodeAndAncestors(m_Hier);
@@ -86,6 +88,7 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
+    @Override
     public boolean isComputeForModel(String name) {
         if (name.equals("Original")) {
             return true;
@@ -103,11 +106,13 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public double getModelError() {
         computeAll();
         switch (m_OptimizeMeasure) {
@@ -130,6 +135,7 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
+    @Override
     public void reset() {
         for (int i = 0; i < m_Dim; i++) {
             m_ClassWisePredictions[i].clear();
@@ -137,6 +143,7 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         BinaryPredictionList[] olist = ((HierErrorMeasures) other).m_ClassWisePredictions;
         for (int i = 0; i < m_Dim; i++) {
@@ -148,6 +155,7 @@ public class HierErrorMeasures extends ClusError {
     // For errors computed on a subset of the examples, it is sometimes useful
     // to also have information about all the examples, this information is
     // passed via this method in the global error measure "global"
+    @Override
     public void updateFromGlobalMeasure(ClusError global) {
         BinaryPredictionList[] olist = ((HierErrorMeasures) global).m_ClassWisePredictions;
         for (int i = 0; i < m_Dim; i++) {
@@ -193,6 +201,7 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
+    @Override
     public boolean isMultiLine() {
         return true;
     }
@@ -334,6 +343,7 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, String bName, int detail) throws IOException {
         if (m_WriteCurves && bName != null) {
             writeCSVFilesPR(bName + ".pr.csv");
@@ -367,11 +377,13 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
+    @Override
     public String getName() {
         return "Hierarchical error measures";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new HierErrorMeasures(par, m_Hier, m_RecallValues, m_Compatibility, m_OptimizeMeasure, m_WriteCurves, m_IsGzipOutput);
     }

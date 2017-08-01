@@ -53,17 +53,20 @@ public class HammingLoss extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return true;
     }
 
 
+    @Override
     public void reset() {
         m_NbWrong = 0;
         m_NbKnown = 0;
     }
 
 
+    @Override
     public void add(ClusError other) {
         HammingLoss ham = (HammingLoss) other;
         m_NbWrong += ham.m_NbWrong;
@@ -81,26 +84,31 @@ public class HammingLoss extends ClusNominalError {
     // }
 
 
+    @Override
     public double getModelError() {
         return ((double) m_NbWrong) / m_Dim / m_NbKnown;
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         return "HammingLoss";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new HammingLoss(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
@@ -120,6 +128,7 @@ public class HammingLoss extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         boolean atLeastOneKnown = false;
         NominalAttrType attr;
@@ -139,6 +148,7 @@ public class HammingLoss extends ClusNominalError {
 
 
     // NEDOTAKNJENO
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 

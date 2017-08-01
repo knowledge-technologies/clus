@@ -99,7 +99,7 @@ public class ILevelCInduce extends DepthFirstInduce {
         int count = 0;
         boolean[] constr = new boolean[m_Constraints.size()];
         for (int i = 0; i < data.getNbRows(); i++) {
-            DataTuple tuple = (DataTuple) data.getTuple(i);
+            DataTuple tuple = data.getTuple(i);
             int[] index = m_ConstraintsIndex[tuple.getIndex()];
             if (index != null) {
                 for (int j = 0; j < index.length; j++) {
@@ -572,13 +572,14 @@ public class ILevelCInduce extends DepthFirstInduce {
     }
 
 
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
         m_NbClasses = 1;
         ClusRandom.reset(ClusRandom.RANDOM_ALGO_INTERNAL);
         RowData data = (RowData) cr.getTrainingSet();
         int nbTrain = data.getNbRows();
         /* add in test data! */
-        RowData test = (RowData) cr.getTestSet();
+        RowData test = cr.getTestSet();
         if (test != null) {
             ArrayList allData = new ArrayList();
             data.addTo(allData);

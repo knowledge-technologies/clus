@@ -256,11 +256,13 @@ public class DigitalCanvas extends Canvas {
     }
 
 
+    @Override
     public void paint(Graphics g) {
         update(g);
     }
 
 
+    @Override
     public void update(Graphics g) {
         Dimension d = getSize();
         reSize(d);

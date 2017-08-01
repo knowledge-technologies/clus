@@ -45,12 +45,14 @@ public class NominalAttribute extends NominalAttrBase {
     }
 
 
+    @Override
     public void resize(int rows) {
         m_NbRows = rows;
         m_Data = new int[rows];
     }
 
 
+    @Override
     public ClusAttribute select(ClusSelection sel, int nbsel) {
         int s_data = 0;
         int s_subset = 0;
@@ -71,6 +73,7 @@ public class NominalAttribute extends NominalAttrBase {
     }
 
 
+    @Override
     public void insert(ClusAttribute attr, ClusSelection sel, int nb_new) {
         int s_data = 0;
         int s_subset = 0;
@@ -87,6 +90,7 @@ public class NominalAttribute extends NominalAttrBase {
     }
 
 
+    @Override
     public void findBestTest(MyArray leaves, ColTarget target, ClusStatManager smanager) {
         // Reset positive statistic
         int nb = leaves.size();
@@ -126,6 +130,7 @@ public class NominalAttribute extends NominalAttrBase {
     }
 
 
+    @Override
     public void split(ColTarget target) {
         // For each attribute value
         // ClusNode[] infos = target.m_Node;
@@ -155,7 +160,7 @@ public class NominalAttribute extends NominalAttrBase {
             m_Data[row] = m_Type.getNbValues();
         }
         else {
-            Integer i = (Integer) m_Type.getValueIndex(value);
+            Integer i = m_Type.getValueIndex(value);
             if (i != null) {
                 m_Data[row] = i.intValue();
             }

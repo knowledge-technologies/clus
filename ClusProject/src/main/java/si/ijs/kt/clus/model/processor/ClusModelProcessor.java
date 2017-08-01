@@ -51,7 +51,7 @@ public abstract class ClusModelProcessor {
     }
 
 
-    public void terminate(ClusModel model) throws IOException {
+    public void terminate(ClusModel model) throws IOException, ClusException {
     }
 
 
@@ -68,11 +68,11 @@ public abstract class ClusModelProcessor {
 
     public void flushWriter() {}
     
-    public void exampleUpdate(DataTuple tuple, ClusStatistic distr) throws IOException {
+    public void exampleUpdate(DataTuple tuple, ClusStatistic distr) throws IOException, ClusException {
     }
 
 
-    public void modelUpdate(DataTuple tuple, ClusModel model) throws IOException {
+    public void modelUpdate(DataTuple tuple, ClusModel model) throws IOException, ClusException {
     }
 
 

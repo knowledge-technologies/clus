@@ -193,6 +193,7 @@ public class OptSmoothLocalSearch {
                 // The operation to perform with each item
                 new Operation<Integer>() {
 
+                    @Override
                     public void perform(Integer rule) {
 
                         //				ClusRuleSet rndSet;

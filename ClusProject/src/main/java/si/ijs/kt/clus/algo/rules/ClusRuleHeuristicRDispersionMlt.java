@@ -47,6 +47,7 @@ public class ClusRuleHeuristicRDispersionMlt extends ClusRuleHeuristicDispersion
      * Larger values are better!
      */
     // We only need the second parameter for rules!
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double n_pos = c_pstat.m_SumWeight;
         // Acceptable?
@@ -91,6 +92,7 @@ public class ClusRuleHeuristicRDispersionMlt extends ClusRuleHeuristicDispersion
     }
 
 
+    @Override
     public String getName() {
         return "Rule Heuristic (Reduced Relative Dispersion, Multiplicative ver.)";
     }

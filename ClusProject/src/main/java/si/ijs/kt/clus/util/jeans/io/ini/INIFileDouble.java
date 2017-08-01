@@ -55,6 +55,7 @@ public class INIFileDouble extends INIFileEntry {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         return new INIFileDouble(getName(), getValue());
     }
@@ -75,11 +76,13 @@ public class INIFileDouble extends INIFileEntry {
     }
 
 
+    @Override
     public void setValue(String value) {
         setValue(Double.parseDouble(value));
     }
 
 
+    @Override
     public String getStringValue() {
         return String.valueOf(getValue());
     }
