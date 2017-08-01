@@ -165,7 +165,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
         ClusStatistic tstat = createTotalTargetStat(data);
         initSelectorAndSplit(cstat);
         ClusNode root = fillInInTree(data, node, cstat, tstat);
-        root.postProc(score, null);
+        root.afterInduce(null);
         cleanSplit();
         return root;
     }
@@ -199,7 +199,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
             // Call induce on each leaf
             induceRecursive(root, data);
         }
-        root.postProc(null, null);
+        root.afterInduce(null);
         cleanSplit();
         return root;
     }

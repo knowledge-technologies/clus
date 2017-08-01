@@ -32,7 +32,6 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.error.common.multiscore.MultiScore;
 import si.ijs.kt.clus.main.ClusOutput;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStat;
@@ -140,12 +139,12 @@ public class OptXVal {
         }
 
         // Output whole tree
-        MultiScore score = m_Clus.getMultiScore();
+        //MultiScore score = m_Clus.getMultiScore();
         ClusOutput output = new ClusOutput(appname + ".out", schema, sett);
         output.writeHeader();
         ClusNode tree = root.getTree(0);
         ClusRun cr = m_Clus.partitionData();
-        tree.postProc(score, null);
+        tree.afterInduce(null);
         // m_Clus.storeAndPruneModel(cr, tree);
         // m_Clus.calcError(cr, null);
         output.writeOutput(cr, true);
@@ -160,7 +159,7 @@ public class OptXVal {
             XValSelection msel = new XValSelection(sel, i);
             cr = m_Clus.partitionData(msel, i + 1);
             tree = root.getTree(i + 1);
-            tree.postProc(score, null);
+            tree.afterInduce(null);
             // m_Clus.storeAndPruneModel(cr, tree);
             // m_Clus.calcError(cr, summary);
             if (sett.getOutput().isOutputFoldModels())

@@ -69,4 +69,11 @@ public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
         System.out.println("Ensemble Classifier");
     }
 
+
+    @Override
+    public void postProcess(ClusRun cr) throws ClusException, IOException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

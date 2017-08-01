@@ -89,10 +89,9 @@ public abstract class ClusInductionAlgorithmType {
 
     public abstract ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException;
 
+    // should be implemented by subclass
+    public abstract void postProcess(ClusRun cr) throws ClusException, IOException;
 
-    public void postProcess(ClusRun cr) throws ClusException, IOException {
-        // should be implemented by subclass
-    }
 
 
     /**

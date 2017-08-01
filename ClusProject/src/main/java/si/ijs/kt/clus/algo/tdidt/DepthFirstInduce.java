@@ -530,11 +530,11 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             /* } */
             // rankFeatures(m_Root, data);
             // Refinement finished
-            if (SettingsGeneric.EXACT_TIME == false)
+            if (SettingsGeneric.EXACT_TIME == false) // TODO: where is this used? martinb
                 break;
         }
 
-        m_Root.postProc(null, m_StatManager);
+        m_Root.afterInduce(m_StatManager);
 
         cleanSplit();
         return m_Root;

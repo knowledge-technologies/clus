@@ -30,6 +30,7 @@ public class MathUtil {
 
     public final static double C1E_6 = 1e-6;
     public final static double C1E_9 = 1e-9;
+    public final static double C1E_16 = 1e-16;
     public final static double M_LN2 = Math.log(2);
 
 

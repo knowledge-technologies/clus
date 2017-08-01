@@ -628,4 +628,11 @@ public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
     public ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException {
         return model;
     }
+
+
+    @Override
+    public void postProcess(ClusRun cr) throws ClusException, IOException {
+        // TODO Auto-generated method stub
+        
+    }
 }

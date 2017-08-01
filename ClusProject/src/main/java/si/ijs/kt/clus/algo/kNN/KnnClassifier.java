@@ -49,9 +49,6 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
     }
 
 
-    
-
-
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
         ClusInductionAlgorithm induce = new ClusInductionAlgorithmImpl(schema, sett);
         return induce;
@@ -139,4 +136,10 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
         return node;
     }
 
+
+    @Override
+    public void postProcess(ClusRun cr) throws ClusException, IOException {
+        // TODO Auto-generated method stub
+        
+    }
 }

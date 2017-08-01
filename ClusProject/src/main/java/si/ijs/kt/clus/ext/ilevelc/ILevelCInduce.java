@@ -644,7 +644,7 @@ public class ILevelCInduce extends DepthFirstInduce {
             /* induce tree now */
             initSelectorAndSplit(root.getClusteringStat());
             iLevelCInduce(root);
-            root.postProc(null, null);
+            root.afterInduce(null);
             cleanSplit();
             return root;
         }

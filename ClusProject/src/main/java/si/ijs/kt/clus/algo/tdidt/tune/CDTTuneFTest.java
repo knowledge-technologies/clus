@@ -53,6 +53,7 @@ import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
+import si.ijs.kt.clus.util.jeans.math.MathUtil;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
@@ -200,7 +201,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
             if (getSettings().getGeneral().getVerbose() > 1)
                 System.out.print("-> " + err);
             if (low) {
-                if (err < best_error - 1e-16) {
+                if (err < best_error - MathUtil.C1E_16) {
                     best_error = err;
                     best_value = i;
                     if (getSettings().getGeneral().getVerbose() > 1)
@@ -212,7 +213,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
                 }
             }
             else {
-                if (err > best_error + 1e-16) {
+                if (err > best_error + MathUtil.C1E_16) {
                     best_error = err;
                     best_value = i;
                     if (getSettings().getGeneral().getVerbose() > 1)

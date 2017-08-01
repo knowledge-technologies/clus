@@ -59,4 +59,10 @@ public class ClusOptionTree extends ClusInductionAlgorithmType {
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
         // TODO Auto-generated method stub
     }
+
+    @Override
+    public void postProcess(ClusRun cr) throws ClusException, IOException {
+        // TODO Auto-generated method stub
+        
+    }
 }

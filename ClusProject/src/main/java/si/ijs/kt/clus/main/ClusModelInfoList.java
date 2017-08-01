@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.util.ClusException;
@@ -35,6 +36,7 @@ import si.ijs.kt.clus.util.ClusException;
 
 public abstract class ClusModelInfoList implements Serializable {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     public final static int TRAINSET = 0;
     public final static int TESTSET = 1;
     public final static int VALIDATIONSET = 2;
@@ -331,13 +333,16 @@ public abstract class ClusModelInfoList implements Serializable {
         return m_IndTime;
     }
 
+
     public final void setInductionTimeSequential(long time) {
         m_IndTimeSequential = time;
     }
-    
+
+
     public final long getInductionTimeSequential() {
         return m_IndTimeSequential;
     }
+
 
     public final void setPruneTime(long time) {
         m_PruneTime = time;
