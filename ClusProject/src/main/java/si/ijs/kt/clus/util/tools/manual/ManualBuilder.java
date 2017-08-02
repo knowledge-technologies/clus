@@ -18,7 +18,7 @@ public class ManualBuilder {
     public void buildSettingsTables(String settingsTablesFolder) {
     	HashMap<String, TreeMap<Integer, String[]>> default_values = listAllSettings();
         for(String section : default_values.keySet()) {
-            writeLatexTable(section, settingsTablesFolder, default_values.get(section));
+            writeLatexTable(section, settingsTablesFolder, default_values.get(section), false);
         }
         
     }
@@ -44,7 +44,7 @@ public class ManualBuilder {
     }
     
     
-    private void writeLatexTable(String sectionName, String settingsTablesFolder, TreeMap<Integer, String[]> sectionDefaults) {
+    private void writeLatexTable(String sectionName, String settingsTablesFolder, TreeMap<Integer, String[]> sectionDefaults, boolean selfstandingTex) {
     	// create folders in the path if necessary
     	File folder = new File(settingsTablesFolder);
     	try {
@@ -59,12 +59,16 @@ public class ManualBuilder {
         	String fileName = String.format("%s/options-%s.tex", settingsTablesFolder, sectionName);
         	
             PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-            String[] preamble = new String[] {"\\documentclass{article}", "\\usepackage[utf8]{inputenc}", "\\usepackage{longtable}"};
-            for(String line : preamble) {
-                writer.println(line);
+            
+            if(selfstandingTex) {
+            	String[] preamble = new String[] {"\\documentclass{article}", "\\usepackage[utf8]{inputenc}"};
+            	for(String line : preamble) {
+                    writer.println(line);
+                }
+                writer.println("\\begin{document}");
+                writer.println();
             }
-            writer.println("\\begin{document}");
-            writer.println();
+            
             writer.println("\\begin{itemize}");
             
             
@@ -73,22 +77,24 @@ public class ManualBuilder {
             	String name = option_default[0];
             	String[] defaults = nicifyDefaultValue(option_default[1]);
             	for(int i = 0; i < defaults.length; i++) {
-            		defaults[i] = String.format("\\texttt{%s}", defaults[i]);
+            		defaults[i] = String.format("\\optionDefaultValueStyle{%s}", defaults[i]);
             	}
             	String default_value = String.join(", ", defaults);
-            	writer.println(String.format("    \\item %s:%n"
+            	writer.println(String.format("    \\item \\optionNameStyle{%s}:%n"
             			                   + "           \\begin{itemize}%n"
-            			                   + "                \\item \\emph{possible values}: ???%n"
-            			                   + "                \\item \\emph{default value}: %s%n"
-            			                   + "                \\item \\emph{description}: ???%n"
+            			                   + "                \\item \\optionPossibleValues{}: ???%n"
+            			                   + "                \\item \\optionDefaultValue{}: %s%n"
+            			                   + "                \\item \\optionDescrption{}: ???%n"
             			                   + "           \\end{itemize}", name, default_value));
             }
             
             writer.println("\\end{itemize}");
             
-            writer.println();
-            writer.println("\\end{document}");
-            
+            if(selfstandingTex) {
+            	writer.println();
+            	writer.println("\\end{document}");
+            }
+                        
             writer.close();            
         } catch (IOException e) {
            
@@ -103,11 +109,19 @@ public class ManualBuilder {
     	result = result.replaceAll("\r\n", ","); // Windows
     	result = result.replaceAll("\n", ",");   // Unix
     	result = result.replaceAll("\r", ",");   // Mac
-    	result.replaceAll(",+", ",");
+    	result = result.replaceAll(",+", ",");
     	// tabs ---> space
-    	result.replaceAll("\t", " ");
-    	result.replaceAll(" +", " ");
-    	String[] results = result.split(",");
+    	result = result.replaceAll("\t", " ");
+    	result = result.replaceAll(" +", " ");
+    	// special Latex chars
+    	String[] results;
+    	if (result.startsWith("{")) {
+    		result = result.replaceAll("\\{", "\\\\{");
+    		result = result.replaceAll("\\}", "\\\\}");
+    		results = new String[] {result}; // keep lists intact
+    	} else {
+    		results = result.split(",");
+    	}
     	for(int i = 0; i < results.length; i++) {
     		results[i] = results[i].trim();
     	}
