@@ -32,14 +32,12 @@ public class ManualBuilder {
             String secName = section.getName();
             if(!default_values.containsKey(secName)) {
                 default_values.put(secName, new TreeMap<Integer, String[]>());
-                System.out.println("[" + secName + "]");
             }
             Integer count = 0;
             for (Enumeration<INIFileNode> e = section.getNodes(); e.hasMoreElements();) {
                 INIFileEntry entry = (INIFileEntry) e.nextElement();
-                default_values.get(secName).put(count, new String[] {entry.getName(), entry.getStringValue()}); // [Rules]: DispersionWeights possibly ugly
+                default_values.get(secName).put(count, new String[] {entry.getName(), entry.getStringValue()});
                 count = new Integer(count.intValue() + 1);
-                //System.out.println("    " + entry.getName() + ": " +  entry.getStringValue());
             }          
         }
         return default_values;
@@ -67,29 +65,26 @@ public class ManualBuilder {
             }
             writer.println("\\begin{document}");
             writer.println();
+            writer.println("\\begin{itemize}");
             
-            writer.println("\\begin{longtable}[c]{| l | l | l | p{0.25\\textwidth} |}");
-            writer.println(String.format("    \\hline%n" +  
-                                         "    \\multicolumn{4}{| c |}{Section %s} \\\\%n" + 
-                                         "    \\hline%n" + 
-                                         "    option & possible values & default & description \\\\%n" + 
-                                         "    \\hline%n" + 
-                                         "    \\endfirsthead%n", sectionName));
-            writer.println(String.format("    \\hline%n" +  
-                                         "    \\multicolumn{4}{| c |}{Section %s continued} \\\\%n" + 
-                                         "    \\hline%n" + 
-                                         "    option & description & default \\\\%n" + 
-                                         "    \\hline%n" + 
-                                         "    \\endhead%n", sectionName));
-            writer.println(String.format("    \\hline%n    \\endfoot%n"));
-            writer.println(String.format("    \\hline%n    \\endlastfoot%n"));
             
             for(Integer key : sectionDefaults.keySet()) {
-            	String[] option_default = sectionDefaults.get(key);
-            	writer.println(String.format("    %s &  & \\texttt{%s} &  \\\\", option_default[0], option_default[1]));
-            }           
-            writer.println();
-            writer.println("\\end{longtable}");
+            	String[] option_default = sectionDefaults.get(key); // option name and its default value
+            	String name = option_default[0];
+            	String[] defaults = nicifyDefaultValue(option_default[1]);
+            	for(int i = 0; i < defaults.length; i++) {
+            		defaults[i] = String.format("\\texttt{%s}", defaults[i]);
+            	}
+            	String default_value = String.join(", ", defaults);
+            	writer.println(String.format("    \\item %s:%n"
+            			                   + "           \\begin{itemize}%n"
+            			                   + "                \\item \\emph{possible values}: ???%n"
+            			                   + "                \\item \\emph{default value}: %s%n"
+            			                   + "                \\item \\emph{description}: ???%n"
+            			                   + "           \\end{itemize}", name, default_value));
+            }
+            
+            writer.println("\\end{itemize}");
             
             writer.println();
             writer.println("\\end{document}");
@@ -98,5 +93,24 @@ public class ManualBuilder {
         } catch (IOException e) {
            
         }
-    } 
+    }
+    
+    
+    private static String[] nicifyDefaultValue(String default_value) {
+    	String result = default_value;
+    	result = result.trim();
+    	// EOL ---> comma
+    	result = result.replaceAll("\r\n", ","); // Windows
+    	result = result.replaceAll("\n", ",");   // Unix
+    	result = result.replaceAll("\r", ",");   // Mac
+    	result.replaceAll(",+", ",");
+    	// tabs ---> space
+    	result.replaceAll("\t", " ");
+    	result.replaceAll(" +", " ");
+    	String[] results = result.split(",");
+    	for(int i = 0; i < results.length; i++) {
+    		results[i] = results[i].trim();
+    	}
+    	return results;
+    }
 }
