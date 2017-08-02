@@ -28,10 +28,13 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Enumeration;
+import java.util.HashMap;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFile;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileNode;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -115,6 +118,10 @@ public class Settings implements Serializable {
         m_SettHMTR = new SettingsHMTR(m_SettAttribute, m_SettGeneral);
         
         m_SettSSL = new SettingsSSL();
+    }
+    
+    public Enumeration<INIFileNode> getSectionsIterator() {
+    	return m_Ini.getNodes();
     }
 
 
@@ -399,6 +406,13 @@ public class Settings implements Serializable {
 
         if (m_SettRules.getCoveringMethod() == SettingsRules.COVERING_METHOD_RULES_FROM_TREE && tempInduceParamNeeded)
             m_SettRules.disableRuleInduceParams();
+    }
+    
+    
+    public static Settings getDefaultSettings() {
+    	Settings sett = new Settings();
+    	sett.create();
+    	return sett;        
     }
 
 }

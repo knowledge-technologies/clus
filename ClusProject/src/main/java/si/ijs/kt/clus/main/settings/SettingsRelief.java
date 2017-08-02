@@ -115,12 +115,12 @@ public class SettingsRelief implements SettingsBase {
 
         m_SectionRelief = new INIFileSection("Relief");
 
-        m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("neighbours", NONELIST));
+        m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("Neighbours", NONELIST));
         m_ReliefNbNeighbours.setInt(RELIEF_NEIGHBOUR_DEFAULT);
-        m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("iterations", NONELIST));
+        m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("Iterations", NONELIST));
         m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);
-        m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("weightNeighbours", false));
-        m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 0.5)); // following Weka,
+        m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("WeightNeighbours", false));
+        m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("WeightingSigma", 0.5)); // following Weka,
                                                                                                     // the authors do
                                                                                                     // not give any
                                                                                                     // suggestions
