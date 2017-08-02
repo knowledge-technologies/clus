@@ -58,6 +58,7 @@ public class INIFileInt extends INIFileEntry {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         return new INIFileInt(getName(), getValue());
     }
@@ -89,6 +90,7 @@ public class INIFileInt extends INIFileEntry {
     }
 
 
+    @Override
     public void setValue(String value) throws NumberFormatException {
         if (m_NameToValue != null) {
             Integer int_value = (Integer) m_NameToValue.get(value);
@@ -105,6 +107,7 @@ public class INIFileInt extends INIFileEntry {
     }
 
 
+    @Override
     public String getStringValue() {
         if (m_ValueToName != null) {
             String name = (String) m_ValueToName.get(new Integer(getValue()));

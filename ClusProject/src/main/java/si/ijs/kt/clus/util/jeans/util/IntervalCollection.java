@@ -262,6 +262,7 @@ public class IntervalCollection implements Serializable {
     }
 
 
+    @Override
     public String toString() {
         if (getNbIntervals() > 0) {
             StringBuffer buf = new StringBuffer();
@@ -354,6 +355,7 @@ class Interval implements Serializable {
     }
 
 
+    @Override
     public String toString() {
         if (m_First == m_Last)
             return String.valueOf(m_First);

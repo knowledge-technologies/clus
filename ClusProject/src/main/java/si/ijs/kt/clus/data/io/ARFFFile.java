@@ -129,7 +129,7 @@ public class ARFFFile {
         Settings sett = schema.getSettings();
         String uptype = atype.toUpperCase();
         while (attrMap.containsKey(aname)) {
-            int[] cnt = (int[]) attrMap.get(aname);
+            int[] cnt = attrMap.get(aname);
             int idx = ++cnt[0];
             aname = aname + "-" + idx;
         }
@@ -413,8 +413,7 @@ public class ARFFFile {
                         if (!Double.isNaN(attrType.getNumeric(tuple)) && !Double.isInfinite(attrType.getNumeric(tuple))) {// Value
                                                                                                                           // not
                                                                                                                           // given
-                            System.err.println("ERROR, isMissing works wrong");
-                            System.exit(0);
+                            throw new ClusException("ERROR, isMissing works wrong");
                         }
                         wrt.print(NUMBER_INF);
                     }

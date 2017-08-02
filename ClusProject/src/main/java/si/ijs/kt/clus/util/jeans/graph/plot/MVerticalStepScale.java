@@ -176,6 +176,6 @@ public class MVerticalStepScale extends MGraphScale {
         float f1 = m_MinValue.getFloat();
         float f2 = m_MaxValue.getFloat();
         float scale = (f - f1) / (f2 - f1) * hi;
-        return hi - (int) Math.round(scale) + y;
+        return hi - Math.round(scale) + y;
     }
 }

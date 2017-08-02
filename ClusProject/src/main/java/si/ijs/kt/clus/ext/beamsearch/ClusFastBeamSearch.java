@@ -79,7 +79,8 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
     }
 
 
-    public ClusBeam initializeBeam(ClusRun run) throws ClusException, IOException {
+    @Override
+    public ClusBeam initializeBeam(ClusRun run) throws Exception {
         ClusBeam beam = super.initializeBeam(run);
         ClusBeamModel model = beam.getBestModel();
         initModelRecursive((ClusNode) model.getModel(), (RowData) run.getTrainingSet());
@@ -104,7 +105,7 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
     }
 
 
-    public void computeGlobalHeuristic(NodeTest test, RowData data, CurrentBestTestAndHeuristic sel) {
+    public void computeGlobalHeuristic(NodeTest test, RowData data, CurrentBestTestAndHeuristic sel) throws ClusException {
         sel.reset(2);
         data.calcPosAndMissStat(test, ClusNode.YES, sel.getPosStat(), sel.getMissStat());
         double global_heur = m_Heuristic.calcHeuristic(sel.getTotStat(), sel.getPosStat(), sel.getMissStat());
@@ -112,7 +113,8 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
     }
 
 
-    public void refineGivenLeaf(ClusNode leaf, ClusBeamModel root, ClusBeam beam, ClusAttrType[] attrs) {
+    @Override
+    public void refineGivenLeaf(ClusNode leaf, ClusBeamModel root, ClusBeam beam, ClusAttrType[] attrs) throws Exception {
         ClusBeamAttrSelector attrsel = (ClusBeamAttrSelector) leaf.getVisitor();
         if (attrsel.isStopCrit()) {
             /* stopping criterion already succeeded for this node */
@@ -189,7 +191,8 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
     }
 
 
-    public void refineModel(ClusBeamModel model, ClusBeam beam, ClusRun run) throws IOException {
+    @Override
+    public void refineModel(ClusBeamModel model, ClusBeam beam, ClusRun run) throws Exception {
         ClusNode tree = (ClusNode) model.getModel();
         ClusBeamModel new_model = model.cloneModel();
         /* Create new model because value can be different */
@@ -197,19 +200,7 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
         if (isBeamPostPrune()) {
             ClusNode clone = tree.cloneTreeWithVisitors();
             m_Constr.enforce(clone, m_MaxTreeSize);
-            /*
-             * if (m_Constr.isModified()) {
-             * System.out.println();
-             * System.out.println("Previous:");
-             * tree.printTree();
-             * System.out.println("Modified:");
-             * clone.printTree();
-             * ClusNode clone2 = tree.cloneTreeWithVisitors();
-             * m_Constr.setDebug(true);
-             * m_Constr.enforce(clone2, m_MaxTreeSize);
-             * System.exit(0);
-             * }
-             */
+           
             if (m_Constr.isFinished()) {
                 model.setFinished(true);
                 return;
@@ -234,7 +225,7 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
     }
 
 
-    public void updateModelRefinement(ClusBeamModel model) {
+    public void updateModelRefinement(ClusBeamModel model) throws ClusException {
         /* Get data into children of last refinement */
         ClusNode leaf = (ClusNode) model.getRefinement();
         if (leaf == null)
@@ -256,7 +247,8 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
     }
 
 
-    public void refineBeam(ClusBeam beam, ClusRun run) throws IOException {
+    @Override
+    public void refineBeam(ClusBeam beam, ClusRun run) throws Exception {
         super.refineBeam(beam, run);
         ArrayList models = beam.toArray();
         for (int i = 0; i < models.size(); i++) {

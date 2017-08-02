@@ -48,6 +48,7 @@ public class DrawableExpandButton extends Drawable {
     }
 
 
+    @Override
     public void draw(Graphics2D g, DrawableCanvas canvas, int xofs, int yofs) {
         g.setStroke(DrawableCanvas.SINGLE_STROKE);
         g.setColor(m_Background);
@@ -78,6 +79,7 @@ public class DrawableExpandButton extends Drawable {
     }
 
 
+    @Override
     public boolean mousePressed(DrawableCanvas canvas, int x, int y, MouseEvent evt) {
         m_bState = !m_bState;
         if (m_hListener != null)
@@ -86,6 +88,7 @@ public class DrawableExpandButton extends Drawable {
     }
 
 
+    @Override
     public boolean mouseSensitive() {
         return true;
     }

@@ -8,6 +8,7 @@ import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.distance.complex.TupleDistance;
 import si.ijs.kt.clus.ext.structuredTypes.Tuple;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class MinkowskiDistance extends TupleDistance {
@@ -30,12 +31,14 @@ public class MinkowskiDistance extends TupleDistance {
     }
 
 
-    public double calcDistance(Object t1, Object t2) {
+    @Override
+    public double calcDistance(Object t1, Object t2) throws ClusException {
         return calcDistance((Tuple) t1, (Tuple) t2);
     }
 
 
-    public double calcDistance(Tuple t1, Tuple t2) {
+    @Override
+    public double calcDistance(Tuple t1, Tuple t2) throws ClusException {
         double distance = 0;
         if (!Double.isInfinite(m_Order)) {
             int i = 0;

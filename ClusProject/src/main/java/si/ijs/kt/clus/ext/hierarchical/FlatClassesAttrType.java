@@ -44,12 +44,14 @@ public class FlatClassesAttrType extends ClassesAttrType {
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
 
     public class MySerializable extends ClusSerializable {
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             ClassesTuple other = (ClassesTuple) tuple.getObjVal(m_Mimic.getArrayIndex());
             tuple.setObjectVal(other.toFlat(m_Table), getArrayIndex());

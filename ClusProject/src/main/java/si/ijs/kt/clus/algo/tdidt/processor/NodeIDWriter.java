@@ -53,6 +53,7 @@ public class NodeIDWriter extends ClusModelProcessor {
     }
 
 
+    @Override
     public void initialize(ClusModel model, ClusSchema schema) throws IOException {
         m_Attrs = new MyArray();
         int nb = schema.getNbAttributes();
@@ -73,16 +74,19 @@ public class NodeIDWriter extends ClusModelProcessor {
     }
 
 
+    @Override
     public void terminate(ClusModel model) throws IOException {
         m_Writer.close();
     }
 
 
+    @Override
     public boolean needsModelUpdate() {
         return true;
     }
 
 
+    @Override
     public void modelUpdate(DataTuple tuple, ClusModel model) {
         ClusNode node = (ClusNode) model;
         if (m_First) {
@@ -103,6 +107,7 @@ public class NodeIDWriter extends ClusModelProcessor {
     }
 
 
+    @Override
     public void modelDone() {
         m_Writer.println(").");
         m_First = true;

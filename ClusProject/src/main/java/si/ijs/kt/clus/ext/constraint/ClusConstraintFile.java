@@ -32,6 +32,7 @@ import java.util.HashMap;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.model.io.ClusTreeReader;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class ClusConstraintFile {
@@ -52,7 +53,7 @@ public class ClusConstraintFile {
     }
 
 
-    public ClusNode getClone(String fname) {
+    public ClusNode getClone(String fname) throws ClusException {
         return (ClusNode) get(fname).cloneTree();
     }
 

@@ -62,11 +62,12 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsEnsemble;
-import si.ijs.kt.clus.main.settings.SettingsGeneral;
-import si.ijs.kt.clus.main.settings.SettingsMLC;
-import si.ijs.kt.clus.main.settings.SettingsOutput;
-import si.ijs.kt.clus.main.settings.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
+import si.ijs.kt.clus.main.settings.section.SettingsMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
@@ -160,7 +161,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         // ClusStatManager.MODE_CLASSIFY)));
         m_OutEnsembleAt = sett.getNbBaggingSets().getIntVectorSorted();
         m_NbMaxBags = getNbTrees(m_OutEnsembleAt.length - 1);
-        m_FeatRank = sett.shouldPerformRanking() && !settMain.getExperimental().IS_XVAL;
+        settMain.getExperimental();
+        m_FeatRank = sett.shouldPerformRanking() && !SettingsExperimental.IS_XVAL;
         if (m_FeatRank && !sett.shouldEstimateOOB() && sett.getRankingMethod() == SettingsEnsemble.RANKING_RFOREST) {
             System.err.println("For Feature Ranking RForest, OOB estimate of error should also be performed.");
             System.err.println("OOB Error Estimate is set to true.");
@@ -313,11 +315,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     /**
      * Train a decision tree ensemble with an algorithm given in settings
-     * 
-     * @throws ClusException,
-     *         IOException, InterruptedException
+     * @throws Exception 
      */
-    public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    @Override
+    public void induceAll(ClusRun cr) throws Exception {
 
         SettingsEnsemble set = getSettings().getEnsemble();
         SettingsGeneral setg = getSettings().getGeneral();
@@ -346,8 +347,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         int nbRankings = m_FeatureRankings[0].getNbFeatureRankings();
         for (int forest = 1; forest < m_FeatureRankings.length; forest++) {
             if (m_FeatureRankings[forest].getNbFeatureRankings() != nbRankings) {
-                System.err.println("The number of feature rankings should be the same for all forests! Exiting.");
-                System.exit(-1);
+                throw new ClusException("The number of feature rankings should be the same for all forests! Exiting.");
             }
         }
         if (setg.getVerbose() > 0) {
@@ -465,7 +465,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    @Override
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
         ClusRun myRun = new ClusRun(cr);
         induceAll(myRun);
         ClusModelInfo info = myRun.getModelInfo(ClusModel.ORIGINAL);
@@ -475,7 +476,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     // this ensemble method builds random forests (i.e. chooses the best test from a subset of attributes at each node),
     // but does not construct bootstrap replicates of the dataset
-    public void induceRForestNoBootstrap(ClusRun cr) throws ClusException, IOException {
+    public void induceRForestNoBootstrap(ClusRun cr) throws Exception {
         long summ_time = 0; // = ResourceInfo.getTime();
 
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
@@ -537,7 +538,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void induceSubspaces(ClusRun cr) throws ClusException, IOException {
+    public void induceSubspaces(ClusRun cr) throws Exception {
         //long summ_time = 0; // = ResourceInfo.getTime();
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
         TupleIterator test_iterator = m_OptMode ? cr.getTestIter() : null; // = test set iterator
@@ -603,11 +604,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void induceBagging(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    public void induceBagging(ClusRun cr) throws ClusException, IOException, InterruptedException, ExecutionException {
         int nbrows = cr.getTrainingSet().getNbRows();
         ((RowData) cr.getTrainingSet()).addIndices(); // necessary to be able to print paths
-        if ((RowData) cr.getTestSet() != null) {
-            ((RowData) cr.getTestSet()).addIndices();
+        if (cr.getTestSet() != null) {
+            cr.getTestSet().addIndices();
         }
 
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
@@ -759,12 +760,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
             }
             catch (InterruptedException e) {
-                e.printStackTrace();
-                System.exit(-1);
-            }
-            catch (ExecutionException e) {
-                e.printStackTrace();
-                System.exit(-1);
+                throw new ClusException(e.toString());
             }
         }
 
@@ -807,7 +803,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
+    public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws Exception {
         long one_bag_time = ResourceInfo.getTime();
         SettingsEnsemble sett = cr.getStatManager().getSettings().getEnsemble();
         SettingsGeneral setg = cr.getStatManager().getSettings().getGeneral();
@@ -904,8 +900,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             PrintWriter pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream("tree_" + i + ".path")));
             ((ClusNode) model).numberCompleteTree();
             ((ClusNode) model).printPaths(pw, "", "", (RowData) cr.getTrainingSet(), oob_sel, false);
-            if ((RowData) cr.getTestSet() != null) {
-                ((ClusNode) model).printPaths(pw, "", "", (RowData) cr.getTestSet(), null, true);
+            if (cr.getTestSet() != null) {
+                ((ClusNode) model).printPaths(pw, "", "", cr.getTestSet(), null, true);
             }
         }
 
@@ -955,7 +951,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void makeForestFromBags(ClusRun cr, TupleIterator train_iterator, TupleIterator test_iterator) throws ClusException, IOException {
+    public void makeForestFromBags(ClusRun cr, TupleIterator train_iterator, TupleIterator test_iterator) throws ClusException, IOException, InterruptedException {
         try {
             OOBSelection oob_total = null; // = total OOB selection
             OOBSelection oob_sel = null; // = current OOB selection
@@ -1029,7 +1025,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void induceBaggingSubspaces(ClusRun cr) throws ClusException, IOException {
+    public void induceBaggingSubspaces(ClusRun cr) throws Exception {
         int nbrows = cr.getTrainingSet().getNbRows();
 
         long summ_time = 0; // = ResourceInfo.getTime();
@@ -1162,14 +1158,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
                 indTimeSequential += results.getInductionTime();
             }
-            catch (InterruptedException e) {
-                e.printStackTrace();
-                System.exit(-1);
-            }
-            catch (ExecutionException e) {
-                e.printStackTrace();
-                System.exit(-1);
-            }
+            catch (Exception e) {
+                throw new ClusException(e.toString());
+            } 
         }
 
         cr.setInductionTimeSequential(indTimeSequential);
@@ -1177,7 +1168,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager mgr) throws ClusException, IOException, InterruptedException {
+    public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager mgr) throws Exception {
         long one_bag_time = ResourceInfo.getTime();
         if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Bag: " + i);
@@ -1282,7 +1273,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void postProcessForest(ClusRun cr) throws ClusException {
+    public void postProcessForest(ClusRun cr) throws ClusException, InterruptedException {
         //      ClusModelInfo def_info = cr.addModelInfo("Default");
         //if (m_OptMode)
         //    m_DForest = null;
@@ -1339,7 +1330,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public synchronized void outputBetweenForest(ClusRun cr, Clus cl, String addname) throws IOException, ClusException {
+    public synchronized void outputBetweenForest(ClusRun cr, Clus cl, String addname) throws IOException, ClusException, InterruptedException {
         // if (m_OptMode){
         // ClusEnsembleInduceOptimization.roundPredictions();
         // }
@@ -1488,8 +1479,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * 
      * @param model
      * @param treeNumber
+     * @throws InterruptedException 
      */
-    private void updateCounts(ClusNode model, int treeNumber) {
+    private void updateCounts(ClusNode model, int treeNumber) throws InterruptedException {
 
         //models, nodes, leaves };
 
@@ -1565,7 +1557,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    private void updatePredictionsForTuples(ClusModel model, TupleIterator train_iterator, TupleIterator test_iterator, int treeNumber) throws IOException, ClusException {
+    private void updatePredictionsForTuples(ClusModel model, TupleIterator train_iterator, TupleIterator test_iterator, int treeNumber) throws IOException, ClusException, InterruptedException {
         //m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
         for (int forest = m_OForests.length - 1; forest >= 0; forest--) {
             if (getNbTrees(forest) >= treeNumber) {

@@ -84,15 +84,14 @@ public abstract class ClusInductionAlgorithmType {
     }
 
 
-    public abstract void pruneAll(ClusRun cr) throws ClusException, IOException;
+    public abstract void pruneAll(ClusRun cr) throws ClusException, IOException, InterruptedException;
 
 
-    public abstract ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException;
+    public abstract ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException, InterruptedException;
 
+    // should be implemented by subclass
+    public abstract void postProcess(ClusRun cr) throws ClusException, IOException, InterruptedException;
 
-    public void postProcess(ClusRun cr) throws ClusException, IOException {
-        // should be implemented by subclass
-    }
 
 
     /**
@@ -100,11 +99,9 @@ public abstract class ClusInductionAlgorithmType {
      * Also collects the information about computational cost of training.
      * 
      * @param cr
-     * @throws ClusException
-     * @throws IOException
-     * @throws InterruptedException
+     * @throws Exception 
      */
-    public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    public void induceAll(ClusRun cr) throws Exception {
         
         // induce default model
         ClusModelInfo def_info = cr.addModelInfo(ClusModel.DEFAULT);
@@ -124,7 +121,7 @@ public abstract class ClusInductionAlgorithmType {
             
             String parallelTime = "";
             if (getSettings().getEnsemble().isEnsembleWithParallelExecution()){
-                parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format(((double)cr.getInductionTimeSequential() / 1000.0)) + " sec)";
+                parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format((cr.getInductionTimeSequential() / 1000.0)) + " sec)";
             }
             
             String cpu = ResourceInfo.isLibLoaded() ? " (CPU)" : "";
@@ -134,13 +131,13 @@ public abstract class ClusInductionAlgorithmType {
     }
 
 
-    public ClusModel induceSingle(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    public ClusModel induceSingle(ClusRun cr) throws Exception {
         ClusModel unpruned = induceSingleUnpruned(cr);
         return pruneSingle(unpruned, cr);
     }
 
 
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
         return getInduce().induceSingleUnpruned(cr);
     }
 

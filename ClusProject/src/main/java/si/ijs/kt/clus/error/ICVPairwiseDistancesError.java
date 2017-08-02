@@ -36,6 +36,7 @@ import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class ICVPairwiseDistancesError extends ClusError {
@@ -52,7 +53,7 @@ public class ICVPairwiseDistancesError extends ClusError {
     }
 
 
-    public static double computeICVPairwiseDistances(ClusDistance dist, RowData data) {
+    public static double computeICVPairwiseDistances(ClusDistance dist, RowData data) throws ClusException {
         double sum = 0.0;
         double sumWiDiag = 0.0;
         double sumWiTria = 0.0;
@@ -73,7 +74,7 @@ public class ICVPairwiseDistancesError extends ClusError {
     }
 
 
-    public void computeRecursive(ClusNode node, RowData data) {
+    public void computeRecursive(ClusNode node, RowData data) throws ClusException {
         int nb = node.getNbChildren();
         if (nb == 0) {
             double variance = computeICVPairwiseDistances(m_Dist, data);
@@ -91,13 +92,13 @@ public class ICVPairwiseDistancesError extends ClusError {
     }
 
 
-    public void computeForRule(ClusRule rule, ClusSchema schema) {
+    public void computeForRule(ClusRule rule, ClusSchema schema) throws ClusException {
         RowData covered = new RowData(rule.getData(), schema);
         m_Value = computeICVPairwiseDistances(m_Dist, covered);
     }
 
 
-    public void computeForRuleSet(ClusRuleSet set, ClusSchema schema) {
+    public void computeForRuleSet(ClusRuleSet set, ClusSchema schema) throws ClusException {
         double sumWeight = 0.0;
         for (int i = 0; i < set.getModelSize(); i++) {
             RowData covered = new RowData(set.getRule(i).getData(), schema);
@@ -115,7 +116,8 @@ public class ICVPairwiseDistancesError extends ClusError {
     }
 
 
-    public void compute(RowData data, ClusModel model) {
+    @Override
+    public void compute(RowData data, ClusModel model) throws ClusException {
         if (model instanceof ClusNode) {
             ClusNode tree = (ClusNode) model;
             computeRecursive(tree, data);
@@ -130,6 +132,7 @@ public class ICVPairwiseDistancesError extends ClusError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter wrt, int detail) {
         StringBuffer res = new StringBuffer();
         res.append(String.valueOf(m_Value));
@@ -140,17 +143,20 @@ public class ICVPairwiseDistancesError extends ClusError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new ICVPairwiseDistancesError(getParent(), m_Dist);
     }
 
 
+    @Override
     public String getName() {
         return "ICV-Pairwise-Distances";
     }
 
 
-	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+	@Override
+    public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
 		return true;
 	}
     

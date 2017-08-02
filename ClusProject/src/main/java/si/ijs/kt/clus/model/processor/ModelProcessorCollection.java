@@ -73,7 +73,7 @@ public class ModelProcessorCollection extends MyArray {
     }
 
 
-    public final void terminate(ClusModel model) throws IOException {
+    public final void terminate(ClusModel model) throws IOException, ClusException {
         if (model != null) {
             for (int i = 0; i < size(); i++) {
                 ClusModelProcessor proc = (ClusModelProcessor) elementAt(i);
@@ -121,7 +121,7 @@ public class ModelProcessorCollection extends MyArray {
         }
     }
 
-    public final void exampleUpdate(DataTuple tuple, ClusStatistic distr) throws IOException {
+    public final void exampleUpdate(DataTuple tuple, ClusStatistic distr) throws IOException, ClusException {
         for (int j = 0; j < size(); j++) {
             ClusModelProcessor proc = (ClusModelProcessor) elementAt(j);
             proc.exampleUpdate(tuple, distr);

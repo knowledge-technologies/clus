@@ -27,6 +27,7 @@ import si.ijs.kt.clus.util.jeans.util.sort.MComparator;
 
 public class MFileSorter implements MComparator {
 
+    @Override
     public int compare(Object obj1, Object obj2) {
         String n1 = ((MFileEntry) obj1).getName();
         String n2 = ((MFileEntry) obj2).getName();

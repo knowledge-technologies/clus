@@ -65,11 +65,13 @@ public class PredictionWriter extends ClusModelProcessor {
     }
 
 
+    @Override
     public boolean shouldProcessModel(ClusModelInfo info) {
         return info.shouldWritePredictions() && !info.getName().equals("Default");
     }
 
 
+    @Override
     public void addModelInfo(ClusModelInfo info) {
         if (!m_ModelNamesMap.contains(info.getName())) {
             m_ModelNamesMap.add(info.getName());
@@ -95,6 +97,7 @@ public class PredictionWriter extends ClusModelProcessor {
     }
 
 
+    @Override
     public void initializeAll(ClusSchema schema) throws IOException, ClusException {
         if (m_Initialized)
             return;
@@ -112,6 +115,7 @@ public class PredictionWriter extends ClusModelProcessor {
     }
 
 
+    @Override
     public void terminateAll() throws IOException {
         if (!m_Global)
             close();
@@ -134,11 +138,13 @@ public class PredictionWriter extends ClusModelProcessor {
     }
 
 
+    @Override
     public boolean needsModelUpdate() {
         return true;
     }
 
 
+    @Override
     public void modelUpdate(DataTuple tuple, ClusModel model) throws IOException {
         if (m_ModelParts.length() != 0)
             m_ModelParts.append("+");
@@ -146,6 +152,7 @@ public class PredictionWriter extends ClusModelProcessor {
     }
 
 
+    @Override
     public void exampleUpdate(DataTuple tuple) {
         for (int j = 0; j < m_Attrs.size(); j++) {
             if (j != 0)
@@ -156,17 +163,20 @@ public class PredictionWriter extends ClusModelProcessor {
     }
 
 
+    @Override
     public void exampleDone() {
         m_Writer.println();
         m_ModelParts.setLength(0);
     }
     
+    @Override
     public void flushWriter() {
         m_Writer.flush();
     }
 
 
-    public void exampleUpdate(DataTuple tuple, ClusStatistic distr) {
+    @Override
+    public void exampleUpdate(DataTuple tuple, ClusStatistic distr) throws ClusException {
         m_Writer.print(",");
         if (distr == null) {
             m_Writer.print("???");

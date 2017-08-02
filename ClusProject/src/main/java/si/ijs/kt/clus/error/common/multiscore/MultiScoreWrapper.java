@@ -52,21 +52,25 @@ public class MultiScoreWrapper extends ClusNumericError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return m_Child.shouldBeLow();
     }
 
 
+    @Override
     public void reset() {
         m_Child.reset();
     }
 
 
+    @Override
     public double getModelError() {
         return m_Child.getModelError();
     }
 
 
+    @Override
     public void addExample(double[] real, double[] predicted) {
         for (int i = 0; i < m_Real.length; i++) {
             m_Real[i] = (byte) (real[i] > 0.5 ? 0 : 1);
@@ -76,10 +80,12 @@ public class MultiScoreWrapper extends ClusNumericError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         // double[] predicted = pred.getNumericPred();
         for (int i = 0; i < m_Dim; i++) {
@@ -89,12 +95,14 @@ public class MultiScoreWrapper extends ClusNumericError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         MultiScoreWrapper oe = (MultiScoreWrapper) other;
         m_Child.add(oe.m_Child);
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         m_Child.showModelError(out, detail);
     }
@@ -104,11 +112,13 @@ public class MultiScoreWrapper extends ClusNumericError {
     // m_Child.hasSummary();
     // }
 
+    @Override
     public String getName() {
         return m_Child.getName();
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MultiScoreWrapper((ClusNominalError) m_Child.getErrorClone(par), m_Attrs);
     }

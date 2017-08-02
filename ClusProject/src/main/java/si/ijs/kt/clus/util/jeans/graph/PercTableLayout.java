@@ -88,10 +88,12 @@ public class PercTableLayout implements LayoutManager {
     }
 
 
+    @Override
     public void addLayoutComponent(String name, Component comp) {
     }
 
 
+    @Override
     public void removeLayoutComponent(Component comp) {
     }
 
@@ -180,6 +182,7 @@ public class PercTableLayout implements LayoutManager {
     }
 
 
+    @Override
     public Dimension preferredLayoutSize(Container parent) {
         Dimension dim = new Dimension(0, 0);
         setSizes(parent);
@@ -190,11 +193,13 @@ public class PercTableLayout implements LayoutManager {
     }
 
 
+    @Override
     public Dimension minimumLayoutSize(Container parent) {
         return preferredLayoutSize(parent);
     }
 
 
+    @Override
     public void layoutContainer(Container parent) {
         Insets insets = parent.getInsets();
         int maxWidth = parent.getSize().width - (insets.left + insets.right);
@@ -240,6 +245,7 @@ public class PercTableLayout implements LayoutManager {
     }
 
 
+    @Override
     public String toString() {
         return getClass().getName() + " [Gap: " + b_size + "]";
     }

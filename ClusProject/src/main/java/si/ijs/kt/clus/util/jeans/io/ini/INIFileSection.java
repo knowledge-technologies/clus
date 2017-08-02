@@ -37,6 +37,8 @@ public class INIFileSection extends INIFileNode {
 
     protected Hashtable<String, INIFileNode> m_hEntries = new Hashtable<String, INIFileNode>();
     protected Vector<INIFileNode> m_hEntryList = new Vector<INIFileNode>();
+    protected int m_Index = 1; // index of this section in the INI file
+
 
 
     public INIFileSection(String name) {
@@ -49,16 +51,19 @@ public class INIFileSection extends INIFileNode {
     }
 
 
+    @Override
     public boolean isSectionGroup() {
         return false;
     }
 
 
+    @Override
     public boolean isSection() {
         return true;
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         INIFileSection sec = new INIFileSection(getName());
         for (Enumeration<INIFileNode> e = getNodes(); e.hasMoreElements();) {
@@ -251,6 +256,7 @@ public class INIFileSection extends INIFileNode {
     }
 
 
+    @Override
     public void save(PrintWriter writer) throws IOException {
         save(null, writer);
     }

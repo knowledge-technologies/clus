@@ -50,40 +50,48 @@ public class FakeTest extends NodeTest {
     }
 
 
+    @Override
     public int predictWeighted(DataTuple tuple) {
         return -1;
     }
 
 
+    @Override
     public boolean equals(NodeTest test) {
         return false;
     }
 
 
+    @Override
     public ClusAttrType getType() {
         return null;
     }
 
 
+    @Override
     public void setType(ClusAttrType type) {
     }
 
 
+    @Override
     public String getString() {
         return m_Line;
     }
 
 
+    @Override
     public String getPythonString() {
         return getString();
     }
 
 
+    @Override
     public int getNbLines() {
         return m_Lines.size();
     }
 
 
+    @Override
     public String getLine(int i) {
         return (String) m_Lines.elementAt(i);
     }

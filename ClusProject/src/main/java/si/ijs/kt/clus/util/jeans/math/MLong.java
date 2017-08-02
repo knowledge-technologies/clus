@@ -40,46 +40,54 @@ public class MLong extends MNumber {
     }
 
 
+    @Override
     public int getLevel() {
         return 0;
     }
 
 
+    @Override
     public MNumber doAdd(MNumber other) {
         return new MLong(value + ((MLong) other).value);
     }
 
 
+    @Override
     public MNumber doSubstract(MNumber other) {
         return new MLong(value - ((MLong) other).value);
     }
 
 
+    @Override
     public MNumber doMultiply(MNumber other) {
         return new MLong(value * ((MLong) other).value);
     }
 
 
+    @Override
     public MNumber doDivide(MNumber other) {
         return new MLong(value / ((MLong) other).value);
     }
 
 
+    @Override
     public MNumber convertTo(MNumber other) {
         if (other instanceof MLong)
             return this;
         if (other instanceof MDouble)
-            return new MDouble((double) value);
+            return new MDouble(value);
         else
             return new MComplex(this, ZERO);
     }
 
 
+    @Override
     public double getDouble() {
         return value;
     }
 
 
+    @Override
     public String toString() {
         return String.valueOf(value);
     }

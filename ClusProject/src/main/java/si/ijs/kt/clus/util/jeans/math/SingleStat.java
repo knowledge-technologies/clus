@@ -110,6 +110,7 @@ public class SingleStat {
     }
 
 
+    @Override
     public String toString() {
         return "" + getMean() + " (" + getStdDev() + ") " + getMin() + "/" + getMax();
     }

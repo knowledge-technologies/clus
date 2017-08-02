@@ -55,17 +55,20 @@ public class ILevelCStatistic extends RegressionStat {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         return new ILevelCStatistic(this.m_Settings, m_Numeric);
     }
 
 
+    @Override
     public String getString(StatisticPrintInfo info) {
         String res = super.getString(info);
         return res + " L=" + getClusterID();
     }
 
 
+    @Override
     public String getPredictWriterString(DataTuple tuple) {
         return "";
     }

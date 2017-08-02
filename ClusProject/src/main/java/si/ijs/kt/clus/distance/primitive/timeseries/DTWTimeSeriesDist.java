@@ -88,11 +88,13 @@ public class DTWTimeSeriesDist extends TimeSeriesDist {
     }
 
 
+    @Override
     public double calcDistance(TimeSeries t1, TimeSeries t2) {
         return calcDistance(t1, t2, Math.max(Math.max(Math.abs(t1.length() - t2.length()) + 1, t1.length() / 2), t2.length() / 2));
     }
 
 
+    @Override
     public String getDistanceName() {
         return "DTWTimeSeriesDist";
     }

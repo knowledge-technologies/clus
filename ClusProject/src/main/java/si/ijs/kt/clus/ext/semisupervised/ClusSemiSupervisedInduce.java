@@ -19,7 +19,7 @@ import si.ijs.kt.clus.ext.hierarchical.HierErrorMeasures;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.RandomSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -48,7 +48,7 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void partitionData(ClusRun cr) throws IOException, ClusException {
+    public void partitionData(ClusRun cr) throws IOException, ClusException, InterruptedException {
 
         m_UnlabeledData = cr.getUnlabeledSet();
         m_TrainingSet = new RowData(cr.getStatManager().getSchema());
@@ -130,8 +130,10 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
      *        only the first maxInstanceIndex will be taken
      *        into account
      * @return
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    public ClusError calculateError(ClusModel model, RowData testSet, int maxInstanceIndex) {
+    public ClusError calculateError(ClusModel model, RowData testSet, int maxInstanceIndex) throws ClusException, InterruptedException {
         ClusError error = null;
         ClusErrorList ErrorList = new ClusErrorList();
 
@@ -178,7 +180,7 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusError calculateError(RowData testSet) {
+    public ClusError calculateError(RowData testSet) throws ClusException, InterruptedException {
         return calculateError(m_Model, testSet, testSet.getNbRows());
     }
 
@@ -197,8 +199,10 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
      *        used in self-training to calculate OOBError only on the originally
      *        labeled examples.
      * @return OOB Error
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    public ClusError getOOBError(RowData all_data, int maxInstanceIndex) {
+    public ClusError getOOBError(RowData all_data, int maxInstanceIndex) throws ClusException, InterruptedException {
 
         ClusError error = null;
         ClusErrorList OOBErrorList = new ClusErrorList();

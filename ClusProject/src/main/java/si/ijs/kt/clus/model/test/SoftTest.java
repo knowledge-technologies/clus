@@ -47,16 +47,19 @@ public abstract class SoftTest extends NodeTest {
     }
 
 
+    @Override
     public int predictWeighted(DataTuple tuple) {
         return ClusNode.NO;
     }
 
 
+    @Override
     public boolean equals(NodeTest test) {
         return false;
     }
 
 
+    @Override
     public boolean isSoft() {
         return true;
     }

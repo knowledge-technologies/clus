@@ -27,11 +27,13 @@ import si.ijs.kt.clus.util.jeans.math.MNumber;
 
 public class ProductExpression extends BinaryExpression {
 
+    @Override
     public Expression createSimilarExpression() {
         return new ProductExpression();
     }
 
 
+    @Override
     public MNumber getValue() {
         return leftexpr.getValue().multiply(rightexpr.getValue());
     }

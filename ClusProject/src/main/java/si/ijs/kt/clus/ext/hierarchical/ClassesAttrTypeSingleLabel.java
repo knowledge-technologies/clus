@@ -50,6 +50,7 @@ public class ClassesAttrTypeSingleLabel extends ClassesAttrType {
     }
 
 
+    @Override
     public ClusAttrType cloneType() {
         ClassesAttrTypeSingleLabel at = new ClassesAttrTypeSingleLabel(m_Name, m_Hier);
         cloneType(at);
@@ -57,12 +58,14 @@ public class ClassesAttrTypeSingleLabel extends ClassesAttrType {
     }
 
 
+    @Override
     public void updatePredictWriterSchema(ClusSchema schema) {
         String name = getName();
         schema.addAttrType(new StringAttrType(name + "-a"));
     }
 
 
+    @Override
     public String getPredictionWriterString(DataTuple tuple) {
         StringBuffer buf = new StringBuffer();
         buf.append(getString(tuple));

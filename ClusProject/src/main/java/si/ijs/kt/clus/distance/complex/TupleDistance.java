@@ -28,6 +28,7 @@ import si.ijs.kt.clus.ext.structuredTypes.Tuple;
 import si.ijs.kt.clus.ext.structuredTypes.TupleStatistic;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 public abstract class TupleDistance extends ClusStructuredDistance {
 
@@ -39,22 +40,25 @@ public abstract class TupleDistance extends ClusStructuredDistance {
 		m_Attr = attr;
 	}
 
-	public abstract double calcDistance(Tuple t1, Tuple t2);
+	public abstract double calcDistance(Tuple t1, Tuple t2) throws ClusException;
 
-	public double calcDistance(Object t1, Object t2){
+	@Override
+    public double calcDistance(Object t1, Object t2) throws ClusException{
 		Tuple s1 = (Tuple)t1;
 		Tuple s2 = (Tuple)t2;
 		return calcDistance(s1, s2);
 	}
 
 	
-	public double calcDistance(DataTuple t1, DataTuple t2) {
+	@Override
+    public double calcDistance(DataTuple t1, DataTuple t2) throws ClusException {
 		Tuple s1 = m_Attr.getTuple(t1);
 		Tuple s2 = m_Attr.getTuple(t2);
 		return calcDistance(s1, s2);
 	}
 
-	public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {
+	@Override
+    public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) throws ClusException {
 		Tuple tu1 = m_Attr.getTuple(t1);
 		TupleStatistic stat = (TupleStatistic)s2;
 		return calcDistance(tu1, stat.getRepresentativeMedoid());

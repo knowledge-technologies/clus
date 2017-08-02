@@ -122,12 +122,12 @@ public abstract class ClusError implements Serializable {
     }
 
 
-    public void addExample(DataTuple tuple, ClusStatistic pred) {
+    public void addExample(DataTuple tuple, ClusStatistic pred) throws ClusException {
         System.err.println(getClass().getName() + ": addExample() not implemented!");
     }
 
 
-    public void addExample(DataTuple real, DataTuple pred) {
+    public void addExample(DataTuple real, DataTuple pred) throws ClusException {
         System.err.println(getClass().getName() + ": addExample() not implemented!");
     }
 

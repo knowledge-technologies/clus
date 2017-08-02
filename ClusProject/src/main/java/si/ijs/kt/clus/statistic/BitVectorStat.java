@@ -28,6 +28,7 @@ import si.ijs.kt.clus.data.cols.ColTarget;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.list.BitList;
 
 
@@ -45,6 +46,7 @@ public class BitVectorStat extends ClusStatistic {
     }
 
     
+    @Override
     public ClusStatistic cloneStat() {
         BitVectorStat stat = new BitVectorStat(this.m_Settings);
         stat.cloneFrom(this);
@@ -56,17 +58,20 @@ public class BitVectorStat extends ClusStatistic {
     }
 
 
+    @Override
     public void setSDataSize(int nbex) {
         m_Bits.resize(nbex);
         m_Modified = true;
     }
 
 
+    @Override
     public void update(ColTarget target, int idx) {
         System.err.println("BitVectorStat: this version of update not implemented");
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         m_SumWeight += tuple.getWeight();
         m_Bits.setBit(idx);
@@ -74,20 +79,24 @@ public class BitVectorStat extends ClusStatistic {
     }
 
 
-    public void calcMean() {
+    @Override
+    public void calcMean() throws ClusException {
     }
 
 
+    @Override
     public String getArrayOfStatistic() {
         return "[" + String.valueOf(m_SumWeight) + "]";
     }
 
 
+    @Override
     public String getString(StatisticPrintInfo info) {
         return String.valueOf(m_SumWeight);
     }
 
 
+    @Override
     public void reset() {
         m_SumWeight = 0.0;
         m_Bits.reset();
@@ -95,6 +104,7 @@ public class BitVectorStat extends ClusStatistic {
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         BitVectorStat or = (BitVectorStat) other;
         m_SumWeight = or.m_SumWeight;
@@ -103,11 +113,13 @@ public class BitVectorStat extends ClusStatistic {
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
         System.err.println("BitVectorStat: addPrediction not implemented");
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
         BitVectorStat or = (BitVectorStat) other;
         m_SumWeight += or.m_SumWeight;
@@ -116,11 +128,13 @@ public class BitVectorStat extends ClusStatistic {
     }
 
 
+    @Override
     public void addScaled(double scale, ClusStatistic other) {
         System.err.println("BitVectorStat: addScaled not implemented");
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
         BitVectorStat or = (BitVectorStat) other;
         m_SumWeight -= or.m_SumWeight;
@@ -129,6 +143,7 @@ public class BitVectorStat extends ClusStatistic {
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
         BitVectorStat or = (BitVectorStat) other;
         m_SumWeight = or.m_SumWeight - m_SumWeight;
@@ -142,28 +157,33 @@ public class BitVectorStat extends ClusStatistic {
     }
 
 
+    @Override
     public double[] getNumericPred() {
         System.err.println("BitVectorStat: getNumericPred not implemented");
         return null;
     }
 
 
+    @Override
     public int[] getNominalPred() {
         System.err.println("BitVectorStat: getNominalPred not implemented");
         return null;
     }
 
 
+    @Override
     public String getPredictedClassName(int idx) {
         return "";
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes) {
         System.err.println(getClass().getName() + "BitVectorStat: vote not implemented");
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         System.err.println(getClass().getName() + "BitVectorStat: vote not implemented");
     }

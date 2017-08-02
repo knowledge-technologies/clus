@@ -72,7 +72,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
     protected Clus m_Clus;
 
 
-    public void run(String[] args) throws IOException, ClusException {
+    public void run(String[] args) throws IOException, ClusException, InterruptedException {
         m_Clus = new Clus();
         Settings sett = m_Clus.getSettings();
         CMDLineArgs cargs = new CMDLineArgs(this);
@@ -222,7 +222,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
     }
 
 
-    void evaluateRuleSet(ClusRun cr, ClusRuleSet rules) throws IOException, ClusException {
+    void evaluateRuleSet(ClusRun cr, ClusRuleSet rules) throws IOException, ClusException, InterruptedException {
         Settings sett = m_Clus.getSettings();
         ClusOutput output = new ClusOutput(sett.getGeneric().getAppName() + ".rules.out", m_Clus.getSchema(), sett);
         ClusModelInfo info = cr.addModelInfo(ClusModel.DEFAULT);
@@ -237,7 +237,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
     }
 
 
-    public void showValuesForGene(ClusRun cr, ClusRuleSet rules, String gene) throws IOException, ClusException {
+    public void showValuesForGene(ClusRun cr, ClusRuleSet rules, String gene) throws IOException, ClusException, InterruptedException {
         DataTuple tuple = null;
         if (cr.getTrainingSet() != null) {
             System.out.println("Searching for gene in training set");
@@ -249,7 +249,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
         }
         if (tuple == null && cr.getTestSet() != null) {
             System.out.println("Searching for gene in test set");
-            tuple = ((RowData) cr.getTestSet()).findTupleByKey(gene);
+            tuple = cr.getTestSet().findTupleByKey(gene);
         }
         if (tuple == null) {
             System.out.println("Can't find gene in data set");
@@ -278,21 +278,25 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
     }
 
 
+    @Override
     public String[] getOptionArgs() {
         return g_Options;
     }
 
 
+    @Override
     public int[] getOptionArgArities() {
         return g_OptionArities;
     }
 
 
+    @Override
     public int getNbMainArgs() {
         return 2;
     }
 
 
+    @Override
     public void showHelp() {
     }
 
@@ -302,11 +306,8 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
             ClusAmandaRules rules = new ClusAmandaRules();
             rules.run(args);
         }
-        catch (IOException io) {
-            System.out.println("IO Error: " + io.getMessage());
-        }
-        catch (ClusException cl) {
-            System.out.println("Error: " + cl.getMessage());
+        catch (Exception io) {
+            System.out.println(io.toString());
         }
     }
 }

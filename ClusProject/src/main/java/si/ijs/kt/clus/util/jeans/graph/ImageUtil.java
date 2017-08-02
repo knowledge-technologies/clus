@@ -86,8 +86,8 @@ public class ImageUtil {
 
 
     public static void drawCube(Graphics g, int x, int y, int w, int h, int d, float fac) {
-        int dx = (int) ((float) d * fac);
-        int dy = (int) ((float) d * (1 - fac));
+        int dx = (int) (d * fac);
+        int dy = (int) (d * (1 - fac));
         Color color = g.getColor();
         g.fillRect(x, y, w + 1, h + 1);
         g.setColor(color.darker());

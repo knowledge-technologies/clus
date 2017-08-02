@@ -229,6 +229,7 @@ public class ILevelCGUI extends JFrame {
         }
 
 
+        @Override
         public void paintComponent(Graphics g) {
             Dimension dim = getSize();
             for (int i = 0; i < m_Points.size(); i++) {
@@ -291,6 +292,7 @@ public class ILevelCGUI extends JFrame {
 
     public class SaveListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             m_Canvas.save();
         }
@@ -298,6 +300,7 @@ public class ILevelCGUI extends JFrame {
 
     public class LoadListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             m_Canvas.load();
         }
@@ -305,6 +308,7 @@ public class ILevelCGUI extends JFrame {
 
     public class ClosureListener implements ActionListener {
 
+        @Override
         public void actionPerformed(ActionEvent e) {
             m_Canvas.computeClosure();
         }
@@ -312,6 +316,7 @@ public class ILevelCGUI extends JFrame {
 
     public class ILevelMouseListener extends MouseAdapter {
 
+        @Override
         public void mousePressed(MouseEvent e) {
             m_Canvas.addPoint((int) e.getPoint().getX(), (int) e.getPoint().getY());
         }

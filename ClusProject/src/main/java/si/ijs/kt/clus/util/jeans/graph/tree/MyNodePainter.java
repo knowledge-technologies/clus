@@ -89,6 +89,7 @@ public abstract class MyNodePainter extends Drawable {
     }
 
 
+    @Override
     public void draw(Graphics2D g, DrawableCanvas canvas, int xofs, int yofs) {
         g.setColor(getNodeColor());
         g.fillRect(xp - xofs, yp - yofs, wd, hi);

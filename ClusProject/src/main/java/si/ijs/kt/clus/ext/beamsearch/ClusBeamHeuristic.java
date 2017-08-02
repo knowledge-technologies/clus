@@ -59,6 +59,7 @@ public abstract class ClusBeamHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public void setRootStatistic(ClusStatistic stat) {
         m_NbTrain = stat.m_SumWeight;
     }

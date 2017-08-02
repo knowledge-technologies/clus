@@ -45,6 +45,7 @@ public class NumericBasicDistance extends BasicDistance {
      * type : must be a NumericAttrType object
      * 
      */
+    @Override
     public double getDistance(ClusAttrType type, DataTuple t1, DataTuple t2) {
         NumericAttrType at = (NumericAttrType) type;
         double x = at.getNumeric(t1); //returns the attribute value for given attribute in tuple t1

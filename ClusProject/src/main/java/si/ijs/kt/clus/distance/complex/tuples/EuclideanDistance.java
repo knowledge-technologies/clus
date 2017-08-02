@@ -6,6 +6,7 @@ import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.distance.complex.TupleDistance;
 import si.ijs.kt.clus.ext.structuredTypes.Tuple;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class EuclideanDistance extends TupleDistance {
@@ -25,7 +26,8 @@ public class EuclideanDistance extends TupleDistance {
     }
 
     
-    public double calcDistance(Tuple t1, Tuple t2) {
+    @Override
+    public double calcDistance(Tuple t1, Tuple t2) throws ClusException {
         return new MinkowskiDistance(m_Attr, 2, this.m_ChildDistances).calcDistance(t1, t2);
     }
 

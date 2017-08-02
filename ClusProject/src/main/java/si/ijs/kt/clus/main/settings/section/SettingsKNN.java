@@ -1,11 +1,17 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 
-public class SettingsKNN implements SettingsBase {
+public class SettingsKNN extends SettingsBase {
+
+    public SettingsKNN(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
 
     /***********************************************************************
      * Section: KNN *
@@ -153,5 +159,11 @@ public class SettingsKNN implements SettingsBase {
 
         return m_SectionKNN;
 
+    }
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 }

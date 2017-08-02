@@ -89,6 +89,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     }
 
 
+    @Override
     public void printInfo() {
         System.out.println("TDIDT (Tuning Size Constraint)");
         System.out.println("Heuristic: " + getStatManager().getHeuristicName());
@@ -328,7 +329,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     }
 
 
-    public void findBestSize(ClusData trset) throws ClusException, IOException, InterruptedException {
+    public void findBestSize(ClusData trset) throws Exception {
         int prevVerb = getSettings().getGeneral().enableVerbose(0);
         ClusStatManager mgr = getStatManager();
         ClusSummary summ = new ClusSummary();
@@ -420,6 +421,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     }
 
 
+    @Override
     public void saveInformation(String fname) {
         System.out.println("Saving: " + fname + ".dat");
         MyFile file = new MyFile(fname + ".dat");
@@ -439,20 +441,22 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     }
 
 
+    @Override
     public ClusModel induceSingle(ClusRun cr) {
         System.out.println(">>> Error: induceSingle/1 not implemented");
         return null;
     }
 
 
-    public ClusStatistic createTotalStat(RowData data) {
+    public ClusStatistic createTotalStat(RowData data) throws ClusException {
         ClusStatistic stat = m_Class.getStatManager().createClusteringStat();
         data.calcTotalStatBitVector(stat);
         return stat;
     }
 
 
-    public void induceAll(ClusRun cr) throws ClusException, InterruptedException {
+    @Override
+    public void induceAll(ClusRun cr) throws Exception {
         try {
             long start_time = System.currentTimeMillis();
             m_OrigSize = getSettings().getConstraints().getSizeConstraintPruning(0);

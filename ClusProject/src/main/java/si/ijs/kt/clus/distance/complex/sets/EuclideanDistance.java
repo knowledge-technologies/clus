@@ -8,6 +8,7 @@ import si.ijs.kt.clus.distance.primitive.timeseries.TimeSeriesDist;
 import si.ijs.kt.clus.ext.structuredTypes.Set;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class EuclideanDistance extends SetDistance {
@@ -26,7 +27,7 @@ public class EuclideanDistance extends SetDistance {
 
 
     @Override
-    public double calcDistance(Set set1, Set set2) {
+    public double calcDistance(Set set1, Set set2) throws ClusException {
         //return square root of hamming if sets of nominal ... or ... 
 
         ClusDistance clusDistance = m_ChildDistances[0];

@@ -43,6 +43,7 @@ public class AWTMenuItemWrapper extends ComponentWrapper {
     }
 
 
+    @Override
     public void output() {
         System.out.println("MenuItemWrapper: " + item);
     }

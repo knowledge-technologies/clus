@@ -33,7 +33,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
-import si.ijs.kt.clus.main.settings.SettingsBeamSearch;
+import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
 
 
 public class ClusBeam {
@@ -355,7 +355,7 @@ public class ClusBeam {
         ClusBeamModel bmodel;
         for (int k = 0; k < arr.size(); k++) {
             bmodel = (ClusBeamModel) arr.get(k);
-            if (((ClusNode) bmodel.getModel()).equals(((ClusNode) model.getModel())))
+            if (((ClusNode) bmodel.getModel()).equals((model.getModel())))
                 return true;
         }
         return false;

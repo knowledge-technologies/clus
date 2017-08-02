@@ -42,6 +42,7 @@ public class DrawableDistrGraph extends Drawable {
     }
 
 
+    @Override
     public void draw(Graphics2D g, DrawableCanvas canvas, int xofs, int yofs) {
         int mxp = xp - xofs;
         int myp = yp - yofs;
@@ -50,8 +51,8 @@ public class DrawableDistrGraph extends Drawable {
         for (int i = 0; i < m_hDistrInfo.getNbBins(); i++) {
             g.setColor(m_hDistrInfo.getBinColor(i));
             value += m_hDistrInfo.getBinCount(i);
-            float delta = value * (float) wd / m_fTotal;
-            int xnext = Math.min(wd, (int) Math.round(delta)) + mxp;
+            float delta = value * wd / m_fTotal;
+            int xnext = Math.min(wd, Math.round(delta)) + mxp;
             g.fillRect(xprev, myp, xnext - xprev, hi);
             g.setColor(Color.black);
             g.drawLine(xprev, myp, xprev, myp + hi);

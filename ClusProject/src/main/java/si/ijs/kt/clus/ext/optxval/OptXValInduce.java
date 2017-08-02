@@ -43,6 +43,7 @@ import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStat;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
@@ -69,7 +70,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
     }
 
 
-    public final void findNominal(NominalAttrType at, OptXValGroup grp) {
+    public final void findNominal(NominalAttrType at, OptXValGroup grp) throws ClusException {
         // Reset positive statistic
         int nbvalues = at.getNbValues();
         int statsize = nbvalues + at.intHasMissing();
@@ -123,7 +124,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
     }
 
 
-    public final void findNumeric(NumericAttrType at, OptXValGroup grp) {
+    public final void findNumeric(NumericAttrType at, OptXValGroup grp) throws ClusException {
         // Sort data
         DataTuple tuple;
         RowData data = grp.getData();
@@ -162,7 +163,8 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
             m_PrevVl[i] = Double.NaN;
         }
         ClusStatistic sum = m_PosStat[0];
-        if (getSettings().getTree().ONE_NOMINAL) {
+        getSettings().getTree();
+        if (SettingsTree.ONE_NOMINAL) {
             for (int i = first; i < nb_rows; i++) {
                 tuple = data.getTuple(i);
                 boolean no_sum_calc = true;
@@ -305,9 +307,10 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
     }
 
 
-    public abstract OptXValNode xvalInduce(OptXValGroup mgrp);
+    public abstract OptXValNode xvalInduce(OptXValGroup mgrp) throws ClusException, Exception;
 
 
+    @Override
     public ClusData createData() {
         return new RowData(m_Schema);
     }
@@ -356,7 +359,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
     }
 
 
-    public final void findBestTest(OptXValGroup mgrp) {
+    public final void findBestTest(OptXValGroup mgrp) throws ClusException {
         // First make nodes
         mgrp.makeNodes();
         // For each attribute
@@ -442,7 +445,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
     }
 
 
-    public final OptXValNode optXVal(RowData data) {
+    public final OptXValNode optXVal(RowData data) throws Exception {
         // Create root node
         if (Debug.debug == 1) {
             ClusStat.initTime();
@@ -466,6 +469,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
     }
 
 
+    @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) {
         return null;
     }

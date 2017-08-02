@@ -47,17 +47,20 @@ public class EncodingCostPruning extends PruneTree {
     }
 
 
+    @Override
     public void setTrainingData(RowData data) {
         m_Data = data;
         m_EC.setAttributes(m_Data.getSchema().getDescriptiveAttributes());
     }
 
 
+    @Override
     public int getNbResults() {
         return 1;
     }
 
 
+    @Override
     public void prune(ClusNode node) throws ClusException {
         System.out.println("Encoding cost pruning started");
         node.numberCompleteTree();

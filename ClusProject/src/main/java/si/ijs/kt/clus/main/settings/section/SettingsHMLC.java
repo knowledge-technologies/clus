@@ -1,6 +1,8 @@
-package si.ijs.kt.clus.main.settings;
+
+package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
@@ -9,7 +11,14 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
-public class SettingsHMLC implements SettingsBase {
+
+public class SettingsHMLC extends SettingsBase {
+
+    public SettingsHMLC(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
     /***********************************************************************
      * Section: Hierarchical multi-label classification *
      ***********************************************************************/
@@ -61,29 +70,34 @@ public class SettingsHMLC implements SettingsBase {
     protected INIFileString m_HierEvalClasses;
     protected static INIFileBool m_HierUseMEstimate;
 
-
     /** Denotes if Clustering attributes contain Hierarchy as well as numeric or nominal attributes */
-    protected boolean isHierAndClassAndReg = false; 
-   
+    protected boolean isHierAndClassAndReg = false;
+
+
     public void setIsHierAndClassAndReg(boolean value) {
         isHierAndClassAndReg = value;
     }
-    
+
+
     /**
      * Do Clustering attributes contain Hierarchy as well as numeric or nominal attributes?
+     * 
      * @return
      */
     public boolean isHierAndClassAndReg() {
         return isHierAndClassAndReg;
     }
-    
+
+
     public void setSectionHierarchicalEnabled(boolean enable) {
         m_SectionHierarchical.setEnabled(enable);
     }
-    
+
+
     public boolean isSectionHierarchicalEnabled() {
         return m_SectionHierarchical.isEnabled();
     }
+
 
     public boolean getHierSingleLabel() {
         return m_HierSingleLabel.getValue();
@@ -113,7 +127,8 @@ public class SettingsHMLC implements SettingsBase {
     public boolean isCalError() {
         return m_CalErr.getValue();
     }
-    
+
+
     public INIFileNominalOrDoubleOrVector getClassificationThresholds() {
         return m_HierClassThreshold;
     }
@@ -175,8 +190,6 @@ public class SettingsHMLC implements SettingsBase {
     }
 
 
-    
-
     @Override
     public INIFileSection create() {
 
@@ -201,8 +214,15 @@ public class SettingsHMLC implements SettingsBase {
         m_SectionHierarchical.addNode(m_HierEvalClasses = new INIFileString("EvalClasses", NONE));
         m_SectionHierarchical.addNode(m_HierUseMEstimate = new INIFileBool("MEstimate", false));
         m_SectionHierarchical.setEnabled(false);
-        
+
         return m_SectionHierarchical;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+
     }
 
 }

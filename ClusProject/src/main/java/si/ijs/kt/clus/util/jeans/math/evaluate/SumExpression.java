@@ -27,11 +27,13 @@ import si.ijs.kt.clus.util.jeans.math.MNumber;
 
 public class SumExpression extends BinaryExpression {
 
+    @Override
     public Expression createSimilarExpression() {
         return new SumExpression();
     }
 
 
+    @Override
     public MNumber getValue() {
         return leftexpr.getValue().add(rightexpr.getValue());
     }

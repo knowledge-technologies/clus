@@ -47,7 +47,7 @@ import si.ijs.kt.clus.ext.structuredTypes.Tuple;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.util.ClusException;
 
 
@@ -330,6 +330,7 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     }
 
 
+    @Override
     public String toString() {
         return getName();
     }
@@ -373,6 +374,7 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     /**
      * Compares to ClusAttrTypes based on index, allowing them to be sorted.
      */
+    @Override
     public int compareTo(Object o) {
         ClusAttrType c = (ClusAttrType) o;
 

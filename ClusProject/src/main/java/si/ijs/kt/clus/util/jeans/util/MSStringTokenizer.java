@@ -164,11 +164,13 @@ public class MSStringTokenizer implements Enumeration {
     }
 
 
+    @Override
     public boolean hasMoreElements() {
         return pos < len;
     }
 
 
+    @Override
     public Object nextElement() {
         return nextToken();
     }

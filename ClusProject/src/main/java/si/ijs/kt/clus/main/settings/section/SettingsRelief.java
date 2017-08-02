@@ -1,6 +1,7 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
@@ -9,9 +10,14 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 
-public class SettingsRelief implements SettingsBase {
+public class SettingsRelief extends SettingsBase {
 
-    /***********************************************************************
+    public SettingsRelief(int position) {
+		super(position);
+	}
+
+
+	/***********************************************************************
      * Section: Relief *
      ***********************************************************************/
 
@@ -129,4 +135,9 @@ public class SettingsRelief implements SettingsBase {
         return m_SectionRelief;
 
     }
+
+
+	@Override
+	public void initNamedValues() {		
+	}
 }

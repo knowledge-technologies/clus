@@ -3,7 +3,7 @@ package si.ijs.kt.clus.ext.semisupervised;
 
 import si.ijs.kt.clus.heuristic.ClusHeuristicImpl;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
@@ -16,6 +16,7 @@ public class ModifiedGainHeuristic extends ClusHeuristicImpl {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic c_nstat, ClusStatistic missing) {
         ClassificationStat tstat = (ClassificationStat) c_tstat;
         ClassificationStat pstat = (ClassificationStat) c_pstat;
@@ -45,6 +46,7 @@ public class ModifiedGainHeuristic extends ClusHeuristicImpl {
     }
 
 
+    @Override
     public String getName() {
         return "Gain modified for semi-supervised learning";
     }

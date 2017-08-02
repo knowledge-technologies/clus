@@ -53,6 +53,7 @@ public class PrintLineStream implements LineStream {
     }
 
 
+    @Override
     public void addLine(String line) {
         m_print.println(line);
     }

@@ -55,10 +55,12 @@ public class RectangleLayout implements LayoutManager {
     }
 
 
+    @Override
     public void addLayoutComponent(String name, Component comp) {
     }
 
 
+    @Override
     public void removeLayoutComponent(Component comp) {
     }
 
@@ -68,6 +70,7 @@ public class RectangleLayout implements LayoutManager {
     }
 
 
+    @Override
     public Dimension preferredLayoutSize(Container parent) {
         Dimension dim = new Dimension(0, 0);
         // Always add the container's getInsets!
@@ -78,11 +81,13 @@ public class RectangleLayout implements LayoutManager {
     }
 
 
+    @Override
     public Dimension minimumLayoutSize(Container parent) {
         return m_MinSize;
     }
 
 
+    @Override
     public void layoutContainer(Container parent) {
         Insets ins = parent.getInsets();
         int maxWidth = parent.getSize().width - (ins.left + ins.right);
@@ -101,6 +106,7 @@ public class RectangleLayout implements LayoutManager {
     }
 
 
+    @Override
     public String toString() {
         return "RectangleLayout";
     }

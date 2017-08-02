@@ -95,6 +95,7 @@ public class IntegerPropertyControl extends Panel implements ActionListener {
     }
 
 
+    @Override
     public void actionPerformed(ActionEvent event) {
         Button source = (Button) event.getSource();
         if (source.getLabel().equals("<")) {

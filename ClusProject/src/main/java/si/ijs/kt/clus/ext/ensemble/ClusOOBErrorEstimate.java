@@ -16,8 +16,8 @@ import si.ijs.kt.clus.main.ClusOutput;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsEnsemble;
-import si.ijs.kt.clus.main.settings.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.processor.ModelProcessorCollection;
@@ -58,7 +58,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public static boolean containsPredictionForTuple(DataTuple tuple) {
+    public static boolean containsPredictionForTuple(DataTuple tuple) throws InterruptedException {
         m_LockPredictions.readingLock();
         boolean contains = m_OOBPredictions.containsKey(tuple.hashCode());
         m_LockPredictions.readingUnlock();
@@ -66,7 +66,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public static double[] getPredictionForRegressionHMCTuple(DataTuple tuple) {
+    public static double[] getPredictionForRegressionHMCTuple(DataTuple tuple) throws InterruptedException {
         m_LockPredictions.readingLock();
         double[] pred = (double[]) m_OOBPredictions.get(tuple.hashCode());
         double[] predictions = Arrays.copyOf(pred, pred.length);
@@ -75,7 +75,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public static double[][] getPredictionForClassificationTuple(DataTuple tuple) {
+    public static double[][] getPredictionForClassificationTuple(DataTuple tuple) throws InterruptedException {
         m_LockPredictions.readingLock();
         double[][] pred = (double[][]) m_OOBPredictions.get(tuple.hashCode());
         double[][] predictions = new double[pred.length][];
@@ -92,7 +92,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public synchronized void postProcessForestForOOBEstimate(ClusRun cr, OOBSelection oob_total, RowData all_data, Clus cl, String addname) throws ClusException, IOException {
+    public synchronized void postProcessForestForOOBEstimate(ClusRun cr, OOBSelection oob_total, RowData all_data, Clus cl, String addname) throws ClusException, IOException, InterruptedException {
         Settings sett = cr.getStatManager().getSettings();
         ClusSchema schema = all_data.getSchema();
         ClusOutput output = new ClusOutput(sett.getGeneric().getAppName() + addname + ".oob", schema, sett);
@@ -134,7 +134,7 @@ public class ClusOOBErrorEstimate {
      * }
      */
 
-    public synchronized void updateOOBTuples(OOBSelection oob_sel, RowData train_data, ClusModel model, int modelNo) throws IOException, ClusException {
+    public synchronized void updateOOBTuples(OOBSelection oob_sel, RowData train_data, ClusModel model, int modelNo) throws IOException, ClusException, InterruptedException {
         for (int i = 0; i < train_data.getNbRows(); i++) {
             if (oob_sel.isSelected(i)) {
                 DataTuple tuple = train_data.getTuple(i);
@@ -162,7 +162,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public boolean existsOOBtuple(DataTuple tuple) {
+    public boolean existsOOBtuple(DataTuple tuple) throws InterruptedException {
         boolean exists = false;
         boolean existsInUsage = existsInOOBUsage(tuple); // m_OOBUsage.containsKey(tuple.hashCode())
         boolean existsInPred = existsInOOBPredictions(tuple); // m_OOBPredictions.containsKey(tuple.hashCode())
@@ -176,7 +176,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public void addOOBTuple(DataTuple tuple, ClusModel model) {
+    public void addOOBTuple(DataTuple tuple, ClusModel model) throws ClusException, InterruptedException {
         putToOOBUsage(tuple, 1); // m_OOBUsage.put(tuple.hashCode(), 1);
 
         ClusStatistic stat = model.predictWeighted(tuple);
@@ -222,7 +222,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public void updateOOBTuple(DataTuple tuple, ClusModel model) {
+    public void updateOOBTuple(DataTuple tuple, ClusModel model) throws ClusException, InterruptedException {
         Integer used = getFromOOBUsage(tuple); // m_OOBUsage.get(tuple.hashCode());
         used = used.intValue() + 1;
         putToOOBUsage(tuple, used); // m_OOBUsage.put(tuple.hashCode(), used);
@@ -277,7 +277,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public final void calcOOBError(OOBSelection oob_tot, RowData all_data, int type, ClusRun cr) throws IOException, ClusException {
+    public final void calcOOBError(OOBSelection oob_tot, RowData all_data, int type, ClusRun cr) throws IOException, ClusException, InterruptedException {
         ClusSchema mschema = all_data.getSchema();
         // if (iter.shouldAttach()) attachModels(mschema, cr);
         cr.initModelProcessors(type, mschema);
@@ -319,8 +319,9 @@ public class ClusOOBErrorEstimate {
      *
      * @param treeNumber
      * @return
+     * @throws InterruptedException 
      */
-    public static boolean isOOBForTree(DataTuple tuple, int treeNumber) {
+    public static boolean isOOBForTree(DataTuple tuple, int treeNumber) throws InterruptedException {
         boolean isOOB;
         m_LockUsage.readingLock();
         if (!OOBMapping.containsKey(treeNumber)) {
@@ -339,7 +340,7 @@ public class ClusOOBErrorEstimate {
 
     // OOBCalculation
 
-    public static boolean isOOBCalculation() {
+    public static boolean isOOBCalculation() throws InterruptedException {
         m_LockCalculation.readingLock();
         boolean isCalc = m_OOBCalculation;
         m_LockCalculation.readingUnlock();
@@ -347,7 +348,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public void setOOBCalculation(boolean value) {
+    public void setOOBCalculation(boolean value) throws InterruptedException {
         m_LockCalculation.writingLock();
         m_OOBCalculation = value;
         m_LockCalculation.writingUnlock();
@@ -356,7 +357,7 @@ public class ClusOOBErrorEstimate {
 
     // OOBPredictions
 
-    private boolean existsInOOBPredictions(DataTuple tuple) {
+    private boolean existsInOOBPredictions(DataTuple tuple) throws InterruptedException {
         m_LockPredictions.readingLock();
         boolean exists = m_OOBPredictions.containsKey(tuple.hashCode());
         m_LockPredictions.readingUnlock();
@@ -364,21 +365,21 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    public void put1DArrayToOOBPredictions(DataTuple tuple, double[] value) {
+    public void put1DArrayToOOBPredictions(DataTuple tuple, double[] value) throws InterruptedException {
         m_LockPredictions.writingLock();
         m_OOBPredictions.put(tuple.hashCode(), value);
         m_LockPredictions.writingUnlock();
     }
 
 
-    public void put2DArrayToOOBPredictions(DataTuple tuple, double[][] value) {
+    public void put2DArrayToOOBPredictions(DataTuple tuple, double[][] value) throws InterruptedException {
         m_LockPredictions.writingLock();
         m_OOBPredictions.put(tuple.hashCode(), value);
         m_LockPredictions.writingUnlock();
     }
 
 
-    private double[] get1DArrayFromOOBPredictions(DataTuple tuple) {
+    private double[] get1DArrayFromOOBPredictions(DataTuple tuple) throws InterruptedException {
         m_LockPredictions.readingLock();
         double[] pred = (double[]) m_OOBPredictions.get(tuple.hashCode());
         double[] predictions = Arrays.copyOf(pred, pred.length);
@@ -387,7 +388,7 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    private double[][] get2DArrayFromOOBPredictions(DataTuple tuple) {
+    private double[][] get2DArrayFromOOBPredictions(DataTuple tuple) throws InterruptedException {
         m_LockPredictions.readingLock();
         double[][] pred = (double[][]) m_OOBPredictions.get(tuple.hashCode());
         double[][] predictions = new double[pred.length][];
@@ -401,7 +402,7 @@ public class ClusOOBErrorEstimate {
 
     // OOBUsage
 
-    private boolean existsInOOBUsage(DataTuple tuple) {
+    private boolean existsInOOBUsage(DataTuple tuple) throws InterruptedException {
         m_LockUsage.readingLock();
         boolean exists = m_OOBUsage.containsKey(tuple.hashCode());
         m_LockUsage.readingUnlock();
@@ -409,14 +410,14 @@ public class ClusOOBErrorEstimate {
     }
 
 
-    private void putToOOBUsage(DataTuple tuple, int i) {
+    private void putToOOBUsage(DataTuple tuple, int i) throws InterruptedException {
         m_LockUsage.writingLock();
         m_OOBUsage.put(tuple.hashCode(), i);
         m_LockUsage.writingUnlock();
     }
 
 
-    public Integer getFromOOBUsage(DataTuple tuple) {
+    public Integer getFromOOBUsage(DataTuple tuple) throws InterruptedException {
         m_LockUsage.readingLock();
         Integer i = m_OOBUsage.get(tuple.hashCode());
         m_LockUsage.readingUnlock();

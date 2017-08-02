@@ -29,6 +29,7 @@ import si.ijs.kt.clus.algo.kNN.methods.NNStack;
 import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
+import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.util.ClusException;
 
@@ -48,13 +49,15 @@ public class BrutForce extends SearchAlgorithm {
     }
 
 
-    public void build() throws ClusException, IOException {
+    @Override
+    public void build() throws ClusException, IOException, InterruptedException {
         // does nothing at all
-        m_List = getRun().getDataSet(ClusRun.TRAINSET).getData(); // m_Data;
+        m_List = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData(); // m_Data;
     }
 
 
-    public LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) {
+    @Override
+    public LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) throws ClusException {
         m_Stack = new NNStack(k);
         for (DataTuple d : m_List)
             m_Stack.addToStack(d, getDistance().calcDistance(tuple, d));

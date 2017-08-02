@@ -189,7 +189,7 @@ public class GenerateData {
 
 
     public static void calcMeanDepth(ClassTerm root, SingleStat stat) {
-        stat.addFloat((double) root.getLevel());
+        stat.addFloat(root.getLevel());
         for (int i = 0; i < root.getNbChildren(); i++) {
             calcMeanDepth((ClassTerm) root.getChild(i), stat);
         }

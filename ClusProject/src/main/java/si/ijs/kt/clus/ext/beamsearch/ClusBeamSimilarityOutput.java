@@ -32,6 +32,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 
@@ -58,7 +59,7 @@ public class ClusBeamSimilarityOutput {
     }
 
 
-    public void appendToFile(ArrayList models, ClusRun run) throws IOException, ClusException {
+    public void appendToFile(ArrayList models, ClusRun run) throws IOException, ClusException, InterruptedException {
         // String str =
         // run.getStatManager().getSettings().getFileAbsolute(run.getStatManager().getSettings().getAppName())+".bsim";
         // File output = new File(fname);
@@ -80,7 +81,8 @@ public class ClusBeamSimilarityOutput {
         try {
             sim[1] = ClusBeamModelDistance.calcBeamSimilarity(models, run.getTestSet(), isNum);
             m_BeamSimTest.add(Double.valueOf(sim[1]));
-            if (set.getExperimental().IS_XVAL) {
+            set.getExperimental();
+            if (SettingsExperimental.IS_XVAL) {
                 wrtr.write("Fold " + run.getIndexString() + ":\t" + outF.format(sim[0]) + "\t\t" + outF.format(sim[1]) + "\n");
                 if (run.getIndex() == set.getData().getXValFolds()) {
                     // we reached the last fold, so we write a summary
@@ -92,7 +94,8 @@ public class ClusBeamSimilarityOutput {
                 wrtr.append("\t\t" + outF.format(sim[0]) + "\t\t" + outF.format(sim[1]) + "\n");
         }
         catch (NullPointerException e) {
-            if (!set.getExperimental().IS_XVAL)
+            set.getExperimental();
+            if (!SettingsExperimental.IS_XVAL)
                 wrtr.append("Summary:\t" + outF.format(sim[0]) + "\t\t" + "N/A" + "\n");
         }
         wrtr.flush();

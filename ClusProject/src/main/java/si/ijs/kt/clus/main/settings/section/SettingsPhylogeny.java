@@ -1,13 +1,20 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 
-public class SettingsPhylogeny implements SettingsBase {
+public class SettingsPhylogeny extends SettingsBase {
+
+    public SettingsPhylogeny(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
 
     /***********************************************************************
      * Section: Phylogeny *
@@ -105,5 +112,12 @@ public class SettingsPhylogeny implements SettingsBase {
         m_SectionPhylogeny.setEnabled(false);
 
         return m_SectionPhylogeny;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 }

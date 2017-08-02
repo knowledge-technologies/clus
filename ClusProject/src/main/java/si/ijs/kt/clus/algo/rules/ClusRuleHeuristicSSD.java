@@ -28,8 +28,9 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class ClusRuleHeuristicSSD extends ClusHeuristic {
@@ -52,6 +53,7 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
 
 
     // Copied from SSDHeuristic.java
+    @Override
     public void setData(RowData data) {
         m_Data = data;
     }
@@ -59,7 +61,8 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
 
     // Larger values are better!
     // Only the second parameter make sense for rules, i.e., statistic for covered examples
-    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
+    @Override
+    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) throws ClusException {
         double n_pos = pstat.m_SumWeight;
         // Acceptable?
         if (n_pos < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
@@ -89,6 +92,7 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return "SS Reduction for Rules (" + m_BasicDist + ", " + m_ClusteringWeights.getName() + ")";
     }

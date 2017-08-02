@@ -6,7 +6,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 
 
@@ -27,6 +27,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
      * This heuristic calculates:
      * ( |S|.Var(S) - |Sr|.Var(Sr) ) . Coverage(r)
      */
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
 
         double n_pos = c_pstat.m_SumWeight;
@@ -62,6 +63,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return "RuleHeuristicHierarchical";
     }

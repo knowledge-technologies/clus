@@ -12,6 +12,7 @@ import si.ijs.kt.clus.addon.sit.TargetSet;
 import si.ijs.kt.clus.addon.sit.mtLearner.MTLearner;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.util.ClusException;
 
 
 /**
@@ -38,6 +39,7 @@ public class SITFitnessFunction extends FitnessFunction {
     }
 
 
+    
     protected double evaluate(IChromosome chromyTheChromoson) {
         TargetSet tset = GeneticSearch.getTargetSet(this.candidates, (Chromosome) chromyTheChromoson);
 
@@ -57,11 +59,20 @@ public class SITFitnessFunction extends FitnessFunction {
         }
         // return 1.0/tset.size();
         // tset.add(mainTarget);
-        double error = 10 - Evaluator.getRelativeError(folds, mainTarget.getIndex());
+        double error;
+        try {
+            error = 10 - Evaluator.getRelativeError(folds, mainTarget.getIndex());
+            return error;
+        }
+        catch (ClusException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+            return Double.POSITIVE_INFINITY;
+        }
 
         // System.out.println(tset);
         // System.out.println(10-error);
-        return error;
+        
     }
 
     // private double calcError(ArrayList<RowData[]> folds, int errorIdx){

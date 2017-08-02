@@ -1,6 +1,7 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
@@ -8,7 +9,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public class SettingsOutput implements SettingsBase {
+public class SettingsOutput extends SettingsBase {
 
     /***********************************************************************
      * Section: Output *
@@ -39,6 +40,9 @@ public class SettingsOutput implements SettingsBase {
     protected INIFileBool m_WriteCurves;
     protected INIFileBool m_OutputClowdFlowsJSON;
 
+    public SettingsOutput(int position) {
+        super(position);
+    }
 
     public boolean isOutTrainError() {
         return m_OutTrainErr.getValue();
@@ -262,5 +266,11 @@ public class SettingsOutput implements SettingsBase {
      */
     public boolean isGzipOutput() {
         return m_GzipOutput.getValue();
+    }
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 }

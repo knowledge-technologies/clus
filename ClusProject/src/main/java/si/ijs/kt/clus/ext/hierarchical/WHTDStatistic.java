@@ -46,9 +46,9 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.heuristic.GISHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsGeneral;
-import si.ijs.kt.clus.main.settings.SettingsHMLC;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStatBinaryNomiss;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
@@ -162,6 +162,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void setTrainingStat(ClusStatistic train) {
         m_Training = (WHTDStatistic) train;
     }
@@ -192,6 +193,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
 
         if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) {// poolAUPRC case
@@ -209,6 +211,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public ClusStatistic cloneSimple() {
         WHTDStatistic res = (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) ? new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility, m_Distance) : new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility);
         // poolAUPRC         
@@ -238,6 +241,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
         WHTDStatistic or = (WHTDStatistic) other;
         super.addPrediction(other, weight);
@@ -247,6 +251,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, double weight) {
         int sidx = m_Hier.getType().getArrayIndex();
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(sidx);
@@ -305,6 +310,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void computePrediction() {
         ClassesTuple meantuple = m_Hier.getBestTupleMaj(m_Means, m_Threshold);
         m_DiscrMean = meantuple.getVectorBooleanNodeAndAncestors(m_Hier);
@@ -312,6 +318,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void calcMean(double[] means) {
         if (getSettings().getHMLC().useMEstimate() && m_Training != null) {
             // Use m-estimate
@@ -334,6 +341,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public double getMean(int i) {
         if (getSettings().getHMLC().useMEstimate() && m_Training != null) {
             // Use m-estimate
@@ -358,6 +366,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void calcMean() {
         super.calcMean();
         computePrediction();
@@ -434,6 +443,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     /**
      * Compute squared Euclidean distance between tuple's target attributes and this statistic's mean.
      */
+    @Override
     public double getSquaredDistance(DataTuple tuple, ClusAttributeWeights weights) {
         double sum = 0.0;
         boolean[] actual = new boolean[m_Hier.getTotal()];
@@ -485,7 +495,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     //RA
-    public double calcPtotal(Integer[] permutation) {
+    @Override
+    public double calcPtotal(Integer[] permutation) throws ClusException {
         double avgik = 0;
         double W = 0.0;
         double upsum = 0.0;
@@ -570,15 +581,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgikR = 1;
         double I = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
     }
 
 
     //global Geary C
-    public double calcGtotal(Integer[] permutation) {
+    @Override
+    public double calcGtotal(Integer[] permutation) throws ClusException {
         double num, den;
         double avgik = 0;
         double W = 0.0;
@@ -689,8 +700,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double scaledI = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
         //System.out.println();
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
@@ -698,7 +708,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     //calculate EquvalentI
     //Equvalent I
-    public double calcEquvalentItotal(Integer[] permutation) {
+    @Override
+    public double calcEquvalentItotal(Integer[] permutation) throws ClusException {
         int M = 0;
         int N = 0;
         int NR = m_data.getNbRows();
@@ -917,15 +928,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         N = splitIndex;
         double scaledI = 1 + I;
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //calculate Equvalent Geary C
-    public double calcEquvalentGtotal(Integer[] permutation) {
+    @Override
+    public double calcEquvalentGtotal(Integer[] permutation) throws ClusException {
         int M = 0;
         int N = 0;
         int NR = m_data.getNbRows();
@@ -1246,15 +1257,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double scaledI = 1 + I;
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //Moran I
-    public double calcItotal(Integer[] permutation) {
+    @Override
+    public double calcItotal(Integer[] permutation) throws ClusException {
         double num, den;
         double avgik = 0;
         double W = 0.0;
@@ -1366,15 +1377,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double I = (IL + avgikR * (N - M)) / m_data.getNbRows();
         double scaledI = 1 + I;
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //global I with distance file
-    public double calcItotalD(Integer[] permutation) {
+    @Override
+    public double calcItotalD(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         double num, den;
@@ -1471,15 +1482,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double scaledI = 1 + I;
         //System.out.println(scaledI);
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //RA with distance file
-    public double calcPDistance(Integer[] permutation) {
+    @Override
+    public double calcPDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         double avgik = 0;
@@ -1559,8 +1570,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double I = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
         //System.out.println(I);
         if (Double.isNaN(I)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return I;
     }
@@ -1568,7 +1578,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     //Geary with distance file
     // global C calculation with a separate distance file
-    public double calcGtotalD(Integer[] permutation) {
+    @Override
+    public double calcGtotalD(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         double num, den;
@@ -1677,15 +1688,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double scaledI = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //calculate EquvalentI with Distance file
-    public double calcEquvalentIDistance(Integer[] permutation) {
+    @Override
+    public double calcEquvalentIDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         int M = 0;
@@ -1991,15 +2002,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double scaledI = 1 + I;
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
     //calculate EquvalentP with Distance file
-    public double calcEquvalentPDistance(Integer[] permutation) {
+    @Override
+    public double calcEquvalentPDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         int M = 0;
@@ -2239,8 +2250,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double scaledI = 1 + I;
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
@@ -2248,7 +2258,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     //Equvalent Geary with distance file
     //calculate Equvalent Geary C with Distance file
-    public double calcEquvalentGDistance(Integer[] permutation) {
+    @Override
+    public double calcEquvalentGDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
         ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
         int M = 0;
@@ -2561,18 +2572,19 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double scaledI = 2 - I;
         //System.out.println(scaledI);
         if (Double.isNaN(scaledI)) {
-            System.out.println("err!");
-            System.exit(-1);
+            throw new ClusException("err!");
         }
         return scaledI;
     }
 
 
+    @Override
     public void setData(RowData data) {
         m_data = data;
     }
 
 
+    @Override
     public void setSplitIndex(int i) {
         splitIndex = i;
     }
@@ -2583,6 +2595,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void setPrevIndex(int i) {
         prevIndex = i;
     }
@@ -2593,6 +2606,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void initializeSum() {
         Arrays.fill(previousSumX, 0.0);
         Arrays.fill(previousSumXR, 0.0);
@@ -2656,6 +2670,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public String getString(StatisticPrintInfo info) {
         String pred = null;
         if (m_Threshold >= 0.0) {
@@ -2684,6 +2699,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public String getPredictString() {
         return "[" + computeMeanTuple().toStringHuman(getHier()) + "]";
     }
@@ -2693,6 +2709,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     // return !m_MeanTuple.isRoot();
     // }
 
+    @Override
     public void showRootInfo() {
         try {
             String hierarchyFile = m_Hier.getSettings().getGeneric().getAppName() + ".hierarchy";
@@ -2718,6 +2735,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void printDistribution(PrintWriter wrt) throws IOException {
         wrt.println("Total: " + m_SumWeight);
         ClassTerm root = m_Hier.getRoot();
@@ -2766,6 +2784,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public String getExtraInfo() {
         StringBuffer res = new StringBuffer();
         ClassesTuple meantuple = m_Hier.getBestTupleMaj(m_Means, 50.0);
@@ -2777,6 +2796,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void addPredictWriterSchema(String prefix, ClusSchema schema) {
         ClassHierarchy hier = getHier();
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -2788,11 +2808,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void unionInit() {
         m_DiscrMean = new boolean[m_Means.length];
     }
 
 
+    @Override
     public void union(ClusStatistic other) {
         boolean[] discr_mean = ((WHTDStatistic) other).m_DiscrMean;
         for (int i = 0; i < m_DiscrMean.length; i++) {
@@ -2802,10 +2824,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void unionDone() {
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes) {
         reset();
         m_Means = new double[m_NbAttrs];
@@ -2824,21 +2848,25 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     /**
      * Used for the hierarchical rules heuristic
      */
+    @Override
     public double getDispersion(ClusAttributeWeights scale, RowData data) {
         return getSVarS(scale);
     }
 
 
+    @Override
     public String getDistanceName() {
         return "Hierarchical Weighted Euclidean Distance";
     }
 
 
+    @Override
     public double getSVarS(int i) { // poolAUPRC case
         throw new RuntimeException("getSVarS(int i)");
     }
 
 
+    @Override
     public double getSVarS(ClusAttributeWeights scale) {
         if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC case
             ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
@@ -2892,6 +2920,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
         if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC case
             ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
@@ -2969,6 +2998,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC case
             WHTDStatistic or = (WHTDStatistic) other;

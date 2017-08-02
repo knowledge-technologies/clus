@@ -50,12 +50,14 @@ public class NumericAttribute extends NumericAttrBase {
     }
 
 
+    @Override
     public void resize(int rows) {
         m_NbRows = rows;
         m_Data = new double[rows];
     }
 
 
+    @Override
     public ClusAttribute select(ClusSelection sel, int nbsel) {
         int s_data = 0;
         int s_subset = 0;
@@ -76,6 +78,7 @@ public class NumericAttribute extends NumericAttrBase {
     }
 
 
+    @Override
     public void insert(ClusAttribute attr, ClusSelection sel, int nb_new) {
         int s_data = 0;
         int s_subset = 0;
@@ -93,6 +96,7 @@ public class NumericAttribute extends NumericAttrBase {
 
 
     // Sort this attribute
+    @Override
     public void prepare() {
         DoubleIndexSorter sorter = DoubleIndexSorter.getInstance();
         sorter.setData(m_Data);
@@ -111,12 +115,14 @@ public class NumericAttribute extends NumericAttrBase {
 
 
     // Unsort this attribute
+    @Override
     public void unprepare() {
         m_Data = DoubleIndexSorter.unsort(m_Data, m_Index);
         m_Index = null;
     }
 
 
+    @Override
     public void findBestTest(MyArray leaves, ColTarget target, ClusStatManager smanager) {
         // Reset positive statistic
         int nb = leaves.size();
@@ -165,6 +171,7 @@ public class NumericAttribute extends NumericAttrBase {
     }
 
 
+    @Override
     public void split(ColTarget target) {
         // For each attribute value
         // ClusNode[] infos = target.m_Node;

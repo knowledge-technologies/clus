@@ -16,6 +16,7 @@ public class SemiSupMinLabeledWeightStopCrit implements ClusStopCriterion {
     }
 
 
+    @Override
     public boolean stopCriterion(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         CombStat ctstat = (CombStat) tstat;
         CombStat cpstat = (CombStat) pstat;
@@ -26,6 +27,7 @@ public class SemiSupMinLabeledWeightStopCrit implements ClusStopCriterion {
     }
 
 
+    @Override
     public boolean stopCriterion(ClusStatistic tstat, ClusStatistic[] pstat, int nbsplit) {
         CombStat ctstat = (CombStat) tstat;
         int lastClass = ctstat.getNbNominalAttributes() - 1;

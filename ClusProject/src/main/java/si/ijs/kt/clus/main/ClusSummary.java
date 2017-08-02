@@ -53,21 +53,25 @@ public class ClusSummary extends ClusModelInfoList {
     }
 
 
+    @Override
     public ClusStatManager getStatManager() {
         return m_StatMgr;
     }
 
 
+    @Override
     public ClusErrorList getTrainError() {
         return m_TrainErr;
     }
 
 
+    @Override
     public ClusErrorList getTestError() {
         return m_TestErr;
     }
 
 
+    @Override
     public ClusErrorList getValidationError() {
         return m_ValidErr;
     }

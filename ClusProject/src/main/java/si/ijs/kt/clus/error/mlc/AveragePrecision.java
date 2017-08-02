@@ -63,17 +63,20 @@ public class AveragePrecision extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         m_NonnormalisedPrec = 0.0;
         m_NbKnown = 0;
     }
 
 
+    @Override
     public void add(ClusError other) {
         AveragePrecision ap = (AveragePrecision) other;
         m_NonnormalisedPrec += ap.m_NonnormalisedPrec;
@@ -91,26 +94,31 @@ public class AveragePrecision extends ClusNominalError {
     // }
 
 
+    @Override
     public double getModelError() {
         return m_NonnormalisedPrec / m_NbKnown;
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         return "AveragePrecision";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new AveragePrecision(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         final double[] scores = ((ClassificationStat) pred).calcScores();
         ArrayList<Integer> indicesOfKnownValues = new ArrayList<Integer>();
@@ -150,6 +158,7 @@ public class AveragePrecision extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         try {
             throw new Exception("AveragePrecision.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
@@ -162,6 +171,7 @@ public class AveragePrecision extends ClusNominalError {
 
 
     // NEDOTAKNJENO
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 

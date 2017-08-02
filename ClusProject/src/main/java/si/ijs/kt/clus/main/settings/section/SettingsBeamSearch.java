@@ -1,6 +1,7 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
@@ -10,8 +11,11 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsBeamSearch implements SettingsBase {
+public class SettingsBeamSearch extends SettingsBase {
 
+    public SettingsBeamSearch(int position) {
+        super(position);
+    }
 
     /***********************************************************************
      * Section: Beam search *
@@ -134,4 +138,9 @@ public class SettingsBeamSearch implements SettingsBase {
 
     }
 
+
+    @Override
+    public void initNamedValues() {
+        m_TreeMaxSize.setNamedValue(-1, "Infinity");
+    }
 }

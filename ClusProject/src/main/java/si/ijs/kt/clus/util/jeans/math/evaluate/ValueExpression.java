@@ -39,6 +39,7 @@ public class ValueExpression extends Expression {
     }
 
 
+    @Override
     public Expression createSimilarExpression() {
         ValueExpression result = new ValueExpression();
         result.setValue(getValue());
@@ -51,6 +52,7 @@ public class ValueExpression extends Expression {
     }
 
 
+    @Override
     public MNumber getValue() {
         return value;
     }

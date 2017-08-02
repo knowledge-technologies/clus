@@ -130,6 +130,6 @@ public class MHorizontalStepScale extends MGraphScale {
         float f1 = m_MinValue.getFloat();
         float f2 = m_MaxValue.getFloat();
         float scale = (f - f1) / (f2 - f1) * wd;
-        return (int) Math.round(scale) + x;
+        return Math.round(scale) + x;
     }
 }

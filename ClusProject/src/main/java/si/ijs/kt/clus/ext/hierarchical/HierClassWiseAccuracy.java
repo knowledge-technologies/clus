@@ -60,6 +60,7 @@ public class HierClassWiseAccuracy extends ClusError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         // System.out.println("tuple: "+tuple.toString());
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(0);
@@ -79,12 +80,14 @@ public class HierClassWiseAccuracy extends ClusError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(0);
         tp.updateDistribution(m_NbPosActual, 1.0);
     }
 
 
+    @Override
     public boolean isComputeForModel(String name) {
         if (name.equals("Default")) {
             return false;
@@ -190,6 +193,7 @@ public class HierClassWiseAccuracy extends ClusError {
     }
 
 
+    @Override
     public void reset() {
         Arrays.fill(m_TP, 0.0);
         Arrays.fill(m_NbPosPredictions, 0.0);
@@ -197,6 +201,7 @@ public class HierClassWiseAccuracy extends ClusError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         HierClassWiseAccuracy acc = (HierClassWiseAccuracy) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -210,6 +215,7 @@ public class HierClassWiseAccuracy extends ClusError {
     // For errors computed on a subset of the examples, it is sometimes useful
     // to also have information about all the examples, this information is
     // passed via this method in the global error measure "global"
+    @Override
     public void updateFromGlobalMeasure(ClusError global) {
         HierClassWiseAccuracy other = (HierClassWiseAccuracy) global;
         System.arraycopy(other.m_NbPosActual, 0, m_NbPosActual, 0, m_NbPosActual.length);
@@ -260,6 +266,7 @@ public class HierClassWiseAccuracy extends ClusError {
 
 
     // does it make sense to make averages of TP, FP and nbPos (look into this: methods implemented but not used)
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr1 = getFormat();
         NumberFormat fr2 = ClusFormat.SIX_AFTER_DOT;
@@ -272,11 +279,13 @@ public class HierClassWiseAccuracy extends ClusError {
     }
 
 
+    @Override
     public String getName() {
         return "Hierarchical accuracy by class";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new HierClassWiseAccuracy(par, m_Hier);
     }
@@ -295,7 +304,8 @@ public class HierClassWiseAccuracy extends ClusError {
     }
 
 
-	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+	@Override
+    public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
 		return false;
 	}
 }

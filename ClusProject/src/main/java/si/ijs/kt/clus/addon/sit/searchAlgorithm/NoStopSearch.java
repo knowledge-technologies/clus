@@ -5,16 +5,19 @@ import java.util.Iterator;
 
 import si.ijs.kt.clus.addon.sit.TargetSet;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class NoStopSearch extends SearchAlgorithmImpl {
 
+    @Override
     public String getName() {
         return "NoStop";
     }
 
 
-    public TargetSet search(ClusAttrType mainTarget, TargetSet candidates) {
+    @Override
+    public TargetSet search(ClusAttrType mainTarget, TargetSet candidates) throws ClusException {
 
         TargetSet best_set = new TargetSet(mainTarget);
         double best_err = eval(best_set, mainTarget);

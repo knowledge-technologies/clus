@@ -47,6 +47,7 @@ public class ColorChangeFilter extends RGBImageFilter {
     }
 
 
+    @Override
     public int filterRGB(int x, int y, int rgb) {
         int lorgb = rgb & 0x00ffffff;
         if (lorgb == scolor)
@@ -55,6 +56,7 @@ public class ColorChangeFilter extends RGBImageFilter {
     }
 
 
+    @Override
     public String toString() {
         return Integer.toString(scolor, 16) + " -> " + Integer.toString(tcolor, 16);
     }

@@ -53,6 +53,7 @@ public class HierRemoveInsigClasses extends PruneTree {
     }
 
 
+    @Override
     public int getNbResults() {
         return 1;
     }
@@ -68,6 +69,7 @@ public class HierRemoveInsigClasses extends PruneTree {
     }
 
 
+    @Override
     public void prune(ClusNode node) throws ClusException {
         m_Pruner.prune(node);
         if (m_SigLevel != 0.0 && m_PruneSet.getNbRows() != 0) {

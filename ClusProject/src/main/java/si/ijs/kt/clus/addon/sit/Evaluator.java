@@ -15,6 +15,7 @@ import si.ijs.kt.clus.error.PearsonCorrelation;
 import si.ijs.kt.clus.error.RMSError;
 import si.ijs.kt.clus.error.RelativeError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.util.ClusException;
 
 
 /**
@@ -25,8 +26,8 @@ import si.ijs.kt.clus.error.common.ClusErrorList;
  */
 public final class Evaluator {
 
-    public final static double getPearsonCorrelation(final ArrayList<RowData[]> folds, final int errorIdx) {
-        RowData[] temp = (RowData[]) folds.get(0);
+    public final static double getPearsonCorrelation(final ArrayList<RowData[]> folds, final int errorIdx) throws ClusException {
+        RowData[] temp = folds.get(0);
         ClusSchema schema = temp[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
         NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
@@ -52,7 +53,7 @@ public final class Evaluator {
     }
 
 
-    public final static double getPearsonCorrelation(RowData[] data, final int errorIdx) {
+    public final static double getPearsonCorrelation(RowData[] data, final int errorIdx) throws ClusException {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
@@ -71,7 +72,7 @@ public final class Evaluator {
     }
 
 
-    public final static double getMSE(RowData[] data, final int errorIdx) {
+    public final static double getMSE(RowData[] data, final int errorIdx) throws ClusException {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
@@ -91,7 +92,7 @@ public final class Evaluator {
     }
 
 
-    public final static MSError getMSE(RowData[] data) {
+    public final static MSError getMSE(RowData[] data) throws ClusException {
 
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
@@ -109,8 +110,8 @@ public final class Evaluator {
     }
 
 
-    public final static double getMSE(final ArrayList<RowData[]> folds, final int errorIdx) {
-        RowData[] temp = (RowData[]) folds.get(0);
+    public final static double getMSE(final ArrayList<RowData[]> folds, final int errorIdx) throws ClusException {
+        RowData[] temp = folds.get(0);
         ClusSchema schema = temp[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
         NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
@@ -135,8 +136,8 @@ public final class Evaluator {
     }
 
 
-    public final static double getMisclassificationError(final ArrayList<RowData[]> folds, final int errorIdx) {
-        RowData[] temp = (RowData[]) folds.get(0);
+    public final static double getMisclassificationError(final ArrayList<RowData[]> folds, final int errorIdx) throws ClusException {
+        RowData[] temp = folds.get(0);
         ClusSchema schema = temp[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
         NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_ALL);
@@ -161,7 +162,7 @@ public final class Evaluator {
     }
 
 
-    public final static double getMisclassificationError(RowData[] data, final int errorIdx) {
+    public final static double getMisclassificationError(RowData[] data, final int errorIdx) throws ClusException {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
@@ -180,8 +181,8 @@ public final class Evaluator {
     }
 
 
-    public final static double getRelativeError(final ArrayList<RowData[]> folds, final int errorIdx) {
-        RowData[] temp = (RowData[]) folds.get(0);
+    public final static double getRelativeError(final ArrayList<RowData[]> folds, final int errorIdx) throws ClusException {
+        RowData[] temp = folds.get(0);
         ClusSchema schema = temp[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
         NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
@@ -206,7 +207,7 @@ public final class Evaluator {
     }
 
 
-    public final static double getRelativeError(RowData[] data, final int errorIdx) {
+    public final static double getRelativeError(RowData[] data, final int errorIdx) throws ClusException {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
@@ -225,7 +226,7 @@ public final class Evaluator {
     }
 
 
-    public final static double getRMSE(RowData[] data, final int errorIdx) {
+    public final static double getRMSE(RowData[] data, final int errorIdx) throws ClusException {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();

@@ -50,17 +50,20 @@ public class Accuracy extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         Arrays.fill(m_NbCorrect, 0);
         Arrays.fill(m_NbKnown, 0);
     }
 
 
+    @Override
     public void add(ClusError other) {
         Accuracy acc = (Accuracy) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -80,12 +83,14 @@ public class Accuracy extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         // System.out.println("Correct: "+m_NbCorrect[i]+" known: "+m_NbKnown[i]+" nbex: "+getNbExamples());
         return ((double) m_NbCorrect[i]) / m_NbKnown[i];
     }
 
 
+    @Override
     public double getModelError() {
         double avg = 0.0;
         for (int i = 0; i < m_Dim; i++) {
@@ -96,16 +101,19 @@ public class Accuracy extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public String getName() {
         return "Accuracy";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new Accuracy(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred();
         for (int i = 0; i < m_Dim; i++) {
@@ -119,6 +127,7 @@ public class Accuracy extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         for (int i = 0; i < m_Dim; i++) {
             NominalAttrType attr = getAttr(i);
@@ -131,6 +140,7 @@ public class Accuracy extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 }

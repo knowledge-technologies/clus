@@ -3,7 +3,7 @@ package si.ijs.kt.clus.heuristic;
 
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsPhylogeny;
+import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.GeneticDistanceStat;
 
@@ -23,12 +23,14 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return "GeneticDistanceHeuristic";
     }
 
 
     // called when a new node should be split
+    @Override
     public void setData(RowData data) {
         m_Data = data;
         m_DataIndices = constructIndexVector(m_Data);
@@ -140,7 +142,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
                 }
             }
         }
-        double p_distance = (double) p / (double) nb;
+        double p_distance = p / nb;
         if (p_distance == Double.POSITIVE_INFINITY)
             System.out.println("p: " + p + " nb: " + nb + " " + seq1 + " " + seq2);
         if (p_distance == Double.NEGATIVE_INFINITY)

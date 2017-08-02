@@ -31,6 +31,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class FindBestTestRules extends FindBestTest {
@@ -51,8 +52,9 @@ public class FindBestTestRules extends FindBestTest {
      * @param at
      * @param data
      *        Data the split is based on. Chooses one value from these.
+     * @throws ClusException 
      */
-    public void findNominal(NominalAttrType at, RowData data) {
+    public void findNominal(NominalAttrType at, RowData data) throws ClusException {
         // Reset positive statistic
         int nbvalues = at.getNbValues();
         m_BestTest.reset(nbvalues + 1);
@@ -111,8 +113,9 @@ public class FindBestTestRules extends FindBestTest {
      *        Data the split is based on. Chooses one value from these.
      * @param rn
      *        Random number generator.
+     * @throws ClusException 
      */
-    public void findNominalRandom(NominalAttrType at, RowData data, Random rn) {
+    public void findNominalRandom(NominalAttrType at, RowData data, Random rn) throws ClusException {
         // Reset positive statistic
         int nbvalues = at.getNbValues();
         m_BestTest.reset(nbvalues + 1);
@@ -137,8 +140,9 @@ public class FindBestTestRules extends FindBestTest {
      * @param at
      * @param data
      *        Data the split is based on. Chooses one value from these.
+     * @throws ClusException 
      */
-    public void findNumeric(NumericAttrType at, RowData data) {
+    public void findNumeric(NumericAttrType at, RowData data) throws ClusException {
         DataTuple tuple;
         if (at.isSparse()) {
             data.sortSparse(at, m_SortHelper);
@@ -218,8 +222,9 @@ public class FindBestTestRules extends FindBestTest {
      *        Data the split is based on. Chooses one value from these.
      * @param rn
      *        Random number generator.
+     * @throws ClusException 
      */
-    public void findNumericRandom(NumericAttrType at, RowData data, RowData orig_data, Random rn) {
+    public void findNumericRandom(NumericAttrType at, RowData data, RowData orig_data, Random rn) throws ClusException {
         DataTuple tuple;
         int idx = at.getArrayIndex();
         // Sort values from large to small

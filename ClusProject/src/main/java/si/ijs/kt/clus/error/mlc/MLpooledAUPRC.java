@@ -22,16 +22,19 @@ public class MLpooledAUPRC extends MLROCAndPRCurve {
     }
 
 
+    @Override
     public double getModelError() {
         return getModelError(m_Measure);
     }
 
 
+    @Override
     public String getName() {
         return "pooledAUPRC";
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
         computeAll();
@@ -39,6 +42,7 @@ public class MLpooledAUPRC extends MLROCAndPRCurve {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MLpooledAUPRC(par, m_Attrs);
     }

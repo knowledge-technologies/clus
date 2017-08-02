@@ -42,7 +42,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusFormat;
@@ -468,7 +468,7 @@ public class OptProbl {
                                 // <current optimized parameter value>*<strenght of nominal value> OR
                                 // <current optimized parameter value>*<regression prediction for rule>
                                 // I.e. this is the real prediction function - weighted sum over the rules
-                                pred_sum[iTarget][iClass] += ((Double) genes.get(iRule)).doubleValue()
+                                pred_sum[iTarget][iClass] += genes.get(iRule).doubleValue()
                                         // * m_RulePred[iRule][iInstance][iTarget][iClass];
                                         * getPredictionsWhenCovered(iRule, iInstance, iTarget, iClass);
 
@@ -613,7 +613,7 @@ public class OptProbl {
             // } else {
 
             // The default rule is included in the rule set. At least it always covers all the examples.
-            prediction[iTarget] = (double) iMaxClass;
+            prediction[iTarget] = iMaxClass;
             // }
         }
         return prediction;
@@ -878,7 +878,7 @@ public class OptProbl {
 
         for (int j = 0; j < genes.size(); j++) {
             // Lasso penalty, i.e. sum of absolute values of weights
-            reg_penalty += Math.pow(Math.abs(((Double) (genes.get(j))).doubleValue()), getSettings().getRules().getOptDERegulPower());
+            reg_penalty += Math.pow(Math.abs((genes.get(j)).doubleValue()), getSettings().getRules().getOptDERegulPower());
         }
 
         return reg_penalty;
@@ -1150,7 +1150,7 @@ public class OptProbl {
         NumberFormat fr = ClusFormat.THREE_AFTER_DOT;
         String print = "[";
         for (int iTarg = 0; iTarg < getNbOfTargets(); iTarg++) {
-            double pred = (double) getPredictionsWhenCovered(ruleIndex, exampleIndex, iTarg);
+            double pred = getPredictionsWhenCovered(ruleIndex, exampleIndex, iTarg);
             if (getSettings().getRules().isOptNormalization()) {
                 pred /= Math.sqrt(getNormFactor(iTarg)); // For single pred you have to take sqrt
             }
@@ -1199,7 +1199,7 @@ public class OptProbl {
 
             wrt.print("[");
             for (int iTarg = 0; iTarg < getNbOfTargets(); iTarg++) {
-                double val = (double) getTrueValue(iTrueVal, iTarg);
+                double val = getTrueValue(iTrueVal, iTarg);
                 if (getSettings().getRules().isOptNormalization()) {
                     val /= Math.sqrt(getNormFactor(iTarg));
                 }

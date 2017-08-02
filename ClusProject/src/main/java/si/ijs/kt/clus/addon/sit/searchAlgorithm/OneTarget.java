@@ -15,20 +15,24 @@ import si.ijs.kt.clus.main.settings.Settings;
  */
 public class OneTarget implements SearchAlgorithm {
 
+    @Override
     public TargetSet search(ClusAttrType mainTarget, TargetSet candidates) {
         return new TargetSet(mainTarget);
     }
 
 
+    @Override
     public void setMTLearner(MTLearner learner) {
     }
 
 
+    @Override
     public String getName() {
         return "OneTarget";
     }
 
 
+    @Override
     public void setSettings(Settings s) {
 
     }

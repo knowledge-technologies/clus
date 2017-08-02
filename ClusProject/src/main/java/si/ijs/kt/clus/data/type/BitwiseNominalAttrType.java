@@ -40,21 +40,24 @@ public class BitwiseNominalAttrType extends NominalAttrType {
 
 
     public void initBitwiseNominal() {
-        m_Bits = Math.round((float) ((Math.log((double) (getNbValues() + 1)) / LOG2) + 0.5));
+        m_Bits = Math.round((float) ((Math.log(getNbValues() + 1) / LOG2) + 0.5));
         m_BitMask = (1 << m_Bits) - 1;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_BITWISEINT;
     }
 
 
+    @Override
     public int getNominal(DataTuple tuple) {
         return (tuple.m_Ints[m_ArrayIndex] >> m_BitPosition) & m_BitMask;
     }
 
 
+    @Override
     public void setNominal(DataTuple tuple, int value) {
         // System.out.println("BIT setNominal: " + value+ " arrayindex: " + getArrayIndex() + " bitpos: " +
         // getBitPosition());
@@ -78,6 +81,7 @@ public class BitwiseNominalAttrType extends NominalAttrType {
     }
 
 
+    @Override
     public ClusAttrType cloneType() {
         BitwiseNominalAttrType at = new BitwiseNominalAttrType(m_Name, m_Values);
         cloneType(at);
@@ -85,6 +89,7 @@ public class BitwiseNominalAttrType extends NominalAttrType {
     }
 
 
+    @Override
     public void copyArrayIndex(ClusAttrType type) {
         m_Index = type.m_Index;
         m_ArrayIndex = type.m_ArrayIndex;

@@ -40,6 +40,7 @@ public class DrawableRectangle extends Drawable {
     }
 
 
+    @Override
     public void draw(Graphics2D g, DrawableCanvas canvas, int xofs, int yofs) {
         g.setColor(color);
         g.fillRect(xp - xofs, yp - yofs, wd, hi);

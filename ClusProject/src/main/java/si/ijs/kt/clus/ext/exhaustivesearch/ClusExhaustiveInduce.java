@@ -53,32 +53,38 @@ public class ClusExhaustiveInduce extends ClusInductionAlgorithm {
     }
 
 
+    @Override
     public void initializeHeuristic() {
         m_Search.initializeHeuristic();
     }
 
 
+    @Override
     public ClusData createData() {
         return new RowData(m_Schema);
     }
 
 
+    @Override
     public boolean isModelWriter() {
         return true;
     }
 
 
-    public void writeModel(ClusModelCollectionIO strm) throws IOException {
+    @Override
+    public void writeModel(ClusModelCollectionIO strm) throws IOException, ClusException {
         m_Search.writeModel(strm);
     }
 
 
+    @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
         return null;
     }
 
 
-    public void induceAll(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public void induceAll(ClusRun cr) throws Exception {
         m_Search.exhaustiveSearch(cr);
         ClusModelInfo def_model = cr.addModelInfo(ClusModel.DEFAULT);
         def_model.setModel(ClusDecisionTree.induceDefault(cr));

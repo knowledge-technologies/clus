@@ -1,6 +1,7 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
@@ -11,7 +12,13 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrDouble;
 
 
-public class SettingsSSL implements SettingsBase {
+public class SettingsSSL extends SettingsBase {
+
+    public SettingsSSL(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
 
     private INIFileSection m_SectionSSL;
     private boolean m_SemiSupervisedMode = false;
@@ -350,6 +357,12 @@ public class SettingsSSL implements SettingsBase {
         // end added by Tomaz
 
         return m_SectionSSL;
+    }
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

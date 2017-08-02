@@ -76,32 +76,38 @@ public class NumericTest extends NodeTest {
     }
 
 
+    @Override
     public ClusAttrType getType() {
         return m_Type;
     }
 
 
+    @Override
     public void setType(ClusAttrType type) {
         m_Type = (NumericAttrType) type;
     }
 
 
+    @Override
     public String getString() {
         String value = m_Bound != Double.NEGATIVE_INFINITY ? String.valueOf(m_Bound) : "?";
         return m_Type.getName() + " > " + value;
     }
 
 
+    @Override
     public String getPythonString() {
         return getString();
     }
 
 
+    @Override
     public boolean hasConstants() {
         return m_Bound != Double.NEGATIVE_INFINITY;
     }
 
 
+    @Override
     public boolean equals(NodeTest test) {
         if (m_Type != test.getType())
             return false;
@@ -112,12 +118,14 @@ public class NumericTest extends NodeTest {
     }
 
 
+    @Override
     public int hashCode() {
         long v = Double.doubleToLongBits(m_Bound);
         return m_Type.getIndex() + (int) (v ^ (v >>> 32));
     }
 
 
+    @Override
     public int softEquals(NodeTest test) {
         if (m_Type != test.getType())
             return N_EQ;
@@ -130,6 +138,7 @@ public class NumericTest extends NodeTest {
     }
 
 
+    @Override
     public int numericPredict(double value) {
         if (value == Double.POSITIVE_INFINITY)
             return ClusRandom.nextDouble(ClusRandom.RANDOM_TEST_DIR) < getPosFreq() ? ClusNode.YES : ClusNode.NO;
@@ -137,6 +146,7 @@ public class NumericTest extends NodeTest {
     }
 
 
+    @Override
     public int numericPredictWeighted(double value) {
         if (value == Double.POSITIVE_INFINITY) {
             return hasUnknownBranch() ? ClusNode.UNK : UNKNOWN;
@@ -147,12 +157,14 @@ public class NumericTest extends NodeTest {
     }
 
 
+    @Override
     public int predictWeighted(DataTuple tuple) {
         double val = m_Type.getNumeric(tuple);
         return numericPredictWeighted(val);
     }
 
 
+    @Override
     public NodeTest getBranchTest(int i) {
         if (i == ClusNode.YES) {
             return this;
@@ -163,6 +175,7 @@ public class NumericTest extends NodeTest {
     }
 
 
+    @Override
     public NodeTest simplifyConjunction(NodeTest other) {
         if (getType().getIndex() != other.getType().getIndex()) {
             return null;

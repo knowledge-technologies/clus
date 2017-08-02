@@ -12,6 +12,7 @@ import java.util.Map;
  */
 public class FastClonerHashSet implements IFastCloner {
 
+    @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
         final HashSet al = (HashSet) t;

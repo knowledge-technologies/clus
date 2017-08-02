@@ -1,6 +1,7 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
@@ -8,7 +9,12 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsAttribute implements SettingsBase {
+public class SettingsAttribute extends SettingsBase {
+
+    public SettingsAttribute(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
 
     /***********************************************************************
      * Section: Attribute *
@@ -154,6 +160,13 @@ public class SettingsAttribute implements SettingsBase {
         attrs.addNode(m_GIS = new INIFileString("GIS", NONE));
 
         return attrs;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

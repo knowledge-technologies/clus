@@ -57,6 +57,7 @@ public class TimeSeriesSignificantChangeTesterXVAL extends ClusError {
     }
 
 
+    @Override
     public boolean isComputeForModel(String name) {
         return false;
     }
@@ -88,7 +89,7 @@ public class TimeSeriesSignificantChangeTesterXVAL extends ClusError {
     }
 
 
-    public double computeError(RowData data, TimeSeries ts) {
+    public double computeError(RowData data, TimeSeries ts) throws ClusException {
         double sum = 0;
         TimeSeriesDist dist = (TimeSeriesDist) m_Stat.getDistance();
         TimeSeriesAttrType attr = m_Stat.getAttribute();
@@ -101,7 +102,7 @@ public class TimeSeriesSignificantChangeTesterXVAL extends ClusError {
     }
 
 
-    public void doOneFold(RowData train, RowData test) {
+    public void doOneFold(RowData train, RowData test) throws ClusException {
         /* create mean training set time series */
         TimeSeriesAttrType attr = m_Stat.getAttribute();
         double mean = computeMeanValue(attr, train);
@@ -142,6 +143,7 @@ public class TimeSeriesSignificantChangeTesterXVAL extends ClusError {
     }
 
 
+    @Override
     public void compute(RowData data, ClusModel model) throws ClusException {
         if (model instanceof ClusRule) {
             computeForRule((ClusRule) model, data.getSchema());
@@ -163,6 +165,7 @@ public class TimeSeriesSignificantChangeTesterXVAL extends ClusError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter wrt, int detail) {
         StringBuffer res = new StringBuffer();
         res.append("\n");
@@ -175,11 +178,13 @@ public class TimeSeriesSignificantChangeTesterXVAL extends ClusError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new TimeSeriesSignificantChangeTesterXVAL(getParent(), m_Stat);
     }
 
 
+    @Override
     public String getName() {
         return "Significant Time Change XVAL";
     }

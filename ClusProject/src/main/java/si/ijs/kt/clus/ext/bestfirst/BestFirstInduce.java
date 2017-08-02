@@ -41,9 +41,9 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsEnsemble;
-import si.ijs.kt.clus.main.settings.SettingsGeneric;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -75,6 +75,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
     }
 
 
+    @Override
     public void initialize() throws ClusException, IOException {
         super.initialize();
     }
@@ -224,7 +225,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void inducePre(ClusNode node, RowData data) {
+    public void inducePre(ClusNode node, RowData data) throws Exception {
 
         ArrayList<ClusNode> listNodes = new ArrayList<ClusNode>();
 
@@ -280,7 +281,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void induce(ArrayList<ClusNode> listNodes, ArrayList<RowData> subsets, ArrayList<RowData> dataLeaves, int bestTestIndex) {
+    public void induce(ArrayList<ClusNode> listNodes, ArrayList<RowData> subsets, ArrayList<RowData> dataLeaves, int bestTestIndex) throws Exception {
         // System.out.println("nonsparse induce");
 
         // System.out.print("Best node index is "+bestTestIndex+"\n");
@@ -418,7 +419,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 
 
     @Deprecated
-    public void rankFeatures(ClusNode node, RowData data) throws IOException {
+    public void rankFeatures(ClusNode node, RowData data) throws Exception {
         // Find best test
         PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream("ranking.csv")));
         ClusAttrType[] attrs = getDescriptiveAttributes();
@@ -456,7 +457,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusNode induceSingleUnpruned(RowData data) throws ClusException, IOException {
+    public ClusNode induceSingleUnpruned(RowData data) throws Exception {
         m_Root = null;
         // Begin of induction process
         int nbr = 0;
@@ -476,14 +477,15 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
             if (SettingsGeneric.EXACT_TIME == false)
                 break;
         }
-        m_Root.postProc(null, null);
+        m_Root.afterInduce(null);
 
         cleanSplit();
         return m_Root;
     }
 
 
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {
+    @Override
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
 
         return induceSingleUnpruned((RowData) cr.getTrainingSet());
     }

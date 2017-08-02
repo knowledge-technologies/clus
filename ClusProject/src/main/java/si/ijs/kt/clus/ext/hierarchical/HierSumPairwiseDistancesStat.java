@@ -8,6 +8,7 @@ import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class HierSumPairwiseDistancesStat extends WHTDStatistic {
@@ -23,34 +24,40 @@ public class HierSumPairwiseDistancesStat extends WHTDStatistic {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         ClusDistance dist = m_PairwiseDistStat.getDistance();
         return new HierSumPairwiseDistancesStat(this.m_Settings, m_Hier, dist, m_Compatibility);
     }
 
 
+    @Override
     public void setSDataSize(int nbex) {
         m_PairwiseDistStat.setSDataSize(nbex);
     }
 
 
-    public double getSVarS(ClusAttributeWeights scale, RowData data) {
+    @Override
+    public double getSVarS(ClusAttributeWeights scale, RowData data) throws ClusException {
         return m_PairwiseDistStat.getSVarS(scale, data);
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         super.updateWeighted(tuple, idx);
         m_PairwiseDistStat.updateWeighted(tuple, idx);
     }
 
 
+    @Override
     public void reset() {
         super.reset();
         m_PairwiseDistStat.reset();
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         HierSumPairwiseDistancesStat or = (HierSumPairwiseDistancesStat) other;
         super.copy(or);
@@ -58,6 +65,7 @@ public class HierSumPairwiseDistancesStat extends WHTDStatistic {
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
         HierSumPairwiseDistancesStat or = (HierSumPairwiseDistancesStat) other;
         super.add(or);
@@ -65,11 +73,13 @@ public class HierSumPairwiseDistancesStat extends WHTDStatistic {
     }
 
 
+    @Override
     public void addScaled(double scale, ClusStatistic other) {
         System.err.println("HierSumPairwiseDistancesStat: addScaled not implemented");
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
         HierSumPairwiseDistancesStat or = (HierSumPairwiseDistancesStat) other;
         super.subtractFromThis(other);
@@ -77,6 +87,7 @@ public class HierSumPairwiseDistancesStat extends WHTDStatistic {
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
         HierSumPairwiseDistancesStat or = (HierSumPairwiseDistancesStat) other;
         super.subtractFromOther(other);
@@ -84,6 +95,7 @@ public class HierSumPairwiseDistancesStat extends WHTDStatistic {
     }
 
 
+    @Override
     public String getDistanceName() {
         return m_PairwiseDistStat.getDistanceName();
     }

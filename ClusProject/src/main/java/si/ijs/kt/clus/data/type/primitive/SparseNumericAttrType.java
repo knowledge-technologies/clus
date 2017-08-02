@@ -37,6 +37,7 @@ public class SparseNumericAttrType extends NumericAttrType {
     }
 
 
+    @Override
     public SparseNumericAttrType cloneType() {
         SparseNumericAttrType at = new SparseNumericAttrType(m_Name);
         cloneType(at);
@@ -48,12 +49,14 @@ public class SparseNumericAttrType extends NumericAttrType {
     }
 
 
+    @Override
     public void setIndex(int idx) {
         m_Index = idx;
         m_IntIndex = new Integer(idx);
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_NONE;
     }
@@ -91,18 +94,20 @@ public class SparseNumericAttrType extends NumericAttrType {
         ArrayList<SparseDataTuple> newExamples = new ArrayList<SparseDataTuple>();
         for (int i = 0; i < m_Examples.size(); i++) {
             if (dataList.contains(m_Examples.get(i))) {
-                newExamples.add((SparseDataTuple) m_Examples.get(i));
+                newExamples.add(m_Examples.get(i));
             }
         }
         return newExamples;
     }
 
 
+    @Override
     public double getNumeric(DataTuple tuple) {
         return ((SparseDataTuple) tuple).getDoubleValueSparse(getIndex());
     }
 
 
+    @Override
     public boolean isMissing(DataTuple tuple) {
         return ((SparseDataTuple) tuple).getDoubleValueSparse(m_IntIndex) == MISSING;
     }
@@ -119,6 +124,7 @@ public class SparseNumericAttrType extends NumericAttrType {
     }
 
 
+    @Override
     public void setNumeric(DataTuple tuple, double value) {
         Double d_value = null;
         for (int i = 0; i < DOUBLES.length; i++) {
@@ -131,12 +137,14 @@ public class SparseNumericAttrType extends NumericAttrType {
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
 
     public class MySerializable extends ClusSerializable {
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             if (!data.readNoSpace())
                 return false;

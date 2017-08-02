@@ -63,11 +63,13 @@ public class MyColumnLayout implements LayoutManager {
 
 
     /* Required by LayoutManager. */
+    @Override
     public void addLayoutComponent(String name, Component comp) {
     }
 
 
     /* Required by LayoutManager. */
+    @Override
     public void removeLayoutComponent(Component comp) {
     }
 
@@ -101,6 +103,7 @@ public class MyColumnLayout implements LayoutManager {
 
 
     /* Required by LayoutManager. */
+    @Override
     public Dimension preferredLayoutSize(Container parent) {
         Dimension dim = new Dimension(0, 0);
 
@@ -128,6 +131,7 @@ public class MyColumnLayout implements LayoutManager {
 
 
     /* Required by LayoutManager. */
+    @Override
     public Dimension minimumLayoutSize(Container parent) {
         return preferredLayoutSize(parent);
     }
@@ -141,6 +145,7 @@ public class MyColumnLayout implements LayoutManager {
      * will be called -- in the case of applets, at least, they probably
      * won't be.
      */
+    @Override
     public void layoutContainer(Container parent) {
         Insets insets = parent.getInsets();
         int maxWidth = parent.getSize().width - (insets.left + insets.right);

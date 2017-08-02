@@ -33,11 +33,13 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MSNominalError(par, m_Attrs, m_Weights);
     }
 
 
+    @Override
     public String getName() {
         if (m_Weights == null)
             return "Mean squared error (MSE) for Nominal Attributes";
@@ -46,6 +48,7 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         int nb = getNbExamples();
         double err = nb != 0.0 ? m_SumErr[i] / nb : 0.0;
@@ -55,6 +58,7 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public double getModelError() {
         double ss_tree = 0.0;
         int nb = getNbExamples();
@@ -73,6 +77,7 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public double getModelErrorStandardError() {
         double sum_err = 0.0;
         double sum_sq_err = 0.0;
@@ -102,6 +107,7 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         ClassificationStat stat = pred.getClassificationStat();
         for (int i = 0; i < m_Dim; i++) {
@@ -121,10 +127,12 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public void reset() {
         for (int i = 0; i < m_Dim; i++) {
             m_SumErr[i] = 0.0;
@@ -133,6 +141,7 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         MSNominalError oe = (MSNominalError) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -142,6 +151,7 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
@@ -170,13 +180,15 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public double computeLeafError(ClusStatistic stat) {
         ClassificationStat cstat = (ClassificationStat) stat;
         return cstat.getSVarS(m_Weights) * cstat.getNbAttributes();
     }
 
 
-	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+	@Override
+    public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
 		return true;
 	}
 }

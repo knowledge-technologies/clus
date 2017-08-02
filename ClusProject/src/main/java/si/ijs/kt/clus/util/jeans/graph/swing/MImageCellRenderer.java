@@ -54,18 +54,21 @@ public class MImageCellRenderer extends Component implements ListCellRenderer {
     }
 
 
+    @Override
     public Dimension getPreferredSize() {
         m_hDimension = new Dimension(m_iWidth + 2 * BORDER, m_iHeight + 2 * BORDER);
         return m_hDimension;
     }
 
 
+    @Override
     public Dimension getMinimumSize() {
         m_hDimension = new Dimension(m_iWidth + 2 * BORDER, m_iHeight + 2 * BORDER);
         return m_hDimension;
     }
 
 
+    @Override
     public void paint(Graphics g) {
         Dimension size = getSize();
         if (m_bSelected) {
@@ -86,6 +89,7 @@ public class MImageCellRenderer extends Component implements ListCellRenderer {
     }
 
 
+    @Override
     public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
         m_sName = value.toString();
         m_bSelected = isSelected;

@@ -46,7 +46,7 @@ public class NominalTarget extends NominalAttrBase {
         String value = data.readString();
         if (value == null)
             return false;
-        Integer i = (Integer) getNominalType().getValueIndex(value);
+        Integer i = getNominalType().getValueIndex(value);
         if (i != null) {
             m_Target.setNominal(m_Index, row, i.intValue());
         }

@@ -32,12 +32,12 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.error.common.multiscore.MultiScore;
 import si.ijs.kt.clus.main.ClusOutput;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStat;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValSelection;
 import si.ijs.kt.clus.util.ClusException;
@@ -60,7 +60,8 @@ public class OptXVal {
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
         schema.addIndices(ClusSchema.ROWS);
         int nb_num = schema.getNbNumericDescriptiveAttributes();
-        if (sett.getExperimental().XVAL_OVERLAP && nb_num > 0)
+        sett.getExperimental();
+        if (SettingsExperimental.XVAL_OVERLAP && nb_num > 0)
             return new OptXValIndOV(schema, sett);
         else
             return new OptXValIndNO(schema, sett);
@@ -103,7 +104,7 @@ public class OptXVal {
     }
 
 
-    public final void xvalRun(String appname, Date date) throws IOException, ClusException {
+    public final void xvalRun(String appname, Date date) throws Exception {
         Settings sett = m_Clus.getSettings();
         ClusSchema schema = m_Clus.getSchema();
         RowData set = m_Clus.getRowDataClone();
@@ -140,12 +141,12 @@ public class OptXVal {
         }
 
         // Output whole tree
-        MultiScore score = m_Clus.getMultiScore();
+        //MultiScore score = m_Clus.getMultiScore();
         ClusOutput output = new ClusOutput(appname + ".out", schema, sett);
         output.writeHeader();
         ClusNode tree = root.getTree(0);
         ClusRun cr = m_Clus.partitionData();
-        tree.postProc(score, null);
+        tree.afterInduce(null);
         // m_Clus.storeAndPruneModel(cr, tree);
         // m_Clus.calcError(cr, null);
         output.writeOutput(cr, true);
@@ -154,13 +155,14 @@ public class OptXVal {
         output = new ClusOutput(appname + ".xval", schema, sett);
         output.writeHeader();
         
-        if (sett.getExperimental().SHOW_XVAL_FOREST)
+        sett.getExperimental();
+        if (SettingsExperimental.SHOW_XVAL_FOREST)
             showForest(output.getWriter(), root);
         for (int i = 0; i < sel.getNbFolds(); i++) {
             XValSelection msel = new XValSelection(sel, i);
             cr = m_Clus.partitionData(msel, i + 1);
             tree = root.getTree(i + 1);
-            tree.postProc(score, null);
+            tree.afterInduce(null);
             // m_Clus.storeAndPruneModel(cr, tree);
             // m_Clus.calcError(cr, summary);
             if (sett.getOutput().isOutputFoldModels())

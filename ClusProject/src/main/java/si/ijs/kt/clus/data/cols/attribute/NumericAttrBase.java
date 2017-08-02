@@ -36,6 +36,7 @@ public abstract class NumericAttrBase extends ClusAttribute {
     }
 
 
+    @Override
     public ClusAttrType getType() {
         return m_Type;
     }

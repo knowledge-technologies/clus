@@ -33,6 +33,7 @@ public class CompleteTreeIterator extends TreeIterator {
     }
 
 
+    @Override
     public void reset() {
         super.reset();
         busy = true;

@@ -46,6 +46,7 @@ public class INIFileStringOrDouble extends INIFileEntry {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         return new INIFileStringOrDouble(getName(), getValue());
     }
@@ -91,6 +92,7 @@ public class INIFileStringOrDouble extends INIFileEntry {
     }
 
 
+    @Override
     public void setValue(String value) {
         if (MDouble.isDouble(value)) {
             m_Double = Double.parseDouble(value);
@@ -100,6 +102,7 @@ public class INIFileStringOrDouble extends INIFileEntry {
     }
 
 
+    @Override
     public String getStringValue() {
         if (m_IsDouble) {
             return String.valueOf(m_Double);

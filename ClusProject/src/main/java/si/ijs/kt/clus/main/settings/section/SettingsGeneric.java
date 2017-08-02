@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -10,6 +10,7 @@ import java.io.PrintWriter;
 import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
@@ -106,7 +107,7 @@ public class SettingsGeneric {
         }
         /* End added by Jurica */
 
-        return new PrintWriter(new OutputStreamWriter(new FileOutputStream(path), SettingsGeneral.CHARSET));
+        return new PrintWriter(new OutputStreamWriter(new FileOutputStream(path), SettingsBase.CHARSET));
     }
 
 }

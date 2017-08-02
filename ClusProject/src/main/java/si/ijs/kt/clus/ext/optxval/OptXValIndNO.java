@@ -82,7 +82,7 @@ public class OptXValIndNO extends OptXValInduce {
     }
 
 
-    public final void xvalInduce(OptXValNode node, OptXValGroup mgrp) {
+    public final void xvalInduce(OptXValNode node, OptXValGroup mgrp) throws Exception {
         long t0;
         if (Debug.debug == 1) {
             t0 = ResourceInfo.getCPUTime();
@@ -171,7 +171,8 @@ public class OptXValIndNO extends OptXValInduce {
     }
 
 
-    public OptXValNode xvalInduce(OptXValGroup mgrp) {
+    @Override
+    public OptXValNode xvalInduce(OptXValGroup mgrp) throws Exception {
         OptXValNode root = new OptXValNode();
         xvalInduce(root, mgrp);
         return root;

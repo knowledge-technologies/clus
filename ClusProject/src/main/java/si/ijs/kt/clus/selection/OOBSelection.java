@@ -43,21 +43,25 @@ public class OOBSelection extends ClusSelection {
     }
 
 
+    @Override
     public boolean changesDistribution() {
         return true;
     }
 
 
+    @Override
     public double getWeight(int row) {
-        return (double) m_OOBCounts[row];
+        return m_OOBCounts[row];
     }
 
 
+    @Override
     public int getNbSelected() {
         return m_OOBNbSel;
     }
 
 
+    @Override
     public boolean isSelected(int row) {
         return m_OOBCounts[row] != 0;
     }

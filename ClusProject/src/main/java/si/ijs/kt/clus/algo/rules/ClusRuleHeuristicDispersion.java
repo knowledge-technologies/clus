@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public abstract class ClusRuleHeuristicDispersion extends ClusHeuristic {
@@ -55,7 +56,7 @@ public abstract class ClusRuleHeuristicDispersion extends ClusHeuristic {
     }
 
 
-    public void setDataIndexes(boolean[] isin) {
+    public void setDataIndexes(boolean[] isin) throws ClusException {
         if ((m_DataIndexesPerVal != null) && (isin.length == m_DataIndexesPerVal.length)) {
             int size = 0;
             for (int i = 0; i < isin.length; i++) {
@@ -74,8 +75,7 @@ public abstract class ClusRuleHeuristicDispersion extends ClusHeuristic {
             setDataIndexes(new_data_idx);
         }
         else {
-            System.err.println("ClusRuleHeuristicDispersion: setDataIndexes(boolean[])");
-            System.exit(1); // Exception???
+            throw new ClusException("ClusRuleHeuristicDispersion: setDataIndexes(boolean[])");
         }
     }
 

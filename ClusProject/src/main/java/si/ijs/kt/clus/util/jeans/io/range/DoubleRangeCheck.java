@@ -33,12 +33,14 @@ public class DoubleRangeCheck implements ValueCheck {
     }
 
 
+    @Override
     public boolean checkValue(Object value) {
         double number = ((Double) value).doubleValue();
         return number >= m_MinDouble && number <= m_MaxDouble;
     }
 
 
+    @Override
     public String getString(String name, Object value) {
         return name + " = " + value + " out of range [" + m_MinDouble + ", " + m_MaxDouble + "]";
     }

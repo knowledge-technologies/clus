@@ -1,10 +1,20 @@
-package si.ijs.kt.clus.main.settings;
 
+package si.ijs.kt.clus.main.settings.section;
+
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
-public class SettingsSIT implements SettingsBase {
+
+public class SettingsSIT extends SettingsBase {
+
+    public SettingsSIT(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
+
     /***********************************************************************
      * Section: Selective inductive transfer *
      ***********************************************************************/
@@ -66,7 +76,14 @@ public class SettingsSIT implements SettingsBase {
         m_SectionSIT.addNode(m_Learner = new INIFileString("Learner", "ClusLearner"));
         m_SectionSIT.addNode(m_Error = new INIFileString("Error", "MSE"));
         m_SectionSIT.setEnabled(false);
-        
+
         return m_SectionSIT;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 }

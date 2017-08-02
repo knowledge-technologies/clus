@@ -87,12 +87,14 @@ public class ILevelCRandIndex extends ClusError {
     }
 
 
+    @Override
     public void reset() {
         m_IsComputed = false;
         m_Exs.clear();
     }
 
 
+    @Override
     public void add(ClusError other) {
         ILevelCRandIndex ri = (ILevelCRandIndex) other;
         if (!ri.isInvalid()) {
@@ -102,11 +104,13 @@ public class ILevelCRandIndex extends ClusError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
         m_Invalid = true;
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         m_IsComputed = false;
         int[] store = new int[2];
@@ -117,12 +121,14 @@ public class ILevelCRandIndex extends ClusError {
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         if (m_Count > 0) { return m_RandIndex / m_Count; }
         return getRandIndex();
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         if (isInvalid()) {
             out.println("?");
@@ -136,17 +142,20 @@ public class ILevelCRandIndex extends ClusError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new ILevelCRandIndex(getParent(), m_Attr);
     }
 
 
+    @Override
     public String getName() {
         return "Rand index";
     }
 
 
-	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+	@Override
+    public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
 		return true;
 	}
 }

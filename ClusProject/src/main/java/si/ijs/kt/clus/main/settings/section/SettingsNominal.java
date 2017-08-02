@@ -1,11 +1,18 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public class SettingsNominal implements SettingsBase {
+public class SettingsNominal extends SettingsBase {
+
+    public SettingsNominal(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
 
     /***********************************************************************
      * Section: Nominal - Should move? *
@@ -24,5 +31,12 @@ public class SettingsNominal implements SettingsBase {
         INIFileSection nominal = new INIFileSection("Nominal");
         nominal.addNode(m_MEstimate = new INIFileDouble("MEstimate", 1.0));
         return nominal;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 }

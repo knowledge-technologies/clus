@@ -145,9 +145,8 @@ public class ClusModelInfo implements Serializable {
     }
 
 
-    public void check() {
-        System.out.println("MI = " + m_TestErr);
-        System.exit(1);
+    public void check() throws ClusException {
+        throw new ClusException("MI = " + m_TestErr);
     }
 
 
@@ -246,7 +245,7 @@ public class ClusModelInfo implements Serializable {
     }
 
 
-    public final void termModelProcessors(int type) throws IOException {
+    public final void termModelProcessors(int type) throws IOException, ClusException {
         ModelProcessorCollection coll = getModelProcessors(type);
         if (coll != null)
             coll.terminate(m_Model);
@@ -411,7 +410,7 @@ public class ClusModelInfo implements Serializable {
     }
 
 
-    public final String getModelInfo() {
+    public final String getModelInfo() throws InterruptedException {
         if (m_Model == null)
             return "No model available";
         else
@@ -468,6 +467,7 @@ public class ClusModelInfo implements Serializable {
     }
 
 
+    @Override
     public String toString() {
         return "ModelInfo '" + getName() + "' Size: " + getModelSize();
     }

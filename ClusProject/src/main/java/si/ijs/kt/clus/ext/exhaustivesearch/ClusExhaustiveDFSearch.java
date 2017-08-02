@@ -80,7 +80,7 @@ public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
     }
 
 
-    public ClusBeamModel getRootNode(ClusRun run) throws ClusException {
+    public ClusBeamModel getRootNode(ClusRun run) throws Exception {
         ClusStatManager smanager = m_BeamInduce.getStatManager();
         Settings sett = smanager.getSettings();
         sett.getModel().setMinimalWeight(1); // the minimal number of covered example in a leaf is 1
@@ -123,7 +123,7 @@ public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
      * Everything that concerns setting the test is in the ClusNode Class
      */
 
-    public void refineGivenLeafExhaustiveDF(ClusNode leaf, ClusBeamModel root, ClusBeam beam, ClusAttrType[] attrs, ClusRun run) throws IOException {
+    public void refineGivenLeafExhaustiveDF(ClusNode leaf, ClusBeamModel root, ClusBeam beam, ClusAttrType[] attrs, ClusRun run) throws Exception {
         MyArray arr = (MyArray) leaf.getVisitor();
         RowData data = new RowData(arr.getObjects(), arr.size());
         if (m_Induce.initSelectorAndStopCrit(leaf, data)) {
@@ -195,7 +195,7 @@ public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
      * Used to go down the tree to each leaf and then refine each leafs
      */
 
-    public void refineEachLeafDF(ClusNode tree, ClusBeamModel root, ClusBeam beam, ClusAttrType[] attrs, ClusRun run) throws IOException {
+    public void refineEachLeafDF(ClusNode tree, ClusBeamModel root, ClusBeam beam, ClusAttrType[] attrs, ClusRun run) throws Exception {
         int nb_c = tree.getNbChildren();
         // System.out.println("Tree to refine:");
         // tree.printTree();
@@ -272,7 +272,8 @@ public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
     }
 
 
-    public void refineModel(ClusBeamModel model, ClusBeam beam, ClusRun run) throws IOException {
+    @Override
+    public void refineModel(ClusBeamModel model, ClusBeam beam, ClusRun run) throws Exception {
         ClusNode tree = (ClusNode) model.getModel();
         int size = tree.getNbNodes();
         /* Does current tree satisfy constraints */
@@ -344,7 +345,8 @@ public class ClusExhaustiveDFSearch extends ClusExhaustiveSearch {
     }
 
 
-    public ClusBeam exhaustiveSearch(ClusRun run) throws ClusException, IOException {
+    @Override
+    public ClusBeam exhaustiveSearch(ClusRun run) throws Exception {
         // int cpt_tree_evaluation = 0;
         reset();
         System.out.println("Starting exhaustive depth first search :");

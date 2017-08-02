@@ -63,7 +63,7 @@ public class BinaryPredictionList implements Serializable {
      */
     public void addExample(boolean actual, double predicted) {
         DoubleBooleanCount value = new DoubleBooleanCount(predicted, actual);
-        DoubleBooleanCount prevValue = (DoubleBooleanCount) m_ValueSet.get(value);
+        DoubleBooleanCount prevValue = m_ValueSet.get(value);
         if (prevValue != null) {
             prevValue.inc();
         }
@@ -102,7 +102,7 @@ public class BinaryPredictionList implements Serializable {
 
 
     public DoubleBooleanCount get(int i) {
-        return (DoubleBooleanCount) m_Values.get(i);
+        return m_Values.get(i);
     }
 
 
@@ -144,8 +144,8 @@ public class BinaryPredictionList implements Serializable {
         m_NbNeg += other.getNbNeg();
         Iterator<DoubleBooleanCount> values = other.m_ValueSet.values().iterator();
         while (values.hasNext()) {
-            DoubleBooleanCount otherValue = (DoubleBooleanCount) values.next();
-            DoubleBooleanCount myValue = (DoubleBooleanCount) m_ValueSet.get(otherValue);
+            DoubleBooleanCount otherValue = values.next();
+            DoubleBooleanCount myValue = m_ValueSet.get(otherValue);
             if (myValue != null) {
                 myValue.inc(otherValue);
             }

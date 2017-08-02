@@ -46,6 +46,7 @@ public class StringAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusAttrType cloneType() {
         StringAttrType at = new StringAttrType(m_Name);
         cloneType(at);
@@ -53,26 +54,31 @@ public class StringAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public int getTypeIndex() {
         return THIS_TYPE;
     }
 
 
+    @Override
     public String getTypeName() {
         return THIS_TYPE_NAME;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_OBJECT;
     }
 
 
+    @Override
     public String getString(DataTuple tuple) {
         return (String) tuple.m_Objects[m_ArrayIndex];
     }
 
 
+    @Override
     public int compareValue(DataTuple t1, DataTuple t2) {
         String s1 = (String) t1.m_Objects[m_ArrayIndex];
         String s2 = (String) t2.m_Objects[m_ArrayIndex];
@@ -80,17 +86,20 @@ public class StringAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public void writeARFFType(PrintWriter wrt) throws ClusException {
         wrt.print("string");
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
 
     public class MySerializable extends ClusSerializable {
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             String value = data.readString();
             if (value == null)

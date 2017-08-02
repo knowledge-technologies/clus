@@ -27,6 +27,7 @@ import java.util.Random;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public abstract class NominalSplit {
@@ -45,11 +46,11 @@ public abstract class NominalSplit {
     public abstract void setSDataSize(int size);
 
 
-    public abstract void findSplit(CurrentBestTestAndHeuristic node, NominalAttrType type);
+    public abstract void findSplit(CurrentBestTestAndHeuristic node, NominalAttrType type) throws ClusException;
 
 
-    public abstract void findRandomSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rn);
+    public abstract void findRandomSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rn) throws ClusException;
 
 
-    public abstract void findExtraTreeSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rn);
+    public abstract void findExtraTreeSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rn) throws ClusException;
 }

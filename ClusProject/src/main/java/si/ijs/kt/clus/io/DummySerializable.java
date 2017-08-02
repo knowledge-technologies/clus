@@ -35,6 +35,7 @@ public class DummySerializable extends ClusSerializable {
     }
 
 
+    @Override
     public boolean read(ClusReader data, DataTuple tuple) throws IOException {
         return data.skipTillComma();
     }

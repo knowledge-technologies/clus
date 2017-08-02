@@ -52,22 +52,26 @@ public class TimeSeriesAttrType extends ClusAttrType {
 	public TimeSeriesAttrType(String name, String typeDefinition) {
 		super(name, typeDefinition);		
 	}
+    @Override
     public ClusAttrType cloneType() {
 		TimeSeriesAttrType tsat = new TimeSeriesAttrType(m_Name,this.getTypeDefinition());
 		return tsat;
 	}
 
 
+    @Override
     public int getTypeIndex() {
         return THIS_TYPE;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_OBJECT;
     }
 
 
+    @Override
     public String getTypeName() {
         return THIS_TYPE_NAME;
     }
@@ -83,12 +87,14 @@ public class TimeSeriesAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public String getString(DataTuple tuple) {
         TimeSeries ts_data = (TimeSeries) tuple.getObjVal(0);
         return ts_data.toString();
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
@@ -114,6 +120,7 @@ public class TimeSeriesAttrType extends ClusAttrType {
         }
 
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             String str = data.readTimeSeries();
             if (str == null)
@@ -132,6 +139,7 @@ public class TimeSeriesAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public void writeARFFType(PrintWriter wrt) throws ClusException {
         wrt.print("TimeSeries");
     }

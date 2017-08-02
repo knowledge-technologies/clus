@@ -36,11 +36,13 @@ public class XValSelection extends ClusSelection {
     }
 
 
+    @Override
     public int getNbSelected() {
         return m_NbSel;
     }
 
 
+    @Override
     public boolean isSelected(int row) {
         return m_Sel.isSelected(row, m_Fold);
     }

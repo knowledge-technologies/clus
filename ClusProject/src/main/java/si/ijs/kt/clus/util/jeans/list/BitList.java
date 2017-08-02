@@ -25,6 +25,8 @@ package si.ijs.kt.clus.util.jeans.list;
 import java.io.Serializable;
 import java.util.Arrays;
 
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
+
 
 public class BitList implements Serializable {
 
@@ -116,6 +118,7 @@ public class BitList implements Serializable {
     }
 
 
+    @Override
     public String toString() {
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < m_Size; i++) {
@@ -159,7 +162,6 @@ public class BitList implements Serializable {
 
 
     public void copyAndSubtractFromThis(BitList bits, BitList bits2) {
-        System.err.println("BitList.java:copyAndSubtractFromThis(): unimplemented method!");
-        System.exit(-1);
+        throw new NotImplementedException();
     }
 }

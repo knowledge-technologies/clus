@@ -1,7 +1,8 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.heuristic.FTest;
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
@@ -11,7 +12,12 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
 
-public class SettingsTree implements SettingsBase {
+public class SettingsTree extends SettingsBase {
+
+    public SettingsTree(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
 
     /***********************************************************************
      * Section: Tree *
@@ -330,12 +336,7 @@ public class SettingsTree implements SettingsBase {
     public double getM5PruningMult() {
         return m_M5PruningMult.getValue();
     }
-
-
-    public void setTreeSplitSamplingNamedValue(int value, String name) {
-        m_TreeSplitSampling.setNamedValue(value, name);
-    }
-
+ 
 
     /**
      * If we transform the induced trees to rules.
@@ -489,7 +490,7 @@ public class SettingsTree implements SettingsBase {
         m_SectionTree = new INIFileSection("Tree");
         m_SectionTree.addNode(m_Heuristic = new INIFileNominal("Heuristic", HEURISTICS, HEURISTIC_DEFAULT));
 
-        m_SectionTree.addNode(m_HeuristicComplexity = new INIFileNominal("HeuristicComlexity", HEURISTIC_COMPLEXITY, 0));
+        m_SectionTree.addNode(m_HeuristicComplexity = new INIFileNominal("HeuristicComplexity", HEURISTIC_COMPLEXITY, 0));
         m_SectionTree.addNode(m_SetDistance = new INIFileNominal("SetDistance", SETDISTANCES, SETDISTANCES_GSM));
         m_SectionTree.addNode(m_TupleDistance = new INIFileNominal("TupleDistance", TUPLEDISTANCES, TUPLEDISTANCES_EUCLIDEAN));
         m_SectionTree.addNode(m_TSDistance = new INIFileNominal("TSDistance", TIME_SERIES_DISTANCE_MEASURE, TIME_SERIES_DISTANCE_MEASURE_DTW));
@@ -528,6 +529,11 @@ public class SettingsTree implements SettingsBase {
         m_SectionTree.addNode(m_SplitPosition = new INIFileNominal("SplitPosition", SPLIT_POSITIONS, SPLIT_POSITION_EXACT));
 
         return m_SectionTree;
+    }
+
+    @Override
+    public void initNamedValues() {
+        m_TreeSplitSampling.setNamedValue(0, "None");
     }
 
 }

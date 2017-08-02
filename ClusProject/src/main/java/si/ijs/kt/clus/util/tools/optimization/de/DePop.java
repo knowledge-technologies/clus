@@ -60,7 +60,7 @@ public class DePop {
 
     public void createFirstPop() {
         for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++)
-            ((DeInd) m_Inds.get(i)).setGenes(m_Probl.getRandVector(m_Rand));
+            m_Inds.get(i).setGenes(m_Probl.getRandVector(m_Rand));
     }
 
 
@@ -74,7 +74,7 @@ public class DePop {
     public int evaluatePop(int num_eval) {
         int result = num_eval;
         for (int i = 0; i < m_Inds.size(); i++) {
-            result = ((DeInd) m_Inds.get(i)).evaluate(m_Probl, result);
+            result = m_Inds.get(i).evaluate(m_Probl, result);
         }
         return result;
     }
@@ -119,11 +119,11 @@ public class DePop {
         // also randomly for other variables. For alteration we take the new value of (i1-i2)+i3.
         for (int kVariable = 0; kVariable < m_Probl.getNumVar(); kVariable++) {
 
-            result.set(i, ((DeInd) m_Inds.get(parent)).getGenes().get(i));
+            result.set(i, m_Inds.get(parent).getGenes().get(i));
 
             // ****** Crossing over
             if (m_Rand.nextDouble() < (getSettings().getRules().getOptDECrossProb()) || (i == i_rand)) {
-                result.set(i, new Double(getSettings().getRules().getOptDEWeight() * (((Double) ((DeInd) m_Inds.get(i1)).getGenes().get(i)).doubleValue() - ((Double) ((DeInd) m_Inds.get(i2)).getGenes().get(i)).doubleValue()) + ((Double) ((DeInd) m_Inds.get(i3)).getGenes().get(i)).doubleValue()));
+                result.set(i, new Double(getSettings().getRules().getOptDEWeight() * (m_Inds.get(i1).getGenes().get(i).doubleValue() - m_Inds.get(i2).getGenes().get(i).doubleValue()) + m_Inds.get(i3).getGenes().get(i).doubleValue()));
             }
 
             // ******** Mutations
@@ -165,13 +165,13 @@ public class DePop {
         for (i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
             n = (int) (indexes.size() * m_Rand.nextDouble());
             // Copy to inds array the individual in random index
-            ((DeInd) inds.get(i)).copy((DeInd) m_Inds.get(((Integer) indexes.get(n)).intValue()));
+            inds.get(i).copy(m_Inds.get(indexes.get(n).intValue()));
             indexes.remove(n);
         }
 
         // Copy the new permutation to m_Inds
         for (i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
-            ((DeInd) m_Inds.get(i)).copy((DeInd) inds.get(i));
+            m_Inds.get(i).copy(inds.get(i));
         }
     }
 
@@ -179,7 +179,7 @@ public class DePop {
     public String getPopString() {
         String result = "";
         for (int i = 0; i < m_Inds.size(); i++) {
-            result += ((DeInd) m_Inds.get(i)).getIndString();
+            result += m_Inds.get(i).getIndString();
         }
         return result;
     }

@@ -22,6 +22,7 @@
 
 package si.ijs.kt.clus.util.jeans.graph.swing.drawable;
 
+import java.awt.Adjustable;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
@@ -48,10 +49,10 @@ public class DrawableScrollableCanvas extends JPanel {
     public DrawableScrollableCanvas() {
         setLayout(new BorderLayout(0, 0));
         add(m_hCanvas = new MyDrawableCnv(), BorderLayout.CENTER);
-        add(m_hVert = new JScrollBar(JScrollBar.VERTICAL, 0, 1, 0, 10000), BorderLayout.EAST);
+        add(m_hVert = new JScrollBar(Adjustable.VERTICAL, 0, 1, 0, 10000), BorderLayout.EAST);
         m_hVert.addAdjustmentListener(new MyVertListener());
         m_hVert.setVisible(false);
-        add(m_hHorz = new JScrollBar(JScrollBar.HORIZONTAL, 0, 1, 0, 10000), BorderLayout.SOUTH);
+        add(m_hHorz = new JScrollBar(Adjustable.HORIZONTAL, 0, 1, 0, 10000), BorderLayout.SOUTH);
         m_hHorz.addAdjustmentListener(new MyHorzListener());
         m_hHorz.setVisible(false);
         m_hCanvas.addComponentListener(new MyResizeListener());
@@ -64,7 +65,7 @@ public class DrawableScrollableCanvas extends JPanel {
 
 
     public DrawableCanvas getCanvas() {
-        return (DrawableCanvas) m_hCanvas;
+        return m_hCanvas;
     }
 
 
@@ -74,6 +75,7 @@ public class DrawableScrollableCanvas extends JPanel {
     }
 
 
+    @Override
     public void setBackground(Color col) {
         super.setBackground(col);
         System.out.println("Setting background: " + m_hCanvas);
@@ -120,6 +122,7 @@ public class DrawableScrollableCanvas extends JPanel {
         }
 
 
+        @Override
         public void render(Graphics2D g) {
             super.render(g);
             updateScrollBars();
@@ -163,6 +166,7 @@ public class DrawableScrollableCanvas extends JPanel {
 
     private class MyResizeListener extends ComponentAdapter {
 
+        @Override
         public void componentResized(ComponentEvent e) {
             m_hCanvas.updateScrollBars();
         }
@@ -170,6 +174,7 @@ public class DrawableScrollableCanvas extends JPanel {
 
     public class MyHorzListener implements AdjustmentListener {
 
+        @Override
         public void adjustmentValueChanged(AdjustmentEvent e) {
             m_hCanvas.setXOrig(m_hHorz.getValue());
             m_hCanvas.repaint();
@@ -178,6 +183,7 @@ public class DrawableScrollableCanvas extends JPanel {
 
     public class MyVertListener implements AdjustmentListener {
 
+        @Override
         public void adjustmentValueChanged(AdjustmentEvent e) {
             m_hCanvas.setYOrig(m_hVert.getValue());
             m_hCanvas.repaint();

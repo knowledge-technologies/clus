@@ -36,8 +36,8 @@ import si.ijs.kt.clus.ext.optiontree.ClusSplitNode;
 import si.ijs.kt.clus.ext.optiontree.MyNode;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.SettingsOutput;
-import si.ijs.kt.clus.main.settings.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.util.ClusException;
@@ -95,6 +95,7 @@ public class ClusRulesFromTree {
      * @return The created rule set.
      * @throws ClusException
      * @throws IOException
+     * @throws InterruptedException 
      */
     public ClusRuleSet constructRules(
             ClusRun cr,
@@ -103,7 +104,7 @@ public class ClusRulesFromTree {
             boolean computeDispersion,
             int optimizeRuleWeights)
             throws ClusException,
-            IOException {
+            IOException, InterruptedException {
 
         ClusRuleSet ruleSet = constructRules(node, mgr);
 
@@ -118,10 +119,10 @@ public class ClusRulesFromTree {
 
             // Find the rule weights with optimization algorithm.
             if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
-                optAlg = (OptAlg) new GDAlg(mgr, param, ruleSet);
+                optAlg = new GDAlg(mgr, param, ruleSet);
             }
             else {
-                optAlg = (OptAlg) new DeAlg(mgr, param, ruleSet);
+                optAlg = new DeAlg(mgr, param, ruleSet);
             }
 
             ArrayList<Double> weights = optAlg.optimize();
@@ -129,8 +130,8 @@ public class ClusRulesFromTree {
             // Print weights of rules
             System.out.print("The weights for rules from trees:");
             for (int j = 0; j < ruleSet.getModelSize(); j++) {
-                ruleSet.getRule(j).setOptWeight(((Double) weights.get(j)).doubleValue());
-                System.out.print(((Double) weights.get(j)).doubleValue() + "; ");
+                ruleSet.getRule(j).setOptWeight(weights.get(j).doubleValue());
+                System.out.print(weights.get(j).doubleValue() + "; ");
             }
             System.out.print(System.lineSeparator());
             ruleSet.removeLowWeightRules();
@@ -147,7 +148,7 @@ public class ClusRulesFromTree {
             ruleSet.computeDispersion(ClusModel.TRAIN);
             ruleSet.removeDataFromRules();
             if (cr.getTestIter() != null) {
-                testdata = (RowData) cr.getTestSet();
+                testdata = cr.getTestSet();
                 ruleSet.addDataToRules(testdata);
                 // res.setTrainErrorScore();
                 ruleSet.computeDispersion(ClusModel.TEST);
@@ -168,7 +169,7 @@ public class ClusRulesFromTree {
             boolean computeDispersion,
             int optimizeRuleWeights)
             throws ClusException,
-            IOException {
+            IOException, InterruptedException {
 
         ClusRuleSet ruleSet = constructOptionRules(node, mgr);
 
@@ -183,10 +184,10 @@ public class ClusRulesFromTree {
 
             // Find the rule weights with optimization algorithm.
             if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
-                optAlg = (OptAlg) new GDAlg(mgr, param, ruleSet);
+                optAlg = new GDAlg(mgr, param, ruleSet);
             }
             else {
-                optAlg = (OptAlg) new DeAlg(mgr, param, ruleSet);
+                optAlg = new DeAlg(mgr, param, ruleSet);
             }
 
             ArrayList<Double> weights = optAlg.optimize();
@@ -194,8 +195,8 @@ public class ClusRulesFromTree {
             // Print weights of rules
             System.out.print("The weights for rules from trees:");
             for (int j = 0; j < ruleSet.getModelSize(); j++) {
-                ruleSet.getRule(j).setOptWeight(((Double) weights.get(j)).doubleValue());
-                System.out.print(((Double) weights.get(j)).doubleValue() + "; ");
+                ruleSet.getRule(j).setOptWeight(weights.get(j).doubleValue());
+                System.out.print(weights.get(j).doubleValue() + "; ");
             }
             System.out.print("\n");
             ruleSet.removeLowWeightRules();
@@ -212,7 +213,7 @@ public class ClusRulesFromTree {
             ruleSet.computeDispersion(ClusModel.TRAIN);
             ruleSet.removeDataFromRules();
             if (cr.getTestIter() != null) {
-                testdata = (RowData) cr.getTestSet();
+                testdata = cr.getTestSet();
                 ruleSet.addDataToRules(testdata);
                 // res.setTrainErrorScore();
                 ruleSet.computeDispersion(ClusModel.TEST);

@@ -18,7 +18,7 @@ import si.ijs.kt.clus.ext.semisupervised.confidence.normalization.Normalization;
 import si.ijs.kt.clus.ext.semisupervised.confidence.normalization.Ranking;
 import si.ijs.kt.clus.ext.semisupervised.confidence.normalization.Standardization;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.util.ClusException;
 
@@ -89,7 +89,7 @@ public abstract class PredictionConfidence {
     }
 
 
-    public void calculateConfidenceScores(ClusModel model, RowData data, boolean OOB) {
+    public void calculateConfidenceScores(ClusModel model, RowData data, boolean OOB) throws ClusException, InterruptedException {
         int nb_unlabeled = data.getNbRows();
         m_ConfidenceScores = new double[nb_unlabeled];
         m_counter = 0;
@@ -140,12 +140,12 @@ public abstract class PredictionConfidence {
     }
 
 
-    public void calculateConfidenceScores(ClusModel model, RowData unlabeledData) throws ClusException {
+    public void calculateConfidenceScores(ClusModel model, RowData unlabeledData) throws ClusException, InterruptedException {
         calculateConfidenceScores(model, unlabeledData, false);
     }
 
 
-    public void calculateOOBConfidenceScores(ClusForest model, RowData data) throws ClusException {
+    public void calculateOOBConfidenceScores(ClusForest model, RowData data) throws ClusException, InterruptedException {
         calculateConfidenceScores(model, data, true);
     }
 
@@ -157,8 +157,10 @@ public abstract class PredictionConfidence {
      * @param model
      * @param tuple
      * @return
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    public abstract double[] calculatePerTargetScores(ClusModel model, DataTuple tuple);
+    public abstract double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) throws ClusException, InterruptedException;
 
 
     /**
@@ -168,8 +170,10 @@ public abstract class PredictionConfidence {
      * @param model
      * @param tuple
      * @return
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    public abstract double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple);
+    public abstract double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple) throws ClusException, InterruptedException;
 
 
     public double getConfidence(int i) {

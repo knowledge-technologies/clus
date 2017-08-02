@@ -59,22 +59,26 @@ public class TupleAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusAttrType cloneType() {
         TupleAttrType tsat = new TupleAttrType(m_Name);
         return tsat;
     }
 
 
+    @Override
     public int getTypeIndex() {
         return THIS_TYPE;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_OBJECT;
     }
 
 
+    @Override
     public String getTypeName() {
         return THIS_TYPE_NAME;
     }
@@ -90,17 +94,20 @@ public class TupleAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public String getString(DataTuple tuple) {
         Tuple ts_data = (Tuple) tuple.getObjVal(this.m_ArrayIndex);
         return ts_data.toString();
     }
 
 
+    @Override
     public void writeARFFType(PrintWriter wrt) throws ClusException {
         wrt.print("Tuple");
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
@@ -121,6 +128,7 @@ public class TupleAttrType extends ClusAttrType {
         }
 
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             String str = data.readTuple();
             if (str == null)

@@ -29,7 +29,7 @@ package si.ijs.kt.clus.algo.rules;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
 
@@ -47,6 +47,7 @@ public class ClusRuleHeuristicDispersionMlt extends ClusRuleHeuristicDispersion 
      * Larger values are better!
      */
     // We only need the second parameter for rules!
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double n_pos = c_pstat.m_SumWeight;
         // Acceptable?
@@ -88,6 +89,7 @@ public class ClusRuleHeuristicDispersionMlt extends ClusRuleHeuristicDispersion 
     }
 
 
+    @Override
     public String getName() {
         return "Rule Heuristic (Reduced Dispersion, Multiplicative ver.)";
     }

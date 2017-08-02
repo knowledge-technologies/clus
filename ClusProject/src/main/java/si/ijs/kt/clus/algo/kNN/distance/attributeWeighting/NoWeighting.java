@@ -38,6 +38,7 @@ public class NoWeighting extends AttributeWeighting {
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
 
+    @Override
     public double getWeight(ClusAttrType attr) {
         return 1.;
     }

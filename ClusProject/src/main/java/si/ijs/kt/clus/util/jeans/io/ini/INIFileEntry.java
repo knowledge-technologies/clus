@@ -38,11 +38,13 @@ public abstract class INIFileEntry extends INIFileNode {
     }
 
 
+    @Override
     public boolean isSectionGroup() {
         return false;
     }
 
 
+    @Override
     public boolean isSection() {
         return false;
     }
@@ -61,6 +63,7 @@ public abstract class INIFileEntry extends INIFileNode {
     }
 
 
+    @Override
     public void save(PrintWriter writer) throws IOException {
         writer.println(getName() + " = " + getStringValue());
     }

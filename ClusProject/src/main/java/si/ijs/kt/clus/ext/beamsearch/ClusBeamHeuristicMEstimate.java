@@ -28,8 +28,8 @@ package si.ijs.kt.clus.ext.beamsearch;
 
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsBeamSearch;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
@@ -46,6 +46,7 @@ public class ClusBeamHeuristicMEstimate extends ClusBeamHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double n_tot = c_tstat.m_SumWeight;
         double n_pos = c_pstat.m_SumWeight;
@@ -71,6 +72,7 @@ public class ClusBeamHeuristicMEstimate extends ClusBeamHeuristic {
     }
 
 
+    @Override
     public double estimateBeamMeasure(ClusNode tree) {
         if (tree.atBottomLevel()) {
             ClusStatistic total = tree.getClusteringStat();
@@ -87,17 +89,20 @@ public class ClusBeamHeuristicMEstimate extends ClusBeamHeuristic {
     }
 
 
+    @Override
     public double computeLeafAdd(ClusNode leaf) {
         return -leaf.getClusteringStat().getError() / m_NbTrain;
     }
 
 
+    @Override
     public void setRootStatistic(ClusStatistic stat) {
         m_Prior = (stat.getTotalWeight() - stat.getError()) / stat.getTotalWeight();
         System.out.println("Setting prior: " + m_Prior);
     }
 
 
+    @Override
     public String getName() {
         return "Beam Heuristic (MEstimate = " + m_MValue + ")" + getAttrHeuristicString();
     }

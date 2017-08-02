@@ -52,7 +52,7 @@ public class NominalCorrelation extends ClusNominalError {
         for (int i = 0; i < size1; i++) {
             for (int j = 0; j < size2; j++) {
                 double mij = (double) ni[i] * nj[j] / n;
-                double err = (double) m_ContTable[i][j] - mij;
+                double err = m_ContTable[i][j] - mij;
                 if (mij != 0.0)
                     xsquare += err * err / mij;
             }
@@ -125,17 +125,20 @@ public class NominalCorrelation extends ClusNominalError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new NominalCorrelation(par, m_Attrs, 0, 0);
     }
 
 
+    @Override
     public String getName() {
         return "Cramer's V coefficient or Mutual information";
     }
 
 
-	public boolean shouldBeLow() { //previously, this method was in ClusError and returned true
+	@Override
+    public boolean shouldBeLow() { //previously, this method was in ClusError and returned true
 		throw new RuntimeException("should NominalCorrelation be high or low?");
 	}
 

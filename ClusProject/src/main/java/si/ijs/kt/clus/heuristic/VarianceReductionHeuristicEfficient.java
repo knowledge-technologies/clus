@@ -25,8 +25,9 @@ package si.ijs.kt.clus.heuristic;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
@@ -73,6 +74,7 @@ public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         // Acceptable?
         if (stopCriterion(tstat, pstat, missing)) { return Double.NEGATIVE_INFINITY; }
@@ -85,6 +87,7 @@ public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic[] pstat, int nbsplit) {
         // Acceptable?
         if (stopCriterion(tstat, pstat, nbsplit)) { return Double.NEGATIVE_INFINITY; }
@@ -98,12 +101,13 @@ public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return "Variance Reduction (FTest = " + SettingsTree.FTEST_VALUE + ", " + m_ClusteringWeights.getName(m_Attrs) + ")";
     }
 
 
-    public void printInfo(double ss_tot, double ss_pos, double ss_neg, ClusStatistic pstat) {
+    public void printInfo(double ss_tot, double ss_pos, double ss_neg, ClusStatistic pstat) throws ClusException {
         pstat.calcMean();
         System.out.println("C-pos: " + pstat);
         System.out.println("SS-pos: " + ss_pos + " SS-neg: " + ss_neg + " -> " + (ss_tot - (ss_pos + ss_neg)));

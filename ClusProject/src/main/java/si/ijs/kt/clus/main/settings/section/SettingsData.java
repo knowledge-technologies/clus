@@ -1,6 +1,7 @@
 
-package si.ijs.kt.clus.main.settings;
+package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
@@ -10,7 +11,12 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrInt;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsData implements SettingsBase {
+public class SettingsData extends SettingsBase {
+
+    public SettingsData(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
 
     /***********************************************************************
      * Section: Data *
@@ -151,6 +157,13 @@ public class SettingsData implements SettingsBase {
         data.addNode(m_NormalizeData = new INIFileNominal("NormalizeData", NORMALIZE_DATA_VALUES, 0));
         
         return data;
+    }
+
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
     }
 
 }

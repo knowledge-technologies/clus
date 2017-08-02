@@ -33,15 +33,17 @@ public class OverSample extends ClusSelection {
 
     public OverSample(int nbrows, double sel) {
         super(nbrows);
-        m_NbSelected = (int) Math.ceil((double) sel * nbrows);
+        m_NbSelected = (int) Math.ceil(sel * nbrows);
     }
 
 
+    @Override
     public boolean supportsReplacement() {
         return true;
     }
 
 
+    @Override
     public int getIndex(ClusRandomNonstatic rnd) {
         if (rnd == null) {
             return ClusRandom.nextInt(ClusRandom.RANDOM_SELECTION, m_NbRows);
@@ -52,11 +54,13 @@ public class OverSample extends ClusSelection {
     }
 
 
+    @Override
     public int getNbSelected() {
         return m_NbSelected;
     }
 
 
+    @Override
     public boolean isSelected(int row) {
         return false;
     }

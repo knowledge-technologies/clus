@@ -59,6 +59,7 @@ public class SoftNumericTest extends SoftTest {
     }
 
 
+    @Override
     public String getString() {
         StringBuffer buff = new StringBuffer();
         buff.append(m_Type.getName());
@@ -80,6 +81,7 @@ public class SoftNumericTest extends SoftTest {
     }
 
 
+    @Override
     public String getPythonString() {
         return getString();
     }
@@ -95,6 +97,7 @@ public class SoftNumericTest extends SoftTest {
     }
 
 
+    @Override
     public int softPredictNb2(DataTuple tuple, int branch) {
         double value = tuple.m_Doubles[m_Type.getArrayIndex()];
         if (branch == ClusNode.YES) {
@@ -134,6 +137,7 @@ public class SoftNumericTest extends SoftTest {
     }
 
 
+    @Override
     public int softPredictNb(DataTuple tuple, int branch) {
         double value = tuple.m_Doubles[m_Type.getArrayIndex()];
         if (branch == ClusNode.YES) {
@@ -189,6 +193,7 @@ public class SoftNumericTest extends SoftTest {
     }
 
 
+    @Override
     public int softPredict(RowData res, DataTuple tuple, int idx, int branch) {
         double value = tuple.m_Doubles[m_Type.getArrayIndex()];
         if (branch == ClusNode.YES) {
@@ -233,6 +238,7 @@ public class SoftNumericTest extends SoftTest {
     }
 
 
+    @Override
     public int softPredict2(RowData res, DataTuple tuple, int idx, int branch) {
         double value = tuple.m_Doubles[m_Type.getArrayIndex()];
         if (branch == ClusNode.YES) {
@@ -321,11 +327,13 @@ public class SoftNumericTest extends SoftTest {
     }
 
 
+    @Override
     public ClusAttrType getType() {
         return m_Type;
     }
 
 
+    @Override
     public void setType(ClusAttrType type) {
         m_Type = (NumericAttrType) type;
     }

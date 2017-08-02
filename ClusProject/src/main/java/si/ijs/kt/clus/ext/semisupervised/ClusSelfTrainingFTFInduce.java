@@ -54,7 +54,7 @@ public class ClusSelfTrainingFTFInduce extends ClusSemiSupervisedInduce {
 
 
     @Override
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
 
         partitionData(cr);
 
@@ -158,11 +158,13 @@ public class ClusSelfTrainingFTFInduce extends ClusSemiSupervisedInduce {
     }
 
 
+    @Override
     public ClusSchema getSchema() {
         return m_Induce.getSchema();
     }
 
 
+    @Override
     public ClusStatManager getStatManager() {
         return m_Induce.getStatManager();
     }
@@ -173,11 +175,13 @@ public class ClusSelfTrainingFTFInduce extends ClusSemiSupervisedInduce {
      *
      * @return The settings object.
      */
+    @Override
     public Settings getSettings() {
         return getStatManager().getSettings();
     }
 
 
+    @Override
     public void getPreprocs(DataPreprocs pps) {
         getStatManager().getPreprocs(pps);
     }

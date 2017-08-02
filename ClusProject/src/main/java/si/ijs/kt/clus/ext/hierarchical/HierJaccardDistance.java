@@ -19,6 +19,7 @@ public class HierJaccardDistance extends ClusDistance {
     }
 
 
+    @Override
     public double calcDistance(DataTuple t1, DataTuple t2) {
         ClassesTuple cl1 = m_Attr.getValue(t1);
         ClassesTuple cl2 = m_Attr.getValue(t2);
@@ -31,12 +32,14 @@ public class HierJaccardDistance extends ClusDistance {
     }
 
 
+    @Override
     public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {
         throw new RuntimeException("Double.POSITIVE_INFINITY is not supposed to be returned, is it?");
         // return Double.POSITIVE_INFINITY;
     }
 
 
+    @Override
     public String getDistanceName() {
         return "Hierarchical Jaccard Distance";
     }

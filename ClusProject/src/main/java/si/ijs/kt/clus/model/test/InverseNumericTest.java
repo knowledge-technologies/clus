@@ -45,23 +45,27 @@ public class InverseNumericTest extends NumericTest {
     }
 
 
+    @Override
     public String getString() {
         String value = m_Bound != Double.NEGATIVE_INFINITY ? NumberFormat.getInstance().format(m_Bound) : "?";
         return m_Type.getName() + " <= " + value;
     }
 
 
+    @Override
     public boolean isInverseNumeric() {
         return true;
     }
 
 
+    @Override
     public int hashCode() {
         long v = Double.doubleToLongBits(m_Bound);
         return m_Type.getIndex() + (int) (v ^ (v >>> 32)) + 1;
     }
 
 
+    @Override
     public int numericPredict(double value) {
         if (value == Double.POSITIVE_INFINITY)
             return ClusRandom.nextDouble(ClusRandom.RANDOM_TEST_DIR) < getPosFreq() ? ClusNode.YES : ClusNode.NO;
@@ -69,6 +73,7 @@ public class InverseNumericTest extends NumericTest {
     }
 
 
+    @Override
     public int numericPredictWeighted(double value) {
         if (value == Double.POSITIVE_INFINITY) {
             return hasUnknownBranch() ? ClusNode.UNK : UNKNOWN;
@@ -79,12 +84,14 @@ public class InverseNumericTest extends NumericTest {
     }
 
 
+    @Override
     public int predictWeighted(DataTuple tuple) {
         double val = m_Type.getNumeric(tuple);
         return numericPredictWeighted(val);
     }
 
 
+    @Override
     public NodeTest getBranchTest(int i) {
         if (i == ClusNode.YES) {
             return this;

@@ -27,11 +27,13 @@ import si.ijs.kt.clus.util.jeans.math.MNumber;
 
 public class QuotientExpression extends BinaryExpression {
 
+    @Override
     public Expression createSimilarExpression() {
         return new QuotientExpression();
     }
 
 
+    @Override
     public MNumber getValue() {
         return leftexpr.getValue().divide(rightexpr.getValue());
     }

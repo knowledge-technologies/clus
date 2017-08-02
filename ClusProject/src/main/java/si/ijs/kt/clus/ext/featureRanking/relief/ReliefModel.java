@@ -13,7 +13,7 @@ import com.google.gson.JsonObject;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.ClusRun;
-import si.ijs.kt.clus.main.settings.SettingsRelief;
+import si.ijs.kt.clus.main.settings.section.SettingsRelief;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;

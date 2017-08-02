@@ -1,11 +1,21 @@
-package si.ijs.kt.clus.main.settings;
 
+package si.ijs.kt.clus.main.settings.section;
+
+import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
-public class SettingsKNNTree implements SettingsBase {
+
+public class SettingsKNNTree extends SettingsBase {
+
+    public SettingsKNNTree(int position) {
+        super(position);
+        // TODO Auto-generated constructor stub
+    }
+
+
     /***********************************************************************
      * Section: KNN Trees *
      ***********************************************************************/
@@ -16,12 +26,13 @@ public class SettingsKNNTree implements SettingsBase {
     private INIFileBool kNNT_distWeighted;
     private INIFileBool kNNT_normalized;
     private INIFileBool kNNT_attrWeighted;
-    
+
 
     public boolean getKNNTNormalized() {
         return kNNT_normalized.getValue();
     }
-    
+
+
     public void setSectionKNNTEnabled(boolean enable) {
         m_SectionKNNT.setEnabled(enable);
     }
@@ -44,10 +55,15 @@ public class SettingsKNNTree implements SettingsBase {
         m_SectionKNNT.addNode(kNNT_normalized = new INIFileBool("Normalizing", true));
         m_SectionKNNT.addNode(kNNT_attrWeighted = new INIFileBool("AttributeWeighted", false));
         m_SectionKNNT.setEnabled(false);
-        
-        
+
         return m_SectionKNNT;
     }
 
+
+    @Override
+    public void initNamedValues() {
+        // TODO Auto-generated method stub
+        
+    }
 
 }

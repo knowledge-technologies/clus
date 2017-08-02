@@ -8,6 +8,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class SumPairwiseDistancesStat extends BitVectorStat {
@@ -35,12 +36,14 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         return new SumPairwiseDistancesStat(this.m_Settings, m_Distance, m_Efficiency);
     }
 
 
-    public double getSVarS(ClusAttributeWeights scale, RowData data) {
+    @Override
+    public double getSVarS(ClusAttributeWeights scale, RowData data) throws ClusException {
         optimizePreCalc(data);
         return m_SVarS;
     }
@@ -51,7 +54,8 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
     }
 
 
-    public void optimizePreCalc(RowData data) {
+    @Override
+    public void optimizePreCalc(RowData data) throws ClusException {
         if (!m_Modified)
             return;
         switch (getEfficiencyLevel()) {
@@ -69,17 +73,17 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
     }
 
 
-    public double calcDistance(DataTuple t1, DataTuple t2) {
+    public double calcDistance(DataTuple t1, DataTuple t2) throws ClusException {
         return m_Distance.calcDistance(t1, t2);
     }
 
 
-    public double calcDistanceToCentroid(DataTuple t1) {
+    public double calcDistanceToCentroid(DataTuple t1) throws ClusException {
         return m_Distance.calcDistanceToCentroid(t1, this);
     }
 
 
-    public void optimizePreCalcExact(RowData data) {
+    public void optimizePreCalcExact(RowData data) throws ClusException {
         m_SVarS = 0.0;
         double sumWiDiag = 0.0;
         double sumWiTria = 0.0;
@@ -112,13 +116,13 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
     }
 
 
-    public void optimizeLinearPreCalc(RowData data) {
+    public void optimizeLinearPreCalc(RowData data) throws ClusException {
         optimizeLinearPreCalc(data, linearParameter);
     }
 
 
     // linear random
-    public void optimizeLinearPreCalc(RowData data, int samplenb) {
+    public void optimizeLinearPreCalc(RowData data, int samplenb) throws ClusException {
         // long t = Calendar.getInstance().getTimeInMillis();
         /* reset value */
         m_SVarS = 0.0;
@@ -161,7 +165,7 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
     }
 
 
-    public void optimizePairwiseLinearPreCalc(RowData data) {
+    public void optimizePairwiseLinearPreCalc(RowData data) throws ClusException {
         /* reset value */
         m_SVarS = 0.0;
         int nb = m_Bits.size();
@@ -191,13 +195,14 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
 
 
     // N*LogN random
-    public void optimizeLogPreCalc(RowData data) {
+    public void optimizeLogPreCalc(RowData data) throws ClusException {
         int nb = getNbTuples();
         int lognb = (int) Math.floor(Math.log(nb) / Math.log(2)) + 1;
         optimizeLinearPreCalc(data, lognb);
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         super.copy(other);
         SumPairwiseDistancesStat or = (SumPairwiseDistancesStat) other;
@@ -210,15 +215,18 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
      * this is executed in the end
      * @see clus.statistic.ClusStatistic#calcMean()
      */
-    public void calcMean() {
+    @Override
+    public void calcMean() throws ClusException {
     }
 
 
+    @Override
     public ClusDistance getDistance() {
         return m_Distance;
     }
 
 
+    @Override
     public String getDistanceName() {
         return getDistance().getDistanceName();
     }

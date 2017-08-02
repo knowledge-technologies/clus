@@ -27,7 +27,7 @@
 package si.ijs.kt.clus.heuristic;
 
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
@@ -46,6 +46,7 @@ public class ReducedErrorHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double n_tot = c_tstat.m_SumWeight;
         double n_pos = c_pstat.m_SumWeight;
@@ -71,16 +72,19 @@ public class ReducedErrorHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic[] c_pstat, int nbsplit) {
         return Double.NEGATIVE_INFINITY;
     }
 
 
+    @Override
     public void setRootStatistic(ClusStatistic stat) {
         m_NbTrain = stat.m_SumWeight;
     }
 
 
+    @Override
     public String getName() {
         return "Reduced Error Heuristic";
     }

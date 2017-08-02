@@ -114,7 +114,7 @@ public abstract class ClusInductionAlgorithm {
     }
 
 
-    public void writeModel(ClusModelCollectionIO strm) throws IOException {
+    public void writeModel(ClusModelCollectionIO strm) throws IOException, ClusException {
     }
 
 
@@ -123,21 +123,21 @@ public abstract class ClusInductionAlgorithm {
     }
 
 
-    public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException, Exception {
         ClusModel model = induceSingleUnpruned(cr);
         ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL);
         model_info.setModel(model);
     }
 
 
-    public abstract ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException;
+    public abstract ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException, Exception;
 
 
     public void initializeHeuristic() {
     }
 
 
-    public ClusStatistic createTotalClusteringStat(RowData data) {
+    public ClusStatistic createTotalClusteringStat(RowData data) throws ClusException {
         ClusStatistic stat = m_StatManager.createClusteringStat();
         stat.setSDataSize(data.getNbRows());
         data.calcTotalStat(stat);
@@ -148,8 +148,9 @@ public abstract class ClusInductionAlgorithm {
 
     /**
      * Compute the statistics for all the (rows in the) data.
+     * @throws ClusException 
      */
-    public ClusStatistic createTotalTargetStat(RowData data) {
+    public ClusStatistic createTotalTargetStat(RowData data) throws ClusException {
         ClusStatistic stat = m_StatManager.createTargetStat();
         stat.setSDataSize(data.getNbRows());
         data.calcTotalStat(stat);

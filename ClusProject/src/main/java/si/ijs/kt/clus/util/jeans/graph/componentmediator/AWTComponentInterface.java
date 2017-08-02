@@ -52,6 +52,7 @@ public abstract class AWTComponentInterface implements ComponentInterface {
     }
 
 
+    @Override
     public void addActionListener(ComponentWrapper cw, ActionListener listener) {
         Component comp = cw.getComponent();
         if (comp instanceof Checkbox)
@@ -70,6 +71,7 @@ public abstract class AWTComponentInterface implements ComponentInterface {
         }
 
 
+        @Override
         public void itemStateChanged(ItemEvent evt) {
             mylistener.actionPerformed(new ActionEvent(evt.getSource(), evt.getID(), ""));
         }
