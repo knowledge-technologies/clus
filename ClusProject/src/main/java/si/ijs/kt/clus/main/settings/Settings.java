@@ -29,6 +29,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Enumeration;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
@@ -60,6 +61,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFile;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileNode;
 import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
@@ -177,6 +179,10 @@ public class Settings implements Serializable {
                 m_SettSIT,
                 m_SettSSL);
 
+    }
+    
+    public Enumeration<INIFileNode> getSectionsIterator() {
+    	return m_Ini.getNodes();
     }
 
 
@@ -443,6 +449,13 @@ public class Settings implements Serializable {
 
         if (m_SettRules.getCoveringMethod() == SettingsRules.COVERING_METHOD_RULES_FROM_TREE && tempInduceParamNeeded)
             m_SettRules.disableRuleInduceParams();
+    }
+    
+    
+    public static Settings getDefaultSettings() {
+    	Settings sett = new Settings();
+    	sett.create();
+    	return sett;        
     }
 
 }

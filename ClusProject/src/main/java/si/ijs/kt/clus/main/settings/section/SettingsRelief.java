@@ -13,12 +13,11 @@ import si.ijs.kt.clus.util.jeans.math.MathUtil;
 public class SettingsRelief extends SettingsBase {
 
     public SettingsRelief(int position) {
-        super(position);
-        // TODO Auto-generated constructor stub
-    }
+		super(position);
+	}
 
 
-    /***********************************************************************
+	/***********************************************************************
      * Section: Relief *
      ***********************************************************************/
 
@@ -122,12 +121,12 @@ public class SettingsRelief extends SettingsBase {
 
         m_SectionRelief = new INIFileSection("Relief");
 
-        m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("neighbours", NONELIST));
+        m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("Neighbours", NONELIST));
         m_ReliefNbNeighbours.setInt(RELIEF_NEIGHBOUR_DEFAULT);
-        m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("iterations", NONELIST));
+        m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("Iterations", NONELIST));
         m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);
-        m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("weightNeighbours", false));
-        m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("weightingSigma", 0.5)); // following Weka,
+        m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("WeightNeighbours", false));
+        m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("WeightingSigma", 0.5)); // following Weka,
                                                                                                     // the authors do
                                                                                                     // not give any
                                                                                                     // suggestions
@@ -138,9 +137,7 @@ public class SettingsRelief extends SettingsBase {
     }
 
 
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-        
-    }
+	@Override
+	public void initNamedValues() {		
+	}
 }
