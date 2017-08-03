@@ -18,6 +18,27 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+	  <plugin>
+        <artifactId>maven-assembly-plugin</artifactId>
+        <executions>
+          <execution>
+            <phase>package</phase>
+            <goals>
+              <goal>single</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <descriptorRefs>
+            <descriptorRef>jar-with-dependencies</descriptorRef>
+          </descriptorRefs>
+          <archive>
+            <manifest>
+              <mainClass>si.ijs.kt.clus.Clus</mainClass>
+            </manifest>
+          </archive>
+        </configuration>
+      </plugin>
     </plugins>
   </build>
   <dependencies>
@@ -55,6 +76,12 @@
   		<groupId>junit</groupId>
   		<artifactId>junit</artifactId>
   		<version>4.12</version>
+  	</dependency>
+  	<dependency>
+  		<groupId>org.apache.maven.plugins</groupId>
+  		<artifactId>maven-assembly-plugin</artifactId>
+  		<version>3.0.0</version>
+  		<type>maven-plugin</type>
   	</dependency>
   </dependencies>
   <name>Clus</name>
