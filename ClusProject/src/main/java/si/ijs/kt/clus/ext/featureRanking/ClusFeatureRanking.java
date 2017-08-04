@@ -295,13 +295,13 @@ public class ClusFeatureRanking {
         JsonElement algorithmName;
         int ens_method = getSettings().getEnsemble().getEnsembleMethod();
         int fr_method = getSettings().getEnsemble().getRankingMethod();
-        if (ens_method == SettingsEnsemble.ENSEMBLE_EXTRA_TREES) {
+        if (ens_method == SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES) {
             algorithmName = new JsonPrimitive("ExtraTrees/GENIE3");
         }
-        else if ((ens_method == SettingsEnsemble.ENSEMBLE_RFOREST) && (fr_method == SettingsEnsemble.RANKING_RFOREST)) {
+        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_RFOREST)) {
             algorithmName = new JsonPrimitive("RandomForestRanking");
         }
-        else if ((ens_method == SettingsEnsemble.ENSEMBLE_RFOREST) && (fr_method == SettingsEnsemble.RANKING_GENIE3)) {
+        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_GENIE3)) {
             algorithmName = new JsonPrimitive("RandomForest/GENIE3");
         }
         else {

@@ -265,7 +265,7 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
     }
     
     public void setEnsembleRankigDescription(int ensembleType, int rankingType, int nbTrees){
-    	String[] description_parts = new String[]{String.format("Ensemble method: %s", getSettings().getEnsemble().getEnsembleTypeName(ensembleType)),
+    	String[] description_parts = new String[]{String.format("Ensemble method: %s", getSettings().getEnsemble().getEnsembleMethodName(ensembleType)),
     											  String.format("Ranking method: %s", getSettings().getEnsemble().getRankingTypeName(rankingType)),
     											  String.format("Ensemble size: %d", nbTrees)};
     	setRankingDescription(String.join("\n", description_parts));

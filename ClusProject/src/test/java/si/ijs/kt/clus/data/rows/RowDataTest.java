@@ -12,12 +12,10 @@ import java.util.Arrays;
 import org.junit.Test;
 
 import si.ijs.kt.clus.BaseTestCase;
-import si.ijs.kt.clus.Clus;
+import si.ijs.kt.clus.TestHelper;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
-import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.ClusException;
-import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 public class RowDataTest extends BaseTestCase {
@@ -83,13 +81,14 @@ public class RowDataTest extends BaseTestCase {
 		//@formatter:on
 
         for (int i = 0; i < settingsFiles.length; i++) {
-            RowData data = loadData(settingsFiles[i]);
+            RowData data = TestHelper.getRowData(settingsFiles[i]);
             NumericAttrType[] attrs = data.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
             for (int repeat = 0; repeat < 4; repeat++) {
                 for (int attr = 0; attr < attrs.length; attr++) {
                     NumericAttrType at = (NumericAttrType) data.m_Schema.getAttrType(attr);
                     Integer[] sortedByAt = data.smartSort(at);
                     String sFile = settingsFiles[i].substring(settingsFiles[i].lastIndexOf("/") + 1, settingsFiles[i].length());
+                    
                     assertArrayEquals(
                             String.format("Sorted arrays should be equal: test => (sFile, repetition, attribute) = (%s, %d, %d)", sFile, repeat, at.getIndex()),
                             solutions[i][at.getIndex()],
@@ -100,25 +99,7 @@ public class RowDataTest extends BaseTestCase {
     }
 
 
-    /**
-     * Loads the data set that is specified in the {@code settingsFile} under the section [Data], field 'File'.
-     * 
-     * @param settingsFile
-     *        name of the settings file
-     * @return
-     * @throws IOException
-     * @throws ClusException
-     */
-    private RowData loadData(String settingsFile) throws IOException, ClusException {
-        Clus clus = new Clus();
-        Settings sett = clus.getSettings();
-        CMDLineArgs cargs = new CMDLineArgs(clus);
-        cargs.process(new String[] { "-silent", settingsFile });
-        sett.getGeneric().setAppName(cargs.getMainArg(0));
-        clus.initSettings(cargs);
-        clus.initialize(cargs);
-        return clus.getData();
-    }
+    
 
 
     /**

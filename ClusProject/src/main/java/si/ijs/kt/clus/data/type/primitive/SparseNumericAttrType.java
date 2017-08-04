@@ -127,11 +127,11 @@ public class SparseNumericAttrType extends NumericAttrType {
     @Override
     public void setNumeric(DataTuple tuple, double value) {
         Double d_value = null;
-        for (int i = 0; i < DOUBLES.length; i++) {
-            if (DOUBLES[i].doubleValue() == value)
-                d_value = DOUBLES[i];
-        }
-        if (d_value == null)
+//        for (int i = 0; i < DOUBLES.length; i++) {
+//            if (DOUBLES[i].doubleValue() == value)
+//                d_value = DOUBLES[i];
+//        }
+//        if (d_value == null)
             d_value = new Double(value);
         ((SparseDataTuple) tuple).setDoubleValueSparse(d_value, m_IntIndex);
     }
@@ -150,8 +150,7 @@ public class SparseNumericAttrType extends NumericAttrType {
                 return false;
             double value = data.getFloat();
             setNumeric(tuple, value);
-            // System.out.println(" adding " + tuple.getIndex());
-            // addExampleIndex(new Integer(tuple.getIndex()));
+
             return true;
         }
     }

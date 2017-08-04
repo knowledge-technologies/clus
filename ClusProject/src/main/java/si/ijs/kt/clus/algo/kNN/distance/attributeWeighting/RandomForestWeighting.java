@@ -79,7 +79,7 @@ public class RandomForestWeighting extends AttributeWeighting {
             new_sett.initialize(null, false);
             new_sett.getEnsemble().setEnsembleMode(true);
             new_sett.getAttribute().setTarget(orig_sett.getAttribute().getTarget());
-            new_sett.getEnsemble().setEnsembleMethod(SettingsEnsemble.ENSEMBLE_RFOREST);
+            new_sett.getEnsemble().setEnsembleMethod(SettingsEnsemble.ENSEMBLE_METHOD_RFOREST);
             new_sett.getEnsemble().setNbBags(nbBags); // TO-DO User Defined!
             new_sett.getEnsemble().setNbRandomAttrSelected(0); // Selects LOG of number of descriptive attributes
             new_sett.getEnsemble().setOOBestimate(true);

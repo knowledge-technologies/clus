@@ -26,17 +26,17 @@ public class SettingsEnsemble extends SettingsBase {
      * Section: Ensemble methods *
      ***********************************************************************/
 
-    private final String[] ENSEMBLE_TYPE = { "Bagging", "RForest", "RSubspaces", "BagSubspaces", "Boosting", "RFeatSelection", "Pert", "ExtraTrees" };
-    public final static int ENSEMBLE_BAGGING = 0;
-    public final static int ENSEMBLE_RFOREST = 1;
-    public final static int ENSEMBLE_RSUBSPACES = 2;
+    private final String[] ENSEMBLE_METHOD = { "Bagging", "RForest", "RSubspaces", "BagSubspaces", "Boosting", "RFeatSelection", "Pert", "ExtraTrees" };
+    public final static int ENSEMBLE_METHOD_BAGGING = 0;
+    public final static int ENSEMBLE_METHOD_RFOREST = 1;
+    public final static int ENSEMBLE_METHOD_RSUBSPACES = 2;
     /** Random subspaces */
-    public final static int ENSEMBLE_BAGSUBSPACES = 3;
+    public final static int ENSEMBLE_METHOD_BAGSUBSPACES = 3;
     /** Bagging of subspaces */
-    public final static int ENSEMBLE_BOOSTING = 4;
-    public final static int ENSEMBLE_RFOREST_NO_BOOTSTRAP = 5;
-    public final static int ENSEMBLE_PERT = 6;
-    public final static int ENSEMBLE_EXTRA_TREES = 7;
+    public final static int ENSEMBLE_METHOD_BOOSTING = 4;
+    public final static int ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP = 5;
+    public final static int ENSEMBLE_METHOD_PERT = 6;
+    public final static int ENSEMBLE_METHOD_EXTRA_TREES = 7;
 
     private final String[] VOTING_TYPE = { "Majority", "ProbabilityDistribution" };
     public final static int VOTING_TYPE_MAJORITY = 0;
@@ -416,8 +416,8 @@ public class SettingsEnsemble extends SettingsBase {
         return m_ClassificationVoteType.getValue();
     }
 
-    public String getEnsembleTypeName(int type) {
-        return ENSEMBLE_TYPE[type];
+    public String getEnsembleMethodName(int type) {
+        return ENSEMBLE_METHOD[type];
     }
     
    
@@ -427,7 +427,7 @@ public class SettingsEnsemble extends SettingsBase {
 
         m_SectionEnsembles = new INIFileSection("Ensemble");
         m_SectionEnsembles.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
-        m_SectionEnsembles.addNode(m_EnsembleMethod = new INIFileNominal("EnsembleMethod", ENSEMBLE_TYPE, ENSEMBLE_BAGGING));
+        m_SectionEnsembles.addNode(m_EnsembleMethod = new INIFileNominal("EnsembleMethod", ENSEMBLE_METHOD, ENSEMBLE_METHOD_BAGGING));
         m_SectionEnsembles.addNode(m_ClassificationVoteType = new INIFileNominal("VotingType", VOTING_TYPE, VOTING_TYPE_PROBAB_DISTR));
         m_SectionEnsembles.addNode(m_RandomAttrSelected = new INIFileString("SelectRandomSubspaces", "0"));
         m_SectionEnsembles.addNode(m_RandomTargetAttrSelected = new INIFileString("SelectRandomTargetSubspaces", "SQRT"));

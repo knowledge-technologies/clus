@@ -7,8 +7,10 @@ import java.util.Arrays;
 
 import org.junit.Test;
 
+import si.ijs.kt.clus.BaseTestCase;
 
-public class LevenshteinTest {
+
+public class LevenshteinTest extends BaseTestCase {
 
     @Test
     public void computeDistTest() {

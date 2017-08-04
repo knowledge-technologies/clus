@@ -136,31 +136,31 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             ClusAttrType[] selected;
             //boolean shouldSet = false;
             switch (sett.getEnsemble().getEnsembleMethod()) { // setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd)
-                case SettingsEnsemble.ENSEMBLE_BAGGING:
+                case SettingsEnsemble.ENSEMBLE_METHOD_BAGGING:
                     selected = schema.getDescriptiveAttributes();
                     break;
-                case SettingsEnsemble.ENSEMBLE_RFOREST:
+                case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST:
                     ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
                     //shouldSet = true; //ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     break;
                 // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
                 // schema.getSettings().getNbRandomAttrSelected());
-                case SettingsEnsemble.ENSEMBLE_RSUBSPACES:
+                case SettingsEnsemble.ENSEMBLE_METHOD_RSUBSPACES:
                     selected = ClusEnsembleInduce.getRandomSubspaces();
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     break;
-                case SettingsEnsemble.ENSEMBLE_BAGSUBSPACES:
+                case SettingsEnsemble.ENSEMBLE_METHOD_BAGSUBSPACES:
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     selected = ClusEnsembleInduce.getRandomSubspaces();
                     break;
-                case SettingsEnsemble.ENSEMBLE_RFOREST_NO_BOOTSTRAP:
+                case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
                     //shouldSet = true;// ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     break;
-                case SettingsEnsemble.ENSEMBLE_EXTRA_TREES:// same as for Random Forests
+                case SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES:// same as for Random Forests
                     ClusAttrType[] attrs_all = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrs_all, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
                     //shouldSet = true; // ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), rnd);
@@ -314,7 +314,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 // daniela end
             }
 
-            if ((getSettings().getEnsemble().isEnsembleMode()) && (getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_EXTRA_TREES)) {
+            if ((getSettings().getEnsemble().isEnsembleMode()) && (getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES)) {
 
                 if (at.isNominal()) { // at instanceof NominalAttrType
                     m_FindBestTest.findNominalExtraTree((NominalAttrType) at, data, rnd);

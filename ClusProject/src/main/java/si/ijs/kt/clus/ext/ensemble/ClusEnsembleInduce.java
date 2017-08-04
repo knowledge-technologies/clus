@@ -397,37 +397,37 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         switch (set.getEnsembleMethod()) {
-            case SettingsEnsemble.ENSEMBLE_BAGGING: { // Bagging
+            case SettingsEnsemble.ENSEMBLE_METHOD_BAGGING: { // Bagging
                 System.out.println("Ensemble Method: Bagging");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_RFOREST: { // RForest
+            case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST: { // RForest
                 System.out.println("Ensemble Method: Random Forest");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_RSUBSPACES: { // RSubspaces
+            case SettingsEnsemble.ENSEMBLE_METHOD_RSUBSPACES: { // RSubspaces
                 System.out.println("Ensemble Method: Random Subspaces");
                 induceSubspaces(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_BAGSUBSPACES: { // Bagging Subspaces
+            case SettingsEnsemble.ENSEMBLE_METHOD_BAGSUBSPACES: { // Bagging Subspaces
                 System.out.println("Ensemble Method: Bagging of Subspaces");
                 induceBaggingSubspaces(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_RFOREST_NO_BOOTSTRAP: { // RForest without bootstrapping (setting: RFeatSelection)
+            case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP: { // RForest without bootstrapping (setting: RFeatSelection)
                 System.out.println("Ensemble Method: Random Forest without bootstrapping");
                 induceRForestNoBootstrap(cr); // TODO: martinb has a problem with the name of this method
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_PERT: { // PERT in combination with bagging
+            case SettingsEnsemble.ENSEMBLE_METHOD_PERT: { // PERT in combination with bagging
                 System.out.println("Ensemble Method: PERT (in combination with Bagging)");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_EXTRA_TREES: { // Extra-Trees ensemble (published by Geurts et al.)
+            case SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES: { // Extra-Trees ensemble (published by Geurts et al.)
                 System.out.println("Ensemble Method: Extra-trees");
                 induceExtraTrees(cr);
                 break;
