@@ -95,6 +95,7 @@ public abstract class ClusAttrType implements Serializable, Comparable {
 
     protected String m_Name;
     protected int m_Index, m_ArrayIndex;
+    private int m_DatasetIndex; // 1-based, so that m_DatasetIndex coincides with the value that refers to the attribute .s file
     protected int m_NbMissing;
     protected ClusSchema m_Schema;
     protected int m_Status = STATUS_NORMAL;
@@ -215,6 +216,17 @@ public abstract class ClusAttrType implements Serializable, Comparable {
     public void setArrayIndex(int idx) {
         m_ArrayIndex = idx;
     }
+    
+    
+    public int getDatasetIndex() {
+    	return m_DatasetIndex;
+    }
+    
+    
+    public void setDatasetIndex(int i) {
+    	m_DatasetIndex = i;
+    }
+    
 
 
     public int getStatus() {

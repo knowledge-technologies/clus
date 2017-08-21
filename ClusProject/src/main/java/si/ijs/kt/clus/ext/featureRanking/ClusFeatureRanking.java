@@ -66,6 +66,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.jeans.util.IntervalCollection;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -92,6 +93,8 @@ public class ClusFeatureRanking {
     int m_NbFeatureRankings;
 
     Settings m_Settings;
+    
+    int[] m_AttributeIndices;
 
 
     public ClusFeatureRanking(Settings sett) {
@@ -112,8 +115,10 @@ public class ClusFeatureRanking {
         int num = -1;
         int nom = -1;
         // System.out.println("NB = "+descriptive.length);
+        setAttributeIndices(descriptive[0].getSchema().getDescriptive());
         for (int i = 0; i < descriptive.length; i++) {
             ClusAttrType type = descriptive[i];
+            type.setDatasetIndex(m_AttributeIndices[i]);
             if (!type.isDisabled()) {
                 // double[] info = new double[3];
                 double[] info = new double[2 + nbRankings];
@@ -679,5 +684,22 @@ public class ClusFeatureRanking {
         if (cr.getStatManager().getSettings().getOutput().isOutputJSONModel()) {
             writeJSON(cr);
         }
+    }
+    
+    
+    public void setAttributeIndices(IntervalCollection descriptive) {
+    	ArrayList<Integer> indices = new ArrayList<Integer>();
+    	for(int i = 0; i < descriptive.getNbIntervals(); i++) {
+    		int from = descriptive.getInterval(i).getFirst();
+    		int to = descriptive.getInterval(i).getLast();
+    		for(int attrInd = ; attrInd; i++) {
+    			indices.add(i);
+    		}
+    	}
+		m_AttributeIndices = new int[indices.size()];
+		for(int i = 0; i < indices.size(); i++) {
+			m_AttributeIndices[i] = indices.get(i).intValue();
+		}
+		Arrays.sort(m_AttributeIndices);
     }
 }
