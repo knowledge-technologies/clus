@@ -35,7 +35,7 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.util.ClusFormat;
 
 
@@ -134,6 +134,7 @@ public class GDAlg extends OptAlg {
      * 
      * @throws Exception
      */
+    @Override
     public ArrayList<Double> optimize() {
 
         if (getSettings().getGeneral().getVerbose() > 0)
@@ -471,6 +472,7 @@ public class GDAlg extends OptAlg {
     }
 
 
+    @Override
     public void postProcess(ClusRuleSet rset) {
         m_GDProbl.changeRuleSetToUndoNormNormalization(rset);
     }

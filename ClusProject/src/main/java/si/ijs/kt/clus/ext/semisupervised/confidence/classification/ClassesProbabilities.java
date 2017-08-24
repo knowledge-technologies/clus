@@ -41,7 +41,7 @@ public class ClassesProbabilities extends PredictionConfidence {
 
 
     @Override
-    public double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) {
+    public double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) throws ClusException, InterruptedException {
         ClusStatistic stat = new ClassificationStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
         ;
         stat = model.predictWeighted(tuple);
@@ -61,10 +61,10 @@ public class ClassesProbabilities extends PredictionConfidence {
 
 
     @Override
-    public double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple) {
+    public double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple) throws ClusException, InterruptedException {
         ClusStatistic stat = new ClassificationStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
         ;
-        stat = ((ClusForest) model).predictWeightedOOB(tuple);
+        stat = model.predictWeightedOOB(tuple);
         double[][] classCounts;
 
         classCounts = ((ClassificationStat) stat).getClassCounts();

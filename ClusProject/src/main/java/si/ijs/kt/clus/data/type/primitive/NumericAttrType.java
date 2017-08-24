@@ -40,7 +40,7 @@ import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRNode;
 import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsHMTR;
+import si.ijs.kt.clus.main.settings.section.SettingsHMTR;
 import si.ijs.kt.clus.util.ClusException;
 
 
@@ -76,6 +76,7 @@ public class NumericAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusAttrType cloneType() {
         NumericAttrType at = new NumericAttrType(m_Name);
         cloneType(at);
@@ -84,6 +85,7 @@ public class NumericAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public boolean isSparse() {
         return m_Sparse;
     }
@@ -94,16 +96,19 @@ public class NumericAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public int getTypeIndex() {
         return THIS_TYPE;
     }
 
 
+    @Override
     public String getTypeName() {
         return THIS_TYPE_NAME;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_DOUBLE;
     }
@@ -117,12 +122,14 @@ public class NumericAttrType extends ClusAttrType {
      * return true;
      * }
      */
+    @Override
     public int getMaxNbStats() {
         // Positive statistic and missing value statistic
         return 2;
     }
 
 
+    @Override
     public String getString(DataTuple tuple) {
         double val = this.getNumeric(tuple);
         // FIXME - SOON - STATUS_KEY attribute :-)
@@ -135,11 +142,13 @@ public class NumericAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public boolean isMissing(DataTuple tuple) {
         return tuple.m_Doubles[m_ArrayIndex] == MISSING;
     }
 
 
+    @Override
     public double getNumeric(DataTuple tuple) {
         return tuple.getDoubleVal(m_ArrayIndex);
     }
@@ -150,6 +159,7 @@ public class NumericAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public int compareValue(DataTuple t1, DataTuple t2) {
         double v1 = t1.m_Doubles[m_ArrayIndex];
         double v2 = t2.m_Doubles[m_ArrayIndex];
@@ -159,16 +169,19 @@ public class NumericAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusAttribute createTargetAttr(ColTarget target) {
         return new NumericTarget(target, this, getArrayIndex());
     }
 
 
+    @Override
     public void writeARFFType(PrintWriter wrt) throws ClusException {
         wrt.print("numeric");
     }
 
 
+    @Override
     public ClusSerializable createRowSerializable() throws ClusException {
         return new MySerializable();
     }
@@ -183,6 +196,7 @@ public class NumericAttrType extends ClusAttrType {
         public int m_NbZero, m_NbNeg, m_NbTotal;
 
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             if (!data.readNoSpace())
                 return false;
@@ -203,6 +217,7 @@ public class NumericAttrType extends ClusAttrType {
         }
 
 
+        @Override
         public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy) throws IOException {
 
             int key = schema.getKeyAttribute().length;
@@ -246,6 +261,7 @@ public class NumericAttrType extends ClusAttrType {
         }
 
 
+        @Override
         public boolean readHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy, String line) throws IOException {
 
             int key = schema.getKeyAttribute().length;
@@ -379,7 +395,7 @@ public class NumericAttrType extends ClusAttrType {
                                 diff *= diff;
                                 sumDiffsSquared += diff;
                             }
-                            return sumDiffsSquared / (double) (values.size());
+                            return sumDiffsSquared / (values.size());
                         case SettingsHMTR.HMTR_AGG_STDEV:
                             double mean = sum / children.size();
                             double temp = 0;
@@ -388,7 +404,7 @@ public class NumericAttrType extends ClusAttrType {
                                 double squrDiffToMean = Math.pow(val - mean, 2);
                                 temp += squrDiffToMean;
                             }
-                            double meanOfDiffs = (double) temp / (double) (values.size());
+                            double meanOfDiffs = temp / (values.size());
                             return Math.sqrt(meanOfDiffs);
                         case SettingsHMTR.HMTR_AGG_ZERO:
                             return 0;
@@ -420,6 +436,7 @@ public class NumericAttrType extends ClusAttrType {
         }
 
 
+        @Override
         public void term(ClusSchema schema) {
             // System.out.println("Attribute: "+getName()+" "+((double)100.0*m_NbZero/m_NbTotal));
             if (m_NbNeg == 0 && m_NbZero > m_NbTotal * 5 / 10) {
@@ -429,6 +446,7 @@ public class NumericAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public boolean isNumeric() {
         return true;
     }

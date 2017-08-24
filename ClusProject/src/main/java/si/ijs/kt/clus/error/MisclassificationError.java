@@ -44,26 +44,31 @@ public class MisclassificationError extends Accuracy {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return true;
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         return 1.0 - ((double) m_NbCorrect[i]) / getNbExamples();
     }
 
 
+    @Override
     public String getName() {
         return "Misclassification error";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MisclassificationError(par, m_Attrs);
     }
 
 
+    @Override
     public double computeLeafError(ClusStatistic stat) {
         ClassificationStat cstat = (ClassificationStat) stat;
         return cstat.getError(null) * cstat.getNbAttributes();

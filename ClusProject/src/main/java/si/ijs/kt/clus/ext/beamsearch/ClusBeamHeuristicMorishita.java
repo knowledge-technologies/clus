@@ -28,7 +28,7 @@ package si.ijs.kt.clus.ext.beamsearch;
 
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 
@@ -53,6 +53,7 @@ public class ClusBeamHeuristicMorishita extends ClusBeamHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         double n_tot = c_tstat.m_SumWeight;
         double n_pos = c_pstat.m_SumWeight;
@@ -81,6 +82,7 @@ public class ClusBeamHeuristicMorishita extends ClusBeamHeuristic {
     }
 
 
+    @Override
     public double estimateBeamMeasure(ClusNode tree) {
         if (tree.atBottomLevel()) {
             return 0;
@@ -96,16 +98,19 @@ public class ClusBeamHeuristicMorishita extends ClusBeamHeuristic {
     }
 
 
+    @Override
     public double computeLeafAdd(ClusNode leaf) {
         return 0.0;
     }
 
 
+    @Override
     public String getName() {
         return "Beam Heuristic (Morishita)";
     }
 
 
+    @Override
     public void setRootStatistic(ClusStatistic stat) {
         super.setRootStatistic(stat);
     }

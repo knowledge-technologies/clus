@@ -32,6 +32,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class ClusBeamModelDistance {
@@ -41,18 +42,17 @@ public class ClusBeamModelDistance {
     boolean isBeamUpdated = false;
 
 
-    public ClusBeamModelDistance(ClusRun run, ClusBeam beam) {
+    public ClusBeamModelDistance(ClusRun run, ClusBeam beam) throws ClusException, InterruptedException {
         m_Data = (RowData) run.getTrainingSet();
         if (m_Data == null) {
-            System.err.println(getClass().getName() + ": ClusBeamTreeDistance(): Error while reading the train data");
-            System.exit(1);
+            throw new ClusException(getClass().getName() + ": ClusBeamTreeDistance(): Error while reading the train data");
         }
         m_NbRows = m_Data.getNbRows();
         fillBeamWithPredictions(beam);
     }
 
 
-    public void fillBeamWithPredictions(ClusBeam beam) {
+    public void fillBeamWithPredictions(ClusBeam beam) throws ClusException, InterruptedException {
         ArrayList arr = beam.toArray();
         ClusBeamModel model;
         for (int k = 0; k < arr.size(); k++) {
@@ -62,7 +62,7 @@ public class ClusBeamModelDistance {
     }
 
 
-    public ArrayList<ClusStatistic> getPredictions(ClusModel model) {
+    public ArrayList<ClusStatistic> getPredictions(ClusModel model) throws ClusException, InterruptedException {
         ArrayList<ClusStatistic> predictions = new ArrayList<ClusStatistic>();
         for (int i = 0; i < m_NbRows; i++) {
             DataTuple tuple = m_Data.getTuple(i);
@@ -74,7 +74,7 @@ public class ClusBeamModelDistance {
     }
 
 
-    public static ArrayList<ClusStatistic> getPredictionsDataSet(ClusModel model, RowData train, boolean isNum) {
+    public static ArrayList<ClusStatistic> getPredictionsDataSet(ClusModel model, RowData train, boolean isNum) throws ClusException, InterruptedException {
         ArrayList<ClusStatistic> predictions = new ArrayList<ClusStatistic>();
         for (int i = 0; i < train.getNbRows(); i++) {
             DataTuple tuple = train.getTuple(i);
@@ -233,8 +233,10 @@ public class ClusBeamModelDistance {
      * @param data
      * @param isNum
      * @return
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    public static double calcBeamSimilarity(ArrayList beam, RowData data, boolean isNum) {
+    public static double calcBeamSimilarity(ArrayList beam, RowData data, boolean isNum) throws ClusException, InterruptedException {
         ArrayList<ArrayList<ClusStatistic>> predictions = new ArrayList<ArrayList<ClusStatistic>>();
         double result = 0.0;
         double dist;
@@ -251,7 +253,7 @@ public class ClusBeamModelDistance {
         for (int m = 0; m < predictions.size(); m++) {
             dist = 0.0;
             for (int n = 0; n < predictions.size(); n++) {
-                dist += getDistance((ArrayList<ClusStatistic>) predictions.get(m), (ArrayList<ClusStatistic>) predictions.get(n));
+                dist += getDistance(predictions.get(m), predictions.get(n));
             }
             dist = 1 - (dist / beam.size());
             // System.out.println("Model "+m+": "+(-((ClusBeamModel)beam.get(m)).getValue())+"\t"+dist);

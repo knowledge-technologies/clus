@@ -38,7 +38,6 @@ import si.ijs.kt.clus.algo.split.CurrentBestTestAndHeuristic;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.error.common.multiscore.MultiScore;
 import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
@@ -79,11 +78,13 @@ public class ClusNode extends MyNode implements ClusModel {
     public NodeTest[] m_OppositeAlternatives; // contains all alternatives to m_Test that give the opposite split
     public String m_AlternativesString; // contains a string of true and opposite alternatives, sorted according to
                                         // attribute number
-    // - adde by Jurica Levatic (E8_IJS), March 2014
+                                        // - adde by Jurica Levatic (E8_IJS), March 2014
     public List<Integer> m_LeafTuples; //contains hash codes of tuples which ended in a leaf
     // - end added by Jurica
 
-    public MyNode cloneNode() {
+
+    @Override
+    public MyNode cloneNode() throws ClusException {
         ClusNode clone = new ClusNode();
         clone.m_Test = m_Test;
         clone.m_ClusteringStat = m_ClusteringStat;
@@ -142,14 +143,14 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public ClusNode cloneNodeWithVisitor() {
+    public ClusNode cloneNodeWithVisitor() throws ClusException {
         ClusNode clone = (ClusNode) cloneNode();
         clone.setVisitor(getVisitor());
         return clone;
     }
 
 
-    public final ClusNode cloneTreeWithVisitors(ClusNode n1, ClusNode n2) {
+    public final ClusNode cloneTreeWithVisitors(ClusNode n1, ClusNode n2) throws ClusException {
         if (n1 == this) {
             return n2;
         }
@@ -167,7 +168,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final ClusNode cloneTreeWithVisitors() {
+    public final ClusNode cloneTreeWithVisitors() throws ClusException {
         ClusNode clone = (ClusNode) cloneNode();
         clone.setVisitor(getVisitor());
         int arity = getNbChildren();
@@ -245,11 +246,13 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public final int getID() {
         return m_ID;
     }
 
 
+    @Override
     public boolean equals(Object other) {
         ClusNode o = (ClusNode) other;
         if (m_Test != null && o.m_Test != null) {
@@ -269,6 +272,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public int hashCode() {
         int hashCode = 1234;
         if (m_Test != null) {
@@ -314,11 +318,13 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public int getModelSize() {
         return getNbNodes();
     }
 
 
+    @Override
     public String getModelInfo() {
         return "Nodes = " + getNbNodes() + " (Leaves: " + getNbLeaves() + ")";
     }
@@ -378,7 +384,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final void computePrediction() {
+    public final void computePrediction() throws ClusException {
         if (getClusteringStat() != null) {
             getClusteringStat().calcMean();
         }
@@ -395,73 +401,75 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    // MultiScore is not used!
-    public final ClusNode postProc(MultiScore score, ClusStatManager mgr) {
-        if (mgr == null) {
-            throw new RuntimeException("ClusStatManager = null.");
+    public final ClusNode afterInduce(ClusStatManager mgr) throws ClusException {
+        if (mgr == null) throw new RuntimeException("ClusStatManager = null.");
+
+        // treshold optimization
+        if (mgr.getSettings().getMLC().shouldRunThresholdOptimization()) { 
+            optimizeTresholds();
         }
         else {
-            if (mgr.getSettings().getMLC().shouldRunThresholdOptimization()) { // mgr.getSettings().getSectionMultiLabel().isEnabled() && mgr.getSettings().getMultiLabelThresholdOptimization() == Settings.MULTILABEL_THRESHOLD_OPTIMIZATION_YES
-                double lower = 0.0, upper = 1.0;
-                double middle = lower + (upper - lower) / 2;
-                int nbRelevantLabels = countTrueRelevant();
-                int nbPredictedRelevantNow = -1;
-                while (upper - lower > 0.0005) {
-                    middle = lower + (upper - lower) / 2;
-                    updateThresholds(middle);
-                    updateTree();
-                    nbPredictedRelevantNow = countPredictedRelevant();
-                    if (nbPredictedRelevantNow == nbRelevantLabels) {
-                        break;
-                    }
-                    else if (nbPredictedRelevantNow < nbRelevantLabels) { // threshold too high
-                        upper = middle;
-                    }
-                    else { // too low
-                        lower = middle;
-                    }
-                }
-                if (nbPredictedRelevantNow == nbRelevantLabels) {
-                    // nothing to do here, since the thresholds are already set
-                    // to optimal value and the tree is updated accordingly
-                }
-                else {
-                    double defaultThreshold = 0.5;  // try the default threshold also: typically, this seems to be at least a close to optimal value
-                    double[] candidates = new double[]{defaultThreshold, lower, upper}; // default the first: we want to choose it if nothing is strictly better
-                    int optimalDiff = Integer.MAX_VALUE;
-                    double optimalThreshold = -10.0;
-                    for(double candidate : candidates){
-                        updateThresholds(candidate);
-                        int currentCount = countPredictedRelevant();
-                        int currentDiff = Math.abs(currentCount - nbRelevantLabels);
-                        if (currentDiff < optimalDiff){
-                            optimalThreshold = candidate;
-                            optimalDiff = currentDiff;
-                        }
-                    }
-                    updateThresholds(optimalThreshold);
-                    updateTree();
-                }
-            }
-            else {
-                updateTree();
-            }
+            updateTree();
         }
+
         safePrune();
         return this;
     }
-    
-    
 
+    
+    private void optimizeTresholds() throws ClusException {
+        double lower = 0.0, upper = 1.0;
+        double middle = lower + (upper - lower) / 2;
+        int nbRelevantLabels = countTrueRelevant();
+        int nbPredictedRelevantNow = -1;
+        while (upper - lower > 0.0005) {
+            middle = lower + (upper - lower) / 2;
+            updateThresholds(middle);
+            updateTree();
+            nbPredictedRelevantNow = countPredictedRelevant();
+            if (nbPredictedRelevantNow == nbRelevantLabels) {
+                break;
+            }
+            else if (nbPredictedRelevantNow < nbRelevantLabels) { // threshold too high
+                upper = middle;
+            }
+            else { // too low
+                lower = middle;
+            }
+        }
+        if (nbPredictedRelevantNow == nbRelevantLabels) {
+            // nothing to do here, since the thresholds are already set
+            // to optimal value and the tree is updated accordingly
+        }
+        else {
+            double defaultThreshold = 0.5; // try the default threshold also: typically, this seems to be at least a close to optimal value
+            double[] candidates = new double[] { defaultThreshold, lower, upper }; // default the first: we want to choose it if nothing is strictly better
+            int optimalDiff = Integer.MAX_VALUE;
+            double optimalThreshold = -10.0;
+            for (double candidate : candidates) {
+                updateThresholds(candidate);
+                int currentCount = countPredictedRelevant();
+                int currentDiff = Math.abs(currentCount - nbRelevantLabels);
+                if (currentDiff < optimalDiff) {
+                    optimalThreshold = candidate;
+                    optimalDiff = currentDiff;
+                }
+            }
+            updateThresholds(optimalThreshold);
+            updateTree();
+        }
+    }
 
     public void updateThresholds(double threshold) {
-        if(getTargetStat() instanceof ClassificationStat){
+        if (getTargetStat() instanceof ClassificationStat) {
             ClassificationStat targetStat = (ClassificationStat) getTargetStat();
             targetStat.setThresholds(threshold);
-        } else if(getTargetStat() instanceof WHTDStatistic){
+        }
+        else if (getTargetStat() instanceof WHTDStatistic) {
             WHTDStatistic targetStat = (WHTDStatistic) getTargetStat();
             targetStat.setThresholds(threshold);
-        } else{
+        }
+        else {
             throw new RuntimeException("Unknown type of target statistics.");
         }
         if (m_Test != null) { // is not leaf
@@ -474,46 +482,51 @@ public class ClusNode extends MyNode implements ClusModel {
         }
     }
 
-    public int countTrueRelevant(){
+
+    public int countTrueRelevant() {
         int nbRelevantLabels = 0;
-        if(getTargetStat() instanceof ClassificationStat){
+        if (getTargetStat() instanceof ClassificationStat) {
             ClassificationStat targetStat = (ClassificationStat) getTargetStat();
             for (int target = 0; target < targetStat.m_ClassCounts.length; target++) {
                 nbRelevantLabels += targetStat.m_ClassCounts[target][0];
             }
-        } else if(getTargetStat() instanceof WHTDStatistic){
+        }
+        else if (getTargetStat() instanceof WHTDStatistic) {
             WHTDStatistic targetStat = (WHTDStatistic) getTargetStat();
             boolean[] evalClasses = targetStat.getHier().getEvalClassesVector();
             double[] sumValues = targetStat.getSumValues();
-            for(int i = 0; i < evalClasses.length; i++){
-                if(evalClasses[i]){
+            for (int i = 0; i < evalClasses.length; i++) {
+                if (evalClasses[i]) {
                     nbRelevantLabels += sumValues[i];
                 }
             }
-        } else{
+        }
+        else {
             throw new RuntimeException("Unknown type of target statistics.");
         }
         return nbRelevantLabels;
     }
 
+
     public int countPredictedRelevant() {
         int nbPredictedRelevant = 0;
         if (m_Test == null) { // is leaf
-            if(getTargetStat() instanceof ClassificationStat){
+            if (getTargetStat() instanceof ClassificationStat) {
                 ClassificationStat targetStat = (ClassificationStat) getTargetStat();
                 for (int target = 0; target < targetStat.m_ClassCounts.length; target++) {
                     if (targetStat.m_ClassCounts[target][0] / targetStat.m_SumWeights[target] >= targetStat.m_Thresholds[target]) {
                         nbPredictedRelevant += (int) targetStat.m_SumWeights[target]; // TODO: does not work for weighted sum of examples!
                     }
                 }
-            } else if (getTargetStat() instanceof WHTDStatistic){
+            }
+            else if (getTargetStat() instanceof WHTDStatistic) {
                 WHTDStatistic targetStat = (WHTDStatistic) getTargetStat();
                 boolean[] evalClasses = targetStat.getHier().getEvalClassesVector();
                 double[] sumValues = targetStat.getSumValues();
                 double sumWeight = targetStat.getSumWeight();
                 double[] thresholds = targetStat.getThresholds();
-                for(int i = 0; i < evalClasses.length; i++){
-                    if(evalClasses[i] && sumValues[i] / sumWeight >= thresholds[i]){
+                for (int i = 0; i < evalClasses.length; i++) {
+                    if (evalClasses[i] && sumValues[i] / sumWeight >= thresholds[i]) {
                         nbPredictedRelevant += sumWeight;
                     }
                 }
@@ -546,7 +559,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final void updateTree() {
+    public final void updateTree() throws ClusException {
         cleanup();
         computePrediction();
         int nb_c = getNbChildren();
@@ -560,14 +573,14 @@ public class ClusNode extends MyNode implements ClusModel {
     public void setAlternatives(ArrayList<NodeTest> alt) {
         m_Alternatives = new NodeTest[alt.size()];
         for (int i = 0; i < alt.size(); i++)
-            m_Alternatives[i] = (NodeTest) alt.get(i);
+            m_Alternatives[i] = alt.get(i);
     }
 
 
     public void setOppositeAlternatives(ArrayList<NodeTest> alt) {
         m_OppositeAlternatives = new NodeTest[alt.size()];
         for (int i = 0; i < alt.size(); i++)
-            m_OppositeAlternatives[i] = (NodeTest) alt.get(i);
+            m_OppositeAlternatives[i] = alt.get(i);
     }
 
 
@@ -661,7 +674,8 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public ClusModel prune(int prunetype) {
+    @Override
+    public ClusModel prune(int prunetype) throws ClusException {
         if (prunetype == PRUNE_INVALID) {
             ClusNode pruned = (ClusNode) cloneTree();
             pruned.pruneInvalid();
@@ -671,24 +685,24 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-//    /***************************************************************************
-//     * Multi score code - this should be made more general!
-//     ***************************************************************************/
-//
-//    public final void multiScore(MultiScore score) {
-//        m_ClusteringStat = new MultiScoreStat(m_ClusteringStat, score);
-//        int nb_c = getNbChildren();
-//        for (int i = 0; i < nb_c; i++) {
-//            ClusNode info = (ClusNode) getChild(i);
-//            info.multiScore(score);
-//        }
-//    }
-
+    //    /***************************************************************************
+    //     * Multi score code - this should be made more general!
+    //     ***************************************************************************/
+    //
+    //    public final void multiScore(MultiScore score) {
+    //        m_ClusteringStat = new MultiScoreStat(m_ClusteringStat, score);
+    //        int nb_c = getNbChildren();
+    //        for (int i = 0; i < nb_c; i++) {
+    //            ClusNode info = (ClusNode) getChild(i);
+    //            info.multiScore(score);
+    //        }
+    //    }
 
     /***************************************************************************
      * Code to attach another dataset to the tree
      ***************************************************************************/
 
+    @Override
     public final void attachModel(HashMap table) throws ClusException {
         int nb_c = getNbChildren();
         if (nb_c > 0)
@@ -702,9 +716,11 @@ public class ClusNode extends MyNode implements ClusModel {
 
     /***************************************************************************
      * Code for making predictions
+     * @throws ClusException 
      ***************************************************************************/
 
-    public ClusStatistic predictWeighted(DataTuple tuple) {
+    @Override
+    public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException {
         if (atBottomLevel()) {
             return getTargetStat();
         }
@@ -731,7 +747,8 @@ public class ClusNode extends MyNode implements ClusModel {
         }
     }
 
-    public ClusStatistic clusterWeighted(DataTuple tuple) {
+
+    public ClusStatistic clusterWeighted(DataTuple tuple) throws ClusException {
         if (atBottomLevel()) {
             return getClusteringStat();
         }
@@ -755,10 +772,12 @@ public class ClusNode extends MyNode implements ClusModel {
         }
     }
 
+
     /**
-     * Store indices of tuples in leaf nodes. Used to 
+     * Store indices of tuples in leaf nodes. Used to
      * calculate RForest proximities (https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm#prox).
-     * @param tuple 
+     * 
+     * @param tuple
      */
     public void incrementProximities(DataTuple tuple) {
         if (atBottomLevel()) { //leaf
@@ -768,12 +787,14 @@ public class ClusNode extends MyNode implements ClusModel {
             if (!m_LeafTuples.contains(tuple.getIndex())) {
                 m_LeafTuples.add(tuple.getIndex());
             }
-        } else {
+        }
+        else {
             int n_idx = m_Test.predictWeighted(tuple);
             if (n_idx != -1) { // normal
                 ClusNode info = (ClusNode) getChild(n_idx);
                 info.incrementProximities(tuple);
-            } else { // has missing
+            }
+            else { // has missing
                 int nb_c = getNbChildren();
                 for (int i = 0; i < nb_c; i++) {
                     ClusNode ch_i = (ClusNode) getChild(i);
@@ -782,30 +803,37 @@ public class ClusNode extends MyNode implements ClusModel {
             }
         }
     }
-    
+
+
     /**
      * Make prediction and store indices of tuples which ended in
      * the same leaf as the given tuple in the leafTuples variable.
-     * This is used to calculate RForest proximities 
+     * This is used to calculate RForest proximities
      * https://www.stat.berkeley.edu/~breiman/RandomForests/cc_home.htm#prox
-     * @param tuple Tuple to predict
-     * @param leafTuples hash codes of tuples which are in the same leaf where
-     * the tuple ended will be stored in this variable.
+     * 
+     * @param tuple
+     *        Tuple to predict
+     * @param leafTuples
+     *        hash codes of tuples which are in the same leaf where
+     *        the tuple ended will be stored in this variable.
      * @return
+     * @throws ClusException 
      */
-    public ClusStatistic predictWeightedAndGetLeafTuples(DataTuple tuple, List<Integer> leafTuples) {
+    public ClusStatistic predictWeightedAndGetLeafTuples(DataTuple tuple, List<Integer> leafTuples) throws ClusException {
         if (atBottomLevel()) {
-            if(this.m_LeafTuples != null) {
+            if (this.m_LeafTuples != null) {
                 leafTuples.addAll(this.m_LeafTuples);
             }
-            
+
             return getTargetStat();
-        } else {
+        }
+        else {
             int n_idx = m_Test.predictWeighted(tuple);
             if (n_idx != -1) {
                 ClusNode info = (ClusNode) getChild(n_idx);
                 return info.predictWeightedAndGetLeafTuples(tuple, leafTuples);
-            } else {
+            }
+            else {
                 int nb_c = getNbChildren();
                 ClusNode ch_0 = (ClusNode) getChild(0);
                 ClusStatistic ch_0s = ch_0.predictWeightedAndGetLeafTuples(tuple, leafTuples);
@@ -822,7 +850,8 @@ public class ClusNode extends MyNode implements ClusModel {
         }
     }
 
-    public final void applyModelProcessor(DataTuple tuple, ClusModelProcessor proc) throws IOException {
+
+    public final void applyModelProcessor(DataTuple tuple, ClusModelProcessor proc) throws IOException, ClusException {
         int nb_c = getNbChildren();
         if (nb_c == 0 || proc.needsInternalNodes())
             proc.modelUpdate(tuple, this);
@@ -843,7 +872,8 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
+    @Override
+    public final void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException, ClusException {
         int nb_c = getNbChildren();
         for (int i = 0; i < mproc.size(); i++) {
             ClusModelProcessor proc = (ClusModelProcessor) mproc.elementAt(i);
@@ -869,35 +899,36 @@ public class ClusNode extends MyNode implements ClusModel {
 
     /***************************************************************************
      * Change the total statistic of the tree?
+     * @throws ClusException 
      ***************************************************************************/
 
-    public final void initTargetStat(ClusStatManager smgr, RowData subset) {
+    public final void initTargetStat(ClusStatManager smgr, RowData subset) throws ClusException {
         m_TargetStat = smgr.createTargetStat();
         subset.calcTotalStatBitVector(m_TargetStat);
     }
 
 
-    public final void initClusteringStat(ClusStatManager smgr, RowData subset) {
+    public final void initClusteringStat(ClusStatManager smgr, RowData subset) throws ClusException {
         m_ClusteringStat = smgr.createClusteringStat();
         subset.calcTotalStatBitVector(m_ClusteringStat);
     }
 
 
-    public final void initTargetStat(ClusStatManager smgr, ClusStatistic train, RowData subset) {
+    public final void initTargetStat(ClusStatManager smgr, ClusStatistic train, RowData subset) throws ClusException {
         m_TargetStat = smgr.createTargetStat();
         m_TargetStat.setTrainingStat(train);
         subset.calcTotalStatBitVector(m_TargetStat);
     }
 
 
-    public final void initClusteringStat(ClusStatManager smgr, ClusStatistic train, RowData subset) {
+    public final void initClusteringStat(ClusStatManager smgr, ClusStatistic train, RowData subset) throws ClusException {
         m_ClusteringStat = smgr.createClusteringStat();
         m_ClusteringStat.setTrainingStat(train);
         subset.calcTotalStatBitVector(m_ClusteringStat);
     }
 
 
-    public final void reInitTargetStat(RowData subset) {
+    public final void reInitTargetStat(RowData subset) throws ClusException {
         if (m_TargetStat != null) {
             m_TargetStat.reset();
             subset.calcTotalStatBitVector(m_TargetStat);
@@ -916,7 +947,7 @@ public class ClusNode extends MyNode implements ClusModel {
      * }
      */
 
-    public final void reInitClusteringStat(RowData subset) {
+    public final void reInitClusteringStat(RowData subset) throws ClusException {
         if (m_ClusteringStat != null) {
             m_ClusteringStat.reset();
             subset.calcTotalStatBitVector(m_ClusteringStat);
@@ -985,7 +1016,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public final void addChildStats() {
+    public final void addChildStats() throws ClusException {
         int nb_c = getNbChildren();
         if (nb_c > 0) {
             ClusNode ch0 = (ClusNode) getChild(0);
@@ -1018,10 +1049,12 @@ public class ClusNode extends MyNode implements ClusModel {
         return estimateClusteringSSRecursive(this, scale);
     }
 
+
     public double estimateTargetSS(ClusAttributeWeights scale) {
         return estimateTargetSSRecursive(this, scale);
     }
-    
+
+
     public double estimateClusteringVariance(ClusAttributeWeights scale) {
         return estimateClusteringSSRecursive(this, scale) / getClusteringStat().getTotalWeight();
     }
@@ -1041,12 +1074,14 @@ public class ClusNode extends MyNode implements ClusModel {
             return result;
         }
     }
-    
+
+
     public static double estimateTargetSSRecursive(ClusNode tree, ClusAttributeWeights scale) {
         if (tree.atBottomLevel()) {
             ClusStatistic total = tree.getTargetStat();
             return total.getSVarS(scale);
-        } else {
+        }
+        else {
             double result = 0.0;
             for (int i = 0; i < tree.getNbChildren(); i++) {
                 ClusNode child = (ClusNode) tree.getChild(i);
@@ -1055,6 +1090,7 @@ public class ClusNode extends MyNode implements ClusModel {
             return result;
         }
     }
+
 
     public static double estimateErrorRecursive(ClusNode tree, ClusAttributeWeights scale) {
         if (tree.atBottomLevel()) {
@@ -1112,21 +1148,25 @@ public class ClusNode extends MyNode implements ClusModel {
 
     // FIXME - what for NominalTests with only two possible outcomes?
 
+    @Override
     public void printModel(PrintWriter wrt) {
         printTree(wrt, StatisticPrintInfo.getInstance(), "");
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         printTree(wrt, info, "");
     }
 
 
+    @Override
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
         printTree(wrt, info, "", examples, true);
     }
 
 
+    @Override
     public void printModelToPythonScript(PrintWriter wrt) {
         // changed tab to 4 spaces
         printTreeToPythonScript(wrt, "    ");
@@ -1240,6 +1280,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive) {
         int lastmodel = cr.getNbModels() - 1;
         System.out.println("The number of models to print is:" + lastmodel);
@@ -1300,22 +1341,25 @@ public class ClusNode extends MyNode implements ClusModel {
      */
     public void printMultiLabelThresholds(PrintWriter writer, int treeIndex) {
         double[] thresholds;
-        if(m_TargetStat instanceof ClassificationStat){
+        if (m_TargetStat instanceof ClassificationStat) {
             thresholds = ((ClassificationStat) m_TargetStat).m_Thresholds;
-        } else if (m_TargetStat instanceof WHTDStatistic){
+        }
+        else if (m_TargetStat instanceof WHTDStatistic) {
             thresholds = ((WHTDStatistic) m_TargetStat).getThresholds();
-        } else{
+        }
+        else {
             throw new RuntimeException("Wrong type of target statistics.");
         }
-        if (treeIndex >= 0){
+        if (treeIndex >= 0) {
             writer.print(String.format("Tree %s: ", treeIndex + 1));
         }
-        if(thresholds != null){
+        if (thresholds != null) {
             writer.print("[");
             for (int i = 0; i < thresholds.length; i++) {
                 writer.print(ClusFormat.FOUR_AFTER_DOT.format(thresholds[i]) + (i == thresholds.length - 1 ? "]" + System.lineSeparator() : ", "));
             }
-        } else{
+        }
+        else {
             writer.print("null" + System.lineSeparator());
         }
 
@@ -1367,12 +1411,12 @@ public class ClusNode extends MyNode implements ClusModel {
                 ((ClusNode) getChild(YES)).printTree(writer, info, prefix + getVerticalLineText() + getSpacesYes(), examples0, false);
                 //writer.print(prefix + "+--no:  ");
                 writer.print(prefix + getHorizontalLineText() + "no:  ");
-                
+
                 if (hasUnknownBranch()) {
                     //((ClusNode) getChild(NO)).printTree(writer, info, prefix + "|       ", examples1, false);
                     ((ClusNode) getChild(NO)).printTree(writer, info, prefix + getVerticalLineText() + getSpacesNo(), examples1, false);
                     //writer.print(prefix + "+--unk: ");
-                    
+
                     writer.print(prefix + getHorizontalLineText() + "unk: ");
                     //((ClusNode) getChild(UNK)).printTree(writer, info, prefix + "        ", examples0, false);
                     ((ClusNode) getChild(UNK)).printTree(writer, info, prefix + getSpacesUnk(), examples0, false);
@@ -1595,6 +1639,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public String toString() {
         try {
             if (hasBestTest())
@@ -1616,6 +1661,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
+    @Override
     public void retrieveStatistics(ArrayList list) {
         if (m_ClusteringStat != null)
             list.add(m_ClusteringStat);
@@ -1644,7 +1690,7 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    public void adaptToData(RowData data) {
+    public void adaptToData(RowData data) throws ClusException {
         // sort data into tree
         NodeTest tst = getTest();
         for (int i = 0; i < getNbChildren(); i++) {

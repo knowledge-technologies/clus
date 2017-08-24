@@ -61,11 +61,13 @@ public class Coverage extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return true;
     }
 
 
+    @Override
     public void reset() {
         m_RankSum = 0;
         m_NbKnown = 0;
@@ -73,6 +75,7 @@ public class Coverage extends ClusNominalError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         Coverage cv = (Coverage) other;
         m_RankSum += cv.m_RankSum;
@@ -91,6 +94,7 @@ public class Coverage extends ClusNominalError {
     // }
 
 
+    @Override
     public double getModelError() {
         return ((double) m_RankSum) / m_NbKnown;
     }
@@ -101,21 +105,25 @@ public class Coverage extends ClusNominalError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()) + "(label cardinality: " + ClusFormat.FOUR_AFTER_DOT.format(getLabelCardinality()) + ")");
     }
 
 
+    @Override
     public String getName() {
         return "Coverage";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new Coverage(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         double[] scores = ((ClassificationStat) pred).calcScores();
         double minScore = Double.POSITIVE_INFINITY;
@@ -150,6 +158,7 @@ public class Coverage extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         try {
             throw new Exception("Coverage.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
@@ -162,6 +171,7 @@ public class Coverage extends ClusNominalError {
 
 
     // NEDOTAKNJENO
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 

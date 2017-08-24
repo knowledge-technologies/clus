@@ -3,7 +3,7 @@ package si.ijs.kt.clus.distance.primitive.relief;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
-import si.ijs.kt.clus.main.settings.SettingsMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsMLC;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 public class MultiLabelDistance {

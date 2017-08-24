@@ -77,6 +77,7 @@ public class IntGraphCanvas extends BufferCanvas {
     }
 
 
+    @Override
     public void paintIt(Graphics g, Dimension d) {
         g.setColor(getBackground());
         g.fillRect(0, 0, d.width, d.height);

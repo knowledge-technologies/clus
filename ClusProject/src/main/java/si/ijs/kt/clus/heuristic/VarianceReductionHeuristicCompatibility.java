@@ -36,6 +36,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
@@ -65,6 +66,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         // Acceptable?
         if (stopCriterion(tstat, pstat, missing)) { return Double.NEGATIVE_INFINITY; }
@@ -112,6 +114,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
     // daniela end
 
 
+    @Override
     public String getName() {
         return "Variance Reduction with Distance '" + m_BasicDist + "', (" + m_ClusteringWeights.getName() + ") (FTest = " + FTest.getSettingSig() + ")";
     }
@@ -341,10 +344,10 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
     }
 
 
-    public double calcI(ClusStatistic t_stat, ClusStatistic p_stat, ClusStatistic missing, Integer[] permutation) {
+    public double calcI(ClusStatistic t_stat, ClusStatistic p_stat, ClusStatistic missing, Integer[] permutation) throws Exception {
         //try{
         //ClusStatistic tstat = (ClusStatistic)t_stat;
-        ClusStatistic pstat = (ClusStatistic) p_stat; // Acceptable?
+        ClusStatistic pstat = p_stat; // Acceptable?
         if (stopCriterion(t_stat, p_stat, missing)) { return Double.NEGATIVE_INFINITY; }
 
         double ss_pos = 0; //pstat.calcItotal();             

@@ -3,15 +3,18 @@ package si.ijs.kt.clus.ext.beamsearch;
 
 import java.util.ArrayList;
 
+import org.apache.commons.lang.NotImplementedException;
+
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.SparseDataTuple;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsBeamSearch;
+import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class ClusBeamSimRegrStat extends RegressionStat {
@@ -43,21 +46,25 @@ public class ClusBeamSimRegrStat extends RegressionStat {
     }
 
 
+    @Override
     public void calcMean(double[] means) {
         super.calcMean(means);
     }
 
 
+    @Override
     public double getMean(int i) {
         return super.getMean(i);
     }
 
 
+    @Override
     public double getSVarS(int i) {
         return super.getSVarS(i);
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
         super.add(other);
         ClusBeamSimRegrStat or = (ClusBeamSimRegrStat) other;
@@ -69,11 +76,11 @@ public class ClusBeamSimRegrStat extends RegressionStat {
 
 
     public void updateWeighted(SparseDataTuple tuple, double weight) {
-        System.out.println("public void updateWeighted(SparseDataTuple tuple, double weight)");
-        System.exit(1);
+        throw new NotImplementedException();
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, double weight) {
         super.updateWeighted(tuple, weight);
         ArrayList<ClusBeamModel> models = m_Beam.toArray();
@@ -94,6 +101,7 @@ public class ClusBeamSimRegrStat extends RegressionStat {
     }
 
 
+    @Override
     public double getSVarS(ClusAttributeWeights scale) {
         double result = super.getSVarS(scale);
         double similarity = 0.0;
@@ -113,16 +121,19 @@ public class ClusBeamSimRegrStat extends RegressionStat {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         return new ClusBeamSimRegrStat(this.m_Settings, m_Attrs, false, m_Beam);
     }
 
 
+    @Override
     public ClusStatistic cloneSimple() {
         return new ClusBeamSimRegrStat(this.m_Settings, m_Attrs, true, m_Beam);
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         super.copy(other);
         ClusBeamSimRegrStat or = (ClusBeamSimRegrStat) other;
@@ -131,11 +142,13 @@ public class ClusBeamSimRegrStat extends RegressionStat {
     }
 
 
+    @Override
     public String getString(StatisticPrintInfo info) {
         return super.getString(info);
     }
 
 
+    @Override
     public void reset() {
         super.reset();
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -145,6 +158,7 @@ public class ClusBeamSimRegrStat extends RegressionStat {
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
         super.subtractFromOther(other);
         ClusBeamSimRegrStat or = (ClusBeamSimRegrStat) other;
@@ -155,6 +169,7 @@ public class ClusBeamSimRegrStat extends RegressionStat {
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
         super.subtractFromThis(other);
         ClusBeamSimRegrStat or = (ClusBeamSimRegrStat) other;
@@ -185,6 +200,7 @@ public class ClusBeamSimRegrStat extends RegressionStat {
     }
 
 
+    @Override
     public void setBeam(ClusBeam beam) {
         m_Beam = beam;
     }

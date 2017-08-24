@@ -26,6 +26,7 @@ import java.util.LinkedList;
 
 import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
 import si.ijs.kt.clus.data.rows.DataTuple;
+import si.ijs.kt.clus.util.ClusException;
 
 
 /**
@@ -50,7 +51,7 @@ public class WeightOver extends DistanceWeighting {
 
 
     @Override
-    public double weight(DataTuple el) {
+    public double weight(DataTuple el) throws ClusException {
         double val = 1. / (0.001 + Math.max(0, this.search.getDistance().calcDistance(el, this.tuple)));
         return val;
     }

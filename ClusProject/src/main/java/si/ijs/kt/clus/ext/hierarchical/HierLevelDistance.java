@@ -24,12 +24,14 @@ package si.ijs.kt.clus.ext.hierarchical;
 
 public class HierLevelDistance implements HierBasicDistance {
 
+    @Override
     public double getVirtualRootWeight() {
         return 0.0;
     }
 
 
     // First argument = actual, second = predicted
+    @Override
     public double calcDistance(ClassTerm t1, ClassTerm t2) {
         int d1 = t1.getLevel();
         int d2 = t2.getLevel();

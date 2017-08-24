@@ -73,6 +73,7 @@ public class RotateFilter extends TransformFilter {
     }
 
 
+    @Override
     public void imageComplete(int status) {
         if (status == IMAGEERROR || status == IMAGEABORTED) {
             consumer.imageComplete(status);

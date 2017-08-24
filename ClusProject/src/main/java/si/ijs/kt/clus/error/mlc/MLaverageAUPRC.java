@@ -23,16 +23,19 @@ public class MLaverageAUPRC extends MLROCAndPRCurve {
     }
 
 
+    @Override
     public double getModelError() {
         return getModelError(m_Measure);
     }
 
 
+    @Override
     public String getName() {
         return "averageAUPRC";
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
         computeAll();
@@ -40,6 +43,7 @@ public class MLaverageAUPRC extends MLROCAndPRCurve {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MLaverageAUPRC(par, m_Attrs); // TO DO: preveriti
     }

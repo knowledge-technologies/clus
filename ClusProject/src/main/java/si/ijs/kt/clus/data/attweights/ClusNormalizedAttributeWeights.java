@@ -46,12 +46,14 @@ public class ClusNormalizedAttributeWeights extends ClusAttributeWeights {
     }
 
 
+    @Override
     public double getWeight(ClusAttrType atttype) {
         int idx = atttype.getIndex();
         return m_Weights[idx] * m_NormalizationWeights[idx];
     }
 
 
+    @Override
     public double getWeight(int idx) {
         return m_Weights[idx] * m_NormalizationWeights[idx];
     }
@@ -77,6 +79,7 @@ public class ClusNormalizedAttributeWeights extends ClusAttributeWeights {
     }
 
 
+    @Override
     public String getName(ClusAttrType[] type) {
         if (type == null) {
         	return getName();

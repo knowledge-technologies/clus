@@ -46,10 +46,10 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
 
     /**
      * Induces rules from ensemble tree, similar to ClusRuleInduce.induce
-     * 
-     * @throws InterruptedException
+     * @throws Exception 
      */
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    @Override
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
 
         // The params may already have been disabled, thus we do not want to disable them again
         // (forgets original values)
@@ -143,7 +143,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
             ruleSet.computeDispersion(ClusModel.TRAIN);
             ruleSet.removeDataFromRules();
             if (cr.getTestIter() != null) {
-                RowData testdata = (RowData) cr.getTestSet(); // or trainingData?
+                RowData testdata = cr.getTestSet(); // or trainingData?
                 ruleSet.addDataToRules(testdata);
                 ruleSet.computeDispersion(ClusModel.TEST);
                 ruleSet.removeDataFromRules();
@@ -159,10 +159,10 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
     /**
      * Induces the rule models. ClusModel.PRUNED = the optimized rule model
      * ClusModel.DEFAULT = the ensemble tree model.
-     * 
-     * @throws InterruptedException
+     * @throws Exception 
      */
-    public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    @Override
+    public void induceAll(ClusRun cr) throws Exception {
         RowData trainData = (RowData) cr.getTrainingSet();
         getStatManager().getHeuristic().setTrainData(trainData);
         // ClusStatistic trainStat = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING);

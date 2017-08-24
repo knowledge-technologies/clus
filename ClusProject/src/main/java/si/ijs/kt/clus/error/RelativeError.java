@@ -46,6 +46,7 @@ public class RelativeError extends ClusNumericError implements ComponentError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         double[] predicted = pred.getNumericPred();
         for (int i = 0; i < m_Dim; i++) {
@@ -55,6 +56,7 @@ public class RelativeError extends ClusNumericError implements ComponentError {
     }
 
 
+    @Override
     public void addExample(DataTuple real, DataTuple pred) {
         for (int i = 0; i < m_Dim; i++) {
             double real_i = getAttr(i).getNumeric(real);
@@ -75,6 +77,7 @@ public class RelativeError extends ClusNumericError implements ComponentError {
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         int nb = getNbExamples();
         // System.out.println(m_SumRelErr[i]);

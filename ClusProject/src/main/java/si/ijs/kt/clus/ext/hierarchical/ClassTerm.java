@@ -77,7 +77,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
 
 
     public ClassTerm getParent(int i) {
-        return (ClassTerm) m_Parents.get(i);
+        return m_Parents.get(i);
     }
     
 
@@ -90,6 +90,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
     }
 
 
+    @Override
     public int compareTo(Object o) {
         ClassTerm other = (ClassTerm) o;
         String s1 = getID();
@@ -166,31 +167,37 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
     }
 
 
+    @Override
     public Node getParent() {
         return null;
     }
 
 
+    @Override
     public Node getChild(int idx) {
         return (Node) m_SubTerms.get(idx);
     }
 
 
+    @Override
     public int getNbChildren() {
         return m_SubTerms.size();
     }
 
 
+    @Override
     public boolean atTopLevel() {
         return m_Parents.size() == 0;
     }
 
 
+    @Override
     public boolean atBottomLevel() {
         return m_SubTerms.size() == 0;
     }
 
 
+    @Override
     public void setParent(Node parent) {
     }
 
@@ -307,6 +314,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
     }
 
 
+    @Override
     public void addChild(Node node) {
         String id = ((ClassTerm) node).getID();
         m_Hash.put(id, node);
@@ -343,6 +351,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
     }
 
 
+    @Override
     public void removeChild(Node node) {
         ClassTerm child = (ClassTerm) node;
         m_Hash.remove(child.getID());
@@ -350,6 +359,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
     }
 
 
+    @Override
     public int getLevel() {
         int depth = 0;
         ClassTerm parent = getCTParent();
@@ -405,6 +415,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
     }
 
 
+    @Override
     public String toString() {
         return toStringHuman(null);
     }

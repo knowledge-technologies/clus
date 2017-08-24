@@ -84,11 +84,8 @@ public class ClusShowModelInfo {
             }
             output.flush();
         }
-        catch (IOException e) {
-            System.err.println("IO Error: " + e.getMessage());
-        }
-        catch (ClassNotFoundException e) {
-            System.err.println("Error: " + e.getMessage());
+        catch (Exception e) {
+            System.err.println(e.getMessage());
         }
     }
 }

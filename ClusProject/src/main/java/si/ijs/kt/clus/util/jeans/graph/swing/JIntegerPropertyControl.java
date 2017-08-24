@@ -96,6 +96,7 @@ public class JIntegerPropertyControl extends JPanel implements ActionListener {
     }
 
 
+    @Override
     public void actionPerformed(ActionEvent event) {
         JButton source = (JButton) event.getSource();
         if (source.getText().equals("<")) {

@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.util.ClusException;
@@ -35,6 +36,7 @@ import si.ijs.kt.clus.util.ClusException;
 
 public abstract class ClusModelInfoList implements Serializable {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     public final static int TRAINSET = 0;
     public final static int TESTSET = 1;
     public final static int VALIDATIONSET = 2;
@@ -63,7 +65,7 @@ public abstract class ClusModelInfoList implements Serializable {
     public ClusModelInfo getModelInfo(int i) {
         if (i >= m_Models.size())
             return null;
-        return (ClusModelInfo) m_Models.get(i);
+        return m_Models.get(i);
     }
 
 
@@ -128,7 +130,7 @@ public abstract class ClusModelInfoList implements Serializable {
 
     public void showModelInfos() {
         for (int i = 0; i < getNbModels(); i++) {
-            ClusModelInfo info = (ClusModelInfo) getModelInfo(i);
+            ClusModelInfo info = getModelInfo(i);
             System.out.println("Model " + i + " name: '" + info.getName() + "'");
         }
     }
@@ -189,7 +191,7 @@ public abstract class ClusModelInfoList implements Serializable {
     public ClusModelInfo addModelInfo(int i) {
         while (i >= m_Models.size())
             m_Models.add(null);
-        ClusModelInfo inf = (ClusModelInfo) m_Models.get(i);
+        ClusModelInfo inf = m_Models.get(i);
         if (inf == null) {
             inf = initModelInfo(i);
             m_Models.set(i, inf);
@@ -209,7 +211,7 @@ public abstract class ClusModelInfoList implements Serializable {
     public ClusModelInfo addModelInfo(int i, String model_name) {
         while (i >= m_Models.size())
             m_Models.add(null);
-        ClusModelInfo inf = (ClusModelInfo) m_Models.get(i);
+        ClusModelInfo inf = m_Models.get(i);
         if (inf == null) {
             inf = initModelInfo(i, model_name);
             m_Models.set(i, inf);
@@ -256,7 +258,7 @@ public abstract class ClusModelInfoList implements Serializable {
     }
 
 
-    public void checkModelInfo() {
+    public void checkModelInfo() throws ClusException {
         int nb_models = getNbModels();
         for (int i = 0; i < nb_models; i++) {
             ClusModelInfo my = getModelInfo(i);
@@ -331,13 +333,16 @@ public abstract class ClusModelInfoList implements Serializable {
         return m_IndTime;
     }
 
+
     public final void setInductionTimeSequential(long time) {
         m_IndTimeSequential = time;
     }
-    
+
+
     public final long getInductionTimeSequential() {
         return m_IndTimeSequential;
     }
+
 
     public final void setPruneTime(long time) {
         m_PruneTime = time;

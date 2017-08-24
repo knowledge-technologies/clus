@@ -36,6 +36,7 @@ import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
 public class ClusOptionTree extends ClusInductionAlgorithmType {
 
+    @Override
     public void printInfo() {
         System.out.println("TDIOT");
         System.out.println("Heuristic: " + getStatManager().getHeuristicName());
@@ -58,5 +59,11 @@ public class ClusOptionTree extends ClusInductionAlgorithmType {
     @Override
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public void postProcess(ClusRun cr) throws ClusException, IOException {
+        // TODO Auto-generated method stub
+        
     }
 }

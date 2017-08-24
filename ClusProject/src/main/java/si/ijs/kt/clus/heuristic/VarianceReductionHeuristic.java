@@ -26,6 +26,7 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class VarianceReductionHeuristic extends ClusHeuristic {
@@ -50,12 +51,14 @@ public class VarianceReductionHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public void setData(RowData data) {
         m_Data = data;
     }
 
 
-    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
+    @Override
+    public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) throws ClusException {
         // Acceptable?
         if (stopCriterion(tstat, pstat, missing)) { return Double.NEGATIVE_INFINITY; }
         // Calculate |S|Var[S]
@@ -75,6 +78,7 @@ public class VarianceReductionHeuristic extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return "Variance Reduction with Distance '" + m_BasicDist + "', (" + m_ClusteringWeights.getName() + ") (FTest = " + FTest.getSettingSig() + ")";
     }

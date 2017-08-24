@@ -50,6 +50,7 @@ public class WAHNDError extends ClusError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         WAHNDError err = (WAHNDError) other;
         m_TreeErr += err.m_TreeErr;
@@ -57,6 +58,7 @@ public class WAHNDError extends ClusError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(m_TreeErr / m_SumWeight);
     }
@@ -67,6 +69,7 @@ public class WAHNDError extends ClusError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         double weight = tuple.getWeight();
         // ClassesTuple tp = (ClassesTuple)tuple.getObjVal(0);
@@ -75,26 +78,31 @@ public class WAHNDError extends ClusError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public double getModelError() {
         return m_TreeErr / m_SumWeight;
     }
 
 
+    @Override
     public void reset() {
         m_TreeErr = 0.0;
         m_SumWeight = 0.0;
     }
 
 
+    @Override
     public String getName() {
         return "WAHND RE with parameter " + m_Weight;
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new WAHNDError(par, m_Weight);
     }

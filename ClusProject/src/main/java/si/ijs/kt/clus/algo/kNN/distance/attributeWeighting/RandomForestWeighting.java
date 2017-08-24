@@ -35,7 +35,7 @@ import si.ijs.kt.clus.ext.ensemble.ClusEnsembleClassifier;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.util.ClusRandom;
 
 
@@ -53,6 +53,7 @@ public class RandomForestWeighting extends AttributeWeighting {
     }
 
 
+    @Override
     public double getWeight(ClusAttrType attr) {
         return m_Weights[attr.getIndex()];
     }
@@ -63,6 +64,7 @@ public class RandomForestWeighting extends AttributeWeighting {
             PrintStream oldOut = System.out;
             PrintStream ps = new PrintStream(new OutputStream() {
 
+                @Override
                 public void write(int arg0) throws IOException {
                 }
             });

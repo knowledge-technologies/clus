@@ -71,7 +71,7 @@ public class MultiDelimStringTokenizer {
         boolean notdelim = true;
         StringBuffer token = new StringBuffer();
         while ($pos < $len && notdelim) {
-            token.append((char) $line.charAt($pos++));
+            token.append($line.charAt($pos++));
             while ((delim = checkDelim()) != -1) {
                 notdelim = false;
                 $lastdelim = delim;

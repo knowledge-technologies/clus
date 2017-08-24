@@ -27,6 +27,7 @@ import java.awt.Dimension;
 
 public class DrawableTransMirror extends DrawableTransform {
 
+    @Override
     public void transform(Drawable drawable) {
         int x = drawable.getX();
         int y = drawable.getY();
@@ -38,6 +39,7 @@ public class DrawableTransMirror extends DrawableTransform {
     }
 
 
+    @Override
     public Dimension transformDimension(Dimension dim) {
         return new Dimension(dim.height, dim.width);
     }

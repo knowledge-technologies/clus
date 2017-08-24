@@ -202,6 +202,7 @@ public class TimeSeries implements Serializable {
      * For easy printing of the series
      * @see java.lang.Object#toString()
      */
+    @Override
     public String toString() {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer a = new StringBuffer("[");

@@ -37,6 +37,7 @@ public class DrawableAutoZoomCanvas extends DrawableCanvas {
 
     private class MyResizeListener extends ComponentAdapter {
 
+        @Override
         public void componentResized(ComponentEvent e) {
             setRenderState(STATE_RENDER_AND_SIZE);
         }

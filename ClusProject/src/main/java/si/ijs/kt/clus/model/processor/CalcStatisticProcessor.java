@@ -29,6 +29,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.tree.CompleteTreeIterator;
 
 
@@ -42,16 +43,19 @@ public class CalcStatisticProcessor extends ClusModelProcessor {
     }
 
 
+    @Override
     public boolean needsModelUpdate() {
         return true;
     }
 
 
+    @Override
     public boolean needsInternalNodes() {
         return true;
     }
 
 
+    @Override
     public void initialize(ClusModel model, ClusSchema schema) {
         CompleteTreeIterator iter = new CompleteTreeIterator((ClusNode) model);
         while (iter.hasMoreNodes()) {
@@ -63,7 +67,8 @@ public class CalcStatisticProcessor extends ClusModelProcessor {
     }
 
 
-    public void terminate(ClusModel model) throws IOException {
+    @Override
+    public void terminate(ClusModel model) throws IOException, ClusException {
         CompleteTreeIterator iter = new CompleteTreeIterator((ClusNode) model);
         while (iter.hasMoreNodes()) {
             ClusNode node = (ClusNode) iter.getNextNode();
@@ -72,6 +77,7 @@ public class CalcStatisticProcessor extends ClusModelProcessor {
     }
 
 
+    @Override
     public void modelUpdate(DataTuple tuple, ClusModel model) {
         ClusNode node = (ClusNode) model;
         node.getClusteringStat().updateWeighted(tuple, 0);

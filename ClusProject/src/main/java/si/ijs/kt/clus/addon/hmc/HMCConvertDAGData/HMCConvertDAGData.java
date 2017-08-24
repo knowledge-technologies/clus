@@ -51,7 +51,7 @@ public class HMCConvertDAGData {
         clus.initializeAddOn(appname);
         ClusStatManager mgr = clus.getStatManager();
         Settings sett = clus.getSettings();
-        RowData data = (RowData) clus.getData();
+        RowData data = clus.getData();
         if (CREATE_TRAIN_TUNE_TEST_SPLIT) {
             ClusRun run = clus.partitionData();
             ClusStatistic[] stats = new ClusStatistic[1];
@@ -60,7 +60,7 @@ public class HMCConvertDAGData {
             if (!sett.getData().isNullTestFile()) {
                 System.out.println("Loading: " + sett.getData().getTestFile());
                 if (minfreq != 0.0) {
-                    RowData test = (RowData) run.getTestSet();
+                    RowData test = run.getTestSet();
                     test.calcTotalStats(stats);
                 }
                 else {
@@ -86,7 +86,7 @@ public class HMCConvertDAGData {
                 ClassesAttrType type = hier.getType();
                 removeLabelsFromData((RowData) run.getTrainingSet(), type, removed);
                 if (!sett.getData().isNullTestFile())
-                    removeLabelsFromData((RowData) run.getTestSet(), type, removed);
+                    removeLabelsFromData(run.getTestSet(), type, removed);
                 if (!sett.getData().isNullPruneFile())
                     removeLabelsFromData((RowData) run.getPruneSet(), type, removed);
             }
@@ -94,7 +94,7 @@ public class HMCConvertDAGData {
             if (minfreq != 0.0) {
                 addIntermediateLabels((RowData) run.getTrainingSet(), hier);
                 if (!sett.getData().isNullTestFile())
-                    addIntermediateLabels((RowData) run.getTestSet(), hier);
+                    addIntermediateLabels(run.getTestSet(), hier);
                 if (!sett.getData().isNullPruneFile())
                     addIntermediateLabels((RowData) run.getPruneSet(), hier);
             }
@@ -102,7 +102,7 @@ public class HMCConvertDAGData {
             RowData train = (RowData) run.getTrainingSet();
             ARFFFile.writeArff(output + ".train.arff", train);
             if (!sett.getData().isNullTestFile()) {
-                RowData test = (RowData) run.getTestSet();
+                RowData test = run.getTestSet();
                 ARFFFile.writeArff(output + ".test.arff", test);
             }
             if (!sett.getData().isNullPruneFile()) {

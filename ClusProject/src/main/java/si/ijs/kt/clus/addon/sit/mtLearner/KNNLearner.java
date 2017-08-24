@@ -78,6 +78,7 @@ public class KNNLearner extends MTLearnerImpl {
     }
 
 
+    @Override
     public String getName() {
         return "KNN";
     }

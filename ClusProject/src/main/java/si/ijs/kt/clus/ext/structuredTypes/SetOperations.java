@@ -1,13 +1,14 @@
 package si.ijs.kt.clus.ext.structuredTypes;
 
 import si.ijs.kt.clus.distance.ClusDistance;
+import si.ijs.kt.clus.util.ClusException;
 
 public class SetOperations {
 
 	public static int getCardinality(Set s){
 		return s.size();
 	}
-	public  static int getIntersectionCardinality(Set s1, Set s2, ClusDistance d){
+	public  static int getIntersectionCardinality(Set s1, Set s2, ClusDistance d) throws ClusException{
 		int intersection = 0;
 		for (Object o1 : s1.getValues()) {
 			for (Object o2 : s2.getValues()) {
@@ -25,11 +26,11 @@ public class SetOperations {
 		return intersection; 
 	}
 	
-	public static int getUnionCardinality(Set s1, Set s2, ClusDistance d){
+	public static int getUnionCardinality(Set s1, Set s2, ClusDistance d) throws ClusException{
 		return s1.size()+s2.size()-getIntersectionCardinality(s1, s2, d);
 	}
 	
-	public static int getDifferenceCardinality(Set s1, Set s2, ClusDistance d){
+	public static int getDifferenceCardinality(Set s1, Set s2, ClusDistance d) throws ClusException{
 		return s1.size()+s2.size()-2*getIntersectionCardinality(s1, s2, d);
 	}
 	

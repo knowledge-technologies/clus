@@ -58,11 +58,13 @@ public class GISStat extends RegressionStat {
     }
 
 
+    @Override
     public void setTrainingStat(ClusStatistic train) {
         m_Training = (GISStat) train;
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         GISStat res = new GISStat(getSettings(), m_Attrs, false);
         res.m_Training = m_Training;
@@ -71,6 +73,7 @@ public class GISStat extends RegressionStat {
     }
 
 
+    @Override
     public ClusStatistic cloneSimple() {
         GISStat res = new GISStat(getSettings(), m_Attrs, true);
         res.m_Training = m_Training;
@@ -83,16 +86,18 @@ public class GISStat extends RegressionStat {
      * Clone this statistic by taking the given weight into account.
      * This is used for example to get the weighted prediction of default rule.
      */
+    @Override
     public ClusStatistic copyNormalizedWeighted(double weight) {
         //    GISStat newStat = (GISStat) cloneSimple();
-        GISStat newStat = (GISStat) normalizedCopy();
+        GISStat newStat = normalizedCopy();
         for (int iTarget = 0; iTarget < newStat.getNbAttributes(); iTarget++) {
             newStat.m_Means[iTarget] = weight * newStat.m_Means[iTarget];
         }
-        return (ClusStatistic) newStat;
+        return newStat;
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         GISStat or = (GISStat) other;
         m_SumWeight = or.m_SumWeight;
@@ -107,6 +112,7 @@ public class GISStat extends RegressionStat {
     /**
      * Used for combining weighted predictions.
      */
+    @Override
     public GISStat normalizedCopy() {
         GISStat copy = (GISStat) cloneSimple();
         copy.m_NbExamples = 0;
@@ -116,6 +122,7 @@ public class GISStat extends RegressionStat {
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
         GISStat or = (GISStat) other;
         m_SumWeight += or.m_SumWeight;
@@ -128,6 +135,7 @@ public class GISStat extends RegressionStat {
     }
 
 
+    @Override
     public void addScaled(double scale, ClusStatistic other) {
         GISStat or = (GISStat) other;
         m_SumWeight += scale * or.m_SumWeight;
@@ -140,6 +148,7 @@ public class GISStat extends RegressionStat {
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
         GISStat or = (GISStat) other;
         m_SumWeight -= or.m_SumWeight;
@@ -152,6 +161,7 @@ public class GISStat extends RegressionStat {
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
         GISStat or = (GISStat) other;
         m_SumWeight = or.m_SumWeight - m_SumWeight;

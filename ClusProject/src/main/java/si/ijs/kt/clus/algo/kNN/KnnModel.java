@@ -103,7 +103,7 @@ public class KnnModel implements ClusModel, Serializable {
 
 
     // Default constructor.
-    public KnnModel(ClusRun cr, int k, int weighting) throws ClusException, IOException {
+    public KnnModel(ClusRun cr, int k, int weighting) throws ClusException, IOException, InterruptedException {
         this.cr = cr;
         this.m_K = k;
         this.m_MaxK = Math.max(this.m_K, this.m_MaxK);
@@ -271,7 +271,8 @@ public class KnnModel implements ClusModel, Serializable {
     }
 
 
-    public ClusStatistic predictWeighted(DataTuple tuple) {
+    @Override
+    public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException {
         LinkedList<DataTuple> nearest = new LinkedList<DataTuple>(); // the first m_K neigbhours of the m_MaxK
                                                                      // neighbours: OK, because the neighbours are
                                                                      // sorted from the nearest to the farthest
@@ -327,43 +328,51 @@ public class KnnModel implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
         System.out.println("-----------");
     }
 
 
+    @Override
     public int getModelSize() {
         System.out.println("No specific model size for kNN model.");
         return -1;
     }
 
 
+    @Override
     public String getModelInfo() {
         return "kNN model weighted with " + this.weightingOption + " and " + m_K + " neighbors.";
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt) {
         wrt.println("No specific kNN model to write!");
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         wrt.println("No specific kNN model to write!");
         wrt.print(info.toString());
     }
 
 
+    @Override
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelAndExamples() - Not supported yet for kNN.");
     }
 
 
+    @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToQuery() - Not supported yet for kNN.");
     }
 
 
+    @Override
     public void printModelToPythonScript(PrintWriter wrt) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToPythonScript() - Not supported yet for kNN.");
     }
@@ -384,21 +393,25 @@ public class KnnModel implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void attachModel(HashMap table) throws ClusException {
         throw new UnsupportedOperationException(this.getClass().getName() + ":attachModel - Not supported yet for kNN.");
     }
 
 
+    @Override
     public void retrieveStatistics(ArrayList list) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":retrieveStatistics - Not supported yet for kNN.");
     }
 
 
+    @Override
     public ClusModel prune(int prunetype) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":prune - Not supported yet for kNN.");
     }
 
 
+    @Override
     public int getID() {
         throw new UnsupportedOperationException(this.getClass().getName() + ":getID - Not supported yet for kNN.");
     }

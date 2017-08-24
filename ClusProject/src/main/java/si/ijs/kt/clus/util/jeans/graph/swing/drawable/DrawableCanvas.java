@@ -91,6 +91,7 @@ public class DrawableCanvas extends JComponent {
     }
 
 
+    @Override
     public boolean isFocusTraversable() {
         return m_KeyFocus;
     }
@@ -208,6 +209,7 @@ public class DrawableCanvas extends JComponent {
     }
 
 
+    @Override
     public void setBackground(Color col) {
         System.out.println("Background: " + col);
         m_BackColor = col;
@@ -433,6 +435,7 @@ public class DrawableCanvas extends JComponent {
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         super.paintComponent(g);
         Graphics2D g2 = (Graphics2D) g;
@@ -470,6 +473,7 @@ public class DrawableCanvas extends JComponent {
 
     public class MyMouseListener extends MouseAdapter {
 
+        @Override
         public void mousePressed(MouseEvent evt) {
             if (m_KeyFocus)
                 requestFocus();

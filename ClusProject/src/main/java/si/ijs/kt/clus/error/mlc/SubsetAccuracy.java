@@ -55,17 +55,20 @@ public class SubsetAccuracy extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         m_NbCorrect = 0;
         m_NbKnown = 0;
     }
 
 
+    @Override
     public void add(ClusError other) {
         SubsetAccuracy sa = (SubsetAccuracy) other;
         m_NbCorrect += sa.m_NbCorrect;
@@ -83,26 +86,31 @@ public class SubsetAccuracy extends ClusNominalError {
     // }
 
 
+    @Override
     public double getModelError() {
         return ((double) m_NbCorrect) / m_NbKnown;
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         return "SubsetAccuracy";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new SubsetAccuracy(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
@@ -127,6 +135,7 @@ public class SubsetAccuracy extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         NominalAttrType attr;
         boolean atLeastOneKnown = false;
@@ -151,6 +160,7 @@ public class SubsetAccuracy extends ClusNominalError {
 
 
     // NEDOTAKNJENO
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 

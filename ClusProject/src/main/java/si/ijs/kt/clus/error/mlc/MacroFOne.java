@@ -55,11 +55,13 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         Arrays.fill(m_NbTruePositives, 0);
         Arrays.fill(m_NbFalsePositives, 0);
@@ -67,6 +69,7 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         MacroFOne mF1 = (MacroFOne) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -87,6 +90,7 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         double prec = ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
         double recall = ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalseNegatives[i]);
@@ -94,6 +98,7 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public double getModelError() {
         double avg = 0.0;
         for (int i = 0; i < m_Dim; i++) {
@@ -103,6 +108,7 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         String[] componentErrors = new String[m_Dim];
         for (int i = 0; i < m_Dim; i++) {
@@ -112,16 +118,19 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public String getName() {
         return "MacroFOne";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MacroFOne(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
@@ -144,6 +153,7 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         NominalAttrType attr;
         for (int i = 0; i < m_Dim; i++) {
@@ -165,6 +175,7 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 }

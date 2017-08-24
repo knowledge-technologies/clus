@@ -1,0 +1,37 @@
+\begin{itemize}
+    \item \optionNameStyle{Neighbours}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: integer between $1$ and the number of training instances, or a list of such integers
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{10}
+                \item \optionDescrption{}: This is the number of neighbours in the Relief algorithms. A warning is given
+                                           when this falls out of bounds. In that case, we compute a ranking with the default value for this option.
+                                           The same goes for every element of the list. In that case, the computational complexity of the algorithm
+                                           approximately equals the complexity of Relief with the maximal number of neighbours.
+           \end{itemize}
+    \item \optionNameStyle{Iterations}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: integer between $1$ and the number of instances
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{0.0}
+                \item \optionDescrption{}: This is the number of iterations in the Relief algorithms. If it is given as a proportion
+                                           of all training instances, we convert it to the absolute value by rounding to the nearest integer.
+                                           If only the value $1$ (or $1.0$) is given, we assume this means $100\%$ in both cases. A warning is given
+                                           when this falls out of bounds. In that case, we compute a ranking with the default value for this option.
+                                           The same goes for every element of the list. In that case, the computational complexity of the algorithm
+                                           approximately equals the complexity of Relief with the maximal number of iterations.
+           \end{itemize}
+    \item \optionNameStyle{WeightNeighbours}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: {\tt Yes} or {\tt No}.
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
+                \item \optionDescrption{}: Boolean that determines whether we weight the influence of the neighbours. If set to {\tt No},
+                                           the value specified under the option \optionNameStyle{WeightingSigma} has no influence.
+           \end{itemize}
+    \item \optionNameStyle{WeightingSigma}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: any non-negative real number
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{0.5}
+                \item \optionDescrption{}: determines how quickly the influence of the neighbours decreases with their position $i$ (nearest, 2nd nearest etc.).
+                                           The weights of the neighbours are proportional to $\exp(-(\sigma i)^2)$, so the value $0.0$ corresponds to
+                                           the case when  \optionNameStyle{WeightNeighbours} is set to {\tt No}.
+           \end{itemize}
+\end{itemize}

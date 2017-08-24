@@ -24,7 +24,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -71,7 +71,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         super(schema, sett);
 
         if (sett.getGeneral().hasRandomSeed()) {
-            m_seed = (long) sett.getGeneral().getRandomSeed();
+            m_seed = sett.getGeneral().getRandomSeed();
         }
 
         m_randGen = new Random(m_seed);
@@ -128,7 +128,8 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
     }
 
 
-    public void induceAll(ClusRun mainClusRun) throws ClusException, IOException, InterruptedException {
+    @Override
+    public void induceAll(ClusRun mainClusRun) throws Exception {
         m_mainClusRun = mainClusRun;
         m_originalFullData = (RowData) mainClusRun.getTrainingSet();
 
@@ -256,7 +257,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
     }
 
 
-    ClusRuleSet runOnce(ClusRuleSet initialRuleSet, Function<ClusRuleSet, Double> objectiveFunction) {
+    ClusRuleSet runOnce(ClusRuleSet initialRuleSet, Function<ClusRuleSet, Double> objectiveFunction) throws ClusException, InterruptedException {
         /**
          * In order to efficiently construct a decision set that maximizes the objective function
          * we run SLS twice with different delta parameters and return the better of the two according
@@ -267,7 +268,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         double bias = (double) 1 / 3;
 
         ClusRuleSet optimizedSet1 = optAlg.SmoothLocalSearch(initialRuleSet, bias, bias, objectiveFunction);
-        ClusRuleSet optimizedSet2 = optAlg.SmoothLocalSearch(initialRuleSet, bias, (double) -1, objectiveFunction);
+        ClusRuleSet optimizedSet2 = optAlg.SmoothLocalSearch(initialRuleSet, bias, -1, objectiveFunction);
 
         ClusRuleSet finalSet = objectiveFunction.apply(optimizedSet1) > objectiveFunction.apply(optimizedSet2) ? optimizedSet1 : optimizedSet2; // take the better performing of the two
 
@@ -283,8 +284,10 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * 
      * @param ruleSet
      * @return rule set with a default rule
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    public ClusRuleSet calculateDefaultRuleAndPrototypesForRuleSet(ClusRuleSet ruleSet) {
+    public ClusRuleSet calculateDefaultRuleAndPrototypesForRuleSet(ClusRuleSet ruleSet) throws ClusException, InterruptedException {
 
         // default rule is over all training set
         RowData trainingData = (RowData) m_mainClusRun.getTrainingSet();
@@ -376,9 +379,17 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
             @Override
             public Double apply(ClusRuleSet t) {
-                double errorScore = t.computeErrorScore(m_validationData); // average RMSE over all targets
-
-                return 1 / Math.abs(errorScore + 1); // if errorScore=0 ==> objectiveValue = 1 (max); else objectiveValue in (0,1)
+                double errorScore = - 1; // this will crash the application if catch is invoked 
+                try {
+                    errorScore = t.computeErrorScore(m_validationData);
+                    return 1 / Math.abs(errorScore + 1); // if errorScore=0 ==> objectiveValue = 1 (max); else objectiveValue in (0,1)
+                    //  average RMSE over all targets
+                }
+                catch (ClusException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                    return Double.POSITIVE_INFINITY;
+                }               
             }
         };
 
@@ -442,11 +453,9 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * INITIAL RULE GENERATION
      * 
      * @return A set of generated rules which is later used as input for the optimization.
-     * @throws ClusException
-     * @throws IOException
-     * @throws InterruptedException 
+     * @throws Exception 
      */
-    ClusRuleSet getInitialRuleSet(double validationRatio) throws ClusException, IOException, InterruptedException {
+    ClusRuleSet getInitialRuleSet(double validationRatio) throws Exception {
         // split the learning data into train and validation set
         splitData(validationRatio);
 
@@ -497,11 +506,9 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * Generate initial rules from Random Forest ensemble.
      * 
      * @return A set of generated rules.
-     * @throws ClusException
-     * @throws IOException
-     * @throws InterruptedException 
+     * @throws Exception 
      */
-    ClusRuleSet getRandomForestRules(RowData dataToUse) throws ClusException, IOException, InterruptedException {
+    ClusRuleSet getRandomForestRules(RowData dataToUse) throws Exception {
         System.out.println("Inducing random forest for initial rule set");
         System.out.println("==============================================================================");
 
@@ -576,8 +583,9 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * @return A set of generated rules.
      * @throws ClusException
      * @throws IOException
+     * @throws InterruptedException 
      */
-    ClusRuleSet getOptionTreeRules(RowData dataToUse) throws ClusException, IOException {
+    ClusRuleSet getOptionTreeRules(RowData dataToUse) throws ClusException, IOException, InterruptedException {
 
         boolean sectionOptionEnabled = m_mainClus.getSettings().getOptionTree().isSectionOptionEnabled();
         m_mainClus.getSettings().getOptionTree().setSectionOptionEnabled(true);

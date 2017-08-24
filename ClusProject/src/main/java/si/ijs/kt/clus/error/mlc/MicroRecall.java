@@ -53,17 +53,20 @@ public class MicroRecall extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         Arrays.fill(m_NbTruePositives, 0);
         Arrays.fill(m_NbFalseNegatives, 0);
     }
 
 
+    @Override
     public void add(ClusError other) {
         MicroRecall mr = (MicroRecall) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -87,6 +90,7 @@ public class MicroRecall extends ClusNominalError {
     // }
 
 
+    @Override
     public double getModelError() {
         int truePositives = 0, falseNegatives = 0;
         for (int i = 0; i < m_Dim; i++) {
@@ -97,21 +101,25 @@ public class MicroRecall extends ClusNominalError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         return "MicroRecall";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MicroRecall(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
@@ -131,6 +139,7 @@ public class MicroRecall extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         NominalAttrType attr;
         for (int i = 0; i < m_Dim; i++) {
@@ -149,6 +158,7 @@ public class MicroRecall extends ClusNominalError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 }

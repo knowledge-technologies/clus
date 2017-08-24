@@ -59,11 +59,13 @@ public class CartPruning extends PruneTree {
     }
 
 
+    @Override
     public int getNbResults() {
         return Math.max(1, m_MaxSize.length);
     }
 
 
+    @Override
     public void prune(int result, ClusNode node) throws ClusException {
         int size = m_MaxSize[result];
         TreeErrorComputer.recursiveInitialize(node, new CartVisitor());
@@ -74,6 +76,7 @@ public class CartPruning extends PruneTree {
     }
 
 
+    @Override
     public ClusErrorList createErrorMeasure(RowData data, ClusAttributeWeights weights) {
         ClusSchema schema = data.getSchema();
         ClusErrorList parent = new ClusErrorList();
@@ -103,18 +106,21 @@ public class CartPruning extends PruneTree {
     }
 
 
+    @Override
     public void sequenceInitialize(ClusNode node) {
         TreeErrorComputer.recursiveInitialize(node, new CartVisitor());
         setOriginalTree(node);
     }
 
 
+    @Override
     public void sequenceReset() {
         setCurrentTree(null);
     }
 
 
-    public ClusNode sequenceNext() {
+    @Override
+    public ClusNode sequenceNext() throws ClusException {
         ClusNode result = getCurrentTree();
         if (result == null) {
             result = getOriginalTree().cloneTreeWithVisitors();
@@ -133,6 +139,7 @@ public class CartPruning extends PruneTree {
     }
 
 
+    @Override
     public void sequenceToElemK(ClusNode node, int k) {
         internalInitialize(node);
         for (int i = 0; i < k; i++) {

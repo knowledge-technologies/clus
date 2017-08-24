@@ -46,6 +46,7 @@ public class MExtensionFilter extends FileFilter {
     }
 
 
+    @Override
     public boolean accept(File f) {
         if (f.isDirectory())
             return true;
@@ -62,6 +63,7 @@ public class MExtensionFilter extends FileFilter {
     }
 
 
+    @Override
     public String getDescription() {
         return m_Descr;
     }

@@ -35,8 +35,10 @@ public class INIFileSection extends INIFileNode {
 
     public final static long serialVersionUID = 1;
 
-    protected Hashtable m_hEntries = new Hashtable();
-    protected Vector m_hEntryList = new Vector();
+    protected Hashtable<String, INIFileNode> m_hEntries = new Hashtable<String, INIFileNode>();
+    protected Vector<INIFileNode> m_hEntryList = new Vector<INIFileNode>();
+    protected int m_Index = 1; // index of this section in the INI file
+
 
 
     public INIFileSection(String name) {
@@ -49,19 +51,22 @@ public class INIFileSection extends INIFileNode {
     }
 
 
+    @Override
     public boolean isSectionGroup() {
         return false;
     }
 
 
+    @Override
     public boolean isSection() {
         return true;
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         INIFileSection sec = new INIFileSection(getName());
-        for (Enumeration e = getNodes(); e.hasMoreElements();) {
+        for (Enumeration<INIFileNode> e = getNodes(); e.hasMoreElements();) {
             INIFileNode node = (INIFileNode) e.nextElement();
             sec.addNode(node.cloneNode());
         }
@@ -74,7 +79,7 @@ public class INIFileSection extends INIFileNode {
     }
 
 
-    public Enumeration getNodes() {
+    public Enumeration<INIFileNode> getNodes() {
         return m_hEntryList.elements();
     }
 
@@ -142,7 +147,7 @@ public class INIFileSection extends INIFileNode {
         }
         else {
             System.out.println("Can't find node: " + nextNode);
-            for (Enumeration e = getNodes(); e.hasMoreElements();) {
+            for (Enumeration<INIFileNode> e = getNodes(); e.hasMoreElements();) {
                 INIFileNode entry = (INIFileNode) e.nextElement();
                 System.out.println("   " + entry.getName());
             }
@@ -243,7 +248,7 @@ public class INIFileSection extends INIFileNode {
             else
                 writer.println("<" + group + ", " + getName() + ">");
         }
-        for (Enumeration e = getNodes(); e.hasMoreElements();) {
+        for (Enumeration<INIFileNode> e = getNodes(); e.hasMoreElements();) {
             INIFileNode entry = (INIFileNode) e.nextElement();
             if (entry.isEnabled())
                 entry.save(writer);
@@ -251,6 +256,7 @@ public class INIFileSection extends INIFileNode {
     }
 
 
+    @Override
     public void save(PrintWriter writer) throws IOException {
         save(null, writer);
     }

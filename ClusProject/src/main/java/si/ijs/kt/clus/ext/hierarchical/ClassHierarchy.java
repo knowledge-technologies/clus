@@ -430,7 +430,7 @@ public class ClassHierarchy implements Serializable {
         m_ClassMap.clear();
         if (isDAG()) {
             for (int i = 0; i < new_cls.size(); i++) {
-                ClassTerm trm = (ClassTerm) new_cls.get(i);
+                ClassTerm trm = new_cls.get(i);
                 m_ClassMap.put(trm.getID(), trm);
             }
         }
@@ -616,7 +616,7 @@ public class ClassHierarchy implements Serializable {
     }
 
 
-    public void findCycle() {
+    public void findCycle() throws ClusException {
         char[] visited = new char[getTotal()];
         ClassTerm[] pi = new ClassTerm[getTotal()];
         boolean[] hasCycle = new boolean[1];
@@ -627,8 +627,7 @@ public class ClassHierarchy implements Serializable {
                 findCycleRecursive(term, visited, pi, hasCycle);
             }
         }
-        if (hasCycle[0])
-            System.exit(-1);
+        if (hasCycle[0]) throw new ClusException("hasCycle[0] == true");
     }
 
 
@@ -719,7 +718,7 @@ public class ClassHierarchy implements Serializable {
 
 
     public ClassTerm getClassTermByName(String id) {
-        return (ClassTerm) m_ClassMap.get(id);
+        return m_ClassMap.get(id);
     }
 
 
@@ -734,7 +733,7 @@ public class ClassHierarchy implements Serializable {
 
 
     public ClassTerm getTermAt(int i) {
-        return (ClassTerm) m_ClassList.get(i);
+        return m_ClassList.get(i);
     }
 
 

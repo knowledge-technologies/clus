@@ -63,6 +63,7 @@ public class DoubleBoolean implements Comparable, Serializable {
     }
 
 
+    @Override
     public boolean equals(Object o) {
         DoubleBoolean ot = (DoubleBoolean) o;
         return ot.m_Boolean == m_Boolean && ot.m_Double == m_Double;
@@ -73,6 +74,7 @@ public class DoubleBoolean implements Comparable, Serializable {
      * Hash function that is used for adding objects of the type {@code DoubleBooleanCount} to the
      * {@code clus.error.BinaryPredictionList.m_ValueSet}.
      */
+    @Override
     public int hashCode() {
         long v = Double.doubleToLongBits(m_Double);
         return (int) (v ^ (v >>> 32)) ^ (m_Boolean ? 1 : 0);
@@ -85,6 +87,7 @@ public class DoubleBoolean implements Comparable, Serializable {
      * which comes in handy when constructing as many points for ROC- and PR-curves as possible.
      *
      */
+    @Override
     public int compareTo(Object o) {
         DoubleBoolean ot = (DoubleBoolean) o;
         if (m_Double == ot.m_Double)

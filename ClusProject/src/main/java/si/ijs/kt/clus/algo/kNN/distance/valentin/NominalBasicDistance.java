@@ -44,6 +44,7 @@ public class NominalBasicDistance extends BasicDistance {
      * Require
      * type : must be a NominalAttrType object
      */
+    @Override
     public double getDistance(ClusAttrType type, DataTuple t1, DataTuple t2) {
         NominalAttrType at = (NominalAttrType) type;
         int x = at.getNominal(t1); //returns the attribute value for given attribute in tuple t1

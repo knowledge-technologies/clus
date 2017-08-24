@@ -10,6 +10,7 @@ public class NominalDistance extends ClusDistance {
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
 
+    @Override
     public double calcDistance(Object nominal1, Object nominal2) {
         if (nominal1.toString().equalsIgnoreCase(nominal2.toString())) {
             return 0;

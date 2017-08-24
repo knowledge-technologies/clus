@@ -73,7 +73,7 @@ public class ClassesTuple implements Serializable {
     public boolean isRoot() {
         if (m_Tuple.length == 0)
             return true;
-        if (m_Tuple.length == 1) { return ((ClassesValue) m_Tuple[0]).isRoot(); }
+        if (m_Tuple.length == 1) { return m_Tuple[0].isRoot(); }
         return false;
     }
 
@@ -217,6 +217,7 @@ public class ClassesTuple implements Serializable {
     }
 
 
+    @Override
     public String toString() {
         return toString(null, '@', false);
     }
@@ -259,7 +260,7 @@ public class ClassesTuple implements Serializable {
 
     public void setAllIntermediate(boolean inter) {
         for (int i = 0; i < m_Tuple.length; i++) {
-            ((ClassesValue) m_Tuple[i]).setIntermediate(inter);
+            m_Tuple[i].setIntermediate(inter);
         }
     }
 

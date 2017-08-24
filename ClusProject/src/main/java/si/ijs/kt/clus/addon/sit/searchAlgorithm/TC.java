@@ -6,16 +6,19 @@ import java.util.Iterator;
 
 import si.ijs.kt.clus.addon.sit.TargetSet;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class TC extends SearchAlgorithmImpl {
 
+    @Override
     public String getName() {
         return "TC";
     }
 
 
-    public TargetSet search(ClusAttrType mainTarget, TargetSet candidates) {
+    @Override
+    public TargetSet search(ClusAttrType mainTarget, TargetSet candidates) throws ClusException {
 
         Iterator i = candidates.iterator();
         Iterator i2 = candidates.iterator();

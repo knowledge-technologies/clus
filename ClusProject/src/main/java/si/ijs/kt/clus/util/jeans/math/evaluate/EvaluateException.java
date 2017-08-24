@@ -35,6 +35,7 @@ public class EvaluateException extends Exception {
     }
 
 
+    @Override
     public String toString() {
         return getMessage() + " - " + pos;
     }

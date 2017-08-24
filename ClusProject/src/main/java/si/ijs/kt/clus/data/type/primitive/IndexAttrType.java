@@ -58,6 +58,7 @@ public class IndexAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public ClusAttrType cloneType() {
         IndexAttrType at = new IndexAttrType(m_Name, m_Min, m_Max);
         cloneType(at);
@@ -70,21 +71,25 @@ public class IndexAttrType extends ClusAttrType {
     }
 
 
+    @Override
     public int getTypeIndex() {
         return THIS_TYPE;
     }
 
 
+    @Override
     public String getTypeName() {
         return THIS_TYPE_NAME;
     }
 
 
+    @Override
     public int getValueType() {
         return VALUE_TYPE_DOUBLE;
     }
 
 
+    @Override
     public void setNbRows(int nb) {
         m_Index = new int[nb];
     }
@@ -149,6 +154,7 @@ public class IndexAttrType extends ClusAttrType {
         }
 
 
+        @Override
         public boolean read(ClusReader data, DataTuple tuple) throws IOException {
             String value = data.readString();
             if (value == null)

@@ -50,6 +50,7 @@ public abstract class EnumerationFilter implements Enumeration {
     /**
      * Returns true if there are still elements to be returned by the Enumeration.
      */
+    @Override
     public boolean hasMoreElements() {
         if (!advanced)
             advanceNext();
@@ -60,6 +61,7 @@ public abstract class EnumerationFilter implements Enumeration {
     /**
      * Returns the next element in the Enumeration.
      */
+    @Override
     public Object nextElement() {
         advanced = false;
         return currentElement;

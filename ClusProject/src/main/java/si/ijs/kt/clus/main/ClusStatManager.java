@@ -27,6 +27,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.math3.distribution.ChiSquaredDistribution;
 
 import si.ijs.kt.clus.algo.rules.ClusRuleHeuristicDispersionAdt;
@@ -133,15 +134,15 @@ import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicCompatibility;
 import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicEfficient;
 import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicInclMissingValues;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsAttribute;
-import si.ijs.kt.clus.main.settings.SettingsBeamSearch;
-import si.ijs.kt.clus.main.settings.SettingsConstraints;
-import si.ijs.kt.clus.main.settings.SettingsGeneral;
-import si.ijs.kt.clus.main.settings.SettingsHMLC;
-import si.ijs.kt.clus.main.settings.SettingsHMTR;
-import si.ijs.kt.clus.main.settings.SettingsRules;
-import si.ijs.kt.clus.main.settings.SettingsTimeSeries;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsAttribute;
+import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
+import si.ijs.kt.clus.main.settings.section.SettingsConstraints;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMTR;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.pruning.BottomUpPruningVSB;
 import si.ijs.kt.clus.pruning.C45Pruner;
@@ -861,13 +862,8 @@ public class ClusStatManager implements Serializable {
                 if (open > 1 && !myType.contains("NOMINAL")) {
                     //complex type 
                     //TODO Implement
-                    try {
-                        throw new Exception("not implemented");
-                    }
-                    catch (Exception e) {
-                        e.printStackTrace();
-                        System.exit(1);
-                    }
+                    
+                    throw new NotImplementedException();
                 }
             }
             // innerType = def.substring(start, end);
@@ -1499,14 +1495,14 @@ public class ClusStatManager implements Serializable {
     }
 
 
-    public void computeTrainSetStat(RowData trainset, int attType) {
+    public void computeTrainSetStat(RowData trainset, int attType) throws ClusException {
         m_TrainSetStatAttrUse[attType] = createStatistic(attType);
         trainset.calcTotalStatBitVector(m_TrainSetStatAttrUse[attType]);
         m_TrainSetStatAttrUse[attType].calcMean();
     }
 
 
-    public void computeTrainSetStat(RowData trainset) {
+    public void computeTrainSetStat(RowData trainset) throws ClusException {
         m_TrainSetStatAttrUse = new ClusStatistic[ClusAttrType.NB_ATTR_USE];
         if (getMode() != MODE_HIERARCHICAL)
             computeTrainSetStat(trainset, ClusAttrType.ATTR_USE_ALL);

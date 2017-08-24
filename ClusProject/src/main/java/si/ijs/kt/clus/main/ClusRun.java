@@ -73,6 +73,7 @@ public class ClusRun extends ClusModelInfoList {
     }
 
 
+    @Override
     public ClusStatManager getStatManager() {
         return m_Summary.getStatManager();
     }
@@ -91,16 +92,19 @@ public class ClusRun extends ClusModelInfoList {
     }
 
 
+    @Override
     public ClusErrorList getTrainError() {
         return m_Summary.getTrainError();
     }
 
 
+    @Override
     public ClusErrorList getTestError() {
         return m_Summary.getTestError();
     }
 
 
+    @Override
     public ClusErrorList getValidationError() {
         return m_Summary.getValidationError();
     }
@@ -142,7 +146,7 @@ public class ClusRun extends ClusModelInfoList {
     }
 
 
-    public final RowData getDataSet(int whichone) throws ClusException, IOException {
+    public final RowData getDataSet(int whichone) throws ClusException, IOException, InterruptedException {
         switch (whichone) {
             case TRAINSET:
                 return (RowData) getTrainingSet();
@@ -157,9 +161,10 @@ public class ClusRun extends ClusModelInfoList {
 
     /***************************************************************************
      * Training set
+     * @throws InterruptedException 
      ***************************************************************************/
 
-    public final ClusData getTrainingSet() {
+    public final ClusData getTrainingSet() throws InterruptedException {
         m_Lock.readingLock();
         ClusData train = m_Train;
         m_Lock.readingUnlock();
@@ -242,7 +247,7 @@ public class ClusRun extends ClusModelInfoList {
     }
 
 
-    public void combineTrainAndValidSets() {
+    public void combineTrainAndValidSets() throws InterruptedException {
         RowData valid = (RowData) getPruneSet();
         if (valid != null) {
             RowData train = (RowData) getTrainingSet();

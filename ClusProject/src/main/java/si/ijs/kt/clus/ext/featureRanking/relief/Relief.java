@@ -50,4 +50,11 @@ public class Relief extends ClusInductionAlgorithmType {
         return null;
     }
 
+
+    @Override
+    public void postProcess(ClusRun cr) throws ClusException, IOException {
+        // TODO Auto-generated method stub
+        
+    }
+
 }

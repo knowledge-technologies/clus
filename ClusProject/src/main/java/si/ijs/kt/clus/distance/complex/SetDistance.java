@@ -29,6 +29,7 @@ import si.ijs.kt.clus.ext.structuredTypes.Set;
 import si.ijs.kt.clus.ext.structuredTypes.SetStatistic;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public abstract class SetDistance extends ClusStructuredDistance {
@@ -51,17 +52,19 @@ public abstract class SetDistance extends ClusStructuredDistance {
     }
 
 
-    public abstract double calcDistance(Set t1, Set t2);
+    public abstract double calcDistance(Set t1, Set t2) throws ClusException;
 
 
-    public double calcDistance(DataTuple t1, DataTuple t2) {
+    @Override
+    public double calcDistance(DataTuple t1, DataTuple t2) throws ClusException {
         Set s1 = m_Attr.getSet(t1);
         Set s2 = m_Attr.getSet(t2);
         return calcDistance(s1, s2);
     }
 
 
-    public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {
+    @Override
+    public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) throws ClusException {
         Set s1 = m_Attr.getSet(t1);
         SetStatistic stat = (SetStatistic) s2;
         return calcDistance(s1, stat.getRepresentativeMedoid());

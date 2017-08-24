@@ -25,6 +25,7 @@ package si.ijs.kt.clus.util.jeans.tree;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 
@@ -119,11 +120,12 @@ public class MyNode implements Node, Serializable {
     }
 
 
-    public MyNode cloneNode() {
+    public MyNode cloneNode() throws ClusException {
         return new MyNode();
     }
 
 
+    @Override
     public final void addChild(Node node) {
         node.setParent(this);
         m_Children.addElement(node);
@@ -136,6 +138,7 @@ public class MyNode implements Node, Serializable {
     }
 
 
+    @Override
     public final void removeChild(Node node) {
         node.setParent(null);
         m_Children.removeElement(node);
@@ -160,21 +163,25 @@ public class MyNode implements Node, Serializable {
     }
 
 
+    @Override
     public final Node getParent() {
         return m_Parent;
     }
 
 
+    @Override
     public final void setParent(Node parent) {
         m_Parent = parent;
     }
 
 
+    @Override
     public final Node getChild(int idx) {
         return (Node) m_Children.elementAt(idx);
     }
 
 
+    @Override
     public final int getNbChildren() {
         return m_Children.size();
     }
@@ -185,17 +192,19 @@ public class MyNode implements Node, Serializable {
     }
 
 
+    @Override
     public final boolean atTopLevel() {
         return m_Parent == null;
     }
 
 
+    @Override
     public final boolean atBottomLevel() {
         return m_Children.size() == 0;
     }
 
 
-    public final MyNode cloneTree() {
+    public final MyNode cloneTree() throws ClusException {
         MyNode clone = cloneNode();
         int arity = getNbChildren();
         clone.setNbChildren(arity);
@@ -207,7 +216,7 @@ public class MyNode implements Node, Serializable {
     }
 
 
-    public final MyNode cloneTree(MyNode n1, MyNode n2) {
+    public final MyNode cloneTree(MyNode n1, MyNode n2) throws ClusException {
         if (n1 == this) {
             return n2;
         }
@@ -224,6 +233,7 @@ public class MyNode implements Node, Serializable {
     }
 
 
+    @Override
     public final int getLevel() {
         int depth = 0;
         Node node = getParent();

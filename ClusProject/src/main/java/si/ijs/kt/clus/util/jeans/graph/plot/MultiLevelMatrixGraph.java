@@ -102,6 +102,7 @@ public class MultiLevelMatrixGraph extends JComponent {
     }
 
 
+    @Override
     public void paintComponent(Graphics g) {
         // Init graphcs
         super.paintComponent(g);
@@ -195,7 +196,7 @@ public class MultiLevelMatrixGraph extends JComponent {
 
 
     public Color calcC(Color color, float val, float min, float max) {
-        float fac = (float) Math.min((val - min) / (max - min) + 0.25f, 1.0f);
+        float fac = Math.min((val - min) / (max - min) + 0.25f, 1.0f);
         float red = fac * color.getRed();
         float green = fac * color.getGreen();
         float blue = fac * color.getBlue();

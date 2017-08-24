@@ -98,6 +98,7 @@ public class MSymMatrix extends MMatrix implements Serializable {
     }
 
 
+    @Override
     public final double get(int r, int c) {
         if (c > r)
             return m_Data[c][r];
@@ -137,11 +138,13 @@ public class MSymMatrix extends MMatrix implements Serializable {
     }
 
 
+    @Override
     public final int getRows() {
         return m_Size;
     }
 
 
+    @Override
     public final int getCols() {
         return m_Size;
     }
@@ -155,6 +158,7 @@ public class MSymMatrix extends MMatrix implements Serializable {
     }
 
 
+    @Override
     public String toString() {
         String output = "";
         for (int i = 0; i < m_Size; i++) {

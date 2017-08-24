@@ -25,7 +25,7 @@ package si.ijs.kt.clus.heuristic;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 
 
@@ -46,6 +46,7 @@ public class VarianceReductionHeuristicInclMissingValues extends ClusHeuristic {
     }
 
 
+    @Override
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         double n_tot = tstat.m_SumWeight;
         double n_pos = pstat.m_SumWeight;
@@ -68,6 +69,7 @@ public class VarianceReductionHeuristicInclMissingValues extends ClusHeuristic {
     }
 
 
+    @Override
     public String getName() {
         return "Variance Reduction Including Missing Values (ftest: " + SettingsTree.FTEST_VALUE + ", " + m_ClusteringWeights.getName(m_Attrs) + ")";
     }

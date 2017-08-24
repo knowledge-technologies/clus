@@ -51,6 +51,7 @@ public class NodeExampleCollector extends BasicExampleCollector {
     }
 
 
+    @Override
     public void initialize(ClusModel model, ClusSchema schema) {
         m_Attrs = new MyArray();
         int nb = schema.getNbAttributes();
@@ -70,6 +71,7 @@ public class NodeExampleCollector extends BasicExampleCollector {
     }
 
 
+    @Override
     public void terminate(ClusModel model) throws IOException {
         ClusNode root = (ClusNode) model;
         writeFile(root);

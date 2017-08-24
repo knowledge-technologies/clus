@@ -8,6 +8,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStatBase;
+import si.ijs.kt.clus.util.ClusException;
 
 /**
  * Provides reliability scores on the basis of 'actual error', which is not 
@@ -28,9 +29,11 @@ public class OracleScore extends PredictionConfidence {
      * @param model
      * @param tuple Tuple is assumed to have true labels 
      * @return 
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
     @Override
-    public double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) {
+    public double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) throws ClusException, InterruptedException {
         
         ClusStatistic stat = model.predictWeighted(tuple); 
         

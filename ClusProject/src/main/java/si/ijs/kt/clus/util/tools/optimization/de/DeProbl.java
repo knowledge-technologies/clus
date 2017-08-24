@@ -86,7 +86,7 @@ public class DeProbl extends si.ijs.kt.clus.util.tools.optimization.OptProbl {
      */
     public double getRandValueInRange(Random rand, int indexOfValue) {
         // min + (max-min)*random
-        return ((Double) m_VarMin.get(indexOfValue)).doubleValue() + (((Double) m_VarMax.get(indexOfValue)).doubleValue() - ((Double) m_VarMin.get(indexOfValue)).doubleValue()) * (double) rand.nextDouble();
+        return m_VarMin.get(indexOfValue).doubleValue() + (m_VarMax.get(indexOfValue).doubleValue() - m_VarMin.get(indexOfValue).doubleValue()) * rand.nextDouble();
 
     }
 
@@ -94,9 +94,9 @@ public class DeProbl extends si.ijs.kt.clus.util.tools.optimization.OptProbl {
     public ArrayList<Double> getRoundVector(ArrayList<Double> genes) {
         ArrayList<Double> result = new ArrayList<Double>(getNumVar());
         for (int i = 0; i < getNumVar(); i++) {
-            if (((Double) genes.get(i)).doubleValue() >= ((Double) m_VarMax.get(i)).doubleValue())
+            if (genes.get(i).doubleValue() >= m_VarMax.get(i).doubleValue())
                 result.add(m_VarMax.get(i));
-            else if (((Double) genes.get(i)).doubleValue() <= ((Double) m_VarMin.get(i)).doubleValue())
+            else if (genes.get(i).doubleValue() <= m_VarMin.get(i).doubleValue())
                 result.add(m_VarMin.get(i));
             else
                 result.add(genes.get(i));

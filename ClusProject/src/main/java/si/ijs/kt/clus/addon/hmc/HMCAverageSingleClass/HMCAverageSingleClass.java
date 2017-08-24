@@ -80,7 +80,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
     protected int m_TotSize;
 
 
-    public void run(String[] args) throws IOException, ClusException, ClassNotFoundException {
+    public void run(String[] args) throws IOException, ClusException, ClassNotFoundException, InterruptedException {
         m_Clus = new Clus();
         Settings sett = m_Clus.getSettings();
         CMDLineArgs cargs = new CMDLineArgs(this);
@@ -157,7 +157,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                 train.addIndices();
                 orig_model.setDataSet(ClusModelInfoList.TRAINSET);
                 m_Clus.calcError(train.getIterator(), ClusModelInfo.TRAIN_ERR, cr);
-                RowData test = (RowData) cr.getTestSet();
+                RowData test = cr.getTestSet();
                 if (test != null) {
                     test.addIndices();
                     orig_model.setDataSet(ClusModelInfoList.TESTSET);
@@ -304,7 +304,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                 // train.addIndices();
                 // orig_model.setDataSet(ClusModelInfoList.TRAINSET);
                 // m_Clus.calcError(train.getIterator(), ClusModelInfo.TRAIN_ERR, cr);
-                RowData test = (RowData) cr.getTestSet();
+                RowData test = cr.getTestSet();
                 if (test != null) {
                     test.addIndices();
                     // orig_model.setDataSet(ClusModelInfoList.TESTSET);
@@ -392,7 +392,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
     }
 
 
-    public void loadModelPerModel(String dir, ClusRun cr) throws IOException, ClusException, ClassNotFoundException {
+    public void loadModelPerModel(String dir, ClusRun cr) throws IOException, ClusException, ClassNotFoundException, InterruptedException {
         String[] files = FileUtil.dirList(dir, "model");
         for (int i = 0; i < files.length; i++) {
             ClusModel model = loadModel(FileUtil.cmbPath(dir, files[i]));
@@ -416,7 +416,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
 
 
     // evaluate tree for one class on all examples and update errors
-    public void evaluateModelAndUpdateErrors(int train_or_test, int class_idx, ClusModel model, ClusRun cr) throws ClusException, IOException {
+    public void evaluateModelAndUpdateErrors(int train_or_test, int class_idx, ClusModel model, ClusRun cr) throws ClusException, IOException, InterruptedException {
         RowData data = cr.getDataSet(train_or_test);
         m_Clus.getSchema().attachModel(model);
         INIFileNominalOrDoubleOrVector class_thr = getSettings().getHMLC().getClassificationThresholds();
@@ -445,21 +445,25 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
     }
 
 
+    @Override
     public String[] getOptionArgs() {
         return g_Options;
     }
 
 
+    @Override
     public int[] getOptionArgArities() {
         return g_OptionArities;
     }
 
 
+    @Override
     public int getNbMainArgs() {
         return 1;
     }
 
 
+    @Override
     public void showHelp() {
     }
 
@@ -488,12 +492,12 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
     }
 
 
-    public void computeStats() throws ClusException, IOException {
+    public void computeStats() throws ClusException, IOException, InterruptedException {
         ClusRun cr = m_Clus.partitionData();
         RegressionStat stat = (RegressionStat) getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
         RowData train = (RowData) cr.getTrainingSet();
         RowData valid = (RowData) cr.getPruneSet();
-        RowData test = (RowData) cr.getTestSet();
+        RowData test = cr.getTestSet();
         train.calcTotalStat(stat);
         if (valid != null)
             valid.calcTotalStat(stat);
@@ -552,6 +556,9 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
         }
         catch (ClassNotFoundException cn) {
             System.out.println("Error: " + cn.getMessage());
+        }
+        catch (Exception e) {
+            System.out.println(e.toString());
         }
     }
 }

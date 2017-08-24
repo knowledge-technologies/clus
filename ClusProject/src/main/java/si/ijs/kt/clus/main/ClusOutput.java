@@ -136,12 +136,12 @@ public class ClusOutput {
     }
 
 
-    public void writeOutput(ClusRun cr, boolean detail) throws IOException, ClusException {
+    public void writeOutput(ClusRun cr, boolean detail) throws IOException, ClusException, InterruptedException {
         writeOutput(cr, detail, false);
     }
 
 
-    public void writeOutput(ClusRun cr, boolean detail, boolean outputtrain) throws IOException, ClusException {
+    public void writeOutput(ClusRun cr, boolean detail, boolean outputtrain) throws IOException, ClusException, InterruptedException {
         ArrayList<ClusModel> models = new ArrayList<ClusModel>();
         String ridx = cr.getIndexString();
 
@@ -159,8 +159,8 @@ public class ClusOutput {
         m_Writer.println("----------");
         m_Writer.println();
         m_Writer.println("FTValue (FTest): " + m_Sett.getTree().getFTest());
-        double tsec = (double) cr.getInductionTime() / 1000.0;
-        double tpru = (double) cr.getPruneTime() / 1000.0;
+        double tsec = cr.getInductionTime() / 1000.0;
+        double tpru = cr.getPruneTime() / 1000.0;
         // Prepare models for printing if required
         for (int i = 0; i < cr.getNbModels(); i++) {
             ClusModelInfo mi = cr.getModelInfo(i);
@@ -178,7 +178,7 @@ public class ClusOutput {
 
         String parallelTime = "";
         if (getSettings().getEnsemble().isEnsembleWithParallelExecution()) {
-            parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format(((double) cr.getInductionTimeSequential() / 1000.0)) + " sec)";
+            parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format((cr.getInductionTimeSequential() / 1000.0)) + " sec)";
         }
 
         // Compute statistics
@@ -189,7 +189,7 @@ public class ClusOutput {
         for (int i = 0; i < cr.getNbModels(); i++) {
             ClusModelInfo mi = cr.getModelInfo(i);
             if (mi != null) {
-                ClusModel model = (ClusModel) models.get(i);
+                ClusModel model = models.get(i);
                 // A model info without an actual model is possible
                 // E.g., to report error measures in HMCAverageSingleClass
                 if (model != null) {
@@ -211,7 +211,7 @@ public class ClusOutput {
             m_Writer.println(System.lineSeparator() + mlThresholdsTitle);
             m_Writer.println(StringUtils.makeString('-', mlThresholdsTitle.length()));
             for (int i = 0; i < cr.getNbModels(); i++) {
-                ClusModel root = (ClusModel) models.get(i);
+                ClusModel root = models.get(i);
                 String modelName = cr.getModelInfo(i).getName();
                 if (cr.getStatManager().getSettings().getMLC().shouldShowThresholds(modelName)) {
                     if (root instanceof ClusForest) {
@@ -274,7 +274,7 @@ public class ClusOutput {
         for (int i = 0; i < cr.getNbModels(); i++) {
             if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.getOutput().shouldShowModel(i)) {
                 ClusModelInfo mi = cr.getModelInfo(i);
-                ClusModel root = (ClusModel) models.get(i);
+                ClusModel root = models.get(i);
                 String modelname = mi.getName() + " Model";
                 m_Writer.println(modelname);
                 m_Writer.println(StringUtils.makeString('*', modelname.length()));
@@ -283,7 +283,7 @@ public class ClusOutput {
                     RowData pex = (RowData) cr.getTrainingSet();
                     // System.out.println(te_err);
                     if (te_err != null)
-                        pex = (RowData) cr.getTestSet();
+                        pex = cr.getTestSet();
                     root.printModelAndExamples(m_Writer, info, pex);
                 }
                 else {
@@ -311,7 +311,7 @@ public class ClusOutput {
         if (getSettings().getOutput().isOutputDatabaseQueries()) {
             int starttree = getSettings().getExhaustiveSearch().getStartTreeCpt();
             int startitem = getSettings().getExhaustiveSearch().getStartItemCpt();
-            ClusModel root = (ClusModel) models.get(cr.getNbModels() - 1);
+            ClusModel root = models.get(cr.getNbModels() - 1);
             // use the following lines for creating a SQL file that will put the tree into a database
             String out_database_name = m_Sett2.getGeneric().getAppName() + ".txt";
             PrintWriter database_writer = m_Sett2.getGeneric().getFileAbsoluteWriter(out_database_name);
@@ -331,14 +331,14 @@ public class ClusOutput {
             for (int i = 0; i < cr.getNbModels(); i++) {
                 if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.getOutput().shouldShowModel(i)) {
                     ClusModelInfo mi = cr.getModelInfo(i);
-                    ClusModel root = (ClusModel) models.get(i);
+                    ClusModel root = models.get(i);
                     String modelname = mi.getName();
                     JsonObject currentModel = new JsonObject();
                     currentModel.addProperty("name", modelname);
                     RowData pex = (RowData) cr.getTrainingSet();
                     // System.out.println(te_err);
                     if (te_err != null)
-                        pex = (RowData) cr.getTestSet();
+                        pex = cr.getTestSet();
                     currentModel.add("representation", root.getModelJSON(info, pex));
                     outputModels.add(currentModel);
                 }
@@ -366,9 +366,9 @@ public class ClusOutput {
         m_Writer.println();
         int runs = summary.getNbRuns();
         m_Writer.println("Runs: " + runs);
-        double tsec = (double) summary.getInductionTime() / 1000.0;
+        double tsec = summary.getInductionTime() / 1000.0;
         m_Writer.println("Induction time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec");
-        double psec = (double) summary.getPrepareTime() / 1000.0;
+        double psec = summary.getPrepareTime() / 1000.0;
         m_Writer.println("Preprocessing time: " + ClusFormat.ONE_AFTER_DOT.format(psec) + " sec");
         m_Writer.println("Mean number of tests");
         for (int i = ClusModel.ORIGINAL; i <= ClusModel.PRUNED; i++) {

@@ -10,6 +10,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.MDoubleArrayComparator;
 
 
@@ -31,7 +32,7 @@ public class ClusBoostingForest extends ClusForest {
 
 
     public double getBetaI(int i) {
-        return ((Double) m_BetaI.get(i)).doubleValue();
+        return m_BetaI.get(i).doubleValue();
     }
 
 
@@ -44,7 +45,8 @@ public class ClusBoostingForest extends ClusForest {
     }
 
 
-    public ClusStatistic predictWeighted(DataTuple tuple) {
+    @Override
+    public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException, InterruptedException {
         ClusStatistic predicted = m_Stat.cloneSimple();
         // predictWeightedRegression((RegressionStat)predicted, tuple);
         for (int i = 0; i < getNbModels(); i++) {
@@ -55,7 +57,7 @@ public class ClusBoostingForest extends ClusForest {
     }
 
 
-    public void predictWeightedRegression(RegressionStat predicted, DataTuple tuple) {
+    public void predictWeightedRegression(RegressionStat predicted, DataTuple tuple) throws ClusException, InterruptedException {
         double[] result = predicted.getNumericPred();
         double[][] treePredictions = new double[getNbModels()][];
         for (int i = 0; i < treePredictions.length; i++) {

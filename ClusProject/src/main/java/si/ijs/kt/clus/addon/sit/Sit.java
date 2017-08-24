@@ -25,6 +25,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStat;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
 import si.ijs.kt.clus.util.ClusException;
@@ -102,8 +103,9 @@ public class Sit implements CMDLineArgsProvider {
         reader.close();
         // Preprocess and initialize induce
         m_Sett.update(m_Schema);
+        getSettings().getExperimental();
         // Set XVal field in Settings
-        getSettings().getExperimental().IS_XVAL = true;
+        SettingsExperimental.IS_XVAL = true;
         System.out.println("Has missing values: " + m_Schema.hasMissing());
     }
 
@@ -219,8 +221,9 @@ public class Sit implements CMDLineArgsProvider {
      * Start the search for the optimal subset using the current learner and search algorithm
      * 
      * @return Targetset The found subset
+     * @throws ClusException 
      */
-    public TargetSet search() {
+    public TargetSet search() throws ClusException {
 
         int mt = new Integer(m_Sett.getSIT().getMainTarget()) - 1;
         ClusAttrType mainTarget = m_Schema.getAttrType(mt);
@@ -237,26 +240,30 @@ public class Sit implements CMDLineArgsProvider {
     public final static int[] OPTION_ARITIES = { 0 };
 
 
+    @Override
     public int getNbMainArgs() {
         return 1;
     }
 
 
+    @Override
     public int[] getOptionArgArities() {
         return OPTION_ARITIES;
     }
 
 
+    @Override
     public String[] getOptionArgs() {
         return OPTION_ARGS;
     }
 
 
+    @Override
     public void showHelp() {
     }
 
 
-    public void singleRun() {
+    public void singleRun() throws ClusException {
         System.out.println("Starting single run");
         /* Init the Learner */
         InitLearner();

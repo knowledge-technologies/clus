@@ -3,10 +3,13 @@ package si.ijs.kt.clus.distance;
 
 import java.io.Serializable;
 
+import org.apache.commons.lang.NotImplementedException;
+
 import si.ijs.kt.clus.algo.kNN.distance.attributeWeighting.AttributeWeighting;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 
@@ -17,20 +20,17 @@ public abstract class ClusDistance implements Serializable {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
 
-    public double calcDistance(DataTuple t1, DataTuple t2) {
+    public double calcDistance(DataTuple t1, DataTuple t2) throws ClusException {
         return Double.POSITIVE_INFINITY;
     }
 
 
-    public double calcDistance(Object t1, Object t2) {
-        System.err.println("Method unimplemented ... ");
-        new Exception("Method unimplemented ... ").printStackTrace();
-        System.exit(1);
-        return Double.POSITIVE_INFINITY;
+    public double calcDistance(Object t1, Object t2) throws ClusException {
+        throw new NotImplementedException();
     }
 
 
-    public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {
+    public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) throws ClusException {
         return Double.POSITIVE_INFINITY;
     }
 

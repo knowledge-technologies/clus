@@ -36,6 +36,7 @@ class OnCheckSetEnabled implements ComponentAction {
     }
 
 
+    @Override
     public void execute(ComponentMediator mediator) {
         boolean enable = mediator.isCheck(source);
         if (invert)

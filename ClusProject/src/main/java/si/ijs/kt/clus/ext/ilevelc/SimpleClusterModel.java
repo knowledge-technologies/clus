@@ -47,6 +47,7 @@ public class SimpleClusterModel extends ClusNode {
     }
 
 
+    @Override
     public ClusStatistic predictWeighted(DataTuple tuple) {
         int idx = tuple.getIndex();
         int cl = m_Assign[idx];
@@ -57,6 +58,7 @@ public class SimpleClusterModel extends ClusNode {
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         wrt.println("MPCKMeans()");
         if (m_Assign == null) {

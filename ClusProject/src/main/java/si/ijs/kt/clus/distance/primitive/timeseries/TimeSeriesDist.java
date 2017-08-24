@@ -29,6 +29,7 @@ import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.ext.timeseries.TimeSeriesStat;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public abstract class TimeSeriesDist extends ClusDistance {
@@ -43,20 +44,23 @@ public abstract class TimeSeriesDist extends ClusDistance {
     }
 
 
-    public abstract double calcDistance(TimeSeries t1, TimeSeries t2);
+    public abstract double calcDistance(TimeSeries t1, TimeSeries t2) throws ClusException;
 
-    public double calcDistance(Object t1, Object t2){
+    @Override
+    public double calcDistance(Object t1, Object t2) throws ClusException{
         return calcDistance((TimeSeries)t1,(TimeSeries)t2);
     }
     
-    public double calcDistance(DataTuple t1, DataTuple t2) {
+    @Override
+    public double calcDistance(DataTuple t1, DataTuple t2) throws ClusException {
         TimeSeries ts1 = m_Attr.getTimeSeries(t1);
         TimeSeries ts2 = m_Attr.getTimeSeries(t2);
         return calcDistance(ts1, ts2);
     }
 
 
-    public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) {
+    @Override
+    public double calcDistanceToCentroid(DataTuple t1, ClusStatistic s2) throws ClusException {
         TimeSeries ts1 = m_Attr.getTimeSeries(t1);
         TimeSeriesStat stat = (TimeSeriesStat) s2;
         return calcDistance(ts1, stat.getRepresentativeMedoid());

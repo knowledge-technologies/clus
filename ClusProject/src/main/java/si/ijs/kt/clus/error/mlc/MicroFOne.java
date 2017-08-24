@@ -54,11 +54,13 @@ public class MicroFOne extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         Arrays.fill(m_NbTruePositives, 0);
         Arrays.fill(m_NbFalsePositives, 0);
@@ -66,6 +68,7 @@ public class MicroFOne extends ClusNominalError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         MicroFOne mF1 = (MicroFOne) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -86,6 +89,7 @@ public class MicroFOne extends ClusNominalError {
         // return getModelErrorComponent(i);
     }
 
+    @Override
     public double getModelError() {
         int truePositives = 0, falsePositives = 0, falseNegatives = 0;
         for (int i = 0; i < m_Dim; i++) {
@@ -99,21 +103,25 @@ public class MicroFOne extends ClusNominalError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         return "MicroFOne";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MicroFOne(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
@@ -136,6 +144,7 @@ public class MicroFOne extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         NominalAttrType attr;
         for (int i = 0; i < m_Dim; i++) {
@@ -157,6 +166,7 @@ public class MicroFOne extends ClusNominalError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 }

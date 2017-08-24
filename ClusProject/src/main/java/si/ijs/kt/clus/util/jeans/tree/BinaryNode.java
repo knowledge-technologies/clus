@@ -36,6 +36,7 @@ public class BinaryNode implements Node {
     }
 
 
+    @Override
     public int getLevel() {
         int depth = 0;
         BinaryNode node = this;
@@ -94,6 +95,7 @@ public class BinaryNode implements Node {
     }
 
 
+    @Override
     public Node getChild(int idx) {
         if (idx == 0)
             return m_Left;
@@ -102,15 +104,18 @@ public class BinaryNode implements Node {
     }
 
 
+    @Override
     public int getNbChildren() {
         return atBottomLevel() ? 0 : 2;
     }
 
 
+    @Override
     public void addChild(Node node) {
     }
 
 
+    @Override
     public void removeChild(Node node) {
         if (node == m_Left)
             m_Left = null;
@@ -119,21 +124,25 @@ public class BinaryNode implements Node {
     }
 
 
+    @Override
     public void setParent(Node parent) {
         m_Parent = parent;
     }
 
 
+    @Override
     public Node getParent() {
         return m_Parent;
     }
 
 
+    @Override
     public boolean atTopLevel() {
         return m_Parent == null;
     }
 
 
+    @Override
     public boolean atBottomLevel() {
         return m_bFakeLeaf || atRealBottomLevel();
     }

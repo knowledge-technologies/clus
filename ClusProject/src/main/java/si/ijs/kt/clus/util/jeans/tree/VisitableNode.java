@@ -39,48 +39,57 @@ public class VisitableNode extends Visitable implements Node {
     }
 
 
+    @Override
     public int getLevel() {
         return 0;
     }
 
 
+    @Override
     public void addChild(Node node) {
         node.setParent(this);
         nodes.addElement(node);
     }
 
 
+    @Override
     public void removeChild(Node node) {
         node.setParent(null);
         nodes.removeElement(node);
     }
 
 
+    @Override
     public void setParent(Node parent) {
         this.parent = parent;
     }
 
 
+    @Override
     public Node getParent() {
         return parent;
     }
 
 
+    @Override
     public Node getChild(int idx) {
         return (Node) nodes.elementAt(idx);
     }
 
 
+    @Override
     public int getNbChildren() {
         return nodes.size();
     }
 
 
+    @Override
     public boolean atTopLevel() {
         return getParent() == null;
     }
 
 
+    @Override
     public boolean atBottomLevel() {
         return getNbChildren() == 0;
     }

@@ -181,6 +181,7 @@ public class IconMessageBox extends Dialog {
         }
 
 
+        @Override
         public void actionPerformed(ActionEvent evt) {
             performAction(m_id);
             dispose();

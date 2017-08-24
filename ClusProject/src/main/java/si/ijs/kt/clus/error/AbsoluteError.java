@@ -49,6 +49,7 @@ public class AbsoluteError extends ClusNumericError {
     }
 
 
+    @Override
     public double getModelError() {
         double avg_abs = 0.0;
         for (int i = 0; i < m_Dim; i++)
@@ -57,6 +58,7 @@ public class AbsoluteError extends ClusNumericError {
     }
 
 
+    @Override
     public void addExample(double[] real, double[] predicted) {
         for (int i = 0; i < m_Dim; i++) {
             double err = real[i] - predicted[i];
@@ -65,10 +67,12 @@ public class AbsoluteError extends ClusNumericError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         double[] predicted = pred.getNumericPred();
         for (int i = 0; i < m_Dim; i++) {
@@ -78,6 +82,7 @@ public class AbsoluteError extends ClusNumericError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         AbsoluteError oe = (AbsoluteError) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -92,6 +97,7 @@ public class AbsoluteError extends ClusNumericError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
@@ -130,17 +136,20 @@ public class AbsoluteError extends ClusNumericError {
     }
 
 
+    @Override
     public String getName() {
         return "Mean absolute error (MAE)";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new AbsoluteError(par, m_Attrs);
     }
 
 
-	public boolean shouldBeLow() {
+	@Override
+    public boolean shouldBeLow() {
 		return true;
 	}
 }

@@ -33,11 +33,13 @@ public class MComplex extends MNumber {
     }
 
 
+    @Override
     public int getLevel() {
         return 3;
     }
 
 
+    @Override
     public MNumber doAdd(MNumber other) {
         MNumber myreal = real.add(((MComplex) other).real);
         MNumber myimag = imag.add(((MComplex) other).imag);
@@ -45,6 +47,7 @@ public class MComplex extends MNumber {
     }
 
 
+    @Override
     public MNumber doSubstract(MNumber other) {
         MNumber myreal = real.substract(((MComplex) other).real);
         MNumber myimag = imag.substract(((MComplex) other).imag);
@@ -52,6 +55,7 @@ public class MComplex extends MNumber {
     }
 
 
+    @Override
     public MNumber doMultiply(MNumber other) {
         MNumber oreal = ((MComplex) other).real;
         MNumber oimag = ((MComplex) other).imag;
@@ -61,6 +65,7 @@ public class MComplex extends MNumber {
     }
 
 
+    @Override
     public MNumber doDivide(MNumber other) {
         MNumber oreal = ((MComplex) other).real;
         MNumber oimag = ((MComplex) other).imag;
@@ -71,16 +76,19 @@ public class MComplex extends MNumber {
     }
 
 
+    @Override
     public MNumber convertTo(MNumber other) {
         return this;
     }
 
 
+    @Override
     public double getDouble() {
         return 0;
     }
 
 
+    @Override
     public String toString() {
         return String.valueOf(real) + "+" + String.valueOf(imag) + "i";
     }

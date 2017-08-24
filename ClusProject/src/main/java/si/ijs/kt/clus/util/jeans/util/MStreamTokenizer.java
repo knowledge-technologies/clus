@@ -465,6 +465,7 @@ public class MStreamTokenizer {
     }
 
 
+    @Override
     public String toString() {
         return "MStreamTokenizer [" + commentchar + "] [" + chartokens + "]";
     }

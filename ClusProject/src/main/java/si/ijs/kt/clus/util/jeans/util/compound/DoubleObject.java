@@ -54,6 +54,7 @@ public class DoubleObject implements Comparable {
     }
 
 
+    @Override
     public int compareTo(Object o) {
         DoubleObject ot = (DoubleObject) o;
         if (m_Double == ot.m_Double)

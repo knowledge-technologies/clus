@@ -41,6 +41,7 @@ public abstract class NominalAttrBase extends ClusAttribute {
     }
 
 
+    @Override
     public ClusAttrType getType() {
         return m_Type;
     }

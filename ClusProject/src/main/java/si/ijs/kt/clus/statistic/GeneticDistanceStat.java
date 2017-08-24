@@ -37,6 +37,7 @@ public class GeneticDistanceStat extends BitVectorStat {
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         m_SumWeight += tuple.getWeight();
         m_Bits.setBit(idx);
@@ -65,6 +66,7 @@ public class GeneticDistanceStat extends BitVectorStat {
     }
 
 
+    @Override
     public void reset() {
         m_SumWeight = 0.0;
         m_Bits.reset();
@@ -72,6 +74,7 @@ public class GeneticDistanceStat extends BitVectorStat {
     }
 
 
+    @Override
     public GeneticDistanceStat cloneStat() {
         GeneticDistanceStat stat = new GeneticDistanceStat(this.m_Settings, m_Attrs);
         stat.cloneFrom(this);
@@ -89,6 +92,7 @@ public class GeneticDistanceStat extends BitVectorStat {
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         GeneticDistanceStat or = (GeneticDistanceStat) other;
         m_SumWeight = or.m_SumWeight;
@@ -99,12 +103,14 @@ public class GeneticDistanceStat extends BitVectorStat {
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
         GeneticDistanceStat or = (GeneticDistanceStat) other;
         m_SumWeight += weight * or.m_SumWeight;
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
         GeneticDistanceStat or = (GeneticDistanceStat) other;
         m_SumWeight += or.m_SumWeight;
@@ -113,6 +119,7 @@ public class GeneticDistanceStat extends BitVectorStat {
     }
 
 
+    @Override
     public void addScaled(double scale, ClusStatistic other) {
         GeneticDistanceStat or = (GeneticDistanceStat) other;
         m_SumWeight += scale * or.m_SumWeight;
@@ -126,6 +133,7 @@ public class GeneticDistanceStat extends BitVectorStat {
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
         GeneticDistanceStat or = (GeneticDistanceStat) other;
         m_SumWeight -= or.m_SumWeight;
@@ -146,6 +154,7 @@ public class GeneticDistanceStat extends BitVectorStat {
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
         GeneticDistanceStat or = (GeneticDistanceStat) other;
         m_SumWeight = or.m_SumWeight - m_SumWeight;
@@ -154,12 +163,14 @@ public class GeneticDistanceStat extends BitVectorStat {
     }
 
 
+    @Override
     public int[] getNominalPred() {
         System.out.println("getNominalPred: not implemented for GeneticDistanceStat");
         return null;
     }
 
 
+    @Override
     public String getString(StatisticPrintInfo info) {
         StringBuffer buf = new StringBuffer();
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
@@ -172,10 +183,12 @@ public class GeneticDistanceStat extends BitVectorStat {
 
     // some methods called to calculate predictions or errors, which we don't need
 
+    @Override
     public void calcMean() {
     }
 
 
+    @Override
     public double getCount(int idx, int cls) {
         return 0.0;
     }

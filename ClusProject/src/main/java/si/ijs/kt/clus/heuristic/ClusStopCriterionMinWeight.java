@@ -14,6 +14,7 @@ public class ClusStopCriterionMinWeight implements ClusStopCriterion {
     }
 
 
+    @Override
     public boolean stopCriterion(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         double w_pos = pstat.getTotalWeight();
         double w_neg = tstat.getTotalWeight() - w_pos;
@@ -29,6 +30,7 @@ public class ClusStopCriterionMinWeight implements ClusStopCriterion {
     }
 
 
+    @Override
     public boolean stopCriterion(ClusStatistic tstat, ClusStatistic[] pstat, int nbsplit) {
         for (int i = 0; i < nbsplit; i++) {
             if (pstat[i].getTotalWeight() < m_MinWeight) { return true; }

@@ -46,16 +46,19 @@ public class NominalTest extends NodeTest {
     }
 
 
+    @Override
     public ClusAttrType getType() {
         return m_Type;
     }
 
 
+    @Override
     public void setType(ClusAttrType type) {
         m_Type = (NominalAttrType) type;
     }
 
 
+    @Override
     public String getString() {
         if (m_Type.getNbValues() > 2) {
             return m_Type.getName();
@@ -70,6 +73,7 @@ public class NominalTest extends NodeTest {
     }
 
 
+    @Override
     public String getPythonString() {
         if (m_Type.getNbValues() > 2) {
             return m_Type.getName();
@@ -84,16 +88,19 @@ public class NominalTest extends NodeTest {
     }
 
 
+    @Override
     public boolean equals(NodeTest test) {
         return m_Type == test.getType();
     }
 
 
+    @Override
     public int hashCode() {
         return m_Type.getIndex();
     }
 
 
+    @Override
     public void preprocess(int mode) {
         DoubleIndexSorter sorter = DoubleIndexSorter.getInstance();
         sorter.setData(m_Sorted = DoubleIndexSorter.arrayclone(m_BranchFreq));
@@ -102,6 +109,7 @@ public class NominalTest extends NodeTest {
     }
 
 
+    @Override
     public int predictWeighted(DataTuple tuple) {
         int val = m_Type.getNominal(tuple);
         return nominalPredictWeighted(val);
@@ -113,6 +121,7 @@ public class NominalTest extends NodeTest {
      * return nominalPredict(((NominalAttribute)attr).m_Data[idx]);
      * }
      */
+    @Override
     public int nominalPredict(int value) {
         // Missing value ?
         int arity = getNbChildren();
@@ -130,6 +139,7 @@ public class NominalTest extends NodeTest {
     }
 
 
+    @Override
     public int nominalPredictWeighted(int value) {
         // Missing value ?
         if (value == getNbChildren())
@@ -138,21 +148,25 @@ public class NominalTest extends NodeTest {
     }
 
 
+    @Override
     public boolean hasBranchLabels() {
         return true;// m_Type.getNbValues() > 2;
     }
 
 
+    @Override
     public String getBranchLabel(int i) {
         return m_Type.getValue(i);
     }
 
 
+    @Override
     public String getBranchString(int i) {
         return m_Type.getName() + " = " + m_Type.getValue(i);
     }
 
 
+    @Override
     public NodeTest getBranchTest(int i) {
         SubsetTest test = new SubsetTest(m_Type, 1);
         test.setValue(0, i);

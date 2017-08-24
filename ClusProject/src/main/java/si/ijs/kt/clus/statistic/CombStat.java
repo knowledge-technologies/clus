@@ -88,26 +88,31 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         return new CombStat(m_StatManager, (RegressionStat) m_RegStat.cloneStat(), (ClassificationStat) m_ClassStat.cloneStat());
     }
 
 
+    @Override
     public ClusStatistic cloneSimple() {
         return new CombStat(m_StatManager, (RegressionStat) m_RegStat.cloneSimple(), (ClassificationStat) m_ClassStat.cloneSimple());
     }
 
 
+    @Override
     public RegressionStat getRegressionStat() {
         return m_RegStat;
     }
 
 
+    @Override
     public ClassificationStat getClassificationStat() {
         return m_ClassStat;
     }
 
 
+    @Override
     public void setTrainingStat(ClusStatistic train) {
         //CombStat ctrain = (CombStat) train;
         m_RegStat.setTrainingStat(train.getRegressionStat());
@@ -115,6 +120,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, double weight) {
         m_RegStat.updateWeighted(tuple, weight);
         m_ClassStat.updateWeighted(tuple, weight);
@@ -122,6 +128,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) { // idx?
         m_RegStat.updateWeighted(tuple, tuple.getWeight());
         m_ClassStat.updateWeighted(tuple, tuple.getWeight());
@@ -129,6 +136,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void calcMean() {
         m_RegStat.calcMean();
         m_ClassStat.calcMean();
@@ -138,6 +146,7 @@ public class CombStat extends ClusStatistic {
     /**
      * Currently only used to compute the default dispersion within rule heuristics.
      */
+    @Override
     public double getDispersion(ClusAttributeWeights scale, RowData data) {
         return dispersionCalc();
     }
@@ -720,6 +729,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public String getString(StatisticPrintInfo info) {
         StringBuffer buf = new StringBuffer();
         buf.append("[");
@@ -731,12 +741,14 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void addPredictWriterSchema(String prefix, ClusSchema schema) {
         m_ClassStat.addPredictWriterSchema(prefix, schema);
         m_RegStat.addPredictWriterSchema(prefix, schema);
     }
 
 
+    @Override
     public String getPredictWriterString() {
         StringBuffer buf = new StringBuffer();
         buf.append(m_ClassStat.getPredictWriterString());
@@ -747,12 +759,14 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public String getArrayOfStatistic() {
         return null;
     }
 
 
     // TODO: Not sure this makes sense in CombStat - Check!
+    @Override
     public double getSVarS(ClusAttributeWeights scale) {
         int nbTargetNom = m_ClassStat.getNbNominalAttributes();
         int nbTargetNum = m_RegStat.getNbNumericAttributes();
@@ -760,6 +774,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
         int nbTargetNom = m_ClassStat.getNbNominalAttributes();
         int nbTargetNum = m_RegStat.getNbNumericAttributes();
@@ -769,6 +784,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void reset() {
         m_RegStat.reset();
         m_ClassStat.reset();
@@ -776,6 +792,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         CombStat or = (CombStat) other;
         m_SumWeight = or.m_SumWeight;
@@ -785,6 +802,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
         CombStat or = (CombStat) other;
         m_RegStat.addPrediction(or.m_RegStat, weight);
@@ -792,6 +810,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void add(ClusStatistic other) {
         CombStat or = (CombStat) other;
         m_RegStat.add(or.m_RegStat);
@@ -800,6 +819,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void subtractFromThis(ClusStatistic other) {
         CombStat or = (CombStat) other;
         m_RegStat.subtractFromThis(or.m_RegStat);
@@ -808,6 +828,7 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void subtractFromOther(ClusStatistic other) {
         CombStat or = (CombStat) other;
         m_RegStat.subtractFromOther(or.m_RegStat);
@@ -816,32 +837,38 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public int getNbNominalAttributes() {
         return m_ClassStat.getNbNominalAttributes();
     }
 
 
+    @Override
     public String getPredictedClassName(int idx) {
         return "";
     }
 
 
+    @Override
     public int getNbNumericAttributes() {
         return m_RegStat.getNbNumericAttributes();
     }
 
 
+    @Override
     public double[] getNumericPred() {
         return m_RegStat.getNumericPred();
     }
 
 
+    @Override
     public int[] getNominalPred() {
         return m_ClassStat.getNominalPred();
     }
 
 
     // TODO: This error assessment should be changed, I guess.
+    @Override
     public double getError(ClusAttributeWeights scale) {
         System.out.println("CombStat :getError");
         switch (m_StatManager.getMode()) {
@@ -857,17 +884,20 @@ public class CombStat extends ClusStatistic {
     }
 
 
+    @Override
     public void printDistribution(PrintWriter wrt) throws IOException {
         m_ClassStat.printDistribution(wrt);
         m_RegStat.printDistribution(wrt);
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes) {
         System.err.println(getClass().getName() + "vote (): Not implemented");
     }
 
 
+    @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
         System.err.println(getClass().getName() + "vote (): Not implemented");
     }

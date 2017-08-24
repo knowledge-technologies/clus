@@ -35,6 +35,14 @@
 %\newcommand{\comment}[1]{{\color{red}\textbf{COMMENT:} #1}}
 \newcommand{\comment}[1]{} % off
 
+% commands for option lists
+\newcommand{\optionListsFolder}{optionListsForUse}
+\newcommand{\optionNameStyle}[1]{{\tt #1}}
+\newcommand{\optionPossibleValues}{\emph{possible values}}
+\newcommand{\optionDefaultValue}{\emph{default}}
+\newcommand{\optionDefaultValueStyle}[1]{{\tt #1}}
+\newcommand{\optionDescrption}[1]{{\it description #1}}
+
 \begin{document}
 
 \title{\clus: User's Manual}
@@ -42,7 +50,6 @@
 \author{Jan Struyf, Bernard \v{Z}enko, Hendrik Blockeel, Celine Vens, Sa\v{s}o D\v{z}eroski}
 
 \maketitle
-
 
 
 \tableofcontents
@@ -845,7 +852,9 @@ Settings for running \clus{} in semi-supervised learning mode, relevant when com
 \item {\tt WeightScoresFile = $s$} : $s$ is the name of the file where predictive performance for each candidate $w$ will be written (applies if {\tt PossibleWeights} is a vector of values). Default is $No$, i.e., the file will not be written.
 \end{itemize}
 
-
+\section{Relief}
+Test :)
+\input{\optionListsFolder/options-Relief.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Command Line Parameters}

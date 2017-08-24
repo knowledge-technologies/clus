@@ -45,7 +45,7 @@ import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.test.NodeTest;
@@ -83,7 +83,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public double estimateBeamMeasure(ClusRule rule) {
+    public double estimateBeamMeasure(ClusRule rule) throws ClusException {
         return m_Heuristic.calcHeuristic(null, rule.getClusteringStat(), null);
     }
 
@@ -98,7 +98,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     }
 
 
-    ClusBeam initializeBeam(RowData data) {
+    ClusBeam initializeBeam(RowData data) throws ClusException {
         Settings sett = getSettings();
         ClusBeam beam = new ClusBeam(sett.getBeamSearch().getBeamWidth(), sett.getBeamSearch().getBeamRemoveEqualHeur());
         ClusStatistic stat = createTotalClusteringStat(data);
@@ -111,7 +111,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void refineModel(ClusBeamModel model, ClusBeam beam, int model_idx) {
+    public void refineModel(ClusBeamModel model, ClusBeam beam, int model_idx) throws ClusException {
         ClusRule rule = (ClusRule) model.getModel();
         RowData data = (RowData) rule.getVisitor();
         if (m_FindBestTest.initSelectorAndStopCrit(rule.getClusteringStat(), data)) {
@@ -169,7 +169,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void refineBeam(ClusBeam beam) {
+    public void refineBeam(ClusBeam beam) throws ClusException {
         setBeamChanged(false);
         ArrayList models = beam.toArray();
         for (int i = 0; i < models.size(); i++) {
@@ -184,7 +184,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusRule learnOneRule(RowData data) {
+    public ClusRule learnOneRule(RowData data) throws ClusException {
         ClusBeam beam = initializeBeam(data);
         int i = 0;
         System.out.print("Step: ");
@@ -233,8 +233,9 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param data
      * @return array of rules
+     * @throws ClusException 
      */
-    public ClusRule[] learnBeamOfRules(RowData data) {
+    public ClusRule[] learnBeamOfRules(RowData data) throws ClusException {
         ClusBeam beam = initializeBeam(data);
         int i = 0;
         System.out.print("Step: ");
@@ -279,8 +280,9 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     /**
      * Standard covering algorithm for learning ordered rules. Data is removed
      * when it is covered. Default rule is added at the end.
+     * @throws ClusException 
      */
-    public void separateAndConquor(ClusRuleSet rset, RowData data) {
+    public void separateAndConquor(ClusRuleSet rset, RowData data) throws ClusException {
         int max_rules = getSettings().getRules().getMaxRulesNb();
         int i = 0;
         // Learn the rules
@@ -488,7 +490,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                     rules[j].computePrediction();
                     ClusRuleSet new_rset = rset.cloneRuleSet();
                     new_rset.add(rules[j]);
-                    RowData data_copy2 = (RowData) data_copy.deepCloneData();
+                    RowData data_copy2 = data_copy.deepCloneData();
                     data_copy2 = rules[j].reweighCovered(data_copy2);
                     ClusStatistic new_left_over2 = createTotalTargetStat(data_copy2);
                     new_left_over2.calcMean();
@@ -664,7 +666,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                     rules[j].computePrediction();
                     ClusRuleSet new_rset = rset.cloneRuleSet();
                     new_rset.add(rules[j]);
-                    RowData data_copy2 = (RowData) data_copy.deepCloneData();
+                    RowData data_copy2 = data_copy.deepCloneData();
                     data_copy2 = rules[j].reweighCovered(data_copy2);
                     ClusStatistic new_left_over2 = createTotalTargetStat(data_copy2);
                     new_left_over2.calcMean();
@@ -771,7 +773,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void separateAndConquorWithHeuristic(ClusRuleSet rset, RowData data) {
+    public void separateAndConquorWithHeuristic(ClusRuleSet rset, RowData data) throws ClusException {
         int max_rules = getSettings().getRules().getMaxRulesNb();
         ArrayList bit_vect_array = new ArrayList();
         int i = 0;
@@ -832,7 +834,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public double sanityCheck(double value, ClusRule rule) {
+    public double sanityCheck(double value, ClusRule rule) throws ClusException {
         double expected = estimateBeamMeasure(rule);
         if (Math.abs(value - expected) > 1e-6) {
             System.out.println("Bug in heurisitc: " + value + " <> " + expected);
@@ -840,7 +842,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             rule.printModel(wrt);
             wrt.close();
             System.out.flush();
-            System.exit(1);
+            throw new ClusException("sanity check failed");
         }
         return expected;
     }
@@ -855,8 +857,9 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * @return
      * @throws ClusException
      * @throws IOException
+     * @throws InterruptedException 
      */
-    public ClusModel induce(ClusRun run) throws ClusException, IOException {
+    public ClusModel induce(ClusRun run) throws ClusException, IOException, InterruptedException {
         int method = getSettings().getRules().getCoveringMethod();
         int add_method = getSettings().getRules().getRuleAddingMethod();
         RowData data = (RowData) run.getTrainingSet();
@@ -919,7 +922,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             rset.computeDispersion(ClusModel.TRAIN);
             rset.removeDataFromRules();
             if (run.getTestIter() != null) {
-                RowData testdata = (RowData) run.getTestSet();
+                RowData testdata = run.getTestSet();
                 rset.addDataToRules(testdata);
                 rset.computeDispersion(ClusModel.TEST);
                 rset.removeDataFromRules();
@@ -955,10 +958,10 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 
         // Find the rule weights with optimization algorithm.
         if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
-            optAlg = (OptAlg) new GDAlg(getStatManager(), param, rset);
+            optAlg = new GDAlg(getStatManager(), param, rset);
         }
         else if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED) {
-            optAlg = (OptAlg) new DeAlg(getStatManager(), param, rset);
+            optAlg = new DeAlg(getStatManager(), param, rset);
         }
         else if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY) {
             weights = CallExternGD.main(getStatManager(), param, rset);
@@ -1064,8 +1067,9 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     /**
      * Updates the default rule. This is the rule that is used if no other rule covers the example.
      * For rule ensembles this is, in effect, void rule.
+     * @throws ClusException 
      */
-    public void updateDefaultRule(ClusRuleSet rset, RowData data) {
+    public void updateDefaultRule(ClusRuleSet rset, RowData data) throws ClusException {
         for (int i = 0; i < rset.getModelSize(); i++) {
             data = rset.getRule(i).removeCovered(data);
         }
@@ -1084,8 +1088,9 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * @param cr
      *        ClusRun
      * @return RuleSet
+     * @throws InterruptedException 
      */
-    public ClusModel induceRandomly(ClusRun run) throws ClusException, IOException {
+    public ClusModel induceRandomly(ClusRun run) throws ClusException, IOException, InterruptedException {
         int number = getSettings().getRules().nbRandomRules();
         RowData data = (RowData) run.getTrainingSet();
         ClusStatistic stat = createTotalClusteringStat(data);
@@ -1125,7 +1130,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             rset.computeDispersion(ClusModel.TRAIN);
             rset.removeDataFromRules();
             if (run.getTestIter() != null) {
-                RowData testdata = (RowData) run.getTestSet();
+                RowData testdata = run.getTestSet();
                 rset.addDataToRules(testdata);
                 rset.computeDispersion(ClusModel.TEST);
                 rset.removeDataFromRules();
@@ -1141,8 +1146,9 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * @param data
      * @param rn
      * @return
+     * @throws ClusException 
      */
-    private ClusRule generateOneRandomRule(RowData data, Random rn) {
+    private ClusRule generateOneRandomRule(RowData data, Random rn) throws ClusException {
         // TODO: Remove/change the beam stuff!!!
         // Jans: Removed beam stuff (because was more difficult to debug)
         ClusStatManager mgr = getStatManager();
@@ -1207,7 +1213,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    @Override
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException, Exception {
         // ClusRulesForAttrs rfa = new ClusRulesForAttrs();
         // return rfa.constructRules(cr);
         resetAll();
@@ -1220,7 +1227,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException {
+    @Override
+    public void induceAll(ClusRun cr) throws Exception {
         // Set the defaults for heuristic
         RowData trainData = (RowData) cr.getTrainingSet();
         getStatManager().getHeuristic().setTrainData(trainData);

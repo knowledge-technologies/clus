@@ -57,17 +57,20 @@ public class MLPrecision extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         m_PrecisionSum = 0.0;
         m_NbKnown = 0;
     }
 
 
+    @Override
     public void add(ClusError other) {
         MLPrecision mlcr = (MLPrecision) other;
         m_PrecisionSum += mlcr.m_PrecisionSum;
@@ -85,26 +88,31 @@ public class MLPrecision extends ClusNominalError {
     // }
 
 
+    @Override
     public double getModelError() {
         return m_PrecisionSum / m_NbKnown;
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         return "MLPrecision";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MLPrecision(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred(); // predicted[i] == 0 IFF label_i is predicted to be relevant for the
                                                  // example
@@ -137,6 +145,7 @@ public class MLPrecision extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         NominalAttrType attr;
         int intersection = 0, nbRelevant = 0, nbRelevantPredicted = 0;
@@ -168,6 +177,7 @@ public class MLPrecision extends ClusNominalError {
 
 
     // NEDOTAKNJENO
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 

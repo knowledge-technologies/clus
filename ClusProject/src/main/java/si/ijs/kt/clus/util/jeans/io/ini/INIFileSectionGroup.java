@@ -40,11 +40,13 @@ public class INIFileSectionGroup extends INIFileNode {
     }
 
 
+    @Override
     public boolean isSectionGroup() {
         return true;
     }
 
 
+    @Override
     public boolean isSection() {
         return false;
     }
@@ -60,6 +62,7 @@ public class INIFileSectionGroup extends INIFileNode {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         INIFileSectionGroup sec = new INIFileSectionGroup(getName());
         sec.setPrototype((INIFileSection) getPrototype().cloneNode());
@@ -83,10 +86,11 @@ public class INIFileSectionGroup extends INIFileNode {
     }
 
 
+    @Override
     public void save(PrintWriter writer) throws IOException {
         String groupName = getName();
         for (int idx = 0; idx < getNbSections(); idx++) {
-            INIFileSection section = (INIFileSection) getSectionAt(idx);
+            INIFileSection section = getSectionAt(idx);
             section.save(groupName, writer);
         }
     }

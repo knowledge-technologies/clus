@@ -99,6 +99,7 @@ public class MessageCanvas extends BufferCanvas {
     }
 
 
+    @Override
     public void paintIt(Graphics g, Dimension d) {
         int wd = d.width;
         int idx = m_offs;

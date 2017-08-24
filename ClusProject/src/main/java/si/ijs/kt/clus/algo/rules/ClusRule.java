@@ -50,7 +50,7 @@ import si.ijs.kt.clus.ext.ilevelc.ILevelConstraint;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClassificationStat;
@@ -110,6 +110,7 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    @Override
     public int getID() {
         return m_ID;
     }
@@ -123,6 +124,7 @@ public class ClusRule implements ClusModel, Serializable {
     /**
      * Returns the prediction by this rule for the tuple. If the value is invalid, returns 0.
      */
+    @Override
     public ClusStatistic predictWeighted(DataTuple tuple) {
         return m_TargetStat;
     }
@@ -130,8 +132,9 @@ public class ClusRule implements ClusModel, Serializable {
 
     /**
      * Computes predictions for the rule by taking the mean of covered examples.
+     * @throws ClusException 
      */
-    public void computePrediction() {
+    public void computePrediction() throws ClusException {
         m_TargetStat.calcMean();
         m_ClusteringStat.calcMean();
         // setTrainErrorScore();
@@ -150,6 +153,7 @@ public class ClusRule implements ClusModel, Serializable {
     /**
      * Equality is based on the tests only.
      */
+    @Override
     public boolean equals(Object other) {
         ClusRule o = (ClusRule) other;
         if (o.getModelSize() != getModelSize())
@@ -200,6 +204,7 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    @Override
     public int hashCode() {
         int hashCode = 1234;
         for (int i = 0; i < getModelSize(); i++) {
@@ -615,10 +620,12 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
     }
 
 
+    @Override
     public void attachModel(HashMap table) throws ClusException {
         for (int i = 0; i < m_Tests.size(); i++) {
             NodeTest test = (NodeTest) m_Tests.get(i);
@@ -634,6 +641,7 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt) {
         printModel(wrt, StatisticPrintInfo.getInstance());
     }
@@ -656,6 +664,7 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         wrt.print("IF ");
         if (m_Tests.size() == 0) {
@@ -725,6 +734,7 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void printModelToPythonScript(PrintWriter wrt) {
     }
 
@@ -747,10 +757,12 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean ex) {
     }
 
 
+    @Override
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
     }
 
@@ -765,6 +777,7 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    @Override
     public int getModelSize() {
         return m_Tests.size();
     }
@@ -842,12 +855,14 @@ public class ClusRule implements ClusModel, Serializable {
      * Post processing is only calculating the means for each of the target statistics.
      * This mean is the target prediction.
      * FIXME Could this be merged with computePrediction?
+     * @throws ClusException 
      */
-    public void postProc() {
+    public void postProc() throws ClusException {
         m_TargetStat.calcMean();
     }
 
 
+    @Override
     public String getModelInfo() {
         return "Tests = " + getModelSize();
     }
@@ -869,8 +884,9 @@ public class ClusRule implements ClusModel, Serializable {
      * attributes on the all training data covered by this rule (kind of ...).
      * To be used in some schemes (AccuracyWeighted) for combining predictions
      * of multiple (unordered) rules.
+     * @throws ClusException 
      */
-    public void setTrainErrorScore() {
+    public void setTrainErrorScore() throws ClusException {
         int nb_rows = m_Data.size();
         int nb_tar = m_TargetStat.getNbAttributes();
         if (m_TargetStat instanceof ClassificationStat) {
@@ -1054,7 +1070,7 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
-    public void computeCoverStat(RowData data, ClusStatistic stat) {
+    public void computeCoverStat(RowData data, ClusStatistic stat) throws ClusException {
         int nb = data.getNbRows();
         stat.setSDataSize(nb);
         for (int i = 0; i < nb; i++) {
@@ -1067,11 +1083,13 @@ public class ClusRule implements ClusModel, Serializable {
     }
 
 
+    @Override
     public ClusModel prune(int prunetype) {
         return this;
     }
 
 
+    @Override
     public void retrieveStatistics(ArrayList list) {
     }
     

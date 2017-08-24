@@ -1,4 +1,5 @@
 /bin/
+*.bbl
 *.aux
 *.log
 *.synctex.gz

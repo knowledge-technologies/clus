@@ -36,6 +36,7 @@ public class GrayScaleFilter extends RGBImageFilter {
     }
 
 
+    @Override
     public int filterRGB(int x, int y, int rgb) {
         int red = (rgb >> 16) & 0xff;
         int green = (rgb >> 8) & 0xff;

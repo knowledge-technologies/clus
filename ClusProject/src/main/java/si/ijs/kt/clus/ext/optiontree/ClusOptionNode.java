@@ -74,6 +74,7 @@ public class ClusOptionNode extends MyNode {
     }
 
 
+    @Override
     public MyNode cloneNode() {
         ClusOptionNode clone = new ClusOptionNode();
         clone.m_ClusteringStat = m_ClusteringStat;
@@ -82,12 +83,14 @@ public class ClusOptionNode extends MyNode {
     }
 
 
+    @Override
     public int getID() {
         return m_ID;
     }
 
 
-    public ClusStatistic predictWeighted(DataTuple tuple) {
+    @Override
+    public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException, InterruptedException {
         if (atBottomLevel()) {
             throw new RuntimeException("clus.ext.optiontree.ClusOptionNode.predictWeighted(DataTuple): This should never happen");
         }
@@ -138,26 +141,31 @@ public class ClusOptionNode extends MyNode {
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt) {
         printTree(wrt, StatisticPrintInfo.getInstance(), "");
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         printTree(wrt, info, "");
     }
 
 
+    @Override
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
         printTree(wrt, info, "", examples);
     }
 
 
+    @Override
     public void printModelToPythonScript(PrintWriter wrt) {
         printTreeToPythonScript(wrt, "\t");
     }
 
 
+    @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive) {
         int lastmodel = cr.getNbModels() - 1;
         System.out.println("The number of models to print is:" + lastmodel);
@@ -226,6 +234,7 @@ public class ClusOptionNode extends MyNode {
     }
 
 
+    @Override
     public final void printTree(PrintWriter writer, StatisticPrintInfo info, String prefix, RowData examples) {
         int arity = getNbChildren();
         if (arity > 0) {
@@ -245,6 +254,7 @@ public class ClusOptionNode extends MyNode {
 
 
     /* to print the tree directly into an IDB : Elisa Fromont 13/06/2007 */
+    @Override
     public final void printTreeInDatabase(PrintWriter writer, String tabitem[], int tabexist[], int cpt, String typetree) {
         int arity = getNbChildren();
         if (arity > 0) {
@@ -285,7 +295,7 @@ public class ClusOptionNode extends MyNode {
         else {
             int max = 0;
             for (int i = 0; i < nb; i++) {
-                MyNode node = (MyNode) getChild(i);
+                MyNode node = getChild(i);
                 max = Math.max(max, node.getMaxLeafDepth());
             }
             return max;

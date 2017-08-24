@@ -34,7 +34,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
@@ -215,6 +215,7 @@ public class ClusRuleLinearTerm extends ClusRule {
 
 
     /** Returns the prediction by this linear term for the tuple. */
+    @Override
     public ClusStatistic predictWeighted(DataTuple tuple) {
         if (!(m_TargetStat instanceof RegressionStat))
             System.err.println("Error: Using linear terms for optimization is implemented for regression only.");
@@ -283,6 +284,7 @@ public class ClusRuleLinearTerm extends ClusRule {
 
 
     /** Does the term cover the given tuple */
+    @Override
     public boolean covers(DataTuple tuple) {
         if (getSettings().getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_CONVERT) { return true; // Always
                                                                                                              // covers,
@@ -297,6 +299,7 @@ public class ClusRuleLinearTerm extends ClusRule {
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         wrt.println("Linear term for the numerical attribute with index " + m_descriptiveDimForLinearTerm + " predicting target index " + m_targetDimForLinearTerm);
 
@@ -324,6 +327,7 @@ public class ClusRuleLinearTerm extends ClusRule {
 
 
     /** Is this a regular rule or some other type of learner (e.g. linear term) */
+    @Override
     public boolean isRegularRule() {
         return false;
     }

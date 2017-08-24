@@ -91,6 +91,7 @@ public class ClusBeamModel implements Comparable, Serializable {
     }
 
 
+    @Override
     public String toString() {
         return "" + m_Value;
     }
@@ -126,6 +127,7 @@ public class ClusBeamModel implements Comparable, Serializable {
     }
 
 
+    @Override
     public int compareTo(Object e2) {
         ClusBeamModel m2 = (ClusBeamModel) e2;
         if (m2.m_Value != m_Value) {
@@ -137,6 +139,7 @@ public class ClusBeamModel implements Comparable, Serializable {
     }
 
 
+    @Override
     public int hashCode() {
         if (m_HashCode == -1) {
             m_HashCode = m_Root.hashCode();
@@ -147,6 +150,7 @@ public class ClusBeamModel implements Comparable, Serializable {
     }
 
 
+    @Override
     public boolean equals(Object other) {
         ClusBeamModel o = (ClusBeamModel) other;
         if (hashCode() != o.hashCode()) {

@@ -48,7 +48,7 @@ import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.processor.ClusEnsemblePredictionWriter;
@@ -190,7 +190,8 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
+    @Override
+    public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException, ClusException {
         ClusModel model;
         for (int i = 0; i < m_Forest.size(); i++) {
             model = m_Forest.get(i);
@@ -199,6 +200,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void attachModel(HashMap table) throws ClusException {
         ClusModel model;
         for (int i = 0; i < m_Forest.size(); i++) {
@@ -208,13 +210,14 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
+    @Override
     public int getID() {
         // TODO Auto-generated method stub
         return 0;
     }
 
 
-    public int getNbModels() {
+    public int getNbModels() throws InterruptedException {
         m_NbModelsLock.readingLock();
         int ans = m_NbModels;
         m_NbModelsLock.readingUnlock();
@@ -222,7 +225,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    private void increaseNbModels(int n) {
+    private void increaseNbModels(int n) throws InterruptedException {
         m_NbModelsLock.writingLock();
         m_NbModels += n;
         m_NbModelsLock.writingUnlock();
@@ -230,7 +233,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    private int getNbNodes() {
+    private int getNbNodes() throws InterruptedException {
         m_NbNodesLock.readingLock();
         int ans = m_NbNodes;
         m_NbNodesLock.readingUnlock();
@@ -238,14 +241,14 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    private void increaseNbNodes(int n) {
+    private void increaseNbNodes(int n) throws InterruptedException {
         m_NbNodesLock.writingLock();
         m_NbNodes += n;
         m_NbNodesLock.writingUnlock();
     }
 
 
-    private int getNbLeaves() {
+    private int getNbLeaves() throws InterruptedException {
         m_NbLeavesLock.readingLock();
         int ans = m_NbLeaves;
         m_NbLeavesLock.readingUnlock();
@@ -253,7 +256,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    private void increaseNbLeaves(int n) {
+    private void increaseNbLeaves(int n) throws InterruptedException {
         m_NbLeavesLock.writingLock();
         m_NbLeaves += n;
         m_NbLeavesLock.writingUnlock();
@@ -278,8 +281,9 @@ public class ClusForest implements ClusModel, Serializable {
      *        number of nodes in the tree
      * @param nbLeaves
      *        number of leaves in the tree
+     * @throws InterruptedException 
      */
-    public void updateCounts(int nbModels, int nbNodes, int nbLeaves) {
+    public void updateCounts(int nbModels, int nbNodes, int nbLeaves) throws InterruptedException {
         increaseNbModels(nbModels);
         increaseNbNodes(nbNodes);
         increaseNbLeaves(nbLeaves);
@@ -296,7 +300,8 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public String getModelInfo() {
+    @Override
+    public String getModelInfo() throws InterruptedException {
         //        int sumOfLeaves = 0;
         //        for (int i = 0; i < getNbModels(); i++)
         //            sumOfLeaves += ((ClusNode) getModel(i)).getNbLeaves();
@@ -328,12 +333,14 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
+    @Override
     public int getModelSize() {
         return m_Forest.size(); // Maybe something else ?!
     }
 
 
-    public ClusStatistic predictWeighted(DataTuple tuple) {
+    @Override
+    public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException, InterruptedException {
         if (ClusEnsembleInduce.m_EnsembleROSScope != SettingsEnsemble.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) {
             switch (ClusEnsembleInduce.m_EnsembleROSScope) {
                 case SettingsEnsemble.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING: // only use subspaces for prediction averaging
@@ -367,7 +374,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public ClusStatistic predictWeightedStandard(DataTuple tuple) {
+    public ClusStatistic predictWeightedStandard(DataTuple tuple) throws ClusException, InterruptedException {
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
         for (int i = 0; i < m_Forest.size(); i++) {
             votes.add(m_Forest.get(i).predictWeighted(tuple));
@@ -397,20 +404,21 @@ public class ClusForest implements ClusModel, Serializable {
      *
      * @param tuple
      * @return ArrayList containing votes or null if tuple was not OOB for any of the models
+     * @throws InterruptedException 
      */
-    public ArrayList getOOBVotes(DataTuple tuple) {
-        if (ClusOOBErrorEstimate.containsPredictionForTuple(tuple)) { return (ArrayList) ClusOOBErrorEstimate.getVotesForTuple(tuple); }
+    public ArrayList getOOBVotes(DataTuple tuple) throws InterruptedException {
+        if (ClusOOBErrorEstimate.containsPredictionForTuple(tuple)) { return ClusOOBErrorEstimate.getVotesForTuple(tuple); }
 
         return null;
     }
 
 
-    public boolean containsOOBForTuple(DataTuple tuple) {
+    public boolean containsOOBForTuple(DataTuple tuple) throws InterruptedException {
         return ClusOOBErrorEstimate.containsPredictionForTuple(tuple);
     }
 
 
-    public ClusStatistic predictWeightedOOB(DataTuple tuple) {
+    public ClusStatistic predictWeightedOOB(DataTuple tuple) throws ClusException, InterruptedException {
 
         if (ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_HIERARCHICAL || ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_REGRESSION)
             return predictWeightedOOBRegressionHMC(tuple);
@@ -422,7 +430,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public ClusStatistic predictWeightedOOBRegressionHMC(DataTuple tuple) {
+    public ClusStatistic predictWeightedOOBRegressionHMC(DataTuple tuple) throws ClusException, InterruptedException {
         double[] predictions = null;
         if (ClusOOBErrorEstimate.containsPredictionForTuple(tuple))
             predictions = ClusOOBErrorEstimate.getPredictionForRegressionHMCTuple(tuple);
@@ -435,15 +443,15 @@ public class ClusForest implements ClusModel, Serializable {
         for (int j = 0; j < predictions.length; j++)
             ((RegressionStatBase) m_Stat).m_Means[j] = predictions[j];
         if (ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_HIERARCHICAL)
-            m_Stat = (WHTDStatistic) m_Stat;
+            m_Stat = m_Stat;
         else
-            m_Stat = (RegressionStat) m_Stat;
+            m_Stat = m_Stat;
         m_Stat.computePrediction();
         return m_Stat;
     }
 
 
-    public ClusStatistic predictWeightedOOBClassification(DataTuple tuple) {
+    public ClusStatistic predictWeightedOOBClassification(DataTuple tuple) throws ClusException, InterruptedException {
         double[][] predictions = null;
         if (ClusOOBErrorEstimate.containsPredictionForTuple(tuple))
             predictions = ClusOOBErrorEstimate.getPredictionForClassificationTuple(tuple);
@@ -468,7 +476,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public ClusStatistic predictWeightedOpt(DataTuple tuple) { // TODO: paralelno pazi matejp
+    public ClusStatistic predictWeightedOpt(DataTuple tuple) throws ClusException { // TODO: paralelno pazi matejp
         int position = m_Optimization.locateTuple(tuple);
         int predlength = m_Optimization.getPredictionLength(position);
         m_Stat.reset();
@@ -498,8 +506,9 @@ public class ClusForest implements ClusModel, Serializable {
 
     /**
      * The same as predict weighted standard, but also calculates random forest proximities
+     * @throws ClusException 
      */
-    public ClusStatistic predictWeightedStandardAndGetProximities(DataTuple tuple) {
+    public ClusStatistic predictWeightedStandardAndGetProximities(DataTuple tuple) throws ClusException {
         m_Proximities = new HashMap<Integer, Double>();
 
         ClusNode model;
@@ -536,8 +545,10 @@ public class ClusForest implements ClusModel, Serializable {
 
     /**
      * The same as predict weighted OOB, but also calculates random forest proximities
+     * @throws ClusException 
+     * @throws InterruptedException 
      */
-    public ClusStatistic predictWeightedOOBAndGetProximities(DataTuple tuple) {
+    public ClusStatistic predictWeightedOOBAndGetProximities(DataTuple tuple) throws ClusException, InterruptedException {
         m_Proximities = new HashMap<Integer, Double>();
 
         ClusNode model;
@@ -557,7 +568,7 @@ public class ClusForest implements ClusModel, Serializable {
                 for (int j = 0; j < leafTuples.size(); j++) {
                     tupleIndex = leafTuples.get(j);
                     if (m_Proximities.containsKey(tupleIndex)) {
-                        m_Proximities.put(tupleIndex, (double) m_Proximities.get(tupleIndex) + incrementValue);
+                        m_Proximities.put(tupleIndex, m_Proximities.get(tupleIndex) + incrementValue);
                     }
                     else {
                         m_Proximities.put(tupleIndex, incrementValue);
@@ -600,8 +611,10 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    /** used for ROS ensembles */
-    public ClusStatistic predictWeightedStandardSubspaceAveraging(DataTuple tuple) {
+    /** used for ROS ensembles 
+     * @throws ClusException 
+     * @throws InterruptedException */
+    public ClusStatistic predictWeightedStandardSubspaceAveraging(DataTuple tuple) throws ClusException, InterruptedException {
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
         for (int i = 0; i < m_Forest.size(); i++) {
             votes.add(m_Forest.get(i).predictWeighted(tuple));
@@ -612,20 +625,22 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    /** used for OPTIMIZED ROS ensembles */
-    public ClusStatistic predictWeightedStandardSubspaceAveragingOpt(DataTuple tuple) {
+    /** used for OPTIMIZED ROS ensembles 
+     * @throws ClusException */
+    public ClusStatistic predictWeightedStandardSubspaceAveragingOpt(DataTuple tuple) throws ClusException {
         // when ensembles are optimized, the running average takes into account the subspaces, so predictWeightedOpt() should return correct results
 
         return predictWeightedOpt(tuple);
     }
 
 
-    public void printModel(PrintWriter wrt) {
+    @Override
+    public void printModel(PrintWriter wrt) throws InterruptedException {
         // This could be better organized
         if (getSettings().getEnsemble().isPrintEnsembleModels()) {
             ClusModel model;
             for (int i = 0; i < m_Forest.size(); i++) {
-                model = (ClusModel) m_Forest.get(i);
+                model = m_Forest.get(i);
                 if (m_PrintModels)
                     thresholdToModel(i, getThreshold());// This will be enabled only in HMLC mode
                 wrt.write("Model " + (i + 1) + ": \n");
@@ -640,12 +655,13 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
+    @Override
+    public void printModel(PrintWriter wrt, StatisticPrintInfo info) throws InterruptedException {
         // This could be better organized
         if (getSettings().getEnsemble().isPrintEnsembleModels()) {
             ClusModel model;
             for (int i = 0; i < m_Forest.size(); i++) {
-                model = (ClusModel) m_Forest.get(i);
+                model = m_Forest.get(i);
                 if (m_PrintModels)
                     thresholdToModel(i, getThreshold());// This will be enabled only in HMLC mode
                 wrt.write("Model " + (i + 1) + ": \n");
@@ -660,15 +676,17 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples) {
         ClusModel model;
         for (int i = 0; i < m_Forest.size(); i++) {
-            model = (ClusModel) m_Forest.get(i);
+            model = m_Forest.get(i);
             model.printModelAndExamples(wrt, info, examples);
         }
     }
 
 
+    @Override
     public void printModelToPythonScript(PrintWriter wrt) {
         printForestToPython();
     }
@@ -700,7 +718,7 @@ public class ClusForest implements ClusModel, Serializable {
             wrtr.println("# Python code of the trees in the ensemble");
             wrtr.println();
             for (int i = 0; i < m_Forest.size(); i++) {
-                ClusModel model = (ClusModel) m_Forest.get(i);
+                ClusModel model = m_Forest.get(i);
                 wrtr.println("#Model " + (i + 1));
                 wrtr.println("def clus_tree_" + (i + 1) + "(" + m_AttributeList + "):");
                 model.printModelToPythonScript(wrtr);
@@ -717,22 +735,25 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
+    @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean ex) {
         // TODO Auto-generated method stub
         ClusModel model;
         for (int i = 0; i < m_Forest.size(); i++) {
-            model = (ClusModel) m_Forest.get(i);
+            model = m_Forest.get(i);
             model.printModelToQuery(wrt, cr, starttree, startitem, ex);
         }
     }
 
 
+    @Override
     public ClusModel prune(int prunetype) {
         // TODO Auto-generated method stub
         return null;
     }
 
 
+    @Override
     public void retrieveStatistics(ArrayList list) {
         // TODO Auto-generated method stub
     }
@@ -742,7 +763,7 @@ public class ClusForest implements ClusModel, Serializable {
         ClusModel model;
         for (int i = 0; i < m_Forest.size(); i++) {
             System.out.println("***************************");
-            model = (ClusModel) m_Forest.get(i);
+            model = m_Forest.get(i);
             ((ClusNode) model).printTree();
             System.out.println("***************************");
         }
@@ -755,7 +776,7 @@ public class ClusForest implements ClusModel, Serializable {
      * @return
      */
     public ClusModel getModel(int idx) {
-        return (ClusModel) m_Forest.get(idx);
+        return m_Forest.get(idx);
     }
 
 
@@ -805,7 +826,7 @@ public class ClusForest implements ClusModel, Serializable {
 
 
     // this is only for Hierarchical ML Classification
-    public ClusForest cloneForestWithThreshold(double threshold) {
+    public ClusForest cloneForestWithThreshold(double threshold) throws InterruptedException {
         ClusForest clone = new ClusForest(m_StatManager);
         clone.setModels(getModels());
         WHTDStatistic stat = (WHTDStatistic) getStat().cloneStat();
@@ -849,10 +870,11 @@ public class ClusForest implements ClusModel, Serializable {
      *        Add only unique rules to rule set. Do NOT use this if you want to count something
      *        on the original forest.
      * @return rule set.
+     * @throws InterruptedException 
      * @throws ClusException
      * @throws IOException
      */
-    public void convertToRules(ClusRun cr, boolean addOnlyUnique) {
+    public void convertToRules(ClusRun cr, boolean addOnlyUnique) throws InterruptedException {
         /**
          * The class for transforming single trees to rules
          */

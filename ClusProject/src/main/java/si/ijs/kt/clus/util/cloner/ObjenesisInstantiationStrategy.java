@@ -15,6 +15,7 @@ public class ObjenesisInstantiationStrategy implements IInstantiationStrategy {
     private final Objenesis objenesis = new ObjenesisStd();
 
 
+    @Override
     public <T> T newInstance(Class<T> c) {
         return objenesis.newInstance(c);
     }

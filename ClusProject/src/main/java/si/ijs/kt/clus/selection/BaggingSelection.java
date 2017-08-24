@@ -83,21 +83,25 @@ public class BaggingSelection extends ClusSelection {
     }
 
 
+    @Override
     public boolean changesDistribution() {
         return true;
     }
 
 
+    @Override
     public double getWeight(int row) {
-        return (double) m_Counts[row];
+        return m_Counts[row];
     }
 
 
+    @Override
     public int getNbSelected() {
         return m_NbSel;
     }
 
 
+    @Override
     public boolean isSelected(int row) {
         return m_Counts[row] != 0;
     }

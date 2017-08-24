@@ -12,6 +12,7 @@ import java.util.TreeMap;
  */
 public class FastClonerTreeMap implements IFastCloner {
 
+    @Override
     @SuppressWarnings({ "unchecked", "rawtypes" })
     public Object clone(final Object t, final IDeepCloner cloner, final Map<Object, Object> clones) {
         final TreeMap<Object, Object> m = (TreeMap) t;

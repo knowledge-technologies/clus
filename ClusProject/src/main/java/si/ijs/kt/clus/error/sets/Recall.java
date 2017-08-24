@@ -42,6 +42,7 @@ import si.ijs.kt.clus.ext.structuredTypes.SetStatistic;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class Recall extends ClusSetError {
@@ -83,6 +84,7 @@ public class Recall extends ClusSetError {
     }
 
 
+    @Override
     public void reset() {
         for (int i = 0; i < m_Dim; i++) {
             m_SumErr[i] = 0.0;
@@ -92,11 +94,13 @@ public class Recall extends ClusSetError {
     }
 
 
+    @Override
     public void setWeights(ClusAttributeWeights weights) {
         m_Weights = weights;
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
 
         //int nb = getNbExamples();
@@ -111,6 +115,7 @@ public class Recall extends ClusSetError {
     }
 
 
+    @Override
     public double getModelError() {
         double ss_tree = 0.0;
         int nb = 0;
@@ -132,6 +137,7 @@ public class Recall extends ClusSetError {
     }
 
 
+    @Override
     public double getModelErrorStandardError() {
         double sum_err = 0.0;
         double sum_sq_err = 0.0;
@@ -166,6 +172,7 @@ public class Recall extends ClusSetError {
     }
 
 
+    @Override
     public void addExample(double[] real, double[] predicted) {
         for (int i = 0; i < m_Dim; i++) {
             double err = sqr(real[i] - predicted[i]);
@@ -179,7 +186,7 @@ public class Recall extends ClusSetError {
     }
 
 
-    private void addExample(Set realSet, Set predicted) {
+    private void addExample(Set realSet, Set predicted) throws ClusException {
         double error = (SetOperations.getIntersectionCardinality(realSet, predicted, innerDistance) + 0.0) / predicted.size();
         if (realSet.size() == 0) {
             if (predicted.size() == 0) {
@@ -199,24 +206,28 @@ public class Recall extends ClusSetError {
     }
 
 
-    public void addExample(DataTuple tuple, ClusStatistic pred) {
+    @Override
+    public void addExample(DataTuple tuple, ClusStatistic pred) throws ClusException {
         Set predicted = ((SetStatistic) pred).getSetPred();
         Set realSet = getAttr(0).getSet(tuple);
         addExample(realSet, predicted);
     }
 
 
-    public void addExample(DataTuple real, DataTuple pred) {
+    @Override
+    public void addExample(DataTuple real, DataTuple pred) throws ClusException {
         Set realSet = getAttr(0).getSet(real);
         Set predicted = getAttr(0).getSet(pred);
         addExample(realSet, predicted);
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public void add(ClusError other) {
         Recall oe = (Recall) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -227,6 +238,7 @@ public class Recall extends ClusSetError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
@@ -255,6 +267,7 @@ public class Recall extends ClusSetError {
     }
 
 
+    @Override
     public String getName() {
         if (m_Weights == null)
             return "Recall (Recall)";
@@ -263,11 +276,13 @@ public class Recall extends ClusSetError {
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new Recall(par, m_Attrs, m_Weights, m_PrintAllComps, innerDistance);
     }
 
 
+    @Override
     public double computeLeafError(ClusStatistic stat) {
         RegressionStat rstat = (RegressionStat) stat;
         return rstat.getSVarS(m_Weights) * rstat.getNbAttributes();

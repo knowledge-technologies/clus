@@ -159,10 +159,10 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
         double area = 0.0;
         // System.out.println("Computing areas");
         if (curve.size() > 0) {
-            double[] prev = (double[]) curve.get(0);
+            double[] prev = curve.get(0);
             // System.out.println("PT: "+prev[0]+","+prev[1]);
             for (int i = 1; i < curve.size(); i++) {
-                double[] pt = (double[]) curve.get(i);
+                double[] pt = curve.get(i);
                 // System.out.println("PT: "+pt[0]+","+pt[1]);
                 area += 0.5 * (pt[1] + prev[1]) * (pt[0] - prev[0]);
                 prev = pt;
@@ -198,8 +198,8 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
             }
             else {
                 for (int crTP = m_PrevTP + 1; crTP < TP; crTP++) {
-                    double crFP = (double) m_PrevFP + ((double) FP - m_PrevFP) / (TP - m_PrevTP) * (crTP - m_PrevTP);
-                    double crPrec = (double) crTP / (crTP + crFP);
+                    double crFP = m_PrevFP + ((double) FP - m_PrevFP) / (TP - m_PrevTP) * (crTP - m_PrevTP);
+                    double crPrec = crTP / (crTP + crFP);
                     double crRecall = (double) crTP / m_Values.getNbPos();
                     addPointPROptimized(crPrec, crRecall);
                 }
@@ -221,13 +221,13 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
 
     public void addPointPROptimized(double prec, double recall) {
         int size = m_PR.size();
-        double[] prev = (double[]) m_PR.get(size - 1);
+        double[] prev = m_PR.get(size - 1);
         if (!(prev[0] == recall && prev[1] == prec)) {
             if (size <= 1) {
                 addPointPR(prec, recall);
             }
             else {
-                double[] prev2 = (double[]) m_PR.get(size - 2);
+                double[] prev2 = m_PR.get(size - 2);
                 if (Math.abs(prev[1] - prec) < 1e-15 && Math.abs(prev2[1] - prec) < 1e-15) {
                     // Constant precision (horizontal line)
                     prev[0] = recall;

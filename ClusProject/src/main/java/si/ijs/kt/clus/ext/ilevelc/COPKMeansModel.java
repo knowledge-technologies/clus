@@ -46,11 +46,13 @@ public class COPKMeansModel extends ClusNode {
     }
 
 
+    @Override
     public int getModelSize() {
         return m_K;
     }
 
 
+    @Override
     public ClusStatistic predictWeighted(DataTuple tuple) {
         if (m_Illegal) {
             return null;
@@ -70,6 +72,7 @@ public class COPKMeansModel extends ClusNode {
     }
 
 
+    @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
         wrt.println("COPKMeans(" + m_K + ", iter = " + m_Iterations + ", max = " + m_AvgIter + ", csets = " + m_CSets + ")");
         if (m_Illegal) {
@@ -83,6 +86,7 @@ public class COPKMeansModel extends ClusNode {
     }
 
 
+    @Override
     public String getModelInfo() {
         if (m_Illegal) {
             return "Rand Index = ?";

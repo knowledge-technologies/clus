@@ -28,7 +28,7 @@ import java.util.HashMap;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
-import si.ijs.kt.clus.main.settings.SettingsOutput;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 
@@ -223,6 +223,7 @@ public abstract class NodeTest implements Serializable {
     public abstract boolean equals(NodeTest test);
 
 
+    @Override
     public int hashCode() {
         return 1111;
     }
@@ -347,6 +348,7 @@ public abstract class NodeTest implements Serializable {
 
 
     // Get string representation of test
+    @Override
     public final String toString() {
         return getString();
     }

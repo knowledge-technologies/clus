@@ -63,6 +63,7 @@ public class TreeRenderer implements DrawableRenderer {
     }
 
 
+    @Override
     public void render(Graphics2D g, FontMetrics fm, DrawableCanvas canvas) {
         calcSizes(m_Node, g, fm, canvas);
         int depth = m_Node.getMaxLeafDepth();
@@ -387,6 +388,7 @@ public class TreeRenderer implements DrawableRenderer {
 
     protected class DebugLineAdder implements Executer {
 
+        @Override
         public void execute(Object param) {
             IntervalTreeNodeRB node = (IntervalTreeNodeRB) param;
             if (m_Vert) {
@@ -450,15 +452,18 @@ public class TreeRenderer implements DrawableRenderer {
     }
 
 
+    @Override
     public Dimension getSize() {
         return m_Size;
     }
 
 
+    @Override
     public void removeAll(DrawableCanvas canvas) {
     }
 
 
+    @Override
     public void addAll(DrawableCanvas canvas) {
         addLines(m_Node, canvas);
         addNodes(m_Node, canvas);

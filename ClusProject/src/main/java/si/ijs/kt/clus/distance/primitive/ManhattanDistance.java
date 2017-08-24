@@ -43,6 +43,7 @@ public class ManhattanDistance extends ClusDistance {
     }
 
 
+    @Override
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
         for (ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))

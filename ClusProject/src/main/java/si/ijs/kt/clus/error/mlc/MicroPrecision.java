@@ -53,17 +53,20 @@ public class MicroPrecision extends ClusNominalError {
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
 
 
+    @Override
     public void reset() {
         Arrays.fill(m_NbTruePositives, 0);
         Arrays.fill(m_NbFalsePositives, 0);
     }
 
 
+    @Override
     public void add(ClusError other) {
         MicroPrecision mp = (MicroPrecision) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -88,6 +91,7 @@ public class MicroPrecision extends ClusNominalError {
     // return ((double)m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
     // }
 
+    @Override
     public double getModelError() {
         int truePositives = 0, falsePositives = 0;
         for (int i = 0; i < m_Dim; i++) {
@@ -98,21 +102,25 @@ public class MicroPrecision extends ClusNominalError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         out.println(ClusFormat.FOUR_AFTER_DOT.format(getModelError()));
     }
 
 
+    @Override
     public String getName() {
         return "MicroPrecision";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new MicroPrecision(par, m_Attrs);
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         int[] predicted = pred.getNominalPred();
         NominalAttrType attr;
@@ -132,6 +140,7 @@ public class MicroPrecision extends ClusNominalError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, DataTuple pred) {
         NominalAttrType attr;
         for (int i = 0; i < m_Dim; i++) {
@@ -150,6 +159,7 @@ public class MicroPrecision extends ClusNominalError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 }

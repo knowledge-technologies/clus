@@ -47,6 +47,7 @@ public class ColData extends ClusData {
     protected Vector m_Attr = new Vector();
 
 
+    @Override
     public ClusData select(ClusSelection sel) {
         ColData res = new ColData();
         int nbsel = sel.getNbSelected();
@@ -61,11 +62,13 @@ public class ColData extends ClusData {
     }
 
 
+    @Override
     public ClusData cloneData() {
         return null;
     }
 
 
+    @Override
     public void insert(ClusData data, ClusSelection sel) {
         ColData other = (ColData) data;
         int nb_new = m_NbRows + sel.getNbSelected();
@@ -128,6 +131,7 @@ public class ColData extends ClusData {
     }
 
 
+    @Override
     public void resize(int nbrows) {
         m_NbRows = nbrows;
         m_Target.resize(nbrows);
@@ -175,6 +179,7 @@ public class ColData extends ClusData {
     }
 
 
+    @Override
     public void attach(ClusNode node) {
         /*
          * ClusAttrType tpe = node.getBestTest().getType();
@@ -183,6 +188,7 @@ public class ColData extends ClusData {
     }
 
 
+    @Override
     public void calcError(ClusNode node, ClusErrorList par) {
         /*
          * node.attachData(this);
@@ -196,21 +202,25 @@ public class ColData extends ClusData {
     }
 
 
+    @Override
     public void calcTotalStat(ClusStatistic stat) {
         m_Target.calcTotalStat(stat);
     }
 
 
+    @Override
     public double[] getNumeric(int idx) {
         return m_Target.m_Numeric[idx];
     }
 
 
+    @Override
     public int[] getNominal(int idx) {
         return null; // m_Target.m_Nominal[idx];
     }
 
 
+    @Override
     public void preprocess(int pass, DataPreprocs pps) {
     }
 }

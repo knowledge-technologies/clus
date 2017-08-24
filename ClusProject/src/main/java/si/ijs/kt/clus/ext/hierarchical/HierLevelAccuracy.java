@@ -83,6 +83,7 @@ public class HierLevelAccuracy extends ClusError {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         /*
          * if (!((WHTDStatistic)pred).getMeanTuple().isRoot()) {
@@ -111,10 +112,12 @@ public class HierLevelAccuracy extends ClusError {
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public double getModelError() {
         int nb = getNbExamples();
         return nb == 0 ? 0.0 : 1.0 - m_Correct / nb;
@@ -146,16 +149,19 @@ public class HierLevelAccuracy extends ClusError {
     }
 
 
+    @Override
     public String getName() {
         return "Hierarchical accuracy by level";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new HierLevelAccuracy(par, m_Hier);
     }
 
 
+    @Override
     public void reset() {
         Arrays.fill(m_CorrectLevel, 0.0);
         Arrays.fill(m_CountLevel, 0.0);
@@ -164,6 +170,7 @@ public class HierLevelAccuracy extends ClusError {
     }
 
 
+    @Override
     public void add(ClusError other) {
         HierLevelAccuracy acc = (HierLevelAccuracy) other;
         m_Correct += acc.m_Correct;
@@ -175,6 +182,7 @@ public class HierLevelAccuracy extends ClusError {
     }
 
 
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
@@ -196,7 +204,8 @@ public class HierLevelAccuracy extends ClusError {
     }
 
 
-	public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+	@Override
+    public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
 		return false;
 	}
 }

@@ -15,7 +15,7 @@ import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.pruning.PruneTree;
 import si.ijs.kt.clus.selection.RandomSelection;
@@ -66,7 +66,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
     }
 
 	@Override
-	public ClusModel induceSingleUnpruned(ClusRun crOriginal) throws ClusException, IOException, InterruptedException {
+	public ClusModel induceSingleUnpruned(ClusRun crOriginal) throws Exception {
 
     	ClusRun cr = new ClusRun(crOriginal);
     	cr.setTrainingSet(crOriginal.getTrainingSet().cloneData());
@@ -246,7 +246,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 	/**
 	 * Set training set and unlabeled set
 	 */
-	public void partitionData(ClusRun cr) throws IOException, ClusException {
+	public void partitionData(ClusRun cr) throws IOException, ClusException, InterruptedException {
 		m_UnlabeledData = cr.getUnlabeledSet();
 		m_TrainingSet = new RowData(cr.getStatManager().getSchema());
 	

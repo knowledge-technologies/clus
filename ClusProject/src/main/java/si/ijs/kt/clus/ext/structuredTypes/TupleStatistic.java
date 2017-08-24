@@ -37,6 +37,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 
 
@@ -58,6 +59,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         TupleStatistic stat = new TupleStatistic(getSettings(), m_Attr, m_Distance, m_Efficiency);
         stat.cloneFrom(this);
@@ -65,6 +67,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public ClusStatistic cloneSimple() {
         TupleStatistic stat = new TupleStatistic(getSettings(), m_Attr, m_Distance, m_Efficiency);
         stat.m_RepresentativeMean = new Tuple(m_RepresentativeMean.length());
@@ -73,6 +76,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         TupleStatistic or = (TupleStatistic) other;
         super.copy(or);
@@ -89,6 +93,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     /**
      * Used for combining weighted predictions.
      */
+    @Override
     public TupleStatistic normalizedCopy() {
         TupleStatistic copy = (TupleStatistic) cloneSimple();
         copy.m_NbExamples = 0;
@@ -100,6 +105,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
         TupleStatistic or = (TupleStatistic) other;
         m_SumWeight += weight * or.m_SumWeight;
@@ -112,6 +118,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     /*
      * Add a weighted time series to the statistic.
      */
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         super.updateWeighted(tuple, idx);
         Tuple newTuple = new Tuple((Tuple) tuple.m_Objects[this.getAttribute().getArrayIndex()]);
@@ -120,26 +127,30 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
-    public double calcDistance(Tuple t1, Tuple t2) {
+    public double calcDistance(Tuple t1, Tuple t2) throws ClusException {
         TupleDistance dist = (TupleDistance) getDistance();
         return dist.calcDistance(t1, t2);
     }
 
 
-    public double calcDistance(DataTuple t1, DataTuple t2) {
+    @Override
+    public double calcDistance(DataTuple t1, DataTuple t2) throws ClusException {
         return ((TupleDistance) m_Distance).calcDistance(t1, t2);
     }
 
 
     /**
      * Currently only used to compute the default dispersion within rule heuristics.
+     * @throws ClusException 
      */
-    public double getDispersion(ClusAttributeWeights scale, RowData data) {
+    @Override
+    public double getDispersion(ClusAttributeWeights scale, RowData data) throws ClusException {
         return getSVarS(scale, data);
     }
 
 
-    public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights) {
+    @Override
+    public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights) throws ClusException {
         int idx = m_Attr.getIndex();
         Tuple actual = (Tuple) tuple.getObjVal(0);
         return calcDistance(m_RepresentativeMean, actual) * weights.getWeight(idx);
@@ -156,11 +167,11 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
-    public void calcSumAndSumSqDistances(Tuple prototype) {
+    public void calcSumAndSumSqDistances(Tuple prototype) throws ClusException {
         m_AvgDistances = 0.0;
         int count = m_TupleStack.size();
         for (int i = 0; i < count; i++) {
-            double dist = calcDistance(prototype, (Tuple) m_TupleStack.get(i));
+            double dist = calcDistance(prototype, m_TupleStack.get(i));
             m_AvgDistances += dist;
         }
         m_AvgDistances /= count;
@@ -172,15 +183,16 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
      * this is executed in the end
      * @see clus.statistic.ClusStatistic#calcMean()
      */
-    public void calcMean() {
+    @Override
+    public void calcMean() throws ClusException {
         // Medoid
         m_RepresentativeMedoid = null;
         double minDistance = Double.POSITIVE_INFINITY;
         for (int i = 0; i < m_TupleStack.size(); i++) {
             double crDistance = 0.0;
-            Tuple t1 = (Tuple) m_TupleStack.get(i);
+            Tuple t1 = m_TupleStack.get(i);
             for (int j = 0; j < m_TupleStack.size(); j++) {
-                Tuple t2 = (Tuple) m_TupleStack.get(j);
+                Tuple t2 = m_TupleStack.get(j);
                 double dist = calcDistance(t1, t2);
                 crDistance += dist * t2.geTSWeight();
                 if (Double.isNaN(dist)) {
@@ -189,7 +201,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
                 }
             }
             if (crDistance < minDistance) {
-                m_RepresentativeMedoid = (Tuple) m_TupleStack.get(i);
+                m_RepresentativeMedoid = m_TupleStack.get(i);
                 minDistance = crDistance;
             }
         }
@@ -197,7 +209,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
 
         double sumwi = 0.0;
         for (int j = 0; j < m_TupleStack.size(); j++) {
-            Tuple t1 = (Tuple) m_TupleStack.get(j);
+            Tuple t1 = m_TupleStack.get(j);
             sumwi += t1.geTSWeight();
         }
         double diff = Math.abs(m_SumWeight - sumwi);
@@ -207,6 +219,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public void reset() {
         super.reset();
         m_TupleStack.clear();
@@ -218,6 +231,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
      * for printing in the nodes
      * @see clus.statistic.ClusStatistic#getString(clus.statistic.StatisticPrintInfo)
      */
+    @Override
     public String getString(StatisticPrintInfo info) {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
@@ -251,6 +265,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public void addPredictWriterSchema(String prefix, ClusSchema schema) {
         schema.addAttrType(new TupleAttrType(prefix + "-p-Tuple"));
         schema.addAttrType(new NumericAttrType(prefix + "-p-Distance"));
@@ -259,7 +274,8 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
-    public String getPredictWriterString(DataTuple tuple) {
+    @Override
+    public String getPredictWriterString(DataTuple tuple) throws ClusException {
         StringBuffer buf = new StringBuffer();
         buf.append(m_RepresentativeMedoid.toString());
         double dist = calcDistanceToCentroid(tuple);
@@ -293,6 +309,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public double getError(ClusAttributeWeights scale) {
         return getSVarS(scale);
     }

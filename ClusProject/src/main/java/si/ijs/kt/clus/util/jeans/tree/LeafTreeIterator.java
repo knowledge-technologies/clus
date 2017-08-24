@@ -46,6 +46,7 @@ public class LeafTreeIterator extends TreeIterator {
     }
 
 
+    @Override
     public void reset() {
         super.reset();
         busy = true;
@@ -81,6 +82,7 @@ public class LeafTreeIterator extends TreeIterator {
     }
 
 
+    @Override
     public int getLevel() {
         return cr_level;
     }

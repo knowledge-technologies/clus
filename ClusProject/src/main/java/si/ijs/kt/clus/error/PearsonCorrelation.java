@@ -54,6 +54,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     }
 
 
+    @Override
     public void reset() {
         for (int i = 0; i < m_Dim; i++) {
             m_SumPi[i] = 0.0;
@@ -65,6 +66,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     }
 
 
+    @Override
     public boolean shouldBeLow() {
         return false;
     }
@@ -89,11 +91,13 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     }
 
 
+    @Override
     public double getModelErrorComponent(int i) {
         return getCorrelation(i);
     }
 
 
+    @Override
     public double getModelError() {
         double mean = 0.0;
         for (int i = 0; i < m_Dim; i++) {
@@ -103,6 +107,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     }
 
 
+    @Override
     public void addExample(double[] real, double[] predicted) {
         for (int i = 0; i < m_Dim; i++) {
             // Predicted
@@ -117,10 +122,12 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     }
 
 
+    @Override
     public void addInvalid(DataTuple tuple) {
     }
 
 
+    @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         double[] predicted = pred.getNumericPred();
         for (int i = 0; i < m_Dim; i++) {
@@ -138,6 +145,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     }
 
 
+    @Override
     public void addExample(DataTuple real, DataTuple pred) {
         for (int i = 0; i < m_Dim; i++) {
             double real_i = getAttr(i).getNumeric(real);
@@ -155,6 +163,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     }
 
 
+    @Override
     public void add(ClusError other) {
         PearsonCorrelation oe = (PearsonCorrelation) other;
         for (int i = 0; i < m_Dim; i++) {
@@ -173,6 +182,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     /**
      * Compute Pearson correlation coefficient
      */
+    @Override
     public void showModelError(PrintWriter out, int detail) {
         NumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
@@ -210,11 +220,13 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     }
 
 
+    @Override
     public String getName() {
         return "Pearson correlation coefficient";
     }
 
 
+    @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new PearsonCorrelation(par, m_Attrs);
     }

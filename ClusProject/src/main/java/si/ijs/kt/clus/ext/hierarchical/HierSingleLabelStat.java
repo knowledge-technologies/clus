@@ -50,11 +50,13 @@ public class HierSingleLabelStat extends WHTDStatistic {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         return new HierSingleLabelStat(this.m_Settings, m_Hier, false, m_Compatibility);
     }
 
 
+    @Override
     public void addPredictWriterSchema(String prefix, ClusSchema schema) {
         //        float biggest = 0;
         //        int prediction = 0;
@@ -78,6 +80,7 @@ public class HierSingleLabelStat extends WHTDStatistic {
     }
 
 
+    @Override
     public String getPredictWriterString() {
         double biggest = 0;
         int prediction = -1;

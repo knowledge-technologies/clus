@@ -147,11 +147,13 @@ public class INIFileNominal extends INIFileEntry {
     }
 
 
+    @Override
     public INIFileNode cloneNode() {
         return new INIFileNominal(getName(), getType());
     }
 
 
+    @Override
     public void build(MStreamTokenizer tokens) throws IOException {
         m_Type.setReader(true);
         if (tokens.isNextToken('{')) {
@@ -184,6 +186,7 @@ public class INIFileNominal extends INIFileEntry {
     }
 
 
+    @Override
     public void setValue(String value) {
     }
 
@@ -196,6 +199,7 @@ public class INIFileNominal extends INIFileEntry {
     }
 
 
+    @Override
     public String getStringValue() {
         if (m_IsSet) {
             StringBuffer buffer = new StringBuffer("{");

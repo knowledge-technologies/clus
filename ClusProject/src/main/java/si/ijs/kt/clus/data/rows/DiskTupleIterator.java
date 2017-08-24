@@ -52,6 +52,7 @@ public class DiskTupleIterator extends FileTupleIterator {
     }
 
 
+    @Override
     public void init() throws IOException, ClusException {
         System.out.println("Loading '" + m_File + "'");
         m_Reader = new ClusReader(m_File, m_Sett);

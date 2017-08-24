@@ -65,5 +65,6 @@ public abstract class VectorDistance {
      */
     public abstract double getDistance(DataTuple a,DataTuple b);
 
+    @Override
     public abstract String toString();
 }

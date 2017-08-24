@@ -63,6 +63,7 @@ public class DrawableLines extends Drawable {
     }
 
 
+    @Override
     public void calcSize(Graphics2D g, FontMetrics fm, DrawableCanvas canvas) {
         wd = 0;
         FontMetrics fm2 = fm;
@@ -76,6 +77,7 @@ public class DrawableLines extends Drawable {
     }
 
 
+    @Override
     public void draw(Graphics2D g, DrawableCanvas canvas, int xofs, int yofs) {
         if (m_Font != null)
             g.setFont(m_Font);

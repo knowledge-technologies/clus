@@ -42,6 +42,7 @@ public class XValDataSelection extends XValMainSelection {
     }
 
 
+    @Override
     public int getFold(int row) {
         return m_Attr.getValue(row) - 1;
     }

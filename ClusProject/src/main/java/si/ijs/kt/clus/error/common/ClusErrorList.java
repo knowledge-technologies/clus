@@ -83,7 +83,7 @@ public class ClusErrorList implements Serializable {
 
     public void setWeights(ClusAttributeWeights weights) {
         for (int i = 0; i < m_Error.size(); i++) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             err.setWeights(weights);
         }
     }
@@ -92,14 +92,14 @@ public class ClusErrorList implements Serializable {
     public void checkChildren() {
         int nb_e = m_Error.size();
         for (int i = 0; i < nb_e; i++) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             if (err.getParent() != this)
                 System.out.println("Child: " + err + " has incorrect parent: " + err.getParent() + " " + this);
         }
     }
 
 
-    public void calcError(TupleIterator iter, ClusModel model) throws ClusException, IOException {
+    public void calcError(TupleIterator iter, ClusModel model) throws ClusException, IOException, InterruptedException {
         iter.init();
         DataTuple tuple = iter.readTuple();
         while (tuple != null) {
@@ -115,7 +115,7 @@ public class ClusErrorList implements Serializable {
         ClusErrorList res = new ClusErrorList();
         int nb = m_Error.size();
         for (int i = 0; i < nb; i++) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             res.addError(err.getErrorClone(res));
         }
         return res;
@@ -126,7 +126,7 @@ public class ClusErrorList implements Serializable {
         ClusErrorList res = new ClusErrorList();
         int nb = m_Error.size();
         for (int i = 0; i < nb; i++) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             if (err.isComputeForModel(model)) {
                 res.addError(err.getErrorClone(res));
             }
@@ -164,12 +164,12 @@ public class ClusErrorList implements Serializable {
 
 
     public ClusError getError(int idx) {
-        return (ClusError) m_Error.get(idx);
+        return m_Error.get(idx);
     }
 
 
     public ClusError getErrorOrNull(int idx) {
-        return (ClusError) m_ErrorWithNulls.get(idx);
+        return m_ErrorWithNulls.get(idx);
     }
 
 
@@ -183,7 +183,7 @@ public class ClusErrorList implements Serializable {
     public ClusError getErrorByName(String name) {
         int nb_e = m_Error.size();
         for (int i = 0; i < nb_e; i++) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             if (err.getName().equals(name))
                 return err;
         }
@@ -194,7 +194,7 @@ public class ClusErrorList implements Serializable {
     public void compute(RowData data, ClusModelInfo model) throws ClusException {
         int nb = m_Error.size();
         for (int i = nb - 1; i >= 0; i--) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             if (err.isComputeForModel(model.getName())) {
                 err.compute(data, model.getModel());
             }
@@ -210,7 +210,7 @@ public class ClusErrorList implements Serializable {
     public void compute(RowData data, ClusModel model) throws ClusException {
         int nb = m_Error.size();
         for (int i = 0; i < nb; i++) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             err.compute(data, model);
         }
         m_NbExamples = data.getNbRows();
@@ -221,7 +221,7 @@ public class ClusErrorList implements Serializable {
     public void reset() {
         int nb = m_Error.size();
         for (int i = 0; i < nb; i++) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             err.reset();
         }
         m_NbExamples = 0;
@@ -229,30 +229,30 @@ public class ClusErrorList implements Serializable {
     }
 
 
-    public void addExample(DataTuple tuple, ClusStatistic stat) {
+    public void addExample(DataTuple tuple, ClusStatistic stat) throws ClusException {
         m_NbExamples++;
         int nb = m_Error.size();
         if (stat != null && stat.isValidPrediction()) {
             m_NbCover++;
             for (int i = 0; i < nb; i++) {
-                ClusError err = (ClusError) m_Error.get(i);
+                ClusError err = m_Error.get(i);
                 err.addExample(tuple, stat);
             }
         }
         else {
             for (int i = 0; i < nb; i++) {
-                ClusError err = (ClusError) m_Error.get(i);
+                ClusError err = m_Error.get(i);
                 err.addInvalid(tuple);
             }
         }
     }
 
 
-    public void addExample(DataTuple real, DataTuple pred) {
+    public void addExample(DataTuple real, DataTuple pred) throws ClusException {
         m_NbExamples++;
         int nb = m_Error.size();
         for (int i = 0; i < nb; i++) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             err.addExample(real, pred);
         }
     }
@@ -267,7 +267,7 @@ public class ClusErrorList implements Serializable {
     public void add(ClusErrorList par) {
         int nb = m_ErrorWithNulls.size();
         for (int i = 0; i < nb; i++) {
-            ClusError my = (ClusError) m_ErrorWithNulls.get(i);
+            ClusError my = m_ErrorWithNulls.get(i);
             ClusError your = par.getErrorOrNull(i);
             if (your != null)
                 my.add(your);
@@ -280,7 +280,7 @@ public class ClusErrorList implements Serializable {
     public void updateFromGlobalMeasure(ClusErrorList par) {
         int nb = m_Error.size();
         for (int i = 0; i < nb; i++) {
-            ClusError err = (ClusError) m_Error.get(i);
+            ClusError err = m_Error.get(i);
             err.updateFromGlobalMeasure(par.getError(i));
         }
         setNbTotal(par.getNbExamples());

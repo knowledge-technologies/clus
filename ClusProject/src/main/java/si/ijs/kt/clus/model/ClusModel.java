@@ -59,22 +59,22 @@ public interface ClusModel {
     public static int TEST = 1;
 
 
-    public ClusStatistic predictWeighted(DataTuple tuple);
+    public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException, InterruptedException;
 
 
-    public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException;
+    public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException, ClusException;
 
 
     public int getModelSize();
 
 
-    public String getModelInfo();
+    public String getModelInfo() throws InterruptedException;
 
 
-    public void printModel(PrintWriter wrt);
+    public void printModel(PrintWriter wrt) throws InterruptedException;
 
 
-    public void printModel(PrintWriter wrt, StatisticPrintInfo info);
+    public void printModel(PrintWriter wrt, StatisticPrintInfo info) throws InterruptedException;
 
 
     public void printModelAndExamples(PrintWriter wrt, StatisticPrintInfo info, RowData examples);
@@ -101,7 +101,7 @@ public interface ClusModel {
     public void retrieveStatistics(ArrayList list);
 
 
-    public ClusModel prune(int prunetype);
+    public ClusModel prune(int prunetype) throws ClusException;
 
 
     public int getID();

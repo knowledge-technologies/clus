@@ -51,7 +51,7 @@ public class ClusView {
 
 
     public ClusSerializable getAttribute(int idx) {
-        return (ClusSerializable) m_Attr.get(idx);
+        return m_Attr.get(idx);
     }
 
 
@@ -69,7 +69,7 @@ public class ClusView {
             tuple = readDataTupleNext(reader, schema);
         }
         for (int j = 0; j < m_Attr.size(); j++) {
-            ClusSerializable attr = (ClusSerializable) m_Attr.get(j);
+            ClusSerializable attr = m_Attr.get(j);
             attr.term(schema);
         }
         schema.setReader(false);
@@ -113,17 +113,17 @@ public class ClusView {
             while (!reader.isNextChar('}')) {
                 int idx = reader.readIntIndex();
                 if (idx < 1 || idx > m_Attr.size()) { throw new IOException("Error attribute index '" + idx + "' out of range [1," + m_Attr.size() + "] at row " + (reader.getRow() + 1)); }
-                ClusSerializable attr = (ClusSerializable) m_Attr.get(idx - 1);
+                ClusSerializable attr = m_Attr.get(idx - 1);
                 if (!attr.read(reader, tuple)) { throw new IOException("Error reading attribute " + m_Attr + " at row " + (reader.getRow() + 1)); }
             }
         }
         else {
             if (m_Attr.size() > 0) {
-                ClusSerializable attr_0 = (ClusSerializable) m_Attr.get(0);
+                ClusSerializable attr_0 = m_Attr.get(0);
                 if (!attr_0.read(reader, tuple))
                     return null;
                 for (int j = 1; j < m_Attr.size(); j++) {
-                    ClusSerializable attr = (ClusSerializable) m_Attr.get(j);
+                    ClusSerializable attr = m_Attr.get(j);
                     if (!attr.read(reader, tuple)) { throw new IOException("Error reading attribute with index " + j + " (" + m_Attr.get(j) + "), at row " + (reader.getRow() + 1)); }
                 }
             }
@@ -155,133 +155,114 @@ public class ClusView {
 
         boolean incorrectDump = true;
 
-        try {
+        //        try {
+        String agg = "";
+        String hier = "";
+        String line = "";
 
-            String agg = "";
-            String hier = "";
-            String line = "";
+        if (file.exists()) {
 
-            if (file.exists()) {
+            FileInputStream inputStream = new FileInputStream(file);
+            Scanner sc = new Scanner(inputStream, "UTF-8");
 
-                FileInputStream inputStream = null;
-                Scanner sc = null;
-                try {
-                    inputStream = new FileInputStream(file);
-                    sc = new Scanner(inputStream, "UTF-8");
+            if (sc.hasNextLine())
+                agg = sc.nextLine();
+            if (sc.hasNextLine())
+                hier = sc.nextLine();
+            if (sc.hasNextLine())
+                sc.nextLine();
 
-                    if (sc.hasNextLine())
-                        agg = sc.nextLine();
-                    if (sc.hasNextLine())
-                        hier = sc.nextLine();
-                    if (sc.hasNextLine())
-                        sc.nextLine();
+            String aggFromS = settings.getHMTR().getHMTRAggregationName();
+            String hierFromS = settings.getHMTR().getHMTRHierarchyString();
 
-                    String aggFromS = settings.getHMTR().getHMTRAggregationName();
-                    String hierFromS = settings.getHMTR().getHMTRHierarchyString();
+            if (agg.equals(aggFromS) && hier.equals(hierFromS)) {
+                incorrectDump = false;
 
-                    if (agg.equals(aggFromS) && hier.equals(hierFromS)) {
-                        incorrectDump = false;
+                schema.getSettings().getHMTR().setHMTRUsingDump(true);
+                //ClassHMTRHierarchy.setIsUsingDump(true);
 
-                        schema.getSettings().getHMTR().setHMTRUsingDump(true);
-                        //ClassHMTRHierarchy.setIsUsingDump(true);
+                if (sc.hasNextLine()) {
+                    line = sc.nextLine();
+                }
+                else {
+                    throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
+                }
 
+                if (line.equals("") || line.equals(" ") || line.equals("\t")) {
+                    if (sc.hasNextLine()) {
+                        line = sc.nextLine();
+                    }
+                    else {
+                        throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
+                    }
+                }
+
+                DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
+
+                while (tuple != null) {
+                    items.add(tuple);
+                    if (sc.hasNextLine()) {
+                        line = sc.nextLine();
+                    }
+                    if (line.equals("") || line.equals(" ") || line.equals("\t")) {
                         if (sc.hasNextLine()) {
                             line = sc.nextLine();
                         }
                         else {
                             throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
                         }
-
-                        if (line.equals("") || line.equals(" ") || line.equals("\t")) {
-                            if (sc.hasNextLine()) {
-                                line = sc.nextLine();
-                            }
-                            else {
-                                throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
-                            }
-                        }
-
-                        DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
-
-                        while (tuple != null) {
-                            items.add(tuple);
-                            if (sc.hasNextLine()) {
-                                line = sc.nextLine();
-                            }
-                            if (line.equals("") || line.equals(" ") || line.equals("\t")) {
-                                if (sc.hasNextLine()) {
-                                    line = sc.nextLine();
-                                }
-                                else {
-                                    throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
-                                }
-                            }
-                            tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
-                            //                            if (tuple != null && line.equals(oldline)) {
-                            //                                throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
-                            //                                }
-                        }
                     }
-                }
-                finally {
-                    if (inputStream != null) {
-                        inputStream.close();
-                    }
-                    if (sc != null) {
-                        sc.close();
-                    }
-                }
-            }
-
-            if (incorrectDump) {
-                fr = new FileWriter(file);
-                br = new BufferedWriter(fr);
-
-                br.write(settings.getHMTR().getHMTRAggregationName() + newLine +
-                        settings.getHMTR().getHMTRHierarchyString() + newLine + newLine);
-
-                DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
-
-                String toWrites[];
-                String toWrite;
-
-                while (tuple != null) {
-                    toWrites = tuple.toString().split(",");
-                    toWrite = "";
-
-                    for (int i = toWrites.length - schema.getNbHMTR(); i < toWrites.length; i++) {
-                        toWrite += "," + toWrites[i];
-                    }
-                    toWrite = toWrite.substring(1);
-
-                    items.add(tuple);
-                    br.write(toWrite + newLine);
                     tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
+
                 }
-
             }
 
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-        finally {
-            try {
-                if (br != null)
-                    br.close();
-                if (fr != null)
-                    fr.close();
+            if (inputStream != null) {
+                inputStream.close();
             }
-            catch (IOException e) {
-                e.printStackTrace();
+            if (sc != null) {
+                sc.close();
             }
         }
+
+        if (incorrectDump) {
+            fr = new FileWriter(file);
+            br = new BufferedWriter(fr);
+
+            br.write(settings.getHMTR().getHMTRAggregationName() + newLine +
+                    settings.getHMTR().getHMTRHierarchyString() + newLine + newLine);
+
+            DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
+
+            String toWrites[];
+            String toWrite;
+
+            while (tuple != null) {
+                toWrites = tuple.toString().split(",");
+                toWrite = "";
+
+                for (int i = toWrites.length - schema.getNbHMTR(); i < toWrites.length; i++) {
+                    toWrite += "," + toWrites[i];
+                }
+                toWrite = toWrite.substring(1);
+
+                items.add(tuple);
+                br.write(toWrite + newLine);
+                tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
+            }
+
+        }
+
+        if (br != null)
+            br.close();
+        if (fr != null)
+            fr.close();
 
         for (int j = 0; j < m_Attr.size(); j++) {
-            ClusSerializable attr = (ClusSerializable) m_Attr.get(j);
+            ClusSerializable attr = m_Attr.get(j);
             attr.term(schema);
         }
+
         schema.setReader(false);
 
         return new RowData(items, schema);
@@ -324,24 +305,24 @@ public class ClusView {
             while (!reader.isNextChar('}')) {
                 int idx = reader.readIntIndex();
                 if (idx < 1 || idx > m_Attr.size()) { throw new IOException("Error attribute index '" + idx + "' out of range [1," + m_Attr.size() + "] at row " + (reader.getRow() + 1)); }
-                ClusSerializable attr = (ClusSerializable) m_Attr.get(idx - 1);
+                ClusSerializable attr = m_Attr.get(idx - 1);
                 if (!attr.read(reader, tuple)) { throw new IOException("Error reading attirbute " + m_Attr + " at row " + (reader.getRow() + 1)); }
             }
         }
         else {
             if (m_Attr.size() > 0) {
-                ClusSerializable attr_0 = (ClusSerializable) m_Attr.get(0);
+                ClusSerializable attr_0 = m_Attr.get(0);
                 if (!attr_0.read(reader, tuple))
                     return null;
                 for (int j = 1; j < m_Attr.size() - schema.getNbHMTR(); j++) {
-                    ClusSerializable attr = (ClusSerializable) m_Attr.get(j);
+                    ClusSerializable attr = m_Attr.get(j);
                     if (!attr.read(reader, tuple)) { throw new IOException("Error reading attirbute " + m_Attr + " at row " + (reader.getRow() + 1)); }
                 }
 
                 if (schema.getSettings().getHMTR().isHMTRUsingDump()) {
                     // read attributes from dump
                     for (int j = m_Attr.size() - schema.getNbHMTR(); j < m_Attr.size(); j++) {
-                        ClusSerializable attr = (ClusSerializable) m_Attr.get(j);
+                        ClusSerializable attr = m_Attr.get(j);
                         if (!attr.readHMTRAttribute(reader, tuple, schema, hmtrHierarchy, line)) { throw new IOException("Error calculating Hierarchical MTR attribute " + m_Attr + " at row " + (reader.getRow() + 1)); }
                     }
 
@@ -350,7 +331,7 @@ public class ClusView {
 
                     // do not read but calculate the Hierarchical MTR aggregate attributes
                     for (int j = m_Attr.size() - schema.getNbHMTR(); j < m_Attr.size(); j++) {
-                        ClusSerializable attr = (ClusSerializable) m_Attr.get(j);
+                        ClusSerializable attr = m_Attr.get(j);
                         if (!attr.calculateHMTRAttribute(reader, tuple, schema, hmtrHierarchy)) { throw new IOException("Error calculating Hierarchical MTR attribute " + m_Attr + " at row " + (reader.getRow() + 1)); }
                     }
                 }

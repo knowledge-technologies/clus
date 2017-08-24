@@ -37,6 +37,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 
 
@@ -64,6 +65,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public ClusStatistic cloneStat() {
         TimeSeriesStat stat = new TimeSeriesStat(this.m_Settings, m_Attr, m_Distance, m_Efficiency);
         stat.cloneFrom(this);
@@ -71,6 +73,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public ClusStatistic cloneSimple() {
         TimeSeriesStat stat = new TimeSeriesStat(this.m_Settings, m_Attr, m_Distance, m_Efficiency);
         stat.m_RepresentativeMean = new TimeSeries(m_RepresentativeMean.length());
@@ -79,6 +82,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public void copy(ClusStatistic other) {
         TimeSeriesStat or = (TimeSeriesStat) other;
         super.copy(or);
@@ -95,6 +99,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     /**
      * Used for combining weighted predictions.
      */
+    @Override
     public TimeSeriesStat normalizedCopy() {
         TimeSeriesStat copy = (TimeSeriesStat) cloneSimple();
         copy.m_NbExamples = 0;
@@ -106,6 +111,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public void addPrediction(ClusStatistic other, double weight) {
         TimeSeriesStat or = (TimeSeriesStat) other;
         m_SumWeight += weight * or.m_SumWeight;
@@ -118,6 +124,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     /*
      * Add a weighted time series to the statistic.
      */
+    @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         super.updateWeighted(tuple, idx);
         TimeSeries newTimeSeries = new TimeSeries((TimeSeries) tuple.m_Objects[m_Attr.getArrayIndex()]); // new TimeSeries((TimeSeries) tuple.m_Objects[0]);
@@ -126,7 +133,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
-    public double calcDistance(TimeSeries ts1, TimeSeries ts2) {
+    public double calcDistance(TimeSeries ts1, TimeSeries ts2) throws ClusException {
         TimeSeriesDist dist = (TimeSeriesDist) getDistance();
         return dist.calcDistance(ts1, ts2);
     }
@@ -134,13 +141,16 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
 
     /**
      * Currently only used to compute the default dispersion within rule heuristics.
+     * @throws ClusException 
      */
-    public double getDispersion(ClusAttributeWeights scale, RowData data) {
+    @Override
+    public double getDispersion(ClusAttributeWeights scale, RowData data) throws ClusException {
         return getSVarS(scale, data);
     }
 
 
-    public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights) {
+    @Override
+    public double getAbsoluteDistance(DataTuple tuple, ClusAttributeWeights weights) throws ClusException {
         int idx = m_Attr.getIndex();
         TimeSeries actual = (TimeSeries) tuple.getObjVal(0);
         return calcDistance(m_RepresentativeMean, actual) * weights.getWeight(idx);
@@ -157,11 +167,11 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
-    public void calcSumAndSumSqDistances(TimeSeries prototype) {
+    public void calcSumAndSumSqDistances(TimeSeries prototype) throws ClusException {
         m_AvgDistances = 0.0;
         int count = m_TimeSeriesStack.size();
         for (int i = 0; i < count; i++) {
-            double dist = calcDistance(prototype, (TimeSeries) m_TimeSeriesStack.get(i));
+            double dist = calcDistance(prototype, m_TimeSeriesStack.get(i));
             m_AvgDistances += dist;
         }
         m_AvgDistances /= count;
@@ -173,20 +183,21 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
      * this is executed in the end
      * @see clus.statistic.ClusStatistic#calcMean()
      */
-    public void calcMean() {
+    @Override
+    public void calcMean() throws ClusException {
         // Medoid
         m_RepresentativeMedoid = null;
         double minDistance = Double.POSITIVE_INFINITY;
         for (int i = 0; i < m_TimeSeriesStack.size(); i++) {
             double crDistance = 0.0;
-            TimeSeries t1 = (TimeSeries) m_TimeSeriesStack.get(i);
+            TimeSeries t1 = m_TimeSeriesStack.get(i);
             for (int j = 0; j < m_TimeSeriesStack.size(); j++) {
-                TimeSeries t2 = (TimeSeries) m_TimeSeriesStack.get(j);
+                TimeSeries t2 = m_TimeSeriesStack.get(j);
                 double dist = calcDistance(t1, t2);
                 crDistance += dist * t2.geTSWeight();
             }
             if (crDistance < minDistance) {
-                m_RepresentativeMedoid = (TimeSeries) m_TimeSeriesStack.get(i);
+                m_RepresentativeMedoid = m_TimeSeriesStack.get(i);
                 minDistance = crDistance;
             }
         }
@@ -197,7 +208,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
             for (int i = 0; i < m_RepresentativeMean.length(); i++) {
                 double sum = 0.0;
                 for (int j = 0; j < m_TimeSeriesStack.size(); j++) {
-                    TimeSeries t1 = (TimeSeries) m_TimeSeriesStack.get(j);
+                    TimeSeries t1 = m_TimeSeriesStack.get(j);
                     sum += t1.getValue(i) * t1.geTSWeight();
                 }
                 m_RepresentativeMean.setValue(i, sum / m_SumWeight);
@@ -205,7 +216,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
         }
         double sumwi = 0.0;
         for (int j = 0; j < m_TimeSeriesStack.size(); j++) {
-            TimeSeries t1 = (TimeSeries) m_TimeSeriesStack.get(j);
+            TimeSeries t1 = m_TimeSeriesStack.get(j);
             sumwi += t1.geTSWeight();
         }
         double diff = Math.abs(m_SumWeight - sumwi);
@@ -246,6 +257,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public void reset() {
         super.reset();
         m_TimeSeriesStack.clear();
@@ -257,6 +269,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
      * for printing in the nodes
      * @see clus.statistic.ClusStatistic#getString(clus.statistic.StatisticPrintInfo)
      */
+    @Override
     public String getString(StatisticPrintInfo info) {
         NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
@@ -290,6 +303,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public void addPredictWriterSchema(String prefix, ClusSchema schema) {
         schema.addAttrType(new TimeSeriesAttrType(prefix + "-p-TimeSeries"));
         schema.addAttrType(new NumericAttrType(prefix + "-p-Distance"));
@@ -298,7 +312,8 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
-    public String getPredictWriterString(DataTuple tuple) {
+    @Override
+    public String getPredictWriterString(DataTuple tuple) throws ClusException {
         StringBuffer buf = new StringBuffer();
         buf.append(m_RepresentativeMedoid.toString());
         double dist = calcDistanceToCentroid(tuple);
@@ -322,6 +337,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     }
 
 
+    @Override
     public TimeSeries getTimeSeriesPred() {
         return m_RepresentativeMedoid;
     }

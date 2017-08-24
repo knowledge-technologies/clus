@@ -96,6 +96,7 @@ public abstract class DragNDropCanvas extends BufferCanvas {
     }
 
 
+    @Override
     public void update(Graphics g) {
         Dimension dim = getSize();
         reSize(dim);

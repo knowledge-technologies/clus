@@ -92,7 +92,7 @@ public class HMCAverageNodeWiseModels {
     }
 
 
-    public void processModels(ClusRun cr) throws ClusException, IOException, ClassNotFoundException {
+    public void processModels(ClusRun cr) throws ClusException, IOException, ClassNotFoundException, InterruptedException {
         ClassHierarchy hier = getStatManager().getHier();
         boolean[] prob_computed = new boolean[hier.getTotal()];
         // All classes still need to be done
@@ -118,7 +118,7 @@ public class HMCAverageNodeWiseModels {
     }
 
 
-    public void updateErrorMeasures(ClusRun cr) throws ClusException, IOException {
+    public void updateErrorMeasures(ClusRun cr) throws ClusException, IOException, InterruptedException {
         ClassHierarchy hier = getStatManager().getHier();
         HierClassTresholdPruner pruner = (HierClassTresholdPruner) getStatManager().getTreePruner(null);
         for (int traintest = ClusModelInfoList.TRAINSET; traintest <= ClusModelInfoList.TESTSET; traintest++) {
@@ -145,7 +145,7 @@ public class HMCAverageNodeWiseModels {
     }
 
 
-    public void doOneClass(ClassTerm term, ClusRun cr) throws IOException, ClassNotFoundException, ClusException {
+    public void doOneClass(ClassTerm term, ClusRun cr) throws IOException, ClassNotFoundException, ClusException, InterruptedException {
         String childName = term.toPathString("=");
         for (int j = 0; j < term.getNbParents(); j++) {
             ClassTerm parent = term.getParent(j);
@@ -179,7 +179,7 @@ public class HMCAverageNodeWiseModels {
     }
 
 
-    public void updatePrediction(RowData data, int exid, int traintest, ClusModel model, ClassTerm parent, ClassTerm term) {
+    public void updatePrediction(RowData data, int exid, int traintest, ClusModel model, ClassTerm parent, ClassTerm term) throws ClusException, InterruptedException {
         DataTuple tuple = data.getTuple(exid);
         ClusStatistic prediction = model.predictWeighted(tuple);
         double[] predicted_distr = prediction.getNumericPred();
