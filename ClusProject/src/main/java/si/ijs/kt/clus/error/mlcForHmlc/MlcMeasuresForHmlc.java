@@ -80,6 +80,7 @@ public class MlcMeasuresForHmlc extends ClusError {
         public void addExample(DataTuple tuple, ClusStatistic pred) {
             ClassesTuple tp = (ClassesTuple) tuple.getObjVal(m_Hier.getType().getArrayIndex());
             boolean[] actual = tp.getVectorBooleanNodeAndAncestors(m_Hier);
+            // ((WHTDStatistic) pred).getDiscretePred() cannot be used since pred belongs the whole forest 
             double[] predicted = ((WHTDStatistic) pred).getNumericPred(); // proportions
             double[] thresholds = ((WHTDStatistic) pred).getThresholds();
             
