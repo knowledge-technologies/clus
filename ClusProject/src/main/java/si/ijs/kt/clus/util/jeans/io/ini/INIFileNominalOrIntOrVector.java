@@ -144,6 +144,15 @@ public class INIFileNominalOrIntOrVector extends INIFileEntry {
         m_ArrayNominal = new int[len];
         m_ArrayInt = new int[len];
     }
+    
+    
+    public void setIntVector(int[] vector) {
+    	int len = vector.length;
+    	setVector(len);
+    	for(int i = 0; i < len; i++) {
+    		setInt(i, vector[i]);
+    	}
+    }
 
 
     public int getVectorLength() {

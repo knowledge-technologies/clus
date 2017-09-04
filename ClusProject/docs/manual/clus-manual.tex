@@ -52,7 +52,6 @@
 \maketitle
 
 
-
 \tableofcontents
 
 %
@@ -855,12 +854,16 @@ Settings for running \clus{} in semi-supervised learning mode, relevant when com
 \end{itemize}
 
 \section{Relief}
-Test :)
 \input{\optionListsFolder/options-Relief.tex}
+
 
 \section{Option trees}
 Settings for using \clus{} to build Option Predictive Clustering Trees, triggered by using the {\tt -option} command line option. These go in the separate section ``OptionTree'' in the settings file. 
 \input{\optionListsFolder/options-OptionTree.tex}
+
+\section{kNN}
+\input{\optionListsFolder/options-kNN.tex}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Command Line Parameters}
@@ -886,6 +889,11 @@ Settings for using \clus{} to build Option Predictive Clustering Trees, triggere
 \item {\tt -info} : gives information and summary statistics about the dataset.
 
 \item {\tt -ssl} : run \clus{} in semi-supervised learning mode.
+
+\item {\tt -relief}: run the generalized Relief algorithm
+
+\item {\tt -knn}: run the nearest neighbors algorithm
+
 \end{itemize}
 
 %	public final static String[] OPTION_ARGS = { "exhaustive", "xval", "oxval",

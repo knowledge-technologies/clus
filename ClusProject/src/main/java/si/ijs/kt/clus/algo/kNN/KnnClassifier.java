@@ -32,6 +32,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.util.ClusException;
@@ -40,7 +41,7 @@ import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
 /**
  *
- * @author Mitja Pugelj
+ * @author Mitja Pugelj, matejp
  */
 public class KnnClassifier extends ClusInductionAlgorithmType {
 
@@ -77,22 +78,17 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
         @Override
         public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
 
-            String[] ks = getSettings().getKNN().getKNNk().split(",");
-            String[] distWeight = getSettings().getKNN().getKNNDistanceWeight().split(",");
+            int[] ks = getSettings().getKNN().getKNNk(); //.split(",");
+            int[] distWeight = getSettings().getKNN().getKNNDistanceWeight(); //.split(",");
             int[] weights = new int[distWeight.length];
             int i = 0;
-            for (String s : distWeight) {
-                if (s.compareTo("1-d") == 0)
-                    weights[i] = KnnModel.WEIGHTING_MINUS;
-                else if (s.compareTo("1/d") == 0)
-                    weights[i] = KnnModel.WEIGHTING_INVERSE;
-                else
-                    weights[i] = KnnModel.WEIGHTING_CONSTANT;
+            for (int s : distWeight) {
+            	weights[i] = s;
                 i++;
             }
             // base model
             String model_name = "Default 1-nn model with no weighting"; // DO NOT CHANGE THE NAME!!!
-            KnnModel model = new KnnModel(cr, 1, 1);
+            KnnModel model = new KnnModel(cr, 1, SettingsKNN.DISTANCE_WEIGHTING_CONSTANT);
             ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL, model_name);
             model_info.setModel(model);
             model_info.setName(model_name);
@@ -104,16 +100,14 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
 
             int modelCnt = 2;
 
-            for (String kt : ks) {
+            for (int k : ks) {
                 i = -1;
                 for (int w : weights) {
                     i++;
-                    int k = Integer.parseInt(kt);
-                    if (k == 1 && w == 1)
+                    if (k == 1 && w == SettingsKNN.DISTANCE_WEIGHTING_CONSTANT)
                         continue; // same as default model
                     KnnModel tmpmodel = new KnnModel(cr, k, w, model);
-                    model_name = "Original " + k + "-nn model with " + weights[i] + " weighting";// DO NOT CHANGE THE
-                                                                                                 // NAME!!!
+                    model_name = "Original " + k + "-nn model with " + SettingsKNN.DISTANCE_WEIGHTS[weights[i]] + " weighting";// DO NOT CHANGE THE NAME!!!
                     ClusModelInfo tmpmodel_info = cr.addModelInfo(modelCnt++, model_name);
                     tmpmodel_info.setModel(tmpmodel);
                     tmpmodel_info.setName(model_name);

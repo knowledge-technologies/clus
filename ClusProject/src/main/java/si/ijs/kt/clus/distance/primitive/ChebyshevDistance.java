@@ -46,7 +46,7 @@ public class ChebyshevDistance extends ClusDistance {
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
         for (ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
-            dist = Math.max(dist, m_Search.calcDistanceOnAttr(t1, t2, attr));
+            dist = Math.max(dist, m_Search.calcDistanceOnAttr(t1, t2, attr) * m_AttrWeighting.getWeight(attr));
         return dist;
     }
 
