@@ -1,26 +1,26 @@
 \begin{itemize}
     \item \optionNameStyle{DecayFactor}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: A number from the $(0,1]$ interval.
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.9}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: How quickly the tolerance for introducing option nodes decays with the depth of the node. Every level the \optionNameStyle{Epsilon} parameter is multiplied by this value. For example, suppose that \optionNameStyle{Epsilon} is 0.1 and \optionNameStyle{DecayFactor} is 0.5. At the root of the tree, options that have the heuristic score at least 90\% as good as the optimal split would be considered. At the next level, the score would need to be 95\% as good, then 97.5\%, and so on.
            \end{itemize}
     \item \optionNameStyle{Epsilon}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: A number from the $[0,1]$ interval.
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: How close to the optimal heuristic value a split must be to be considered in an option node. The default value 0.1 means that the heuristic value must be at least 90\% as good as the optimal heuristic value. Every level it is multiplied by the \optionNameStyle{DecayFactor}. For example, suppose that \optionNameStyle{Epsilon} is 0.1 and \optionNameStyle{DecayFactor} is 0.5. At the root of the tree, options that have the heuristic score at least 90\% as good as the optimal split would be considered. At the next level, the score would need to be 95\% as good, then 97.5\%, and so on.
            \end{itemize}
     \item \optionNameStyle{MaxNumberOfOptionsPerNode}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: A positive integer.
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{5}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Determines the maximum number of options included in an option node. If there are more options satisfying the heuristic criterion, only those ranked up to this value (by their heuristic scores) will be selected.
            \end{itemize}
     \item \optionNameStyle{MaxDepthOfOptionNode}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: A positive integer.
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{3}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Determines the number of levels at which an option node can be introduced. The default value 3 means that option nodes can only be introduced at the top 3 levels of the tree.
            \end{itemize}
 \end{itemize}
