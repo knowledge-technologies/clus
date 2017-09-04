@@ -85,15 +85,15 @@ public class SettingsKNN extends SettingsBase {
     @Override
     public INIFileSection create() {
         m_SectionKNN = new INIFileSection("kNN");
-        m_SectionKNN.addNode(m_k = new INIFileNominalOrIntOrVector("k", NONELIST));
+        m_SectionKNN.addNode(m_k = new INIFileNominalOrIntOrVector("K", NONELIST));
         m_k.setIntVector(DEFAULT_K);
         
-        m_SectionKNN.addNode(m_distance = new INIFileNominal("distance", DISTANCES, DISTANCE_EUCLIDEAN));
-        m_SectionKNN.addNode(m_searchMethod = new INIFileNominal("method", SEARCH_METHODS, SEARCH_METHOD_BRUTE_FORCE));        
-        m_SectionKNN.addNode(m_distanceWeight = new INIFileNominalOrIntOrVector("distanceWeighting", DISTANCE_WEIGHTS));        
+        m_SectionKNN.addNode(m_distance = new INIFileNominal("Distance", DISTANCES, DISTANCE_EUCLIDEAN));
+        m_SectionKNN.addNode(m_searchMethod = new INIFileNominal("SearchMethod", SEARCH_METHODS, SEARCH_METHOD_BRUTE_FORCE));        
+        m_SectionKNN.addNode(m_distanceWeight = new INIFileNominalOrIntOrVector("DistanceWeighting", DISTANCE_WEIGHTS));        
         m_distanceWeight.setNominal(DISTANCE_WEIGHTING_CONSTANT);
         
-        m_SectionKNN.addNode(m_attributeWeight = new INIFileString("attributeWeighting", "none"));
+        m_SectionKNN.addNode(m_attributeWeight = new INIFileString("AttributeWeighting", "none"));
         m_SectionKNN.setEnabled(false);
 
         return m_SectionKNN;

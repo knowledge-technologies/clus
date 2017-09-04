@@ -788,7 +788,7 @@ MEstimate = No                      % whether to use m-estimate in the predictio
 \end{figure}
 
 %
-\section{SemiSupervised}
+\section{SemiSupervised }
 
 Settings for running \clus{} in semi-supervised learning mode, relevant when command line argument {\tt -ssl} is used. These go in the separate section ``SemiSupervised'' in the settings file.
 
@@ -853,8 +853,10 @@ Settings for running \clus{} in semi-supervised learning mode, relevant when com
 \end{itemize}
 
 \section{Relief}
-Test :)
 \input{\optionListsFolder/options-Relief.tex}
+
+\section{kNN}
+\input{\optionListsFolder/options-kNN.tex}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Command Line Parameters}
@@ -880,6 +882,11 @@ Test :)
 \item {\tt -info} : gives information and summary statistics about the dataset.
 
 \item {\tt -ssl} : run \clus{} in semi-supervised learning mode.
+
+\item {\tt -relief}: run the generalized Relief algorithm
+
+\item {\tt -knn}: run the nearest neighbors algorithm
+
 \end{itemize}
 
 %	public final static String[] OPTION_ARGS = { "exhaustive", "xval", "oxval",

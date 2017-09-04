@@ -20,6 +20,7 @@ public class ManualBuilder {
         for(String section : default_values.keySet()) {
             writeLatexTable(section, settingsTablesFolder, default_values.get(section), false);
         }
+        System.out.println("Done.");
         
     }
     
