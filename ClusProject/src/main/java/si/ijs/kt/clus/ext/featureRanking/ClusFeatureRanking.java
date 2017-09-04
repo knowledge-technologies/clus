@@ -84,6 +84,7 @@ public class ClusFeatureRanking {
     
     private enum FimpOrdering{AS_IN_DATASET, BY_RELEVANCE};
     private FimpOrdering m_Order;
+    
     private TreeMap<Double, ArrayList<Triple<String, int[], double[]>>> m_OutputRanking;
     /**
      * Hash map of pairs attribute name: (double) index of the attribute in the dataset,
@@ -96,9 +97,9 @@ public class ClusFeatureRanking {
      */
     private HashMap<String, int[]> m_AttributeRanks;
     
-
     /** Description of the ranking that appears in the first lines of the .fimp file */
     private String m_RankingDescription;
+    
     /** Header for the table of relevances in the .fimp file */
     protected String m_FimpTableHeader;
 
@@ -107,6 +108,7 @@ public class ClusFeatureRanking {
     private int m_NbFeatureRankings;
 
     private Settings m_Settings;
+    
     private boolean m_ScoresNormalized = false;
     
     private final static String FIMP_SEPARATOR = "\t";
