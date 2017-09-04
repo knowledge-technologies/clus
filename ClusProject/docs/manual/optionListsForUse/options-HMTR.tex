@@ -1,32 +1,32 @@
 \begin{itemize}
     \item \optionNameStyle{Type}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{Disabled}
-                \item \optionDescrption{}: ???
+                \item \optionPossibleValues{}: [TREE, DAG]
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{}
+                \item \optionDescrption{}: Tree or DAG, whether the class hierarchy is a tree or a directed acyclic graph.
            \end{itemize}
     \item \optionNameStyle{Distance}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{WeightedEuclidean}
-                \item \optionDescrption{}: ???
+                \item \optionPossibleValues{}: [WeightedEuclidean]
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{}
+                \item \optionDescrption{}: The distance function used.
            \end{itemize}
     \item \optionNameStyle{Aggregation}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{SUM}
-                \item \optionDescrption{}: ???
+                \item \optionPossibleValues{}: [SUM, AVG, MEDIAN, MIN, MAX, AND, OR, COUNT, VAR, STDEV, ZERO, ONE]
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{}
+                \item \optionDescrption{}: The aggregation function used for the supervariables in the hierarchy.
            \end{itemize}
     \item \optionNameStyle{Hierarchy}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: text
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: The hierarchy of the dataset in the format of pair-wise comma-separated node names.
            \end{itemize}
     \item \optionNameStyle{Weight}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{0.0}
-                \item \optionDescrption{}: ???
+                \item \optionPossibleValues{}: [0-1]
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{}
+                \item \optionDescrption{}: The weight, used in the Weighted Euclidean distance.
            \end{itemize}
 \end{itemize}
