@@ -143,6 +143,13 @@ Ryszard~S. Michalski.
   Information Processing (FCIP 69)}, volume A3, Switching Circuits, pages
   125--128, Bled, Yugoslavia, 1969.
 
+\bibitem{Mileski2017:proc}
+Vanja Mileski, Sa\v{s}o D\v{z}eroski, and Dragi Kocev.
+\newblock Predictive clustering trees for hierarchical multi-target regression.
+\newblock In {\em Proceedings of the 16th {I}nternational {S}ymposium on
+  {I}ntelligent {D}ata {A}nalysis {XVI LNCS}}, page In {P}ress.
+  Springer-Verlag, 2017.
+
 \bibitem{PanovDzeroski2007}
 Pan\v{c}e Panov and Sa\v{s}o D\v{z}eroski.
 \newblock Combining bagging and random subspaces to create better ensembles.
