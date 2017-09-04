@@ -300,7 +300,7 @@ public class Clus implements CMDLineArgsProvider {
 
             m_HMTRHierarchy.initialize(m_Sett);//m_Sett.getHMTRHierarchyString().getStringValue(), 
                                                //m_Sett.getHMTRHierarchyWeight().getValue());
-            
+
             if (m_Sett.getGeneral().getVerbose() > 0) {
                 m_HMTRHierarchy.printHierarchy();
 

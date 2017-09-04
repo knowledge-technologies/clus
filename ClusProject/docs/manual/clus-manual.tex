@@ -6,6 +6,7 @@
 \usepackage{fancyhdr}
 \usepackage{fancyvrb}
 \usepackage{amsmath, amsthm, amssymb}
+\usepackage{graphicx}
 
 \ifpdf
 \pdfinfo{
@@ -63,7 +64,7 @@ This text is a user's manual for the open source machine learning system \clus{}
 % Should we avoid one (or two) sentence paragraphs?
 While most decision tree learners induce classification or regression trees, \clus{} generalizes this approach by learning trees that are interpreted as cluster hierarchies. We call such trees predictive clustering trees or PCTs. Depending on the learning task at hand, different goal criteria are to be optimized while creating the clusters, and different heuristics will be suitable to achieve this.
 
-Classification and regression trees are special cases of PCTs, and by choosing the right parameter settings \clus{} can closely mimic the behavior of tree learners such as CART \cite{Breiman1984} or C4.5 \cite{Quinlan1993}.  However, its applicability goes well beyond classical classification or regression tasks: \clus{} has been successfully applied to many different tasks including multi-task learning (multi-target classification and regression), structured output learning, multi-label classification, hierarchical classification, and time series prediction. Next to these supervised learning tasks, PCTs are also applicable to semi-supervised learning, subgroup discovery, and clustering.
+Classification and regression trees are special cases of PCTs, and by choosing the right parameter settings \clus{} can closely mimic the behavior of tree learners such as CART \cite{Breiman1984} or C4.5 \cite{Quinlan1993}.  However, its applicability goes well beyond classical classification or regression tasks: \clus{} has been successfully applied to many different tasks including multi-task learning (multi-target classification and regression), structured output learning, multi-label classification, hierarchical classification, hierarchical regression, and time series prediction. Next to these supervised learning tasks, PCTs are also applicable to semi-supervised learning, subgroup discovery, and clustering.
 %
 In a similar way, predictive clustering rules (PCRs) generalize classification rule sets \cite{Clark91:proc} and also apply to the aforementioned learning tasks.
 
@@ -789,7 +790,45 @@ MEstimate = No                      % whether to use m-estimate in the predictio
 \label{settings-hmc:fig}
 \end{figure}
 
-%
+
+\section{Hierarchical Multi-Target Regression}
+
+\begin{figure}[tb]
+\hrule\vspace{1em}
+\begin{verbatim}
+[HMTR]
+Type = Tree                        % Tree or DAG hierarchy?
+Distance = WeightedEuclidean       % The distance function
+Aggregation = SUM                  % The aggregation function
+Weight = 0.75                      % The weight parameter w_0
+Hierarchy = ALL-ECOG,ALL-ADAS13... % The HMTR hierarchy (see examples)
+\end{verbatim}
+\hrule
+\caption{Settings specific for Hierarchical Multi-Target Regression (HMTR)}
+\label{settings-hmtr:fig}
+\end{figure}
+
+\begin{figure}[tb]
+\centering
+\includegraphics[width=0.5\textwidth]{hmtr}
+\caption{An example of a HMTR tree hierarchy.}
+\label{settings-hmtrex:fig}
+\end{figure}
+
+These settings are relevant when using \clus{} for Hierarchical Multi-Target Regression (HMTR) \cite{Mileski2017:proc}. Note that HMTR calculates the hierarchy supervariables by itself from the target attributes and it is not required to be done as a preprocessing step. A separate section "HMTR" is implemented for this. Figure~\ref{settings-hmtr:fig} gives an example of these settings. They are listed below:
+
+\begin{itemize}
+\item {\tt Type = $o$} : $o$ is {\tt Tree} or {\tt DAG}, and indicates whether the class hierarchy is a tree or a directed acyclic graph \cite{Vens08:jrnl}.
+\item {\tt Distance = $o$} : $o$ is the distance function used. Currently, the {\tt WeightedEuclidean} is implemented and recommended.
+\item {\tt Aggregation = $o$} : $o$ is the aggregation function used for the supervariables in the hierarchy. The current implemented aggregation functions are: [{\tt SUM, AVG, MEDIAN, MIN, MAX, AND, OR, COUNT, VAR, STDEV, ZERO, ONE}]. {\tt SUM} stands for the sum of the values, {\tt AVG} stands for the average value, {\tt MEDIAN} is the median value from the (ordered by size) children, {\tt MIN} and {\tt MAX} are the minimum and maximum values amongst the children nodes, {\tt AND} and {\tt OR} can be used on values that are either 0 or 1 and are the logical \textit{and} and \textit{or} functions, {\tt COUNT} returns the number of children, {\tt VAR} and {\tt STDEV} return the variance and standard deviation of the children node values respectively, and finally {\tt ZERO} and {\tt ONE} functions return a constant value of 0 or 1, respectively.
+\item {\tt Weight = $v$} : $v$ is the weight, used in the Weighted Euclidean distance. The weight is in the form of $w(n)=w_{0}^{depth(n)}$, i.e., it decreases exponentially with the depth of the node $n$ in the hierarchy. A good starting point is 0.75 \cite{Mileski2017:proc}.
+\item {\tt Hierarchy = $o$} : $o$ is the hierarchy of the dataset. The hierarchy is in the format of pair-wise comma-separated node names, starting from the root downwards. The target attribute names are case-sensitive and must be written exactly like in the dataset. If a node name is not found in the dataset, the algorithm assumes it is a supervariable and adds it as a supervariable target by calculating it using the aggregate function on its' children nodes. The first element is the parent node, and the second is the child node. All of the edges in the hierarchy must be represented. The input ignores white spaces, parentheses and the larger-than sign (" ", "(", ")", "\textgreater") therefore both of the following notations are acceptable for the hierarchy depicted in Figure~\ref{settings-hmtrex:fig}:
+  \subitem \begin{sloppypar}Example 1: (ROOT { }-\textgreater{ } SUPERVARIABLE1), (ROOT { }-\textgreater{ } SUPERVARIABLE2), (SUPERVARIABLE1 { }-\textgreater{ } target1), (SUPERVARIABLE1 { }-\textgreater{ } target2), (SUPERVARIABLE2 { }-\textgreater{ } target3), (SUPERVARIABLE2 { }-\textgreater{ } target4)\end{sloppypar}
+	\subitem \begin{sloppypar}Example 2: ROOT-SUPERVARIABLE1,ROOT-SUPERVARIABLE2,SUPERVARIABLE1-target1,SUPERVARIABLE1-target2,SUPERVARIABLE2-target3,SUPERVARIABLE2-target4\end{sloppypar}
+\end{itemize}
+
+The output file of the HMTR task differs slightly from the standard output file. First, the hierarchy is drawn in the output file. This can be helpful in order to check if the hierarchy written in the settings file corresponds to the actual hierarchy. And the second change is on the location where the errors are reported. Here we now have two groups of errors: the first one is measured on all of the targets \textit{and} supervariables. The second group of errors is the error on the targets only, excluding the error on the supervariables.
+
 \section{SemiSupervised}
 
 Settings for running \clus{} in semi-supervised learning mode, relevant when command line argument {\tt -ssl} is used. These go in the separate section ``SemiSupervised'' in the settings file.
