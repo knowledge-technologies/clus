@@ -6,6 +6,7 @@
 \usepackage{fancyhdr}
 \usepackage{fancyvrb}
 \usepackage{amsmath, amsthm, amssymb}
+\usepackage{graphicx}
 
 \ifpdf
 \pdfinfo{
@@ -52,7 +53,6 @@
 \maketitle
 
 
-
 \tableofcontents
 
 %
@@ -63,7 +63,7 @@ This text is a user's manual for the open source machine learning system \clus{}
 % Should we avoid one (or two) sentence paragraphs?
 While most decision tree learners induce classification or regression trees, \clus{} generalizes this approach by learning trees that are interpreted as cluster hierarchies. We call such trees predictive clustering trees or PCTs. Depending on the learning task at hand, different goal criteria are to be optimized while creating the clusters, and different heuristics will be suitable to achieve this.
 
-Classification and regression trees are special cases of PCTs, and by choosing the right parameter settings \clus{} can closely mimic the behavior of tree learners such as CART \cite{Breiman1984} or C4.5 \cite{Quinlan1993}.  However, its applicability goes well beyond classical classification or regression tasks: \clus{} has been successfully applied to many different tasks including multi-task learning (multi-target classification and regression), structured output learning, multi-label classification, hierarchical classification, and time series prediction. Next to these supervised learning tasks, PCTs are also applicable to semi-supervised learning, subgroup discovery, and clustering.
+Classification and regression trees are special cases of PCTs, and by choosing the right parameter settings \clus{} can closely mimic the behavior of tree learners such as CART \cite{Breiman1984} or C4.5 \cite{Quinlan1993}.  However, its applicability goes well beyond classical classification or regression tasks: \clus{} has been successfully applied to many different tasks including multi-task learning (multi-target classification and regression), structured output learning, multi-label classification, hierarchical classification, hierarchical regression, and time series prediction. Next to these supervised learning tasks, PCTs are also applicable to semi-supervised learning, subgroup discovery, and clustering.
 %
 In a similar way, predictive clustering rules (PCRs) generalize classification rule sets \cite{Clark91:proc} and also apply to the aforementioned learning tasks.
 
@@ -789,7 +789,11 @@ MEstimate = No                      % whether to use m-estimate in the predictio
 \label{settings-hmc:fig}
 \end{figure}
 
-%
+
+\section{Hierarchical Multi-Target Regression (HMTR)}
+
+\input{\optionListsFolder/options-HMTR.tex}
+
 \section{SemiSupervised}
 
 Settings for running \clus{} in semi-supervised learning mode, relevant when command line argument {\tt -ssl} is used. These go in the separate section ``SemiSupervised'' in the settings file.
@@ -855,8 +859,16 @@ Settings for running \clus{} in semi-supervised learning mode, relevant when com
 \end{itemize}
 
 \section{Relief}
-Test :)
 \input{\optionListsFolder/options-Relief.tex}
+
+
+\section{Option trees}
+Settings for using \clus{} to build Option Predictive Clustering Trees, triggered by using the {\tt -option} command line option. These go in the separate section ``OptionTree'' in the settings file. 
+\input{\optionListsFolder/options-OptionTree.tex}
+
+\section{kNN}
+\input{\optionListsFolder/options-kNN.tex}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \chapter{Command Line Parameters}
@@ -882,6 +894,11 @@ Test :)
 \item {\tt -info} : gives information and summary statistics about the dataset.
 
 \item {\tt -ssl} : run \clus{} in semi-supervised learning mode.
+
+\item {\tt -relief}: run the generalized Relief algorithm
+
+\item {\tt -knn}: run the nearest neighbors algorithm
+
 \end{itemize}
 
 %	public final static String[] OPTION_ARGS = { "exhaustive", "xval", "oxval",

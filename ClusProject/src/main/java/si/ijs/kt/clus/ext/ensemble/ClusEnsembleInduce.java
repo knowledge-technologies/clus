@@ -652,10 +652,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         Cloner cloner = new Cloner();
-        ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];
-        for (int i = 0; i < statManagerClones.length; i++) {
-            statManagerClones[i] = cloner.deepClone(cr.getStatManager()); // must be cloned here
-        }
+//        ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];
+//        for (int i = 0; i < statManagerClones.length; i++) {
+//            statManagerClones[i] = cloner.deepClone(cr.getStatManager()); // must be cloned here
+//        }
+        ClusStatManager clonedStatManager = cloneStatManager(cr.getStatManager());
 
         ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
         ArrayList<Future<OneBagResults>> bagResults = new ArrayList<Future<OneBagResults>>();
@@ -685,7 +686,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
                 OOBSelection current_oob_total = cloner.deepClone(oob_total);
                 // induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, current_oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]);
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, current_oob_total, train_iterator, test_iterator, msel, rnd, clonedStatManager); // statManagerClones[i - 1]
                 Future<OneBagResults> submit = executor.submit(worker);
                 bagResults.add(submit);
             }
@@ -716,7 +717,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     oob_sel = new OOBSelection(msel);
                 }
                 // induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, cloner.deepClone(cr.getStatManager()));
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, clonedStatManager); //  cloner.deepClone(cr.getStatManager())
                 Future<OneBagResults> submit = executor.submit(worker);
                 bagResults.add(submit);
             }
@@ -803,7 +804,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws Exception {
+    public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager unmodifiedManager) throws Exception {
         long one_bag_time = ResourceInfo.getTime();
         SettingsEnsemble sett = cr.getStatManager().getSettings().getEnsemble();
         SettingsGeneral setg = cr.getStatManager().getSettings().getGeneral();
@@ -820,8 +821,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(), msel, cr.getSummary(), i);
 
+        ClusStatManager mgr = cloneStatManager(unmodifiedManager);
         DepthFirstInduce ind;
-
         // ordinary bagging run
         if (getSchema().isSparse()) {
             ind = new DepthFirstInduceSparse(this, mgr, true);
@@ -1123,18 +1124,19 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             seeds[i] = bagSeedGenerator.nextInt();
         }
 
-        Cloner cloner = new Cloner();
-        ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];
-        for (int i = 0; i < statManagerClones.length; i++) {
-            statManagerClones[i] = cloner.deepClone(cr.getStatManager()); // must be cloned here
-        }
+//        Cloner cloner = new Cloner();
+//        ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];
+//        for (int i = 0; i < statManagerClones.length; i++) {
+//            statManagerClones[i] = cloner.deepClone(cr.getStatManager()); // must be cloned here
+//        }
+        ClusStatManager clonedManager = cloneStatManager(cr.getStatManager());
 
         ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
         ArrayList<Future<OneBagResults>> bagResults = new ArrayList<Future<OneBagResults>>();
 
         for (int i = 1; i <= m_NbMaxBags; i++) {
             ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-            InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, statManagerClones[i - 1]); // <-- induceExtraTree(cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]);
+            InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, clonedManager); // statManagerClones[i - 1]; <-- induceExtraTree(cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]);
             Future<OneBagResults> submit = executor.submit(worker);
             bagResults.add(submit);
         }
@@ -1168,7 +1170,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager mgr) throws Exception {
+    public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager unmodifiedManager) throws Exception {
         long one_bag_time = ResourceInfo.getTime();
         if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Bag: " + i);
@@ -1176,6 +1178,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         ClusRun crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());
         // ClusEnsembleInduce.setRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(),
         // cr.getStatManager().getSettings().getNbRandomAttrSelected());
+        ClusStatManager mgr = cloneStatManager(unmodifiedManager);
         DepthFirstInduce ind;
         if (getSchema().isSparse()) {
             ind = new DepthFirstInduceSparse(this, mgr, true);
@@ -1567,6 +1570,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 break;
             }
         }
+    }
+    
+    private ClusStatManager cloneStatManager(ClusStatManager statManager) {
+    	 Cloner cloner = new Cloner();
+         return cloner.deepClone(statManager);
     }
 
 }
