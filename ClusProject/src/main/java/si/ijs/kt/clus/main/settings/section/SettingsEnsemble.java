@@ -43,10 +43,10 @@ public class SettingsEnsemble extends SettingsBase {
     public final static int VOTING_TYPE_PROBAB_DISTR = 1;
 
     private final String[] RANKING_TYPE = { "None", "RForest", "GENIE3", "SYMBOLIC" };
-    public final static int RANKING_NONE = 0;
-    public final static int RANKING_RFOREST = 1;
-    public final static int RANKING_GENIE3 = 2;
-    public final static int RANKING_SYMBOLIC = 3;
+    public final static int RANKING_TYPE_NONE = 0;
+    public final static int RANKING_TYPE_RFOREST = 1;
+    public final static int RANKING_TYPE_GENIE3 = 2;
+    public final static int RANKING_TYPE_SYMBOLIC = 3;
 
     private final String[] ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE = { "None", "TotalAveraging", "SubspaceAveraging", "SMARTERWAY" };
     public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE = 0; /* IF THIS IS SELECTED, ROS IS NOT ACTIVATED */
@@ -438,7 +438,7 @@ public class SettingsEnsemble extends SettingsBase {
         m_SectionEnsembles.addNode(m_PrintPaths = new INIFileBool("PrintPaths", false));
         m_SectionEnsembles.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
         m_SectionEnsembles.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
-        m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileNominal("FeatureRanking", RANKING_TYPE, 0));
+        m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileNominal("FeatureRanking", RANKING_TYPE, RANKING_TYPE_NONE));
         m_SectionEnsembles.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
         m_SectionEnsembles.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
         m_SymbolicWeight.setDouble(1.0);

@@ -1,3 +1,6 @@
+\section{SemiSupervised}
+
+
 \begin{itemize}
     \item \optionNameStyle{SemiSupervisedMethod}:
            \begin{itemize}
@@ -119,4 +122,70 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{[0.0}, \optionDefaultValueStyle{0.1}, \optionDefaultValueStyle{0.2}, \optionDefaultValueStyle{0.3}, \optionDefaultValueStyle{0.4}, \optionDefaultValueStyle{0.5}, \optionDefaultValueStyle{0.6}, \optionDefaultValueStyle{0.7}, \optionDefaultValueStyle{0.8}, \optionDefaultValueStyle{0.9}, \optionDefaultValueStyle{1.0]}
                 \item \optionDescrption{}: ???
            \end{itemize}
+\end{itemize}
+
+
+
+
+
+Settings for running \clus{} in semi-supervised learning mode, relevant when command line argument {\tt -ssl} is used. These go in the separate section ``SemiSupervised'' in the settings file.
+
+\begin{itemize}
+	\item {\tt SemiSupervisedMethod = $o$} : $o$ is the semi-supervised method used. Default is {\tt PCT}.
+	\begin{itemize}
+		\item {\tt PCT}: Semi-supervised predictive clustering trees (SSL-PCTs) that use both descriptive and target attributes to evaluate the splits (if {\tt -forest} is used, ensemble of SSL-PCTs will be built). For more details see \cite{levatic2017_SSL4MTR_distanceBased,levatic2017_SSL4class_distanceBased}
+		\item {\tt SelfTraining}: The self-training method that "wraps" around ensembles of PCTs ({\tt -forest} needs to be used). It iteratively uses its own most reliable predictions in the learning proces. Note, when this method is used, the Default model in .out is supervised random forest. For more details see \cite{levatic2017_self-training}.  
+		\item {\tt SelfTrainingFTF}: Self-training that operates without reliability score, iterates until distances between predictions of two consecutive iterations are smaller than predefined threshold. Note, when this method is used, the Default model in .out is supervised random forest. Implemented on the basis of \cite{culp_iterative_2008}.
+	\end{itemize}
+	\item {\tt UnlabeledData = $s$} : $s$ is the name of the file that contains unlabeled data. This is optional, unlabeled data can be provided directly in the training set (with missing values for target attributes).
+	\item {\tt PercentageLabeled = $r$} : If unlabeled data is not given with {\tt UnlabeledData} or given directly in the training set, then unlabeled data are randomly selected from the training set, where $r$ is the ratio of labeled examples. Default if 5, which means that 5\% of the data will be selected as labeled data, and the rest 95\% will be used as unlabeled data. 
+	\item {\tt StoppingCriteria = $o$} : Stopping criteria for the {\tt SelfTraining} method, an element of \{{\tt NoneAdded, Iterations, Airbag}\}. Default is {\tt NoneAdded}.
+	\begin{itemize}
+		\item {\tt NoneAdded}: Stops if no example was added to the training set in the current iteration, i.e., if no unlabeled example met the criteria speficied with {\tt UnlabeledCriteria}. 
+		\item {\tt Iterations}: Stops after the predefined number of iterations with the {\tt Iterations} setting. Also applies for {\tt SelfTrainingFTF}.
+		\item {\tt Airbag}: "Smart" stopping criteria proposed in \cite{leistner2009semi}. Monitors the out-of-bag error, and stops learning if performance degradation is detected. 
+	\end{itemize}
+	\item {\tt UnlabeledCriteria = $o$} : Criteria used by the {\tt SelfTraining} method to select the predictions on unlabeled data that will be added to the training set. Default is {\tt Threshold}.
+	\begin{itemize}
+		\item {\tt Threshold}: All of the unlabeled instances with confidence of prediction greater than {\tt Threshold} will be added to the training set.
+		\item {\tt KMostConfident}: {\tt K} unlabeled instances with the most confident predictions will be added to the training set.
+		\item {\tt KPercentageMostConfident}: {\tt K} percentage of unlabeled instances with the most confident predictions will be added to the training set.
+		\item {\tt KPercentageMostAverage}: The threshold is set to the average of the reliability scores of the {\tt K} percentage of the most reliable examples (the threshold is set only once after the initial iteration).
+		\item {\tt AutomaticOOB}: The optimal threshold will be automatically selected on the basis of reliability scores of out-of-bag labeled examples, for more details see \cite{levatic2017_self-training}.
+		\item {\tt AutomaticOOBInitial}: Similar as {\tt AutomaticOOB}, however, the threshold will be selected only after the initial iteration and used throughout next iterations.
+		\item {\tt ExhaustiveSearch}: At each iteration, the optimal threshold will be selected from the list specified in {\tt ExhaustiveSearchThresholds}, on the basis of out-of-bag error on labeled examples. Beware, this is computationally expensive. 
+	\end{itemize}
+	\item {\tt ConfidenceMeasure = $o$} : Confidence (i.e., reliability) score used in {\tt SelfTraining}. Default is {\tt Variance} if the task is (multi-target) regression or {\tt ClassesProbabilities} if the task is (hierarchical multi-label) classification.
+	\begin{itemize}
+		\item {\tt Variance}: Reliability is inversely proportional to the standard deviation of the votes of an ensemble, i.e., smaller deviation, greater reliability.
+		\item {\tt ClassesProbabilities}: Used for (hierarchical) multi-label classification. Reliability is proportional to empirical probabilites, i.e., proportion of trees in ensemble that voted for a given class.
+		\item {\tt RForestProximities}: Reliability scores are calculated by using estimation of an error of unlabeled examples via out-of-bag error of labeled examples in their random Forest proximity (see \cite{levatic2017_self-training}).
+		\item {\tt RandomUniform}: Unlabeled examples to be added to the training set are randomly selected, where reliability scores are random numbers uniformly distributed in $[0,1]$.
+		\item {\tt RandomGaussian}: Unlabeled examples to be added to the training set are randomly selected, where reliability scores are random numbers normally distributed in $[0,1]$.
+		\item {\tt Oracle}: Actual errors on unlabeled examples are used to calculated to establish reliability scores. This is not attainable in practice (with real unlabeled data), but can be used to gain some insight into the algorithm. To use this score, unlabeled examples in {\tt UnlabeledData} need to be provided with labels.
+	\end{itemize}
+	\item {\tt Normalization = $o$} : Normalization of the per-target reliability scores, performed prior to aggregation. An element of {\tt MinMaxNormalization, Ranking, Standardization, NoNormalization}. Default is {\tt MinMaxNormalization}.
+	\begin{itemize}
+		\item {\tt MinMaxNormalization}: Per-target reliability scores are normalized to $[0,1]$ interval, where the least reliable score gets 0, and the most reliable score gets 1.
+		\item {\tt Ranking}: Ranks per-target scores according to their reliability, can be useful if per-target scores have very skewed distribution.
+		\item {\tt Standardization}: Per-target scores are standardized to 0.5 mean and 0.125 standard deviation (ensures that 99.98\% of the scores are in $[0,1]$ interval).
+		\item {\tt NoNormalization}: Normalization of per-target scores is not performed.
+	\end{itemize}
+	\item {\tt Aggregation = $o$} : Aggregation of the per-target reliability scores, an element of {\tt Average, Minimum, Maximum}. Default is {\tt Average}.
+	\begin{itemize}
+		\item {\tt Average}: Reliability score is calculated as an average of per-target reliability scores.
+		\item {\tt Minimum}: An example's prediction is considered as reliable as its leas reliable component.
+		\item {\tt Maximum}: An example's prediction is considered as reliable as its most reliable component.
+	\end{itemize} 
+	\item {\tt ConfidenceThreshold = $r$} : The threshold (between 0 and 1) for reliability scores, applicable if \\ {\tt UnlabeledCriteria = Threshold} is used. Default is 0.8.
+	\item {\tt Iterations = $n$} : The number of iterations for {\tt SelfTraining} or {\tt SelfTrainingFTF} methods. Default is 10.
+	\item {\tt K = $n$} : $K$ parameter for {\tt KMostConfident}, {\tt KPercentageMostConfident} and {\tt KPercentageMostAverage}. Default is 5.
+	\item {\tt UseWeights = $y$} : if set to {\tt Yes}, unlabeled examples that are added to the training set when {\tt SelfTraining} is used will be given weights that correspond to their reliability scores. Default is {\tt No}.
+	\item {\tt AirbagTrials = $n$} : The {\tt Airbag} stops {\tt SelfTraining} when degradation of performance according to out-of-bag error is detected. This setting specifies the number of times it is allowed for the model's out-of-bag error to be worse than that of the model trained in previous iteration. Default is 0. 
+	\item {\tt ExhaustiveSearchThresholds =  $\left[ r_1, \ldots, r_n\right]$} : Candidate thresholds that are considered if {\tt ExhaustiveSearch} is used. Default is $\left[ 0.5,0.6,0.7,0.8,0.9,0.99\right]$.
+	\item {\tt CalibrateHmcThreshold = $y$} : If set to $Yes$, the threshold is calibrated such that the difference between label cardinality of labeled examples and predicted unlabeled examples is minimal. Applies if {\tt SelfTraining} is used for hierarchical multi-label classification. Default is $No$.
+	\item {\tt PossibleWeights = $\left[ r_1, \ldots, r_n\right]$} : Specifies the $w$ parameter ($\in [0,1]$) for SSL-PCTs, i.e., the trade-off between target and descriptive spaces. Can be a double or vector of values. $w=1$ means that supervisd learning will be performed, while $w=0$ means that unsupervised learning will be performed. If vector is provided, each candidate $w$ will be evaluated via internal cross validation on the labeled part of the training set (each run of internal cross validation will use available unlabeled data), and the final model will be built with the best $w$. Default is $[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]$.
+	\item {\tt InternalFolds = $n$} : The number of fold for internal cross-validation, applies if {\tt PossibleWeights} is a vector of values. Default is 5.
+	\item {\tt PruningWhenTuning = $y$} : If set to $Yes$, the trees will be pruned while optimizing the $w$ parameter of SSL-PCTs. Should be turned on if pruned trees are of interest. Default is $No$.
+	\item {\tt WeightScoresFile = $s$} : $s$ is the name of the file where predictive performance for each candidate $w$ will be written (applies if {\tt PossibleWeights} is a vector of values). Default is $No$, i.e., the file will not be written.
 \end{itemize}

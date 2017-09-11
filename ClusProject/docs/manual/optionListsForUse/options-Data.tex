@@ -1,3 +1,6 @@
+\section{Data}
+
+
 \begin{itemize}
     \item \optionNameStyle{File}:
            \begin{itemize}
@@ -41,4 +44,13 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
                 \item \optionDescrption{}: ???
            \end{itemize}
+\end{itemize}
+
+
+
+\begin{itemize}
+	\item {\tt File = $s$} : $s$ is the name of the file that contains the training set.  The default value for $s$ is {\tt {\em filename}.arff}.  \clus{} can read compressed ({\tt .arff.zip}) or uncompressed ({\tt .arff}) data files. Path can also be included in the string.
+	\item {\tt TestSet = $o$} : when $o$ is {\tt None}, no test set is used; if $o$ is a number between 0 and 1, \clus{} will use a proportion $o$ of the data file as a separate test set (used for evaluating the model but not for training); if $o$ is a valid file name containing a test set in ARFF format, \clus{} will evaluate the learned model on this test set.
+	\item {\tt PruneSet = $o$} : defines whether and how to use a pruning set; the meaning of $o$ is identical as in the {\tt TestSet} setting.
+	\item {\tt XVal = $n$}\label{sett:xval} : $n$ is the number of folds to be used in a cross-validation.  To perform cross-validation, \clus{} needs to be run with the {\tt -xval} command line parameter.
 \end{itemize}

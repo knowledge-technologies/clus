@@ -1,3 +1,6 @@
+
+\section{General}
+
 \begin{itemize}
     \item \optionNameStyle{Verbose}:
            \begin{itemize}
@@ -23,4 +26,10 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: ???
            \end{itemize}
+\end{itemize}
+
+
+\begin{itemize}
+	\item {\tt RandomSeed = $n$}\label{sett:seed} : $n$ is used to initialize the random generator.
+	Some procedures used by \clus{} (e.g., creation of cross-validation folds) are randomized, and as a result, different runs of \clus{} on identical data may still yield different outputs.  When \clus{} is run on identical input data with the same {\tt RandomSeed} setting, it is guaranteed to yield the same results.
 \end{itemize}

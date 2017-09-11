@@ -1,3 +1,5 @@
+\section{Rules}
+
 \begin{itemize}
     \item \optionNameStyle{CoveringMethod}:
            \begin{itemize}
@@ -341,4 +343,53 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.33}
                 \item \optionDescrption{}: ???
            \end{itemize}
+\end{itemize}
+
+
+%Please note that the parameter for selecting rule learning heuristic in actually located in the \texttt{[Tree]} section!
+
+\begin{itemize}
+	\item \texttt{Heuristic = $o$} : determines the heuristic for rule learning; see the Tree section for details.
+	\item \texttt{CoveringMethod = $o$} : $o$ is an element of \{\texttt{Standard, % WeightedMultiplicative, WeightedAdditive, 
+		WeightedError, %Union, BeamRuleDefSet, 
+		RandomRuleSet, %StandardBootstrap, 
+		HeurOnly, RulesFromTree}\}. Defines how the rules are generated.
+	\begin{itemize}
+		\item \texttt{Standard}: standard covering algorithm \cite{Michalski1969}, all examples covered by the new rule are removed from the current learning set, can be used for learning ordered rules.
+		%\item \texttt{WeightedMultiplicative}: 
+		%\item \texttt{WeightedAdditive}: 
+		\item \texttt{WeightedError}: error weighted covering algorithm \cite{Zenko07} (Section 4.5), examples covered by the new rule are not removed from the current learning set, but their weight is decreased inversely proportional to the error the new rule makes when predicting their target values, can be used for learning unordered rules.
+		%\item \texttt{Union}: 
+		%\item \texttt{BeamRuleDefSet}: 
+		\item \texttt{RandomRuleSet}: rules are generated randomly, (experimental feature).
+		%\item \texttt{StandardBootstrap}: 
+		\item \texttt{HeurOnly}: no covering is used, the heuristic function takes into account the already learned rules and the examples they cover to focus on yet uncovered examples, (experimental feature).
+		\item \texttt{RulesFromTree}: rules are not learned with the covering approach, but a tree is learned first and then transcribed into a rule set. After this e.g.\ rule weight optimization methods can be used.
+	\end{itemize}
+	\item \texttt{CoveringWeight = $r$} : weight controlling the amount by which weights of covered examples are reduced within the error weighted covering algorithm -- $\zeta$ in \cite{Zenko07} (Section 4.5, Equations 4.6 and 4.8), valid values are between 0 and 1, by default it is set to 0.1, can be used for unordered rules with error weighted covering method.
+	\item \texttt{InstCoveringWeightThreshold = $r$} : instance weight threshold used in error weighted covering algorithm for learning unordered rules. When an instance's weight falls below this threshold, it is removed from the current learning set.  $\epsilon$ in \cite{Zenko07} (Section 4.5), valid values are between 0 and 1, by default it is set to 0.1.
+	\item \texttt{MaxRulesNb = $n$}: $n$ defines a maximum number of rules in a rule set. By default it is set to 1000.
+	\item \texttt{RuleAddingMethod = $o$} : $o$ is an element of \{\texttt{Always, IfBetter, IfBetterBeam}\}. Defines how rules are added to the rule set.
+	\begin{itemize}
+		\item \texttt{Always}: each rule when constructed is always added to the rule set,
+		\item \texttt{IfBetter}: rule is only added to the rule set if the performance of the rule set with the new rule is better than without it,
+		\item \texttt{IfBetterBeam}: similar to \texttt{IfBetter}, but if the rule does not improve the performance of the rule set, other rules from the beam are also evaluated and possibly added to the rule set.
+	\end{itemize}
+	The default value is \texttt{Always}, for regression rules setting this option to \texttt{IfBetter} is recommended.
+	\item \texttt{PrintRuleWiseErrors = $y$}: If \texttt{Yes},  \clus{} will print error estimation for each rule separately.
+	%	\item \texttt{PredictionMethod = $o$} : $o$ is an element of \{\texttt{DecisionList", "TotCoverageWeighted", %"CoverageWeighted", "AccuracyWeighted",
+	%		"AccCovWeighted", "EquallyWeighted", "Optimized", "Union", "GDOptimized", "GDOptimizedBinary"
+	\item {\tt ComputeDispersion = $y$}: If \texttt{Yes},  \clus{} will print some additional dispersion estimation for each rule and entire rule set.
+	\item \texttt{OptGDMaxIter = $n$} : $n$ defines a number of iterations that a gradient descent algorithm for
+	optimizing rule weights makes, used for learning rule ensembles \cite{Aho2009}. The default value is 1000.
+	\item \texttt{OptGDMaxNbWeights = $n$}: $n$ defines a maximum number of of allowed nonzero weights for
+	rules/linear terms, used for learning rule ensembles \cite{Aho2009}. If we have enough modified weights, only the nonzero ones are altered for the rest of the optimization. With this we can limit the size of the rule set. The default value of 0 means no rule set size limitation.
+	\item \texttt{OptGDGradTreshold = $r$} : the $\tau$ treshold value for the gradient descent (GD) algorithm used for learning rule ensembles \cite{Aho2009}. $\tau$ defines the limit by which gradients are changed during every iteration of the GD algorithm. If $\tau$=1 effect is similar to L1 regularization (Lasso) and $\tau$=0 the effect is similar to L2. If \texttt{OptGDMaxNbWeights} is low (less than 40), setting $\tau$=1 is usually enough (it is the fastest). Possible values are from the [0,1] interval, the default is 1.
+	\item \texttt{OptGDNbOfTParameterTry = $n$} : $n$ defines how many different $\tau$ values are checked between 1 and \texttt{Opt\-GD\-Grad\-Treshold}. We use a validation set to compute, which $\tau$ value gives the best accuracy. If \texttt{OptGDMaxNbWeights} is low, usually only a single value $\tau$=1 is enough (fastest). Default 1.
+	\item \texttt{OptGDEarlyTTryStop = $y$} : When trying different $\tau$ values starting from 1, do we stop if validation error starts to increase too much? Usually a lot faster, but may decrease the accuracy. Default \texttt{Yes}.
+	\item \texttt{OptGDStepSize = $r$} : If \texttt{OptGDIsDynStepsize} is \texttt{No}, the initial gradient descent step size factor. Default 0.1.
+	\item \texttt{OptGDIsDynStepsize = $y$} : Do we use as the step size factor a lower limit of optimal one? The value is computed based on the rule prediction values. Usually faster (lower step sizes are not tried at all) and often also more accurate than a given value. Default \texttt{Yes}.
+	\item \texttt{OptAddLinearTerms = $o$} : $o$ is an element of \{\texttt{No, Yes, YesSaveMemory}\}. Defines whether to add descriptive attributes as linear terms to the rule set. Usually this increases the accuracy. Especially for multi-target data sets it also slows the algorithm down. For these, use value \texttt{YesSaveMemory}, otherwise it can take a lot of memory. For single target data sets \texttt{Yes} is faster. Used for learning rule ensembles \cite{Aho2009}.
+	\item \texttt{OptLinearTermsTruncate = $y$} : Used in conjunction with the above \texttt{OptAddLinearTerms} setting. If \texttt{Yes}, the linear terms are truncated so that they do not predict values greater or smaller than found in the training set. This adds more robustness against outliers. The default setting is \texttt{Yes}. Used for learning rule ensembles \cite{Aho2009}.
+	\item \texttt{OptNormalizeLinearTerms = $o$} : $o$ is an element of \{\texttt{No, Yes, YesAndConvert}\}. Defines whether the linear terms are scaled so that each descriptive attribute has a similar effect. The default setting is \texttt{Yes} and it should always be used. However, if you want to transform the rule ensemble so that linear terms are of "standard type", you may use \texttt{YesAndConvert} setting. This moves the effect of normalizations to weights and default prediction after optimization. Used for learning rule ensembles \cite{Aho2009}.
 \end{itemize}

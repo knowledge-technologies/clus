@@ -1,3 +1,6 @@
+\section{Hierarchical}
+
+
 \begin{itemize}
     \item \optionNameStyle{Type}:
            \begin{itemize}
@@ -102,3 +105,54 @@
                 \item \optionDescrption{}: ???
            \end{itemize}
 \end{itemize}
+
+
+
+A number of settings are relevant only when using \clus{} for Hierarchical Multi-label Classification (HMC).  These go in the separate section ``Hierarchical''.  The most important ones are:
+
+\begin{itemize}
+	\item {\tt Type = $o$} : $o$ is {\tt Tree} or {\tt DAG}, and indicates whether the class hierarchy is a tree or a directed acyclic graph \cite{Vens08:jrnl}
+	\item {\tt WType = $o$} : defines how parents' class weights are aggregated in DAG-shaped hierarchies (\cite{Vens08:jrnl}, Section 4.1): possible values are {\tt ExpSumParentWeight}, {\tt ExpAvgParentWeight}, {\tt ExpMinParentWeight}, {\tt ExpMaxParentWeight}, and {\tt NoWeight}.  These define the weight of a class to be $w_0$ times the sum, average, minimum or maximum of the parent's weights, respectively, or to be 1.0 for all classes. 
+	\item {\tt WParam = $r$} : sets the parameter $w_0$ used in the formula for defining the class weights (\cite{Vens08:jrnl}, Section 4.1)
+	\item {\tt HSeparator = $o$} : $o$ is the separator used in the notation of values of the hierarchical domain (typically `/' or `.') 
+	\item {\tt EmptySetIndicator = $o$} : $o$ is the symbol used to indicate the empty set
+	\item {\tt OptimizeErrorMeasure = $o$} : \clus{} can automatically optimize the {\tt FTest} setting (see earlier); $o$ indicates what criterion should be maximized for this (\cite{Vens08:jrnl}, Section 5.2).  Possible values for $o$ are:
+	\begin{itemize}
+		\item {\tt AverageAUROC}: average of the areas under the class-wise ROC curves
+		\item {\tt AverageAUPRC}: average of the areas under the class-wise precision-recall curves
+		\item {\tt WeightedAverageAUPRC}: similar to AverageAUPRC, but each class's contribution is weighted by its relative frequency
+		\item {\tt PooledAUPRC}: area under the average (or pooled) precision-recall curve
+	\end{itemize}
+	\item {\tt ClassificationThreshold = $o$} : The original tree constructed by \clus{} contains a vector of predicted probabilities (one for each class) in each leaf. Such a probabilistic prediction can be converted into a set of labels by applying a threshold $t$: all labels that are predicted with probability $\geq t$ are in the predicted set.  $o$ can be a list of thresholds, e.g., [0.5, 0.75, 0.80, 0.90, 0.95]. \clus{} will output for each value in the set a tree in which the predicted label sets are constructed with this particular threshold. So, in the example, the output file will contain 5 trees corresponding to the thresholds 0.5, 0.75, 0.80, 0.90 and 0.95.
+	
+	\item {\tt RecallValues = $v$} : $v$ is a list of recall values, e.g., [0.1, 0.2, 0.3]. For each value, \clus{} will output the average of the precisions over all class-wise precision-recall curves that correspond to the particular recall value in the output file.
+	\item {\tt EvalClasses = $o$} : If $o$ is {\tt None}, \clus{} computes average error measures across all classes in the class  hierarchy. If $o$ is a list of classes, then the error measures are only computed with regard to the classes in this list.
+	\item {\tt MEstimate = $y$} : if set to {\tt Yes}, \clus{} will apply an m-estimate in the prediction vector of each leaf. For each leaf and each label, define $T =$ total training examples and $P =$ number of positive training examples. With the m-estimate, instead of predicting $P/T$ for the given label, we predict $(P+p*T') /
+	(T+T')$, i.e. we act as if we have seen $T'$ extra (``virtual'') examples of
+	which $p$ are positive, where $T'$ and $p$ are parameters. In the \clus{}
+	implementation, $T'=1$ and $p$ is the proportion of positive examples in the full
+	training set. So the predictions in the leaf for a given label are interpreted as $(P+p) /
+	(T+1)$.
+	
+\end{itemize}
+Figure~\ref{settings-hmc:fig} summarizes these settings briefly.
+
+\begin{figure}[tb]
+	\hrule\vspace{1em}
+	\begin{verbatim}
+	[Hierarchical]
+	Type = Tree                         % Tree or DAG hierarchy?
+	WType = ExpAvgParentWeight          % aggregation of class weights
+	WParam = 0.75                       % parameter w_0
+	HSeparator = /                      % separator used in class names
+	EmptySetIndicator = n               % symbol for empty set
+	OptimizeErrorMeasure = PooledAUPRC  % FTest optimization strategy
+	ClassificationThreshold = None      % threshold for "positive"
+	RecallValues = None                 % where to report precision
+	EvalClasses = None                  % classes to evaluate
+	MEstimate = No                      % whether to use m-estimate in the prediction vector
+	\end{verbatim}
+	\hrule
+	\caption{Settings specific for hierarchical multi-label classification}
+	\label{settings-hmc:fig}
+\end{figure}

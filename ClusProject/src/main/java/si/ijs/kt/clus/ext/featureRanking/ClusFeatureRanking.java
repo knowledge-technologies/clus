@@ -267,10 +267,10 @@ public class ClusFeatureRanking {
         if (ens_method == SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES) {
             algorithmName = new JsonPrimitive("ExtraTrees/GENIE3");
         }
-        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_RFOREST)) {
+        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_TYPE_RFOREST)) {
             algorithmName = new JsonPrimitive("RandomForestRanking");
         }
-        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_GENIE3)) {
+        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_TYPE_GENIE3)) {
             algorithmName = new JsonPrimitive("RandomForest/GENIE3");
         }
         else {

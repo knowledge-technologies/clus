@@ -1,3 +1,7 @@
+\section{Output}
+
+
+
 \begin{itemize}
     \item \optionNameStyle{ShowModels}:
            \begin{itemize}
@@ -126,3 +130,17 @@
                 \item \optionDescrption{}: ???
            \end{itemize}
 \end{itemize}
+
+
+
+\begin{itemize}
+	\item {\tt AllFoldModels = $y$} : if set to {\tt Yes}, \clus{} will output the model built in each fold of a cross-validation.
+	\item {\tt AllFoldErrors = $y$} : if set to {\tt Yes}, \clus{} will output the test set error (and other evaluation measures) for each fold.
+	\item {\tt TrainErrors = $y$} : if set to {\tt Yes}, \clus{} will output the training set error (and other evaluation measures).
+	\item {\tt UnknownFrequency = $y$} : if set to {\tt Yes}, \clus{} will show in each node of the tree the proportion of instances that had a missing value for the test in that node.
+	\item {\tt BranchFrequency = $y$} : if set to {\tt Yes}, \clus{} will show in each node of the tree, for each possible outcome of the test in that node, the proportion of instances that had that outcome.
+	\item {\tt WritePredictions = $o$} : $o$ is a subset of \{\texttt{Train,Test}\}. If $o$ includes ``Train'', then the prediction for each training instance will be written to an ARFF output file. The file is named {\tt {\em filename}.train. {\em i}.pred.arff} with $i$ the iteration. In a single run, $i = 1$. In a 10 fold cross-validation, $i$ will vary from 1 to 10. If $o$ includes ``Test'', then the predictions for each test instance will be written to disk. The file is named {\tt {\em filename}.test.pred.arff}.
+	\item {\tt GzipOutput = $y$} : if set to {\tt Yes}, \clus{} will compress output in gzip file format (approx. 10 times smaller file sizes). The default setting is {\tt No}.
+\end{itemize}
+
+

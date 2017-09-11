@@ -1,3 +1,6 @@
+\section{Tree}
+
+
 \begin{itemize}
     \item \optionNameStyle{Heuristic}:
            \begin{itemize}
@@ -161,4 +164,45 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Exact}
                 \item \optionDescrption{}: ???
            \end{itemize}
+\end{itemize}
+
+
+\begin{itemize}
+	\item {\tt FTest = $r$} : sets the f-test stopping criterion for regression; a node will only be split if a statistical F-test indicates a significant (at level $r$) reduction of variance inside the subsets. The f-test level can also be optimized by providing a vector of levels, e.g. {\tt FTest = [0.001,0.005,0.01,0.05,0.1,0.125]}. In that case, the (smallest) f-test level will be chosen that minimizes the RMSE measure on the validation set provided (using the {\tt PruneSet} setting).
+	\item {\tt ConvertToRules = $o$} : $o$ is an element of \texttt{\{No, Leaves, AllNodes\}}. \clus{} can convert a tree (or ensemble of trees) into a set of rules. The default setting is \texttt{No}, if set to \texttt{Leaves}, only tree leaves are converted to rules, if set to \texttt{AllNodes}, also the internal nodes of tree(s) are converted. This setting can be used for learning rule ensembles \cite{Aho2009}.
+	\item {\tt SplitSampling = $s$} : the split heuristic can be calculated on a sample of the training set. For $s > 0$, the training set is, for each split, sampled with replacement to form a sample of size $s$. The default setting is $s = {\tt None}$, the training set is used as is. 
+	\item \texttt{Heuristic = $o$} : $o$ is an element of \{\raggedright\texttt{Default, ReducedError, Gain, GainRatio, % SSPD,
+		VarianceReduction, MEstimate, Morishita, DispersionAdt, DispersionMlt, RDispersionAdt, RDispersionMlt%, GeneticDistance, SemiSupervised, VarianceReductionMissing
+	}\}. Sets the heuristic function that is used for evaluating the clusters (splits) when generating trees or rules. Please note that this setting is used for trees as well as rules.
+	%	
+	\begin{itemize}
+		\item \texttt{Default}: default heuristic, if learning trees this is equal to \texttt{VarianceReduction}, if learning rules this setting is equal to \texttt{RDispersionMlt}.
+		\item \texttt{ReducedError}: reduced error heuristic, can be used for trees.
+		\item \texttt{Gain}: information gain heuristic, can be used for classification trees.
+		\item \texttt{GainRatio}: information gain ratio heuristic \cite{Quinlan1986}, can be used for classification trees.
+		%\item \texttt{SSPD}: sum of squared distances, can be used for regression trees,
+		\item \texttt{VarianceReduction}: variance reduction heuristic, can be used for trees.
+		\item \texttt{MEstimate}: $m$-estimate heuristic \cite{Cestnik1990}, can be used for classification trees.
+		\item \texttt{Morishita}: Morishita heuristic \cite{Sese2004}, can be used for trees.% Is this correct?
+		\item \texttt{DispersionAdt}: additive dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules.
+		\item \texttt{DispersionMlt}: multiplicative dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules.
+		\item \texttt{RDispersionAdt}: additive relative dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules.
+		\item \texttt{RDispersionMlt}: multiplicative relative dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules, the default heuristic for learning predictive clustering rules.
+		%\item \texttt{GeneticDistance}:
+		%\item \texttt{SemiSupervised}:
+		%\item \texttt{VarianceReductionMissing}:
+	\end{itemize}
+	\item \texttt{PruningMethod = $o$} : $o$ is an element of \{\raggedright\texttt{Default, None, C4.5, M5, M5Multi, ReducedErrorVSB, Garofalakis, GarofalakisVSB, CartVSB, CartMaxSize}\}. Sets the post-pruning method for trees.
+	\begin{itemize}
+		\item \texttt{Default}: default pruning method for trees, if learning classification trees this is equal to \texttt{C4.5}, if learning regression trees this is equal to \texttt{M5}. % Is this true -> Yes
+		\item \texttt{None}: no post-pruning of learned trees is performed.
+		\item \texttt{C4.5}: pruning as in C4.5 \cite{Quinlan1993}, can be used for classification trees,
+		\item \texttt{M5}: pruning as in M5 \cite{Quinlan1992},	can be used for regression trees,
+		\item \texttt{M5Multi}: experimental modification to M5 \cite{Quinlan1992} pruning for multi-target regression trees.
+		\item \texttt{ReducedErrorVSB}: reduced error pruning where the error is estimated on a separate validation data set (VSB = validation set based pruning).
+		\item \texttt{Garofalakis}: pruning method proposed by Garofalakis et al. \cite{Garofalakis03:jrnl} used for constraint induction of trees.
+		\item \texttt{GarofalakisVSB}: same as \texttt{Garofalakis}, but the error is estimated on a separate validation data set.
+		\item \texttt{CartVSB}: pruning method that is implemented in CART \cite{Breiman1984}, and uses a separate validation set. It seems to work better than M5 on the multi-target regression data sets.
+		\item \texttt{CartMaxSize}: pruning method that is also implemented in CART \cite{Breiman1984}, but uses cross-validation to tune the pruning parameter to achieve the desired tree size.
+	\end{itemize}
 \end{itemize}

@@ -1,3 +1,6 @@
+\section{Beam}
+
+
 \begin{itemize}
     \item \optionNameStyle{SizePenalty}:
            \begin{itemize}
@@ -72,3 +75,59 @@
                 \item \optionDescrption{}: ???
            \end{itemize}
 \end{itemize}
+
+
+\begin{itemize}
+	\item {\tt SizePenalty = $o$} : sets the size penalty parameter used in the beam heuristic \cite{Kocev07a:proc}.
+	\item {\tt BeamWidth = $n$} : sets the width of the beam used in the beam search performed by \clus{} \cite{Kocev07a:proc}.
+	\item {\tt MaxSize = $o$} : sets the maximum size constraint \cite{Kocev07a:proc}; $o$ is a positive integer or {\tt Infinity}.
+\end{itemize}
+
+\begin{figure}[tb]
+	\hrule\vspace{1em}
+	\begin{verbatim}
+	[General]
+	RandomSeed = 0              % seed of random generator
+	
+	[Data]
+	File = weather.arff         % training data
+	TestSet = None              % data used for evaluation (file name / proportion)
+	PruneSet = None             % data used for tree pruning (file name / proportion)
+	XVal = 10                   % number of folds in cross-validation (clus -xval ...)
+	
+	[Attributes]
+	Target = 5                  % index of target attributes
+	Disable = 4                 % Disables some attributes (e.g., "5,7-8")
+	Key = None                  % Sets the index of the key attribute
+	Weights = Normalize         % Normalize numeric attributes
+	
+	[Model]
+	MinimalWeight = 2.0         % at least 2 examples in each subtree
+	
+	[Tree]
+	FTest = 1.0                 % f-test stopping criterion for regression
+	ConvertToRules = No         % Convert the tree to a set of rules
+	
+	[Constraints]
+	Syntactic = None            % file with syntactic constraints (a partial tree)
+	MaxSize = Infinity          % maximum size for Garofalakis pruning
+	MaxError = Infinity         % maximum error for Garofalakis pruning
+	MaxDepth = Infinity         % Stop building the tree at the given depth
+	
+	[Output]
+	AllFoldModels = Yes         % Output model in each cross-validation fold
+	AllFoldErrors = No          % Output error measures for each fold
+	TrainErrors = Yes           % Output training error measures
+	UnknownFrequency = No       % proportion of missing values for each test
+	BranchFrequency = No        % proportion of instances for which test succeeds
+	WritePredictions = {Train,Test}    % write test set predictions to file
+	
+	[Beam]
+	SizePenalty = 0.1           % size penalty parameter used in the beam heuristic
+	BeamWidth = 10              % beam width
+	MaxSize = Infinity          % Sets the maximum size constraint
+	\end{verbatim}
+	\hrule
+	\caption{An example settings file}
+	\label{settings:fig}
+\end{figure}
