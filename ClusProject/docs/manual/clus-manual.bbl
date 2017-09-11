@@ -14,12 +14,6 @@ A.~N. Arslan and P.~Bizargity.
 \newblock In {\em Proceedings of the 7th IEEE Symposium on Bioinformatics and
   Biotechnology (BIBE 2007), Vol. II}, pages 809--814, 2007.
 
-\bibitem{BauerKohavi1999}
-Eric Bauer and Ron Kohavi.
-\newblock An empirical comparison of voting classification algorithms: Bagging,
-  boosting, and variants.
-\newblock {\em Machine Learning}, 36(1-2):105--139, 1999.
-
 \bibitem{Blockeel99:proc}
 H.~Blockeel, S.~D{\v z}eroski, and J.~Grbovi{\' c}.
 \newblock Simultaneous prediction of multiple chemical parameters of river
@@ -33,16 +27,6 @@ H.~Blockeel, L.~De Raedt, and J.~Ramon.
 \newblock Top-down induction of clustering trees.
 \newblock In {\em Proceedings of the 15th International Conference on Machine
   Learning}, pages 55--63, 1998.
-
-\bibitem{Breiman1996}
-Leo Breiman.
-\newblock Bagging predictors.
-\newblock {\em Machine Learning}, 24(2):123--140, 1996.
-
-\bibitem{Breiman2001}
-Leo {Breiman}.
-\newblock Random forests.
-\newblock {\em Machine Learning}, 45(1):5--32, 2001.
 
 \bibitem{Breiman1984}
 Leo Breiman, Jerome~H. Friedman, Richard~A. Olshen, and Charles~J. Stone.
@@ -90,12 +74,6 @@ J.~Felsenstein.
 M.~Garofalakis, D.~Hyun, R.~Rastogi, and K.~Shim.
 \newblock Building decision trees with constraints.
 \newblock {\em Data Mining and Knowledge Discovery}, 7(2):187--214, 2003.
-
-\bibitem{Ho1998}
-Tin~Kam {Ho}.
-\newblock The random subspace method for constructing decision forests.
-\newblock {\em IEEE Transactions on Pattern Analysis and Machine Intelligence},
-  20(8):832--844, 1998.
 
 \bibitem{Kocev07a:proc}
 D.~Kocev, S.~D\v{z}eroski, and J.~Struyf.
@@ -150,13 +128,6 @@ Vanja Mileski, Sa\v{s}o D\v{z}eroski, and Dragi Kocev.
   {I}ntelligent {D}ata {A}nalysis {XVI LNCS}}, page In {P}ress.
   Springer-Verlag, 2017.
 
-\bibitem{PanovDzeroski2007}
-Pan\v{c}e Panov and Sa\v{s}o D\v{z}eroski.
-\newblock Combining bagging and random subspaces to create better ensembles.
-\newblock In {\em Proceedings of Seventh International Symposium on Intelligent
-  Data Analysis (IDA '07)}, volume 4723 of {\em Lecture Notes in Computer
-  Science}, pages 118--129, Berlin, Germany, 2007. Springer.
-
 \bibitem{Piccart08-DS:proc}
 B.~Piccart, J.~Struyf, and H.~Blockeel.
 \newblock Empirical asymmetric selective transfer in multi-objective decision
@@ -205,12 +176,6 @@ Celine Vens, Eduardo Costa, and Hendrik Blockeel.
 \newblock In {\em Proceedings of the 8th European Conference on Evolutionary
   Computation, Machine Learning and Data Mining in Bioinformatics (EvoBIO
   2010)}. Springer, 2010.
-
-\bibitem{Vens2011}
-Celine Vens and Fabrizio Costa.
-\newblock Random forest based feature induction.
-\newblock In {\em Proceedings of IEEE International Conference on Data Mining},
-  2011.
 
 \bibitem{Vens08:jrnl}
 Celine Vens, Jan Struyf, Leander Schietgat, Sa{\v s}o D{\v z}eroski, and

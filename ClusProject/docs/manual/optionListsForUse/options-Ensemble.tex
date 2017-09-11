@@ -1,15 +1,18 @@
+\section{Ensemble}
+
+
 \begin{itemize}
     \item \optionNameStyle{Iterations}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
-                \item \optionDescrption{}: ???
+                \item \optionPossibleValues{}: integer between $1$ and available resources
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{10}
+                \item \optionDescrption{}:  defines the number of base-level models (trees) in the ensemble.
            \end{itemize}
     \item \optionNameStyle{EnsembleMethod}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Bagging}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: $o$ is an element of \{\texttt{Bagging, RForest, RSubspaces, BagSubspaces}\} defines the ensemble method.
            \end{itemize}
     \item \optionNameStyle{VotingType}:
            \begin{itemize}
@@ -126,3 +129,53 @@
                 \item \optionDescrption{}: ???
            \end{itemize}
 \end{itemize}
+
+
+
+
+%\begin{itemize}
+%
+%	\item \texttt{EnsembleMethod = $o$} : $o$ is an element of \{\texttt{Bagging, RForest, RSubspaces, BagSubspaces}\} defines the ensemble method.
+%	\begin{itemize}
+%		\item \texttt{Bagging}: Bagging \cite{Breiman1996}.
+%		\item \texttt{RForest}: Random forest \cite{Breiman2001}.
+%		\item \texttt{RSubspaces}: Random Subspaces \cite{Ho1998}.
+%		\item \texttt{BagSubspaces}: Bagging of subspaces \cite{PanovDzeroski2007}.
+%		\item \texttt{Extra-Trees}: Extra trees
+%	\end{itemize}
+%	\item \texttt{BagSize = $n$}: When using a bagging scheme in large datasets, it might be useful to control the size of the individual bags. For $n > 0$, bags will have size $n$ rather than size $N$ (the size of the dataset).
+%	\item \texttt{VotingType = $o$} : $o$ is an element of \{\texttt{Majority, ProbabilityDistribution}\} selects the voting scheme for combining predictions of base-level models.
+%	\begin{itemize}
+%		\item \texttt{Majority}: each base-level model casts one vote, for regression this is equal to averageing.
+%		\item \texttt{ProbabilityDistribution}: each base-level model casts probability distributions for each target attribute, does not work for regression.
+%	\end{itemize}
+%	The default value is \texttt{Majority}, Bauer and Kohavi \cite{BauerKohavi1999} recommend \texttt{ProbabilityDistribution}.
+%	\item \texttt{SelectRandomSubspaces = $o$} : $o$ is an element of \{\texttt{log, sqrt, 0, int, double}\} and defines size of feature subset for random forests, random subspaces and bagging of subspaces. 
+%	\begin{itemize}
+%		\item \texttt{log} or \texttt{0}: the feature subset size is set to $\lceil{\log_2(\mathrm{number\ of\ descriptive\ attributes})}\rceil$ as recommended by Breiman \cite{Breiman2001}. This is the default value.
+%		\item \texttt{sqrt}: the feature subset size is set to $\lceil{\sqrt{\mathrm{number\ of\ descriptive\ attributes}}}\rceil$.
+%		\item \texttt{int}: an integer number that specifies the feature subset size (the maximum allowed is the $\mathrm{number\ of\ descriptive\ attributes}$).
+%		\item \texttt{double}: an double value $dval$ from the range (0,1) that specifies the fraction of the descriptive attributes used as feature sub set (the maximum allowed is 1.0), i.e., the feature subset value is set to $[{dval \cdot (\mathrm{number\ of\ descriptive\ attributes})}]$ .
+%	\end{itemize}
+%	\item {\tt PrintAllModels = $y$} : If \texttt{Yes}, \clus\ will print all base-level models of an ensemble in the output file. The default setting is \texttt{No}.
+%	\item {\tt PrintAllModelFiles = $y$}: If \texttt{Yes}, \clus\ will save all base-level models of an ensemble in the model file. The default setting is \texttt{No}, which prevents from creating very large model files.
+%	\item {\tt Optimize = $y$} : If \texttt{Yes}, \clus\ will optimize memory usage during learning. The default setting is \texttt{No}.
+%	\item {\tt OOBestimate = $y$} : If \texttt{Yes}, out-of-bag estimate of the performance of the ensemble will be done. The default setting is \texttt{No}.
+%	\item {\tt FeatureRanking = $y$} : If \texttt{Yes}, feature ranking via random forests will be performed. The default setting is \texttt{No}.
+%	\item {\tt EnsembleRandomDepth = $y$} : If \texttt{Yes}, different random depth for each base-level model is selected. Used, e.g., in rule ensembles. The \texttt{MaxDepth} setting from \texttt{[Tree]} section is used as average. The default setting is \texttt{No}.
+%	\item {\tt PrintPaths = $y$} : If \texttt{Yes}, for each tree, the path that is followed by each instance in that tree will be printed to a file named {\tt tree\_i.path}.  The default setting is \texttt{No}. Currently, the setting is only implemented for bagging and random forests. This setting was used in random forest based feature induction, see \cite{Vens2011} for details, and the following directory for an example:  
+%	\begin{flushleft}
+%		\verb^$CLUS_DIR/data/rfbfi/.^
+%	\end{flushleft}
+%
+%
+%%BagSelection = -1
+%% 'Quasi' parallel implementation for ensembles
+%% its value is an integer ranging from -1 to the number of trees in the ensemble
+%% if set to -1, then the parallel implementation is discarded
+%% if set to 0, then CLUS combines the predictions from the different bags
+%% if set to i, i in 1..EnsembleSize, then CLUS learns the model for the i-th bag
+%% if set as interval [val1-val2], this means to learn all bags between val1 and val2, including val1 and val2
+%
+%
+%\end{itemize}
