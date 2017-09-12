@@ -49,7 +49,7 @@
 \newcommand{\optionPossibleValuesList}[1]{%
 	\listItems{#1}%
 }
-\newcommand{\formatOneElement}[1]{\emph{\trim{#1}}}
+\newcommand{\formatOneElement}[1]{\texttt{\trim{#1}}}
 \def\listItems#1{%
 	\gdef\firstelement{1}
 	\{%
@@ -62,7 +62,7 @@
 }
 
 
-
+\newcommand{\doNotShowThis}[1]{}
 
 
 
@@ -348,7 +348,7 @@ In this example, the resulting tree is a multi-target tree: each leaf predicts a
 % 
 % \subsection{Constrained Induction}
 % 
-% \subsection{Ensembles}
+% \subsection{s}
 % 
 % \section{Rule Learning}
 % 
@@ -499,6 +499,56 @@ The algorithms included in the \clus{} system have a number of parameters that i
 The settings file is structured into sections.  Each parameter belongs to a particular section.  Including the section headers (section names written in brackets) is optional, however; these headers are meant to help users structure the settings and their use is recommended.
 
 We here explain the most common settings. Some settings that are connected to experimental or not yet fully implemented features of \clus\ are either marked as such or not presented at all.  Figure~\ref{settings:fig} shows  an example of a settings file. All the settings (including the default ones) that were used in a specific \clus\ run are printed at the beginning of the output file (\texttt{\emph{filename}.out}).
+
+\begin{figure}[tb]
+    \hrule\vspace{1em}
+    \begin{verbatim}
+    [General]
+    RandomSeed = 0              % seed of random generator
+    
+    [Data]
+    File = weather.arff         % training data
+    TestSet = None              % data used for evaluation (file name / proportion)
+    PruneSet = None             % data used for tree pruning (file name / proportion)
+    XVal = 10                   % number of folds in cross-validation (clus -xval ...)
+    
+    [Attributes]
+    Target = 5                  % index of target attributes
+    Disable = 4                 % Disables some attributes (e.g., "5,7-8")
+    Key = None                  % Sets the index of the key attribute
+    Weights = Normalize         % Normalize numeric attributes
+    
+    [Model]
+    MinimalWeight = 2.0         % at least 2 examples in each subtree
+    
+    [Tree]
+    FTest = 1.0                 % f-test stopping criterion for regression
+    ConvertToRules = No         % Convert the tree to a set of rules
+    
+    [Constraints]
+    Syntactic = None            % file with syntactic constraints (a partial tree)
+    MaxSize = Infinity          % maximum size for Garofalakis pruning
+    MaxError = Infinity         % maximum error for Garofalakis pruning
+    MaxDepth = Infinity         % Stop building the tree at the given depth
+    
+    [Output]
+    AllFoldModels = Yes         % Output model in each cross-validation fold
+    AllFoldErrors = No          % Output error measures for each fold
+    TrainErrors = Yes           % Output training error measures
+    UnknownFrequency = No       % proportion of missing values for each test
+    BranchFrequency = No        % proportion of instances for which test succeeds
+    WritePredictions = {Train,Test}    % write test set predictions to file
+    
+    [Beam]
+    SizePenalty = 0.1           % size penalty parameter used in the beam heuristic
+    BeamWidth = 10              % beam width
+    MaxSize = Infinity          % Sets the maximum size constraint
+    \end{verbatim}
+    \hrule
+    \caption{An example settings file}
+    \label{settings:fig}
+\end{figure}
+
 
 In the following, we use the convention that $n$ is an integer, $r$ is a real, $v$ is a vector of real values, $s$ is a string, $y$ is an element of \{ {\tt Yes}, {\tt No} \}, $r$ is an range of attribute indices, and $o$ is another type of value.  Strings are denoted without quotes. A vector is denoted as $[r_1,\ldots,r_n]$. An attribute range is a comma separated list of integers or intervals or \texttt{None} if the range is empty. For example, {\tt 5,7-9} indicates attributes 5, 7, 8 and 9. The first attribute in the dataset is attribute 1. Run {\tt clus -info {\em filename}.s} to list all attributes together with their indices. We now explain the settings organized into sections.
 

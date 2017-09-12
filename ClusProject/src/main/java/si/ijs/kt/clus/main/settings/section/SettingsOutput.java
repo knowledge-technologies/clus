@@ -236,7 +236,7 @@ public class SettingsOutput extends SettingsBase {
         output.addNode(m_ShowBrFreq = new INIFileBool("BranchFrequency", false));
         output.addNode(m_ShowInfo = new INIFileNominal("ShowInfo", SHOW_INFO, SHOW_INFO_VALUES));
         output.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
-        output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false));
+        output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); //TODO: bug: see issue #51 in the repository
         output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
         output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
         output.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));

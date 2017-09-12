@@ -10,21 +10,34 @@
            \end{itemize}
     \item \optionNameStyle{EnsembleMethod}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element from \optionPossibleValuesList{Bagging, RForest, RSubspaces, BagSubspace, Boosting, RFeatSelection, Pert, ExtraTrees}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Bagging}
-                \item \optionDescrption{}: $o$ is an element of \{\texttt{Bagging, RForest, RSubspaces, BagSubspaces}\} defines the ensemble method.
+                \item \optionDescrption{}: defines the ensemble method. ???????????????????????????????????????????
            \end{itemize}
     \item \optionNameStyle{VotingType}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Majority, ProbabilityDistribution}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{ProbabilityDistribution}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:
+                	\begin{itemize}
+                		\item \formatOneElement{Majority}: each base-level model casts one vote, for regression this is equal to averaging.
+                		\item \formatOneElement{ProbabilityDistribution}: each base-level model casts probability distributions for each target attribute, does not work for regression.
+                	\end{itemize}
            \end{itemize}
     \item \optionNameStyle{SelectRandomSubspaces}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an integer $k$ from the interval $[1, \mathrm{number\ of\ attributes}]$ or a real number $q$ from the interval $[0, 1]$, or an element
+                of \optionPossibleValuesList{LOG, SQRT, RANDOM}
+
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:
+                 \begin{itemize}
+                    \item \formatOneElement{LOG} or \formatOneElement{0}: the feature subset size is set to $\lceil{\log_2(\mathrm{number\ of\ descriptive\ attributes})}\rceil$ as recommended by Breiman \cite{Breiman2001}. This is the default value.
+                    \item \formatOneElement{SQRT}: the feature subset size is set to $\lceil{\sqrt{\mathrm{number\ of\ descriptive\ attributes}}}\rceil$.
+                    \item \formatOneElement{RANDOM}: works only if \formatOneElement{EnsembleMethod} is set to \formatOneElement{RSubspaces} ???????????????????????????????????????????
+                    \item $k$: an integer number that specifies the feature subset size.
+                    \item $q$: the fraction of the descriptive attributes used as feature subset, i.e., the feature subset value is set to $[{q(\mathrm{number\ of\ descriptive\ attributes})}]$ .
+                \end{itemize}
            \end{itemize}
     \item \optionNameStyle{SelectRandomTargetSubspaces}:
            \begin{itemize}
@@ -40,69 +53,83 @@
            \end{itemize}
     \item \optionNameStyle{PrintAllModels}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies whether the base models are included in the \texttt{.out} file.
            \end{itemize}
     \item \optionNameStyle{PrintAllModelFiles}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If \formatOneElement{Yes}, \clus\ will save all base-level models of an ensemble in the model file. The default setting prevents creating very large model files.
            \end{itemize}
     \item \optionNameStyle{PrintAllModelInfo}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If \formatOneElement{Yes}, \clus\ will include additional model information in the \texttt{.out} file.
            \end{itemize}
     \item \optionNameStyle{PrintPaths}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:If \formatOneElement{Yes}, for each tree, the path that is followed by each instance in that tree will be printed to a file named {\tt tree\_i.path}.  The default setting is \texttt{No}. Currently, the setting is only implemented for \formatOneElement{Bagging} and \formatOneElement{RForest}. This setting was used in random forest based feature induction, see \cite{Vens2011} for details
+                %, and the following directory for an example:  
+                %	\begin{flushleft}
+                %		\verb^$CLUS_DIR/data/rfbfi/.^
+                %	\end{flushleft}
            \end{itemize}
     \item \optionNameStyle{Optimize}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If set to \formatOneElement{Yes}, \clus\ will optimize memory usage during learning. In that case, the tree induction/predictive error computation procedure is slightly modified.
+                For example, the predictions of the ensemble are updated every time a new tree is grown.
+                After that, the tree is removed from the memory. Due to floating point arithmetic, this could result in slightly different predictions.
            \end{itemize}
     \item \optionNameStyle{OOBestimate}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  If \formatOneElement{Yes}, out-of-bag estimate of the performance of the ensemble will be done.
            \end{itemize}
     \item \optionNameStyle{FeatureRanking}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}:  \optionPossibleValuesList{None, RForest, GENIE3, SYMBOLIC}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If set to non-default value, the specified ranking will be computed in addition to the ensemble predictive model.
+                    \begin{itemize}
+                        \item \formatOneElement{RForest}: random forest ranking as described in \cite{petkovic2017-ensemble-fr}, does not work with extra trees (no out-of-bag examples)
+                        \item \formatOneElement{GENIE3}: Genie3 ranking as given in \cite{petkovic2017-ensemble-fr}
+                        \item \formatOneElement{SYMBOLIC}: Symbolic ranking, as described in \cite{petkovic2017-ensemble-fr}
+                    \end{itemize}
            \end{itemize}
     \item \optionNameStyle{FeatureRankingPerTarget}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If the \formatOneElement{FeatureRanking}, the \textit{number of targets} additional feature rankings are computed, each one only with respect to one target.
+                This option is ignored when the additional rankings are the same as the original one, e.g., when there is only one target or \formatOneElement{FeatureRanking} is set to \formatOneElement{SYMBOLIC}.
            \end{itemize}
     \item \optionNameStyle{SymbolicWeight}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a real number $w$ from the interval $(0, 1]$.
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{1.0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: every appearance of an attribute at the depth $d$ in a tree increases the importance score of \formatOneElement{SYMBOLIC} by $w^d$. If \optionNameStyle{FeatureRanking} is not
+                set to \formatOneElement{SYMBOLIC}, this option has no influence.
            \end{itemize}
     \item \optionNameStyle{SortRankingByRelevance}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If set to \formatOneElement{Yes}, the attributes in the \texttt{.fimp} file are sorted decreasingly by relevance. Otherwise, they are in the same as in \texttt{.arff} file.
            \end{itemize}
     \item \optionNameStyle{WriteEnsemblePredictions}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If set to \formatOneElement{Yes}, the predictions of the ensemble for the training set are written to \texttt{{\em filename}.ens.train.preds}.
+                If the option \formatOneElement{TestSet} is also specified,  the predictions of the ensemble for the testing set are written to \texttt{{\em filename}.ens.test.preds}.
            \end{itemize}
     \item \optionNameStyle{EnsembleRandomDepth}:
            \begin{itemize}
@@ -118,15 +145,16 @@
            \end{itemize}
     \item \optionNameStyle{BagSize}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an integer from the interval $[0, \mathrm{number\ of\ instances}]$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Specifies the size of a bag. If set to $0$, this will be converted to the \emph{number of instances}.
            \end{itemize}
     \item \optionNameStyle{NumberOfThreads}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: An integer, greater or equal to $1$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Specifies the number of threads that run in parallel when inducing the ensemble from \optionPossibleValuesList{Bagging, RForest, ExtraTrees},
+                or computing \formatOneElement{Relief} feature ranking.
            \end{itemize}
 \end{itemize}
 

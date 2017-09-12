@@ -39,7 +39,7 @@ These settings are relevant when using \clus{} for Hierarchical Multi-Target Reg
            \end{itemize}
     \item \optionNameStyle{Aggregation}:
            \begin{itemize}
-                \item \optionPossibleValues{}: an element of \{SUM, AVG, MEDIAN, MIN, MAX, AND, OR, COUNT, VAR, STDEV, ZERO, ONE\}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{SUM, AVG, MEDIAN, MIN, MAX, AND, OR, COUNT, VAR, STDEV, ZERO, ONE}
                 \item \optionDescrption{}:  The aggregation function used for the supervariables in the hierarchy.  {\tt SUM} stands for the sum of the values, {\tt AVG} stands for the average value, {\tt MEDIAN} is the median value from the (ordered by size) children, {\tt MIN} and {\tt MAX} are the minimum and maximum values amongst the children nodes, {\tt AND} and {\tt OR} can be used on values that are either 0 or 1 and are the logical \textit{and} and \textit{or} functions, {\tt COUNT} returns the number of children, {\tt VAR} and {\tt STDEV} return the variance and standard deviation of the children node values respectively, and finally {\tt ZERO} and {\tt ONE} functions return a constant value of 0 or 1, respectively.
            \end{itemize}
     \item \optionNameStyle{Hierarchy}:

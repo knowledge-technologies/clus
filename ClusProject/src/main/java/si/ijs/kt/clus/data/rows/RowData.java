@@ -151,7 +151,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         return getSummary("");
     }
 
-
+    @Deprecated
     public String getSummaryDT(String prefix) {
         StringBuffer sb = new StringBuffer();
         double[] avg, min, max, stddev;

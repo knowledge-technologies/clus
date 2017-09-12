@@ -4,36 +4,27 @@
 \begin{itemize}
     \item \optionNameStyle{Syntactic}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a string
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: sets the file with syntactic constraints (e.g., a partial tree) \cite{Struyf06-KDID:proc}.
            \end{itemize}
     \item \optionNameStyle{MaxSize}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive integer or \formatOneElement{Infinity}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Infinity}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  sets the maximum size for Garofalakis pruning \cite{Garofalakis03:jrnl, Struyf06-KDID:proc}.
            \end{itemize}
     \item \optionNameStyle{MaxError}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive real number of \formatOneElement{Infinity}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: sets the maximum error for Garofalakis pruning.
            \end{itemize}
     \item \optionNameStyle{MaxDepth}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive integer or \formatOneElement{Infinity}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{-1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: \clus{} will build trees with the depth that does not exceed the specified value. In the context of rule ensemble learning \cite{Aho2009},
+                this sets the average maximum depth of trees that are then converted into rules and a value of 3 seems to work fine.
            \end{itemize}
-\end{itemize}
-
-
-
-
-\begin{itemize}
-	\item {\tt Syntactic = $o$} : sets the file with syntactic constraints (e.g., a partial tree) \cite{Struyf06-KDID:proc}.
-	\item {\tt MaxSize = $o$} : sets the maximum size for Garofalakis pruning \cite{Garofalakis03:jrnl, Struyf06-KDID:proc}; $o$ can be a positive integer or {\tt Infinity}.
-	\item {\tt MaxError = $o$} : sets the maximum error for Garofalakis pruning; $o$ is a positive real or {\tt Infinity}.
-	\item {\tt MaxDepth = $o$} : $o$ is a positive integer or {\tt Infinity}. \clus{} will build trees with depth at most $o$. In the context of rule ensemble learning \cite{Aho2009}, this sets the average maximum depth of trees that are then converted into rules and a value of 3 seems to work fine.
 \end{itemize}
