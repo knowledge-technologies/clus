@@ -16,9 +16,9 @@
         \item \optionDescrption{}: the distance measure which is used when finding the nearest neighbours.        
         This option (together with the option \optionNameStyle{AttributeWeighting}) defines the distance measures used in nearest neighbour search:
         \begin{itemize}
-            \item \optionDefaultValueStyle{euclidean}: $d(a, b) = \sqrt{\sum_i w_i d_i(a_i, b_i)^2}$,
-            \item \optionDefaultValueStyle{manhattan}: $d(a, b) = \sum_i w_i d_i(a_i, b_i)$,
-            \item \optionDefaultValueStyle{chebyshev}: $d(a, b) = \max_i w_i d_i(a_i, b_i)$,
+            \item \formatOneElement{euclidean}: $d(a, b) = \sqrt{\sum_i w_i d_i(a_i, b_i)^2}$,
+            \item \formatOneElement{manhattan}: $d(a, b) = \sum_i w_i d_i(a_i, b_i)$,
+            \item \formatOneElement{chebyshev}: $d(a, b) = \max_i w_i d_i(a_i, b_i)$,
         \end{itemize}
         where $a$ and $b$ are vectors of descriptive attributes, the weights $w_i$ are defined by the option \optionNameStyle{AttributeWeighting},
         and $d_i$ is the distance in the space of the $i$-th attribute.
@@ -28,17 +28,17 @@
     \end{itemize}
     \item \optionNameStyle{SearchMethod}:
     \begin{itemize}
-        \item \optionPossibleValues{}: {\tt BruteForce}, {\tt VP-tree} or {\tt KD-tree}
+        \item \optionPossibleValues{}: an element of \optionPossibleValuesList{BruteForce, VP-tree, KD-tree}
         \item \optionDefaultValue{}: \optionDefaultValueStyle{BrutForce}
-        \item \optionDescrption{}: the method that is used when finding the nearest neighbors. If the number of attributes is high, {\tt BruteForce}
+        \item \optionDescrption{}: the method that is used when finding the nearest neighbors. If the number of attributes is high, \formatOneElement{BruteForce}
         may be the fastest, since the structures such as VP- and KD-trees suffer from the \emph{curse of dimensionality}.
     \end{itemize}
     \item \optionNameStyle{DistanceWeighting}:
     \begin{itemize}
-        \item \optionPossibleValues{}: {\tt constant}, {\tt 1-d} or {\tt 1/d}
+        \item \optionPossibleValues{}: an element of \optionPossibleValuesList{constant,1-d,1/d}
         \item \optionDefaultValue{}: \optionDefaultValueStyle{constant}
-        \item \optionDescrption{}: When making predictions for a new example, this option is used to weight the contributions of the neighbors. The option {\tt constant}
-        is equivalent to no weighting, whereas the options {\tt 1-d} and {\tt 1/d} respectively correspond to the weights that equal
+        \item \optionDescrption{}: When making predictions for a new example, this option is used to weight the contributions of the neighbors. The option \formatOneElement{constant}
+        is equivalent to no weighting, whereas the options \formatOneElement{1-d} and \formatOneElement{1/d} respectively correspond to the weights that equal
         $1 - d(\text{example, neighbour})$ and $1 / (\varepsilon + d(\text{example, neighbour}))$, where $\varepsilon = 0.001$ prevents zero-division
         problems.
     \end{itemize}

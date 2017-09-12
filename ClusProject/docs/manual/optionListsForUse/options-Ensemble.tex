@@ -53,25 +53,25 @@
            \end{itemize}
     \item \optionNameStyle{PrintAllModels}:
            \begin{itemize}
-                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
+                \item \optionPossibleValues{}: an element of  \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: specifies whether the base models are included in the \texttt{.out} file.
            \end{itemize}
     \item \optionNameStyle{PrintAllModelFiles}:
            \begin{itemize}
-                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: If \formatOneElement{Yes}, \clus\ will save all base-level models of an ensemble in the model file. The default setting prevents creating very large model files.
            \end{itemize}
     \item \optionNameStyle{PrintAllModelInfo}:
            \begin{itemize}
-                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: If \formatOneElement{Yes}, \clus\ will include additional model information in the \texttt{.out} file.
            \end{itemize}
     \item \optionNameStyle{PrintPaths}:
            \begin{itemize}
-                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}:If \formatOneElement{Yes}, for each tree, the path that is followed by each instance in that tree will be printed to a file named {\tt tree\_i.path}.  The default setting is \texttt{No}. Currently, the setting is only implemented for \formatOneElement{Bagging} and \formatOneElement{RForest}. This setting was used in random forest based feature induction, see \cite{Vens2011} for details
                 %, and the following directory for an example:  
@@ -81,7 +81,7 @@
            \end{itemize}
     \item \optionNameStyle{Optimize}:
            \begin{itemize}
-                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: If set to \formatOneElement{Yes}, \clus\ will optimize memory usage during learning. In that case, the tree induction/predictive error computation procedure is slightly modified.
                 For example, the predictions of the ensemble are updated every time a new tree is grown.
@@ -89,13 +89,13 @@
            \end{itemize}
     \item \optionNameStyle{OOBestimate}:
            \begin{itemize}
-                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}:  If \formatOneElement{Yes}, out-of-bag estimate of the performance of the ensemble will be done.
            \end{itemize}
     \item \optionNameStyle{FeatureRanking}:
            \begin{itemize}
-                \item \optionPossibleValues{}:  \optionPossibleValuesList{None, RForest, GENIE3, SYMBOLIC}
+                \item \optionPossibleValues{}:  an element of \optionPossibleValuesList{None, RForest, GENIE3, SYMBOLIC}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
                 \item \optionDescrption{}: If set to non-default value, the specified ranking will be computed in addition to the ensemble predictive model.
                     \begin{itemize}
@@ -106,7 +106,7 @@
            \end{itemize}
     \item \optionNameStyle{FeatureRankingPerTarget}:
            \begin{itemize}
-                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
+                \item \optionPossibleValues{}:an element of  \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: If the \formatOneElement{FeatureRanking}, the \textit{number of targets} additional feature rankings are computed, each one only with respect to one target.
                 This option is ignored when the additional rankings are the same as the original one, e.g., when there is only one target or \formatOneElement{FeatureRanking} is set to \formatOneElement{SYMBOLIC}.
@@ -120,13 +120,13 @@
            \end{itemize}
     \item \optionNameStyle{SortRankingByRelevance}:
            \begin{itemize}
-                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
                 \item \optionDescrption{}: If set to \formatOneElement{Yes}, the attributes in the \texttt{.fimp} file are sorted decreasingly by relevance. Otherwise, they are in the same as in \texttt{.arff} file.
            \end{itemize}
     \item \optionNameStyle{WriteEnsemblePredictions}:
            \begin{itemize}
-                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: If set to \formatOneElement{Yes}, the predictions of the ensemble for the training set are written to \texttt{{\em filename}.ens.train.preds}.
                 If the option \formatOneElement{TestSet} is also specified,  the predictions of the ensemble for the testing set are written to \texttt{{\em filename}.ens.test.preds}.

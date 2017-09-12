@@ -1,0 +1,160 @@
+\section{HMLC}
+Settings for hierarchical multi-label classification. Figure~\ref{settings-hmc:fig} summarizes these settings briefly. If the hierarchy is \formatOneElement{Tree},
+possible values of a HML attribute are given as
+\begin{verbatim}
+@attribute myAttr hierarchical L1,L1<HSeparator>L1.1,L1<HSeparator>L1.1<HSeparator>L1.1.1, ...
+\end{verbatim}
+i.e., as a comma separated list of all paths from the root label(s) that does not necessarily end in a leaf of hierarchy.
+If the hierarchy is \formatOneElement{DAG}, the possible values of a HML attribute are given as
+\begin{verbatim}
+@attribute myAttr hierarchical L1,L1<HSeparator>L1.1,L1.1<HSeparator>L1.1.1, ...
+\end{verbatim}
+i.e., as a comma separated list of all child-parent pairs. The option \optionNameStyle{HSeparator} is defined below.
+
+\begin{itemize}
+    \item \optionNameStyle{Type}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Tree, DAG}
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{Tree}
+                \item \optionDescrption{}: specifies the hierarchy type: tree or directed acyclic graph \cite{Vens08:jrnl}
+           \end{itemize}
+    \item \optionNameStyle{Distance}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{WeightedEuclidean}   
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{WeightedEuclidean}
+                \item \optionDescrption{}: internally, a list of relevant labels in the hierarchy (for a given example) is transformed into a vector of zeros and ones. The distance between
+                two such vectors $u$ and $v$ is then computed as
+                $$
+                d(u, v) = \sqrt{\sum_i w_i (u[i] - v[i])^2}\text{,}
+                $$
+                where the weight $w_i$ on the depth $d$ is defined by \optionNameStyle{WType}.
+           \end{itemize}
+    \item \optionNameStyle{WType}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{ExpSumParentWeight, ExpAvgParentWeight, ExpMinParentWeight, ExpMaxParentWeight, NoWeight}
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{ExpSumParentWeight}
+                \item \optionDescrption{}: if set to \formatOneElement{NoWeight}, all weights equal $1$. Otherwise, if the \optionNameStyle{Type} is set to \formatOneElement{Tree}, the
+                weight $w$ on the depth $d$ is defined as $w = w_0^d$, where $w_0$ is specified by \optionNameStyle{WParam}. \optionNameStyle{Type} is set to \formatOneElement{DAG}, then the
+                the weight $w$ is computed as sum/average/minimum/maximum of parents' weights, multiplied by $w_0$.
+           \end{itemize}
+    \item \optionNameStyle{WParam}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: a real number from the interval $(0, 1]$
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{0.75}
+                \item \optionDescrption{}: specifies, how fast the weights of the labels decrease with the depth in the hierarchy (\cite{Vens08:jrnl}, Section 4.1)
+           \end{itemize}
+    \item \optionNameStyle{HSeparator}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: a character
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{.}
+                \item \optionDescrption{}: is the separator used in the notation of values of the hierarchical domain (typically \formatOneElement{/} or \formatOneElement{.}) 
+           \end{itemize}
+    \item \optionNameStyle{EmptySetIndicator}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: a character
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{n}
+                \item \optionDescrption{}: the symbol used to indicate the empty set
+           \end{itemize}
+    \item \optionNameStyle{OptimizeErrorMeasure}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{AverageAUROC, AverageAUPRC, WeightedAverageAUPRC, PooledAUPRC}
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{PooledAUPRC}
+                \item \optionDescrption{}: \clus{} can automatically optimize the \optionNameStyle{FTest} setting (see earlier). This parameter indicates what criterion should be maximized for this (\cite{Vens08:jrnl}, Section 5.2)
+                	\begin{itemize}
+                    \item \formatOneElement{AverageAUROC}: average of the areas under the class-wise ROC curves
+                    \item \formatOneElement{AverageAUPRC}: average of the areas under the class-wise precision-recall curves
+                    \item \formatOneElement{WeightedAverageAUPRC}: similar to \formatOneElement{AverageAUPRC}, but each class's contribution is weighted by its relative frequency
+                    \item \formatOneElement{PooledAUPRC}: area under the average (or pooled) precision-recall curve
+                \end{itemize}
+           \end{itemize}
+    \doNotShowThis{\item \optionNameStyle{DefinitionFile}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: ???
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
+                \item \optionDescrption{}: ???
+           \end{itemize}
+    \item \optionNameStyle{NoRootPredictions}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: ???
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
+                \item \optionDescrption{}: ???
+           \end{itemize}
+    \item \optionNameStyle{PruneInSig}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: ???
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{0.0}
+                \item \optionDescrption{}: ???
+           \end{itemize}
+    \item \optionNameStyle{Bonferroni}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: ???
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
+                \item \optionDescrption{}: ???
+           \end{itemize}
+    \item \optionNameStyle{SingleLabel}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: ???
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
+                \item \optionDescrption{}: ???
+           \end{itemize}
+    \item \optionNameStyle{CalculateErrors}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: ???
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
+                \item \optionDescrption{}: ???
+           \end{itemize}
+       }
+    \item \optionNameStyle{ClassificationThreshold}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: a real number from the interval $[0, 1]$ or a list of such values
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
+                \item \optionDescrption{}:  The original tree constructed by \clus{} contains a vector of predicted probabilities (one for each class) in each leaf.
+                Such a probabilistic prediction can be converted into a set of labels by applying a threshold $t$: all labels that are predicted with probability $\geq t$ are in the predicted set.
+                \clus{} will output for each value in the set a tree in which the predicted label sets are constructed with this particular threshold.
+                So, if \optionNameStyle{ClassificationThreshold} is set to \formatOneElement{0.5, 0.75, 0.80, 0.90, 0.95}, the output file will contain 5 trees corresponding to the thresholds 0.5, 0.75, 0.80, 0.90 and 0.95.
+           \end{itemize}
+    \item \optionNameStyle{RecallValues}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: a real number from the interval $[0, 1]$ or a list of such values
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
+                \item \optionDescrption{}: For each value, \clus{} will output the average of the precisions over all class-wise precision-recall curves that correspond to the particular recall value in the output file.
+           \end{itemize}
+    \item \optionNameStyle{EvalClasses}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: a string (path to the file)
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
+                \item \optionDescrption{}:  If this is set to \formatOneElement{None}, \clus{} computes average error measures across all classes in the class hierarchy. Otherwise, then the error measures are only computed with regard to the classes given in the file, specified under this option. Each line of the file contains one label is of form
+                \texttt{<root><HSeparator>...<HSeparator><our class>} if the hierarchy is \formatOneElement{Tree}, and \texttt{<our class>} if the hierarchy is \formatOneElement{DAG}.
+           \end{itemize}
+    \item \optionNameStyle{MEstimate}:
+           \begin{itemize}
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
+                \item \optionDescrption{}: if set to {\tt Yes}, \clus{} will apply an m-estimate in the prediction vector of each leaf. For each leaf and each label, define $T =$ total training examples and $P =$ number of positive training examples. With the m-estimate, instead of predicting $P/T$ for the given label, we predict $(P + p T') /
+                (T+T')$, i.e. we act as if we have seen $T'$ extra (``virtual'') examples of
+                which $p$ are positive, where $T'$ and $p$ are parameters. In the \clus{}
+                implementation, $T'=1$ and $p$ is the proportion of positive examples in the full
+                training set. So the predictions in the leaf for a given label are interpreted as $(P+p) / (T+1)$.
+           \end{itemize}
+\end{itemize}
+
+
+\begin{figure}[htb]
+	\hrule\vspace{1em}
+	\begin{verbatim}
+	[Hierarchical]
+	Type = Tree                         % Tree or DAG hierarchy?
+	WType = ExpAvgParentWeight          % aggregation of class weights
+	WParam = 0.75                       % parameter w_0
+	HSeparator = /                      % separator used in class names
+	EmptySetIndicator = n               % symbol for empty set
+	OptimizeErrorMeasure = PooledAUPRC  % FTest optimization strategy
+	ClassificationThreshold = None      % threshold for "positive"
+	RecallValues = None                 % where to report precision
+	EvalClasses = None                  % classes to evaluate
+	MEstimate = No                      % whether to use m-estimate in the prediction vector
+	\end{verbatim}
+	\hrule
+	\caption{Settings specific for hierarchical multi-label classification}
+	\label{settings-hmc:fig}
+\end{figure}
