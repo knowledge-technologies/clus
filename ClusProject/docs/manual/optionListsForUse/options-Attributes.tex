@@ -1,43 +1,50 @@
 \section{Attributes}
-
+Note: all indices in this section are 1-based.
 
 \begin{itemize}
     \item \optionNameStyle{Target}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an index or an interval or a comma-separated string of the first two options, e.g. \formatOneElement{21} or \formatOneElement{1-10} or \formatOneElement{1-10,21,314}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Default}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies the indices of the target attributes, i.e., the attributes which the predictions are made for.
+                If this setting is not specified, then it is equal to the index of the last attribute in the training dataset, i.e., the last attribute is the target by default.
+                 This setting overrides the \optionNameStyle{Disable} setting. This is convenient if one needs to build models that predict only a subset $S$ of all available target attributes $T$
+                 (and other target attributes should not be used as descriptive attributes). Because \optionNameStyle{Target} overrides \optionNameStyle{Disable}, this can be achieved
+                 by setting \formatOneElement{Disable} to $T$ \formatOneElement{Target} to $S$. 
            \end{itemize}
     \item \optionNameStyle{Clustering}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an index or an interval or a comma-separated string of the first two options, e.g. \formatOneElement{21} or \formatOneElement{1-10} or \formatOneElement{1-10,21,314}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Default}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: The predictive clustering heuristic that is used to guide the model construction is computed with regard to these atrributes. If this setting is not specified, then the clustering attributes are by default equal to the target attributes.
            \end{itemize}
     \item \optionNameStyle{Descriptive}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an index or an interval or a comma-separated string of the first two options, e.g. \formatOneElement{21} or \formatOneElement{1-10} or \formatOneElement{1-10,21,314}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Default}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: sets the range of attributes that can be used in the descriptive part of the models. For a PCT, these attributes will be used to construct the tests in the internal nodes of the tree. For a set of PCRs, these attributes will appear in the rule conditions. If this setting is not specified, then the descriptive attributes are all attributes that are not \optionNameStyle{Target}, \optionNameStyle{Key}, or \optionNameStyle{Disable}.
            \end{itemize}
     \item \optionNameStyle{Key}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an index or an interval or a comma-separated string of the first two options, e.g. \formatOneElement{21} or \formatOneElement{1-10} or \formatOneElement{1-10,21,314}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: sets the range of key attributes. A key attribute or a set of key attributes can be used as an example identifier. For example, if each instance represents a person, then the key attribute could store the person's name.
+                Key attributes are not actually used by the induction algorithm, but they are written to output files, for example, to ARFF files with predictions. See \texttt{[Output]/WritePredictions} for an example.
            \end{itemize}
     \item \optionNameStyle{Disable}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an index or an interval or a comma-separated string of the first two options, e.g. \formatOneElement{21} or \formatOneElement{1-10} or \formatOneElement{1-10,21,314}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  sets the range of attributes that are to be ignored by \clus. These attributes are not read into memory.
            \end{itemize}
     \item \optionNameStyle{Weights}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a nonnegative positive real number or a list of such numbers or \formatOneElement{Normalize}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Normalize}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: sets the relative weights $w_i$ of the attributes $x_i$ in the clustering heuristic. If given as a list, the weight $w_i$ equals the $i$-th element of the list. If given as a single number, e.g., $1.0$
+                all the weights of all clustering attributes are set to this weight. To use weights $w_i = 1/\mathrm{Var}(x_i)$, with $\mathrm{Var}(x_i)$ the variance of attribute $x_i$ in the input data, use (the default option) \formatOneElement{Normalize}.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{ClusteringWeights}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -50,27 +57,11 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
     \item \optionNameStyle{GIS}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an index or an interval or a comma-separated string of the first two options, e.g. \formatOneElement{21} or \formatOneElement{1-10} or \formatOneElement{1-10,21,314}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies the indices of GIS attributes
            \end{itemize}
-\end{itemize}
-
-
-
-
-\begin{itemize}
-	\item {\tt Target = $r$} : sets the range of target attributes. The predictive clustering model will predict these attributes. If this setting is not specified, then it is equal to the index of the last attribute in the training dataset, i.e., the last attribute is the target by default. This setting overrides the \texttt{Disable} setting. This is convenient if one needs to build models that predict only a subset $S$ of all available target attributes $T$ (and other target attributes should not be used as descriptive attributes). Because {\tt Target} overrides {\tt Disable}, one can use the settings {\tt Disable = $T$} and {\tt Target = $S$} to achieve this. 
-	
-	\item {\tt Clustering = $r$} : sets the range of clustering attributes. The predictive clustering heuristic that is used to guide the model construction is computed with regard to these atrributes. If this setting is not specified, then the clustering attributes are by default equal to the target attributes.
-	
-	\item {\tt Descriptive = $r$} : sets the range of attributes that can be used in the descriptive part of the models. For a PCT, these attributes will be used to construct the tests in the internal nodes of the tree. For a set of PCRs, these attributes will appear in the rule conditions. If this setting is not specified, then the descriptive attributes are all attributes that are not target, key, or disabled.
-	
-	\item {\tt Disable = $r$} : sets the range of attributes that are to be ignored by \clus. These attributes are also not read into memory.
-	
-	\item {\tt Key = $r$} : sets the range of key attributes. A key attribute or a set of key attributes can be used as an example identifier. For example, if each instance represents a person, then the key attribute could store the person's name. Key attributes are not actually used by the induction algorithm, but they are written to output files, for example, to ARFF files with predictions. See \texttt{[Output]/WritePredictions} for an example.
-	
-	\item {\tt Weights = $o$} : sets the relative weights of the different attributes in the clustering heuristic. To set the weights of all clustering attributes to 1.0, use {\tt Weights = 1}. To use as  weights $w_i = 1/\mathrm{Var}(a_i)$, with $\mathrm{Var}(a_i)$ the variance of attribute $a_i$ in the input data, use {\tt Weights = Normalize}.
 \end{itemize}

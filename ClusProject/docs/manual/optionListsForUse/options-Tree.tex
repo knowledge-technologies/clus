@@ -4,10 +4,28 @@
 \begin{itemize}
     \item \optionNameStyle{Heuristic}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Default,ReducedError,Gain,GainRatio,VarianceReduction,MEstimate,Morishita,DispersionAdt,DispersionMlt,RDispersionAdt,RDispersionMlt,VarianceReductionGIS}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Default}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Sets the heuristic function that is used for evaluating the clusters (splits) when generating trees or rules. Please note that this setting is used for trees as well as rules.
+                %	
+                \begin{itemize}
+                    \item \formatOneElement{Default}: default heuristic. If learning trees this is equal to \formatOneElement{VarianceReduction}, if learning rules this setting is equal to \formatOneElement{RDispersionMlt}.
+                    \item \formatOneElement{ReducedError}: reduced error heuristic, can be used for trees.
+                    \item \formatOneElement{Gain}: information gain heuristic, can be used for classification trees.
+                    \item \formatOneElement{GainRatio}: information gain ratio heuristic \cite{Quinlan1986}, can be used for classification trees.
+                    %\item \formatOneElement{SSPD}: sum of squared distances, can be used for regression trees,
+                    \item \formatOneElement{VarianceReduction}: variance reduction heuristic, can be used for trees.
+                    \item \formatOneElement{MEstimate}: $m$-estimate heuristic \cite{Cestnik1990}, can be used for classification trees.
+                    \item \formatOneElement{Morishita}: Morishita heuristic \cite{Sese2004}, can be used for trees.% Is this correct?
+                    \item \formatOneElement{DispersionAdt}: additive dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules.
+                    \item \formatOneElement{DispersionMlt}: multiplicative dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules.
+                    \item \formatOneElement{RDispersionAdt}: additive relative dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules.
+                    \item \formatOneElement{RDispersionMlt}: multiplicative relative dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules, the default heuristic for learning predictive clustering rules.
+                    %\item \formatOneElement{StructuredData}: ??????????????????
+                    \item \formatOneElement{VarianceReductionGIS}: used when GIS-attributes are present in the data
+                \end{itemize}
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{HeuristicComlexity}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -32,12 +50,26 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{DTW}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
     \item \optionNameStyle{PruningMethod}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Default, None, C4.5, M5, M5Multi, ReducedErrorVSB, Garofalakis, GarofalakisVSB, CartVSB, CartMaxSize}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Default}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Sets the post-pruning method for trees.
+                \begin{itemize}
+                    \item\formatOneElement{Default}: default pruning method for trees, if learning classification trees this is equal to\formatOneElement{C4.5}, if learning regression trees this is equal to\formatOneElement{M5}. % Is this true -> Yes
+                    \item\formatOneElement{None}: no post-pruning of learned trees is performed.
+                    \item\formatOneElement{C4.5}: pruning as in C4.5 \cite{Quinlan1993}, can be used for classification trees,
+                    \item\formatOneElement{M5}: pruning as in M5 \cite{Quinlan1992},	can be used for regression trees,
+                    \item\formatOneElement{M5Multi}: experimental modification to M5 \cite{Quinlan1992} pruning for multi-target regression trees.
+                    \item\formatOneElement{ReducedErrorVSB}: reduced error pruning where the error is estimated on a separate validation data set (VSB = validation set based pruning).
+                    \item\formatOneElement{Garofalakis}: pruning method proposed by Garofalakis et al. \cite{Garofalakis03:jrnl} used for constraint induction of trees.
+                    \item\formatOneElement{GarofalakisVSB}: same as\formatOneElement{Garofalakis}, but the error is estimated on a separate validation data set.
+                    \item\formatOneElement{CartVSB}: pruning method that is implemented in CART \cite{Breiman1984}, and uses a separate validation set. It seems to work better than M5 on the multi-target regression data sets.
+                    \item\formatOneElement{CartMaxSize}: pruning method that is also implemented in CART \cite{Breiman1984}, but uses cross-validation to tune the pruning parameter to achieve the desired tree size.
+                \end{itemize}
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{M5PruningMult}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -50,25 +82,30 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: ???
            \end{itemize}
+   }
     \item \optionNameStyle{FTest}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a real number from the interval $[0, 1]$ or a list of such numbers, e.g., \formatOneElement{0.001} or \formatOneElement{[0.001,0.005,0.01,0.05,0.1,0.125]}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{1.0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: sets the f-test stopping criterion for regression; a node will only be split if a statistical F-test indicates a significant (at level $r$) reduction of variance inside the subsets. The f-test level can also be optimized by providing a vector of levels. In that case, the (smallest) f-test level will be chosen that minimizes the RMSE measure on the validation set provided (using the \optionNameStyle{PruneSet} setting).
            \end{itemize}
     \item \optionNameStyle{BinarySplit}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes,No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies whether only binary splits are used in the tree induction
            \end{itemize}
     \item \optionNameStyle{ConvertToRules}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{No, Leaves, AllNodes}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  \clus{} can convert a tree (or ensemble of trees) into a set of rules. This setting can be used for learning rule ensembles \cite{Aho2009}.
+                \begin{itemize}
+                    \item \formatOneElement{Leaves}: only tree leaves are converted to rules
+                    \item \formatOneElement{AllNodes}: the internal nodes of tree(s) are converted also
+                \end{itemize}
            \end{itemize}
-    \item \optionNameStyle{AlternativeSplits}:
+    \doNotShowThis{\item \optionNameStyle{AlternativeSplits}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
@@ -86,30 +123,32 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
     \item \optionNameStyle{SplitSampling}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a nonnegative integer $s$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: the split heuristic can be calculated on a sample of the training set. For $s > 0$, the training set is, for each split, sampled with replacement to form a sample of size $s$. Otherwise, the training set is used as is. 
            \end{itemize}
     \item \optionNameStyle{MissingClusteringAttrHandling}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Ignore,EstimateFromTrainingSet,EstimateFromParentNode}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{EstimateFromParentNode}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: determines how we handle the case where when searching evaluating candidate split all examples have only missing values for a clustering attribute, in one of the branches.
            \end{itemize}
     \item \optionNameStyle{MissingTargetAttrHandling}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Zero, DefaultModel,ParentNode}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{ParentNode}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: determines how we calculate prototype (i.e., prediction) if all the tuple in leaf node have only missing values for target attriute 
            \end{itemize}
     \item \optionNameStyle{InductionOrder}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{DepthFirst,BestFirst}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{DepthFirst}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies the tree induction order (depth first search or best first search)
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{EntropyType}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -164,45 +203,5 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Exact}
                 \item \optionDescrption{}: ???
            \end{itemize}
-\end{itemize}
-
-
-\begin{itemize}
-	\item {\tt FTest = $r$} : sets the f-test stopping criterion for regression; a node will only be split if a statistical F-test indicates a significant (at level $r$) reduction of variance inside the subsets. The f-test level can also be optimized by providing a vector of levels, e.g. {\tt FTest = [0.001,0.005,0.01,0.05,0.1,0.125]}. In that case, the (smallest) f-test level will be chosen that minimizes the RMSE measure on the validation set provided (using the {\tt PruneSet} setting).
-	\item {\tt ConvertToRules = $o$} : $o$ is an element of \texttt{\{No, Leaves, AllNodes\}}. \clus{} can convert a tree (or ensemble of trees) into a set of rules. The default setting is \texttt{No}, if set to \texttt{Leaves}, only tree leaves are converted to rules, if set to \texttt{AllNodes}, also the internal nodes of tree(s) are converted. This setting can be used for learning rule ensembles \cite{Aho2009}.
-	\item {\tt SplitSampling = $s$} : the split heuristic can be calculated on a sample of the training set. For $s > 0$, the training set is, for each split, sampled with replacement to form a sample of size $s$. The default setting is $s = {\tt None}$, the training set is used as is. 
-	\item \texttt{Heuristic = $o$} : $o$ is an element of \{\raggedright\texttt{Default, ReducedError, Gain, GainRatio, % SSPD,
-		VarianceReduction, MEstimate, Morishita, DispersionAdt, DispersionMlt, RDispersionAdt, RDispersionMlt%, GeneticDistance, SemiSupervised, VarianceReductionMissing
-	}\}. Sets the heuristic function that is used for evaluating the clusters (splits) when generating trees or rules. Please note that this setting is used for trees as well as rules.
-	%	
-	\begin{itemize}
-		\item \texttt{Default}: default heuristic, if learning trees this is equal to \texttt{VarianceReduction}, if learning rules this setting is equal to \texttt{RDispersionMlt}.
-		\item \texttt{ReducedError}: reduced error heuristic, can be used for trees.
-		\item \texttt{Gain}: information gain heuristic, can be used for classification trees.
-		\item \texttt{GainRatio}: information gain ratio heuristic \cite{Quinlan1986}, can be used for classification trees.
-		%\item \texttt{SSPD}: sum of squared distances, can be used for regression trees,
-		\item \texttt{VarianceReduction}: variance reduction heuristic, can be used for trees.
-		\item \texttt{MEstimate}: $m$-estimate heuristic \cite{Cestnik1990}, can be used for classification trees.
-		\item \texttt{Morishita}: Morishita heuristic \cite{Sese2004}, can be used for trees.% Is this correct?
-		\item \texttt{DispersionAdt}: additive dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules.
-		\item \texttt{DispersionMlt}: multiplicative dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules.
-		\item \texttt{RDispersionAdt}: additive relative dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules.
-		\item \texttt{RDispersionMlt}: multiplicative relative dispersion heuristic \cite{Zenko07} pages 37--38, can be used for rules, the default heuristic for learning predictive clustering rules.
-		%\item \texttt{GeneticDistance}:
-		%\item \texttt{SemiSupervised}:
-		%\item \texttt{VarianceReductionMissing}:
-	\end{itemize}
-	\item \texttt{PruningMethod = $o$} : $o$ is an element of \{\raggedright\texttt{Default, None, C4.5, M5, M5Multi, ReducedErrorVSB, Garofalakis, GarofalakisVSB, CartVSB, CartMaxSize}\}. Sets the post-pruning method for trees.
-	\begin{itemize}
-		\item \texttt{Default}: default pruning method for trees, if learning classification trees this is equal to \texttt{C4.5}, if learning regression trees this is equal to \texttt{M5}. % Is this true -> Yes
-		\item \texttt{None}: no post-pruning of learned trees is performed.
-		\item \texttt{C4.5}: pruning as in C4.5 \cite{Quinlan1993}, can be used for classification trees,
-		\item \texttt{M5}: pruning as in M5 \cite{Quinlan1992},	can be used for regression trees,
-		\item \texttt{M5Multi}: experimental modification to M5 \cite{Quinlan1992} pruning for multi-target regression trees.
-		\item \texttt{ReducedErrorVSB}: reduced error pruning where the error is estimated on a separate validation data set (VSB = validation set based pruning).
-		\item \texttt{Garofalakis}: pruning method proposed by Garofalakis et al. \cite{Garofalakis03:jrnl} used for constraint induction of trees.
-		\item \texttt{GarofalakisVSB}: same as \texttt{Garofalakis}, but the error is estimated on a separate validation data set.
-		\item \texttt{CartVSB}: pruning method that is implemented in CART \cite{Breiman1984}, and uses a separate validation set. It seems to work better than M5 on the multi-target regression data sets.
-		\item \texttt{CartMaxSize}: pruning method that is also implemented in CART \cite{Breiman1984}, but uses cross-validation to tune the pruning parameter to achieve the desired tree size.
-	\end{itemize}
+    }
 \end{itemize}

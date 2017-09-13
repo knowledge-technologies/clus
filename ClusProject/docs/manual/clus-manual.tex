@@ -70,7 +70,7 @@
 
 \title{\clus: User's Manual}
 
-\author{Jan Struyf, Bernard \v{Z}enko, Hendrik Blockeel, Celine Vens, Sa\v{s}o D\v{z}eroski}
+\author{Jan Struyf, Bernard \v{Z}enko, Hendrik Blockeel, Celine Vens, Matej Petkovi\'{c},\\ Toma\v{z} Stepisnik Perdih, Vanja Mileski, Martin Breskvar, Jurica Levati\'{c}, Sa\v{s}o D\v{z}eroski}
 
 \maketitle
 
@@ -578,7 +578,7 @@ In the following, we use the convention that $n$ is an integer, $r$ is a real, $
 \clus{} is run from the command line.  It takes a number of command line parameters that affect its behavior.
 
 \begin{itemize}
-\item {\tt -xval} : in addition to learning a single model from the whole input dataset, perform a cross-validation.  The XVal setting (page~\pageref{sett:xval}) determines the number of folds; the RandomSeed setting (page~\pageref{sett:seed}) initializes the random generator that determines the folds.
+\item {\tt -xval} : in addition to learning a single model from the whole input dataset, perform a cross-validation.  The XVal setting (page~\pageref{sett:xval}) determines the number of folds; the RandomSeed setting (page \pageref{sett:randomSeed}) initializes the random generator that determines the folds.
 
 \item {\tt -fold} $N$: run only fold $N$ of the cross-validation.
 
@@ -612,10 +612,13 @@ In the following, we use the convention that $n$ is an integer, $r$ is a real, $
 \chapter{Output Files}
 \label{ch:output}
 
+
+\section{Output File}
+
 When \clus{} is finished, it writes the results of the run into an output file with the name
 {\tt {\em filename}.out}.  An example of such an output file is shown in Figures \ref{output1:fig} to \ref{output4:fig}.
 
-\begin{figure}[tb]
+\begin{figure}[htb]
 \hrule\vspace{1em}
 \begin{verbatim}
 Clus run "weather"
@@ -680,7 +683,7 @@ OutputDatabaseQueries = No
 \label{output1:fig}
 \end{figure}
 
-\begin{figure}[tb]
+\begin{figure}[htb]
 \hrule\vspace{1em}
 \small
 \begin{verbatim}
@@ -711,7 +714,7 @@ MSENominal = No
 \label{output2:fig}
 \end{figure}
 
-\begin{figure}[tb]
+\begin{figure}[htb]
 \hrule\vspace{1em}
 \footnotesize
 \begin{verbatim}
@@ -759,7 +762,7 @@ Pearson correlation coefficient
 \label{output3:fig}
 \end{figure}
 
-\begin{figure}[tb]
+\begin{figure}[htb]
 \hrule\vspace{1em}
 \begin{verbatim}
 Default Model
@@ -790,11 +793,11 @@ outlook = sunny
 \label{output4:fig}
 \end{figure}
 
-\section{Used Settings}
+\subsection{Used Settings}
 
 The first part of {\tt {\em filename}.out} (shown in Figures \ref{output1:fig} and \ref{output2:fig}) contains the values of the settings that were used for this run of \clus{}, in the format used by the settings file.  This part can be copied and pasted to {\tt {\em filename}.s} and modified for subsequent runs.
 
-\section{Evaluation Statistics}
+\subsection{Evaluation Statistics}
 
 The next part contains statistics about the results of this \clus{} run.
 
@@ -806,9 +809,101 @@ For classification trees the information given for each model by default include
 
 For regression trees, this information includes the mean absolute error (MAE), mean squared error (MSE), root mean squared error (RMSE), weighted RMSE, the Pearson correlation coefficient $r$ and it square.  In the weighted RMSE, the weight of a given attribute $A$ is its normalization weight, which is $\frac{1}{\sqrt{\mathrm{Var}(A)}}$, with $\mathrm{Var}(A)$ equal to $A$'s variance in the input data. 
 
-\section{The Models}
+\subsection{The Models}
 
 The output file contains the learned models, represented as decision trees.  The level of detail in which the models are shown is influenced by certain settings.
+
+\section{Fimp File}
+If at least one feature ranking was computed, the corresponding results are given in at least one {\tt .fimp} file. The file contains basic information about the parameters that influence the ranking and the table with the feature relevances.
+
+Currently, we have three ensemble feature ranking methods:
+\begin{itemize}
+    \item Symbolic (random forests, bagging and ensembles of extra trees),
+    \item Genie3 (random forests, bagging and ensembles of extra trees),
+    \item RForest (random forests and bagging),
+\end{itemize}
+
+and we have generalised Relief. All rankings can be computed in the case of classification, (multi-target) regression, (hierarchical) multi-label classification etc.
+
+\subsection{Nomenclature}
+If the ranking algorithm is one of the ensemble feature rankings, we produce one fimp for every number of iterations, specified under the \texttt{[Ensemble]/Iterations} field. For a given number of iterations, i.e., number of trees, 
+{\tt {\em{filename}}Trees{\em <number of trees>}.fimp} is created. In the case of Relief, only one fimp is produced, namely {\tt {\em{filename}}.fimp}.
+
+\subsection{Structure}
+Every fimp contains
+\begin{itemize}
+    \item header: contains basic description of the ranking(s) computed, e.g., the number of trees (for the ensemble methods) or number of the neighbours (for Relief),
+    \item table with feature importances: each row (except for the table's header) corresponds to one attribute, which is described by
+        \begin{itemize}
+            \item its index in the dataset,
+            \item its name,
+            \item list of ranks in the computed feature rankings,
+            \item list of importances in the computed feature rankings.
+        \end{itemize}
+\end{itemize}
+
+The columns in the table's header that belongs to feature ranks and importances contain the names of the target attributes, possibly with some additional information:
+\begin{itemize}
+    \item Ensemble methods: no additional information, except for the multi-label classification where the measure that was used in feature ranking computation is specified.
+    \item Relief: The number of iterations and neighbors used in the computation.
+\end{itemize}
+The first ranking, i.e., \texttt{overAll} ranking is the ranking that is computed with respect to all targets. If \optionNameStyle{FeatureRankingPerTarget} is set to \formatOneElement{Yes}
+and there is more than one target attribute, the additional feature rankings are computed. In the exemplary files (see Figs.\ \ref{fig:ranking:ensemble} and \ref{fig:ranking:Relief}), we have two targets,
+namely {\tt T1} and {\tt T2}.
+
+Following the example of the attribute {\tt A1} in Fig.\ \ref{fig:ranking:ensemble}, here is how we read the fimp table. {\tt A1} has index 1 in the dataset.
+It is ranked 4th in the overall ranking and the ranking with respect to the target {\tt T1} (has the lowest importances in these two cases), and is ranked second in the ranking with respect to the target {\tt T2}.
+Its importances in the overall, T1 and T2 ranking are $0.5$, $0.6$ and $1.2$ respectively.
+
+If only one ranking is computed, depending on the {\tt [Ensemble]/SortRankingByRelevance} setting, the table is sorted increasingly by dataset index or decreasingly by the feature importances.
+
+\begin{figure}[htb]
+    \begin{verbatim}
+    Ensemble method: Bagging
+    Ranking method: GENIE3
+    Ensemble size: 10
+    attributeDatasetIndex attributeName [overAllRank, T2Rank, T1Rank] [overAll, T2, T1]
+    -----------------------------------------------------------------------------------
+    1 A1 [4, 4, 2] [0.5, 0.6, 1.2]
+    2 A2 [3, 3, 3] [0.7, 0.8, 0.8]
+    3 A3 [1, 1, 1] [5.3, 4.5, 4.6]
+    4 A4 [2, 2, 4] [2.2  2.1, 0.0]
+    \end{verbatim}
+    \caption{An example of ensemble \texttt{.fimp} file}\label{fig:ranking:ensemble}
+\end{figure}
+
+
+\begin{figure}[htb]
+    \begin{verbatim}
+    Ranking method: Relief with all combinations of
+    numbers of neighbours: [15]
+    numbers of iterations: [300]
+    attributeDatasetIndex attributeName <rank descriptions> <importances descriptions>
+    ----------------------------------------------------------------------------------
+    1 A1 [4, 4, 2, 2] [0.5, 0.6, 1.1, 1.2]
+    2 A2 [3, 3, 3, 3] [0.7, 0.8, 0.8, 0.8]
+    3 A3 [1, 1, 1, 1] [5.3, 4.5, 4.5, 4.6]
+    4 A4 [2, 2, 4, 4] [2.2  2.1  0.1, 0.0]
+    \end{verbatim}
+    \caption{An example of Relief \texttt{.fimp} file, where {\tt <rank descriptions>} are given as {\tt[overallIter300Neigh15Rank, T1Iter300Neigh15Rank, T2Iter300Neigh15Rank]} and
+        {\tt <importances descriptions>} are given as  {\tt [overallIter300Neigh15, T1Iter300Neigh15, T2Iter300Neigh15]}.}\label{fig:ranking:Relief}
+\end{figure}
+
+
+
+%So, we have 5 attributes. For each, six relevances are computed. The corresponding rankings names are of form `<target>Iter<number of iterations>Neigh<number of neighbours>`. In the dataset,
+%there are two targets: `weight` and `height` and we can compute feature ranking in three ways:
+%
+%- for multi-target regression problem with two targets (`overall`)
+%- for the single target regression problem with target `height`
+%- for the single target regression problem with target `weight`
+%
+%Since there are two combinations of parameters, namely `(1, 25)` and `(5, 25)`, we compute six rankings.
+%
+%
+%In the case of ensemble feature ranking, the structure is the same. The names of the rankings depend on the chosen ranking method, and are again self explanatory.
+%
+
 
 \chapter{Developer Documentation}
 \label{ch:devel}

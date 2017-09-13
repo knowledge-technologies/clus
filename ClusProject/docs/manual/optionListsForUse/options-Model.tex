@@ -4,10 +4,11 @@
 \begin{itemize}
     \item \optionNameStyle{MinimalWeight}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive real number
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{2.0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: \clus{} only generates clusters with at least $r$ instances in each subset (tree nodes or rules). This is a standard setting used for pre-pruning of trees and rules.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{MinimalNumberExamples}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -26,23 +27,11 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{10}
                 \item \optionDescrption{}: ???
            \end{itemize}
-    \item \optionNameStyle{ClassWeights}:
-           \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{0.0}
-                \item \optionDescrption{}: ???
-           \end{itemize}
+    }
     \item \optionNameStyle{NominalSubsetTests}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If set to \formatOneElement{No}, only equality tests for nominal attributes are allowed. Otherwise, tests such as \texttt{attr value is an element of \{green, blue, red\}} are allowed also.
            \end{itemize}
 \end{itemize}
-
-
-
-\begin{itemize}
-	\item {\tt MinimalWeight = $r$} : \clus{} only generates clusters with at least $r$ instances in each subset (tree leaves or rules). This is a standard setting used for pre-pruning of trees and rules.
-\end{itemize}
-
