@@ -4,14 +4,14 @@
 \begin{itemize}
     \item \optionNameStyle{K}:
     \begin{itemize}
-        \item \optionPossibleValues{}: a positive integer or a list thereof, e.g., \texttt{10} or \texttt{[1,5,10]}.
+        \item \optionPossibleValues{}: a positive integer or a list thereof, e.g., \formatOneElement{10} or \formatOneElement{[1,5,10]}.
         \item \optionDefaultValue{}: \optionDefaultValueStyle{[1,3]}
         \item \optionDescrption{}: the number(s) of neighbors in the kNN algorithm. Computational complexity of the algorithm equals
         the complexity for the maximal number of neighbors.
     \end{itemize}
     \item \optionNameStyle{Distance}:
     \begin{itemize}
-        \item \optionPossibleValues{}: \texttt{euclidean}, \texttt{manhattan} or \texttt{chebyshev}
+        \item \optionPossibleValues{}: an element of \optionPossibleValuesList{euclidean,manhattan,chebyshev}
         \item \optionDefaultValue{}: \optionDefaultValueStyle{euclidean}
         \item \optionDescrption{}: the distance measure which is used when finding the nearest neighbours.        
         This option (together with the option \optionNameStyle{AttributeWeighting}) defines the distance measures used in nearest neighbour search:
