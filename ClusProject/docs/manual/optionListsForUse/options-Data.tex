@@ -1,12 +1,13 @@
 \section{Data}
-All paths (see, for example \optionNameStyle{File}), can be given as absolute paths or relative paths (relative to the \clus executable).
+All paths (see, for example \optionNameStyle{File}), can be given as absolute paths or relative paths (relative to the \clus{} executable).
 
 \begin{itemize}
     \item \optionNameStyle{File}:
            \begin{itemize}
                 \item \optionPossibleValues{}: a string (path to the file)
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
-                \item \optionDescrption{}: The name of the file that contains the training set. The default value for $s$ is {\tt {\em filename}.arff}.  \clus{} can read compressed ({\tt .arff.zip}) or uncompressed ({\tt .arff}) data files. Path can also be included in the string. 
+                \item \optionDescrption{}: The name of the file that contains the training set. The default value is
+                internally changed to {\tt {\em filename}.arff}.  \clus{} can read compressed ({\tt .arff.zip}) or uncompressed ({\tt .arff}) data files.% Path can also be included in the string. 
            \end{itemize}
     \item \optionNameStyle{TestSet}:
            \begin{itemize}

@@ -33,9 +33,11 @@ i.e., as a comma separated list of all child-parent pairs. The option \optionNam
            \begin{itemize}
                 \item \optionPossibleValues{}: an element of \optionPossibleValuesList{ExpSumParentWeight, ExpAvgParentWeight, ExpMinParentWeight, ExpMaxParentWeight, NoWeight}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{ExpSumParentWeight}
-                \item \optionDescrption{}: if set to \formatOneElement{NoWeight}, all weights equal $1$. Otherwise, if the \optionNameStyle{Type} is set to \formatOneElement{Tree}, the
-                weight $w$ on the depth $d$ is defined as $w = w_0^d$, where $w_0$ is specified by \optionNameStyle{WParam}. \optionNameStyle{Type} is set to \formatOneElement{DAG}, then the
+                \item \optionDescrption{}: if set to \formatOneElement{NoWeight}, all weights equal $1$. Otherwise,
                 the weight $w$ is computed as sum/average/minimum/maximum of parents' weights, multiplied by $w_0$.
+                If the \optionNameStyle{Type} is set to \formatOneElement{Tree}, the
+                weight $w$ on the depth $d$ amounts to $w = w_0^d$. The value of $w_0$ is specified by \optionNameStyle{WParam}.
+                
            \end{itemize}
     \item \optionNameStyle{WParam}:
            \begin{itemize}
@@ -111,7 +113,7 @@ i.e., as a comma separated list of all child-parent pairs. The option \optionNam
                 \item \optionDescrption{}:  The original tree constructed by \clus{} contains a vector of predicted probabilities (one for each class) in each leaf.
                 Such a probabilistic prediction can be converted into a set of labels by applying a threshold $t$: all labels that are predicted with probability $\geq t$ are in the predicted set.
                 \clus{} will output for each value in the set a tree in which the predicted label sets are constructed with this particular threshold.
-                So, if \optionNameStyle{ClassificationThreshold} is set to \formatOneElement{0.5, 0.75, 0.80, 0.90, 0.95}, the output file will contain 5 trees corresponding to the thresholds 0.5, 0.75, 0.80, 0.90 and 0.95.
+                So, if \optionNameStyle{ClassificationThreshold} is set to \formatOneElement{[0.5, 0.75, 0.80, 0.90, 0.95]}, the output file will contain 5 trees corresponding to the thresholds 0.5, 0.75, 0.80, 0.90 and 0.95.
            \end{itemize}
     \item \optionNameStyle{RecallValues}:
            \begin{itemize}

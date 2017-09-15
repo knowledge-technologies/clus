@@ -85,7 +85,7 @@
    }
     \item \optionNameStyle{FTest}:
            \begin{itemize}
-                \item \optionPossibleValues{}: a real number from the interval $[0, 1]$ or a list of such numbers, e.g., \formatOneElement{0.001} or \formatOneElement{[0.001,0.005,0.01,0.05,0.1,0.125]}
+                \item \optionPossibleValues{}: a real number $r$ from the interval $[0, 1]$ or a list of such numbers, e.g., \formatOneElement{0.001} or \formatOneElement{[0.001,0.005,0.01,0.05,0.1,0.125]}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{1.0}
                 \item \optionDescrption{}: sets the f-test stopping criterion for regression; a node will only be split if a statistical F-test indicates a significant (at level $r$) reduction of variance inside the subsets. The f-test level can also be optimized by providing a vector of levels. In that case, the (smallest) f-test level will be chosen that minimizes the RMSE measure on the validation set provided (using the \optionNameStyle{PruneSet} setting).
            \end{itemize}
@@ -101,6 +101,7 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}:  \clus{} can convert a tree (or ensemble of trees) into a set of rules. This setting can be used for learning rule ensembles \cite{Aho2009}.
                 \begin{itemize}
+                	\item \formatOneElement{No}: the tree is not converted to rules
                     \item \formatOneElement{Leaves}: only tree leaves are converted to rules
                     \item \formatOneElement{AllNodes}: the internal nodes of tree(s) are converted also
                 \end{itemize}
@@ -126,9 +127,9 @@
     }
     \item \optionNameStyle{SplitSampling}:
            \begin{itemize}
-                \item \optionPossibleValues{}: a nonnegative integer $s$
+                \item \optionPossibleValues{}: a nonnegative integer $n$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
-                \item \optionDescrption{}: the split heuristic can be calculated on a sample of the training set. For $s > 0$, the training set is, for each split, sampled with replacement to form a sample of size $s$. Otherwise, the training set is used as is. 
+                \item \optionDescrption{}: the split heuristic can be calculated on a sample of the training set. For $n > 0$, the training set is, for each split, sampled with replacement to form a sample of size $n$. Otherwise, the training set is used as is. 
            \end{itemize}
     \item \optionNameStyle{MissingClusteringAttrHandling}:
            \begin{itemize}

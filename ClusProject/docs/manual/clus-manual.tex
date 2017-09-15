@@ -494,9 +494,11 @@ YAL008W,0,1,0,0,0,0,0,0,0,0,0,0,0,...,0,0,0,0,[0.49, 1.01, 1.33, 1.23, 1.32, 1.0
 \chapter{Settings File}
 \label{ch:sett}
 
-The algorithms included in the \clus{} system have a number of parameters that influence their behavior.  Most parameters have a default setting; the specification of a value for such parameters is optional.  For parameters that do not have a default setting or which should get another value than the default, a value must be specified in the settings file, {\tt {\em filename}.s}.
+The algorithms included in the \clus{} system have a number of parameters that influence their behavior. Most parameters have a default setting; the specification of a value for such parameters is optional. For parameters that do not have a default setting or which should get another value than the default, a value must be specified in the settings file, {\tt {\em filename}.s}.
 
-The settings file is structured into sections.  Each parameter belongs to a particular section.  Including the section headers (section names written in brackets) is optional, however; these headers are meant to help users structure the settings and their use is recommended.
+The settings file is structured into sections. Each parameter belongs to a particular section. Including the section headers (section names written in brackets) is necessary,
+since some names of the settings are not unique, e.g., \formatOneElement{Iterations} appear in the sections \texttt{[Ensemble]} and \texttt{SemiSupervised}.
+These headers also help users structure the settings.
 
 We here explain the most common settings. Some settings that are connected to experimental or not yet fully implemented features of \clus\ are either marked as such or not presented at all.  Figure~\ref{settings:fig} shows  an example of a settings file. All the settings (including the default ones) that were used in a specific \clus\ run are printed at the beginning of the output file (\texttt{\emph{filename}.out}).
 
@@ -550,7 +552,7 @@ We here explain the most common settings. Some settings that are connected to ex
 \end{figure}
 
 
-In the following, we use the convention that $n$ is an integer, $r$ is a real, $v$ is a vector of real values, $s$ is a string, $y$ is an element of \{ {\tt Yes}, {\tt No} \}, $r$ is an range of attribute indices, and $o$ is another type of value.  Strings are denoted without quotes. A vector is denoted as $[r_1,\ldots,r_n]$. An attribute range is a comma separated list of integers or intervals or \texttt{None} if the range is empty. For example, {\tt 5,7-9} indicates attributes 5, 7, 8 and 9. The first attribute in the dataset is attribute 1. Run {\tt clus -info {\em filename}.s} to list all attributes together with their indices. We now explain the settings organized into sections.
+%In the following, we use the convention that $n$ is an integer, $r$ is a real, $v$ is a vector of real values, $s$ is a string, $y$ is an element of \{ {\tt Yes}, {\tt No} \}, $r$ is an range of attribute indices, and $o$ is another type of value.  Strings are denoted without quotes. A vector is denoted as $[r_1,\ldots,r_n]$. An attribute range is a comma separated list of integers or intervals or \texttt{None} if the range is empty. For example, {\tt 5,7-9} indicates attributes 5, 7, 8 and 9. The first attribute in the dataset is attribute 1. Run {\tt clus -info {\em filename}.s} to list all attributes together with their indices. We now explain the settings organized into sections.
 
 
 \input{optionListsForUse/options-General.tex}
