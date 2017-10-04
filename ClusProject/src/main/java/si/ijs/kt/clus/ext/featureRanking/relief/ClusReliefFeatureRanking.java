@@ -31,6 +31,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
+import si.ijs.kt.clus.util.jeans.util.Triple;
 
 
 /**
@@ -996,6 +997,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      */
     private void computeNearestNeighbours(int[] randomPermutation) throws InterruptedException, ExecutionException {
         ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
+        ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>> results = new ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>>();  
+        
         for (Integer targetIndex : computeTargetIndicesThatNeedNeigbhours()) {
             m_NearestNeighbours.put(targetIndex, new HashMap<Integer, NearestNeighbour[][]>());
             for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
@@ -1003,13 +1006,18 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 DataTuple tuple = m_Data.getTuple(tupleIndex);
                 if (shouldUseTuple(targetIndex, tuple)) {
                     FindNeighboursCallable task = new FindNeighboursCallable(this, tupleIndex, targetIndex);
-                    Future<NearestNeighbour[][]> result = executor.submit(task);
-                    m_NearestNeighbours.get(targetIndex).put(tupleIndex, result.get()); // here, we are in the main thread, no concurrency issues
+                    Future<Triple<Integer, Integer, NearestNeighbour[][]>> result = executor.submit(task);
+                    results.add(result);
                 }
             }
         }
         executor.shutdown();
         executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
+        
+        for(Future<Triple<Integer, Integer, NearestNeighbour[][]>> futureTriple : results) {
+        	Triple<Integer, Integer, NearestNeighbour[][]> triple = futureTriple.get();
+        	m_NearestNeighbours.get(triple.getFirst()).put(triple.getSecond(), triple.getThird());
+        }        
     }
 
 

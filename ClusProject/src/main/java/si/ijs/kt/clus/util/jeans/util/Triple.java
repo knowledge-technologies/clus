@@ -1,7 +1,7 @@
 package si.ijs.kt.clus.util.jeans.util;
 
 /**
- * Implements 2-Tuple.
+ * Implements 3-Tuple.
  * 
  * @author matejp
  *
