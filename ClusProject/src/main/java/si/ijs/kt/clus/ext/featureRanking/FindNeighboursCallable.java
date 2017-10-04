@@ -4,10 +4,11 @@ import java.util.concurrent.Callable;
 
 import si.ijs.kt.clus.ext.featureRanking.relief.ClusReliefFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.relief.NearestNeighbour;
+import si.ijs.kt.clus.util.jeans.util.Triple;
 
-public class FindNeighboursCallable implements Callable<NearestNeighbour[][]> {
+public class FindNeighboursCallable implements Callable<Triple<Integer, Integer, NearestNeighbour[][]>> {
 	
-	/** Instances of the Relief ranking where this object will be used from. */
+	/** Instance of the Relief ranking where this object will be used from. */
 	private ClusReliefFeatureRanking m_Relief;
 	
 	/** Index of the tuple in the dataset where we look for the neighbours. */
@@ -26,8 +27,8 @@ public class FindNeighboursCallable implements Callable<NearestNeighbour[][]> {
 	}
 	
 	@Override
-	public NearestNeighbour[][] call() throws Exception {
-		return m_Relief.findNearestNeighbours(m_TupleIndex, m_TargetIndex);
+	public Triple<Integer, Integer, NearestNeighbour[][]> call() throws Exception {
+		return new Triple<Integer, Integer, NearestNeighbour[][]>(m_TargetIndex, m_TupleIndex, m_Relief.findNearestNeighbours(m_TupleIndex, m_TargetIndex));
 	}
 
 }

@@ -4,7 +4,7 @@ Verbose = 1
 RandomSeed = 1234
 
 [Data]
-File = C:/Users/matejp/git/clusfr/Clus-SVN-FRank/resources/unitTests/ensembleAndRankingData/testMTR.arff
+File = C:/Users/matej/git/clusproject/ClusProject/resources/unitTests/ensembleAndRankingData/testMTR.arff
 
 [Attributes]
 Descriptive = 1-7
@@ -17,7 +17,7 @@ ConvertToRules = No
 FeatureRankingPerTarget = Yes
 
 [Relief]
-neighbours = [3,1]
-iterations = [-1,5]
-weightNeighbours = Yes
-weightingSigma = 0.5
+Neighbours = [3,1]
+Iterations = [-1,5]
+WeightNeighbours = Yes
+WeightingSigma = 0.5
