@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.ext.featureRanking.relief;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -24,7 +25,9 @@ import si.ijs.kt.clus.distance.primitive.timeseries.DTWTimeSeriesDist;
 import si.ijs.kt.clus.distance.primitive.timeseries.QDMTimeSeriesDist;
 import si.ijs.kt.clus.distance.primitive.timeseries.TSCTimeSeriesDist;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
-import si.ijs.kt.clus.ext.featureRanking.FindNeighboursCallable;
+import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.FindNeighboursCallable;
+import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.SaveLoadNeighbours;
+import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.NearestNeighbour;
 import si.ijs.kt.clus.ext.hierarchical.ClassesAttrType;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -173,7 +176,14 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> m_NearestNeighbours;
 
     private int m_NbThreads;
-
+    
+    
+    private boolean m_ShouldSaveNeighbours;
+    private boolean m_ShouldLoadNeighbours;
+    /** The name of the file that is used if the nearest neighbours should be loaded or saved to the file. Otherwise, empty string. */
+    private String m_NearestNeigbhoursFile;
+    SaveLoadNeighbours m_NNLoaderSaver = new SaveLoadNeighbours(m_NearestNeigbhoursFile);
+    
 
     /**
      * Constructor for the {@code ClusReliefFeatureRanking}, with the standard parameters of (R)Relief(F).
@@ -202,6 +212,10 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_WeightNeighbours = weightNeighbours;
         m_Sigma = m_WeightNeighbours ? sigma : 0.0;
         m_NeighbourWeights = new double[m_MaxNbNeighbours];
+        
+        m_ShouldSaveNeighbours = data.getSchema().getSettings().getRelief().shouldSaveNeighbours();
+        m_ShouldLoadNeighbours = data.getSchema().getSettings().getRelief().shouldSaveNeighbours();
+        m_NearestNeigbhoursFile = data.getSchema().getSettings().getGeneric().getAppName() + ".neigh";     
 
         m_rnd = new Random(seed);
         initialize();
@@ -222,8 +236,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         }
         else {
             Arrays.fill(m_NeighbourWeights, 1.0);
-        }
-
+        }  
+        
         m_TimeSeriesDistance = m_Data.m_Schema.getSettings().getTimeSeries().getTimeSeriesDistance();
         setReliefDescription(m_NbNeighbours, m_NbIterations);
         m_NbExamples = m_Data.getNbRows();
@@ -354,8 +368,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @throws ClusException
      * @throws InterruptedException
      * @throws ExecutionException
+     * @throws IOException 
      */
-    public void calculateReliefImportance(RowData data) throws ClusException, InterruptedException, ExecutionException {
+    public void calculateReliefImportance(RowData data) throws ClusException, InterruptedException, ExecutionException, IOException {
 
         DataTuple tuple;
 
@@ -993,8 +1008,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      *        the order in which the instances will be used in the Relief algorithm.
      * @throws InterruptedException
      * @throws ExecutionException
+     * @throws IOException 
      */
-    private void computeNearestNeighbours(int[] randomPermutation) throws InterruptedException, ExecutionException {
+    private void computeNearestNeighbours(int[] randomPermutation) throws InterruptedException, ExecutionException, IOException {
         ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
         ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>> results = new ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>>();  
         
@@ -1016,7 +1032,18 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         for(Future<Triple<Integer, Integer, NearestNeighbour[][]>> futureTriple : results) {
         	Triple<Integer, Integer, NearestNeighbour[][]> triple = futureTriple.get();
         	m_NearestNeighbours.get(triple.getFirst()).put(triple.getSecond(), triple.getThird());
-        }        
+        }
+        
+        if(m_ShouldSaveNeighbours) {
+        	SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(m_NearestNeigbhoursFile);
+        	nnLoader.saveToFile(m_NearestNeighbours);
+        }
+    }
+    
+    
+    private HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadNearestNeighboursFromFile() throws IOException{
+    	SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(m_NearestNeigbhoursFile);
+    	return nnLoader.loadFromFile();
     }
 
 

@@ -31,8 +31,9 @@ public class SettingsRelief extends SettingsBase {
     private INIFileNominalOrDoubleOrVector m_ReliefNbIterations;
     private INIFileBool m_ReliefShouldHaveNeighbourWeighting;
     private INIFileDouble m_ReliefWeightingSigma;
+    private INIFileBool m_ReliefLoadNeighboursFromFile;
     private INIFileBool m_ReliefSaveNeighboursToFile;
-    private INIFileString m_NeighboursFile;
+//    private INIFileString m_NeighboursFile;
     
 
     public void setSectionReliefEnabled(boolean value) {
@@ -124,13 +125,17 @@ public class SettingsRelief extends SettingsBase {
     	return m_ReliefSaveNeighboursToFile.getValue();
     }
     
-    public boolean isNullFile() {
-        return StringUtils.unCaseCompare(m_NeighboursFile.getValue(), NONE);
+    public boolean shouldLoadNeighbours() {
+    	return m_ReliefLoadNeighboursFromFile.getValue();
     }
     
-    public String getNeighboursFile() {
-        return m_NeighboursFile.getValue();
-    }
+//    public boolean isNullFile() {
+//        return StringUtils.unCaseCompare(m_NeighboursFile.getValue(), NONE);
+//    }
+    
+//    public String getNeighboursFile() {
+//        return m_NeighboursFile.getValue();
+//    }
 
 
     @Override
@@ -148,7 +153,8 @@ public class SettingsRelief extends SettingsBase {
                                                                                                     // not give any
                                                                                                     // suggestions
         m_SectionRelief.addNode(m_ReliefSaveNeighboursToFile = new INIFileBool("SaveNeighboursToFile", false));
-        m_SectionRelief.addNode(m_NeighboursFile = new INIFileString("NeighboursFile", NONE));
+        m_SectionRelief.addNode(m_ReliefLoadNeighboursFromFile = new INIFileBool("LoadNeighboursFromFile", false));
+//        m_SectionRelief.addNode(m_NeighboursFile = new INIFileString("NeighboursFile", NONE));
         
         m_SectionRelief.setEnabled(false);
 

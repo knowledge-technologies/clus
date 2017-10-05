@@ -1,9 +1,8 @@
-package si.ijs.kt.clus.ext.featureRanking;
+package si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour;
 
 import java.util.concurrent.Callable;
 
 import si.ijs.kt.clus.ext.featureRanking.relief.ClusReliefFeatureRanking;
-import si.ijs.kt.clus.ext.featureRanking.relief.NearestNeighbour;
 import si.ijs.kt.clus.util.jeans.util.Triple;
 
 public class FindNeighboursCallable implements Callable<Triple<Integer, Integer, NearestNeighbour[][]>> {

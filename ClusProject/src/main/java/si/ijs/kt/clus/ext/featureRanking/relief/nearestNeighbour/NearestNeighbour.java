@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.ext.featureRanking.relief;
+package si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
