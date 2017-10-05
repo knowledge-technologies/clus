@@ -463,7 +463,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param tuple
      * @param nearestNeighbours
      * @param targetIndex
-     * @param isPerTarget
      * @return
      * @throws ClusException
      */
