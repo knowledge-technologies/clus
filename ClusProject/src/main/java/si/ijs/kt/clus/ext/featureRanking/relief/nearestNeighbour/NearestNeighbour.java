@@ -60,6 +60,10 @@ public class NearestNeighbour {
     	return m_targetDistance;
     }
     
+    public void setTargetDistance(double dist) {
+    	m_targetDistance = dist;
+    }
+    
     @Override
     public boolean equals(Object other){
     	if(other instanceof NearestNeighbour){

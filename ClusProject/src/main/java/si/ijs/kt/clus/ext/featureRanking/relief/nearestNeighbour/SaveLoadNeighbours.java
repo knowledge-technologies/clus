@@ -39,13 +39,14 @@ public class SaveLoadNeighbours {
 	private static final String END_TUPLE = "START_TUPLE";
 	private static final String NB_TARGET_VALUES = "NB_TARGET_VALUES";
 
+	private static final String NN_SEPARATOR = "&";
 
 	public SaveLoadNeighbours(String m_NearestNeigbhoursFile) {
 		m_File = m_NearestNeigbhoursFile;
 	}
 	
 	
-	public void saveToFile(HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nearestNeighbours) throws IOException {
+	public void saveNeighboursToFile(HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nearestNeighbours) throws IOException {
 		ArrayList<String> lines = new ArrayList<String>();
 		for(Integer targetInd : nearestNeighbours.keySet()) {
 			lines.add(String.format("%s;%d", START_TARGET, targetInd));
@@ -59,7 +60,7 @@ public class SaveLoadNeighbours {
 					for(int i = 0; i < nns.length; i++) {
 						nnsString[i] = nns[i].toFileString();
 					}
-					lines.add(String.join("&", nnsString));
+					lines.add(String.join(NN_SEPARATOR, nnsString));
 				}
 				lines.add(END_TUPLE);
 			}
@@ -68,38 +69,57 @@ public class SaveLoadNeighbours {
 		Files.write(Paths.get(m_File), lines, Charset.forName("UTF-8"));
 	}
 	
-	public HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadFromFile() throws IOException {
+	public HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadNeighboursFromFile() throws IOException {
 		HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
+		Integer targetInd = -123;
+	    Integer tupleInd = -123;
+	    NearestNeighbour[][] nnss = new NearestNeighbour[0][0];
+	    int targetValueInd = -123;
 		
 		BufferedReader br = new BufferedReader(new FileReader(m_File));
-
-	    String line = br.readLine();
-	    Integer targetInd;
-	    Integer tupleInd;
-	    NearestNeighbour[][] nnss;
-	    int targetValueInd;
+	    String line = br.readLine();	    
 	    while (line != null) {
 	    	if(line.startsWith(START_TARGET)) {
-	    		
+	    		// start processing new target
+	    		targetInd = intAfterSemicolon(line);
+	    		nearestNeighbours.put(targetInd, new HashMap<Integer, NearestNeighbour[][]>());
 	    	} else if(line.startsWith(START_TUPLE)) {
-	    		
+	    		// start processing new tuple
+	    		tupleInd = intAfterSemicolon(line);
 	    	} else if(line.startsWith(NB_TARGET_VALUES)) {
-	    		int nbTarVal = Integer.parseInt(line.substring(line.indexOf(";")));
+	    		// initialize NearestNeighbours[][] of the appropriate length, set target value index to 0
+	    		int nbTarVal = intAfterSemicolon(line);
 	    		nnss = new NearestNeighbour[nbTarVal][];
 	    		targetValueInd = 0;
+	    	} else if(line.startsWith("NN")) {
+	    		// parse nearest neighbours for given target value, increase it 
+	    		String[] nnsString = line.trim().split(NN_SEPARATOR);
+	    		NearestNeighbour[] nns = new NearestNeighbour[nnsString.length];
+	    		for(int i = 0; i < nns.length; i++) {
+	    			nns[i] = new NearestNeighbour(nnsString[i]);
+	    		}
+	    		nnss[targetValueInd] = nns;
+	    		targetValueInd++;	    		
 	    	} else if(line.startsWith(END_TUPLE)) {
-	    		
-	    	} else if(line.startsWith(START_TARGET)) {
-	    		
+	    		// save the results for given tuple
+	    		nearestNeighbours.get(targetInd).put(tupleInd, nnss);
+	    	} else if(line.startsWith(END_TARGET)) {
+	    		// nothing to do here
 	    	}
-	    	
 	        line = br.readLine();
 	    }
-
-	    br.close();
-		
+	    br.close();		
 		return nearestNeighbours;
 		
+	}
+	
+	/**
+	 * Parses string of form {@code <description>;<integer>} to int value of the {@code <integer>.}
+	 * @param myString
+	 * @return
+	 */
+	private int intAfterSemicolon(String myString) {
+		return Integer.parseInt(myString.substring(myString.indexOf(";")));	
 	}
 
 }
