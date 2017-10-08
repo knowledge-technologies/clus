@@ -1172,6 +1172,10 @@ public class ClusNode extends MyNode implements ClusModel {
         printTreeToPythonScript(wrt, "    ");
     }
 
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
+        // changed tab to 4 spaces
+        printTreeToPythonScript(wrt, "    ", dict);
+    }
 
     @Override
     public JsonObject getModelJSON() {
@@ -1603,7 +1607,6 @@ public class ClusNode extends MyNode implements ClusModel {
         }
     }
 
-
     public final void printTreeToPythonScript(PrintWriter writer, String prefix) {
         int arity = getNbChildren();
         if (arity > 0) {
@@ -1617,6 +1620,38 @@ public class ClusNode extends MyNode implements ClusModel {
                 }
                 else {
                     ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "    ");
+                }
+            }
+            else {
+                // TODO what to do?
+            }
+        }
+        else {
+            if (m_TargetStat != null) {
+                writer.println(prefix + "return " + m_TargetStat.getArrayOfStatistic());
+                // System.out.println(m_TargetStat.getClass());
+            }
+        }
+    }
+
+
+    public final void printTreeToPythonScript(PrintWriter writer, String prefix, HashMap<String, Integer> dict) {
+        int arity = getNbChildren();
+        if (arity > 0) {
+            int delta = hasUnknownBranch() ? 1 : 0;
+            if (arity - delta == 2) {
+                int index = dict.get(m_Test.getType().getName());
+                String atrNameReplacement = String.format("Xs[%d]", index);
+                String original = "if " + m_Test.getPythonTestString() + ":";
+                String neww = original.replace(m_Test.getType().getName(), atrNameReplacement);
+                writer.println(prefix + neww);
+                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "    ", dict);
+                writer.println(prefix + "else: ");
+                if (hasUnknownBranch()) {
+                    // TODO anything to do???
+                }
+                else {
+                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "    ", dict);
                 }
             }
             else {

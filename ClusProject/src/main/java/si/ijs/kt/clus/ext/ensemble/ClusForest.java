@@ -100,6 +100,7 @@ public class ClusForest implements ClusModel, Serializable {
     ClusStatistic m_Stat;
     boolean m_PrintModels;
     String m_AttributeList;
+    HashMap<String, Integer> m_DescriptiveIndex;
     String m_AppName;
 
     private ClusEnsembleInduceOptimization m_Optimization;
@@ -159,11 +160,16 @@ public class ClusForest implements ClusModel, Serializable {
 
         m_AppName = statmgr.getSettings().getGeneric().getFileAbsolute(statmgr.getSettings().getGeneric().getAppName());
         m_AttributeList = "";
+        m_DescriptiveIndex = new HashMap<String, Integer>();
         ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(ClusAttrType.ATTR_USE_DESCRIPTIVE, ClusAttrType.THIS_TYPE));
         if (statmgr.getSettings().getOutput().isOutputPythonModel()) {
-            for (int ii = 0; ii < cat.length - 1; ii++)
+            for (int ii = 0; ii < cat.length - 1; ii++){
                 m_AttributeList = m_AttributeList.concat(cat[ii].getName() + ", ");
+                m_DescriptiveIndex.put(cat[ii].getName(), ii);
+            }
             m_AttributeList = m_AttributeList.concat(cat[cat.length - 1].getName());
+            int ii = cat.length - 1;
+            m_DescriptiveIndex.put(cat[ii].getName(), ii);
         }
         m_Optimization = opt;
 
@@ -214,6 +220,10 @@ public class ClusForest implements ClusModel, Serializable {
     public int getID() {
         // TODO Auto-generated method stub
         return 0;
+    }
+    
+    public int getDescriptiveIndex(String name){
+        return m_DescriptiveIndex.get(name);
     }
 
 
@@ -690,6 +700,11 @@ public class ClusForest implements ClusModel, Serializable {
     public void printModelToPythonScript(PrintWriter wrt) {
         printForestToPython();
     }
+    
+    
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
+        printForestToPython(dict);
+    }
 
 
     @Override
@@ -710,7 +725,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public void printForestToPython() {
+    public void printForestToPython(HashMap<String, Integer> dict) {
         // create a separate .py file
         try {
             File pyscript = new File(m_AppName + "_models.py");
@@ -720,8 +735,8 @@ public class ClusForest implements ClusModel, Serializable {
             for (int i = 0; i < m_Forest.size(); i++) {
                 ClusModel model = m_Forest.get(i);
                 wrtr.println("#Model " + (i + 1));
-                wrtr.println("def clus_tree_" + (i + 1) + "(" + m_AttributeList + "):");
-                model.printModelToPythonScript(wrtr);
+                wrtr.println("def clus_tree_" + (i + 1) + "(Xs):"); // m_AttributeList
+                ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
                 wrtr.println();
             }
             wrtr.flush();
@@ -732,6 +747,10 @@ public class ClusForest implements ClusModel, Serializable {
             System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");
             e.printStackTrace();
         }
+    }
+    
+    public void printForestToPython() {
+        printForestToPython(null);
     }
 
 

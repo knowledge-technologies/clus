@@ -885,6 +885,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             //        	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
             updatePredictionsForTuples(model, train_iterator, test_iterator, i);
             model = null;
+            unmodifiedManager = null;
+            ind = null;
         }
         // instead of adding the model here, we will do this in after all bags are completed to keep the order of the
         // models invariant
