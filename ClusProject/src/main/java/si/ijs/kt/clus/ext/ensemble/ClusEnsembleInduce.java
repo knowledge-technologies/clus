@@ -329,6 +329,18 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         if (set.isEnsembleROSEnabled()) {
             m_EnsembleROSInfo = ClusROS.prepareROSEnsembleInfo(getSettings(), getSchema());
+            
+            // write it very ugly to disk 
+            PrintWriter writer = new PrintWriter("ros_subspaces.csv", "UTF-8");
+            
+            for(int i = 0; i < m_NbMaxBags; i++){
+            	writer.println( 
+            			Arrays.toString(m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(i)))
+            	);
+            }
+            
+            writer.close();
+            
         }
 
         // initialise ranking stuff here: we need stat manager with clustering statistics != null
