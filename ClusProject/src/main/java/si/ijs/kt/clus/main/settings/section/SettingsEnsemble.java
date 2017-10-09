@@ -441,7 +441,7 @@ public class SettingsEnsemble extends SettingsBase {
         m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileNominal("FeatureRanking", RANKING_TYPE, RANKING_TYPE_NONE));
         m_SectionEnsembles.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
         m_SectionEnsembles.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
-        m_SymbolicWeight.setDouble(1.0);
+        m_SymbolicWeight.setDouble(0.5);
         m_SectionEnsembles.addNode(m_SortFeaturesByRelevance = new INIFileBool("SortRankingByRelevance", true));
         m_SectionEnsembles.addNode(m_WriteEnsemblePredictions = new INIFileBool("WriteEnsemblePredictions", false));
         m_SectionEnsembles.addNode(m_EnsembleRandomDepth = new INIFileBool("EnsembleRandomDepth", false));
