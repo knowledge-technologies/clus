@@ -43,7 +43,7 @@ public class ReliefInduce extends ClusInductionAlgorithm {
 
         m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getData(), reliefModel.getNbNeighbours(), reliefModel.getNbIterations(), reliefModel.getWeightNeighbours(), reliefModel.getSigma(), randomSeed, getSettings());
         m_FeatureRanking.initializeAttributes(cr.getStatManager().getSchema().getDescriptiveAttributes(), m_FeatureRanking.getNbFeatureRankings());
-        m_FeatureRanking.calculateReliefImportance(reliefModel.getData());
+        m_FeatureRanking.computeReliefImportance(reliefModel.getData());
 
         m_FeatureRanking.createFimp(cr, 0);
         

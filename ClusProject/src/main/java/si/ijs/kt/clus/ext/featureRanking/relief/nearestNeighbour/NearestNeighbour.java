@@ -8,6 +8,7 @@ public class NearestNeighbour {
 
     private final int m_indexInDataSet;
     private double m_descriptiveDistance = Double.NaN;
+    @Deprecated
     private double m_targetDistance = Double.NaN;
 
     /**
@@ -16,6 +17,7 @@ public class NearestNeighbour {
      * @param desDist
      * @param tarDist
      */
+    @Deprecated
     public NearestNeighbour(int index, double desDist, double tarDist) {
         m_indexInDataSet = index;
         m_descriptiveDistance = desDist;
@@ -23,23 +25,34 @@ public class NearestNeighbour {
     }
     
     /**
+     * Construct nearest neighbour from the two parameters that define it.
+     * @param index
+     * @param desDist
+     */
+    public NearestNeighbour(int index, double desDist) {
+        m_indexInDataSet = index;
+        m_descriptiveDistance = desDist;
+    }
+    
+    /**
      * Construct nearest neighbour from a string in a file.
-     * @param nnFileString e.g., NN(21;2.21;1.2E-1) or NN(0;2.22;0.21)
+     * @param nnFileString e.g., NN(21;1.2E-1) or NN(0;0.21)
      */
     public NearestNeighbour(String nnFileString) {
-    	Pattern nnPatern = Pattern.compile("NN[(]([^;]+);([^;]+);([^)]+)[)]");
+    	Pattern nnPatern = Pattern.compile("NN[(]([^;]+);([^;]+))[)]"); // removed the last ;([^)]+ component
     	Matcher nnParsed = nnPatern.matcher(nnFileString);
     	if(nnParsed.find()) {
     		m_indexInDataSet = Integer.parseInt(nnParsed.group(1));
     		m_descriptiveDistance = Double.parseDouble(nnParsed.group(2));
-    		m_targetDistance = Double.parseDouble(nnParsed.group(3));
+    		// m_targetDistance = Double.parseDouble(nnParsed.group(3));
     	} else {
     		throw new RuntimeException(String.format("Nearest neighbour %s could not be parsed.", nnFileString));
     	}
     }
     
     public String toFileString() {
-    	return String.format("NN(%d;%f;%f)", m_indexInDataSet, m_descriptiveDistance, m_targetDistance);
+    	// return String.format("NN(%d;%f;%f)", m_indexInDataSet, m_descriptiveDistance, m_targetDistance);
+    	return String.format("NN(%d;%f)", m_indexInDataSet, m_descriptiveDistance);
     }
     
     @Override
@@ -56,10 +69,11 @@ public class NearestNeighbour {
     	return m_descriptiveDistance;
     }
     
+    @Deprecated
     public double getTargetDistance(){
     	return m_targetDistance;
     }
-    
+    @Deprecated
     public void setTargetDistance(double dist) {
     	m_targetDistance = dist;
     }

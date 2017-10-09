@@ -3,20 +3,15 @@ package si.ijs.kt.clus.distance.primitive.relief;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
-import si.ijs.kt.clus.main.settings.section.SettingsMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsRelief.MultilabelDistance;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 public class MultiLabelDistance {
-	// If new types are introduced use the same values as in SettingsMLC class
-	private static final int HAMMING_LOSS = SettingsMLC.MULTILABEL_MEASURES_HAMMINGLOSS;
-	private static final int ACCURACY = SettingsMLC.MULTILABEL_MEASURES_MLACCURACY;
-	private static final int F1 = SettingsMLC.MULTILABEL_MEASURES_MLFONE;
-	private static final int SUBSET_ACCURACY = SettingsMLC.MULTILABEL_MEASURES_SUBSETACCURACY;
-	
-	private final int m_DistanceType;
+		
+	private MultilabelDistance m_DistanceType;
 	private NominalAttrType[] m_Labels;
 	
-	public MultiLabelDistance(int type, ClusAttrType[] attrs){
+	public MultiLabelDistance(MultilabelDistance type, ClusAttrType[] attrs){
 		m_DistanceType = type;
 		m_Labels = new NominalAttrType[attrs.length];
 		for(int i = 0; i < attrs.length; i++){
@@ -36,16 +31,16 @@ public class MultiLabelDistance {
 	public double calculateDist(DataTuple t1, DataTuple t2){
 		double dist;
 		switch(m_DistanceType){
-		case HAMMING_LOSS:
+		case HammingLoss:
 			dist = hamming_loss(t1, t2);
 			break;
-		case ACCURACY:
+		case MLAccuracy:
 			dist = accuracy(t1, t2);
 			break;
-		case F1:
+		case MLFOne:
 			dist = F1(t1, t2);
 			break;
-		case SUBSET_ACCURACY:
+		case SubsetAccuracy:
 			dist = subsetAccuracy(t1, t2);			
 		default:
 			throw new RuntimeException("Unknown distance type");
@@ -53,7 +48,7 @@ public class MultiLabelDistance {
 		return dist;
 	}
 	
-    private double correctedAttributeValue(NominalAttrType attr, DataTuple t) {
+    private static double correctedAttributeValue(NominalAttrType attr, DataTuple t) {
     	return attr.isMissing(t) ? 1.0 / attr.m_NbValues :  attr.getNominal(t);
     }
 
@@ -146,5 +141,10 @@ public class MultiLabelDistance {
     		pEqualSets *= factor;
     	}
     	return pEqualSets;
+    }
+    
+    
+    public String toString() {
+    	return String.format("%s(%s)", this.getClass().toString(), m_DistanceType.toString());
     }
 }

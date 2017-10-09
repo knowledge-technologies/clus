@@ -4,12 +4,11 @@ package si.ijs.kt.clus.main.settings.section;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
-import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
 public class SettingsRelief extends SettingsBase {
@@ -34,6 +33,10 @@ public class SettingsRelief extends SettingsBase {
     private INIFileBool m_ReliefLoadNeighboursFromFile;
     private INIFileBool m_ReliefSaveNeighboursToFile;
 //    private INIFileString m_NeighboursFile;
+    
+	// If new types are introduced use the same names as in SettingsMLC class
+    public enum MultilabelDistance {HammingLoss, MLAccuracy, MLFOne, SubsetAccuracy};
+	private INIFileEnum<MultilabelDistance> m_MultilabelDistance;	
     
 
     public void setSectionReliefEnabled(boolean value) {
@@ -125,9 +128,18 @@ public class SettingsRelief extends SettingsBase {
     	return m_ReliefSaveNeighboursToFile.getValue();
     }
     
+    public void turnOffSaveNeighbours() {
+    	m_ReliefSaveNeighboursToFile.setValue(false);
+    }
+    
     public boolean shouldLoadNeighbours() {
     	return m_ReliefLoadNeighboursFromFile.getValue();
     }
+    
+    public MultilabelDistance getMultilabelDistance() {
+    	return m_MultilabelDistance.getChosenOption();
+    }
+    
     
 //    public boolean isNullFile() {
 //        return StringUtils.unCaseCompare(m_NeighboursFile.getValue(), NONE);
@@ -155,6 +167,7 @@ public class SettingsRelief extends SettingsBase {
         m_SectionRelief.addNode(m_ReliefSaveNeighboursToFile = new INIFileBool("SaveNeighboursToFile", false));
         m_SectionRelief.addNode(m_ReliefLoadNeighboursFromFile = new INIFileBool("LoadNeighboursFromFile", false));
 //        m_SectionRelief.addNode(m_NeighboursFile = new INIFileString("NeighboursFile", NONE));
+        m_SectionRelief.addNode(m_MultilabelDistance =  new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.class));
         
         m_SectionRelief.setEnabled(false);
 
