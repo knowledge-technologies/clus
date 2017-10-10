@@ -3,7 +3,7 @@ package si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour;
 import java.util.concurrent.Callable;
 
 import si.ijs.kt.clus.ext.featureRanking.relief.ClusReliefFeatureRanking;
-import si.ijs.kt.clus.util.jeans.util.Triple;
+import si.ijs.kt.clus.util.tuple.Triple;
 
 public class FindNeighboursCallable implements Callable<Triple<Integer, Integer, NearestNeighbour[][]>> {
 	

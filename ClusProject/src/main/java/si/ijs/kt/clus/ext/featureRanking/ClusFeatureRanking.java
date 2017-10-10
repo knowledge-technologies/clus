@@ -69,7 +69,7 @@ import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
-import si.ijs.kt.clus.util.jeans.util.Triple;
+import si.ijs.kt.clus.util.tuple.Triple;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
@@ -111,7 +111,8 @@ public class ClusFeatureRanking {
     
     private boolean m_ScoresNormalized = false;
     
-    private final static String FIMP_SEPARATOR = "\t";
+    /** Separator that separates different blocks of columnts in fimp file. Must not be equal to "," (see parsing in the unit tests)! */
+    public final static String FIMP_SEPARATOR = "\t";
     
 
     public ClusFeatureRanking(Settings sett) {

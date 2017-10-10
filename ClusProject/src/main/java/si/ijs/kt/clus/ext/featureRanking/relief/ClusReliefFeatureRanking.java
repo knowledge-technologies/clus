@@ -36,7 +36,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsRelief.MultilabelDistance;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
-import si.ijs.kt.clus.util.jeans.util.Triple;
+import si.ijs.kt.clus.util.tuple.Triple;
 
 
 /**
