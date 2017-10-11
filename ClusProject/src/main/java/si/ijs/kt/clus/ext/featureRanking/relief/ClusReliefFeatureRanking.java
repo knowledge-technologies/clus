@@ -422,7 +422,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                         nearestNeighbours = m_NearestNeighbours.get(targetIndex).get(tupleInd);
                     }
                     else {
-                        nearestNeighbours = m_NearestNeighbours.get(targetIndex).get(tupleInd);
+                        nearestNeighbours = m_NearestNeighbours.get(-1).get(tupleInd);
                     }
                     insufficientNbNeighbours += updateDistanceStatistics(data, tuple, nearestNeighbours, targetIndex);
                     shouldUpdate[targetIndex + 1] = true;

@@ -39,5 +39,4 @@ public class Quadruple<T1, T2, T3, T4> {
     public T4 getFourth(){
         return m_Fourth;
     }
-
 }

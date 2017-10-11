@@ -94,7 +94,7 @@ public class Fimp {
 		String[] decomposed = decomposeArrayStr(strArray);
 		int[] parsed = new int[decomposed.length];
 		for (int i = 0; i < parsed.length; i++) {
-			parsed[i] = Integer.parseInt(decomposed[i]);
+			parsed[i] = Integer.parseInt(decomposed[i].trim());
 		}
 		return parsed;
 	}
@@ -109,7 +109,7 @@ public class Fimp {
 		String[] decomposed = decomposeArrayStr(strArray);
 		double[] parsed = new double[decomposed.length];
 		for (int i = 0; i < parsed.length; i++) {
-			parsed[i] = Double.parseDouble(decomposed[i]);
+			parsed[i] = Double.parseDouble(decomposed[i].trim());
 		}
 		return parsed;
 	}

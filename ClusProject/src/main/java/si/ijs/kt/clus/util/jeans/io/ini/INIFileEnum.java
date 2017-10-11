@@ -5,12 +5,13 @@ import java.lang.Enum;
 
 public class INIFileEnum<T extends Enum<T>> extends INIFileEntry {
 	
-	T m_choseOption;
+	T m_ChosenOption;
 	Class<T> m_EnumType;
 	
-	public INIFileEnum(String name, Class<T> enumClass) {
+	public INIFileEnum(String name, Class<T> enumClass, T defaultValue) {
 		super(name);
 		m_EnumType = enumClass;
+		m_ChosenOption = defaultValue;
 	}
 
 	@Override
@@ -20,16 +21,16 @@ public class INIFileEnum<T extends Enum<T>> extends INIFileEntry {
 
 	@Override
 	public void setValue(String value) throws IOException {
-		m_choseOption = Enum.valueOf(m_EnumType, value);
+		m_ChosenOption = Enum.valueOf(m_EnumType, value);
 		
 	}
 
 	@Override
 	public INIFileNode cloneNode() {
-		return new INIFileEnum<T>(getName(), m_EnumType);
+		return new INIFileEnum<T>(getName(), m_EnumType, m_ChosenOption);
 	}
 	
 	public T getChosenOption() {
-		return m_choseOption;
+		return m_ChosenOption;
 	}
 }
