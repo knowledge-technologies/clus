@@ -35,7 +35,7 @@ public class ClusReliefFeatureRankingTest extends BaseTestCase {
 		System.out.println("Clean up ...");
 		HashSet<String> newFiles = currentFiles();		
 		for(String file: newFiles) {
-			System.out.println(file);
+//			System.out.println(file);
 			if(!m_OldFiles.contains(file)) {
 //				System.out.println("will be deleted");
 				(new File(file)).delete();
@@ -43,6 +43,7 @@ public class ClusReliefFeatureRankingTest extends BaseTestCase {
 //				System.out.println("wont be");
 			}
 		}
+		System.out.println("Done.");
 	}
 	
 	@Test

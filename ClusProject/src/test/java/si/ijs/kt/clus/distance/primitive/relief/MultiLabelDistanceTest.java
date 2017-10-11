@@ -65,8 +65,6 @@ public class MultiLabelDistanceTest extends BaseTestCase {
 		String line = br.readLine();
 		br.close();
 		return Fimp.getArrayOfDoubles(line);
-		
-		
 	}
 
 }

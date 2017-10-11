@@ -246,8 +246,7 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
     }
     
     public void setRForestFimpHeader(ArrayList<String> names) {
-        String rfHeader = "attributeName\t[" + String.join(",", names) + "]";
-        setFimpHeader(rfHeader);
+        setFimpHeader(fimpTableHeader(names));
     }
 
     public void setGenie3FimpHeader(ArrayList<String> names) {
