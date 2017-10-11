@@ -167,7 +167,8 @@ public class SettingsRelief extends SettingsBase {
         m_SectionRelief.addNode(m_ReliefSaveNeighboursToFile = new INIFileBool("SaveNeighboursToFile", false));
         m_SectionRelief.addNode(m_ReliefLoadNeighboursFromFile = new INIFileBool("LoadNeighboursFromFile", false));
 //        m_SectionRelief.addNode(m_NeighboursFile = new INIFileString("NeighboursFile", NONE));
-        m_SectionRelief.addNode(m_MultilabelDistance =  new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.class));
+        m_SectionRelief.addNode(m_MultilabelDistance =  new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.class, MultilabelDistance.HammingLoss));
+        
         
         m_SectionRelief.setEnabled(false);
 
