@@ -9,8 +9,6 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 
-import org.codehaus.plexus.util.cli.EnhancedStringTokenizer;
-
 public class SaveLoadNeighbours {
 	/**
 	 * The file, storing the nearest neighbours data:<br>
@@ -119,7 +117,7 @@ public class SaveLoadNeighbours {
 	 * @param myString
 	 * @return
 	 */
-	private int intAfterSemicolon(String myString) {
+	private static int intAfterSemicolon(String myString) {
 		return Integer.parseInt(myString.substring(myString.indexOf(";") + 1));	
 	}
 

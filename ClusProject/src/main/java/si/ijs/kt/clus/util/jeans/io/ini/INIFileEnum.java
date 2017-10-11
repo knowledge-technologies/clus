@@ -2,6 +2,9 @@ package si.ijs.kt.clus.util.jeans.io.ini;
 
 import java.io.IOException;
 import java.lang.Enum;
+import java.util.Arrays;
+
+import com.sun.xml.internal.bind.v2.runtime.unmarshaller.XsiNilLoader.Array;
 
 public class INIFileEnum<T extends Enum<T>> extends INIFileEntry {
 	
@@ -21,7 +24,13 @@ public class INIFileEnum<T extends Enum<T>> extends INIFileEntry {
 
 	@Override
 	public void setValue(String value) throws IOException {
-		m_ChosenOption = Enum.valueOf(m_EnumType, value);
+		try {
+			m_ChosenOption = Enum.valueOf(m_EnumType, value);
+		} catch(IllegalArgumentException e) {
+			System.err.println(String.format("Value %s is illigal for the option %s", value, m_hName));
+			System.err.println(String.format("List of allowed values: " + Arrays.toString(m_ChosenOption.getDeclaringClass().getEnumConstants())));
+			throw e;
+		}
 		
 	}
 
