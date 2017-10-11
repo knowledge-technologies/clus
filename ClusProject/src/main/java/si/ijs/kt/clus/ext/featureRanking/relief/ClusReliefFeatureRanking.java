@@ -126,12 +126,12 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private int[] m_NbTargetValues;
 
     /**
-     * m_targetProbabilities[index]: relative frequencies of the target values, used in standard classification,
+     * m_TargetProbabilities[index]: relative frequencies of the target values, used in standard classification,
      * for the target with the index of {@code index - 1} if {@code index > 0}, and overall target otherwise.<br>
      * If not {@link #m_IsStandardClassification}[index],
-     * then m_targetProbabilities[index] = null.
+     * then m_TargetProbabilities[index] = null.
      */
-    private double[][] m_targetProbabilities;
+    private double[][] m_TargetProbabilities;
 
     /** tells, whether to perform per-target rankings also */
     private boolean m_PerformPerTargetRanking;
@@ -276,10 +276,10 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
         m_IsStandardClassification = computeStandardClassification();
         m_NbTargetValues = nbTargetValues();
-        m_targetProbabilities = new double[m_NbGeneralisedTargetAttrs][];
-        for (int targetIndex = -1; targetIndex < m_targetProbabilities.length - 1; targetIndex++) {
+        m_TargetProbabilities = new double[m_NbGeneralisedTargetAttrs][];
+        for (int targetIndex = -1; targetIndex < m_TargetProbabilities.length - 1; targetIndex++) {
             if (m_IsStandardClassification[targetIndex + 1]) {
-                m_targetProbabilities[targetIndex + 1] = nominalClassCounts(targetIndex);
+                m_TargetProbabilities[targetIndex + 1] = nominalClassCounts(targetIndex);
             }
         }
 
@@ -310,7 +310,13 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_IsMLC = getSettings().getMLC().getSectionMultiLabel().isEnabled();
         if(m_IsMLC) {
         	m_MLCDistanceType = getSettings().getRelief().getMultilabelDistance();
-        	m_MLCDist = new MultiLabelDistance(m_MLCDistanceType, m_DescriptiveTargetAttr[TARGET_SPACE]);
+        	double[] labelProbabilities = new double[m_NbTargetAttrs];
+        	String labelPresent = "1";
+        	for(int i = 0; i < m_NbTargetAttrs; i++) {
+        		NominalAttrType attr = (NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][i];
+        		labelProbabilities[i] = m_TargetProbabilities[i + 1][attr.getValueIndex(labelPresent)];
+        	}
+        	m_MLCDist = new MultiLabelDistance(m_MLCDistanceType, m_DescriptiveTargetAttr[TARGET_SPACE], labelProbabilities);
         }
 
         // check for hierarchical attributes
@@ -543,8 +549,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                             tempSumDistAttr[attrInd] -= distAttr;
                         }
                         else {
-                            double pTupleTarget = m_targetProbabilities[targetIndex + 1][tupleTarget];
-                            double pNeighTarget = m_targetProbabilities[targetIndex + 1][targetValue];
+                            double pTupleTarget = m_TargetProbabilities[targetIndex + 1][tupleTarget];
+                            double pNeighTarget = m_TargetProbabilities[targetIndex + 1][targetValue];
                             tempSumDistAttr[attrInd] += pNeighTarget / (1.0 - pTupleTarget) * distAttr;
                         }
                     }
@@ -594,7 +600,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     /**
      * Computes normalised counts of each class value, for a given target.
      * 
-     * @param data
      * @param nominalTargetIndex
      *        if -1, this is the overall ranking, hence STC is the task at hand. Otherwise, we are computing statistics
      *        that are used in per-target ranking.

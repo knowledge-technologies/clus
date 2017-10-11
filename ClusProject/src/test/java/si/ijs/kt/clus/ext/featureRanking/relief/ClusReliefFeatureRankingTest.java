@@ -15,7 +15,7 @@ import org.junit.Test;
 
 import si.ijs.kt.clus.BaseTestCase;
 import si.ijs.kt.clus.Clus;
-import si.ijs.kt.clus.util.clusfile.Fimp;
+import si.ijs.kt.clus.ext.featureRanking.Fimp;
 import si.ijs.kt.clus.util.tuple.Pair;
 import si.ijs.kt.clus.util.tuple.Quadruple;
 
@@ -49,7 +49,7 @@ public class ClusReliefFeatureRankingTest extends BaseTestCase {
 	public void computeReliefImportance() throws IOException {
 		System.out.println("Testing ...");
 		String format = m_Subfolder + "/test%s.%s";
-		String[] tasks = new String[] {"Mixed", "MLC", "MTR", "TreeHMLC"};
+		String[] tasks = new String[] {"Mixed", "MLCHammingLoss", "MTR", "TreeHMLC"};
 		ArrayList<Pair<String, String>> settingsFimps = new ArrayList<Pair<String, String>>();
 		for(String task: tasks) {
 			settingsFimps.add(new Pair<String, String>(String.format(format, task, "s"), String.format(format, task, "fimpTruth")));

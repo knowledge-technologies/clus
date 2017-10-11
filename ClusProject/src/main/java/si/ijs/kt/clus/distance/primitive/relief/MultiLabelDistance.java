@@ -10,14 +10,17 @@ public class MultiLabelDistance {
 		
 	private MultilabelDistance m_DistanceType;
 	private NominalAttrType[] m_Labels;
+	private double[] m_LabelProbabilities;
 	
-	public MultiLabelDistance(MultilabelDistance type, ClusAttrType[] attrs){
+	public static int m_RelevantLabelIndex = 0;
+	
+	public MultiLabelDistance(MultilabelDistance type, ClusAttrType[] attrs, double[] labelProbabilities){
 		m_DistanceType = type;
 		m_Labels = new NominalAttrType[attrs.length];
 		for(int i = 0; i < attrs.length; i++){
 			m_Labels[i] = (NominalAttrType) attrs[i];
 		}
-		
+		m_LabelProbabilities = labelProbabilities;
 	}
 	
 	/**
@@ -35,21 +38,36 @@ public class MultiLabelDistance {
 			dist = hamming_loss(t1, t2);
 			break;
 		case MLAccuracy:
-			dist = accuracy(t1, t2);
+			dist = mlAccuracy(t1, t2);
 			break;
 		case MLFOne:
 			dist = F1(t1, t2);
 			break;
 		case SubsetAccuracy:
-			dist = subsetAccuracy(t1, t2);			
+			dist = subsetAccuracy(t1, t2);
+			break;
 		default:
 			throw new RuntimeException("Unknown distance type");
 		}
 		return dist;
 	}
 	
-    private static double correctedAttributeValue(NominalAttrType attr, DataTuple t) {
-    	return attr.isMissing(t) ? 1.0 / attr.m_NbValues :  attr.getNominal(t);
+    private double correctedAttributeValue(int attrInd, NominalAttrType attr, DataTuple t) {
+    	return attr.isMissing(t) ? m_LabelProbabilities[attrInd] : 1.0 - attr.getNominal(t); // P(value) = 1/2 : index of value x in {1, 0} is 1 - x ...
+    }
+    
+    private double areValuesEqualProbability(int attrInd, NominalAttrType attr, DataTuple t1, DataTuple t2) {
+    	double p = m_LabelProbabilities[attrInd];
+		double q = 1 - p;
+    	if(attr.isMissing(t1) && attr.isMissing(t2)) {			
+			return p * p + q * q;   		
+    	} else if(attr.isMissing(t1)) {
+    		return attr.getNominal(t2) == m_RelevantLabelIndex ? p : q; 
+    	} else if(attr.isMissing(t2)) {
+    		return attr.getNominal(t1) == m_RelevantLabelIndex ? p : q; 
+    	} else {
+    		return attr.getNominal(t1) == attr.getNominal(t2) ? 1.0 : 0.0;
+    	}
     }
 
 	/**
@@ -64,14 +82,7 @@ public class MultiLabelDistance {
     	double dist = 0.0;
         for (int i = 0; i < m_Labels.length; i++) {
             attr = m_Labels[i];
-            int value1 = attr.getNominal(t1);
-            int value2 = attr.getNominal(t2);
-            if(attr.isMissing(t1) || attr.isMissing(t2)){
-            	dist +=  1.0 - 1.0 / attr.m_NbValues;  // mimics P(different values)
-            }
-            else{
-            	dist += value1 == value2 ? 0.0 : 1.0;
-            }
+            dist += 1.0 - areValuesEqualProbability(i, attr, t1, t2); // different
         }
         return dist / m_Labels.length;
     }
@@ -82,14 +93,14 @@ public class MultiLabelDistance {
      * @param t2
      * @return
      */
-    private double accuracy(DataTuple t1, DataTuple t2){
+    private double mlAccuracy(DataTuple t1, DataTuple t2){
     	NominalAttrType attr;
     	double cap = 0.0;  // size of intersection
     	double cup = 0.0;  // size of union
     	for(int i = 0; i < m_Labels.length; i++){
     		attr = m_Labels[i];
-    		double value1 = correctedAttributeValue(attr, t1);
-    		double value2 = correctedAttributeValue(attr, t2);
+    		double value1 = correctedAttributeValue(i, attr, t1);
+    		double value2 = correctedAttributeValue(i, attr, t2);
             
             cap += value1 * value2;  // P(both present)
             cup += value1 + value2 - value1 * value2;  // P(at least one present)
@@ -111,8 +122,8 @@ public class MultiLabelDistance {
     	double first = 0.0, second = 0.0;  // size of first and second label set
     	for(int i = 0; i < m_Labels.length; i++){
     		attr = m_Labels[i];
-    		double value1 = correctedAttributeValue(attr, t1);
-    		double value2 = correctedAttributeValue(attr, t2);
+    		double value1 = correctedAttributeValue(i, attr, t1);
+    		double value2 = correctedAttributeValue(i, attr, t2);
             
             cap += value1 * value2;
             first += value1;
@@ -134,17 +145,20 @@ public class MultiLabelDistance {
     	double pEqualSets = 1.0;
     	for(int i = 0; i < m_Labels.length; i++){
     		attr = m_Labels[i];       
-    		double factor = correctedAttributeValue(attr, t1) * correctedAttributeValue(attr, t2);
+    		double factor = areValuesEqualProbability(i, attr, t1, t2);
     		if (factor < MathUtil.C1E_9) {
-    			return 0.0;
+    			pEqualSets = 0.0;
+    			break;
     		}
     		pEqualSets *= factor;
     	}
-    	return pEqualSets;
+    	return 1.0 - pEqualSets;
     }
     
     
     public String toString() {
-    	return String.format("%s(%s)", this.getClass().toString(), m_DistanceType.toString());
+    	String fullClassName = this.getClass().toString();
+    	int lastIndex = fullClassName.lastIndexOf(".") + 1;
+    	return String.format("%s(%s)", fullClassName.substring(lastIndex), m_DistanceType.toString());
     }
 }

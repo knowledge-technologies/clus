@@ -4,7 +4,7 @@ Verbose = 1
 RandomSeed = 1234
 
 [Data]
-File = C:/Users/matej/git/clusproject/ClusProject/resources/unitTests/ensembleAndRankingData/testMixed.arff
+File = resources/unitTests/ensembleAndRankingData/testMixed.arff
 
 [Attributes]
 Descriptive = 1-7

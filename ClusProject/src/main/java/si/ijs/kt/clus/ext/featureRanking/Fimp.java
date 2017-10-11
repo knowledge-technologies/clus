@@ -1,11 +1,10 @@
-package si.ijs.kt.clus.util.clusfile;
+package si.ijs.kt.clus.ext.featureRanking;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
-import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.util.tuple.Quadruple;
 
 public class Fimp {
