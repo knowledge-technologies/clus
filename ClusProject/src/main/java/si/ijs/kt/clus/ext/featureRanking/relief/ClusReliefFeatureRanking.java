@@ -237,7 +237,11 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     	m_ShouldLoadNeighbours = getSettings().getRelief().shouldLoadNeighbours();
         m_ShouldSaveNeighbours = getSettings().getRelief().shouldSaveNeighbours();
         if(m_ShouldLoadNeighbours && m_ShouldSaveNeighbours) {
-        	System.err.println("Loading and saving nearest neighbours turned on. Saving would not change the file, hence this saving is now turned off.");
+        	System.err.println("Situation:");
+        	System.err.println("  - Loading and saving nearest neighbours turned on.");
+        	System.err.println("  - Saving would not change the existing file.");
+        	System.err.println("Consequence:");
+        	System.err.println("  - Saving is now turned off.");
         	getSettings().getRelief().turnOffSaveNeighbours();
         	m_ShouldSaveNeighbours = getSettings().getRelief().shouldSaveNeighbours();
         }        
@@ -267,8 +271,11 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_NbTargetAttrs = m_DescriptiveTargetAttr[1].length;
         m_PerformPerTargetRanking = m_Data.m_Schema.getSettings().getEnsemble().shouldPerformRankingPerTarget();
         if (m_PerformPerTargetRanking && m_NbTargetAttrs == 1) {
-            System.err.println("The per-target rankings were desired but number of targets = 1, hence per-target == overall.");
-            System.err.println("m_PerformPerTargetRanking set to: false");
+        	System.err.println("Situation:");
+            System.err.println("  - Per-target rankings were desired.");
+            System.err.println("  - The number of targets is 1, hence per-target ranking == overall ranking.");
+            System.err.println("Consequence:");
+            System.err.println("  - Only overall feature ranking(s) will be computed.");
             m_PerformPerTargetRanking = false;
         }
         m_NbGeneralisedTargetAttrs = 1 + (m_PerformPerTargetRanking ? m_NbTargetAttrs : 0);

@@ -39,7 +39,7 @@ public class NearestNeighbour {
      * @param nnFileString e.g., NN(21;1.2E-1) or NN(0;0.21)
      */
     public NearestNeighbour(String nnFileString) {
-    	Pattern nnPatern = Pattern.compile("NN[(]([^;]+);([^;]+))[)]"); // removed the last ;([^)]+ component
+    	Pattern nnPatern = Pattern.compile("NN[(]([^;]+);([^;]+)[)]"); // removed the last ;([^)]+ component
     	Matcher nnParsed = nnPatern.matcher(nnFileString);
     	if(nnParsed.find()) {
     		m_indexInDataSet = Integer.parseInt(nnParsed.group(1));

@@ -34,9 +34,9 @@ public class SaveLoadNeighbours {
 	private String m_File;
 	
 	private static final String START_TARGET = "START_TARGET";
-	private static final String END_TARGET = "START_TARGET";
+	private static final String END_TARGET = "END_TARGET";
 	private static final String START_TUPLE = "START_TUPLE";
-	private static final String END_TUPLE = "START_TUPLE";
+	private static final String END_TUPLE = "END_TUPLE";
 	private static final String NB_TARGET_VALUES = "NB_TARGET_VALUES";
 
 	private static final String NN_SEPARATOR = "&";
@@ -52,7 +52,7 @@ public class SaveLoadNeighbours {
 			lines.add(String.format("%s;%d", START_TARGET, targetInd));
 			HashMap<Integer, NearestNeighbour[][]> neighboursTarget = nearestNeighbours.get(targetInd);
 			for(Integer tupleInd : neighboursTarget.keySet()) {
-				lines.add(START_TUPLE);
+				lines.add(String.format("%s;%d", START_TUPLE, tupleInd));
 				NearestNeighbour[][] nnss = neighboursTarget.get(tupleInd);
 				lines.add(String.format("%s;%d", NB_TARGET_VALUES, nnss.length));
 				for(NearestNeighbour[] nns : nnss) {
@@ -67,6 +67,7 @@ public class SaveLoadNeighbours {
 			lines.add(END_TARGET);
 		}
 		Files.write(Paths.get(m_File), lines, Charset.forName("UTF-8"));
+		System.out.println("Nearest neighbours written to: " + m_File);
 	}
 	
 	public HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadNeighboursFromFile() throws IOException {
@@ -119,7 +120,7 @@ public class SaveLoadNeighbours {
 	 * @return
 	 */
 	private int intAfterSemicolon(String myString) {
-		return Integer.parseInt(myString.substring(myString.indexOf(";")));	
+		return Integer.parseInt(myString.substring(myString.indexOf(";") + 1));	
 	}
 
 }

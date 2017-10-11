@@ -16,7 +16,7 @@ public class INIFileEnum<T extends Enum<T>> extends INIFileEntry {
 
 	@Override
 	public String getStringValue() {
-		return m_EnumType.toString();
+		return m_ChosenOption.toString();
 	}
 
 	@Override

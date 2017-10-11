@@ -111,7 +111,7 @@ public class ClusFeatureRanking {
     
     private boolean m_ScoresNormalized = false;
     
-    /** Separator that separates different blocks of columnts in fimp file. Must not be equal to "," (see parsing in the unit tests)! */
+    /** Separator that separates different blocks of columns in fimp file. Must not be equal to "," (see parsing in the unit tests)! */
     public final static String FIMP_SEPARATOR = "\t";
     
 
