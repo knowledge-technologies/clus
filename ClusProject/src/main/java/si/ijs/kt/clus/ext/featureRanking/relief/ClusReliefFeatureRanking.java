@@ -283,9 +283,13 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
         m_IsStandardClassification = computeStandardClassification();
         m_NbTargetValues = nbTargetValues();
-        m_TargetProbabilities = new double[m_NbGeneralisedTargetAttrs][];
+        
+        // check for multilabelness
+        m_IsMLC = getSettings().getMLC().getSectionMultiLabel().isEnabled();
+        int upperBound = 1 + (m_IsMLC ? m_NbTargetAttrs : 0);
+        m_TargetProbabilities = new double[upperBound][];
         for (int targetIndex = -1; targetIndex < m_TargetProbabilities.length - 1; targetIndex++) {
-            if (m_IsStandardClassification[targetIndex + 1]) {
+            if ((m_IsMLC && targetIndex >= 0) || m_IsStandardClassification[targetIndex + 1]) {
                 m_TargetProbabilities[targetIndex + 1] = nominalClassCounts(targetIndex);
             }
         }
@@ -313,8 +317,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             }
         }
         
-        // check for multilabelness
-        m_IsMLC = getSettings().getMLC().getSectionMultiLabel().isEnabled();
+        // depends on m_TargetProbabilities ...
         if(m_IsMLC) {
         	m_MLCDistanceType = getSettings().getRelief().getMultilabelDistance();
         	double[] labelProbabilities = new double[m_NbTargetAttrs];
@@ -616,14 +619,14 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      *         examples with non-missing value for the target.
      */
     private double[] nominalClassCounts(int nominalTargetIndex) {
-        int nbValues = m_NbTargetValues[nominalTargetIndex + 1];
+        int nbValues = m_IsMLC ? 2 : m_NbTargetValues[nominalTargetIndex + 1];
         double[] targetProbabilities = new double[nbValues + 1]; // one additional place for missing values
         int trueIndex = getTrueTargetIndex(nominalTargetIndex);
         NominalAttrType attr = (NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex];
         for (int example = 0; example < m_NbExamples; example++) {
             targetProbabilities[attr.getNominal(m_Data.getTuple(example))] += 1.0;
         }
-        if (m_NbExamples + MathUtil.C1E_9 > targetProbabilities[nbValues]) { // otherwise: targetProbabilities = {0, 0, ... , 0, m_NbExamples}
+        if (m_NbExamples > MathUtil.C1E_9 + targetProbabilities[nbValues]) { // otherwise: targetProbabilities = {0, 0, ... , 0, m_NbExamples}
             // Normalise probabilities: examples with unknown targets are effectively ignored
             // The formula for standard classification class weighting still holds, i.e., sum over other classes of
             // the terms P(other class) / (1 - P(class)), equals 1
@@ -1128,5 +1131,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private boolean shouldUseTuple(int targetIndex, DataTuple tuple) {
         int trueIndex = getTrueTargetIndex(targetIndex);
         return !(m_IsStandardClassification[targetIndex + 1] && m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex].isMissing(tuple));
+    }
+    
+    public String getMultilabelDistance(){
+        return m_MLCDist.distanceName();
     }
 }

@@ -161,4 +161,8 @@ public class MultiLabelDistance {
     	int lastIndex = fullClassName.lastIndexOf(".") + 1;
     	return String.format("%s(%s)", fullClassName.substring(lastIndex), m_DistanceType.toString());
     }
+    
+    public String distanceName(){
+        return m_DistanceType.toString();
+    }
 }
