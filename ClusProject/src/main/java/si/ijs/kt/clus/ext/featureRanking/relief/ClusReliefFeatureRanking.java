@@ -286,7 +286,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         
         // check for multilabelness
         m_IsMLC = getSettings().getMLC().getSectionMultiLabel().isEnabled();
-        int upperBound = 1 + (m_IsMLC ? m_NbTargetAttrs : 0);
+        int upperBound = m_IsMLC ? 1 + m_NbTargetAttrs : m_NbGeneralisedTargetAttrs;
         m_TargetProbabilities = new double[upperBound][];
         for (int targetIndex = -1; targetIndex < m_TargetProbabilities.length - 1; targetIndex++) {
             if ((m_IsMLC && targetIndex >= 0) || m_IsStandardClassification[targetIndex + 1]) {

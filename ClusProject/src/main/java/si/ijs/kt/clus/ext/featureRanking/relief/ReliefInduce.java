@@ -47,7 +47,7 @@ public class ReliefInduce extends ClusInductionAlgorithm {
         
         String fimpNameAppendix = getSettings().getMLC().getSectionMultiLabel().isEnabled() ?
                 m_FeatureRanking.getMultilabelDistance() : "";
-        m_FeatureRanking.createFimp(cr, fimpNameAppendix, 0);
+        m_FeatureRanking.createFimp(cr, 0);
         
         return reliefModel;
     }

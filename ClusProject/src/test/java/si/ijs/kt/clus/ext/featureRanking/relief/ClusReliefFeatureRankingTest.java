@@ -108,10 +108,10 @@ public class ClusReliefFeatureRankingTest extends BaseTestCase {
 				int[] ranks2 = contents2.get(i).getThird();
 				double[] relevs2 = contents2.get(i).getFourth();
 				
-				assertEquals(String.format("1st components of quadruple do not match (line index: %d)", i), ind1, ind2);
-				assertEquals(String.format("2nd components of quadruple do not match (line index: %d)", i), attr1, attr2);
-				assertArrayEquals(String.format("3rd components of quadruple do not match (line index: %d)", i), ranks1, ranks2);
-				assertArrayEquals(String.format("4th components of quadruple do not match (line index: %d)", i), relevs1, relevs2, precision);
+				assertEquals(String.format("Error for %s:\n1st components of quadruple do not match (line index: %d)", sFile, i), ind1, ind2);
+				assertEquals(String.format("Error for %s:\n:2nd components of quadruple do not match (line index: %d)", sFile, i), attr1, attr2);
+				assertArrayEquals(String.format("Error for %s:\n3rd components of quadruple do not match (line index: %d)", sFile, i), ranks1, ranks2);
+				assertArrayEquals(String.format("Error for %s:\n4th components of quadruple do not match (line index: %d)", sFile, i), relevs1, relevs2, precision);
 			}
 		}
 		
