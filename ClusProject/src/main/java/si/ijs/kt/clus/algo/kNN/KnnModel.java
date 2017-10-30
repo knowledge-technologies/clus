@@ -59,6 +59,7 @@ import si.ijs.kt.clus.ext.timeseries.TimeSeriesStat;
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
@@ -68,14 +69,11 @@ import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 /**
  *
- * @author Mitja Pugelj
+ * @author Mitja Pugelj, matejp
  */
 public class KnnModel implements ClusModel, Serializable {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-    public static final int WEIGHTING_CONSTANT = 1; // 1
-    public static final int WEIGHTING_INVERSE = 2; // d^{-1}
-    public static final int WEIGHTING_MINUS = 3; // 1-d
 
     private SearchAlgorithm search;
     private int weightingOption;
@@ -160,18 +158,20 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // Initialize distance according to settings file
-        String dist = this.cr.getStatManager().getSettings().getKNN().getKNNDistance();
+        int dist = this.cr.getStatManager().getSettings().getKNN().getKNNDistance();
         SearchDistance searchDistance = new SearchDistance();
         ClusDistance distance;
 
-        if (dist.toLowerCase().compareTo("chebyshev") == 0) {
+        if (dist == SettingsKNN.DISTANCE_CHEBYSHEV) {
             distance = new ChebyshevDistance(searchDistance);
         }
-        else if (dist.toLowerCase().compareTo("manhattan") == 0) {
+        else if (dist == SettingsKNN.DISTANCE_MANHATTAN) {
             distance = new ManhattanDistance(searchDistance);
         }
-        else {
+        else if (dist == SettingsKNN.DISTANCE_EUCLIDEAN) {
             distance = new EuclideanDistance(searchDistance);
+        } else {
+        	throw new RuntimeException("Wrong distance!");
         }
 
         // initialize min values of numeric attributes: needed for normalization in the distance computation
@@ -214,11 +214,11 @@ public class KnnModel implements ClusModel, Serializable {
         searchDistance.setNormalizationWeights(mins, maxs);
 
         // Select search method according to settings file.
-        String alg = this.cr.getStatManager().getSettings().getKNN().getKNNMethod();
-        if (alg.compareTo("vp-tree") == 0) {
+        int alg = this.cr.getStatManager().getSettings().getKNN().getKNNMethod();
+        if (alg == SettingsKNN.SEARCH_METHOD_VP_TREE) {
             this.search = new VPTree(this.cr, searchDistance);
         }
-        else if (alg.compareTo("kd-tree") == 0) {
+        else if (alg == SettingsKNN.SEARCH_METHOD_KD_TREE) {
             this.search = new KDTree(this.cr, searchDistance);
         }
         else {
@@ -293,10 +293,10 @@ public class KnnModel implements ClusModel, Serializable {
 
         // Initialize distance weighting according to setting file
         DistanceWeighting weighting;
-        if (this.weightingOption == WEIGHTING_INVERSE) {
+        if (this.weightingOption == SettingsKNN.DISTANCE_WEIGHTING_INVERSE) {
             weighting = new WeightOver(nearest, this.search, tuple);
         }
-        else if (this.weightingOption == WEIGHTING_MINUS) {
+        else if (this.weightingOption == SettingsKNN.DISTANCE_WEIGHTING_MINUS) {
             weighting = new WeightMinus(nearest, this.search, tuple);
         }
         else {
@@ -343,7 +343,7 @@ public class KnnModel implements ClusModel, Serializable {
 
     @Override
     public String getModelInfo() {
-        return "kNN model weighted with " + this.weightingOption + " and " + m_K + " neighbors.";
+        return "kNN model weighted with " + SettingsKNN.DISTANCE_WEIGHTS[this.weightingOption] + " and " + m_K + " neighbors.";
     }
 
 

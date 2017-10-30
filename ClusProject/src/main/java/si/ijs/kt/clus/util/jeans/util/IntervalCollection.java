@@ -24,6 +24,7 @@ package si.ijs.kt.clus.util.jeans.util;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 
 public class IntervalCollection implements Serializable {
@@ -288,6 +289,25 @@ public class IntervalCollection implements Serializable {
         }
         m_Total = total;
     }
+    
+    public int[] toIndices(){
+        ArrayList<Integer> indices = new ArrayList<Integer>();
+        for(int i = 0; i < getNbIntervals(); i++) {
+            int from = getInterval(i).getFirst();
+            int to = getInterval(i).getLast();
+            for(int attrInd = from; attrInd <= to; attrInd++) {
+                indices.add(attrInd);
+            }
+        }
+        int[] indicesArray = new int[indices.size()];
+        for(int i = 0; i < indices.size(); i++) {
+            indicesArray[i] = indices.get(i).intValue();
+        }
+        Arrays.sort(indicesArray);
+        return indicesArray;
+    }
+
+
 }
 
 
@@ -362,5 +382,4 @@ class Interval implements Serializable {
         else
             return String.valueOf(m_First) + "-" + String.valueOf(m_Last);
     }
-
 }

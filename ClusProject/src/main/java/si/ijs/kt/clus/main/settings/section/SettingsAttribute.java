@@ -36,9 +36,9 @@ public class SettingsAttribute extends SettingsBase {
     }
 
 
-    public void setGIS(String str) {
-        m_GIS.setValue(str);
-    }
+//    public void setGIS(String str) {
+//        m_GIS.setValue(str);
+//    }
 
     public boolean isNullGIS(){
         return StringUtils.unCaseCompare(m_GIS.getValue(), NONE);

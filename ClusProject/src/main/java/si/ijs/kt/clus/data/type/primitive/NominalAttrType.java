@@ -57,14 +57,14 @@ public class NominalAttrType extends ClusAttrType {
      */
     public int m_NbValues;
     public String[] m_Values;
-    protected transient Hashtable m_Hash;
+    protected transient Hashtable<String, Integer> m_Hash;
 
 
     public NominalAttrType(String name, String type) {
         super(name);
         int len = type.length();
         StringTokenizer tokens = new StringTokenizer(type.substring(1, len - 1), ",");
-        ArrayList values = new ArrayList();
+        ArrayList<String> values = new ArrayList<String>();
         while (tokens.hasMoreTokens()) {
             String value = tokens.nextToken().trim();
             if (!value.equals("?"))
@@ -78,7 +78,7 @@ public class NominalAttrType extends ClusAttrType {
         m_NbValues = values.size();
         m_Values = new String[m_NbValues];
         for (int i = 0; i < m_NbValues; i++) {
-            m_Values[i] = (String) values.get(i);
+            m_Values[i] = values.get(i);
         }
         createHash();
     }
@@ -101,17 +101,17 @@ public class NominalAttrType extends ClusAttrType {
     }
 
 
-    public NominalAttrType(String name, String[] values) {
+    public NominalAttrType(String name, String[] values) { // matejp: Do not call this if you want to initialize MLC attribute properly, see NominalAttrType(String name, String type)
         super(name);
         m_NbValues = values.length;
         m_Values = values;
     }
 
 
-    public NominalAttrType(String name, ArrayList values) {
+    public NominalAttrType(String name, ArrayList<String> values) {
         super(name);
         m_NbValues = values.size();
-        m_Values = (String[]) values.toArray(new String[values.size()]);
+        m_Values = values.toArray(new String[values.size()]);
     }
 
 
@@ -184,7 +184,7 @@ public class NominalAttrType extends ClusAttrType {
 
 
     public Integer getValueIndex(String value) {
-        return (Integer) m_Hash.get(value);
+        return m_Hash.get(value);
     }
 
 
@@ -204,7 +204,7 @@ public class NominalAttrType extends ClusAttrType {
 
 
     public void createHash() {
-        m_Hash = new Hashtable();
+        m_Hash = new Hashtable<String, Integer>();
         for (int i = 0; i < m_NbValues; i++) {
             m_Hash.put(m_Values[i], new Integer(i));
         }

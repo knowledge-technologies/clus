@@ -1,34 +1,43 @@
+\section{Data}
+All paths (see, for example \optionNameStyle{File}), can be given as absolute paths or relative paths (relative to the \clus{} executable).
+
 \begin{itemize}
     \item \optionNameStyle{File}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a string (path to the file)
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: The name of the file that contains the training set. The default value is
+                internally changed to {\tt {\em filename}.arff}.  \clus{} can read compressed ({\tt .arff.zip}) or uncompressed ({\tt .arff}) data files.% Path can also be included in the string. 
            \end{itemize}
     \item \optionNameStyle{TestSet}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a string $s$ (path to the file) or a real number $p$ from the interval $[0, 1]$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If the default value \optionDefaultValueStyle{None} is used, no test set is used.
+                 If $s$ is a valid file name containing a test set in ARFF format, \clus{} will evaluate the learned model on this test set.
+                 If this settings is specified as a real number $p$, \clus{} will use a proportion $p$ of the data file as a separate test set (used for evaluating the model but not for training).
            \end{itemize}
     \item \optionNameStyle{PruneSet}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: same as for \optionNameStyle{TestSet}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: defines whether and how to use a pruning set; the meaning of this setting is analogous to \optionNameStyle{TestSet} setting.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{PruneSetMax}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Infinity}
                 \item \optionDescrption{}: ???
            \end{itemize}
-    \item \optionNameStyle{XVal}:
+    }
+    \item \optionNameStyle{XVal}:\label{sett:xval}
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an integer greater or equal to $2$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{10}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  the number of folds to be used in a cross-validation.  To perform cross-validation, \clus{} needs to be run with the {\tt -xval} command line parameter.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{RemoveMissingTarget}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -41,4 +50,5 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{None}
                 \item \optionDescrption{}: ???
            \end{itemize}
+   }
 \end{itemize}

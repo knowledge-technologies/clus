@@ -46,7 +46,7 @@ public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
 
     @Override
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
-        if (sett.getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_BOOSTING) {
+        if (sett.getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_METHOD_BOOSTING) {
             return new ClusBoostingInduce(schema, sett);
         }
         else {

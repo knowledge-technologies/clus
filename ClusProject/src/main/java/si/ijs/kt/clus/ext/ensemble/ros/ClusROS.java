@@ -98,10 +98,10 @@ public class ClusROS {
         SettingsEnsemble sett = settMain.getEnsemble();
 
         int method = sett.getEnsembleMethod();
-        if (method != SettingsEnsemble.ENSEMBLE_BAGGING
-                && method != SettingsEnsemble.ENSEMBLE_RFOREST
-                && method != SettingsEnsemble.ENSEMBLE_RSUBSPACES
-                && method != SettingsEnsemble.ENSEMBLE_EXTRA_TREES)
+        if (method != SettingsEnsemble.ENSEMBLE_METHOD_BAGGING
+                && method != SettingsEnsemble.ENSEMBLE_METHOD_RFOREST
+                && method != SettingsEnsemble.ENSEMBLE_METHOD_RSUBSPACES
+                && method != SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES)
 
             throw new RuntimeException("ROS extension is not implemented for the selected ensemble method!");
 

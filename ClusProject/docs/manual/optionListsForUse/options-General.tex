@@ -1,26 +1,32 @@
+
+\section{General}
 \begin{itemize}
     \item \optionNameStyle{Verbose}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a nonnegative integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies the verbosity of the information, printed to standard output.
            \end{itemize}
-    \item \optionNameStyle{Compatibility}:
+    \doNotShowThis{\item \optionNameStyle{Compatibility}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{CMB05,MLJ08,Latest}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Latest}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies a version of the \clus, so that the results can be reproduced
            \end{itemize}
-    \item \optionNameStyle{RandomSeed}:
+    }
+    \item \optionNameStyle{RandomSeed}: \label{sett:randomSeed}
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}:  a nonnegative integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Used to initialize the object that takes care of random number generation. Some procedures used by \clus{} (e.g., creation of cross-validation folds) are randomized, and as a result, different runs of \clus{} on identical data may still yield different outputs.  When \clus{} is run on identical input data with the same \optionNameStyle{RandomSeed} setting, it is guaranteed to yield the same results.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{ResourceInfoLoaded}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
 \end{itemize}
+

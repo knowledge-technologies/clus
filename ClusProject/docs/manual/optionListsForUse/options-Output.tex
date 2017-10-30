@@ -1,95 +1,104 @@
+\section{Output}
+
+
+
 \begin{itemize}
     \item \optionNameStyle{ShowModels}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a subset of \optionPossibleValuesList{Default, Original, Pruned, Others}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{\{Default, Pruned, Others\}}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies which models are shown in the \texttt{.out} file
            \end{itemize}
     \item \optionNameStyle{TrainErrors}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: if set to \formatOneElement{Yes}, training errors will be computed and included in the \texttt{.out} file
            \end{itemize}
-    \item \optionNameStyle{ValidErrors}:
+    \doNotShowThis{\item \optionNameStyle{ValidErrors}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: if set to \formatOneElement{Yes}, validation errors will be computed and included in the \texttt{.out} file
            \end{itemize}
+    }
     \item \optionNameStyle{TestErrors}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: if set to \formatOneElement{Yes}, testing errors will be computed and included in the \texttt{.out} file
            \end{itemize}
     \item \optionNameStyle{AllFoldModels}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: if set to \formatOneElement{Yes}, \clus{} will output the model built in each fold of a cross-validation.
            \end{itemize}
     \item \optionNameStyle{AllFoldErrors}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of  \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  if set to \formatOneElement{Yes}, \clus{} will output the test set error (and other evaluation measures) for each fold.
            \end{itemize}
     \item \optionNameStyle{AllFoldDatasets}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: if set to \formatOneElement{Yes}, \clus{} will output the test set error (and other evaluation measures) for each fold.
            \end{itemize}
     \item \optionNameStyle{UnknownFrequency}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of  \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: if set to \formatOneElement{Yes}, \clus{} will show in each node of the tree the proportion of instances that had a missing value for the test in that node.
            \end{itemize}
     \item \optionNameStyle{BranchFrequency}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  if set to \formatOneElement{Yes}, \clus{} will show in each node of the tree, for each possible outcome of the test in that node, the proportion of instances that had that outcome.
            \end{itemize}
     \item \optionNameStyle{ShowInfo}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Count, CountByTarget, Distribution, Index, NodePrototypes, Key}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{\{Count\}}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies the type of information shown in the models in \texttt{.out} file
            \end{itemize}
     \item \optionNameStyle{PrintModelAndExamples}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of  \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: if set to \formatOneElement{Yes}, the leaves of the models in the \texttt{.out} file will include some basic information about the distribution of values of the numeric
+                descriptive attributes: minimal and maximal value, average and standard deviation.
            \end{itemize}
-    \item \optionNameStyle{WriteErrorFile}:
+    \doNotShowThis{
+    \item \optionNameStyle{WriteErrorFile}: until this bug is fixed ...
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
     \item \optionNameStyle{WriteModelFile}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: if set to \formatOneElement{Yes}, the \texttt{.model} file will be created
            \end{itemize}
     \item \optionNameStyle{WritePredictions}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a subset of \optionPossibleValuesList{Train,Test} or \formatOneElement{None}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{\{None\}}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If \formatOneElement{Train} is included, then the prediction for each training instance will be written to an ARFF output file {\tt {\em filename}.train.{\em i}.pred.arff} with $i$ the iteration. In a single run, $i = 1$. In a 10-fold cross-validation, $i$ will vary from 1 to 10. If \formatOneElement{Test}, then the predictions for each test instance will be written to the file
+                {\tt {\em filename}.test.pred.arff}.
            \end{itemize}
     \item \optionNameStyle{GzipOutput}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  if set to \formatOneElement{Yes}, \clus{} will compress output in gzip file format (approx. 10 times smaller file sizes).
            \end{itemize}
-    \item \optionNameStyle{ModelIDFiles}:
+    \doNotShowThis{\item \optionNameStyle{ModelIDFiles}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
@@ -125,4 +134,7 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: ???
            \end{itemize}
+      }
 \end{itemize}
+
+

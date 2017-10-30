@@ -1,122 +1,167 @@
+\section{SemiSupervised}
+
+Settings for running \clus{} in semi-supervised learning mode, relevant when command line argument {\tt -ssl} is used. These go in the separate section ``SemiSupervised'' in the settings file.
+
+
 \begin{itemize}
     \item \optionNameStyle{SemiSupervisedMethod}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{PCT, SelfTraining, SelfTrainingFTF}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{PCT}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies the semi-supervised method used:
+                \begin{itemize}
+                    \item \formatOneElement{PCT}: Semi-supervised predictive clustering trees (SSL-PCTs) that use both descriptive and target attributes to evaluate the splits (if {\tt -forest} is used, ensemble of SSL-PCTs will be built). For more details see \cite{levatic2017_SSL4MTR_distanceBased,levatic2017_SSL4class_distanceBased}
+                    \item \formatOneElement{SelfTraining}: The self-training method that "wraps" around ensembles of PCTs ({\tt -forest} needs to be used). It iteratively uses its own most reliable predictions in the learning proces. Note, when this method is used, the Default model in .out is supervised random forest. For more details see \cite{levatic2017_self-training}.  
+                    \item \formatOneElement{SelfTrainingFTF}: Self-training that operates without reliability score, iterates until distances between predictions of two consecutive iterations are smaller than predefined threshold. Note, when this method is used, the Default model in .out is supervised random forest. Implemented on the basis of \cite{culp_iterative_2008}.
+                \end{itemize}
            \end{itemize}
     \item \optionNameStyle{StoppingCriteria}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{NoneAdded, Iterations, Airbag}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{NoneAdded}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  Stopping criteria for the \optionNameStyle{SelfTraining} method:
+                \begin{itemize}
+                    \item \formatOneElement{NoneAdded}: Stops if no example was added to the training set in the current iteration, i.e., if no unlabeled example met the criteria speficied with \optionNameStyle{UnlabeledCriteria}. 
+                    \item \formatOneElement{Iterations}: Stops after the predefined number of iterations with the \optionNameStyle{Iterations} setting. Also applies for \formatOneElement{SelfTrainingFTF}.
+                    \item \formatOneElement{Airbag}: "Smart" stopping criteria proposed in \cite{leistner2009semi}. Monitors the out-of-bag error, and stops learning if performance degradation is detected. 
+                \end{itemize}
            \end{itemize}
     \item \optionNameStyle{UnlabeledCriteria}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Threshold,KMostConfident,KPercentageMostConfident,KPercentageMostAverage,AutomaticOOB,AutomaticOOBInitial,ExhaustiveSearch}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Threshold}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Criteria used by the \formatOneElement{SelfTraining} method to select the predictions on unlabeled data that will be added to the training set.
+                \begin{itemize}
+                    \item \formatOneElement{Threshold}: All of the unlabeled instances with confidence of prediction greater than {\tt Threshold} will be added to the training set.
+                    \item \formatOneElement{KMostConfident}: {\tt K} unlabeled instances with the most confident predictions will be added to the training set.
+                    \item \formatOneElement{KPercentageMostConfident}: {\tt K} percentage of unlabeled instances with the most confident predictions will be added to the training set.
+                    \item \formatOneElement{KPercentageMostAverage}: The threshold is set to the average of the reliability scores of the \optionNameStyle{K} percentage of the most reliable examples (the threshold is set only once after the initial iteration).
+                    \item \formatOneElement{AutomaticOOB}: The optimal threshold will be automatically selected on the basis of reliability scores of out-of-bag labeled examples, for more details see \cite{levatic2017_self-training}.
+                    \item \formatOneElement{AutomaticOOBInitial}: Similar as \formatOneElement{AutomaticOOB}, however, the threshold will be selected only after the initial iteration and used throughout next iterations.
+                    \item \formatOneElement{ExhaustiveSearch}: At each iteration, the optimal threshold will be selected from the list specified in \optionNameStyle{ExhaustiveSearchThresholds}, on the basis of out-of-bag error on labeled examples. Beware, this is computationally expensive. 
+                \end{itemize}
            \end{itemize}
     \item \optionNameStyle{ConfidenceThreshold}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a real number from the interval $[0, 1]$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.8}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: The threshold for reliability scores, applicable if \optionNameStyle{UnlabeledCriteria} is set to \formatOneElement{Threshold} is used.
            \end{itemize}
     \item \optionNameStyle{ConfidenceMeasure}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{Variance}
-                \item \optionDescrption{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Variance,ClassesProbabilities,RForestProximities,RandomUniform,RandomGaussian,Oracle}
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{Variance} if the task is (multi-target) regression, \optionDefaultValueStyle{ClassesProbabilities} if the task is (hierarchical multi-label) classification.
+                \item \optionDescrption{}:  Confidence (i.e., reliability) score used in \formatOneElement{SelfTraining}.
+                \begin{itemize}
+                    \item \formatOneElement{Variance}: Reliability is inversely proportional to the standard deviation of the votes of an ensemble, i.e., smaller deviation, greater reliability.
+                    \item\formatOneElement{ClassesProbabilities}: Used for (hierarchical) multi-label classification. Reliability is proportional to empirical probabilites, i.e., proportion of trees in ensemble that voted for a given class.
+                    \item \formatOneElement{RForestProximities}: Reliability scores are calculated by using estimation of an error of unlabeled examples via out-of-bag error of labeled examples in their random Forest proximity (see \cite{levatic2017_self-training}).
+                    \item \formatOneElement{RandomUniform}: Unlabeled examples to be added to the training set are randomly selected, where reliability scores are random numbers uniformly distributed in $[0,1]$.
+                    \item \formatOneElement{RandomGaussian}: Unlabeled examples to be added to the training set are randomly selected, where reliability scores are random numbers normally distributed in $[0,1]$.
+                    \item \formatOneElement{Oracle}: Actual errors on unlabeled examples are used to calculated to establish reliability scores. This is not attainable in practice (with real unlabeled data), but can be used to gain some insight into the algorithm. To use this score, unlabeled examples in {\tt UnlabeledData} need to be provided with labels.
+                \end{itemize}
            \end{itemize}
     \item \optionNameStyle{Iterations}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{10}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: The number of iterations for \formatOneElement{SelfTraining} or \formatOneElement{SelfTrainingFTF} methods.
            \end{itemize}
     \item \optionNameStyle{K}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{5}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: $K$ parameter for \formatOneElement{KMostConfident}, \formatOneElement{KPercentageMostConfident} and \formatOneElement{KPercentageMostAverage}.
            \end{itemize}
     \item \optionNameStyle{UnlabeledData}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{}
-                \item \optionDescrption{}: ???
+                \item \optionPossibleValues{}: a string (path to the file)
+                \item \optionDefaultValue{}: the empty string
+                \item \optionDescrption{}: the name of the file that contains unlabeled data. This is optional, unlabeled data can be provided directly in the training set (with missing values for target attributes).
            \end{itemize}
     \item \optionNameStyle{PercentageLabeled}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an integer $r$ from the interval $[0, 100]$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{5}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If unlabeled data is not given with \optionNameStyle{UnlabeledData} or given directly in the training set, then unlabeled data are randomly selected from the training set, where $r$ is the ratio of labeled examples. Default if 5, which means that $5\%$ of the data will be selected as labeled data, and the rest $95\%$ will be used as unlabeled data.
            \end{itemize}
     \item \optionNameStyle{UseWeights}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: if set to \formatOneElement{Yes}, unlabeled examples that are added to the training set when \formatOneElement{SelfTraining} is used will be given weights that correspond to their reliability scores.
            \end{itemize}
     \item \optionNameStyle{AirbagTrials}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a nonnegative integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: The \formatOneElement{Airbag} stops \formatOneElement{SelfTraining} when degradation of performance according to out-of-bag error is detected. This setting specifies the number of times it is allowed for the model's out-of-bag error to be worse than that of the model trained in previous iteration.
            \end{itemize}
     \item \optionNameStyle{ExhaustiveSearchThresholds}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{[0.5}, \optionDefaultValueStyle{0.6}, \optionDefaultValueStyle{0.7}, \optionDefaultValueStyle{0.8}, \optionDefaultValueStyle{0.9}, \optionDefaultValueStyle{0.99]}
-                \item \optionDescrption{}: ???
+                \item \optionPossibleValues{}: a list of reals from the interval $[0, 1]$.
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{[0.5,0.6,0.7,0.8,0.9,0.99]}
+                \item \optionDescrption{}: Candidate thresholds that are considered if \formatOneElement{ExhaustiveSearch} is used.
            \end{itemize}
     \item \optionNameStyle{OOBErrorCalculation}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{LabeledOnly,AllData}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{LabeledOnly}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies the data which out of beg error is calculated for in \formatOneElement{SelfTraining}.
            \end{itemize}
     \item \optionNameStyle{Normalization}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{MinMaxNormalization, Ranking, Standardization, NoNormalization}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{MinMaxNormalization}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Normalization of the per-target reliability scores, performed prior to aggregation. An element of . Default is {\tt MinMaxNormalization}.
+                \begin{itemize}
+                    \item \formatOneElement{MinMaxNormalization}: Per-target reliability scores are normalized to $[0,1]$ interval, where the least reliable score gets 0, and the most reliable score gets 1.
+                    \item \formatOneElement{Ranking}: Ranks per-target scores according to their reliability, can be useful if per-target scores have very skewed distribution.
+                    \item \formatOneElement{Standardization}: Per-target scores are standardized to 0.5 mean and 0.125 standard deviation (ensures that 99.98\% of the scores are in $[0,1]$ interval).
+                    \item \formatOneElement{NoNormalization}: Normalization of per-target scores is not performed.
+                \end{itemize}
            \end{itemize}
     \item \optionNameStyle{Aggregation}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Average, Minimum, Maximum}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Average}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  Aggregation of the per-target reliability scores:
+                	\begin{itemize}
+                    \item \formatOneElement{Average}: Reliability score is calculated as an average of per-target reliability scores.
+                    \item \formatOneElement{Minimum}: An example's prediction is considered as reliable as its least reliable component.
+                    \item \formatOneElement{Maximum}: An example's prediction is considered as reliable as its most reliable component.
+                \end{itemize} 
            \end{itemize}
     \item \optionNameStyle{CalibrateHmcThreshold}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}:  an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If set to $Yes$, the threshold is calibrated such that the difference between label cardinality of labeled examples and predicted unlabeled examples is minimal.
+                Applies if \formatOneElement{SelfTraining} is used for hierarchical multi-label classification.
            \end{itemize}
     \item \optionNameStyle{PruningWhenTuning}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:If set to $Yes$, the trees will be pruned while optimizing the $w$ parameter of SSL-PCTs. Should be turned on if pruned trees are of interest.
            \end{itemize}
     \item \optionNameStyle{InternalFolds}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an integer, greater than $2$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{5}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: The number of fold for internal cross-validation, applies if \optionNameStyle{PossibleWeights} is a vector of values. Default is $5$.
            \end{itemize}
     \item \optionNameStyle{WeightScoresFile}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}:  a string that describes path to the file or \formatOneElement{NO}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{NO}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: the name of the file where predictive performance for each candidate $w$ will be written (applies if \optionDefaultValueStyle{PossibleWeights} is a vector of values).
+                By default, the file will not be written.
            \end{itemize}
     \item \optionNameStyle{PossibleWeights}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{[0.0}, \optionDefaultValueStyle{0.1}, \optionDefaultValueStyle{0.2}, \optionDefaultValueStyle{0.3}, \optionDefaultValueStyle{0.4}, \optionDefaultValueStyle{0.5}, \optionDefaultValueStyle{0.6}, \optionDefaultValueStyle{0.7}, \optionDefaultValueStyle{0.8}, \optionDefaultValueStyle{0.9}, \optionDefaultValueStyle{1.0]}
-                \item \optionDescrption{}: ???
+                \item \optionPossibleValues{}: a real number from the interval $[0, 1]$ or a list of such numbers
+                \item \optionDefaultValue{}: \optionDefaultValueStyle{[0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]}
+                \item \optionDescrption{}: Specifies the $w$ parameter for SSL-PCTs, i.e., the trade-off between target and descriptive spaces, where $w=1$ means that supervisd learning will be performed, while $w=0$ means that unsupervised learning will be performed. If vector is provided, each candidate $w$ will be evaluated via internal cross validation on the labeled part of the training set (each run of internal cross validation will use available unlabeled data), and the final model will be built with the best $w$.
            \end{itemize}
 \end{itemize}

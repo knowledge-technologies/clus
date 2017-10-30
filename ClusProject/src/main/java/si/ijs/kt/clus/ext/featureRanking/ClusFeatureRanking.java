@@ -7,10 +7,12 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Random;
+import java.util.Set;
 import java.util.TreeMap;
 
 import com.google.gson.Gson;
@@ -67,6 +69,7 @@ import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
+import si.ijs.kt.clus.util.tuple.Triple;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 
@@ -77,29 +80,47 @@ public class ClusFeatureRanking {
      * {@code [type of the attribute, position of the attribute, relevance1, relevance2, ..., relevanceK]}<br>
      * where {@code K >= 1} and each relevance corresponds to some ranking.
      */
-    protected HashMap<String, double[]> m_AllAttributes;
-    // boolean m_FeatRank;
-    protected TreeMap<Double, ArrayList<String>> m_FeatureRanks;// sorted by the rank
-    HashMap<String, Double> m_FeatureRankByName; // Part of fimp's header
-
+    protected final HashMap<String, double[]> m_AllAttributes;
+    
+    private enum FimpOrdering{AS_IN_DATASET, BY_RELEVANCE};
+    private FimpOrdering m_Order;
+    
+    private TreeMap<Double, ArrayList<Triple<String, int[], double[]>>> m_OutputRanking;
+    /**
+     * Hash map of pairs attribute name: (double) index of the attribute in the dataset,
+     * where indices are 1-based.
+     */
+    private HashMap<String, Double> m_AttributeDatasetIndices;
+    /**
+     * Hash map of pairs attribute name: [rank in the 1st ranking, rank in the 2nd ranking, ...],
+     * where ranks are 1-based.
+     */
+    private HashMap<String, int[]> m_AttributeRanks;
+    
     /** Description of the ranking that appears in the first lines of the .fimp file */
-    String m_RankingDescription;
+    private String m_RankingDescription;
+    
     /** Header for the table of relevances in the .fimp file */
-    String m_FimpTableHeader;
+    protected String m_FimpTableHeader;
 
     ClusReadWriteLock m_Lock;
 
-    int m_NbFeatureRankings;
+    private int m_NbFeatureRankings;
 
-    Settings m_Settings;
-
+    private Settings m_Settings;
+    
+    private boolean m_ScoresNormalized = false;
+    
+    /** Separator that separates different blocks of columns in fimp file. Must not be equal to "," (see parsing in the unit tests)! */
+    public final static String FIMP_SEPARATOR = "\t";
+    
 
     public ClusFeatureRanking(Settings sett) {
         m_AllAttributes = new HashMap<String, double[]>();
-        m_FeatureRankByName = new HashMap<String, Double>();
-        m_FeatureRanks = new TreeMap<Double, ArrayList<String>>();
         m_Lock = new ClusReadWriteLock();
         m_Settings = sett;
+        m_AttributeDatasetIndices = new HashMap<String, Double>();
+        m_OutputRanking = new TreeMap<Double, ArrayList<Triple<String, int[], double[]>>>();
     }
 
 
@@ -112,8 +133,11 @@ public class ClusFeatureRanking {
         int num = -1;
         int nom = -1;
         // System.out.println("NB = "+descriptive.length);
+        int[] attributeDatasetIndices = descriptive[0].getSchema().getDescriptive().toIndices();
         for (int i = 0; i < descriptive.length; i++) {
             ClusAttrType type = descriptive[i];
+            // type.setDatasetIndex(m_AttributeDatasetIndices[i]);
+            m_AttributeDatasetIndices.put(type.getName(), (double) attributeDatasetIndices[i]);
             if (!type.isDisabled()) {
                 // double[] info = new double[3];
                 double[] info = new double[2 + nbRankings];
@@ -137,105 +161,51 @@ public class ClusFeatureRanking {
     }
 
 
-    public void sortFeatureRanks(int numberOfTrees) {
-        Iterator<String> iter = m_AllAttributes.keySet().iterator();
-        while (iter.hasNext()) {
-            String attr = iter.next();
-            double score = m_AllAttributes.get(attr)[2] / Math.max(1.0, numberOfTrees);
-            // double score = ((double[])m_AllAttributes.get(attr))[2];
-            ArrayList<String> attrs = new ArrayList<String>();
-            if (m_FeatureRanks.containsKey(score))
-                attrs = m_FeatureRanks.get(score);
-            attrs.add(attr);
-            m_FeatureRanks.put(score, attrs);
-        }
-    }
-
-
-    public void convertRanksByName() {
-        TreeMap<Double, ArrayList<String>> sorted = (TreeMap<Double, ArrayList<String>>) m_FeatureRanks.clone();
-        while (!sorted.isEmpty()) {
-            double score = sorted.lastKey();
-            ArrayList<String> attrs = new ArrayList<String>();
-            attrs = sorted.get(sorted.lastKey());
-            for (int i = 0; i < attrs.size(); i++)
-                m_FeatureRankByName.put(attrs.get(i), score);
-            sorted.remove(sorted.lastKey());
-        }
-    }
-
-
     /**
-     * Writes fimp with attributes sorted decreasingly by relevances. This method should be called only if the number of
-     * feature rankings is 1.
+     * Writes fimp with where the attributes appear in the order that was chosen
+     * (as in the dataset or sorted by relevance).
      * 
      * @param fname
-     * @param rankingMethod
      * @throws IOException
      */
-    public void writeRanking(String fname, int rankingMethod) throws IOException {
-        TreeMap<Double, ArrayList<String>> ranking = (TreeMap<Double, ArrayList<String>>) m_FeatureRanks.clone();
-
+    public void writeRanking(String fname) throws IOException {
         File franking = new File(fname + ".fimp");
         FileWriter wrtr = new FileWriter(franking);
 
         wrtr.write(m_RankingDescription + "\n");
         wrtr.write(m_FimpTableHeader + "\n");
         wrtr.write(StringUtils.makeString('-', m_FimpTableHeader.length()) + "\n");
-        while (!ranking.isEmpty()) {
-            // wrtr.write(sorted.get(sorted.lastKey()) + "\t" + sorted.lastKey()+"\n");
-            wrtr.write(writeRow(ranking.get(ranking.lastKey()), ranking.lastKey()));
-            ranking.remove(ranking.lastKey());
+
+        Set<Double> orderedKeys;
+        if(m_Order == FimpOrdering.AS_IN_DATASET){
+             orderedKeys = m_OutputRanking.keySet();
+        } else{
+            orderedKeys = m_OutputRanking.descendingKeySet();
         }
-        wrtr.flush();
-        wrtr.close();
-        System.out.println(String.format("Feature importances written to: %s.fimp", fname));
-    }
-
-
-    public String writeRow(ArrayList<String> attributes, double value) {
-        String output = "";
-        for (int i = 0; i < attributes.size(); i++) {
-            String attr = attributes.get(i);
-            attr = attr.replaceAll("\\[", "");
-            attr = attr.replaceAll("\\]", "");
-            output += attr + "\t[" + value + "]\n"; // added [ and ] to make fimps look the same, when #rankings == 1 or #rankings > 1.
-        }
-        return output;
-    }
-
-
-    public void writeRankingByAttributeName(String fname, ClusAttrType[] descriptive, int rankingMethod) throws IOException {
-        File franking = new File(fname + ".fimp");
-        FileWriter wrtr = new FileWriter(franking);
-
-        wrtr.write(m_RankingDescription + "\n");
-        wrtr.write(m_FimpTableHeader + "\n");
-        wrtr.write(StringUtils.makeString('-', m_FimpTableHeader.length()) + "\n");
-        int nbRankings = m_AllAttributes.get(descriptive[0].getName()).length - 2;
-        for (int i = 0; i < descriptive.length; i++) {
-            String attribute = descriptive[i].getName();
-            double[] values = Arrays.copyOfRange(m_AllAttributes.get(attribute), 2, nbRankings + 2);
-            for (int j = 0; j < values.length; j++) {
-                values[j] /= Math.max(1.0, ClusEnsembleInduce.getMaxNbBags()); // Relief has 0 number of bags ...
+        for(Double key: orderedKeys){
+            ArrayList<Triple<String, int[], double[]>> triples = m_OutputRanking.get(key);
+            for(Triple<String, int[], double[]> triple : triples){
+                wrtr.write(fimpTableRow(triple.getFirst(), triple.getSecond(), triple.getThird()) + "\n");
             }
-            wrtr.write(attribute + "\t" + Arrays.toString(values) + "\n");
-            wrtr.flush();
         }
-
-        /*
-         * Iterator iter = m_AllAttributes.keySet().iterator();
-         * while (iter.hasNext()){
-         * String attr = (String)iter.next();
-         * double value = ((double[])m_AllAttributes.get(attr))[2]/ClusEnsembleInduce.getMaxNbBags();
-         * wrtr.write(attr +"\t"+value+"\n");
-         * wrtr.flush();
-         * }
-         */
-
         wrtr.flush();
         wrtr.close();
         System.out.println(String.format("Feature importances written to: %s.fimp", fname));
+    }
+
+    
+    /**
+     * Produces a fimp table row of the form
+     * datasetIndex of the attribute, attribute name, ranks, relevances
+     * @param attributeName
+     * @param ranks
+     * @param relevances
+     * @return
+     */
+    public String fimpTableRow(String attributeName, int[] ranks, double[] relevances) {
+        int datasetIndex = (int) Math.round(m_AttributeDatasetIndices.get(attributeName).doubleValue());
+        String[] output = new String[] {Integer.toString(datasetIndex), attributeName, Arrays.toString(ranks), Arrays.toString(relevances)};
+        return String.join(FIMP_SEPARATOR, output);
     }
 
 
@@ -295,13 +265,13 @@ public class ClusFeatureRanking {
         JsonElement algorithmName;
         int ens_method = getSettings().getEnsemble().getEnsembleMethod();
         int fr_method = getSettings().getEnsemble().getRankingMethod();
-        if (ens_method == SettingsEnsemble.ENSEMBLE_EXTRA_TREES) {
+        if (ens_method == SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES) {
             algorithmName = new JsonPrimitive("ExtraTrees/GENIE3");
         }
-        else if ((ens_method == SettingsEnsemble.ENSEMBLE_RFOREST) && (fr_method == SettingsEnsemble.RANKING_RFOREST)) {
+        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_TYPE_RFOREST)) {
             algorithmName = new JsonPrimitive("RandomForestRanking");
         }
-        else if ((ens_method == SettingsEnsemble.ENSEMBLE_RFOREST) && (fr_method == SettingsEnsemble.RANKING_GENIE3)) {
+        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_TYPE_GENIE3)) {
             algorithmName = new JsonPrimitive("RandomForest/GENIE3");
         }
         else {
@@ -319,22 +289,26 @@ public class ClusFeatureRanking {
         functionOutputJSON.add("algorithmSpecification", algorithmSpec);
 
         JsonArray rankingResults = new JsonArray();
-        TreeMap<Double, ArrayList<String>> sorted = (TreeMap<Double, ArrayList<String>>) m_FeatureRanks.clone();
+//        TreeMap<Double, ArrayList<String>> sorted = (TreeMap<Double, ArrayList<String>>) m_FeatureRanks.clone();
         // this was not used: Iterator<Double> iter = sorted.keySet().iterator();
-
-        int count = 1;
-        while (!sorted.isEmpty()) {
-            double score = sorted.lastKey();
-            ArrayList<String> attrs = sorted.get(score);
-            for (int i = 0; i < attrs.size(); i++) {
+        prepareFeatureRankingForOutput(FimpOrdering.BY_RELEVANCE);
+        Set<Double> relevances = m_OutputRanking.descendingKeySet();
+        
+        // int count = 1;  matejp: ranks are already computed and we should use the same values as in .fimp file
+//        while (!sorted.isEmpty()) {
+//            double score = sorted.lastKey();
+        int rankingIndex = 0; // TODO: allow for more than one ranking
+        for(Double relevance: relevances) {   
+        	ArrayList<Triple<String, int[], double[]>> nameRanksRelevancesTriples = m_OutputRanking.get(relevance); // ArrayList<String> attrs = sorted.get(score);
+            for (int i = 0; i < nameRanksRelevancesTriples.size(); i++) {
                 JsonObject elm = new JsonObject();
-                elm.addProperty("attributeName", attrs.get(i));
-                elm.addProperty("ordering", count);
-                elm.addProperty("importance", score);
-                count++;
+                elm.addProperty("attributeName", nameRanksRelevancesTriples.get(i).getFirst());
+                elm.addProperty("ordering", nameRanksRelevancesTriples.get(i).getSecond()[rankingIndex]);  // elm.addProperty("ordering", count);
+                elm.addProperty("importance", nameRanksRelevancesTriples.get(i).getThird()[rankingIndex]);
+//                count++;
                 rankingResults.add(elm);
             }
-            sorted.remove(sorted.lastKey());
+//            sorted.remove(sorted.lastKey());
         }
 
         functionOutputJSON.add("ranking", rankingResults);
@@ -581,26 +555,19 @@ public class ClusFeatureRanking {
     }
 
 
-    // returns sorted feature ranking
-    public TreeMap<Double, ArrayList<String>> getFeatureRanks() {
-        return m_FeatureRanks;
-    }
-
-
-    // returns feature ranking
-    public HashMap<String, Double> getFeatureRanksByName() {
-        return m_FeatureRankByName;
-    }
-
-
     public double[] getAttributeInfo(String attribute) throws InterruptedException {
         m_Lock.readingLock();
         double[] info = Arrays.copyOf(m_AllAttributes.get(attribute), m_AllAttributes.get(attribute).length);
         m_Lock.readingUnlock();
         return info;
     }
-
-
+    
+    
+    public double getAttributeRelevance(String attribute, int rankingIndex) {
+    	return m_AllAttributes.get(attribute)[2 + rankingIndex];
+    }
+    
+    
     public void putAttributeInfo(String attribute, double[] info) throws InterruptedException {
         m_Lock.writingLock();
         m_AllAttributes.put(attribute, info);
@@ -635,12 +602,22 @@ public class ClusFeatureRanking {
 
 
     public String fimpTableHeader(Iterable<? extends CharSequence> list) {
-        return "attributeName\t[" + String.join(",", list) + "]";
+        ArrayList<String> rankNames = new ArrayList<>();
+        for(CharSequence elt : list){
+            rankNames.add(elt + "Rank");
+        }
+        String[] header = new String[]{"attributeDatasetIndex", "attributeName", rankNames.toString(), "[" + String.join(", ", list) + "]"};
+        return String.join(FIMP_SEPARATOR, header);
     }
 
 
     public String fimpTableHeader(CharSequence... list) {
-        return "attributeName\t[" + String.join(",", list) + "]";
+        ArrayList<String> rankNames = new ArrayList<>();
+        for(CharSequence elt : list){
+            rankNames.add(elt + "Rank");
+        }
+        String[] header = new String[]{"attributeDatasetIndex", "attributeName", rankNames.toString(), "[" + String.join(", ", list) + "]"};
+        return String.join(FIMP_SEPARATOR, header);
     }
 
 
@@ -660,24 +637,93 @@ public class ClusFeatureRanking {
 
 
     public void createFimp(ClusRun cr, String appendixToFimpName, int numberOfTrees) throws IOException {
-        boolean sorted = cr.getStatManager().getSettings().getEnsemble().shouldSortRankingByRelevance();
-        if (sorted && getNbFeatureRankings() > 1) {
-            System.err.println("More than one feature ranking will be output. " + "The attributes will appear as in ARFF\nand will not be sorted " + "by relevance, although SortRankingByRelevance = Yes.");
-            sorted = false;
+        if(cr.getStatManager().getSettings().getEnsemble().shouldSortRankingByRelevance()){
+            m_Order = FimpOrdering.BY_RELEVANCE;
+        } else{
+            m_Order = FimpOrdering.AS_IN_DATASET;
         }
-        if (sorted) {
-            sortFeatureRanks(numberOfTrees);
+        if (m_Order == FimpOrdering.BY_RELEVANCE && getNbFeatureRankings() > 1) {
+            System.err.println("More than one feature ranking will be output. The attributes will appear as in ARFF\nand will not be sorted by relevance, although SortRankingByRelevance = Yes.");
+            m_Order = FimpOrdering.AS_IN_DATASET;
         }
-        convertRanksByName();
+        computeFinalScores();
+        computeRanks();
+        prepareFeatureRankingForOutput();
+
         String appName = cr.getStatManager().getSettings().getGeneric().getFileAbsolute(cr.getStatManager().getSettings().getGeneric().getAppName()) + appendixToFimpName;
-        if (sorted) {
-            writeRanking(appName, cr.getStatManager().getSettings().getEnsemble().getRankingMethod());
-        }
-        else {
-            writeRankingByAttributeName(appName, cr.getStatManager().getSchema().getDescriptiveAttributes(), cr.getStatManager().getSettings().getEnsemble().getRankingMethod());
-        }
+        writeRanking(appName);
+
         if (cr.getStatManager().getSettings().getOutput().isOutputJSONModel()) {
             writeJSON(cr);
+        }
+    }
+    
+    
+    /**
+     * Computes the final scores (and ranks) and puts the attributes into a sorting tree,
+     * according to the chosen order.
+     */
+    private void prepareFeatureRankingForOutput(FimpOrdering ordering) {
+        for(String attributeName : m_AllAttributes.keySet()){
+            Double key;
+            double[] scores = Arrays.copyOfRange(m_AllAttributes.get(attributeName), 2, 2 + m_NbFeatureRankings);
+            if (ordering == FimpOrdering.AS_IN_DATASET){
+                key = m_AttributeDatasetIndices.get(attributeName);
+            } else{
+                key = scores[0];  // the only relevance
+            }
+            if(!m_OutputRanking.containsKey(key)){
+                m_OutputRanking.put(key, new ArrayList<Triple<String, int[], double[]>>());
+            }
+            m_OutputRanking.get(key).add(new Triple<String, int[], double[]>(attributeName, m_AttributeRanks.get(attributeName), scores));
+        }
+    }
+    
+    private void prepareFeatureRankingForOutput() {
+    	prepareFeatureRankingForOutput(m_Order);
+    }
+    
+    
+    public void computeFinalScores(){
+    	if(!m_ScoresNormalized) {
+	        for(String attributeName : m_AllAttributes.keySet()){
+	            double[] possiblyNonnormalizedScores = m_AllAttributes.get(attributeName);  // indeed not normalised in the case of ensemble rankings
+	            for (int j = 0; j < m_NbFeatureRankings; j++) {
+	                possiblyNonnormalizedScores[2 + j] /= Math.max(1.0, ClusEnsembleInduce.getMaxNbBags()); // Relief has 0 number of bags ...
+	            }
+	        }
+	        m_ScoresNormalized = true;
+    	}
+    }
+    
+    
+    private void computeRanks(){
+        m_AttributeRanks = new HashMap<String, int[]>();
+        ArrayList<String> attributeNames = new ArrayList<String>();
+        for(String attributeName : m_AllAttributes.keySet()){
+            m_AttributeRanks.put(attributeName, new int[m_NbFeatureRankings]);
+            attributeNames.add(attributeName);
+        }
+        for(int rankingInd = 0; rankingInd < m_NbFeatureRankings; rankingInd++){
+            final int ind = 2 + rankingInd;
+            Collections.sort(attributeNames, new Comparator<String>() {
+                @Override
+                public int compare(String attr1, String attr2) {
+                    return Double.compare(m_AllAttributes.get(attr2)[ind], m_AllAttributes.get(attr1)[ind]); // decreasing
+                }
+            });
+            int lastRank = -200;
+            double prevRelevance = Double.NaN;
+            double thisRelevance;
+            for(int i = 0; i < attributeNames.size(); i++){
+                String attributeName = attributeNames.get(i);
+                thisRelevance = m_AllAttributes.get(attributeName)[ind];
+                if(thisRelevance != prevRelevance){
+                    lastRank = i + 1;
+                }
+                m_AttributeRanks.get(attributeName)[rankingInd] = lastRank;
+                prevRelevance = thisRelevance;                
+            }
         }
     }
 }

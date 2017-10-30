@@ -435,30 +435,31 @@ public class Clus implements CMDLineArgsProvider {
 
 
     // added by Leander 7-4-2006
-    public final void initializeClassWeights() {
-        double[] we = m_Sett.getModel().getClassWeight();
-        // add the weight to all examples of specific classes (in DataTuple)
-        // if there are no weights specified, are they automatically 1? yes
-        System.out.println(we);
-        ClusAttrType[] classes = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
-        // int nbClasses = 1;
-        // for (int i = 0; i < nbClasses; i++){
-        // ClusAttrType targetclass = classes[i];
-        // }
-        ClusAttrType targetclass = classes[0];
-        RowData data = m_Data;
-        int nbrows = m_Data.getNbRows();
-        for (int i = 0; i < nbrows; i++) {
-            DataTuple tuple = data.getTuple(i);
-            if (targetclass.getString(tuple).equals("[pos]")) { // tuple is
-                                                                // positive
-                                                                // System.out.println("Tuple"+tuple.toString()+" Klasse"+targetclass.getString(tuple));
-                DataTuple newTuple = tuple.changeWeight(we[0]);
-                data.setTuple(newTuple, i);
-                // make hash table for mapping classes with their weights?
-            }
-        }
-    }
+//    @Deprecated  // matejp found out that this is not referenced
+//    public final void initializeClassWeights() {
+//        double[] we = m_Sett.getModel().getClassWeight();
+//        // add the weight to all examples of specific classes (in DataTuple)
+//        // if there are no weights specified, are they automatically 1? yes
+//        System.out.println(we);
+//        ClusAttrType[] classes = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
+//        // int nbClasses = 1;
+//        // for (int i = 0; i < nbClasses; i++){
+//        // ClusAttrType targetclass = classes[i];
+//        // }
+//        ClusAttrType targetclass = classes[0];
+//        RowData data = m_Data;
+//        int nbrows = m_Data.getNbRows();
+//        for (int i = 0; i < nbrows; i++) {
+//            DataTuple tuple = data.getTuple(i);
+//            if (targetclass.getString(tuple).equals("[pos]")) { // tuple is
+//                                                                // positive
+//                                                                // System.out.println("Tuple"+tuple.toString()+" Klasse"+targetclass.getString(tuple));
+//                DataTuple newTuple = tuple.changeWeight(we[0]);
+//                data.setTuple(newTuple, i);
+//                // make hash table for mapping classes with their weights?
+//            }
+//        }
+//    }
 
 
     // end added by Leander 7-4-2006
@@ -2021,34 +2022,42 @@ public class Clus implements CMDLineArgsProvider {
         }
         catch (ClusException e) {
             System.err.println("Error: " + e);
+            e.printStackTrace();
             System.exit(-1);
         }
         catch (IllegalArgumentException e) {
             System.err.println("Error: " + e.getMessage());
+            e.printStackTrace();
             System.exit(-2);
         }
         catch (FileNotFoundException e) {
             System.err.println("File not found: " + e);
+            e.printStackTrace();
             System.exit(-3);
         }
         catch (IOException e) {
             System.err.println("IO Error: " + e);
+            e.printStackTrace();
             System.exit(-4);
         }
         catch (ClassNotFoundException e) {
             System.err.println("Class not found" + e);
+            e.printStackTrace();
             System.exit(-5);
         }
         catch (InterruptedException e) {
             System.err.println("Error: " + e);
+            e.printStackTrace();
             System.exit(-6);
         }
         catch (NotImplementedException e) {
             System.err.println(e);
+            e.printStackTrace();
             System.exit(-7);
         }
         catch (Exception e) {
             System.err.println(e);
+            e.printStackTrace();
             System.exit(-100);
         }
     }

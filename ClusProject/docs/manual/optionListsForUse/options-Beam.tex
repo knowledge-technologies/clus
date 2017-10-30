@@ -1,29 +1,33 @@
+\section{Beam}
+
+
 \begin{itemize}
     \item \optionNameStyle{SizePenalty}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive real number
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  sets the size penalty parameter used in the beam heuristic \cite{Kocev07a:proc}.
            \end{itemize}
     \item \optionNameStyle{BeamWidth}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{10}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  sets the width of the beam used in the beam search performed by \clus{} \cite{Kocev07a:proc}.
            \end{itemize}
-    \item \optionNameStyle{BeamBestN}:
+    \doNotShowThis{\item \optionNameStyle{BeamBestN}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{5}
                 \item \optionDescrption{}: ???
            \end{itemize}
+      }
     \item \optionNameStyle{MaxSize}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive integer or \formatOneElement{Infinity}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{-1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  sets the maximum size constraint \cite{Kocev07a:proc}.
            \end{itemize}
-    \item \optionNameStyle{AttributeHeuristic}:
+    \doNotShowThis{\item \optionNameStyle{AttributeHeuristic}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Default}
@@ -71,4 +75,5 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
                 \item \optionDescrption{}: ???
            \end{itemize}
+       }
 \end{itemize}

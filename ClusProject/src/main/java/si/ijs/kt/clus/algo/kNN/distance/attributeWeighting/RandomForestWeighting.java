@@ -33,6 +33,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleClassifier;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
+import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
@@ -79,7 +80,7 @@ public class RandomForestWeighting extends AttributeWeighting {
             new_sett.initialize(null, false);
             new_sett.getEnsemble().setEnsembleMode(true);
             new_sett.getAttribute().setTarget(orig_sett.getAttribute().getTarget());
-            new_sett.getEnsemble().setEnsembleMethod(SettingsEnsemble.ENSEMBLE_RFOREST);
+            new_sett.getEnsemble().setEnsembleMethod(SettingsEnsemble.ENSEMBLE_METHOD_RFOREST);
             new_sett.getEnsemble().setNbBags(nbBags); // TO-DO User Defined!
             new_sett.getEnsemble().setNbRandomAttrSelected(0); // Selects LOG of number of descriptive attributes
             new_sett.getEnsemble().setOOBestimate(true);
@@ -107,29 +108,22 @@ public class RandomForestWeighting extends AttributeWeighting {
                                    // before m_Induce.initialize())
                                    // new_clus.singleRun(new_clus.getClassifier());
 
+            // matejp was here
             ensemble.induceBagging(run);
             int forestIndex = 0;
-            ensemble.getEnsembleFeatureRanking(forestIndex).sortFeatureRanks(ensemble.getNbTrees(forestIndex));  // matejp changed this
-            ensemble.getEnsembleFeatureRanking(forestIndex).convertRanksByName();
+            ClusFeatureRanking franking = ensemble.getEnsembleFeatureRanking(forestIndex);
+            franking.computeFinalScores();
             System.setOut(oldOut);
 
-            // The feature ranks can be retrieved using one of the following statements
-            // check what you need and how you wish the ranks to be organized...
-            // TreeMap ranks_sorted = ensemble.getFeatureRanks(); //sorted by the rank
-            HashMap ranks_by_name = ensemble.getEnsembleFeatureRanking(0).getFeatureRanksByName();// key is the
-                                                                                                 // AttributeName, and
-                                                                                                 // the value is array
-                                                                                                 // with the order in
-                                                                                                 // the file and the
-                                                                                                 // rank
-            System.out.println(ranks_by_name);
+
             m_Weights = new double[schema.getDescriptiveAttributes().length];
             double dsum = 0.;
+            int rankingIndex = 0;
             // fill weights from ranks
             for (ClusAttrType attr : schema.getDescriptiveAttributes()) {
-                Double d = (Double) ranks_by_name.get(attr.getName());
-                m_Weights[attr.getIndex()] = d.doubleValue();
-                dsum = dsum + d.doubleValue();
+                double d = franking.getAttributeRelevance(attr.getName(), rankingIndex);
+                m_Weights[attr.getIndex()] = d;
+                dsum += d;
             }
             for (int i = 0; i < m_Weights.length; i++)
                 System.out.println(m_Weights[i]);

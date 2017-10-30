@@ -1,32 +1,60 @@
+\section{kNN}
+
+
 \begin{itemize}
-    \item \optionNameStyle{k}:
-           \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{1}, \optionDefaultValueStyle{3}
-                \item \optionDescrption{}: ???
-           \end{itemize}
-    \item \optionNameStyle{method}:
-           \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{kd-tree}
-                \item \optionDescrption{}: ???
-           \end{itemize}
-    \item \optionNameStyle{distance}:
-           \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{euclidean}
-                \item \optionDescrption{}: ???
-           \end{itemize}
-    \item \optionNameStyle{distanceWeighting}:
-           \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{none}
-                \item \optionDescrption{}: ???
-           \end{itemize}
-    \item \optionNameStyle{attributeWeighting}:
-           \begin{itemize}
-                \item \optionPossibleValues{}: ???
-                \item \optionDefaultValue{}: \optionDefaultValueStyle{none}
-                \item \optionDescrption{}: ???
-           \end{itemize}
+    \item \optionNameStyle{K}:
+    \begin{itemize}
+        \item \optionPossibleValues{}: a positive integer or a list thereof, e.g., \formatOneElement{10} or \formatOneElement{[1,5,10]}.
+        \item \optionDefaultValue{}: \optionDefaultValueStyle{[1,3]}
+        \item \optionDescrption{}: the number(s) of neighbors in the kNN algorithm. Computational complexity of the algorithm equals
+        the complexity for the maximal number of neighbors.
+    \end{itemize}
+    \item \optionNameStyle{Distance}:
+    \begin{itemize}
+        \item \optionPossibleValues{}: an element of \optionPossibleValuesList{euclidean,manhattan,chebyshev}
+        \item \optionDefaultValue{}: \optionDefaultValueStyle{euclidean}
+        \item \optionDescrption{}: the distance measure which is used when finding the nearest neighbours.        
+        This option (together with the option \optionNameStyle{AttributeWeighting}) defines the distance measures used in nearest neighbour search:
+        \begin{itemize}
+            \item \formatOneElement{euclidean}: $d(a, b) = \sqrt{\sum_i w_i d_i(a_i, b_i)^2}$,
+            \item \formatOneElement{manhattan}: $d(a, b) = \sum_i w_i d_i(a_i, b_i)$,
+            \item \formatOneElement{chebyshev}: $d(a, b) = \max_i w_i d_i(a_i, b_i)$,
+        \end{itemize}
+        where $a$ and $b$ are vectors of descriptive attributes, the weights $w_i$ are defined by the option \optionNameStyle{AttributeWeighting},
+        and $d_i$ is the distance in the space of the $i$-th attribute.
+        
+        If the $i$-th attribute is numeric, then $d_i(a_i, b_i)$ is proportional to $|a_i - b_i|$ and linearly normalized to the interval $[0, 1]$.
+        If the $i$-th attribute is nominal, then $d_i(a_i, b_i) = 0$ if $a_i = b_i$ and  $d_i(a_i, b_i) = 1$ otherwise.
+    \end{itemize}
+    \item \optionNameStyle{SearchMethod}:
+    \begin{itemize}
+        \item \optionPossibleValues{}: an element of \optionPossibleValuesList{BruteForce, VP-tree, KD-tree}
+        \item \optionDefaultValue{}: \optionDefaultValueStyle{BrutForce}
+        \item \optionDescrption{}: the method that is used when finding the nearest neighbors. If the number of attributes is high, \formatOneElement{BruteForce}
+        may be the fastest, since the structures such as VP- and KD-trees suffer from the \emph{curse of dimensionality}.
+    \end{itemize}
+    \item \optionNameStyle{DistanceWeighting}:
+    \begin{itemize}
+        \item \optionPossibleValues{}: an element of \optionPossibleValuesList{constant,1-d,1/d}
+        \item \optionDefaultValue{}: \optionDefaultValueStyle{constant}
+        \item \optionDescrption{}: When making predictions for a new example, this option is used to weight the contributions of the neighbors. The option \formatOneElement{constant}
+        is equivalent to no weighting, whereas the options \formatOneElement{1-d} and \formatOneElement{1/d} respectively correspond to the weights that equal
+        $1 - d(\text{example, neighbour})$ and $1 / (\varepsilon + d(\text{example, neighbour}))$, where $\varepsilon = 0.001$ prevents zero-division
+        problems.
+    \end{itemize}
+    \item \optionNameStyle{AttributeWeighting}:
+    \begin{itemize}
+        \item \optionPossibleValues{}: a string that equals {\tt none}, or starts with {\tt RF}, or represents a list of double values, e.g.,
+        {\tt none} or {\tt RF} or {\tt RF,100} or {\tt [2.71828,3.14,1.618,0.0]}.
+        \item \optionDefaultValue{}: \optionDefaultValueStyle{none}
+        \item \optionDescrption{}: From the value of these option, the dimensional weights $w_i$ are computed, i.e., the weights that control the contribution
+        of each dimension (attribute). The weights are defined as follows:
+        \begin{itemize}
+            \item {\tt none}: $w_i = 1$
+            \item {\tt RF,<number of trees>}: $w_i$ equals the importance of the $i$-th attribute as computed from {\tt RForest} ranking from the ensemble
+            of the size {\tt <number of trees>}.
+            \item {\tt RF}: equivalent to {\tt RF,100}
+            \item {\tt <explicitly given list of weights>}: $w_i$ equals the $i$-th element of the list.
+        \end{itemize}
+    \end{itemize}
 \end{itemize}

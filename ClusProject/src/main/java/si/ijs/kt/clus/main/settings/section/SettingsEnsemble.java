@@ -26,27 +26,27 @@ public class SettingsEnsemble extends SettingsBase {
      * Section: Ensemble methods *
      ***********************************************************************/
 
-    private final String[] ENSEMBLE_TYPE = { "Bagging", "RForest", "RSubspaces", "BagSubspaces", "Boosting", "RFeatSelection", "Pert", "ExtraTrees" };
-    public final static int ENSEMBLE_BAGGING = 0;
-    public final static int ENSEMBLE_RFOREST = 1;
-    public final static int ENSEMBLE_RSUBSPACES = 2;
+    private final String[] ENSEMBLE_METHOD = { "Bagging", "RForest", "RSubspaces", "BagSubspaces", "Boosting", "RFeatSelection", "Pert", "ExtraTrees" };
+    public final static int ENSEMBLE_METHOD_BAGGING = 0;
+    public final static int ENSEMBLE_METHOD_RFOREST = 1;
+    public final static int ENSEMBLE_METHOD_RSUBSPACES = 2;
     /** Random subspaces */
-    public final static int ENSEMBLE_BAGSUBSPACES = 3;
+    public final static int ENSEMBLE_METHOD_BAGSUBSPACES = 3;
     /** Bagging of subspaces */
-    public final static int ENSEMBLE_BOOSTING = 4;
-    public final static int ENSEMBLE_RFOREST_NO_BOOTSTRAP = 5;
-    public final static int ENSEMBLE_PERT = 6;
-    public final static int ENSEMBLE_EXTRA_TREES = 7;
+    public final static int ENSEMBLE_METHOD_BOOSTING = 4;
+    public final static int ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP = 5;
+    public final static int ENSEMBLE_METHOD_PERT = 6;
+    public final static int ENSEMBLE_METHOD_EXTRA_TREES = 7;
 
     private final String[] VOTING_TYPE = { "Majority", "ProbabilityDistribution" };
     public final static int VOTING_TYPE_MAJORITY = 0;
     public final static int VOTING_TYPE_PROBAB_DISTR = 1;
 
     private final String[] RANKING_TYPE = { "None", "RForest", "GENIE3", "SYMBOLIC" };
-    public final static int RANKING_NONE = 0;
-    public final static int RANKING_RFOREST = 1;
-    public final static int RANKING_GENIE3 = 2;
-    public final static int RANKING_SYMBOLIC = 3;
+    public final static int RANKING_TYPE_NONE = 0;
+    public final static int RANKING_TYPE_RFOREST = 1;
+    public final static int RANKING_TYPE_GENIE3 = 2;
+    public final static int RANKING_TYPE_SYMBOLIC = 3;
 
     private final String[] ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE = { "None", "TotalAveraging", "SubspaceAveraging", "SMARTERWAY" };
     public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE = 0; /* IF THIS IS SELECTED, ROS IS NOT ACTIVATED */
@@ -416,8 +416,8 @@ public class SettingsEnsemble extends SettingsBase {
         return m_ClassificationVoteType.getValue();
     }
 
-    public String getEnsembleTypeName(int type) {
-        return ENSEMBLE_TYPE[type];
+    public String getEnsembleMethodName(int type) {
+        return ENSEMBLE_METHOD[type];
     }
     
    
@@ -427,7 +427,7 @@ public class SettingsEnsemble extends SettingsBase {
 
         m_SectionEnsembles = new INIFileSection("Ensemble");
         m_SectionEnsembles.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
-        m_SectionEnsembles.addNode(m_EnsembleMethod = new INIFileNominal("EnsembleMethod", ENSEMBLE_TYPE, ENSEMBLE_BAGGING));
+        m_SectionEnsembles.addNode(m_EnsembleMethod = new INIFileNominal("EnsembleMethod", ENSEMBLE_METHOD, ENSEMBLE_METHOD_BAGGING));
         m_SectionEnsembles.addNode(m_ClassificationVoteType = new INIFileNominal("VotingType", VOTING_TYPE, VOTING_TYPE_PROBAB_DISTR));
         m_SectionEnsembles.addNode(m_RandomAttrSelected = new INIFileString("SelectRandomSubspaces", "0"));
         m_SectionEnsembles.addNode(m_RandomTargetAttrSelected = new INIFileString("SelectRandomTargetSubspaces", "SQRT"));
@@ -438,10 +438,10 @@ public class SettingsEnsemble extends SettingsBase {
         m_SectionEnsembles.addNode(m_PrintPaths = new INIFileBool("PrintPaths", false));
         m_SectionEnsembles.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
         m_SectionEnsembles.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
-        m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileNominal("FeatureRanking", RANKING_TYPE, 0));
+        m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileNominal("FeatureRanking", RANKING_TYPE, RANKING_TYPE_NONE));
         m_SectionEnsembles.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
         m_SectionEnsembles.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
-        m_SymbolicWeight.setDouble(1.0);
+        m_SymbolicWeight.setDouble(0.5);
         m_SectionEnsembles.addNode(m_SortFeaturesByRelevance = new INIFileBool("SortRankingByRelevance", true));
         m_SectionEnsembles.addNode(m_WriteEnsemblePredictions = new INIFileBool("WriteEnsemblePredictions", false));
         m_SectionEnsembles.addNode(m_EnsembleRandomDepth = new INIFileBool("EnsembleRandomDepth", false));

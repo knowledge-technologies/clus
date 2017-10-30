@@ -18,8 +18,9 @@ public class ManualBuilder {
     public void buildSettingsTables(String settingsTablesFolder) {
     	HashMap<String, TreeMap<Integer, String[]>> default_values = listAllSettings();
         for(String section : default_values.keySet()) {
-            writeLatexTable(section, settingsTablesFolder, default_values.get(section), false);
+            writeLatexSectionSettingsFile(section, settingsTablesFolder, default_values.get(section), false);
         }
+        System.out.println("Done.");
         
     }
     
@@ -44,7 +45,7 @@ public class ManualBuilder {
     }
     
     
-    private void writeLatexTable(String sectionName, String settingsTablesFolder, TreeMap<Integer, String[]> sectionDefaults, boolean selfstandingTex) {
+    private void writeLatexSectionSettingsFile(String sectionName, String settingsTablesFolder, TreeMap<Integer, String[]> sectionDefaults, boolean selfstandingTex) {
     	// create folders in the path if necessary
     	File folder = new File(settingsTablesFolder);
     	try {
@@ -69,6 +70,7 @@ public class ManualBuilder {
                 writer.println();
             }
             
+            writer.println(String.format("\\section{%s}", sectionName));
             writer.println("\\begin{itemize}");
             
             

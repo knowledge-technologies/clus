@@ -4,6 +4,7 @@ package si.ijs.kt.clus.main.settings.section;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
@@ -29,7 +30,14 @@ public class SettingsRelief extends SettingsBase {
     private INIFileNominalOrDoubleOrVector m_ReliefNbIterations;
     private INIFileBool m_ReliefShouldHaveNeighbourWeighting;
     private INIFileDouble m_ReliefWeightingSigma;
-
+    private INIFileBool m_ReliefLoadNeighboursFromFile;
+    private INIFileBool m_ReliefSaveNeighboursToFile;
+//    private INIFileString m_NeighboursFile;
+    
+	// If new types are introduced use the same names as in SettingsMLC class
+    public enum MultilabelDistance {HammingLoss, MLAccuracy, MLFOne, SubsetAccuracy};
+	private INIFileEnum<MultilabelDistance> m_MultilabelDistance;	
+    
 
     public void setSectionReliefEnabled(boolean value) {
         m_SectionRelief.setEnabled(value);
@@ -44,8 +52,8 @@ public class SettingsRelief extends SettingsBase {
     public int[] getReliefNbNeighboursValue() {
         return m_ReliefNbNeighbours.getIntVector();
     }
-
-
+    
+    
     /**
      * Returns a list, containing the numbers of the iterations.
      * If this setting is given as a (list of) proportion(s) of the instances
@@ -114,6 +122,32 @@ public class SettingsRelief extends SettingsBase {
     public double getReliefWeightingSigma() {
         return m_ReliefWeightingSigma.getValue();
     }
+    
+    
+    public boolean shouldSaveNeighbours() {
+    	return m_ReliefSaveNeighboursToFile.getValue();
+    }
+    
+    public void turnOffSaveNeighbours() {
+    	m_ReliefSaveNeighboursToFile.setValue(false);
+    }
+    
+    public boolean shouldLoadNeighbours() {
+    	return m_ReliefLoadNeighboursFromFile.getValue();
+    }
+    
+    public MultilabelDistance getMultilabelDistance() {
+    	return m_MultilabelDistance.getChosenOption();
+    }
+    
+    
+//    public boolean isNullFile() {
+//        return StringUtils.unCaseCompare(m_NeighboursFile.getValue(), NONE);
+//    }
+    
+//    public String getNeighboursFile() {
+//        return m_NeighboursFile.getValue();
+//    }
 
 
     @Override
@@ -130,6 +164,12 @@ public class SettingsRelief extends SettingsBase {
                                                                                                     // the authors do
                                                                                                     // not give any
                                                                                                     // suggestions
+        m_SectionRelief.addNode(m_ReliefSaveNeighboursToFile = new INIFileBool("SaveNeighboursToFile", false));
+        m_SectionRelief.addNode(m_ReliefLoadNeighboursFromFile = new INIFileBool("LoadNeighboursFromFile", false));
+//        m_SectionRelief.addNode(m_NeighboursFile = new INIFileString("NeighboursFile", NONE));
+        m_SectionRelief.addNode(m_MultilabelDistance =  new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.class, MultilabelDistance.HammingLoss));
+        
+        
         m_SectionRelief.setEnabled(false);
 
         return m_SectionRelief;

@@ -1,40 +1,61 @@
+\section{Rules}
+
 \begin{itemize}
     \item \optionNameStyle{CoveringMethod}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Standard,WeightedError,RandomRuleSet,HeurOnly,RulesFromTree}.
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Standard}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  Defines how the rules are generated:
+                \begin{itemize}
+                    \item \formatOneElement{Standard}: standard covering algorithm \cite{Michalski1969}, all examples covered by the new rule are removed from the current learning set, can be used for learning ordered rules.
+                    %\item \texttt{WeightedMultiplicative}: 
+                    %\item \formatOneElement{WeightedAdditive}: 
+                    \item \formatOneElement{WeightedError}: error weighted covering algorithm \cite{Zenko07} (Section 4.5), examples covered by the new rule are not removed from the current learning set, but their weight is decreased inversely proportional to the error the new rule makes when predicting their target values, can be used for learning unordered rules.
+                    %\item \formatOneElement{Union}: 
+                    %\item \formatOneElement{BeamRuleDefSet}: 
+                    \item \formatOneElement{RandomRuleSet}: rules are generated randomly, (experimental feature).
+                    %\item \formatOneElement{StandardBootstrap}: 
+                    \item \formatOneElement{HeurOnly}: no covering is used, the heuristic function takes into account the already learned rules and the examples they cover to focus on yet uncovered examples, (experimental feature).
+                    \item \formatOneElement{RulesFromTree}: rules are not learned with the covering approach, but a tree is learned first and then transcribed into a rule set. After this e.g.\ rule weight optimization methods can be used.
+                \end{itemize}
            \end{itemize}
-    \item \optionNameStyle{PredictionMethod}:
+    \doNotShowThis{\item \optionNameStyle{PredictionMethod}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{DecisionList}
                 \item \optionDescrption{}: ???
            \end{itemize}
+       }
     \item \optionNameStyle{RuleAddingMethod}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Always, IfBetter, IfBetterBeam}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Always}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  Defines how rules are added to the rule set. For regression rules setting this option to \formatOneElement{IfBetter} is recommended.
+                \begin{itemize}
+                    \item \formatOneElement{Always}: each rule when constructed is always added to the rule set,
+                    \item \formatOneElement{IfBetter}: rule is only added to the rule set if the performance of the rule set with the new rule is better than without it,
+                    \item \formatOneElement{IfBetterBeam}: similar to \formatOneElement{IfBetter}, but if the rule does not improve the performance of the rule set, other rules from the beam are also evaluated and possibly added to the rule set.
+                \end{itemize}
            \end{itemize}
     \item \optionNameStyle{CoveringWeight}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a real number from the interval $[0, 1]$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: weight controlling the amount by which weights of covered examples are reduced within the error weighted covering algorithm -- $\zeta$ in \cite{Zenko07} (Section 4.5, Equations 4.6 and 4.8), can be used for unordered rules with error weighted covering method.
            \end{itemize}
     \item \optionNameStyle{InstCoveringWeightThreshold}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}:  a real number from the interval $[0, 1]$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: instance weight threshold used in error weighted covering algorithm for learning unordered rules. When an instance's weight falls below this threshold, it is removed from the current learning set.  $\epsilon$ in \cite{Zenko07} (Section 4.5)
            \end{itemize}
     \item \optionNameStyle{MaxRulesNb}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{1000}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  defines a maximum number of rules in a rule set.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{HeurDispOffset}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -77,12 +98,14 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
     \item \optionNameStyle{ComputeDispersion}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If set to \formatOneElement{Yes}, \clus{} will print some additional dispersion estimation for each rule and entire rule set.
            \end{itemize}
+    \doNotShowThis{   
     \item \optionNameStyle{VarBasedDispNormWeight}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -95,18 +118,21 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{TargetWeight = 1.0}, \optionDefaultValueStyle{NonTargetWeight = 1.0}, \optionDefaultValueStyle{NumericWeight = 1.0}, \optionDefaultValueStyle{NominalWeight = 1.0}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    
     \item \optionNameStyle{RandomRules}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
     \item \optionNameStyle{PrintRuleWiseErrors}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: If \formatOneElement{Yes},  \clus{} will print error estimation for each rule separately.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{PrintAllRules}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -203,24 +229,30 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
     \item \optionNameStyle{OptAddLinearTerms}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{No, Yes, YesSaveMemory}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{No}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Defines whether to add descriptive attributes as linear terms to the rule set. Usually this increases the accuracy.
+                Especially for multi-target data sets it also slows the algorithm down. For these, use value \texttt{YesSaveMemory}, otherwise it can take a lot of memory.
+                For single target data sets \formatOneElement{Yes} is faster. Used for learning rule ensembles \cite{Aho2009}.
            \end{itemize}
     \item \optionNameStyle{OptNormalizeLinearTerms}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{No,Yes,YesAndConvert}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Defines whether the linear terms are scaled so that each descriptive attribute has a similar effect. The default setting \formatOneElement{Yes} and it should always be used.
+                However, if you want to transform the rule ensemble so that linear terms are of "standard type", you may use \texttt{YesAndConvert} setting.
+                This moves the effect of normalizations to weights and default prediction after optimization. Used for learning rule ensembles \cite{Aho2009}.
            \end{itemize}
     \item \optionNameStyle{OptLinearTermsTruncate}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes,No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Used in conjunction with the \texttt{OptAddLinearTerms} setting. If \texttt{Yes}, the linear terms are truncated so that they do not predict values greater or smaller than found in the training set. This adds more robustness against outliers. Used for learning rule ensembles \cite{Aho2009}.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{OptOmitRulePredictions}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -245,36 +277,44 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.9}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
     \item \optionNameStyle{OptGDMaxIter}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{1000}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: defines a number of iterations that a gradient descent algorithm for
+                optimizing rule weights makes, used for learning rule ensembles \cite{Aho2009}. The default value is 1000.
            \end{itemize}
     \item \optionNameStyle{OptGDGradTreshold}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a real value from the interval $[0, 1]$
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{1.0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  the $\tau$ treshold value for the gradient descent (GD) algorithm used for learning rule ensembles \cite{Aho2009}.
+                $\tau$ defines the limit by which gradients are changed during every iteration of the GD algorithm. If $\tau=1$ effect is similar to L1 regularization (Lasso) and $\tau=0$ the effect is similar to L2. If \optionNameStyle{OptGDMaxNbWeights} is low (less than 40), setting $\tau=1$ is usually enough (it is the fastest).
            \end{itemize}
     \item \optionNameStyle{OptGDStepSize}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive real number
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}:  If \optionNameStyle{OptGDIsDynStepsize} is set to \texttt{No}, the initial gradient descent step size factor.
            \end{itemize}
     \item \optionNameStyle{OptGDIsDynStepsize}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes,No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Do we use as the step size factor a lower limit of optimal one? The value is computed based on the rule prediction values.
+                Usually faster (lower step sizes are not tried at all) and often also more accurate than a given value.
            \end{itemize}
     \item \optionNameStyle{OptGDMaxNbWeights}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: 0 or a positive integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: defines a maximum number of of allowed nonzero weights for
+                rules/linear terms, used for learning rule ensembles \cite{Aho2009}.
+                If we have enough modified weights, only the nonzero ones are altered for the rest of the optimization.
+                With this we can limit the size of the rule set. The default value of \formatOneElement{0} means no rule set size limitation.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{OptGDEarlyStopAmount}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -305,18 +345,21 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Avg}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
     \item \optionNameStyle{OptGDNbOfTParameterTry}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: a positive integer
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{1}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: Defines how many different $\tau$ values are checked between 1 and \optionNameStyle{Opt\-GD\-Grad\-Treshold}. We use a validation set to compute, which $\tau$ value gives the best accuracy. If \optionNameStyle{OptGDMaxNbWeights} is low, usually only a single value $\tau$=1 is enough (fastest).
            \end{itemize}
     \item \optionNameStyle{OptGDEarlyTTryStop}:
            \begin{itemize}
-                \item \optionPossibleValues{}: ???
+                \item \optionPossibleValues{}: an element of \optionPossibleValuesList{Yes, No}
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{Yes}
-                \item \optionDescrption{}: ???
+                \item \optionDescrption{}: specifies whether do we stop if validation error starts to increase too much, when trying different $\tau$ values starting from 1.
+                Usually a lot faster, but may decrease the accuracy.
            \end{itemize}
+    \doNotShowThis{
     \item \optionNameStyle{MaxRuleCardinality}:
            \begin{itemize}
                 \item \optionPossibleValues{}: ???
@@ -341,4 +384,8 @@
                 \item \optionDefaultValue{}: \optionDefaultValueStyle{0.33}
                 \item \optionDescrption{}: ???
            \end{itemize}
+    }
 \end{itemize}
+
+
+%Please note that the parameter for selecting rule learning heuristic in actually located in the \texttt{[Tree]} section!

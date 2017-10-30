@@ -163,7 +163,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         m_NbMaxBags = getNbTrees(m_OutEnsembleAt.length - 1);
         settMain.getExperimental();
         m_FeatRank = sett.shouldPerformRanking() && !SettingsExperimental.IS_XVAL;
-        if (m_FeatRank && !sett.shouldEstimateOOB() && sett.getRankingMethod() == SettingsEnsemble.RANKING_RFOREST) {
+        if (m_FeatRank && !sett.shouldEstimateOOB() && sett.getRankingMethod() == SettingsEnsemble.RANKING_TYPE_RFOREST) {
             System.err.println("For Feature Ranking RForest, OOB estimate of error should also be performed.");
             System.err.println("OOB Error Estimate is set to true.");
 
@@ -253,7 +253,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         ArrayList<String> rankingNames = new ArrayList<String>();
         switch (sett.getRankingMethod()) {
-            case SettingsEnsemble.RANKING_RFOREST:
+            case SettingsEnsemble.RANKING_TYPE_RFOREST:
                 ClusErrorList errLst = franking.computeErrorList(schema, mgr);
                 int nbErrors = errLst.getNbErrors();
                 for (int i = 0; i < nbErrors; i++) {
@@ -270,7 +270,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
                 franking.setRForestFimpHeader(rankingNames);
                 break;
-            case SettingsEnsemble.RANKING_GENIE3:
+            case SettingsEnsemble.RANKING_TYPE_GENIE3:
                 nbRankings++; // overall
                 rankingNames.add(String.format("overAll"));
                 if (sett.shouldPerformRankingPerTarget()) {
@@ -289,7 +289,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
                 franking.setGenie3FimpHeader(rankingNames);
                 break;
-            case SettingsEnsemble.RANKING_SYMBOLIC:
+            case SettingsEnsemble.RANKING_TYPE_SYMBOLIC:
                 double[] weights = sett.getSymbolicWeights();
                 if (weights == null) {
                     weights = new double[] { sett.getSymbolicWeight() };
@@ -322,13 +322,23 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         SettingsEnsemble set = getSettings().getEnsemble();
         SettingsGeneral setg = getSettings().getGeneral();
-
+        SettingsOutput seto = getSettings().getOutput();
+        
         System.out.println("Memory And Time Optimization = " + m_OptMode);
         System.out.println("Out-Of-Bag Estimate of the error = " + set.shouldEstimateOOB());
         System.out.println("Perform Feature Ranking = " + m_FeatRank);
 
         if (set.isEnsembleROSEnabled()) {
             m_EnsembleROSInfo = ClusROS.prepareROSEnsembleInfo(getSettings(), getSchema());
+            
+            
+            if (seto.isOutputROSSubspaces()) {
+                // write ROS subspaces to disk
+                PrintWriter writer = new PrintWriter(getSettings().getGeneric().getAppName() + "." + m_NbMaxBags + ".ros.csv", "UTF-8");
+                
+                for(int i = 0; i < m_NbMaxBags; i++) writer.println(Arrays.toString(m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(i))));
+                writer.close();
+            }            
         }
 
         // initialise ranking stuff here: we need stat manager with clustering statistics != null
@@ -397,37 +407,37 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         switch (set.getEnsembleMethod()) {
-            case SettingsEnsemble.ENSEMBLE_BAGGING: { // Bagging
+            case SettingsEnsemble.ENSEMBLE_METHOD_BAGGING: { // Bagging
                 System.out.println("Ensemble Method: Bagging");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_RFOREST: { // RForest
+            case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST: { // RForest
                 System.out.println("Ensemble Method: Random Forest");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_RSUBSPACES: { // RSubspaces
+            case SettingsEnsemble.ENSEMBLE_METHOD_RSUBSPACES: { // RSubspaces
                 System.out.println("Ensemble Method: Random Subspaces");
                 induceSubspaces(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_BAGSUBSPACES: { // Bagging Subspaces
+            case SettingsEnsemble.ENSEMBLE_METHOD_BAGSUBSPACES: { // Bagging Subspaces
                 System.out.println("Ensemble Method: Bagging of Subspaces");
                 induceBaggingSubspaces(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_RFOREST_NO_BOOTSTRAP: { // RForest without bootstrapping (setting: RFeatSelection)
+            case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP: { // RForest without bootstrapping (setting: RFeatSelection)
                 System.out.println("Ensemble Method: Random Forest without bootstrapping");
                 induceRForestNoBootstrap(cr); // TODO: martinb has a problem with the name of this method
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_PERT: { // PERT in combination with bagging
+            case SettingsEnsemble.ENSEMBLE_METHOD_PERT: { // PERT in combination with bagging
                 System.out.println("Ensemble Method: PERT (in combination with Bagging)");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_EXTRA_TREES: { // Extra-Trees ensemble (published by Geurts et al.)
+            case SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES: { // Extra-Trees ensemble (published by Geurts et al.)
                 System.out.println("Ensemble Method: Extra-trees");
                 induceExtraTrees(cr);
                 break;
@@ -652,10 +662,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         Cloner cloner = new Cloner();
-        ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];
-        for (int i = 0; i < statManagerClones.length; i++) {
-            statManagerClones[i] = cloner.deepClone(cr.getStatManager()); // must be cloned here
-        }
+//        ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];
+//        for (int i = 0; i < statManagerClones.length; i++) {
+//            statManagerClones[i] = cloner.deepClone(cr.getStatManager()); // must be cloned here
+//        }
+        ClusStatManager clonedStatManager = cloneStatManager(cr.getStatManager());
 
         ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
         ArrayList<Future<OneBagResults>> bagResults = new ArrayList<Future<OneBagResults>>();
@@ -685,7 +696,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
                 OOBSelection current_oob_total = cloner.deepClone(oob_total);
                 // induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, current_oob_total, train_iterator, test_iterator, msel, rnd, statManagerClones[i - 1]);
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, current_oob_total, train_iterator, test_iterator, msel, rnd, clonedStatManager); // statManagerClones[i - 1]
                 Future<OneBagResults> submit = executor.submit(worker);
                 bagResults.add(submit);
             }
@@ -716,7 +727,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     oob_sel = new OOBSelection(msel);
                 }
                 // induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, cloner.deepClone(cr.getStatManager()));
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, clonedStatManager); //  cloner.deepClone(cr.getStatManager())
                 Future<OneBagResults> submit = executor.submit(worker);
                 bagResults.add(submit);
             }
@@ -803,7 +814,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager mgr) throws Exception {
+    public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager unmodifiedManager) throws Exception {
         long one_bag_time = ResourceInfo.getTime();
         SettingsEnsemble sett = cr.getStatManager().getSettings().getEnsemble();
         SettingsGeneral setg = cr.getStatManager().getSettings().getGeneral();
@@ -820,8 +831,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(), msel, cr.getSummary(), i);
 
+        ClusStatManager mgr = cloneStatManager(unmodifiedManager);
         DepthFirstInduce ind;
-
         // ordinary bagging run
         if (getSchema().isSparse()) {
             ind = new DepthFirstInduceSparse(this, mgr, true);
@@ -861,16 +872,16 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (m_FeatRank) {// franking
             // this suffices even in the case when we grow more than one forest 
             //if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
-            if (sett.getRankingMethod() == SettingsEnsemble.RANKING_RFOREST) {
+            if (sett.getRankingMethod() == SettingsEnsemble.RANKING_TYPE_RFOREST) {
                 fimportances = m_FeatureRankings[0].calculateRFimportance(model, cr, oob_sel, rnd, ind.getStatManager());
             }
             //else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3) {
-            else if (sett.getRankingMethod() == SettingsEnsemble.RANKING_GENIE3) {
+            else if (sett.getRankingMethod() == SettingsEnsemble.RANKING_TYPE_GENIE3) {
                 // m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
                 fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model, ind.getStatManager());
             }
             //else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
-            else if (sett.getRankingMethod() == SettingsEnsemble.RANKING_SYMBOLIC) {
+            else if (sett.getRankingMethod() == SettingsEnsemble.RANKING_TYPE_SYMBOLIC) {
                 double[] weights = sett.getSymbolicWeights(); // m_BagClus.getSettings().getSymbolicWeights();
                 if (weights == null) {
                     weights = new double[] { sett.getSymbolicWeight() }; //m_BagClus.getSettings().getSymbolicWeight() };
@@ -884,6 +895,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             //        	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
             updatePredictionsForTuples(model, train_iterator, test_iterator, i);
             model = null;
+            unmodifiedManager = null;
+            ind = null;
         }
         // instead of adding the model here, we will do this in after all bags are completed to keep the order of the
         // models invariant
@@ -1123,18 +1136,19 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             seeds[i] = bagSeedGenerator.nextInt();
         }
 
-        Cloner cloner = new Cloner();
-        ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];
-        for (int i = 0; i < statManagerClones.length; i++) {
-            statManagerClones[i] = cloner.deepClone(cr.getStatManager()); // must be cloned here
-        }
+//        Cloner cloner = new Cloner();
+//        ClusStatManager[] statManagerClones = new ClusStatManager[m_NbMaxBags];
+//        for (int i = 0; i < statManagerClones.length; i++) {
+//            statManagerClones[i] = cloner.deepClone(cr.getStatManager()); // must be cloned here
+//        }
+        ClusStatManager clonedManager = cloneStatManager(cr.getStatManager());
 
         ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
         ArrayList<Future<OneBagResults>> bagResults = new ArrayList<Future<OneBagResults>>();
 
         for (int i = 1; i <= m_NbMaxBags; i++) {
             ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-            InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, statManagerClones[i - 1]); // <-- induceExtraTree(cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]);
+            InduceExtraTreeCallable worker = new InduceExtraTreeCallable(this, cr, i, train_iterator, test_iterator, rnd, clonedManager); // statManagerClones[i - 1]; <-- induceExtraTree(cr, i, train_iterator, test_iterator, rnd, summ_time, one_bag_time, statManagerClones[i - 1]);
             Future<OneBagResults> submit = executor.submit(worker);
             bagResults.add(submit);
         }
@@ -1168,7 +1182,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager mgr) throws Exception {
+    public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager unmodifiedManager) throws Exception {
         long one_bag_time = ResourceInfo.getTime();
         if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Bag: " + i);
@@ -1176,6 +1190,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         ClusRun crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());
         // ClusEnsembleInduce.setRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(),
         // cr.getStatManager().getSettings().getNbRandomAttrSelected());
+        ClusStatManager mgr = cloneStatManager(unmodifiedManager);
         DepthFirstInduce ind;
         if (getSchema().isSparse()) {
             ind = new DepthFirstInduceSparse(this, mgr, true);
@@ -1209,12 +1224,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             // if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST)
             // m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
             //if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3) {
-            if (getSettings().getEnsemble().getRankingMethod() == SettingsEnsemble.RANKING_GENIE3) {
+            if (getSettings().getEnsemble().getRankingMethod() == SettingsEnsemble.RANKING_TYPE_GENIE3) {
                 // m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
                 fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model, ind.getStatManager());
             }
             //else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
-            else if (getSettings().getEnsemble().getRankingMethod() == SettingsEnsemble.RANKING_SYMBOLIC) {
+            else if (getSettings().getEnsemble().getRankingMethod() == SettingsEnsemble.RANKING_TYPE_SYMBOLIC) {
                 double[] weights = getSettings().getEnsemble().getSymbolicWeights(); //m_BagClus.getSettings().getSymbolicWeights();
                 if (weights == null) {
                     weights = new double[] { getSettings().getEnsemble().getSymbolicWeight() }; //m_BagClus.getSettings().getSymbolicWeight() };
@@ -1567,6 +1582,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 break;
             }
         }
+    }
+    
+    private ClusStatManager cloneStatManager(ClusStatManager statManager) {
+    	 Cloner cloner = new Cloner();
+         return cloner.deepClone(statManager);
     }
 
 }

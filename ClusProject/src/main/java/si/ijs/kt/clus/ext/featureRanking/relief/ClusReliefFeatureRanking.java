@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.ext.featureRanking.relief;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,17 +21,22 @@ import si.ijs.kt.clus.data.type.primitive.StringAttrType;
 import si.ijs.kt.clus.data.type.primitive.TimeSeriesAttrType;
 import si.ijs.kt.clus.distance.primitive.relief.HierarchicalMultiLabelDistance;
 import si.ijs.kt.clus.distance.primitive.relief.Levenshtein;
+import si.ijs.kt.clus.distance.primitive.relief.MultiLabelDistance;
 import si.ijs.kt.clus.distance.primitive.timeseries.DTWTimeSeriesDist;
 import si.ijs.kt.clus.distance.primitive.timeseries.QDMTimeSeriesDist;
 import si.ijs.kt.clus.distance.primitive.timeseries.TSCTimeSeriesDist;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
-import si.ijs.kt.clus.ext.featureRanking.FindNeighboursCallable;
+import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.FindNeighboursCallable;
+import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.SaveLoadNeighbours;
+import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.NearestNeighbour;
 import si.ijs.kt.clus.ext.hierarchical.ClassesAttrType;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsRelief.MultilabelDistance;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
+import si.ijs.kt.clus.util.tuple.Triple;
 
 
 /**
@@ -120,15 +126,12 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private int[] m_NbTargetValues;
 
     /**
-     * m_targetProbabilities[index]: relative frequencies of the target values, used in standard classification,
+     * m_TargetProbabilities[index]: relative frequencies of the target values, used in standard classification,
      * for the target with the index of {@code index - 1} if {@code index > 0}, and overall target otherwise.<br>
      * If not {@link #m_IsStandardClassification}[index],
-     * then m_targetProbabilities[index] = null.
+     * then m_TargetProbabilities[index] = null.
      */
-    private double[][] m_targetProbabilities;
-
-    /** type of the time series distance */
-    private int m_TimeSeriesDistance;
+    private double[][] m_TargetProbabilities;
 
     /** tells, whether to perform per-target rankings also */
     private boolean m_PerformPerTargetRanking;
@@ -156,7 +159,17 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private double[][][] m_SumDistAttrTarget;
 
     /** Hierarchical multi-label distance handler */
-    private HierarchicalMultiLabelDistance m_HierarDist = new HierarchicalMultiLabelDistance();
+    private HierarchicalMultiLabelDistance m_HierarMLCDist = new HierarchicalMultiLabelDistance();
+    
+    /** Tells whether the task is multi-label classification. */
+    private boolean m_IsMLC;
+    /** Multi-label classification distance handler */
+    private MultiLabelDistance m_MLCDist;
+    /** Multi-label classification distance type */    
+    private MultilabelDistance m_MLCDistanceType;
+    
+    /** Time series distance type */
+    private int m_TimeSeriesDistance;
 
     /** Counter for approximate proportion of the finished iterations. */
     private int m_Percents = 0;
@@ -172,7 +185,13 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> m_NearestNeighbours;
 
     private int m_NbThreads;
-
+        
+    private boolean m_ShouldLoadNeighbours;
+    private boolean m_ShouldSaveNeighbours;    
+    /** The name of the file that is used if the nearest neighbours should be loaded or saved to the file. Otherwise, empty string. */
+    private String m_NearestNeigbhoursFile;
+    SaveLoadNeighbours m_NNLoaderSaver = new SaveLoadNeighbours(m_NearestNeigbhoursFile);
+    
 
     /**
      * Constructor for the {@code ClusReliefFeatureRanking}, with the standard parameters of (R)Relief(F).
@@ -201,7 +220,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_WeightNeighbours = weightNeighbours;
         m_Sigma = m_WeightNeighbours ? sigma : 0.0;
         m_NeighbourWeights = new double[m_MaxNbNeighbours];
-
         m_rnd = new Random(seed);
         initialize();
     }
@@ -213,7 +231,22 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param data
      */
     private void initialize() {
-        printMessage("Preprocessing steps ...", 1);
+    	printMessage("Preprocessing steps ...", 1);
+    	
+    	// initialize nearest neighbours staff
+    	m_ShouldLoadNeighbours = getSettings().getRelief().shouldLoadNeighbours();
+        m_ShouldSaveNeighbours = getSettings().getRelief().shouldSaveNeighbours();
+        if(m_ShouldLoadNeighbours && m_ShouldSaveNeighbours) {
+        	System.err.println("Situation:");
+        	System.err.println("  - Loading and saving nearest neighbours turned on.");
+        	System.err.println("  - Saving would not change the existing file.");
+        	System.err.println("Consequence:");
+        	System.err.println("  - Saving is now turned off.");
+        	getSettings().getRelief().turnOffSaveNeighbours();
+        	m_ShouldSaveNeighbours = getSettings().getRelief().shouldSaveNeighbours();
+        }        
+        m_NearestNeigbhoursFile = getSettings().getGeneric().getAppName() + ".neigh";
+                
         if (m_WeightNeighbours) {
             for (int neigh = 0; neigh < m_MaxNbNeighbours; neigh++) {
                 m_NeighbourWeights[neigh] = Math.exp(-(m_Sigma * neigh) * (m_Sigma * neigh));
@@ -221,8 +254,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         }
         else {
             Arrays.fill(m_NeighbourWeights, 1.0);
-        }
-
+        }  
+                
         m_TimeSeriesDistance = m_Data.m_Schema.getSettings().getTimeSeries().getTimeSeriesDistance();
         setReliefDescription(m_NbNeighbours, m_NbIterations);
         m_NbExamples = m_Data.getNbRows();
@@ -238,8 +271,11 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_NbTargetAttrs = m_DescriptiveTargetAttr[1].length;
         m_PerformPerTargetRanking = m_Data.m_Schema.getSettings().getEnsemble().shouldPerformRankingPerTarget();
         if (m_PerformPerTargetRanking && m_NbTargetAttrs == 1) {
-            System.err.println("The per-target rankings were desired but number of targets = 1, hence per-target == overall.");
-            System.err.println("m_PerformPerTargetRanking set to: false");
+        	System.err.println("Situation:");
+            System.err.println("  - Per-target rankings were desired.");
+            System.err.println("  - The number of targets is 1, hence per-target ranking == overall ranking.");
+            System.err.println("Consequence:");
+            System.err.println("  - Only overall feature ranking(s) will be computed.");
             m_PerformPerTargetRanking = false;
         }
         m_NbGeneralisedTargetAttrs = 1 + (m_PerformPerTargetRanking ? m_NbTargetAttrs : 0);
@@ -247,10 +283,10 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
         m_IsStandardClassification = computeStandardClassification();
         m_NbTargetValues = nbTargetValues();
-        m_targetProbabilities = new double[m_NbGeneralisedTargetAttrs][];
-        for (int targetIndex = -1; targetIndex < m_targetProbabilities.length - 1; targetIndex++) {
+        m_TargetProbabilities = new double[m_NbGeneralisedTargetAttrs][];
+        for (int targetIndex = -1; targetIndex < m_TargetProbabilities.length - 1; targetIndex++) {
             if (m_IsStandardClassification[targetIndex + 1]) {
-                m_targetProbabilities[targetIndex + 1] = nominalClassCounts(targetIndex);
+                m_TargetProbabilities[targetIndex + 1] = nominalClassCounts(targetIndex);
             }
         }
 
@@ -276,13 +312,26 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 }
             }
         }
+        
+        // check for multilabelness
+        m_IsMLC = getSettings().getMLC().getSectionMultiLabel().isEnabled();
+        if(m_IsMLC) {
+        	m_MLCDistanceType = getSettings().getRelief().getMultilabelDistance();
+        	double[] labelProbabilities = new double[m_NbTargetAttrs];
+        	String labelPresent = "1";
+        	for(int i = 0; i < m_NbTargetAttrs; i++) {
+        		NominalAttrType attr = (NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][i];
+        		labelProbabilities[i] = m_TargetProbabilities[i + 1][attr.getValueIndex(labelPresent)];
+        	}
+        	m_MLCDist = new MultiLabelDistance(m_MLCDistanceType, m_DescriptiveTargetAttr[TARGET_SPACE], labelProbabilities);
+        }
 
         // check for hierarchical attributes
         for (int space : SPACE_TYPES) {
             for (int attrInd = 0; attrInd < m_DescriptiveTargetAttr[space].length; attrInd++) {
                 if (m_DescriptiveTargetAttr[space][attrInd].isClasses()) {
                     ClassesAttrType attr = (ClassesAttrType) m_DescriptiveTargetAttr[space][attrInd];
-                    m_HierarDist.processAttribute(attr, m_Data);
+                    m_HierarMLCDist.processAttribute(attr, m_Data);
                 }
             }
         }
@@ -353,8 +402,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @throws ClusException
      * @throws InterruptedException
      * @throws ExecutionException
+     * @throws IOException 
      */
-    public void calculateReliefImportance(RowData data) throws ClusException, InterruptedException, ExecutionException {
+    public void computeReliefImportance(RowData data) throws ClusException, InterruptedException, ExecutionException, IOException {
 
         DataTuple tuple;
 
@@ -373,7 +423,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         printMessage("Calculating importances ...", 1);
         for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
             printProgress(iteration);
-            // CHOOSE TUPLE AND COMPUTE NEAREST NEIGHBOURS
+            // CHOOSE TUPLE AND GET NEAREST NEIGHBOURS
             int tupleInd = theOrder[iteration];
             tuple = data.getTuple(tupleInd);
             NearestNeighbour[][] nearestNeighbours;
@@ -462,7 +512,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param tuple
      * @param nearestNeighbours
      * @param targetIndex
-     * @param isPerTarget
      * @return
      * @throws ClusException
      */
@@ -488,27 +537,27 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 NearestNeighbour neigh = nearestNeighbours[targetValue][neighbour];
                 double targetDistance = 0.0;
                 if (targetIndex >= 0 && !isStdClassification) {
-                    // regression per-target case: we took the neighbours from overall ranking, but need only d_target(tuple, neigh).
-                    targetDistance = calcDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]);
+                    // regression per-target case: we took the neighbours from overall ranking, but need d_target(tuple, neigh).
+                    targetDistance = computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]);
                 }
                 else {
-                    targetDistance = neigh.getTargetDistance();
-                }
+                    targetDistance = computeDistance(tuple, data.getTuple(neigh.getIndexInDataset()), TARGET_SPACE);  //  neigh.getTargetDistance();
+                }                
 
                 if (!isStdClassification) {
                     tempSumDistTarget += targetDistance * neighWeightNonnormalized;
                 }
                 for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
                     ClusAttrType attr = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE][attrInd];
-                    double distAttr = calcDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), attr) * neighWeightNonnormalized;
+                    double distAttr = computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), attr) * neighWeightNonnormalized;
                     if (isStdClassification) {
                         int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]).getNominal(tuple);
                         if (targetValue == tupleTarget) {
                             tempSumDistAttr[attrInd] -= distAttr;
                         }
                         else {
-                            double pTupleTarget = m_targetProbabilities[targetIndex + 1][tupleTarget];
-                            double pNeighTarget = m_targetProbabilities[targetIndex + 1][targetValue];
+                            double pTupleTarget = m_TargetProbabilities[targetIndex + 1][tupleTarget];
+                            double pNeighTarget = m_TargetProbabilities[targetIndex + 1][targetValue];
                             tempSumDistAttr[attrInd] += pNeighTarget / (1.0 - pTupleTarget) * distAttr;
                         }
                     }
@@ -558,7 +607,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     /**
      * Computes normalised counts of each class value, for a given target.
      * 
-     * @param data
      * @param nominalTargetIndex
      *        if -1, this is the overall ranking, hence STC is the task at hand. Otherwise, we are computing statistics
      *        that are used in per-target ranking.
@@ -609,7 +657,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         int targetValue;
 
         for (int i = 0; i < m_NbExamples; i++) {
-            distances[i] = calcDistance(tuple, m_Data.getTuple(i), DESCRIPTIVE_SPACE);
+            distances[i] = computeDistance(tuple, m_Data.getTuple(i), DESCRIPTIVE_SPACE);
         }
         boolean sortingNeeded;
         boolean isSorted[] = new boolean[nbTargetValues]; // isSorted[target value]: tells whether the neighbours for target value are sorted
@@ -672,15 +720,15 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             for (int i = 0; i < whereToPlaceNeigh[value]; i++) {
                 int datasetIndex = neighbours[value][i];
                 double descriptiveSpaceDist = distances[neighbours[value][i]];
-                double targetSpaceDist = 0.0;
-                boolean isPerTarget = targetIndex >= 0;
-                if (isPerTarget) {
-                    targetSpaceDist = calcDistance1D(tuple, m_Data.getTuple(datasetIndex), m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]);
-                }
-                else {
-                    targetSpaceDist = calcDistance(tuple, m_Data.getTuple(datasetIndex), TARGET_SPACE);
-                }
-                nearestNeighbours[value][whereToPlaceNeigh[value] - i - 1] = new NearestNeighbour(datasetIndex, descriptiveSpaceDist, targetSpaceDist);
+//                double targetSpaceDist = 0.0;
+//                boolean isPerTarget = targetIndex >= 0;
+//                if (isPerTarget) {
+//                    targetSpaceDist = calculateDistance1D(tuple, m_Data.getTuple(datasetIndex), m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]);
+//                }
+//                else {
+//                    targetSpaceDist = calculateDistance(tuple, m_Data.getTuple(datasetIndex), TARGET_SPACE);
+//                }
+                nearestNeighbours[value][whereToPlaceNeigh[value] - i - 1] = new NearestNeighbour(datasetIndex, descriptiveSpaceDist);  // new NearestNeighbour(datasetIndex, descriptiveSpaceDist, targetSpaceDist);
             }
         }
         return nearestNeighbours;
@@ -699,15 +747,20 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @return Distance between {@code t1} and {@code t2} in the given subspace.
      * @throws ClusException
      */
-    public double calcDistance(DataTuple t1, DataTuple t2, int space) throws ClusException {
+    public double computeDistance(DataTuple t1, DataTuple t2, int space) throws ClusException {
         double dist = 0.0;
-        int dimensions = space == DESCRIPTIVE_SPACE ? m_NbDescriptiveAttrs : m_NbTargetAttrs;
-        ClusAttrType attr;
-        for (int attrInd = 0; attrInd < dimensions; attrInd++) {
-            attr = m_DescriptiveTargetAttr[space][attrInd];
-            dist += calcDistance1D(t1, t2, attr);
+        if(m_IsMLC && space == TARGET_SPACE) {
+        	return m_MLCDist.calculateDist(t1, t2);
+        } else {
+        	int dimensions = space == DESCRIPTIVE_SPACE ? m_NbDescriptiveAttrs : m_NbTargetAttrs;
+        	ClusAttrType attr;
+            for (int attrInd = 0; attrInd < dimensions; attrInd++) {
+                attr = m_DescriptiveTargetAttr[space][attrInd];
+                dist += computeDistance1D(t1, t2, attr);
+            }
+            return dist / dimensions;
         }
-        return dist / dimensions;
+        
     }
 
 
@@ -723,9 +776,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @return distance({@code attr.value(t1), attr.value(t2)})
      * @throws ClusException
      */
-    public double calcDistance1D(DataTuple t1, DataTuple t2, ClusAttrType attr) throws ClusException {
+    public double computeDistance1D(DataTuple t1, DataTuple t2, ClusAttrType attr) throws ClusException {
         if (attr.isNominal()) {
-            return calculateNominalDist1D(t1, t2, (NominalAttrType) attr);
+            return computeNominalDist1D(t1, t2, (NominalAttrType) attr);
         }
         else if (attr.isNumeric()) {
             double normFactor = m_numMaxs.get(attr.getName()) - m_numMins.get(attr.getName());
@@ -733,16 +786,16 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                                      // does not depend on normFactor
                 normFactor = 1.0;
             }
-            return calculateNumericDist1D(t1, t2, (NumericAttrType) attr, normFactor);
+            return computeNumericDist1D(t1, t2, (NumericAttrType) attr, normFactor);
         }
         else if (attr.isClasses()) {
-            return calculateHierarchicalDist1D(t1, t2, (ClassesAttrType) attr);
+            return computeHierarchicalDist1D(t1, t2, (ClassesAttrType) attr);
         }
         else if (attr.isTimeSeries()) {
-            return calculateTimeSeriesDist1D(t1, t2, (TimeSeriesAttrType) attr);
+            return computeTimeSeriesDist1D(t1, t2, (TimeSeriesAttrType) attr);
         }
         else if (attr.isString()) {
-            return calculateStringDist1D(t1, t2, (StringAttrType) attr);
+            return computeStringDist1D(t1, t2, (StringAttrType) attr);
         }
         else {
             throw new ClusException("Unknown attribute type for attribute " + attr.getName() + ": " + attr.getClass().toString());
@@ -765,7 +818,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      *        The nominal attribute/dimension in which the distance between {@code t1} and {@code t2} is computed.
      * @return distance({@code attr.value(t1), attr.value(t2)})
      */
-    public double calculateNominalDist1D(DataTuple t1, DataTuple t2, NominalAttrType attr) {
+    public double computeNominalDist1D(DataTuple t1, DataTuple t2, NominalAttrType attr) {
         int v1 = attr.getNominal(t1);
         int v2 = attr.getNominal(t2);
         if (v1 >= attr.m_NbValues || v2 >= attr.m_NbValues) { // at least one missing
@@ -801,7 +854,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      *         <p>
      *         is returned.
      */
-    public double calculateNumericDist1D(DataTuple t1, DataTuple t2, NumericAttrType attr, double normalizationFactor) {
+    public double computeNumericDist1D(DataTuple t1, DataTuple t2, NumericAttrType attr, double normalizationFactor) {
         double v1 = attr.getNumeric(t1);
         double v2 = attr.getNumeric(t2);
         double t;
@@ -835,8 +888,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param attr
      * @return
      */
-    public double calculateHierarchicalDist1D(DataTuple t1, DataTuple t2, ClassesAttrType attr) {
-        return m_HierarDist.calculateDist(t1, t2, attr);
+    public double computeHierarchicalDist1D(DataTuple t1, DataTuple t2, ClassesAttrType attr) {
+        return m_HierarMLCDist.calculateDist(t1, t2, attr);
     }
 
 
@@ -852,7 +905,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @return distance({@code attr.value(t1), attr.value(t2)})
      * @throws ClusException
      */
-    public double calculateTimeSeriesDist1D(DataTuple t1, DataTuple t2, TimeSeriesAttrType attr) throws ClusException {
+    public double computeTimeSeriesDist1D(DataTuple t1, DataTuple t2, TimeSeriesAttrType attr) throws ClusException {
         TimeSeries ts1 = attr.getTimeSeries(t1);
         TimeSeries ts2 = attr.getTimeSeries(t2);
 
@@ -886,7 +939,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      *        The string attribute/dimension in which the distance between {@code t1} and {@code t2} is computed.
      * @return Levenshtein distance between {@code attr.value(t1)} and {@code attr.value(t2)}.
      */
-    public double calculateStringDist1D(DataTuple t1, DataTuple t2, StringAttrType attr) {
+    public double computeStringDist1D(DataTuple t1, DataTuple t2, StringAttrType attr) {
         return new Levenshtein(t1, t2, attr).getDist();
     }
 
@@ -986,32 +1039,71 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
 
     /**
-     * Computes all nearest neighbours in advance, i.e., before the main iterative part of Relief.
+     * Computes (or loads) all nearest neighbours in advance, i.e., before the main iterative part of Relief.
      * Updates the field {@link #m_NearestNeighbours} accordingly.
      * 
      * @param randomPermutation
      *        the order in which the instances will be used in the Relief algorithm.
      * @throws InterruptedException
      * @throws ExecutionException
+     * @throws IOException 
+     * @throws ClusException 
      */
-    private void computeNearestNeighbours(int[] randomPermutation) throws InterruptedException, ExecutionException {
-        ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
-        for (Integer targetIndex : computeTargetIndicesThatNeedNeigbhours()) {
-            m_NearestNeighbours.put(targetIndex, new HashMap<Integer, NearestNeighbour[][]>());
-            for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
-                int tupleIndex = randomPermutation[iteration];
-                DataTuple tuple = m_Data.getTuple(tupleIndex);
-                if (shouldUseTuple(targetIndex, tuple)) {
-                    FindNeighboursCallable task = new FindNeighboursCallable(this, tupleIndex, targetIndex);
-                    Future<NearestNeighbour[][]> result = executor.submit(task);
-                    m_NearestNeighbours.get(targetIndex).put(tupleIndex, result.get()); // here, we are in the main thread, no concurrency issues
-                }
-            }
+    private void computeNearestNeighbours(int[] randomPermutation) throws InterruptedException, ExecutionException, IOException, ClusException {
+    	if(m_ShouldLoadNeighbours) {
+    		// read from file
+    		SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(m_NearestNeigbhoursFile);
+    		m_NearestNeighbours = nnLoader.loadNeighboursFromFile();
+//    		recomputeNeighbourTargetDistances();  // compute target distances again (necessary for MLC)
+    	} else {
+    		// compute them now
+	        ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
+	        ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>> results = new ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>>();  
+	        
+	        for (Integer targetIndex : computeTargetIndicesThatNeedNeigbhours()) {
+	            m_NearestNeighbours.put(targetIndex, new HashMap<Integer, NearestNeighbour[][]>());
+	            for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
+	                int tupleIndex = randomPermutation[iteration];
+	                DataTuple tuple = m_Data.getTuple(tupleIndex);
+	                if (shouldUseTuple(targetIndex, tuple)) {
+	                    FindNeighboursCallable task = new FindNeighboursCallable(this, tupleIndex, targetIndex);
+	                    Future<Triple<Integer, Integer, NearestNeighbour[][]>> result = executor.submit(task);
+	                    results.add(result);
+	                }
+	            }
+	        }
+	        executor.shutdown();
+	        executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
+	        
+	        for(Future<Triple<Integer, Integer, NearestNeighbour[][]>> futureTriple : results) {
+	        	Triple<Integer, Integer, NearestNeighbour[][]> triple = futureTriple.get();
+	        	m_NearestNeighbours.get(triple.getFirst()).put(triple.getSecond(), triple.getThird());
+	        }
+    	}
+    	
+    	if(m_ShouldSaveNeighbours) {
+        	SaveLoadNeighbours nnSaver = new SaveLoadNeighbours(m_NearestNeigbhoursFile);
+        	nnSaver.saveNeighboursToFile(m_NearestNeighbours);
         }
-        executor.shutdown();
-        executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
     }
+    
 
+	@SuppressWarnings("unused")
+	@Deprecated
+    private void recomputeNeighbourTargetDistances() throws ClusException {
+		for(int targetIndex : m_NearestNeighbours.keySet()) {
+			for(int tupleIndex : m_NearestNeighbours.get(targetIndex).keySet()) {
+				DataTuple t1 = m_Data.getTuple(tupleIndex);
+				NearestNeighbour[][] nnss = m_NearestNeighbours.get(targetIndex).get(tupleIndex);
+				for(NearestNeighbour[] nns : nnss) {
+					for(NearestNeighbour nn : nns) {
+						DataTuple t2 = m_Data.getTuple(nn.getIndexInDataset());
+						nn.setTargetDistance(computeDistance(t1, t2, TARGET_SPACE));						
+					}
+				}
+			}
+		}
+    }
 
     /**
      * Prints the message if Settings.VERBOSE is at the desired verbose level or higher.

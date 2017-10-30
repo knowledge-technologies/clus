@@ -107,13 +107,14 @@ public class ClusOOBErrorEstimate {
         // allmi.addModelProcessor(ClusModelInfo.TRAIN_ERR, wrt);
         // cr.copyAllModelsMIs();
         // wrt.initializeAll(schema);
-
-        calcOOBError(oob_total, all_data, ClusModelInfo.TRAIN_ERR, cr);
-        cl.calcExtraTrainingSetErrors(cr);
-        output.writeHeader();
-        output.writeOutput(cr, true, cl.getSettings().getOutput().isOutTrainError());
-        output.close();
-        // wrt.close();
+        if(sett.getOutput().isWriteOOBFile()) {
+	        calcOOBError(oob_total, all_data, ClusModelInfo.TRAIN_ERR, cr);
+	        cl.calcExtraTrainingSetErrors(cr);
+	        output.writeHeader();
+	        output.writeOutput(cr, true, cl.getSettings().getOutput().isOutTrainError());
+	        output.close();
+	        // wrt.close();
+        }
         setOOBCalculation(false);
         // m_OOBCalculation = false;
     }
