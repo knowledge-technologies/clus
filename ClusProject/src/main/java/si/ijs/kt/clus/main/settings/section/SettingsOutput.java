@@ -33,6 +33,7 @@ public class SettingsOutput extends SettingsBase {
     protected INIFileBool m_GzipOutput; // added by Jurica Levatic JSI, July 2014
     protected INIFileBool m_WriteErrorFile;
     protected INIFileBool m_WriteModelFile;
+    protected INIFileBool m_WriteOOBFile;
     protected INIFileBool m_ModelIDFiles;
     protected INIFileBool m_OutputPythonModel;
     protected INIFileBool m_OutputJSONModel;
@@ -132,6 +133,9 @@ public class SettingsOutput extends SettingsBase {
         return m_OutputPythonModel.getValue();
     }
 
+    public boolean isWriteOOBFile() {
+        return m_WriteOOBFile.getValue();
+    }
 
     public boolean isOutputJSONModel() {
         return m_OutputJSONModel.getValue();
