@@ -732,13 +732,19 @@ public class ClusForest implements ClusModel, Serializable {
             PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
             wrtr.println("# Python code of the trees in the ensemble");
             wrtr.println();
+            
             for (int i = 0; i < m_Forest.size(); i++) {
                 ClusModel model = m_Forest.get(i);
                 wrtr.println("#Model " + (i + 1));
-                wrtr.println("def clus_tree_" + (i + 1) + "(Xs):"); // m_AttributeList
+                wrtr.println("def clus_tree_" + (i + 1) + "(xs):"); // m_AttributeList
                 ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
                 wrtr.println();
             }
+            
+            // TODO: matejp please add voting procedure python script:)
+            // http://source.ijs.si/mpetkovic/clusproject/issues/54
+            
+            
             wrtr.flush();
             wrtr.close();
             System.out.println("Model to Python Code written to: " + pyscript.getName());

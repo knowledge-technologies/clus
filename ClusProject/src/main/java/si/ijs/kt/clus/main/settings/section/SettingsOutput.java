@@ -39,7 +39,8 @@ public class SettingsOutput extends SettingsBase {
     protected INIFileBool m_OutputDatabaseQueries;
     protected INIFileBool m_WriteCurves;
     protected INIFileBool m_OutputClowdFlowsJSON;
-
+    protected INIFileBool m_OutputROSSubspaces;
+    
     public SettingsOutput(int position) {
         super(position);
     }
@@ -103,6 +104,9 @@ public class SettingsOutput extends SettingsBase {
         return m_OutFoldModels.getValue();
     }
 
+    public boolean isOutputROSSubspaces() {
+        return m_OutputROSSubspaces.getValue();
+    }
 
     public boolean isWriteTestSetPredictions() {
         return m_WritePredictions.contains(WRITE_PRED_TEST);
@@ -245,6 +249,7 @@ public class SettingsOutput extends SettingsBase {
         output.addNode(m_ModelIDFiles = new INIFileBool("ModelIDFiles", false));
         output.addNode(m_WriteCurves = new INIFileBool("WriteCurves", false));
         output.addNode(m_OutputPythonModel = new INIFileBool("OutputPythonModel", false));
+        output.addNode(m_OutputROSSubspaces = new INIFileBool("OutputROSSubspaces", false));
         output.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
         output.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));
         output.addNode(m_OutputClowdFlowsJSON = new INIFileBool("OutputClowdFlowsJSON", false));

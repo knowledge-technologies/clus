@@ -322,7 +322,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         SettingsEnsemble set = getSettings().getEnsemble();
         SettingsGeneral setg = getSettings().getGeneral();
-
+        SettingsOutput seto = getSettings().getOutput();
+        
         System.out.println("Memory And Time Optimization = " + m_OptMode);
         System.out.println("Out-Of-Bag Estimate of the error = " + set.shouldEstimateOOB());
         System.out.println("Perform Feature Ranking = " + m_FeatRank);
@@ -330,17 +331,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (set.isEnsembleROSEnabled()) {
             m_EnsembleROSInfo = ClusROS.prepareROSEnsembleInfo(getSettings(), getSchema());
             
-            // write it very ugly to disk 
-            PrintWriter writer = new PrintWriter("ros_subspaces.csv", "UTF-8");
             
-            for(int i = 0; i < m_NbMaxBags; i++){
-            	writer.println( 
-            			Arrays.toString(m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(i)))
-            	);
-            }
-            
-            writer.close();
-            
+            if (seto.isOutputROSSubspaces()) {
+                // write ROS subspaces to disk
+                PrintWriter writer = new PrintWriter(getSettings().getGeneric().getAppName() + "." + m_NbMaxBags + ".ros.csv", "UTF-8");
+                
+                for(int i = 0; i < m_NbMaxBags; i++) writer.println(Arrays.toString(m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(i))));
+                writer.close();
+            }            
         }
 
         // initialise ranking stuff here: we need stat manager with clustering statistics != null

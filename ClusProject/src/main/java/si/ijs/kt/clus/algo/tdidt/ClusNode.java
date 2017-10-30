@@ -1641,17 +1641,17 @@ public class ClusNode extends MyNode implements ClusModel {
             int delta = hasUnknownBranch() ? 1 : 0;
             if (arity - delta == 2) {
                 int index = dict.get(m_Test.getType().getName());
-                String atrNameReplacement = String.format("Xs[%d]", index);
+                String atrNameReplacement = String.format("xs[%d]", index);
                 String original = "if " + m_Test.getPythonTestString() + ":";
                 String neww = original.replace(m_Test.getType().getName(), atrNameReplacement);
                 writer.println(prefix + neww);
-                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "    ", dict);
+                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "\t", dict);
                 writer.println(prefix + "else: ");
                 if (hasUnknownBranch()) {
                     // TODO anything to do???
                 }
                 else {
-                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "    ", dict);
+                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "\t", dict);
                 }
             }
             else {
