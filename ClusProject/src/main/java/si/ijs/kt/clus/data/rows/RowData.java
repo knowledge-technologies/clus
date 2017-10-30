@@ -266,6 +266,11 @@ public class RowData extends ClusData implements MSortable, Serializable {
         JsonObject summary = new JsonObject();
 
         double[] avg, min, max, stddev;
+        try {
+            DataTuple temp = getTuple(0);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return summary;
+        }
         DataTuple temp = getTuple(0);
         int nda = temp.getSchema().getNbNumericDescriptiveAttributes();
         int nta = temp.getSchema().getNbNumericTargetAttributes();
