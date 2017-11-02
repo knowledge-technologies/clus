@@ -189,14 +189,24 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
         buf.append("[");
         int nb = getNbExamples();
         double avg_sq_r = 0.0;
+        double root, above, el, Ai_ss, Pi_ss;
+        
         for (int i = 0; i < m_Dim; i++) {
-            double Pi_ss = m_SumSPi[i] - m_SumPi[i] * m_SumPi[i] / nb;
-            double Ai_ss = m_SumSAi[i] - m_SumAi[i] * m_SumAi[i] / nb;
-            double root = Math.sqrt(Pi_ss * Ai_ss);
-            double above = m_SumPiAi[i] - m_SumPi[i] * m_SumAi[i] / nb;
-            double el = above / root;
+            Pi_ss = m_SumSPi[i] - m_SumPi[i] * m_SumPi[i] / nb;
+            Ai_ss = m_SumSAi[i] - m_SumAi[i] * m_SumAi[i] / nb;
+            
+            if (Pi_ss <= 0 || Ai_ss <= 0) {
+                el = 0F;
+            }
+            else {
+                root = Math.sqrt(Pi_ss * Ai_ss);
+                above = m_SumPiAi[i] - m_SumPi[i] * m_SumAi[i] / nb;
+
+                el = above / root;
+            }
             if (i != 0)
                 buf.append(",");
+            
             buf.append(fr.format(el));
             avg_sq_r += el * el;
         }
