@@ -747,7 +747,7 @@ public class ClusForest implements ClusModel, Serializable {
             
             wrtr.flush();
             wrtr.close();
-            System.out.println("Model to Python Code written to: " + pyscript.getName());
+            System.out.println("Python code for Forest model written to: " + pyscript.getName());
         }
         catch (IOException e) {
             System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");

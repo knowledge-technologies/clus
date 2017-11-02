@@ -1169,12 +1169,12 @@ public class ClusNode extends MyNode implements ClusModel {
     @Override
     public void printModelToPythonScript(PrintWriter wrt) {
         // changed tab to 4 spaces
-        printTreeToPythonScript(wrt, "    ");
+        printTreeToPythonScript(wrt, "\t");
     }
 
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
         // changed tab to 4 spaces
-        printTreeToPythonScript(wrt, "    ", dict);
+        printTreeToPythonScript(wrt, "\t", dict);
     }
 
     @Override
@@ -1613,13 +1613,13 @@ public class ClusNode extends MyNode implements ClusModel {
             int delta = hasUnknownBranch() ? 1 : 0;
             if (arity - delta == 2) {
                 writer.println(prefix + "if " + m_Test.getPythonTestString() + ":");
-                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "    ");
+                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "\t");
                 writer.println(prefix + "else: ");
                 if (hasUnknownBranch()) {
                     // TODO anything to do???
                 }
                 else {
-                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "    ");
+                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "\t");
                 }
             }
             else {
