@@ -266,13 +266,13 @@ public class ClusHMTRHierarchy  { //implements Serializable {
 
     private String getVerticalLineText() {
         //return "·" + getSpaces();
-        return "\u00B7" + getSpaces();
+        return "|" + getSpaces();
     }
 
 
     private String getHorizontalLineText() {
-        String corner = "\u2514";
-        String dash = "\u2500";
+        String corner = "+";
+        String dash = "-";
         return corner + dash + dash + " ";
     }
 

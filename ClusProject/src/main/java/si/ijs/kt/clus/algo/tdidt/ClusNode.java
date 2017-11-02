@@ -108,14 +108,14 @@ public class ClusNode extends MyNode implements ClusModel {
 
 
     private String getHorizontalLineText() {
-        String corner = "\u2514";
-        String dash = "\u2500";
+        String corner = "+";
+        String dash = "-";
         return corner + dash + dash;
     }
 
 
     private String getVerticalLineText() {
-        return "\u2506";
+        return "|";
     }
 
 
