@@ -84,7 +84,7 @@ public interface ClusModel {
 
 
     public void printModelToPythonScript(PrintWriter wrt);
-
+    
 
     public JsonObject getModelJSON();
 

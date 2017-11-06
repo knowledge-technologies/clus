@@ -22,6 +22,8 @@
 
 package si.ijs.kt.clus.main;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -294,16 +296,45 @@ public class ClusOutput {
                     if (getSettings().getEnsemble().isEnsembleMode() && (i == ClusModel.ORIGINAL)) {
                         root.printModelToPythonScript(m_Writer);// root is a forest
                     }
-                    else {
-                        // use following lines for getting tree as Python function
-                        m_Writer.print("def clus_tree(");
-                        ClusAttrType[] cat = ClusSchema.vectorToAttrArray(m_Schema.collectAttributes(ClusAttrType.ATTR_USE_DESCRIPTIVE, ClusAttrType.THIS_TYPE));
-                        for (int ii = 0; ii < cat.length - 1; ii++) {
-                            m_Writer.print(cat[ii].getName() + ", ");
+                    else if (i == ClusModel.DEFAULT) {
+                        // prints the python code for the default model
+                        m_Writer.print("def clus_default(xs):");
+                        root.printModelToPythonScript(m_Writer);// root is a forest
+                        
+                        
+                        
+                        /*
+                        try {
+                            File pyscript = new File(m_AppName + "_default.py");
+                            PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
+                            wrtr.println("# Python code of the trees in the ensemble");
+                            wrtr.println();
+                            
+                            for (int i = 0; i < m_Forest.size(); i++) {
+                                ClusModel model = m_Forest.get(i);
+                                wrtr.println("#Model " + (i + 1));
+                                wrtr.println("def clus_tree_" + (i + 1) + "(xs):"); // m_AttributeList
+                                ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
+                                wrtr.println();
+                            }
+                            
+                            wrtr.flush();
+                            wrtr.close();
+                            System.out.println("Python code for Forest model written to: " + pyscript.getName());
                         }
-                        m_Writer.println(cat[cat.length - 1].getName() + "):");
-                        root.printModelToPythonScript(m_Writer);
-                        m_Writer.println();
+                        catch (IOException e) {
+                            System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");
+                            e.printStackTrace();
+                        }                        
+                        
+                        */
+                        
+                        
+                        
+                        
+                        
+                        
+
                     }
                 }
             }

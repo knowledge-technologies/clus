@@ -134,13 +134,17 @@ public class RowData extends ClusData implements MSortable, Serializable {
 
     public String printIDs(String prefix) {
         StringBuffer sb = new StringBuffer();
-        ClusAttrType key = m_Schema.getKeyAttribute()[0];
-        // sb.append(prefix);
-        for (int i = 0; i < getNbRows(); i++) {
-            if (i != 0)
-                sb.append(",");
-            sb.append(key.getString(getTuple(i)));
-            // sb.append("works" + i +"\n");
+        for (int j = 0; j < m_Schema.getKeyAttribute().length; j++) {
+            ClusAttrType key = m_Schema.getKeyAttribute()[j];
+            // sb.append(prefix);
+            sb.append(key.getName()+": ");
+            for (int i = 0; i < getNbRows(); i++) {
+                if (i != 0)
+                    sb.append(",");
+                sb.append(key.getString(getTuple(i)));
+                // sb.append("works" + i +"\n");
+            }
+            sb.append("\n");
         }
         // sb.append("\n");
         return sb.toString();
@@ -266,6 +270,11 @@ public class RowData extends ClusData implements MSortable, Serializable {
         JsonObject summary = new JsonObject();
 
         double[] avg, min, max, stddev;
+        try {
+            DataTuple temp = getTuple(0);
+        } catch (ArrayIndexOutOfBoundsException e) {
+            return summary;
+        }
         DataTuple temp = getTuple(0);
         int nda = temp.getSchema().getNbNumericDescriptiveAttributes();
         int nta = temp.getSchema().getNbNumericTargetAttributes();
@@ -375,6 +384,8 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
+    
+    
     public DataTuple createTuple() {
         return new DataTuple(m_Schema);
     }

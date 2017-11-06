@@ -40,7 +40,8 @@ public class SettingsOutput extends SettingsBase {
     protected INIFileBool m_OutputDatabaseQueries;
     protected INIFileBool m_WriteCurves;
     protected INIFileBool m_OutputClowdFlowsJSON;
-
+    protected INIFileBool m_OutputROSSubspaces;
+    
     public SettingsOutput(int position) {
         super(position);
     }
@@ -104,6 +105,9 @@ public class SettingsOutput extends SettingsBase {
         return m_OutFoldModels.getValue();
     }
 
+    public boolean isOutputROSSubspaces() {
+        return m_OutputROSSubspaces.getValue();
+    }
 
     public boolean isWriteTestSetPredictions() {
         return m_WritePredictions.contains(WRITE_PRED_TEST);
@@ -128,11 +132,10 @@ public class SettingsOutput extends SettingsBase {
     public boolean isOutputPythonModel() {
         return m_OutputPythonModel.getValue();
     }
-    
+
     public boolean isWriteOOBFile() {
         return m_WriteOOBFile.getValue();
     }
-
 
     public boolean isOutputJSONModel() {
         return m_OutputJSONModel.getValue();
@@ -243,7 +246,6 @@ public class SettingsOutput extends SettingsBase {
         output.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
         output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); //TODO: bug: see issue #51 in the repository
         output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
-        output.addNode(m_WriteOOBFile = new INIFileBool("WriteOOBFile", false));
         output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
         output.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));
         // If this option name is to be changed, it must also be changed in testsets/iris-classify.s
@@ -251,6 +253,7 @@ public class SettingsOutput extends SettingsBase {
         output.addNode(m_ModelIDFiles = new INIFileBool("ModelIDFiles", false));
         output.addNode(m_WriteCurves = new INIFileBool("WriteCurves", false));
         output.addNode(m_OutputPythonModel = new INIFileBool("OutputPythonModel", false));
+        output.addNode(m_OutputROSSubspaces = new INIFileBool("OutputROSSubspaces", false));
         output.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
         output.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));
         output.addNode(m_OutputClowdFlowsJSON = new INIFileBool("OutputClowdFlowsJSON", false));

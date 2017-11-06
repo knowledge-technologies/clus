@@ -108,14 +108,14 @@ public class ClusNode extends MyNode implements ClusModel {
 
 
     private String getHorizontalLineText() {
-        String corner = "\u2514";
-        String dash = "\u2500";
+        String corner = "+";
+        String dash = "-";
         return corner + dash + dash;
     }
 
 
     private String getVerticalLineText() {
-        return "\u2506";
+        return "|";
     }
 
 
@@ -1169,9 +1169,13 @@ public class ClusNode extends MyNode implements ClusModel {
     @Override
     public void printModelToPythonScript(PrintWriter wrt) {
         // changed tab to 4 spaces
-        printTreeToPythonScript(wrt, "    ");
+        printTreeToPythonScript(wrt, "\t");
     }
 
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
+        // changed tab to 4 spaces
+        printTreeToPythonScript(wrt, "\t", dict);
+    }
 
     @Override
     public JsonObject getModelJSON() {
@@ -1603,20 +1607,51 @@ public class ClusNode extends MyNode implements ClusModel {
         }
     }
 
-
     public final void printTreeToPythonScript(PrintWriter writer, String prefix) {
         int arity = getNbChildren();
         if (arity > 0) {
             int delta = hasUnknownBranch() ? 1 : 0;
             if (arity - delta == 2) {
                 writer.println(prefix + "if " + m_Test.getPythonTestString() + ":");
-                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "    ");
+                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "\t");
                 writer.println(prefix + "else: ");
                 if (hasUnknownBranch()) {
                     // TODO anything to do???
                 }
                 else {
-                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "    ");
+                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "\t");
+                }
+            }
+            else {
+                // TODO what to do?
+            }
+        }
+        else {
+            if (m_TargetStat != null) {
+                writer.println(prefix + "return " + m_TargetStat.getArrayOfStatistic());
+                // System.out.println(m_TargetStat.getClass());
+            }
+        }
+    }
+
+
+    public final void printTreeToPythonScript(PrintWriter writer, String prefix, HashMap<String, Integer> dict) {
+        int arity = getNbChildren();
+        if (arity > 0) {
+            int delta = hasUnknownBranch() ? 1 : 0;
+            if (arity - delta == 2) {
+                int index = dict.get(m_Test.getType().getName());
+                String atrNameReplacement = String.format("xs[%d]", index);
+                String original = "if " + m_Test.getPythonTestString() + ":";
+                String neww = original.replace(m_Test.getType().getName(), atrNameReplacement);
+                writer.println(prefix + neww);
+                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "\t", dict);
+                writer.println(prefix + "else: ");
+                if (hasUnknownBranch()) {
+                    // TODO anything to do???
+                }
+                else {
+                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "\t", dict);
                 }
             }
             else {

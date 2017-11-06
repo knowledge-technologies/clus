@@ -322,13 +322,23 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         SettingsEnsemble set = getSettings().getEnsemble();
         SettingsGeneral setg = getSettings().getGeneral();
-
+        SettingsOutput seto = getSettings().getOutput();
+        
         System.out.println("Memory And Time Optimization = " + m_OptMode);
         System.out.println("Out-Of-Bag Estimate of the error = " + set.shouldEstimateOOB());
         System.out.println("Perform Feature Ranking = " + m_FeatRank);
 
         if (set.isEnsembleROSEnabled()) {
             m_EnsembleROSInfo = ClusROS.prepareROSEnsembleInfo(getSettings(), getSchema());
+            
+            
+            if (seto.isOutputROSSubspaces()) {
+                // write ROS subspaces to disk
+                PrintWriter writer = new PrintWriter(getSettings().getGeneric().getAppName() + "." + m_NbMaxBags + ".ros.csv", "UTF-8");
+                
+                for(int i = 0; i < m_NbMaxBags; i++) writer.println(Arrays.toString(m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(i))));
+                writer.close();
+            }            
         }
 
         // initialise ranking stuff here: we need stat manager with clustering statistics != null
@@ -885,6 +895,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             //        	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
             updatePredictionsForTuples(model, train_iterator, test_iterator, i);
             model = null;
+            unmodifiedManager = null;
+            ind = null;
         }
         // instead of adding the model here, we will do this in after all bags are completed to keep the order of the
         // models invariant
