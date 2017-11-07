@@ -499,7 +499,7 @@ public class Clus implements CMDLineArgsProvider {
      */
     public final void induce(ClusRun cr, ClusInductionAlgorithmType clss) throws Exception {
         if (getSettings().getGeneral().getVerbose() > 0) {
-            System.out.println("Time: " + (new SimpleDateFormat("HH:mm:ss")).format(Calendar.getInstance().getTime()));
+            System.out.println("Time: " + (new SimpleDateFormat("dd. MM. yyyy HH:mm:ss")).format(Calendar.getInstance().getTime()));
             System.out.println("Run: " + cr.getIndexString());
             System.out.println("Verbose: " + getSettings().getGeneral().getVerbose());
             clss.printInfo();
