@@ -246,6 +246,7 @@ public class SettingsOutput extends SettingsBase {
         output.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
         output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); //TODO: bug: see issue #51 in the repository
         output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
+        output.addNode(m_WriteOOBFile = new INIFileBool("WriteOOBFile", false));
         output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
         output.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));
         // If this option name is to be changed, it must also be changed in testsets/iris-classify.s
