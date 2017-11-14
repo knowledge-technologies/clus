@@ -33,6 +33,7 @@ import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.NearestNeighbou
 import si.ijs.kt.clus.ext.hierarchical.ClassesAttrType;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsRelief;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief.MultilabelDistance;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.util.ClusException;
@@ -51,11 +52,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private static final int TARGET_SPACE = 1;
     private static final int[] SPACE_TYPES = new int[] { DESCRIPTIVE_SPACE, TARGET_SPACE };
 
-    //private static final int DISTANCE_ATTR = 0;
-    //private static final int DISTANCE_TARGET = 1;
-    //private static final int DISTANCE_ATTR_TARGET = 2;
-    //private static final int[] DISTACNE_TYPES = new int[]{DISTANCE_ATTR, DISTANCE_TARGET, DISTANCE_ATTR_TARGET};
-
     /**
      * The dataset used.
      */
@@ -72,6 +68,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
     /** Maximal element of m_NbIterations */
     private int m_MaxNbIterations;
+    
+    /** The order of instances whose neighbours we compute etc. */
+    private int[] m_Order;
 
     /** Tells, whether the contributions of the neighbours are weighted */
     private boolean m_WeightNeighbours;
@@ -189,9 +188,10 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         
     private boolean m_ShouldLoadNeighbours;
     private boolean m_ShouldSaveNeighbours;    
-    /** The name of the file that is used if the nearest neighbours should be loaded or saved to the file. Otherwise, empty string. */
-    private String m_NearestNeigbhoursFile;
-    SaveLoadNeighbours m_NNLoaderSaver = new SaveLoadNeighbours(m_NearestNeigbhoursFile);
+    /** The name of the files that are used when the nearest neighbours should be loaded from the files.*/
+    private String[] m_LoadNearestNeigbhoursFiles;
+    /** The name of the file that is used when the nearest neighbours should be saved to the file.*/
+    private String m_SaveNearestNeigbhoursFile;
     
     /** Counts the progress in nearest neighbour computation. */
     private int m_NeighCounter;
@@ -242,17 +242,10 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     	
     	// initialize nearest neighbours staff
     	m_ShouldLoadNeighbours = getSettings().getRelief().shouldLoadNeighbours();
+        m_LoadNearestNeigbhoursFiles = m_ShouldLoadNeighbours ? getSettings().getRelief().getLoadNeighboursFiles() : new String[] {};
+        
         m_ShouldSaveNeighbours = getSettings().getRelief().shouldSaveNeighbours();
-        if(m_ShouldLoadNeighbours && m_ShouldSaveNeighbours) {
-        	System.err.println("Situation:");
-        	System.err.println("  - Loading and saving nearest neighbours turned on.");
-        	System.err.println("  - Saving would not change the existing file.");
-        	System.err.println("Consequence:");
-        	System.err.println("  - Saving is now turned off.");
-        	getSettings().getRelief().turnOffSaveNeighbours();
-        	m_ShouldSaveNeighbours = getSettings().getRelief().shouldSaveNeighbours();
-        }        
-        m_NearestNeigbhoursFile = getSettings().getGeneric().getAppName() + ".neigh";
+        m_SaveNearestNeigbhoursFile = m_ShouldSaveNeighbours ? getSettings().getRelief().getSaveNeighboursFile() : "";
                 
         if (m_WeightNeighbours) {
             for (int neigh = 0; neigh < m_MaxNbNeighbours; neigh++) {
@@ -261,7 +254,13 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         }
         else {
             Arrays.fill(m_NeighbourWeights, 1.0);
-        }  
+        }
+        
+        // order of the instances
+        m_Order = getSettings().getRelief().getChosenIntances();
+        if(m_Order.equals(SettingsRelief.DUMMY_INSTANCES)){
+        	m_Order = randomPermutation(m_NbExamples);
+        }
                 
         m_TimeSeriesDistance = m_Data.m_Schema.getSettings().getTimeSeries().getTimeSeriesDistance();
         setReliefDescription(m_NbNeighbours, m_NbIterations);
@@ -421,10 +420,10 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         int nbTargets = m_PerformPerTargetRanking ? 1 + m_NbTargetAttrs : 1;
         double[] successfulIterations = new double[nbTargets];
 
-        int[] theOrder = randomPermutation(m_NbExamples);
+//        int[] theOrder = randomPermutation(m_NbExamples);
 
         printMessage("Calculating nearest neighbours ...", 1);
-        computeNearestNeighbours(theOrder);
+        computeNearestNeighbours(m_Order);
 
         int insufficientNbNeighbours = 0;
         int numIterInd = 0;
@@ -434,7 +433,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
             printProgress(iteration);
             // CHOOSE TUPLE AND GET NEAREST NEIGHBOURS
-            int tupleInd = theOrder[iteration];
+            int tupleInd = m_Order[iteration]; // theOrder[iteration];
             tuple = data.getTuple(tupleInd);
             NearestNeighbour[][] nearestNeighbours;
             // UPDATE OVERALL (AND PER-TARGET) RANKING STATISTICS
@@ -1088,8 +1087,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private void computeNearestNeighbours(int[] randomPermutation) throws InterruptedException, ExecutionException, IOException, ClusException {
     	if(m_ShouldLoadNeighbours) {
     		// read from file
-    		SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(m_NearestNeigbhoursFile);
-    		m_NearestNeighbours = nnLoader.loadNeighboursFromFile();
+    		SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(m_LoadNearestNeigbhoursFiles, null);
+    		m_NearestNeighbours = nnLoader.loadNeighboursFromFiles();
 //    		recomputeNeighbourTargetDistances();  // compute target distances again (necessary for MLC)
     	} else {
     		// compute them now
@@ -1123,7 +1122,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     	}
     	
     	if(m_ShouldSaveNeighbours) {
-        	SaveLoadNeighbours nnSaver = new SaveLoadNeighbours(m_NearestNeigbhoursFile);
+        	SaveLoadNeighbours nnSaver = new SaveLoadNeighbours(null, m_SaveNearestNeigbhoursFile);
         	nnSaver.saveNeighboursToFile(m_NearestNeighbours);
         }
     }

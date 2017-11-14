@@ -80,7 +80,7 @@ public class KnnModel implements ClusModel, Serializable {
     private ClusRun cr;
     protected ClusStatistic statTemplate;
     private int m_K = 1; // the number of nearest neighbours, see also https://www.youtube.com/watch?v=KqOsrniBooQ
-    private int m_MaxK = 1; // maximal number of neighbours among the master itself and his 'workeks': for efficient use
+    private int m_MaxK = 1; // maximal number of neighbours among the master itself and his 'workers': for efficient use
                             // of predictWeighted in Clus.calcError()
     private DataTuple m_CurrentTuple; // used for efficient use of predictWeighted in Clus.calcError()
     private LinkedList<DataTuple> m_CurrentNeighbours; // m_MaxK nearest neighbours of m_CurrentTuple
@@ -110,7 +110,7 @@ public class KnnModel implements ClusModel, Serializable {
         String fName = this.cr.getStatManager().getSettings().getGeneric().getAppName();
         // Initialize attribute weighting according to settings file
         AttributeWeighting attrWe = new NoWeighting();
-        ;
+        
         String attrWeighting = this.cr.getStatManager().getSettings().getKNN().getKNNAttrWeight();
         boolean loadedWeighting = false;
         if (attrWeighting.toLowerCase().compareTo("none") == 0) {
@@ -204,7 +204,6 @@ public class KnnModel implements ClusModel, Serializable {
                             }
                         }
                     }
-
                 }
             }
         }

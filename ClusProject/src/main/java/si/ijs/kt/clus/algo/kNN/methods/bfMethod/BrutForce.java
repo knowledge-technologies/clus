@@ -35,7 +35,7 @@ import si.ijs.kt.clus.util.ClusException;
 
 
 /**
- * @author Mitja Pugelj
+ * @author Mitja Pugelj, matejp
  */
 public class BrutForce extends SearchAlgorithm {
 
