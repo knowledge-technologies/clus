@@ -12,6 +12,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import javax.swing.plaf.synth.SynthSplitPaneUI;
+
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
@@ -239,6 +241,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      */
     private void initialize() {
     	printMessage("Preprocessing steps ...", 1);
+    	m_NbExamples = m_Data.getNbRows();
     	
     	// initialize nearest neighbours staff
     	m_ShouldLoadNeighbours = getSettings().getRelief().shouldLoadNeighbours();
@@ -258,14 +261,18 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         
         // order of the instances
         m_Order = getSettings().getRelief().getChosenIntances();
-        if(m_Order.equals(SettingsRelief.DUMMY_INSTANCES)){
+        if(Arrays.equals(m_Order, SettingsRelief.DUMMY_INSTANCES)){
         	m_Order = randomPermutation(m_NbExamples);
+        }
+        if(m_Order.length < m_MaxNbIterations) {
+        	System.err.println(String.format("Warning! Maximal number of iterations = %d > %d = number of chosen instances.", m_MaxNbIterations, m_Order.length));
+        	System.err.println("Setting the maximal number of iterations to the number of chosen instances.");
+        	m_MaxNbIterations = m_Order.length;
         }
                 
         m_TimeSeriesDistance = m_Data.m_Schema.getSettings().getTimeSeries().getTimeSeriesDistance();
         setReliefDescription(m_NbNeighbours, m_NbIterations);
-        m_NbExamples = m_Data.getNbRows();
-
+        
         // Initialise descriptive and target attributes if necessary
         int attrType;
         for (int space : SPACE_TYPES) {
@@ -421,8 +428,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         double[] successfulIterations = new double[nbTargets];
 
 //        int[] theOrder = randomPermutation(m_NbExamples);
-
-        printMessage("Calculating nearest neighbours ...", 1);
         computeNearestNeighbours(m_Order);
 
         int insufficientNbNeighbours = 0;
@@ -1087,11 +1092,13 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private void computeNearestNeighbours(int[] randomPermutation) throws InterruptedException, ExecutionException, IOException, ClusException {
     	if(m_ShouldLoadNeighbours) {
     		// read from file
+    		printMessage("Loading nearest neighbours ...", 1);
     		SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(m_LoadNearestNeigbhoursFiles, null);
     		m_NearestNeighbours = nnLoader.loadNeighboursFromFiles();
 //    		recomputeNeighbourTargetDistances();  // compute target distances again (necessary for MLC)
     	} else {
     		// compute them now
+    		printMessage("Calculating nearest neighbours ...", 1);
     		ArrayList<Integer> necessaryTargetIndices = computeTargetIndicesThatNeedNeigbhours();
     		m_NeighCounter = 0;
     		m_NeighCounterBound = necessaryTargetIndices.size() * m_MaxNbIterations;
@@ -1102,8 +1109,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 	        
 	        for (Integer targetIndex : necessaryTargetIndices) {
 	            m_NearestNeighbours.put(targetIndex, new HashMap<Integer, NearestNeighbour[][]>());
-	            for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
-	                int tupleIndex = randomPermutation[iteration];
+	            for (int tupleIndex : randomPermutation) {
 	                DataTuple tuple = m_Data.getTuple(tupleIndex);
 	                if (shouldUseTuple(targetIndex, tuple)) {
 	                    FindNeighboursCallable task = new FindNeighboursCallable(this, tupleIndex, targetIndex);

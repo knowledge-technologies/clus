@@ -130,8 +130,8 @@ public class SaveLoadNeighbours {
 				HashMap<Integer, NearestNeighbour[][]> neighboursTargetAll = nearestNeighbours.get(targetInd);
 				for(Integer tupleInd : neighboursTargetPartial.keySet()) {
 					if(neighboursTargetAll.containsKey(tupleInd)) {
-						String warning = "Warning: Neighbours for tuple with index %d and target with index %d are computed in at least two input files\n"
-								       + "Checking whether the neighbours are the same.";
+						String warning = "Warning: Neighbours for tuple with index %d and target with index %d are computed in at least two input files.\n"
+								       + "If the neighbours are not the same, an exception will be thrown.";
 						System.err.println(String.format(warning, tupleInd.intValue(), targetInd.intValue()));
 						if(!Arrays.deepEquals(neighboursTargetAll.get(tupleInd), neighboursTargetPartial.get(tupleInd))) {
 							throw new RuntimeException("Different neighbours!\n" + Arrays.deepToString(neighboursTargetAll.get(tupleInd)) + "\n" + Arrays.deepToString(neighboursTargetPartial.get(tupleInd)));
