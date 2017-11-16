@@ -542,7 +542,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             boolean isStdClassification = m_IsStandardClassification[targetIndex + 1];
             int trueIndex = getTrueTargetIndex(targetIndex);
             int numNeighInd = 0;
-            for (int neighbour = 0; neighbour < nearestNeighbours[targetValue].length; neighbour++) {
+            int nbNeighbours = Math.min(m_MaxNbNeighbours, nearestNeighbours[targetValue].length);
+            for (int neighbour = 0; neighbour < nbNeighbours; neighbour++) {
                 if (nearestNeighbours[targetValue].length < m_MaxNbNeighbours) {
                     tempInsufficientNbNeighbours++;
                 }
