@@ -269,7 +269,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         	System.err.println("Setting the maximal number of iterations to the number of chosen instances.");
         	m_MaxNbIterations = m_Order.length;
         }
-                
+        
         m_TimeSeriesDistance = m_Data.m_Schema.getSettings().getTimeSeries().getTimeSeriesDistance();
         setReliefDescription(m_NbNeighbours, m_NbIterations);
         
@@ -446,7 +446,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 if (shouldUseTuple(targetIndex, tuple)) {
                     successfulIterations[targetIndex + 1]++;
                     if (m_IsStandardClassification[targetIndex + 1] && targetIndex >= 0) {
-                        nearestNeighbours = m_NearestNeighbours.get(targetIndex).get(tupleInd);
+                    	nearestNeighbours = m_NearestNeighbours.get(targetIndex).get(tupleInd);
                     }
                     else {
                         nearestNeighbours = m_NearestNeighbours.get(-1).get(tupleInd);
@@ -1102,12 +1102,12 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     		printMessage("Calculating nearest neighbours ...", 1);
     		ArrayList<Integer> necessaryTargetIndices = computeTargetIndicesThatNeedNeigbhours();
     		m_NeighCounter = 0;
-    		m_NeighCounterBound = necessaryTargetIndices.size() * m_MaxNbIterations;
+    		m_NeighCounterBound = necessaryTargetIndices.size() * randomPermutation.length;
     		m_NeighPercents = 0;
     		
 	        ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
+	        int dolzina = 0;
 	        ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>> results = new ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>>();  
-	        
 	        for (Integer targetIndex : necessaryTargetIndices) {
 	            m_NearestNeighbours.put(targetIndex, new HashMap<Integer, NearestNeighbour[][]>());
 	            for (int tupleIndex : randomPermutation) {
@@ -1121,7 +1121,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 	        }
 	        executor.shutdown();
 	        executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
-	        
 	        for(Future<Triple<Integer, Integer, NearestNeighbour[][]>> futureTriple : results) {
 	        	Triple<Integer, Integer, NearestNeighbour[][]> triple = futureTriple.get();
 	        	m_NearestNeighbours.get(triple.getFirst()).put(triple.getSecond(), triple.getThird());
