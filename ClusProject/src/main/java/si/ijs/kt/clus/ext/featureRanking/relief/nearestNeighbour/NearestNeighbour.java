@@ -43,7 +43,7 @@ public class NearestNeighbour {
     	Matcher nnParsed = nnPatern.matcher(nnFileString);
     	if(nnParsed.find()) {
     		m_indexInDataSet = Integer.parseInt(nnParsed.group(1));
-    		m_descriptiveDistance = Double.parseDouble(nnParsed.group(2));
+    		m_descriptiveDistance = Double.parseDouble(nnParsed.group(2).replace(",", "."));
     		// m_targetDistance = Double.parseDouble(nnParsed.group(3));
     	} else {
     		throw new RuntimeException(String.format("Nearest neighbour %s could not be parsed.", nnFileString));

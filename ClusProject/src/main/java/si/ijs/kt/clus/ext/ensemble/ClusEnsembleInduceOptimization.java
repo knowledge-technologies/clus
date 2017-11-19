@@ -119,7 +119,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
 
     public abstract void initPredictions(ClusStatistic stat, ClusEnsembleROSInfo ensembleROSInfo);
 
-
+    
     public abstract void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException, InterruptedException;
     //@Deprecated
     //public abstract void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException;
@@ -141,8 +141,10 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
         // the current averages are stored in the avg_predictions
         int plength = avg_predictions.length;
         double[] result = new double[plength];
-        for (int i = 0; i < plength; i++)
-            result[i] = avg_predictions[i] + (predictions[i] - avg_predictions[i]) / nb_models;
+        for (int i = 0; i < plength; i++) {
+        	// result[i] = avg_predictions[i] + (predictions[i] - avg_predictions[i]) / nb_models;
+        	result[i] = computeNextAverage(avg_predictions[i], predictions[i], nb_models);
+        }
         return result;
     }
 
@@ -159,7 +161,8 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
                     result[i] = new double[sum_predictions[i].length];
                     // if target is enables, then update results[i][j]
                     for (int j = 0; j < sum_predictions[i].length; j++) {
-                        result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) / m_EnsembleROSInfo.getCoverageOpt(i);
+                        // result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) / m_EnsembleROSInfo.getCoverageOpt(i);
+                    	result[i][j] = computeNextAverage(sum_predictions[i][j], predictions[i][j], m_EnsembleROSInfo.getCoverageOpt(i));
                     }
                 }
                 else { // target not enabled for this model; retain what we have until now
@@ -171,12 +174,25 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
             for (int i = 0; i < sum_predictions.length; i++) {
                 result[i] = new double[sum_predictions[i].length];
                 for (int j = 0; j < sum_predictions[i].length; j++) {
-                    result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) / nb_models;
+                    // result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) / nb_models;
+                	result[i][j] = computeNextAverage(sum_predictions[i][j], predictions[i][j], nb_models);
                 }
             }
         }
 
         return result;
+    }
+    
+    /**
+     * Computes the average of {@code nbValues} values, given the average {@code currentAverage} of {@code nbValues - 1} values
+     * and the next value.
+     * @param currentAverege
+     * @param nextValue
+     * @param nbValues
+     * @return
+     */
+    private static double computeNextAverage(double currentAverege, double nextValue, double nbValues) {
+    	return  nextValue / nbValues + currentAverege * (nbValues - 1) / nbValues; 	
     }
 
 

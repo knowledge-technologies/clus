@@ -7,6 +7,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class SaveLoadNeighbours {
@@ -14,7 +15,7 @@ public class SaveLoadNeighbours {
 	 * The file, storing the nearest neighbours data:<br>
 	 * START_TARGET1;index<br>
 	 * START_TUPLE1;index<br>
-	 * NB_TARGET_VALUES1;numberOfTargetValues
+	 * NB_TARGET_VALUES1;numberOfTargetValues<br>
 	 * NN(2;0.21;0.21)&...&NN(32;0.121;0.51)<br>
 	 * ...<br>
 	 * NN(4;0.31;0.11)&...&NN(112;0.1;0.1)<br>
@@ -29,7 +30,11 @@ public class SaveLoadNeighbours {
 	 * ...<br>
 	 * where NN-lines are produced by the NearestNeighbour.toFileString() method. Each line corresponds to one target value.
 	 */
-	private String m_File;
+	private String m_OutputFile;
+	
+	/** The file names that store the NN-s, which are given in the same way as in the {@link #m_OutputFile}.
+	 * They are joined into one structure when loading. */
+	private String[] m_InputFiles;
 	
 	private static final String START_TARGET = "START_TARGET";
 	private static final String END_TARGET = "END_TARGET";
@@ -39,8 +44,9 @@ public class SaveLoadNeighbours {
 
 	private static final String NN_SEPARATOR = "&";
 
-	public SaveLoadNeighbours(String m_NearestNeigbhoursFile) {
-		m_File = m_NearestNeigbhoursFile;
+	public SaveLoadNeighbours(String[] m_NearestNeighbourInputFiles, String m_NearestNeighbourOutputFile) {
+		m_InputFiles = m_NearestNeighbourInputFiles;
+		m_OutputFile = m_NearestNeighbourOutputFile;
 	}
 	
 	
@@ -64,18 +70,18 @@ public class SaveLoadNeighbours {
 			}
 			lines.add(END_TARGET);
 		}
-		Files.write(Paths.get(m_File), lines, Charset.forName("UTF-8"));
-		System.out.println("Nearest neighbours written to: " + m_File);
+		Files.write(Paths.get(m_OutputFile), lines, Charset.forName("UTF-8"));
+		System.out.println("Nearest neighbours written to: " + m_OutputFile);
 	}
 	
-	public HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadNeighboursFromFile() throws IOException {
+	public HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadNeighboursFromFile(String nearestNeighboursFile) throws IOException {
 		HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
 		Integer targetInd = -123;
 	    Integer tupleInd = -123;
 	    NearestNeighbour[][] nnss = new NearestNeighbour[0][0];
 	    int targetValueInd = -123;
 		
-		BufferedReader br = new BufferedReader(new FileReader(m_File));
+		BufferedReader br = new BufferedReader(new FileReader(nearestNeighboursFile));
 	    String line = br.readLine();	    
 	    while (line != null) {
 	    	if(line.startsWith(START_TARGET)) {
@@ -109,7 +115,34 @@ public class SaveLoadNeighbours {
 	    }
 	    br.close();		
 		return nearestNeighbours;
-		
+	}
+	
+	
+	public HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadNeighboursFromFiles() throws IOException{
+		HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
+		for(String inFile : m_InputFiles) {
+			HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> partialNNs = loadNeighboursFromFile(inFile);
+			for(Integer targetInd : partialNNs.keySet()) {
+				if(!nearestNeighbours.containsKey(targetInd)) {
+					nearestNeighbours.put(targetInd, new HashMap<Integer, NearestNeighbour[][]>());
+				}
+				HashMap<Integer, NearestNeighbour[][]> neighboursTargetPartial = partialNNs.get(targetInd);
+				HashMap<Integer, NearestNeighbour[][]> neighboursTargetAll = nearestNeighbours.get(targetInd);
+				for(Integer tupleInd : neighboursTargetPartial.keySet()) {
+					if(neighboursTargetAll.containsKey(tupleInd)) {
+						String warning = "Warning: Neighbours for tuple with index %d and target with index %d are computed in at least two input files.\n"
+								       + "If the neighbours are not the same, an exception will be thrown.";
+						System.err.println(String.format(warning, tupleInd.intValue(), targetInd.intValue()));
+						if(!Arrays.deepEquals(neighboursTargetAll.get(tupleInd), neighboursTargetPartial.get(tupleInd))) {
+							throw new RuntimeException("Different neighbours!\n" + Arrays.deepToString(neighboursTargetAll.get(tupleInd)) + "\n" + Arrays.deepToString(neighboursTargetPartial.get(tupleInd)));
+						}
+					} else {
+						neighboursTargetAll.put(tupleInd, neighboursTargetPartial.get(tupleInd));
+					}
+				}
+			}
+		}		
+		return nearestNeighbours;
 	}
 	
 	/**

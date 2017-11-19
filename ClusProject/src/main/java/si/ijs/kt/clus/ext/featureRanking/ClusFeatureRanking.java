@@ -68,6 +68,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.tuple.Triple;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
@@ -113,6 +114,8 @@ public class ClusFeatureRanking {
     
     /** Separator that separates different blocks of columns in fimp file. Must not be equal to "," (see parsing in the unit tests)! */
     public final static String FIMP_SEPARATOR = "\t";
+    
+    public final static int FIMP_RELEVANCES_SIGNIFICANT_PLACES = 10;
     
 
     public ClusFeatureRanking(Settings sett) {
@@ -354,7 +357,6 @@ public class ClusFeatureRanking {
                 else {
                     System.err.println("WARNING: type is not 1 (numeric). We will try to swap the values like in non-sparse case, but some things might go wrong, e.g.,\n" + "java.lang.NullPointerException might occur.");
                 }
-
             }
             if (!successfullySwapped) {
                 if (type == 0) {// nominal
@@ -684,19 +686,28 @@ public class ClusFeatureRanking {
     }
     
     
+    /**
+     * Normalizes the feature importance scores.
+     */
     public void computeFinalScores(){
-    	if(!m_ScoresNormalized) {
-	        for(String attributeName : m_AllAttributes.keySet()){
-	            double[] possiblyNonnormalizedScores = m_AllAttributes.get(attributeName);  // indeed not normalised in the case of ensemble rankings
-	            for (int j = 0; j < m_NbFeatureRankings; j++) {
+    	for(String attributeName : m_AllAttributes.keySet()){
+    		double[] possiblyNonnormalizedScores = m_AllAttributes.get(attributeName);  // indeed not normalised in the case of ensemble rankings
+	        for (int j = 0; j < m_NbFeatureRankings; j++) {
+	        	// normalisation
+		        if(!m_ScoresNormalized) {
 	                possiblyNonnormalizedScores[2 + j] /= Math.max(1.0, ClusEnsembleInduce.getMaxNbBags()); // Relief has 0 number of bags ...
 	            }
-	        }
-	        m_ScoresNormalized = true;
+		        // rounding: done implicitly only in ranks computation
+		        // possiblyNonnormalizedScores[2 + j] = ClusUtil.roundToSignificantFigures(possiblyNonnormalizedScores[2 + j], FIMP_RELEVANCES_SIGNIFICANT_PLACES);
+	        } 
     	}
+    	m_ScoresNormalized = true;
     }
     
     
+    /**
+     * Comptues ranks of the features. To avoid the floating-point arithmetics issues we use approximately equal when computing the ranks ... 
+     */
     private void computeRanks(){
         m_AttributeRanks = new HashMap<String, int[]>();
         ArrayList<String> attributeNames = new ArrayList<String>();
@@ -718,7 +729,7 @@ public class ClusFeatureRanking {
             for(int i = 0; i < attributeNames.size(); i++){
                 String attributeName = attributeNames.get(i);
                 thisRelevance = m_AllAttributes.get(attributeName)[ind];
-                if(thisRelevance != prevRelevance){
+                if (!ClusUtil.eq(thisRelevance, prevRelevance, ClusUtil.PICO)) {   //(thisRelevance != prevRelevance){
                     lastRank = i + 1;
                 }
                 m_AttributeRanks.get(attributeName)[rankingInd] = lastRank;
