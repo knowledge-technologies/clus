@@ -907,8 +907,8 @@ public class SettingsRules extends SettingsBase {
         m_SectionRules.addNode(m_HeurDispOffset = new INIFileDouble("HeurDispOffset", 0.0));
         m_SectionRules.addNode(m_HeurCoveragePar = new INIFileDouble("HeurCoveragePar", 1.0));
         m_SectionRules.addNode(m_HeurRuleDistPar = new INIFileDouble("HeurRuleDistPar", 0.0));
-        m_SectionRules.addNode(m_InitialRuleGeneratingMethod = new INIFileNominal("InitialRuleGeneratingMethod", INITIAL_RULE_GENERATING_METHODS, INITIAL_RULE_GENERATING_METHOD_RANDOM_FOREST));
         m_SectionRules.addNode(m_HeurPrototypeDistPar = new INIFileDouble("HeurPrototypeDistPar", 0.0));
+        m_SectionRules.addNode(m_InitialRuleGeneratingMethod = new INIFileNominal("InitialRuleGeneratingMethod", INITIAL_RULE_GENERATING_METHODS, INITIAL_RULE_GENERATING_METHOD_RANDOM_FOREST));
         m_SectionRules.addNode(m_RuleSignificanceLevel = new INIFileDouble("RuleSignificanceLevel", 0.05));
         m_SectionRules.addNode(m_RuleNbSigAtts = new INIFileInt("RuleNbSigAtts", 0));
         m_SectionRules.addNode(m_ComputeDispersion = new INIFileBool("ComputeDispersion", false));
