@@ -177,16 +177,14 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
         m_AvgDistances /= count;
     }
 
-
-    /*
-     * [Aco]
-     * this is executed in the end
-     * @see clus.statistic.ClusStatistic#calcMean()
+    /**
+     * @author matejp
+     * Computes the medoid of the time series instances. Copied from the body of {@link #calcMean()}.
+     * @return
+     * @throws ClusException
      */
-    @Override
-    public void calcMean() throws ClusException {
-        // Medoid
-        m_RepresentativeMedoid = null;
+    private TimeSeries calcMedoidTS() throws ClusException {
+    	TimeSeries medoid = null;
         double minDistance = Double.POSITIVE_INFINITY;
         for (int i = 0; i < m_TimeSeriesStack.size(); i++) {
             double crDistance = 0.0;
@@ -197,22 +195,58 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
                 crDistance += dist * t2.geTSWeight();
             }
             if (crDistance < minDistance) {
-                m_RepresentativeMedoid = m_TimeSeriesStack.get(i);
+            	medoid = m_TimeSeriesStack.get(i);
                 minDistance = crDistance;
             }
         }
+    	return medoid;
+    }
+    
+    
+    /**
+     * @author matejp
+     * Computes the mean of time series. Copied from the body of  {@link #calcMean()}. If not all time series are of equal length,
+     * the method throws exception.
+     * @return
+     */
+    private TimeSeries calcMeanTS() {
+    	TimeSeries mean = new TimeSeries("[]");
+    	if(m_TimeSeriesStack.size() == 0) {
+    		return null;
+    	}
+    	mean.setSize(m_TimeSeriesStack.get(0).length());
+    	// check for the lengths
+    	for(int j = 0; j < m_TimeSeriesStack.size(); j++) {
+    		if(m_TimeSeriesStack.get(j).length() != mean.length()) {
+    			System.out.println("TSs should be of the same length, returning null as the mean value.");
+    			return null;
+    		}
+    	}
+    	// compute mean
+    	for (int i = 0; i < mean.length(); i++) {
+            double sum = 0.0;
+            for (int j = 0; j < m_TimeSeriesStack.size(); j++) {
+                TimeSeries t1 = m_TimeSeriesStack.get(j);
+                sum += t1.getValue(i) * t1.geTSWeight();
+            }
+            mean.setValue(i, sum / m_SumWeight);
+        }
+    	return mean;
+    }
+    
+    /*
+     * [Aco]
+     * this is executed in the end
+     * @see clus.statistic.ClusStatistic#calcMean()
+     */
+    @Override
+    public void calcMean() throws ClusException {
+        // Medoid
+        m_RepresentativeMedoid = calcMedoidTS();
         calcSumAndSumSqDistances(m_RepresentativeMedoid);
         // Mean
         if (m_Attr.isEqualLength()) {
-            m_RepresentativeMean.setSize(m_RepresentativeMedoid.length());
-            for (int i = 0; i < m_RepresentativeMean.length(); i++) {
-                double sum = 0.0;
-                for (int j = 0; j < m_TimeSeriesStack.size(); j++) {
-                    TimeSeries t1 = m_TimeSeriesStack.get(j);
-                    sum += t1.getValue(i) * t1.geTSWeight();
-                }
-                m_RepresentativeMean.setValue(i, sum / m_SumWeight);
-            }
+            m_RepresentativeMean = calcMeanTS();
         }
         double sumwi = 0.0;
         for (int j = 0; j < m_TimeSeriesStack.size(); j++) {
@@ -256,6 +290,27 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
          */
     }
 
+    @Override
+    public boolean samePrediction(ClusStatistic other) {
+    	TimeSeriesStat otherTS = (TimeSeriesStat) other;
+    	
+    	TimeSeries thisMean = this.calcMeanTS();
+    	TimeSeries otherMean = otherTS.calcMeanTS();
+        
+        if(!TimeSeries.areEqual(thisMean, otherMean)) {
+        	return false;
+        }
+        TimeSeries thisMedoid;
+		try {
+			thisMedoid = this.calcMedoidTS();
+			TimeSeries otherMedoid = otherTS.calcMedoidTS();
+			return  TimeSeries.areEqual(thisMedoid, otherMedoid);
+		} catch (ClusException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return false;
+		}
+    }
 
     @Override
     public void reset() {

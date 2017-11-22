@@ -41,7 +41,7 @@ public class DTWTimeSeriesDist extends TimeSeriesDist {
      * For implementation details please see
      * Yuu Yamada et.al.
      * Decision-tree Induction from Time-series Data Based on a Standard-example Split Test
-     * http://www.hpl.hp.com/conferences/icml2003/papers/145.pdf
+     * Link broken: http://www.hpl.hp.com/conferences/icml2003/papers/145.pdf
      */
     public double calcDistance(TimeSeries t1, TimeSeries t2, int adjustmentWindow) {
 
