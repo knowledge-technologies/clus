@@ -39,6 +39,7 @@ import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.ClusUtil;
 
 
 public class TimeSeriesStat extends SumPairwiseDistancesStat {
@@ -69,6 +70,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     public ClusStatistic cloneStat() {
         TimeSeriesStat stat = new TimeSeriesStat(this.m_Settings, m_Attr, m_Distance, m_Efficiency);
         stat.cloneFrom(this);
+//        checkInvariant()
         return stat;
     }
 
@@ -78,6 +80,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
         TimeSeriesStat stat = new TimeSeriesStat(this.m_Settings, m_Attr, m_Distance, m_Efficiency);
         stat.m_RepresentativeMean = new TimeSeries(m_RepresentativeMean.length());
         stat.m_RepresentativeMedoid = new TimeSeries(m_RepresentativeMedoid.length());
+//        checkInvariant()
         return stat;
     }
 
@@ -93,6 +96,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
         m_TimeSeriesStack.addAll(or.m_TimeSeriesStack);
         // m_RepresentativeMean = or.m_RepresentativeMean;
         // m_RepresentativeMedoid = or.m_RepresentativeMedoid;
+//        checkInvariant()
     }
 
 
@@ -107,6 +111,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
         copy.m_TimeSeriesStack.add(getTimeSeriesPred());
         copy.m_RepresentativeMean.setValues(m_RepresentativeMean.getValues());
         copy.m_RepresentativeMedoid.setValues(m_RepresentativeMedoid.getValues());
+//        checkInvariant()
         return copy;
     }
 
@@ -114,10 +119,11 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     @Override
     public void addPrediction(ClusStatistic other, double weight) {
         TimeSeriesStat or = (TimeSeriesStat) other;
-        m_SumWeight += weight * or.m_SumWeight;
+        m_SumWeight += weight; // matejp changed from weight * or.m_SumWeight; since this brakes the invariant of sum of weights in stack == m_SumWeights 
         TimeSeries pred = new TimeSeries(or.getTimeSeriesPred());
         pred.setTSWeight(weight);
         m_TimeSeriesStack.add(pred);
+//        checkInvariant()
     }
 
 
@@ -130,6 +136,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
         TimeSeries newTimeSeries = new TimeSeries((TimeSeries) tuple.m_Objects[m_Attr.getArrayIndex()]); // new TimeSeries((TimeSeries) tuple.m_Objects[0]);
         newTimeSeries.setTSWeight(tuple.getWeight());
         m_TimeSeriesStack.add(newTimeSeries);
+//        checkInvariant()
     }
 
 
@@ -206,7 +213,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     /**
      * @author matejp
      * Computes the mean of time series. Copied from the body of  {@link #calcMean()}. If not all time series are of equal length,
-     * the method throws exception.
+     * returns null.
      * @return
      */
     private TimeSeries calcMeanTS() {
@@ -218,7 +225,9 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     	// check for the lengths
     	for(int j = 0; j < m_TimeSeriesStack.size(); j++) {
     		if(m_TimeSeriesStack.get(j).length() != mean.length()) {
-    			System.out.println("TSs should be of the same length, returning null as the mean value.");
+    			if(m_Settings.getGeneral().getVerbose() > 1) {
+    				System.out.println("TSs should be of the same length, returning null as the mean value.");
+    			}
     			return null;
     		}
     	}
@@ -316,6 +325,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     public void reset() {
         super.reset();
         m_TimeSeriesStack.clear();
+//        checkInvariant()
     }
 
 
@@ -400,5 +410,59 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
 
     public TimeSeriesAttrType getAttribute() {
         return m_Attr;
+    }
+    
+    public double stackWeight() {
+    	double sum = 0.0;
+    	for(TimeSeries ts : m_TimeSeriesStack) {
+    		sum += ts.geTSWeight();
+    	}
+    	return sum;
+    }
+    
+    @Override
+    public void add(ClusStatistic other) {
+        super.add(other);
+        m_TimeSeriesStack.addAll(((TimeSeriesStat) other).m_TimeSeriesStack);
+    }
+    
+    @Override
+    public void subtractFromThis(ClusStatistic other) {
+    	super.subtractFromThis(other);
+    	// filter time series stack
+    	ArrayList<TimeSeries> newStack = new ArrayList<TimeSeries>();
+    	boolean[] shouldRemove = new boolean[m_TimeSeriesStack.size()];
+    	TimeSeriesStat otherTS = (TimeSeriesStat) other;
+    	int found = 0;
+    	for(TimeSeries ts1 : otherTS.m_TimeSeriesStack) {
+    		for(int i = 0; i < m_TimeSeriesStack.size(); i++) {
+    			if (!shouldRemove[i] && TimeSeries.areEqual(ts1, m_TimeSeriesStack.get(i))) { // !shouldRemove[i] to prevent removing the same ts twice
+    				shouldRemove[i] = true;
+    				found++;
+    				break;
+    			}
+    		}
+    	}
+    	if(found !=  otherTS.m_TimeSeriesStack.size())
+    		System.err.println("Removal candidates: "  + otherTS.m_TimeSeriesStack.size() + " found: " + found);
+    	for(int i = 0; i < shouldRemove.length; i++) {
+    		if(!shouldRemove[i]) {
+    			newStack.add(m_TimeSeriesStack.get(i));
+    		}
+    	}
+    	m_TimeSeriesStack = newStack;
+
+    }
+    
+    /**
+     * For debugging purposes. Do not change the body, since matejp would like to be able to put a breakpoint in the return false; line.
+     * @return
+     */
+    public boolean checkInvariant() {
+        if(!ClusUtil.eq(stackWeight(), m_SumWeight, ClusUtil.MICRO)) {
+        	return false;
+        } else {
+        	return true;
+        }
     }
 }

@@ -228,7 +228,7 @@ public class TimeSeries implements Serializable {
     }
     
     /**
-     * Checks the equality of the two, possibly null time series. They are equal if they are either both null or of the same length and values.
+     * Checks the equality of the two, possibly null time series. They are equal if they are either both null or of the same length, weight and values.
      * @author matejp
      * @param ts1
      * @param ts2
@@ -239,6 +239,9 @@ public class TimeSeries implements Serializable {
     		return ts2 == null;
     	}
     	if(ts1.length() != ts2.length()) {
+    		return false;
+    	}
+    	if(!ClusUtil.eq(ts1.geTSWeight(), ts2.geTSWeight(), ClusUtil.MICRO)) {
     		return false;
     	}
     	for(int i = 0; i < ts1.length(); i++) {
