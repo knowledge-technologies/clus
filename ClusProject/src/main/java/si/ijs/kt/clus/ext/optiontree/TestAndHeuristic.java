@@ -245,15 +245,15 @@ public class TestAndHeuristic {
  ***************************************************************************/
 
     public final double getPosWeight() {
-        return m_PosStat.m_SumWeight;
+        return m_PosStat.getTotalWeight();
     }
 
     public final double getTotWeight() {
-        return m_TotStat.m_SumWeight;
+        return m_TotStat.getTotalWeight();
     }
 
     public final double getTotNoUnkW() {
-        return m_TotCorrStat.m_SumWeight;
+        return m_TotCorrStat.getTotalWeight();
     }
 
     public final void subtractMissing() {
@@ -265,7 +265,7 @@ public class TestAndHeuristic {
     }
 
     public final void calcPosFreq() {
-        m_PosFreq = m_PosStat.m_SumWeight / m_TotStat.m_SumWeight;
+        m_PosFreq = m_PosStat.getTotalWeight() / m_TotStat.getTotalWeight();
     }
 
     public final ClusStatistic getStat(int i) {
@@ -319,7 +319,7 @@ public class TestAndHeuristic {
             double tot_no_unk = getTotNoUnkW();
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
             m_TestType = TYPE_NUMERIC;
-            m_PosFreq = pos.m_SumWeight / tot_no_unk;
+            m_PosFreq = pos.getTotalWeight() / tot_no_unk;
             m_Split = val;
             m_BestHeur = heur;
             m_SplitAttr = at;
@@ -332,7 +332,7 @@ public class TestAndHeuristic {
         // System.out.println(val);
         
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
-        if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
         //System.out.println(m_BestHeur);
         //System.out.println(heur);
         if (heur - ClusHeuristic.DELTA > m_BestHeur ) {
@@ -362,7 +362,7 @@ public class TestAndHeuristic {
      */
     public final void updateInverseNumeric(double val, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
-        if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+        if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Better.");
             double tot_w = getTotWeight();

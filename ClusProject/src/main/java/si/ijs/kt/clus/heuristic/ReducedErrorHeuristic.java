@@ -48,12 +48,12 @@ public class ReducedErrorHeuristic extends ClusHeuristic {
 
     @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
-        double n_tot = c_tstat.m_SumWeight;
-        double n_pos = c_pstat.m_SumWeight;
+        double n_tot = c_tstat.getTotalWeight();
+        double n_pos = c_pstat.getTotalWeight();
         double n_neg = n_tot - n_pos;
         // Acceptable?
         if (n_pos < SettingsTree.MINIMAL_WEIGHT || n_neg < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
-        if (missing.m_SumWeight <= MathUtil.C1E_9) {
+        if (missing.getTotalWeight() <= MathUtil.C1E_9) {
             double pos_error = c_pstat.getError();
             double neg_error = c_tstat.getErrorDiff(c_pstat);
             return -(pos_error + neg_error) / m_NbTrain;
@@ -80,7 +80,7 @@ public class ReducedErrorHeuristic extends ClusHeuristic {
 
     @Override
     public void setRootStatistic(ClusStatistic stat) {
-        m_NbTrain = stat.m_SumWeight;
+        m_NbTrain = stat.getTotalWeight();
     }
 
 

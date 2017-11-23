@@ -92,7 +92,7 @@ public class SubsetSplit extends NominalSplit {
             ClusStatistic unknown = node.m_TestStat[nbvalues];
             m_MStat.copy(node.m_TotStat);
             m_MStat.subtractFromThis(unknown);
-            unk_freq = unknown.m_SumWeight / node.m_TotStat.m_SumWeight;
+            unk_freq = unknown.getTotalWeight() / node.m_TotStat.getTotalWeight();
         }
         else {
             m_MStat.copy(node.m_TotStat);
@@ -108,7 +108,7 @@ public class SubsetSplit extends NominalSplit {
             ClusStatistic CStat = node.m_TestStat[0];
             bheur = node.calcHeuristic(m_MStat, CStat);
             // showTest(type, isin, -1, bheur, m_MStat, m_CStat);
-            pos_freq = CStat.m_SumWeight / m_MStat.m_SumWeight;
+            pos_freq = CStat.getTotalWeight() / m_MStat.getTotalWeight();
         }
         else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence() == SettingsPhylogeny.PHYLOGENY_SEQUENCE_DNA)) {
             // for phylogenetic trees with DNA sequences, we use an optimization method: tests like pos10={A,t} are
@@ -129,7 +129,7 @@ public class SubsetSplit extends NominalSplit {
                     isin[j] = true;
                     card = 1;
                     // Calculate pos freq (of current best one)
-                    pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;
+                    pos_freq = m_PStat.getTotalWeight() / m_MStat.getTotalWeight();
                 }
                 if (mheur > Double.NEGATIVE_INFINITY) {
                     valid[j] = true;
@@ -163,7 +163,7 @@ public class SubsetSplit extends NominalSplit {
                                 isin[k] = true;
                                 card = 2;
                                 // Calculate pos freq (of current best one)
-                                pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;
+                                pos_freq = m_PStat.getTotalWeight() / m_MStat.getTotalWeight();
                             }
                         }
                     }
@@ -207,7 +207,7 @@ public class SubsetSplit extends NominalSplit {
                             bheur = mheur;
                             bvalue = j;
                             // Calculate pos freq (of current best one)
-                            pos_freq = m_CStat.m_SumWeight / m_MStat.m_SumWeight;
+                            pos_freq = m_CStat.getTotalWeight() / m_MStat.getTotalWeight();
                             node.checkAcceptable(m_MStat, m_CStat);
                         }
                     }
@@ -251,7 +251,7 @@ public class SubsetSplit extends NominalSplit {
             ClusStatistic unknown = node.m_TestStat[nbvalues];
             m_MStat.copy(node.m_TotStat);
             m_MStat.subtractFromThis(unknown);
-            unk_freq = unknown.m_SumWeight / node.m_TotStat.m_SumWeight;
+            unk_freq = unknown.getTotalWeight() / node.m_TotStat.getTotalWeight();
         }
         else {
             m_MStat.copy(node.m_TotStat);
@@ -281,7 +281,7 @@ public class SubsetSplit extends NominalSplit {
                 m_PStat.add(node.m_TestStat[j]);
             }
         }
-        pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;
+        pos_freq = m_PStat.getTotalWeight() / m_MStat.getTotalWeight();
         node.m_UnknownFreq = unk_freq;
         node.m_BestHeur = node.calcHeuristic(m_MStat, m_PStat);
         node.m_TestType = CurrentBestTestAndHeuristic.TYPE_TEST;
@@ -301,7 +301,7 @@ public class SubsetSplit extends NominalSplit {
             ClusStatistic unknown = node.m_TestStat[nbvalues];
             m_MStat.copy(node.m_TotStat);
             m_MStat.subtractFromThis(unknown);
-            unk_freq = unknown.m_SumWeight / node.m_TotStat.m_SumWeight;
+            unk_freq = unknown.getTotalWeight() / node.m_TotStat.getTotalWeight();
         }
         else {
             m_MStat.copy(node.m_TotStat);
@@ -325,9 +325,9 @@ public class SubsetSplit extends NominalSplit {
             // <--- ClusStatistic CStat = node.m_TestStat[0];
             bheur = node.calcHeuristic(m_MStat, m_PStat); // <--- bheur = node.calcHeuristic(m_MStat, CStat);
             showTest(type, isin, -1, bheur, m_MStat, m_PStat); // <--- showTest(type, isin, -1, bheur, m_MStat, CStat);
-            pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight; // <--- CStat.m_SumWeight / m_MStat.m_SumWeight;
+            pos_freq = m_PStat.getTotalWeight() / m_MStat.getTotalWeight(); // <--- CStat.m_SumWeight / m_MStat.m_SumWeight;
 
-            boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
+            boolean acc_test = node.m_IsAcceptable && (m_MStat.getTotalWeight() >= 4.0) && (m_PStat.getTotalWeight() >= 2.0) && ((m_MStat.getTotalWeight() - m_PStat.getTotalWeight()) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
             // <---
             // boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0)             &&             (CStat.m_SumWeight              >=             2.0)             &&              ((m_MStat.m_SumWeight              -              CStat.m_SumWeight)               >=              2.0)              &&              (pos_freq              >              minAllowedFrequency)              &&              (pos_freq              <              1.0              -             minAllowedFrequency);
 
@@ -369,10 +369,10 @@ public class SubsetSplit extends NominalSplit {
                             m_PStat.add(node.m_TestStat[j]);
                         }
                     }
-                    pos_freq = m_PStat.m_SumWeight / m_MStat.m_SumWeight;
+                    pos_freq = m_PStat.getTotalWeight() / m_MStat.getTotalWeight();
 
                     node.checkAcceptable(m_MStat, m_PStat);
-                    boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
+                    boolean acc_test = node.m_IsAcceptable && (m_MStat.getTotalWeight() >= 4.0) && (m_PStat.getTotalWeight() >= 2.0) && ((m_MStat.getTotalWeight() - m_PStat.getTotalWeight()) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
                     // node.getStat(i);
 
                     // acc_test = acc_test && node.getHeuristic().stopCriterion(node.getTotStat(), m_PStat, m_MStat);
@@ -397,7 +397,7 @@ public class SubsetSplit extends NominalSplit {
             }
         }
 
-        boolean valid_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0) && (m_PStat.m_SumWeight >= 2.0) && ((m_MStat.m_SumWeight - m_PStat.m_SumWeight) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
+        boolean valid_test = node.m_IsAcceptable && (m_MStat.getTotalWeight() >= 4.0) && (m_PStat.getTotalWeight() >= 2.0) && ((m_MStat.getTotalWeight() - m_PStat.getTotalWeight()) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
 
         showTest(type, isin, -1, bheur, m_MStat, m_CStat);
         if (found_test && valid_test) {

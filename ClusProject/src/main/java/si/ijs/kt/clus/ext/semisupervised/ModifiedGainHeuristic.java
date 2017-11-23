@@ -23,9 +23,9 @@ public class ModifiedGainHeuristic extends ClusHeuristicImpl {
         ClassificationStat nstat = (ClassificationStat) c_nstat;
         // Equal for all target attributes
         int nb = tstat.m_NbTarget;
-        double n_tot = tstat.m_SumWeight;
-        double n_pos = pstat.m_SumWeight;
-        double n_neg = nstat.m_SumWeight;
+        double n_tot = tstat.getTotalWeight();
+        double n_pos = pstat.getTotalWeight();
+        double n_neg = nstat.getTotalWeight();
         // Acceptable?
         if (n_pos < SettingsTree.MINIMAL_WEIGHT || n_neg < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
         // Initialize entropy's

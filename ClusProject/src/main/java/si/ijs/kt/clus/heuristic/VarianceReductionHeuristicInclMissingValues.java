@@ -48,8 +48,8 @@ public class VarianceReductionHeuristicInclMissingValues extends ClusHeuristic {
 
     @Override
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
-        double n_tot = tstat.m_SumWeight;
-        double n_pos = pstat.m_SumWeight;
+        double n_tot = tstat.getTotalWeight();
+        double n_pos = pstat.getTotalWeight();
         double n_neg = n_tot - n_pos;
         // Acceptable?
         if (n_pos < SettingsTree.MINIMAL_WEIGHT || n_neg < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }

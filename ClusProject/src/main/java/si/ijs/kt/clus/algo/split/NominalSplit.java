@@ -35,7 +35,7 @@ public abstract class NominalSplit {
     public double[] createFreqList(double n_tot, ClusStatistic[] s_set, int nbvalues) {
         double[] res = new double[nbvalues];
         for (int i = 0; i < nbvalues; i++)
-            res[i] = s_set[i].m_SumWeight / n_tot;
+            res[i] = s_set[i].getTotalWeight() / n_tot;
         return res;
     }
 

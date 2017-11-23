@@ -55,8 +55,8 @@ public class ClusBeamHeuristicMorishita extends ClusBeamHeuristic {
 
     @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
-        double n_tot = c_tstat.m_SumWeight;
-        double n_pos = c_pstat.m_SumWeight;
+        double n_tot = c_tstat.getTotalWeight();
+        double n_pos = c_pstat.getTotalWeight();
         double n_neg = n_tot - n_pos;
         // Acceptable?
         if (n_pos < SettingsTree.MINIMAL_WEIGHT || n_neg < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }

@@ -393,11 +393,11 @@ public class ClusRuleSet implements ClusModel, Serializable {
     public double getAppropriateWeight(ClusRule rule) {
         switch (getSettings().getRules().getRulePredictionMethod()) {
             case SettingsRules.RULE_PREDICTION_METHOD_COVERAGE_WEIGHTED:
-                return rule.m_TargetStat.m_SumWeight;
+                return rule.m_TargetStat.getTotalWeight();
             case SettingsRules.RULE_PREDICTION_METHOD_TOT_COVERAGE_WEIGHTED:
                 return rule.getCoverage()[ClusModel.TRAIN];
             case SettingsRules.RULE_PREDICTION_METHOD_ACC_COV_WEIGHTED:
-                return rule.m_TargetStat.m_SumWeight * (1 - rule.getTrainErrorScore());
+                return rule.m_TargetStat.getTotalWeight() * (1 - rule.getTrainErrorScore());
             case SettingsRules.RULE_PREDICTION_METHOD_ACCURACY_WEIGHTED:
                 return 1 - rule.getTrainErrorScore();
             case SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED:
@@ -1403,7 +1403,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
                     System.err.println("Error: GD optimization is implemented regression only.");
 
                 RegressionStat stat = (RegressionStat) rule.m_TargetStat;
-                double scalingFactor = stat.m_SumWeight / nbOfExamples;
+                double scalingFactor = stat.getTotalWeight() / nbOfExamples;
                 for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
                     stat.m_Means[iTarget] *= scalingFactor;
                     stat.setSumValues(iTarget, stat.m_Means[iTarget]); // stat.m_SumValues[iTarget] = stat.m_Means[iTarget];

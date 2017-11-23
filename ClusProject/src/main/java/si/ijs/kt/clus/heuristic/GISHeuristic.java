@@ -90,7 +90,7 @@ public class GISHeuristic extends ClusHeuristic {
 
 
     public int[] constructIndexVector(RowData data, ClusStatistic stat) {
-        int nb = (int) stat.m_SumWeight;
+        int nb = (int) stat.getTotalWeight();
         int[] resultvector = new int[nb];
         for (int i = 0; i < nb; i++) {
             int index = data.getTuple(i).getIndex();

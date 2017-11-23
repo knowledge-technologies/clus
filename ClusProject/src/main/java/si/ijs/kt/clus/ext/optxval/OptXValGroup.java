@@ -260,7 +260,7 @@ public class OptXValGroup extends MyList {
 
 
     public final boolean stopCrit(int idx) {
-        if (m_TotStat[idx].m_SumWeight < 2.0 * SettingsTree.MINIMAL_WEIGHT)
+        if (m_TotStat[idx].getTotalWeight() < 2.0 * SettingsTree.MINIMAL_WEIGHT)
             return true;
         return false;
     }
