@@ -24,10 +24,12 @@ package si.ijs.kt.clus.util.jeans.io.range;
 
 import java.io.Serializable;
 
+import si.ijs.kt.clus.main.settings.Settings;
+
 
 public class IntRangeCheck implements ValueCheck, Serializable {
 
-    private static final long serialVersionUID = -4723124353605331288L;
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     protected int m_MinInt, m_MaxInt;
 
 

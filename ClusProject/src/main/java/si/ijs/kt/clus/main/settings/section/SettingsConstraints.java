@@ -1,5 +1,6 @@
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
@@ -9,6 +10,8 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 public class SettingsConstraints extends SettingsBase {
+    
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     
     public SettingsConstraints(int position) {
         super(position);

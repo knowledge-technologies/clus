@@ -26,10 +26,12 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import si.ijs.kt.clus.main.settings.Settings;
+
 
 public class IntervalCollection implements Serializable {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static IntervalCollection EMPTY = new IntervalCollection();
 
@@ -314,7 +316,7 @@ public class IntervalCollection implements Serializable {
 
 class Interval implements Serializable {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected int m_First, m_Last;
     protected int m_Curr;

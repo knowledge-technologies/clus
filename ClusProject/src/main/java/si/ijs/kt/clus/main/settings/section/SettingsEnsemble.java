@@ -2,6 +2,7 @@
 package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.data.ClusSchema;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
@@ -15,12 +16,13 @@ import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
 public class SettingsEnsemble extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
+
     public SettingsEnsemble(int position) {
         super(position);
         // TODO Auto-generated constructor stub
     }
-
-
 
     /***********************************************************************
      * Section: Ensemble methods *
@@ -159,8 +161,7 @@ public class SettingsEnsemble extends SettingsBase {
 
 
     public boolean isEnsembleROSEnabled() {
-        return (getEnsembleROSScope() != ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) 
-                && isEnsembleMode();
+        return (getEnsembleROSScope() != ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) && isEnsembleMode();
     }
 
 
@@ -416,11 +417,11 @@ public class SettingsEnsemble extends SettingsBase {
         return m_ClassificationVoteType.getValue();
     }
 
+
     public String getEnsembleMethodName(int type) {
         return ENSEMBLE_METHOD[type];
     }
-    
-   
+
 
     @Override
     public INIFileSection create() {
@@ -450,7 +451,7 @@ public class SettingsEnsemble extends SettingsBase {
         m_SectionEnsembles.addNode(m_EnsembleBagSize = new INIFileInt("BagSize", 0));
         m_EnsembleBagSize.setValueCheck(new IntRangeCheck(0, Integer.MAX_VALUE));
         m_SectionEnsembles.addNode(m_NumberOfThreads = new INIFileInt("NumberOfThreads", 1));
-        m_NumberOfThreads.setValueCheck(new IntRangeCheck(0, 200));//Runtime.getRuntime().availableProcessors()));
+        m_NumberOfThreads.setValueCheck(new IntRangeCheck(0, 200));// Runtime.getRuntime().availableProcessors()));
 
         m_SectionEnsembles.setEnabled(false);
 
@@ -461,7 +462,7 @@ public class SettingsEnsemble extends SettingsBase {
     @Override
     public void initNamedValues() {
         // TODO Auto-generated method stub
-        
+
     }
 
 }
