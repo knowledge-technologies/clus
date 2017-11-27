@@ -300,7 +300,7 @@ public class SettingsEnsemble extends SettingsBase {
             }
         }
 
-        return fsize;
+        return Math.max(1, fsize);
     }
 
 
