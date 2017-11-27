@@ -85,7 +85,7 @@ public class RandomForestWeighting extends AttributeWeighting {
             new_sett.getEnsemble().setNbBags(nbBags); // TO-DO User Defined!
             new_sett.getEnsemble().setNbRandomAttrSelected(0); // Selects LOG of number of descriptive attributes
             new_sett.getEnsemble().setOOBestimate(true);
-            new_sett.getEnsemble().setFeatureRankingMethod(orig_sett.getEnsemble().getRankingMethod());
+            new_sett.getEnsemble().setFeatureRankingMethod(orig_sett.getEnsemble().getRankingMethod().toString());
             ClusRandom.initialize(new_sett);
 
             RowData trainData = (RowData) run.getTrainingSet().cloneData();

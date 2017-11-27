@@ -46,11 +46,12 @@ public class SettingsEnsemble extends SettingsBase {
     public final static int VOTING_TYPE_MAJORITY = 0;
     public final static int VOTING_TYPE_PROBAB_DISTR = 1;
 
-    private final String[] RANKING_TYPE = { "None", "RForest", "GENIE3", "SYMBOLIC" };
-    public final static int RANKING_TYPE_NONE = 0;
-    public final static int RANKING_TYPE_RFOREST = 1;
-    public final static int RANKING_TYPE_GENIE3 = 2;
-    public final static int RANKING_TYPE_SYMBOLIC = 3;
+//    private final String[] RANKING_TYPE = { "None", "RForest", "GENIE3", "SYMBOLIC" };
+//    public final static int RANKING_TYPE_NONE = 0;
+//    public final static int RANKING_TYPE_RFOREST = 1;
+//    public final static int RANKING_TYPE_GENIE3 = 2;
+//    public final static int RANKING_TYPE_SYMBOLIC = 3;
+    public enum EnsembleRanking {None, RForest, Genie3, Symbolic};
 
     private final String[] ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE = { "None", "TotalAveraging", "SubspaceAveraging", "SMARTERWAY" };
     public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE = 0; /* IF THIS IS SELECTED, ROS IS NOT ACTIVATED */
@@ -88,7 +89,8 @@ public class SettingsEnsemble extends SettingsBase {
     /** Estimate error with time & memory optimization */
     private INIFileBool m_EnsembleOOBestimate;
     // protected INIFileBool m_FeatureRanking;
-    private INIFileNominal m_FeatureRanking;
+//    private INIFileNominal m_FeatureRanking;
+    private INIFileEnum<EnsembleRanking> m_FeatureRanking;
     private INIFileNominalOrDoubleOrVector m_SymbolicWeight;
     private INIFileBool m_SortFeaturesByRelevance;
     private INIFileBool m_WriteEnsemblePredictions;
@@ -169,13 +171,13 @@ public class SettingsEnsemble extends SettingsBase {
     }
 
 
-    public int getRankingMethod() {
-        return m_FeatureRanking.getValue();
+    public EnsembleRanking getRankingMethod() {
+        return m_FeatureRanking.getChosenOption();
     }
 
 
     public String getRankingMethodName() {
-        return m_FeatureRanking.getStringSingle();
+        return m_FeatureRanking.getChosenOption().toString();
     }
 
 
@@ -190,17 +192,12 @@ public class SettingsEnsemble extends SettingsBase {
 
 
     public boolean shouldPerformRanking() {
-        return m_FeatureRanking.getValue() != 0;
+        return m_FeatureRanking.getChosenOption() != EnsembleRanking.None;
     }
 
 
-    public void setFeatureRankingMethod(String value) {
+    public void setFeatureRankingMethod(String value) throws IOException {
         m_FeatureRanking.setValue(value);
-    }
-
-
-    public void setFeatureRankingMethod(int value) {
-        m_FeatureRanking.setSingleValue(value);
     }
 
 
@@ -412,11 +409,6 @@ public class SettingsEnsemble extends SettingsBase {
     }
 
 
-    public String getRankingTypeName(int type) {
-        return RANKING_TYPE[type];
-    }
-
-
     public int getClassificationVoteType() {
         return m_ClassificationVoteType.getValue();
     }
@@ -442,7 +434,7 @@ public class SettingsEnsemble extends SettingsBase {
         m_SectionEnsembles.addNode(m_PrintPaths = new INIFileBool("PrintPaths", false));
         m_SectionEnsembles.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
         m_SectionEnsembles.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
-        m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileNominal("FeatureRanking", RANKING_TYPE, RANKING_TYPE_NONE));
+        m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileEnum<EnsembleRanking>("FeatureRanking", EnsembleRanking.class, EnsembleRanking.None));
         m_SectionEnsembles.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
         m_SectionEnsembles.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
         m_SymbolicWeight.setDouble(0.5);
