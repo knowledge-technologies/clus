@@ -42,14 +42,13 @@ import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
 
@@ -136,31 +135,31 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             ClusAttrType[] selected;
             //boolean shouldSet = false;
             switch (sett.getEnsemble().getEnsembleMethod()) { // setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd)
-                case SettingsEnsemble.ENSEMBLE_METHOD_BAGGING:
+                case Bagging:
                     selected = schema.getDescriptiveAttributes();
                     break;
-                case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST:
+                case RForest:
                     ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
                     //shouldSet = true; //ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     break;
                 // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
                 // schema.getSettings().getNbRandomAttrSelected());
-                case SettingsEnsemble.ENSEMBLE_METHOD_RSUBSPACES:
+                case RSubspaces:
                     selected = ClusEnsembleInduce.getRandomSubspaces();
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     break;
-                case SettingsEnsemble.ENSEMBLE_METHOD_BAGSUBSPACES:
+                case BagSubspaces:
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     selected = ClusEnsembleInduce.getRandomSubspaces();
                     break;
-                case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
+                case RFeatSelection: //SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
                     //shouldSet = true;// ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), rnd);
                     break;
-                case SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES:// same as for Random Forests
+                case ExtraTrees:// same as for Random Forests
                     ClusAttrType[] attrs_all = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrs_all, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
                     //shouldSet = true; // ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), rnd);
@@ -313,8 +312,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 // daniela end
             }
 
-            if ((getSettings().getEnsemble().isEnsembleMode()) && (getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES)) {
-
+            if ((getSettings().getEnsemble().isEnsembleMode()) && (getSettings().getEnsemble().getEnsembleMethod() == EnsembleMethod.ExtraTrees)) {
                 if (at.isNominal()) { // at instanceof NominalAttrType
                     m_FindBestTest.findNominalExtraTree((NominalAttrType) at, data, rnd);
                 }

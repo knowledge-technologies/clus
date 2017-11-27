@@ -60,6 +60,8 @@ import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN.Distance;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN.SearchMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
@@ -158,20 +160,25 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // Initialize distance according to settings file
-        int dist = this.cr.getStatManager().getSettings().getKNN().getKNNDistance();
+//        int dist = this.cr.getStatManager().getSettings().getKNN().getKNNDistance();
+        Distance dist = this.cr.getStatManager().getSettings().getKNN().getDistance();
+        
         SearchDistance searchDistance = new SearchDistance();
         ClusDistance distance;
 
-        if (dist == SettingsKNN.DISTANCE_CHEBYSHEV) {
-            distance = new ChebyshevDistance(searchDistance);
-        }
-        else if (dist == SettingsKNN.DISTANCE_MANHATTAN) {
-            distance = new ManhattanDistance(searchDistance);
-        }
-        else if (dist == SettingsKNN.DISTANCE_EUCLIDEAN) {
-            distance = new EuclideanDistance(searchDistance);
-        } else {
-        	throw new RuntimeException("Wrong distance!");
+        switch(dist) {
+	        case Euclidean:
+	        	distance = new EuclideanDistance(searchDistance);
+	        	break;
+	        case Chebyshev:
+	        	distance = new ChebyshevDistance(searchDistance);
+	        	break;
+	        case Manhattan:
+	        	distance = new ManhattanDistance(searchDistance);
+	        	break;
+        	default:
+        		throw new RuntimeException("Wrong distance.");
+        		
         }
 
         // initialize min values of numeric attributes: needed for normalization in the distance computation
@@ -213,15 +220,17 @@ public class KnnModel implements ClusModel, Serializable {
         searchDistance.setNormalizationWeights(mins, maxs);
 
         // Select search method according to settings file.
-        int alg = this.cr.getStatManager().getSettings().getKNN().getKNNMethod();
-        if (alg == SettingsKNN.SEARCH_METHOD_VP_TREE) {
-            this.search = new VPTree(this.cr, searchDistance);
-        }
-        else if (alg == SettingsKNN.SEARCH_METHOD_KD_TREE) {
-            this.search = new KDTree(this.cr, searchDistance);
-        }
-        else {
-            this.search = new BrutForce(this.cr, searchDistance);
+        SearchMethod searchMethod = this.cr.getStatManager().getSettings().getKNN().getSearchMethod();
+        switch(searchMethod) {
+        case VPTree:
+        	this.search = new VPTree(this.cr, searchDistance);
+        	break;
+        case KDTree:
+        	this.search = new KDTree(this.cr, searchDistance);
+        	break;
+        case BrutForce:
+        	this.search = new BrutForce(this.cr, searchDistance);
+        	break;        	
         }
 
         // debug info

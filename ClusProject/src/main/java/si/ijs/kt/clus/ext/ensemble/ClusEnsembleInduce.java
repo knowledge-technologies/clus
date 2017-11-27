@@ -299,9 +299,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 break;
         }
         franking.setNbFeatureRankings(nbRankings);
-        int ensType = sett.getEnsembleMethod();
         int rankType = sett.getRankingMethod();
-        franking.setEnsembleRankigDescription(ensType, rankType, nbTrees);
+        franking.setEnsembleRankigDescription(rankType, nbTrees);
     }
 
 
@@ -407,41 +406,43 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         switch (set.getEnsembleMethod()) {
-            case SettingsEnsemble.ENSEMBLE_METHOD_BAGGING: { // Bagging
+            case Bagging: { // Bagging
                 System.out.println("Ensemble Method: Bagging");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST: { // RForest
+            case RForest: { // RForest
                 System.out.println("Ensemble Method: Random Forest");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_RSUBSPACES: { // RSubspaces
+            case RSubspaces: { // RSubspaces
                 System.out.println("Ensemble Method: Random Subspaces");
                 induceSubspaces(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_BAGSUBSPACES: { // Bagging Subspaces
+            case BagSubspaces: { // Bagging Subspaces
                 System.out.println("Ensemble Method: Bagging of Subspaces");
                 induceBaggingSubspaces(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP: { // RForest without bootstrapping (setting: RFeatSelection)
+            case RFeatSelection: { // RForest without bootstrapping (setting: RFeatSelection)
                 System.out.println("Ensemble Method: Random Forest without bootstrapping");
                 induceRForestNoBootstrap(cr); // TODO: martinb has a problem with the name of this method
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_PERT: { // PERT in combination with bagging
+            case Pert: { // PERT in combination with bagging
                 System.out.println("Ensemble Method: PERT (in combination with Bagging)");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES: { // Extra-Trees ensemble (published by Geurts et al.)
+            case ExtraTrees: { // Extra-Trees ensemble (published by Geurts et al.)
                 System.out.println("Ensemble Method: Extra-trees");
                 induceExtraTrees(cr);
                 break;
             }
+            default:
+            	throw new RuntimeException(String.format("Inappropriate ensemble method: %s", set.getEnsembleMethod().toString()));
         }
         if (m_FeatRank) {
             //            m_FeatureRanking.createFimp(cr);

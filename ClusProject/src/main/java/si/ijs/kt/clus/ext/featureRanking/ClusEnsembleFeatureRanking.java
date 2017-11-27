@@ -263,8 +263,8 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
         setFimpHeader(fimpTableHeader(names)); 
     }
     
-    public void setEnsembleRankigDescription(int ensembleType, int rankingType, int nbTrees){
-    	String[] description_parts = new String[]{String.format("Ensemble method: %s", getSettings().getEnsemble().getEnsembleMethodName(ensembleType)),
+    public void setEnsembleRankigDescription(int rankingType, int nbTrees){
+    	String[] description_parts = new String[]{String.format("Ensemble method: %s", getSettings().getEnsemble().getEnsembleMethodName()),
     											  String.format("Ranking method: %s", getSettings().getEnsemble().getRankingTypeName(rankingType)),
     											  String.format("Ensemble size: %d", nbTrees)};
     	setRankingDescription(String.join("\n", description_parts));

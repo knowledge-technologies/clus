@@ -62,6 +62,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsMLC;
 import si.ijs.kt.clus.model.ClusModel;
@@ -266,15 +267,15 @@ public class ClusFeatureRanking {
 
         JsonObject algorithmSpec = new JsonObject();
         JsonElement algorithmName;
-        int ens_method = getSettings().getEnsemble().getEnsembleMethod();
+        EnsembleMethod ens_method = getSettings().getEnsemble().getEnsembleMethod();
         int fr_method = getSettings().getEnsemble().getRankingMethod();
-        if (ens_method == SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES) {
+        if (ens_method == EnsembleMethod.ExtraTrees) {
             algorithmName = new JsonPrimitive("ExtraTrees/GENIE3");
         }
-        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_TYPE_RFOREST)) {
+        else if ((ens_method == EnsembleMethod.RForest) && (fr_method == SettingsEnsemble.RANKING_TYPE_RFOREST)) {
             algorithmName = new JsonPrimitive("RandomForestRanking");
         }
-        else if ((ens_method == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST) && (fr_method == SettingsEnsemble.RANKING_TYPE_GENIE3)) {
+        else if ((ens_method == EnsembleMethod.RForest) && (fr_method == SettingsEnsemble.RANKING_TYPE_GENIE3)) {
             algorithmName = new JsonPrimitive("RandomForest/GENIE3");
         }
         else {

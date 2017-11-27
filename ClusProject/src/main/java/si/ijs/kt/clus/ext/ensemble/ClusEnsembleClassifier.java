@@ -30,7 +30,7 @@ import si.ijs.kt.clus.algo.ClusInductionAlgorithmType;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
@@ -46,7 +46,7 @@ public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
 
     @Override
     public ClusInductionAlgorithm createInduce(ClusSchema schema, Settings sett, CMDLineArgs cargs) throws ClusException, IOException {
-        if (sett.getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_METHOD_BOOSTING) {
+        if (sett.getEnsemble().getEnsembleMethod() == EnsembleMethod.Boosting) {
             return new ClusBoostingInduce(schema, sett);
         }
         else {

@@ -2,7 +2,7 @@
 package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.main.settings.SettingsBase;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
@@ -24,17 +24,11 @@ public class SettingsKNN extends SettingsBase {
     private final static int[] DEFAULT_K = new int[] {1, 3};
     private INIFileNominalOrIntOrVector m_k;
     
-    private final static String[] DISTANCES = new String[] {"euclidean", "chebyshev", "manhattan"};
-    public final static int DISTANCE_EUCLIDEAN = 0;
-    public final static int DISTANCE_CHEBYSHEV = 1;
-    public final static int DISTANCE_MANHATTAN = 2;
-    private INIFileNominal m_distance;
+    public enum Distance {Euclidean, Chebyshev, Manhattan};
+    private INIFileEnum<Distance> m_Distance;
     
-    private final static String[] SEARCH_METHODS = new String[]{"BrutForce", "VP-tree", "KD-tree"};
-    public final static int SEARCH_METHOD_BRUTE_FORCE = 0;
-    public final static int SEARCH_METHOD_VP_TREE = 1;
-    public final static int SEARCH_METHOD_KD_TREE = 2;
-    private INIFileNominal m_searchMethod;
+    public enum SearchMethod {BrutForce, VPTree, KDTree};
+    private INIFileEnum<SearchMethod> m_SearchMethod;	
     
     public final static String[] DISTANCE_WEIGHTS = new String[]{"constant", "1/d", "1-d"};
     public static final int DISTANCE_WEIGHTING_CONSTANT = 0;
@@ -49,8 +43,8 @@ public class SettingsKNN extends SettingsBase {
         return m_k.getIntVector();
     }
 
-    public int getKNNDistance() {
-        return m_distance.getValue();
+    public Distance getDistance() {
+        return m_Distance.getChosenOption();
     }
 
     public int[] getKNNDistanceWeight() {
@@ -74,9 +68,9 @@ public class SettingsKNN extends SettingsBase {
         return m_SectionKNN.isEnabled();
     }
 
-
-    public int getKNNMethod() {
-        return m_searchMethod.getValue();
+    
+    public SearchMethod getSearchMethod() {
+    	return m_SearchMethod.getChosenOption();
     }
 
    
@@ -88,8 +82,9 @@ public class SettingsKNN extends SettingsBase {
         m_SectionKNN.addNode(m_k = new INIFileNominalOrIntOrVector("K", NONELIST));
         m_k.setIntVector(DEFAULT_K);
         
-        m_SectionKNN.addNode(m_distance = new INIFileNominal("Distance", DISTANCES, DISTANCE_EUCLIDEAN));
-        m_SectionKNN.addNode(m_searchMethod = new INIFileNominal("SearchMethod", SEARCH_METHODS, SEARCH_METHOD_BRUTE_FORCE));        
+        m_SectionKNN.addNode(m_Distance = new INIFileEnum<Distance>("Distance", Distance.class, Distance.Euclidean));
+        //m_SectionKNN.addNode(m_searchMethod = new INIFileNominal("SearchMethod", SEARCH_METHODS, SEARCH_METHOD_BRUTE_FORCE));
+        m_SectionKNN.addNode(m_SearchMethod =  new INIFileEnum<SearchMethod>("SearchMethod", SearchMethod.class, SearchMethod.BrutForce));
         m_SectionKNN.addNode(m_distanceWeight = new INIFileNominalOrIntOrVector("DistanceWeighting", DISTANCE_WEIGHTS));        
         m_distanceWeight.setNominal(DISTANCE_WEIGHTING_CONSTANT);
         
