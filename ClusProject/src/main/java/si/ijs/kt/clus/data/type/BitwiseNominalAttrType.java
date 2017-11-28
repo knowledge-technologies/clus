@@ -3,11 +3,12 @@ package si.ijs.kt.clus.data.type;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
+import si.ijs.kt.clus.main.settings.Settings;
 
 
 public class BitwiseNominalAttrType extends NominalAttrType {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected int m_Bits;
     protected int m_BitMask;

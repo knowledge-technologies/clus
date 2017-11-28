@@ -25,10 +25,12 @@ package si.ijs.kt.clus.util.jeans.io.range;
 import java.io.Serializable;
 import java.util.Hashtable;
 
+import si.ijs.kt.clus.main.settings.Settings;
+
 
 public class NominalType implements Serializable {
 
-    public final static long serialVersionUID = 1;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected String[] m_Names;
     protected Hashtable m_Lookup;

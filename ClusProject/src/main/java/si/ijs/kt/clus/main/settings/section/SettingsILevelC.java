@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
@@ -12,11 +13,13 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 public class SettingsILevelC extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
+
     public SettingsILevelC(int position) {
         super(position);
         // TODO Auto-generated constructor stub
     }
-
 
     /***********************************************************************
      * Section: Instance level constraints *
@@ -75,7 +78,7 @@ public class SettingsILevelC extends SettingsBase {
         m_SectionILevelC.addNode(m_ILevelCCOPKMeans = new INIFileBool("RunCOPKMeans", false));
         m_SectionILevelC.addNode(m_ILevelCMPCKMeans = new INIFileBool("RunMPCKMeans", false));
         m_SectionILevelC.setEnabled(false);
-        
+
         return m_SectionILevelC;
     }
 
@@ -83,6 +86,6 @@ public class SettingsILevelC extends SettingsBase {
     @Override
     public void initNamedValues() {
         // TODO Auto-generated method stub
-        
+
     }
 }

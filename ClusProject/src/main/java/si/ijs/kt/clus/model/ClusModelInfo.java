@@ -37,7 +37,7 @@ import si.ijs.kt.clus.util.ClusException;
 
 public class ClusModelInfo implements Serializable {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static int TRAIN_ERR = 0;
     public final static int TEST_ERR = 1;

@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
@@ -11,6 +12,7 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 public class SettingsGeneral extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     /***********************************************************************
      * Section: General *
      ***********************************************************************/
@@ -20,9 +22,11 @@ public class SettingsGeneral extends SettingsBase {
     INIFileString m_RandomSeed;
     INIFileNominal m_ResourceInfoLoaded;
 
+
     public SettingsGeneral(int position) {
         super(position);
     }
+
 
     public int getCompatibility() {
         return m_Compatibility.getValue();
@@ -56,10 +60,11 @@ public class SettingsGeneral extends SettingsBase {
         return m_ResourceInfoLoaded.getValue();
     }
 
+
     public INIFileNominal getResourceInfoLoaded() {
         return m_ResourceInfoLoaded;
     }
-    
+
     /***********************************************************************
      * Section: General - Compatibility mode *
      ***********************************************************************/
@@ -92,10 +97,11 @@ public class SettingsGeneral extends SettingsBase {
         return settings;
     }
 
+
     @Override
     public void initNamedValues() {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

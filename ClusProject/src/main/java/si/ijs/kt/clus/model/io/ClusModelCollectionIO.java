@@ -32,6 +32,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.util.jeans.io.ObjectLoadStream;
@@ -40,7 +41,7 @@ import si.ijs.kt.clus.util.jeans.io.ObjectSaveStream;
 
 public class ClusModelCollectionIO implements Serializable {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected ArrayList m_ModelInfos = new ArrayList();
 

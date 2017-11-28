@@ -2,6 +2,7 @@
 package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.heuristic.FTest;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
@@ -13,6 +14,9 @@ import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
 
 public class SettingsTree extends SettingsBase {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
 
     public SettingsTree(int position) {
         super(position);
@@ -28,7 +32,7 @@ public class SettingsTree extends SettingsBase {
     public final static int TREE_OPTIMIZE_NO_CLUSTERING_STATS = 0;
     public final static int TREE_OPTIMIZE_NO_INODE_STATS = 1;
 
-    //@!TODO
+    // @!TODO
     /* consider creating new section Structured Data for heuristic and structured data distance measures */
     // TODO: good suggestion because this is a mess; martinb
     private final String[] HEURISTIC_COMPLEXITY = { "N2", "LOG", "LINEAR", "NPAIRS", "TEST" };
@@ -80,29 +84,40 @@ public class SettingsTree extends SettingsBase {
     private INIFileDouble m_NeighCount;
     private INIFileDouble m_SpatialAlpha;
     // end daniela
-    private INIFileInt m_TreeSplitSampling; // Amount of datapoints to include for calculating split heuristic.  Datapoints will be selected randomly.
-    
+    private INIFileInt m_TreeSplitSampling; // Amount of datapoints to include for calculating split heuristic.
+                                            // Datapoints will be selected randomly.
+
     private INIFileNominal m_SplitPosition;
-    private static final String[] SPLIT_POSITIONS = {"Exact", "Middle"};
+    private static final String[] SPLIT_POSITIONS = { "Exact", "Middle" };
     public static final int SPLIT_POSITION_EXACT = 0;
     public static final int SPLIT_POSITION_MIDDLE = 1;
 
     public static double ALPHA; // daniela
 
-    //added by Jurica Levatic, JSI
-    private INIFileNominal m_MissingClusteringAttrHandling; //determines how we handle the case where when searching evaluating candidate split all examples have only missing values for a clustering attriute, in one of the branches 
+    // added by Jurica Levatic, JSI
+    private INIFileNominal m_MissingClusteringAttrHandling; // determines how we handle the case where when searching
+                                                            // evaluating candidate split all examples have only missing
+                                                            // values for a clustering attriute, in one of the branches
     private final String[] MISSING_CLUSTERING_ATTR_HANDLING_TYPE = { "Ignore", "EstimateFromTrainingSet", "EstimateFromParentNode" };
-    private INIFileNominal m_MissingTargetAttrHandling; //determines how we calculate prototype (i.e., prediction) if all the tuple in leaf node have only missing values for target attriute 
+    private INIFileNominal m_MissingTargetAttrHandling; // determines how we calculate prototype (i.e., prediction) if
+                                                        // all the tuple in leaf node have only missing values for
+                                                        // target attriute
 
     private final String[] MISSING_TARGET_ATTR_HANDLING_TYPE = { "Zero", "DefaultModel", "ParentNode" };
-    public static final int MISSING_ATTRIBUTE_HANDLING_PARENT = 2; //variance and mean (i.e., prediction) will be estimated on the basis of the node's parent
-    public static final int MISSING_ATTRIBUTE_HANDLING_TRAINING = 1; //variance and mean (i.e., prediction) will be estimated on the basis of the root node (i.e., default model)
-    public static final int MISSING_ATTRIBUTE_HANDLING_NONE = 0; //variance will not be estimated, while mean (i.e., prediction) will be equal to zero
+    public static final int MISSING_ATTRIBUTE_HANDLING_PARENT = 2; // variance and mean (i.e., prediction) will be
+                                                                   // estimated on the basis of the node's parent
+    public static final int MISSING_ATTRIBUTE_HANDLING_TRAINING = 1; // variance and mean (i.e., prediction) will be
+                                                                     // estimated on the basis of the root node (i.e.,
+                                                                     // default model)
+    public static final int MISSING_ATTRIBUTE_HANDLING_NONE = 0; // variance will not be estimated, while mean (i.e.,
+                                                                 // prediction) will be equal to zero
 
-    public int getSplitPosition(){
+
+    public int getSplitPosition() {
         return m_SplitPosition.getValue();
     }
-    
+
+
     public int getMissingClusteringAttrHandling() {
         return m_MissingClusteringAttrHandling.getValue();
     }
@@ -336,7 +351,7 @@ public class SettingsTree extends SettingsBase {
     public double getM5PruningMult() {
         return m_M5PruningMult.getValue();
     }
- 
+
 
     /**
      * If we transform the induced trees to rules.
@@ -508,10 +523,10 @@ public class SettingsTree extends SettingsBase {
         m_SectionTree.addNode(m_TreeSplitSampling = new INIFileInt("SplitSampling", 0));
         m_TreeSplitSampling.setValueCheck(new IntRangeCheck(0, Integer.MAX_VALUE));
 
-        //added by Jurica Levatic, JSI
+        // added by Jurica Levatic, JSI
         m_SectionTree.addNode(m_MissingClusteringAttrHandling = new INIFileNominal("MissingClusteringAttrHandling", MISSING_CLUSTERING_ATTR_HANDLING_TYPE, MISSING_ATTRIBUTE_HANDLING_PARENT));
         m_SectionTree.addNode(m_MissingTargetAttrHandling = new INIFileNominal("MissingTargetAttrHandling", MISSING_TARGET_ATTR_HANDLING_TYPE, MISSING_ATTRIBUTE_HANDLING_PARENT));
-        
+
         // added by Eduardo Costa 06/06/2011
         m_SectionTree.addNode(m_InductionOrder = new INIFileNominal("InductionOrder", INDUCTION_ORDER, DEPTH_FIRST));
 
@@ -525,11 +540,12 @@ public class SettingsTree extends SettingsBase {
         m_SectionTree.addNode(m_Longlat = new INIFileBool("Longlat", false));
         m_SectionTree.addNode(m_NeighCount = new INIFileDouble("NumNeightbours", 0.0));
         m_SectionTree.addNode(m_SpatialAlpha = new INIFileDouble("Alpha", 1.0));
-        
+
         m_SectionTree.addNode(m_SplitPosition = new INIFileNominal("SplitPosition", SPLIT_POSITIONS, SPLIT_POSITION_EXACT));
 
         return m_SectionTree;
     }
+
 
     @Override
     public void initNamedValues() {

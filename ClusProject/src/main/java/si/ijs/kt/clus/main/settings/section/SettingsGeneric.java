@@ -7,15 +7,19 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.util.Date;
 import java.util.zip.GZIPOutputStream;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
-public class SettingsGeneric {
+public class SettingsGeneric implements Serializable {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     private SettingsOutput m_SettOutput;
 
@@ -35,8 +39,6 @@ public class SettingsGeneric {
 
     public static boolean EXACT_TIME = false;
 
-
-  
 
     public Date getDate() {
         return m_Date;
@@ -98,8 +100,7 @@ public class SettingsGeneric {
         if (m_SettOutput.isGzipOutput()) {
             path += ".gz";
             try {
-                return new PrintWriter(new OutputStreamWriter(
-                        new GZIPOutputStream(new FileOutputStream(path))));
+                return new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(path))));
             }
             catch (IOException ex) {
                 System.err.println(ex.toString());

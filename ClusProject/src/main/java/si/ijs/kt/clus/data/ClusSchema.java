@@ -54,7 +54,7 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 public class ClusSchema implements Serializable {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static int ROWS = 0;
     public final static int COLS = 1;

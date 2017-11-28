@@ -1,5 +1,7 @@
+
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
@@ -11,6 +13,9 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrInt;
 
 
 public class SettingsRules extends SettingsBase {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
 
     public SettingsRules(int position) {
         super(position);
@@ -34,10 +39,11 @@ public class SettingsRules extends SettingsBase {
         return m_PrintAllRules.getValue();
     }
 
+
     public void setPrintAllRules(boolean value) {
         m_PrintAllRules.setValue(value);
     }
-    
+
     private final String[] COVERING_METHODS = { "Standard", "WeightedMultiplicative", "WeightedAdditive", "WeightedError", "Union", "BeamRuleDefSet", "RandomRuleSet", "StandardBootstrap", "HeurOnly", "RulesFromTree", "SampledRuleSet" };
 
     // Standard covering: ordered rules (decision list)
@@ -48,7 +54,8 @@ public class SettingsRules extends SettingsBase {
     public final static int COVERING_METHOD_WEIGHTED_ADDITIVE = 2;
     public final static int COVERING_METHOD_WEIGHTED_ERROR = 3;
 
-    public final static int COVERING_METHOD_UNION = 4; // In multi-label classification: predicted set of classes is union of predictions of individual rules
+    public final static int COVERING_METHOD_UNION = 4; // In multi-label classification: predicted set of classes is
+                                                       // union of predictions of individual rules
 
     // Evaluates rules in the context of complete rule set: unordered rules
     // public final static int COVERING_METHOD_RULE_SET = 5;
@@ -410,9 +417,7 @@ public class SettingsRules extends SettingsBase {
 
 
     public boolean isRulePredictionOptimized() {
-        return (getRulePredictionMethod() == RULE_PREDICTION_METHOD_OPTIMIZED
-                || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED
-                || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY);
+        return (getRulePredictionMethod() == RULE_PREDICTION_METHOD_OPTIMIZED || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY);
     }
 
 
@@ -512,9 +517,7 @@ public class SettingsRules extends SettingsBase {
 
 
     public boolean isWeightedCovering() {
-        if (m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ADDITIVE
-                || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_MULTIPLICATIVE
-                || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ERROR) {
+        if (m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ADDITIVE || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_MULTIPLICATIVE || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ERROR) {
             return true;
         }
         else {
@@ -907,8 +910,8 @@ public class SettingsRules extends SettingsBase {
         m_SectionRules.addNode(m_HeurDispOffset = new INIFileDouble("HeurDispOffset", 0.0));
         m_SectionRules.addNode(m_HeurCoveragePar = new INIFileDouble("HeurCoveragePar", 1.0));
         m_SectionRules.addNode(m_HeurRuleDistPar = new INIFileDouble("HeurRuleDistPar", 0.0));
-        m_SectionRules.addNode(m_InitialRuleGeneratingMethod = new INIFileNominal("InitialRuleGeneratingMethod", INITIAL_RULE_GENERATING_METHODS, INITIAL_RULE_GENERATING_METHOD_RANDOM_FOREST));
         m_SectionRules.addNode(m_HeurPrototypeDistPar = new INIFileDouble("HeurPrototypeDistPar", 0.0));
+        m_SectionRules.addNode(m_InitialRuleGeneratingMethod = new INIFileNominal("InitialRuleGeneratingMethod", INITIAL_RULE_GENERATING_METHODS, INITIAL_RULE_GENERATING_METHOD_RANDOM_FOREST));
         m_SectionRules.addNode(m_RuleSignificanceLevel = new INIFileDouble("RuleSignificanceLevel", 0.05));
         m_SectionRules.addNode(m_RuleNbSigAtts = new INIFileInt("RuleNbSigAtts", 0));
         m_SectionRules.addNode(m_ComputeDispersion = new INIFileBool("ComputeDispersion", false));
@@ -971,6 +974,6 @@ public class SettingsRules extends SettingsBase {
     @Override
     public void initNamedValues() {
         // TODO Auto-generated method stub
-        
+
     }
 }

@@ -868,8 +868,7 @@ public class Clus implements CMDLineArgsProvider {
         if (iter.shouldAttach())
             attachModels(mschema, cr);
         cr.initModelProcessors(type, mschema);
-        getSettings().getExperimental();
-        getSettings().getExperimental();
+
         boolean wr_ens_tr_preds = (!SettingsExperimental.IS_XVAL) || (SettingsExperimental.IS_XVAL && cr.getTestSet() == null);
         wr_ens_tr_preds = wr_ens_tr_preds && (type == ClusModelInfo.TRAIN_ERR) && (getSettings().getEnsemble().shouldWritePredictionsFromEnsemble());
         getSettings().getExperimental();

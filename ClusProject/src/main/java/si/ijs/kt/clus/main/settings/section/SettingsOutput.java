@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
@@ -11,6 +12,8 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 public class SettingsOutput extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+    
     /***********************************************************************
      * Section: Output *
      ***********************************************************************/
@@ -41,10 +44,12 @@ public class SettingsOutput extends SettingsBase {
     protected INIFileBool m_WriteCurves;
     protected INIFileBool m_OutputClowdFlowsJSON;
     protected INIFileBool m_OutputROSSubspaces;
-    
+
+
     public SettingsOutput(int position) {
         super(position);
     }
+
 
     public boolean isOutTrainError() {
         return m_OutTrainErr.getValue();
@@ -105,9 +110,11 @@ public class SettingsOutput extends SettingsBase {
         return m_OutFoldModels.getValue();
     }
 
+
     public boolean isOutputROSSubspaces() {
         return m_OutputROSSubspaces.getValue();
     }
+
 
     public boolean isWriteTestSetPredictions() {
         return m_WritePredictions.contains(WRITE_PRED_TEST);
@@ -133,9 +140,11 @@ public class SettingsOutput extends SettingsBase {
         return m_OutputPythonModel.getValue();
     }
 
+
     public boolean isWriteOOBFile() {
         return m_WriteOOBFile.getValue();
     }
+
 
     public boolean isOutputJSONModel() {
         return m_OutputJSONModel.getValue();
@@ -244,7 +253,8 @@ public class SettingsOutput extends SettingsBase {
         output.addNode(m_ShowBrFreq = new INIFileBool("BranchFrequency", false));
         output.addNode(m_ShowInfo = new INIFileNominal("ShowInfo", SHOW_INFO, SHOW_INFO_VALUES));
         output.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
-        output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); //TODO: bug: see issue #51 in the repository
+        output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); // TODO: bug: see issue #51 in the
+                                                                                     // repository
         output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
         output.addNode(m_WriteOOBFile = new INIFileBool("WriteOOBFile", false));
         output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
@@ -278,9 +288,10 @@ public class SettingsOutput extends SettingsBase {
         return m_GzipOutput.getValue();
     }
 
+
     @Override
     public void initNamedValues() {
         // TODO Auto-generated method stub
-        
+
     }
 }

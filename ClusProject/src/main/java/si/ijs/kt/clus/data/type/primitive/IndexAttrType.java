@@ -29,12 +29,13 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.io.ClusSerializable;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.ClusException;
 
 
 public class IndexAttrType extends ClusAttrType {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static int THIS_TYPE = INDEX_ATR_TYPE;
     public final static String THIS_TYPE_NAME = "Index";

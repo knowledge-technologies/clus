@@ -11,13 +11,14 @@ import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.error.common.ClusNominalError;
 import si.ijs.kt.clus.error.common.ComponentError;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 
 
 public class MSNominalError extends ClusNominalError implements ComponentError {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected ClusAttributeWeights m_Weights;
     protected double[] m_SumErr;
