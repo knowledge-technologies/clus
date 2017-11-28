@@ -349,8 +349,8 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         double stop = checkStopCriterion(tstat, pstat, nstat);
         if (stop != 0.0) { return stop; }
 
-        //double n_pos = pstat.m_SumWeight;
-        //double n_neg = nstat.m_SumWeight;
+        //double n_pos = pstat.getTotalWeight();
+        //double n_neg = nstat.getTotalWeight();
 
         int[] posindices = constructIndexVector(m_Data, pstat);
         int[] negindices = constructIndexVector(m_Data, nstat);
@@ -377,8 +377,8 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         double stop = checkStopCriterion(tstat, pstat, nstat);
         if (stop != 0.0) { return stop; }
 
-//        double n_pos = pstat.m_SumWeight;
-//        double n_neg = nstat.m_SumWeight;
+//        double n_pos = pstat.getTotalWeight();
+//        double n_neg = nstat.getTotalWeight();
 
         int[] posindices = constructIndexVector(m_Data, pstat);
         int[] negindices = constructIndexVector(m_Data, nstat);
@@ -492,8 +492,8 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             negwithin = getSumPWDistancesWithin(negindices);
         }
 
-        double n_pos = pstat.m_SumWeight;
-        double n_neg = tstat.m_SumWeight - pstat.m_SumWeight;
+        double n_pos = pstat.getTotalWeight();
+        double n_neg = tstat.getTotalWeight() - pstat.getTotalWeight();
         double result;
 
         // root of the tree
@@ -505,7 +505,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         else {
             double sumDistPosToCompl = 0.0;
             double sumDistNegToCompl = 0.0;
-            for (int i = 0; i < tstat.m_SumWeight; i++) {
+            for (int i = 0; i < tstat.getTotalWeight(); i++) {
                 if (pstat.getBits().getBit(i)) {
                     sumDistPosToCompl += m_SumDistWithCompl[i];
                 }
@@ -551,8 +551,8 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
 
 
     public double checkStopCriterion(GeneticDistanceStat tstat, GeneticDistanceStat pstat, GeneticDistanceStat nstat) {
-        double n_pos = pstat.m_SumWeight;
-        double n_neg = tstat.m_SumWeight - pstat.m_SumWeight;
+        double n_pos = pstat.getTotalWeight();
+        double n_neg = tstat.getTotalWeight() - pstat.getTotalWeight();
 
         // If insufficient examples in the children, then stop
         if (n_pos < SettingsTree.MINIMAL_WEIGHT || n_neg < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
@@ -583,8 +583,8 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         nstat.copy(tstat);
         nstat.subtractFromThis(pstat);
 
-        double n_pos = pstat.m_SumWeight;
-        double n_neg = tstat.m_SumWeight - pstat.m_SumWeight;
+        double n_pos = pstat.getTotalWeight();
+        double n_neg = tstat.getTotalWeight() - pstat.getTotalWeight();
 
         // if the sum of entropies in the current node is small enough w.r.t. the root node, then stop
         // LARGE threshold means SMALL trees

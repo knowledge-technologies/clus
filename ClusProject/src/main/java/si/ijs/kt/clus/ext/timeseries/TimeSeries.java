@@ -28,6 +28,7 @@ import java.util.StringTokenizer;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.ClusUtil;
 
 
 public class TimeSeries implements Serializable {
@@ -224,6 +225,31 @@ public class TimeSeries implements Serializable {
 
     public void setTSWeight(double weight) {
         m_TSWeight = weight;
+    }
+    
+    /**
+     * Checks the equality of the two, possibly null time series. They are equal if they are either both null or of the same length, weight and values.
+     * @author matejp
+     * @param ts1
+     * @param ts2
+     * @return
+     */
+    public static boolean areEqual(TimeSeries ts1, TimeSeries ts2) {
+    	if(ts1 == null) {
+    		return ts2 == null;
+    	}
+    	if(ts1.length() != ts2.length()) {
+    		return false;
+    	}
+    	if(!ClusUtil.eq(ts1.geTSWeight(), ts2.geTSWeight(), ClusUtil.MICRO)) {
+    		return false;
+    	}
+    	for(int i = 0; i < ts1.length(); i++) {
+    		if(!ClusUtil.eq(ts1.getValue(i), ts2.getValue(i), ClusUtil.MICRO)) {
+    			return false;
+    		}
+    	}
+    	return true;
     }
 
 }

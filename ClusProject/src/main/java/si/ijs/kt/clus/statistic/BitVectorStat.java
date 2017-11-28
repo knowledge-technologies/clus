@@ -38,6 +38,7 @@ public class BitVectorStat extends ClusStatistic {
 
     protected BitList m_Bits = new BitList();
     protected boolean m_Modified = true;
+    private BitVectorStat m_ParentStat;
 
 
     public BitVectorStat(Settings sett) {
@@ -196,11 +197,18 @@ public class BitVectorStat extends ClusStatistic {
 	
 	@Override
 	public void setParentStat(ClusStatistic parent) {
-		throw new UnsupportedOperationException("Not supported yet.");
+		// throw new UnsupportedOperationException("Not supported yet.");
+		m_ParentStat = (BitVectorStat) parent;
 	}
 
 	@Override
 	public ClusStatistic getParentStat() {
-		throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		// throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+		return m_ParentStat;
+	}
+	
+	@Override
+	public double getTargetSumWeights() { // TODO: missing values
+		return getTotalWeight();
 	}
 }

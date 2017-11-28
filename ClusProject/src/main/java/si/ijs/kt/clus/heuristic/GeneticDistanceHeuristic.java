@@ -51,7 +51,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
 
     public int[] constructIndexVector(RowData data, ClusStatistic stat) {
         GeneticDistanceStat gstat = (GeneticDistanceStat) stat;
-        int nb = (int) gstat.m_SumWeight;
+        int nb = (int) gstat.getTotalWeight();
         int[] resultvector = new int[nb];
         for (int i = 0; i < nb; i++) {
             int tupleindex = gstat.getTupleIndex(i);

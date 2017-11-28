@@ -895,7 +895,7 @@ public class ClusSchema implements Serializable {
         m_NominalAttrUse = new NominalAttrType[ClusAttrType.NB_ATTR_USE][];
         m_NumericAttrUse = new NumericAttrType[ClusAttrType.NB_ATTR_USE][];
         m_TimeSeriesAttrUse = new TimeSeriesAttrType[ClusAttrType.NB_ATTR_USE][];
-        for (int attruse = ClusAttrType.ATTR_USE_ALL; attruse <= ClusAttrType.ATTR_USE_KEY; attruse++) {
+        for (int attruse = ClusAttrType.ATTR_USE_ALL; attruse < ClusAttrType.NB_ATTR_USE; attruse++) {
             m_AllAttrUse[attruse] = vectorToAttrArray(collectAttributes(attruse, ClusAttrType.THIS_TYPE));
             m_NominalAttrUse[attruse] = vectorToNominalAttrArray(collectAttributes(attruse, NominalAttrType.THIS_TYPE));
             m_NumericAttrUse[attruse] = vectorToNumericAttrArray(collectAttributes(attruse, NumericAttrType.THIS_TYPE));

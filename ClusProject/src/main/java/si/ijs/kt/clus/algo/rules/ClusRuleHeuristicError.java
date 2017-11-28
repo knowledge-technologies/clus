@@ -50,7 +50,7 @@ public class ClusRuleHeuristicError extends ClusHeuristic {
 
     @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
-        double n_pos = c_pstat.m_SumWeight;
+        double n_pos = c_pstat.getTotalWeight();
         // Acceptable?
         // if (n_pos < Settings.MINIMAL_WEIGHT) {
         if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { return Double.NEGATIVE_INFINITY; }
@@ -58,7 +58,7 @@ public class ClusRuleHeuristicError extends ClusHeuristic {
         // Prefer rules that cover more examples
         double global_sum_w = m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING).getTotalWeight();
         double heur_par = getSettings().getRules().getHeurCoveragePar();
-        pos_error *= (1 + heur_par * global_sum_w / c_pstat.m_SumWeight);
+        pos_error *= (1 + heur_par * global_sum_w / c_pstat.getTotalWeight());
 
         return -pos_error;
     }

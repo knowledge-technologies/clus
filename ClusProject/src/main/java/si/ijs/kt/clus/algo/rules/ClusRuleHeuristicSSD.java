@@ -63,7 +63,7 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
     // Only the second parameter make sense for rules, i.e., statistic for covered examples
     @Override
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) throws ClusException {
-        double n_pos = pstat.m_SumWeight;
+        double n_pos = pstat.getTotalWeight();
         // Acceptable?
         if (n_pos < SettingsTree.MINIMAL_WEIGHT) { return Double.NEGATIVE_INFINITY; }
         // Calculate value

@@ -305,7 +305,6 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         }
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
-
             if (isGIS) {
                 // daniela
                 ClusStatistic.INITIALIZEPARTIALSUM = true; // This way the first time a split threshold of the current

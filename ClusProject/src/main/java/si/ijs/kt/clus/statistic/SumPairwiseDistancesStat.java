@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.statistic;
 
+import java.util.ArrayList;
 import java.util.Random;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
@@ -82,29 +83,40 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
         return m_Distance.calcDistanceToCentroid(t1, this);
     }
 
-
+    // matejp: optimized time complexity 
     public void optimizePreCalcExact(RowData data) throws ClusException {
         m_SVarS = 0.0;
         double sumWiDiag = 0.0;
         double sumWiTria = 0.0;
         int nb = m_Bits.size();
-        for (int i = 0; i < nb; i++) {
-            if (m_Bits.getBit(i)) {
+        ArrayList<Integer> presentIndices = new ArrayList<Integer>();
+        for(int i = 0; i < nb; i++) {
+        	if (m_Bits.getBit(i)) {
+        		presentIndices.add(i);
+        	}
+        }
+        int nbPresent = presentIndices.size();
+//        for(int i = 0; i < nb; i++) {
+        for(int ii = 0; ii < nbPresent; ii++) {
+        	int i = presentIndices.get(ii);
+//            if (m_Bits.getBit(i)) {
                 DataTuple a = data.getTuple(i);
                 double a_weight = a.getWeight();
                 // sum up elements in upper triangle of matrix (and give double weights)
-                for (int j = 0; j < i; j++) {
-                    if (m_Bits.getBit(j)) {
+//                for(int j = 0; j < i; j++) {
+                for (int jj = 0; jj < ii; jj++) {
+                	int j = presentIndices.get(jj);
+//                    if (m_Bits.getBit(j)) {
                         DataTuple b = data.getTuple(j);
                         double wi = a_weight * b.getWeight();
                         double d = calcDistance(a, b);
                         m_SVarS += wi * d;
                         sumWiTria += wi;
-                    }
+//                    }
                 }
                 // sum up weights for elements on diagonal (with corresponding zero distances)
                 sumWiDiag += a_weight * a_weight;
-            }
+//            }
         }
         m_SVarS = getTotalWeight() * m_SVarS / (2 * sumWiTria + sumWiDiag);
     }

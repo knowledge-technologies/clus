@@ -360,7 +360,7 @@ public class ClusNode extends MyNode implements ClusModel {
 
 
     public final double getTotWeight() {
-        return m_ClusteringStat.m_SumWeight;
+        return m_ClusteringStat.getTotalWeight();
     }
 
 

@@ -30,7 +30,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
     @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
 
-        double n_pos = c_pstat.m_SumWeight;
+        double n_pos = c_pstat.getTotalWeight();
         if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { // (n_pos < Settings.MINIMAL_WEIGHT)
             return Double.NEGATIVE_INFINITY;
         }

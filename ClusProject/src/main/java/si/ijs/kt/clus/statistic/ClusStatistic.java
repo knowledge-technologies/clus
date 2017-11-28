@@ -52,7 +52,8 @@ public abstract class ClusStatistic implements Serializable {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     /** The weighted sum of all examples */
-    public double m_SumWeight, m_SumWeightLabeled;;
+    protected double m_SumWeight;
+    protected double m_SumWeightLabeled;
     public int m_NbExamples;
 
     public static boolean INITIALIZEPARTIALSUM = true;
@@ -270,7 +271,7 @@ public abstract class ClusStatistic implements Serializable {
     }
 
 
-    public double getTotalWeight() {
+    public final double getTotalWeight() {
         return m_SumWeight;
     }
 

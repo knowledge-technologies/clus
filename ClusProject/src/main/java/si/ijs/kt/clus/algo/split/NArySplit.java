@@ -58,7 +58,7 @@ public class NArySplit extends NominalSplit {
             ClusStatistic unknown = node.m_TestStat[nbvalues];
             m_MStat.copy(node.m_TotStat);
             m_MStat.subtractFromThis(unknown);
-            unk_freq = unknown.m_SumWeight / node.getTotWeight();
+            unk_freq = unknown.getTotalWeight() / node.getTotWeight();
         }
         else {
             m_MStat.copy(node.m_TotStat);
@@ -69,7 +69,7 @@ public class NArySplit extends NominalSplit {
             node.m_UnknownFreq = unk_freq;
             node.m_BestHeur = mheur;
             node.m_TestType = CurrentBestTestAndHeuristic.TYPE_TEST;
-            double[] freq = createFreqList(m_MStat.m_SumWeight, node.m_TestStat, nbvalues);
+            double[] freq = createFreqList(m_MStat.getTotalWeight(), node.m_TestStat, nbvalues);
             node.m_BestTest = new NominalTest(type, freq);
         }
     }

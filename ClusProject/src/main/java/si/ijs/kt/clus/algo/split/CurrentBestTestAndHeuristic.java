@@ -252,17 +252,17 @@ public class CurrentBestTestAndHeuristic {
      ***************************************************************************/
 
     public final double getPosWeight() {
-        return m_PosStat.m_SumWeight;
+        return m_PosStat.getTotalWeight();
     }
 
 
     public final double getTotWeight() {
-        return m_TotStat.m_SumWeight;
+        return m_TotStat.getTotalWeight();
     }
 
 
     public final double getTotNoUnkW() {
-        return m_TotCorrStat.m_SumWeight;
+        return m_TotCorrStat.getTotalWeight();
     }
 
 
@@ -277,7 +277,7 @@ public class CurrentBestTestAndHeuristic {
 
 
     public final void calcPosFreq() {
-        m_PosFreq = m_PosStat.m_SumWeight / m_TotStat.m_SumWeight;
+        m_PosFreq = m_PosStat.getTotalWeight() / m_TotStat.getTotalWeight();
     }
 
 
@@ -331,7 +331,7 @@ public class CurrentBestTestAndHeuristic {
             double tot_no_unk = getTotNoUnkW();
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
             m_TestType = TYPE_NUMERIC;
-            m_PosFreq = pos.m_SumWeight / tot_no_unk;
+            m_PosFreq = pos.getTotalWeight() / tot_no_unk;
             m_BestSplit = val;
             m_BestHeur = heur;
             m_SplitAttr = at;
@@ -343,7 +343,7 @@ public class CurrentBestTestAndHeuristic {
     public final void calcMinMax(ClusAttrType at, double value) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= 2)
-            System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+            System.err.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
         if (heur != Double.NEGATIVE_INFINITY) {
             //System.out.println(at.getName()+" > "+value + "--> heur=" + heur);
             Double currentMin = mins.get(at.getName());
@@ -390,7 +390,7 @@ public class CurrentBestTestAndHeuristic {
     public final void updateNumericGIS(double val, ClusAttrType at, Integer[] permutation) throws Exception {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= 2)
-            System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+            System.err.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
 
         double I = 0;
         double alpha = SettingsTree.ALPHA; // daniela
@@ -454,7 +454,7 @@ public class CurrentBestTestAndHeuristic {
         double heur = isEfficient ? m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat, ss_tot) : m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         //      System.out.println(t1 - t0);
         if (m_Sett.getGeneral().getVerbose() >= 2)
-            System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+            System.err.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
 
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (m_Sett.getGeneral().getVerbose() >= 2)
@@ -480,7 +480,7 @@ public class CurrentBestTestAndHeuristic {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
 
         if (m_Sett.getGeneral().getVerbose() >= 2)
-            System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+            System.err.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
 
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (m_Sett.getGeneral().getVerbose() >= 2)
@@ -514,7 +514,7 @@ public class CurrentBestTestAndHeuristic {
     public final void updateInverseNumeric(double val, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= 2)
-            System.err.println("Heur: " + heur + " nb: " + m_PosStat.m_SumWeight);
+            System.err.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (m_Sett.getGeneral().getVerbose() >= 2)
                 System.err.println("Better.");
