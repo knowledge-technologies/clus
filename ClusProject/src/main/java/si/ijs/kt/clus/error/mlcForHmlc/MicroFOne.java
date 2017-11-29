@@ -1,13 +1,18 @@
+
 package si.ijs.kt.clus.error.mlcForHmlc;
 
 public class MicroFOne implements MlcHmlcSubError {
+
     protected int[] m_NbTruePositives, m_NbFalsePositives, m_NbFalseNegatives;
-    
+
+
     public MicroFOne(int dim) {
         m_NbTruePositives = new int[dim];
         m_NbFalsePositives = new int[dim];
         m_NbFalseNegatives = new int[dim];
     }
+
+
     @Override
     public double compute(int dim) {
         int truePositives = 0, falsePositives = 0, falseNegatives = 0;
@@ -20,6 +25,7 @@ public class MicroFOne implements MlcHmlcSubError {
         double recall = ((double) truePositives) / (truePositives + falseNegatives);
         return 2.0 * precision * recall / (precision + recall);
     }
+
 
     @Override
     public void addExample(boolean[] actual, double[] predicted, boolean[] predictedThresholded) {
@@ -39,9 +45,21 @@ public class MicroFOne implements MlcHmlcSubError {
         }
     }
 
+
     @Override
     public String getName() {
         return "MicroFOne";
     }
 
+
+    @Override
+    public void add(MlcHmlcSubError other) {
+        MicroFOne o = (MicroFOne) other;
+
+        for (int i = 0; i < m_NbTruePositives.length; i++) {
+            m_NbTruePositives[i] += o.m_NbTruePositives[i];
+            m_NbFalsePositives[i] += o.m_NbFalsePositives[i];
+            m_NbFalseNegatives[i] += o.m_NbFalseNegatives[i];
+        }
+    }
 }

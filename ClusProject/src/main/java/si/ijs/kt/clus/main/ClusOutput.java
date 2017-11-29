@@ -22,8 +22,6 @@
 
 package si.ijs.kt.clus.main;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -38,7 +36,6 @@ import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.ensemble.ClusOOBErrorEstimate;

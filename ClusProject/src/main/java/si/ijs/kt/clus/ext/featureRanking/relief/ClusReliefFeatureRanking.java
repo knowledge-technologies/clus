@@ -12,8 +12,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
-import javax.swing.plaf.synth.SynthSplitPaneUI;
-
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;

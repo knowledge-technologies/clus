@@ -65,4 +65,11 @@ public class RankingLoss implements MlcHmlcSubError {
         return "RankingLoss";
     }
 
+
+    @Override
+    public void add(MlcHmlcSubError other) {
+        RankingLoss o = (RankingLoss) other;
+        m_NonnormalisedLoss += o.m_NonnormalisedLoss;
+        m_NbKnown += o.m_NbKnown;
+    }
 }

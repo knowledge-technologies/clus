@@ -14,7 +14,6 @@ import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
-import si.ijs.kt.clus.util.ClusException;
 
 
 public class ClusBeamSimRegrStat extends RegressionStat {

@@ -1,9 +1,12 @@
+
 package si.ijs.kt.clus.error.mlcForHmlc;
 
 import si.ijs.kt.clus.error.BinaryPredictionList;
 import si.ijs.kt.clus.error.ROCAndPRCurve;
 
+
 public abstract class MLROCAndPRCurve {
+
     protected static final int averageAUROC = 0;
     protected static final int averageAUPRC = 1;
     protected static final int weightedAUPRC = 2;
@@ -19,7 +22,8 @@ public abstract class MLROCAndPRCurve {
     protected ROCAndPRCurve[] m_ROCAndPRCurves;
 
     protected double m_AverageAUROC = -1.0, m_AverageAUPRC = -1.0, m_WAvgAUPRC = -1.0, m_PooledAUPRC = -1.0;
-    
+
+
     public MLROCAndPRCurve(int dim) {
         m_ClassWisePredictions = new BinaryPredictionList[dim];
         m_ROCAndPRCurves = new ROCAndPRCurve[dim];
@@ -29,7 +33,8 @@ public abstract class MLROCAndPRCurve {
             m_ROCAndPRCurves[i] = new ROCAndPRCurve(predlist);
         }
     }
-    
+
+
     public double getModelError(int typeOfCurve) {
         computeAll();
         switch (typeOfCurve) {
@@ -44,7 +49,8 @@ public abstract class MLROCAndPRCurve {
         }
         throw new RuntimeException("Unknown type of curve: typeOfCurve" + typeOfCurve);
     }
-    
+
+
     public void computeAll() {
         int dim = m_ROCAndPRCurves.length;
         BinaryPredictionList pooled = new BinaryPredictionList();
@@ -79,13 +85,18 @@ public abstract class MLROCAndPRCurve {
         m_WAvgAUPRC = sumAUPRCw / sumFrequency;
         m_PooledAUPRC = pooledCurve.getAreaPR();
     }
-    
+
+
     public void addExample(boolean[] actual, double[] predicted, boolean[] predictedThresholded) {
-        double[] probabilities = predicted; 
+        double[] probabilities = predicted;
         for (int i = 0; i < actual.length; i++) {
             m_ClassWisePredictions[i].addExample(actual[i], probabilities[i]);
         }
     }
-    
-    
+
+
+    public void add(MlcHmlcSubError other) {
+        System.err.println(getClass().getName() + ": add() not implemented!");
+    }
+
 }

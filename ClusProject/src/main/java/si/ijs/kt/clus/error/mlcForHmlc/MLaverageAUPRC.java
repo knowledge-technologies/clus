@@ -16,4 +16,9 @@ public class MLaverageAUPRC extends MLROCAndPRCurve implements MlcHmlcSubError {
     public String getName() {
         return "averageAUPRC";
     }
+
+    @Override
+    public void add(MlcHmlcSubError other) {
+        super.add(other);        
+    }
 }

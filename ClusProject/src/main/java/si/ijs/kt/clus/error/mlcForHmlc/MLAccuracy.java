@@ -1,18 +1,23 @@
+
 package si.ijs.kt.clus.error.mlcForHmlc;
 
 public class MLAccuracy implements MlcHmlcSubError {
+
     private double m_JaccardSum;
     private int m_NbKnown;
-    
+
+
     public MLAccuracy() {
         m_JaccardSum = 0.0;
         m_NbKnown = 0;
     }
-    
+
+
     @Override
     public double compute(int dim) {
         return m_JaccardSum / m_NbKnown;
     }
+
 
     @Override
     public void addExample(boolean[] actual, double[] predicted, boolean[] predictedThresholded) {
@@ -30,9 +35,17 @@ public class MLAccuracy implements MlcHmlcSubError {
         m_NbKnown++;
     }
 
+
     @Override
     public String getName() {
         return "MLAccuracy";
     }
 
+
+    @Override
+    public void add(MlcHmlcSubError other) {
+        MLAccuracy o = (MLAccuracy) other;
+        m_JaccardSum += o.m_JaccardSum;
+        m_NbKnown += o.m_NbKnown;
+    }
 }

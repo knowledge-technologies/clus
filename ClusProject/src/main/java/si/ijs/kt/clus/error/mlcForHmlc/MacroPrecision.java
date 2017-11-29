@@ -1,17 +1,20 @@
+
 package si.ijs.kt.clus.error.mlcForHmlc;
 
-
 import si.ijs.kt.clus.error.common.ComponentError;
- 
+
 
 public class MacroPrecision implements MlcHmlcSubError, ComponentError {
+
     protected int[] m_NbTruePositives, m_NbFalsePositives;
-    
+
+
     public MacroPrecision(int dim) {
         m_NbTruePositives = new int[dim];
         m_NbFalsePositives = new int[dim];
     }
-    
+
+
     @Override
     public double compute(int dim) {
         double avg = 0.0;
@@ -20,6 +23,7 @@ public class MacroPrecision implements MlcHmlcSubError, ComponentError {
         }
         return avg / dim;
     }
+
 
     @Override
     public void addExample(boolean[] actual, double[] predicted, boolean[] predictedThresholded) {
@@ -36,14 +40,26 @@ public class MacroPrecision implements MlcHmlcSubError, ComponentError {
         }
     }
 
+
     @Override
     public String getName() {
         return "MacroPrecision";
     }
+
 
     @Override
     public double getModelErrorComponent(int i) {
         return ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
     }
 
+
+    @Override
+    public void add(MlcHmlcSubError other) {
+        MacroPrecision o = (MacroPrecision) other;
+
+        for (int i = 0; i < m_NbTruePositives.length; i++) {
+            m_NbTruePositives[i] += o.m_NbTruePositives[i];
+            m_NbFalsePositives[i] += o.m_NbFalsePositives[i];
+        }
+    }
 }

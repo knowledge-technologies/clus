@@ -67,7 +67,7 @@ public class INIFileSection extends INIFileNode {
     public INIFileNode cloneNode() {
         INIFileSection sec = new INIFileSection(getName());
         for (Enumeration<INIFileNode> e = getNodes(); e.hasMoreElements();) {
-            INIFileNode node = (INIFileNode) e.nextElement();
+            INIFileNode node = e.nextElement();
             sec.addNode(node.cloneNode());
         }
         return sec;
@@ -90,7 +90,7 @@ public class INIFileSection extends INIFileNode {
 
 
     public INIFileNode getNode(String name) {
-        return (INIFileNode) m_hEntries.get(name);
+        return m_hEntries.get(name);
     }
 
 
@@ -148,7 +148,7 @@ public class INIFileSection extends INIFileNode {
         else {
             System.out.println("Can't find node: " + nextNode);
             for (Enumeration<INIFileNode> e = getNodes(); e.hasMoreElements();) {
-                INIFileNode entry = (INIFileNode) e.nextElement();
+                INIFileNode entry = e.nextElement();
                 System.out.println("   " + entry.getName());
             }
             return null;
@@ -249,7 +249,7 @@ public class INIFileSection extends INIFileNode {
                 writer.println("<" + group + ", " + getName() + ">");
         }
         for (Enumeration<INIFileNode> e = getNodes(); e.hasMoreElements();) {
-            INIFileNode entry = (INIFileNode) e.nextElement();
+            INIFileNode entry = e.nextElement();
             if (entry.isEnabled())
                 entry.save(writer);
         }

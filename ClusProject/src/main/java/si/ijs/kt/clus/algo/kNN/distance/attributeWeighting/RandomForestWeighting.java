@@ -25,8 +25,6 @@ package si.ijs.kt.clus.algo.kNN.distance.attributeWeighting;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
-
 import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;

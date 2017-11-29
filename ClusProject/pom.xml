@@ -48,19 +48,9 @@
   		<version>3.0</version>
   	</dependency>
   	<dependency>
-  		<groupId>nz.ac.waikato.cms.weka</groupId>
-  		<artifactId>weka-stable</artifactId>
-  		<version>3.8.1</version>
-  	</dependency>
-  	<dependency>
   		<groupId>net.sf.jgap</groupId>
   		<artifactId>jgap</artifactId>
   		<version>3.4.4</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.google.guava</groupId>
-  		<artifactId>guava</artifactId>
-  		<version>15.0</version>
   	</dependency>
   	<dependency>
   		<groupId>org.objenesis</groupId>
@@ -78,10 +68,9 @@
   		<version>4.12</version>
   	</dependency>
   	<dependency>
-  		<groupId>org.apache.maven.plugins</groupId>
-  		<artifactId>maven-assembly-plugin</artifactId>
-  		<version>3.0.0</version>
-  		<type>maven-plugin</type>
+  		<groupId>com.google.guava</groupId>
+  		<artifactId>guava-primitives</artifactId>
+  		<version>r03</version>
   	</dependency>
   </dependencies>
   <name>Clus</name>
