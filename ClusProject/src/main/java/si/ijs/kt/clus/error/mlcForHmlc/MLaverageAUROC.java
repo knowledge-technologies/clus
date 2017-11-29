@@ -15,5 +15,8 @@ public class MLaverageAUROC extends MLROCAndPRCurve implements MlcHmlcSubError {
     public String getName() {
         return "averageAUROC";
     }
-
+    @Override
+    public void add(MlcHmlcSubError other) {
+        super.add(other);
+    }
 }

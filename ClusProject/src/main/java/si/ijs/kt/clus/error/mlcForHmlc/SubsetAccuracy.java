@@ -1,18 +1,23 @@
+
 package si.ijs.kt.clus.error.mlcForHmlc;
 
 public class SubsetAccuracy implements MlcHmlcSubError {
+
     private int m_NbCorrect;
     private int m_NbKnown;
-    
+
+
     public SubsetAccuracy() {
         m_NbCorrect = 0;
         m_NbKnown = 0;
     }
 
+
     @Override
     public double compute(int dim) {
         return ((double) m_NbCorrect) / m_NbKnown;
     }
+
 
     @Override
     public void addExample(boolean[] actual, double[] predicted, boolean[] predictedThresholded) {
@@ -29,9 +34,17 @@ public class SubsetAccuracy implements MlcHmlcSubError {
         m_NbKnown++;
     }
 
+
     @Override
     public String getName() {
         return "SubsetAccuracy";
     }
 
+
+    @Override
+    public void add(MlcHmlcSubError other) {
+        SubsetAccuracy o = (SubsetAccuracy) other;
+        m_NbCorrect += o.m_NbCorrect;
+        m_NbKnown = o.m_NbKnown;
+    }
 }

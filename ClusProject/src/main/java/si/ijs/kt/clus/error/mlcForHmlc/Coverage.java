@@ -1,21 +1,26 @@
+
 package si.ijs.kt.clus.error.mlcForHmlc;
 
 public class Coverage implements MlcHmlcSubError {
+
     protected int m_RankSum;
     protected int m_NbKnown;
     protected int m_NbRelevantLabels;
-    
-    public Coverage(){
+
+
+    public Coverage() {
         m_RankSum = 0;
         m_NbKnown = 0;
-        m_NbRelevantLabels = 0; 
+        m_NbRelevantLabels = 0;
     }
+
 
     @Override
     public double compute(int dim) {
         // TODO Auto-generated method stub
         return ((double) m_RankSum) / m_NbKnown;
     }
+
 
     @Override
     public void addExample(boolean[] actual, double[] predicted, boolean[] predictedThresholded) {
@@ -46,9 +51,18 @@ public class Coverage implements MlcHmlcSubError {
         }
     }
 
+
     @Override
     public String getName() {
         return "Coverage";
+    }
+
+
+    @Override
+    public void add(MlcHmlcSubError other) {
+        m_RankSum += ((Coverage) other).m_RankSum;
+        m_NbKnown += ((Coverage) other).m_NbKnown;
+        m_NbRelevantLabels += ((Coverage) other).m_NbRelevantLabels;
     }
 
 }

@@ -8,12 +8,6 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 
 import si.ijs.kt.clus.BaseTestCase;
-import si.ijs.kt.clus.Clus;
-import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
-import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
-import sun.reflect.generics.scope.MethodScope;
 
 
 public class ClusROSTest extends BaseTestCase {

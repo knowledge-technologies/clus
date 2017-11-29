@@ -20,7 +20,6 @@ import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 

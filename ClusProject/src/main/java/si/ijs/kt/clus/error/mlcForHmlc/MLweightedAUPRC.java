@@ -17,4 +17,8 @@ public class MLweightedAUPRC extends MLROCAndPRCurve implements MlcHmlcSubError 
         return "weightedAUPRC";
     }
 
+    @Override
+    public void add(MlcHmlcSubError other) {
+        super.add(other);
+    }
 }

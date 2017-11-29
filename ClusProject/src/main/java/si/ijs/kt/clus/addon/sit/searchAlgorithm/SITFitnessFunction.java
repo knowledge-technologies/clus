@@ -40,6 +40,7 @@ public class SITFitnessFunction extends FitnessFunction {
 
 
     
+    @Override
     protected double evaluate(IChromosome chromyTheChromoson) {
         TargetSet tset = GeneticSearch.getTargetSet(this.candidates, (Chromosome) chromyTheChromoson);
 

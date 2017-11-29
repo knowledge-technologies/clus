@@ -54,4 +54,12 @@ public class AveragePrecision implements MlcHmlcSubError {
         return "AveragePrecision";
     }
 
+    @Override
+    public void add(MlcHmlcSubError other) {
+        
+        m_NonnormalisedPrec += ((AveragePrecision)other).m_NonnormalisedPrec;
+        m_NbKnown += ((AveragePrecision)other).m_NbKnown;
+        
+    }
+
 }

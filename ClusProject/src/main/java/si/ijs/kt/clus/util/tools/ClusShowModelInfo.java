@@ -26,7 +26,6 @@
 
 package si.ijs.kt.clus.util.tools;
 
-import java.io.IOException;
 import java.io.PrintWriter;
 
 import si.ijs.kt.clus.error.common.ClusError;
