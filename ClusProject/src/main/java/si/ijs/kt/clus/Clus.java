@@ -239,7 +239,6 @@ public class Clus implements CMDLineArgsProvider {
 
         // Set XVal field in Settings
         if (isxval) {
-            getSettings().getExperimental();
             SettingsExperimental.IS_XVAL = true;
         }
 
@@ -871,7 +870,7 @@ public class Clus implements CMDLineArgsProvider {
 
         boolean wr_ens_tr_preds = (!SettingsExperimental.IS_XVAL) || (SettingsExperimental.IS_XVAL && cr.getTestSet() == null);
         wr_ens_tr_preds = wr_ens_tr_preds && (type == ClusModelInfo.TRAIN_ERR) && (getSettings().getEnsemble().shouldWritePredictionsFromEnsemble());
-        getSettings().getExperimental();
+        
         boolean wr_ens_te_preds = (!SettingsExperimental.IS_XVAL && cr.getTestSet() != null);
         wr_ens_te_preds = wr_ens_te_preds && (type == ClusModelInfo.TEST_ERR) && (getSettings().getEnsemble().shouldWritePredictionsFromEnsemble());
         // boolean wr_ens_xval_preds = (getSettings().shouldWritePredictionsFromEnsemble() && getSettings().IS_XVAL &&
