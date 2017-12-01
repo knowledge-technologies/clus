@@ -17,12 +17,13 @@ import si.ijs.kt.clus.util.ClusException;
 
 public class OracleBruteForce extends BruteForce {
 	
-	HashMap<Integer, NearestNeighbour[]> m_NearestNeighbours;
+	HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> m_NearestNeighbours;
 	
 	
 	public OracleBruteForce(ClusRun run, SearchDistance dist) {
 		super(run, dist);
-		m_NearestNeighbours = new HashMap<Integer, NearestNeighbour[]>();
+		m_NearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
+		m_NearestNeighbours.put(SaveLoadNeighbours.DUMMY_TARGET, new HashMap<Integer, NearestNeighbour[][]>());
 	}
 
    
@@ -42,10 +43,12 @@ public class OracleBruteForce extends BruteForce {
 	   }
 	   
 	   Settings sett =  getRun().getStatManager().getSettings();
+	   // obtaining neighbours
 	   if (sett.getKNN().shouldLoadNeighbours()) {
 		   ClusReliefFeatureRanking.printMessage("Loading nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
 		   SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(sett.getKNN().getLoadNeighboursFiles(), null);
-		   m_NearestNeighbours = SaveLoadNeighbours.flattenNearestNeighbours(nnLoader.loadNeighboursFromFiles());
+		   m_NearestNeighbours = nnLoader.loadNeighboursFromFiles();
+		   SaveLoadNeighbours.assureIsFlatNearestNeighbours(m_NearestNeighbours);		   
 	   } else {
 		   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
 		   for(DataTuple tuple : new ArrayOfArraysIterator<>(new DataTuple[][] {m_ListTrain, m_ListTest})) {
@@ -54,19 +57,14 @@ public class OracleBruteForce extends BruteForce {
 			   for(int n = 0; n < nns.length; n++) {
 				   nns[n] = new NearestNeighbour(temp[n].getTuple().getDatasetIndex(), temp[n].getDistance());
 			   }
-			   m_NearestNeighbours.put(getModifiedIndex(tuple), nns);
+			   m_NearestNeighbours.get(SaveLoadNeighbours.DUMMY_TARGET).put(getModifiedIndex(tuple), new NearestNeighbour[][] {nns});
 		   }
 	   }
-       
-
-//		if(m_ShouldSaveNeighbours) {
-//			SaveLoadNeighbours nnSaver = new SaveLoadNeighbours(null, m_SaveNearestNeigbhoursFile);
-//			nnSaver.saveNeighboursToFile(m_NearestNeighbours);
-//		}
-	   
-	   
-       
-       // compute everything
+	   // saving neighbours
+	   if(sett.getKNN().shouldSaveNeighbours()) {
+		   SaveLoadNeighbours nnSaver = new SaveLoadNeighbours(null, sett.getKNN().getSaveNeighboursFile());
+		   nnSaver.saveNeighboursToFile(m_NearestNeighbours);
+	   }
    }
 
 
@@ -75,11 +73,12 @@ public class OracleBruteForce extends BruteForce {
 	   LinkedList<DataTuple> nns = new LinkedList<DataTuple>();
 	   int index = getModifiedIndex(tuple);
 	   for(int i = 0; i < k; i++) {
-		   int nn_index = m_NearestNeighbours.get(index)[i].getIndexInDataset();
+		   int nn_index = m_NearestNeighbours.get(SaveLoadNeighbours.DUMMY_TARGET).get(index)[0][i].getIndexInDataset();
 		   nns.add(m_ListTrain[nn_index]);
 	   }
 	   return nns;
    }
+   
    
    private int getModifiedIndex(DataTuple tuple) {
 	   if(tuple.isTraining()) {

@@ -170,14 +170,16 @@ public class SaveLoadNeighbours {
 	
 	/**
 	 * Used outside of Relief, when we only need the nearest neighbours of each instance and targets do not have any influence.
-	 * Thus, the structure<p> {targetIndex: {tupleIndex: [neighbours for the first target value, neighbours for target second value, ...], ...}, ...}<p>is flattened
+	 * Thus, we check whether the structure<p> {targetIndex: {tupleIndex: [neighbours for the first target value, neighbours for target second value, ...], ...}, ...}
+	 * <p> can be flattened
 	 * to {tupleIndex: neigbours for the first target value, ...}.<p>
 	 * Makes sure that only one target index is present and that it equals {{@link #DUMMY_TARGET}. Also, makes sure that each tuple has only the neighbours for one target value.<br>
 	 * If any of these conditions are broken, an exception is thrown.
+	 * 
+	 * @param nnss Nearest neighbours in the Relief form.
 	 * @return
 	 */
-	public static HashMap<Integer, NearestNeighbour[]> flattenNearestNeighbours(HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nnss){
-		HashMap<Integer, NearestNeighbour[]> flattened = new HashMap<Integer, NearestNeighbour[]>();
+	public static void assureIsFlatNearestNeighbours(HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nnss){
 		if(nnss.size() != 1) {
 			throw new RuntimeException("Nearest neighbours cannot be safely flattened (more than one target value)!");
 		}
@@ -189,11 +191,9 @@ public class SaveLoadNeighbours {
 			NearestNeighbour[][] nns = temp.get(tupleIndex);
 			if(nns.length != 1) {
 				throw new RuntimeException(String.format("Nearest neighbours cannot be safely flattened (tuple with index %s has computed neigbours for more than one target value)!", tupleIndex.toString()));
-			} else {
-				flattened.put(tupleIndex, nns[0]);
 			}
 		}		
-		return flattened;
 	}
+	
 
 }
