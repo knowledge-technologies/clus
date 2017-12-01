@@ -61,6 +61,16 @@ public class DataTuple implements Serializable {
      * Unknown
      */
     public int m_Index;
+    
+    /**
+     * 0-based index of the tuple in the dataset the tuple is part of.
+     */
+    private int m_DatasetIndex = -1;
+    
+    /** Tells whether the dataset that the tuple belongs to is training set. */
+    private boolean m_IsTrain = false;
+    /** Tells whether the dataset that the tuple belongs to is test set. */
+    private boolean m_IsTest = false;
 
     /**
      * Hack for efficient xval, should be replaced later.
@@ -122,6 +132,9 @@ public class DataTuple implements Serializable {
         res.m_Index = m_Index;
         res.m_Folds = m_Folds;
         res.m_Schema = m_Schema;
+        res.m_DatasetIndex = m_DatasetIndex;
+        res.m_IsTrain = m_IsTrain;
+        res.m_IsTest = m_IsTest;
     }
 
 
@@ -291,6 +304,31 @@ public class DataTuple implements Serializable {
 
     public final int getIndex() {
         return m_Index;
+    }
+    
+    public final void setDatasetIndex(int idx) {
+        m_DatasetIndex = idx;
+    }
+
+
+    public final int getDatasetIndex() {
+        return m_DatasetIndex;
+    }
+    
+    public final boolean isTraining() {
+    	return m_IsTrain;
+    }
+    
+    public final boolean isTesting() {
+    	return m_IsTest;
+    }
+    
+    public final void setTraining(boolean value) {
+    	m_IsTrain = value;
+    }
+    
+    public final void setTesting(boolean value) {
+    	m_IsTest = value;
     }
 
 

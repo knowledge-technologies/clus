@@ -3,9 +3,7 @@ package si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -43,6 +41,7 @@ public class SaveLoadNeighbours {
 	private static final String NB_TARGET_VALUES = "NB_TARGET_VALUES";
 
 	private static final String NN_SEPARATOR = "&";
+	public static final Integer DUMMY_TARGET = -1;
 
 	public SaveLoadNeighbours(String[] m_NearestNeighbourInputFiles, String m_NearestNeighbourOutputFile) {
 		m_InputFiles = m_NearestNeighbourInputFiles;
@@ -51,8 +50,10 @@ public class SaveLoadNeighbours {
 	
 	
 	public void saveNeighboursToFile(HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nearestNeighbours) throws IOException {
+		PrintWriter writer = new PrintWriter(m_OutputFile, "UTF-8");
 		ArrayList<String> lines = new ArrayList<String>();
 		for(Integer targetInd : nearestNeighbours.keySet()) {
+			System.out.println(targetInd.toString());
 			lines.add(String.format("%s;%d", START_TARGET, targetInd));
 			HashMap<Integer, NearestNeighbour[][]> neighboursTarget = nearestNeighbours.get(targetInd);
 			for(Integer tupleInd : neighboursTarget.keySet()) {
@@ -69,12 +70,21 @@ public class SaveLoadNeighbours {
 				lines.add(END_TUPLE);
 			}
 			lines.add(END_TARGET);
+			if(lines.size() > 1000) {
+				writer.println(String.join("\n", lines));
+				lines = new ArrayList<String>();
+			}
 		}
-		Files.write(Paths.get(m_OutputFile), lines, Charset.forName("UTF-8"));
+		if (lines.size() > 0) {
+			writer.println(String.join("\n", lines));
+			lines = new ArrayList<String>();
+		}
+		writer.close();
 		System.out.println("Nearest neighbours written to: " + m_OutputFile);
 	}
 	
 	public HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadNeighboursFromFile(String nearestNeighboursFile) throws IOException {
+		System.out.println("Loading from " + nearestNeighboursFile);
 		HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
 		Integer targetInd = -123;
 	    Integer tupleInd = -123;
@@ -85,6 +95,7 @@ public class SaveLoadNeighbours {
 	    String line = br.readLine();	    
 	    while (line != null) {
 	    	if(line.startsWith(START_TARGET)) {
+	    		System.out.print(line);
 	    		// start processing new target
 	    		targetInd = intAfterSemicolon(line);
 	    		nearestNeighbours.put(targetInd, new HashMap<Integer, NearestNeighbour[][]>());
@@ -110,10 +121,12 @@ public class SaveLoadNeighbours {
 	    		nearestNeighbours.get(targetInd).put(tupleInd, nnss);
 	    	} else if(line.startsWith(END_TARGET)) {
 	    		// nothing to do here
+	    		System.out.println();
 	    	}
 	        line = br.readLine();
 	    }
-	    br.close();		
+	    br.close();
+	    System.out.println("Loaded");
 		return nearestNeighbours;
 	}
 	
@@ -152,6 +165,35 @@ public class SaveLoadNeighbours {
 	 */
 	private static int intAfterSemicolon(String myString) {
 		return Integer.parseInt(myString.substring(myString.indexOf(";") + 1));	
+	}
+	
+	
+	/**
+	 * Used outside of Relief, when we only need the nearest neighbours of each instance and targets do not have any influence.
+	 * Thus, the structure<p> {targetIndex: {tupleIndex: [neighbours for the first target value, neighbours for target second value, ...], ...}, ...}<p>is flattened
+	 * to {tupleIndex: neigbours for the first target value, ...}.<p>
+	 * Makes sure that only one target index is present and that it equals {{@link #DUMMY_TARGET}. Also, makes sure that each tuple has only the neighbours for one target value.<br>
+	 * If any of these conditions are broken, an exception is thrown.
+	 * @return
+	 */
+	public static HashMap<Integer, NearestNeighbour[]> flattenNearestNeighbours(HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nnss){
+		HashMap<Integer, NearestNeighbour[]> flattened = new HashMap<Integer, NearestNeighbour[]>();
+		if(nnss.size() != 1) {
+			throw new RuntimeException("Nearest neighbours cannot be safely flattened (more than one target value)!");
+		}
+		if (!nnss.containsKey(DUMMY_TARGET)) {
+			throw new RuntimeException(String.format("Nearest neighbours cannot be safely flattened (missing expected target: %s)!", DUMMY_TARGET.toString()));
+		}
+		HashMap<Integer, NearestNeighbour[][]> temp = nnss.get(DUMMY_TARGET);
+		for(Integer tupleIndex : temp.keySet()) {
+			NearestNeighbour[][] nns = temp.get(tupleIndex);
+			if(nns.length != 1) {
+				throw new RuntimeException(String.format("Nearest neighbours cannot be safely flattened (tuple with index %s has computed neigbours for more than one target value)!", tupleIndex.toString()));
+			} else {
+				flattened.put(tupleIndex, nns[0]);
+			}
+		}		
+		return flattened;
 	}
 
 }
