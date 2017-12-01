@@ -240,15 +240,15 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param data
      */
     private void initialize() {
-    	printMessage("Preprocessing steps ...", 1);
+    	printMessage("Preprocessing steps ...", 1, getSettings().getGeneral().getVerbose());
     	m_NbExamples = m_Data.getNbRows();
     	
     	// initialize nearest neighbours staff
-    	m_ShouldLoadNeighbours = getSettings().getRelief().shouldLoadNeighbours();
-        m_LoadNearestNeigbhoursFiles = m_ShouldLoadNeighbours ? getSettings().getRelief().getLoadNeighboursFiles() : new String[] {};
+    	m_ShouldLoadNeighbours = getSettings().getKNN().shouldLoadNeighbours();
+        m_LoadNearestNeigbhoursFiles = m_ShouldLoadNeighbours ? getSettings().getKNN().getLoadNeighboursFiles() : new String[] {};
         
-        m_ShouldSaveNeighbours = getSettings().getRelief().shouldSaveNeighbours();
-        m_SaveNearestNeigbhoursFile = m_ShouldSaveNeighbours ? getSettings().getRelief().getSaveNeighboursFile() : "";
+        m_ShouldSaveNeighbours = getSettings().getKNN().shouldSaveNeighbours();
+        m_SaveNearestNeigbhoursFile = m_ShouldSaveNeighbours ? getSettings().getKNN().getSaveNeighboursFile() : "";
                 
         if (m_WeightNeighbours) {
             for (int neigh = 0; neigh < m_MaxNbNeighbours; neigh++) {
@@ -434,7 +434,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         int numIterInd = 0;
         boolean[] shouldUpdate = new boolean[nbTargets]; // [overall] or [overall, target1, target2, ...]
 
-        printMessage("Calculating importances ...", 1);
+        printMessage("Calculating importances ...", 1, getSettings().getGeneral().getVerbose());
         for (int iteration = 0; iteration < m_MaxNbIterations; iteration++) {
             printProgress(iteration);
             // CHOOSE TUPLE AND GET NEAREST NEIGHBOURS
@@ -1093,20 +1093,19 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     private void computeNearestNeighbours(int[] randomPermutation) throws InterruptedException, ExecutionException, IOException, ClusException {
     	if(m_ShouldLoadNeighbours) {
     		// read from file
-    		printMessage("Loading nearest neighbours ...", 1);
+    		printMessage("Loading nearest neighbours ...", 1, getSettings().getGeneral().getVerbose());
     		SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(m_LoadNearestNeigbhoursFiles, null);
     		m_NearestNeighbours = nnLoader.loadNeighboursFromFiles();
 //    		recomputeNeighbourTargetDistances();  // compute target distances again (necessary for MLC)
     	} else {
     		// compute them now
-    		printMessage("Calculating nearest neighbours ...", 1);
+    		printMessage("Calculating nearest neighbours ...", 1, getSettings().getGeneral().getVerbose());
     		ArrayList<Integer> necessaryTargetIndices = computeTargetIndicesThatNeedNeigbhours();
     		m_NeighCounter = 0;
     		m_NeighCounterBound = necessaryTargetIndices.size() * randomPermutation.length;
     		m_NeighPercents = 0;
     		
 	        ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
-	        int dolzina = 0;
 	        ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>> results = new ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>>();  
 	        for (Integer targetIndex : necessaryTargetIndices) {
 	            m_NearestNeighbours.put(targetIndex, new HashMap<Integer, NearestNeighbour[][]>());
@@ -1152,13 +1151,13 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     }
 
     /**
-     * Prints the message if Settings.VERBOSE is at the desired verbose level or higher.
+     * Prints the message if verbose level in the settings file is at the desired verbose level or higher.
      * 
      * @param message
      * @param verboseLevel
      */
-    private void printMessage(String message, int verboseLevel) {
-        if (getSettings().getGeneral().getVerbose() >= verboseLevel) {
+    public static void printMessage(String message, int desiredVerboseLevel, int verboseLevel) {
+        if (desiredVerboseLevel <= verboseLevel) {
             System.out.println(message);
         }
     }
