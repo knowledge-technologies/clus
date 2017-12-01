@@ -416,6 +416,7 @@ public class SettingsEnsemble extends SettingsBase {
 
     public String getEnsembleMethodName() {
         return getEnsembleMethod().toString();
+    }
 
 
     @Override
