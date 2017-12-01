@@ -18,7 +18,6 @@ public class SettingsILevelC extends SettingsBase {
 
     public SettingsILevelC(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -80,12 +79,5 @@ public class SettingsILevelC extends SettingsBase {
         m_SectionILevelC.setEnabled(false);
 
         return m_SectionILevelC;
-    }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
     }
 }

@@ -15,7 +15,6 @@ public class SettingsExperimental extends SettingsBase {
 
     public SettingsExperimental(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -50,12 +49,4 @@ public class SettingsExperimental extends SettingsBase {
 
         return exper;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

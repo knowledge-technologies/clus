@@ -14,7 +14,7 @@ public class MacroPrecision implements MlcHmlcSubError, ComponentError {
 	}
 
 	@Override
-	public double compute(int dim) {
+	public double getModelError(int dim) {
 		double avg = 0.0;
 		for (int i = 0; i < dim; i++) {
 			avg += getModelErrorComponent(i);
@@ -44,7 +44,7 @@ public class MacroPrecision implements MlcHmlcSubError, ComponentError {
 	@Override
 	public double getModelErrorComponent(int i) {
 		if (ClusUtil.isNaNOrZero(m_NbTruePositives[i] + m_NbFalsePositives[i])) {
-			return ClusUtil.ZERO;
+			return ClusUtil.NaN;
 		} else {
 			return ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
 		}

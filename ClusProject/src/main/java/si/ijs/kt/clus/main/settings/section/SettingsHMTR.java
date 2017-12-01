@@ -19,7 +19,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 public class SettingsHMTR extends SettingsBase {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-    
+
     SettingsAttribute m_SettAttribute;
     SettingsGeneral m_SettGeneral;
 
@@ -182,12 +182,4 @@ public class SettingsHMTR extends SettingsBase {
             schema.setNbHMTR(numAggregates);
         }
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

@@ -20,7 +20,6 @@ public class SettingsTree extends SettingsBase {
 
     public SettingsTree(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -551,5 +550,4 @@ public class SettingsTree extends SettingsBase {
     public void initNamedValues() {
         m_TreeSplitSampling.setNamedValue(0, "None");
     }
-
 }

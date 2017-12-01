@@ -12,7 +12,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 public class SettingsMLC extends SettingsBase {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-    
+
     SettingsHMLC m_SettHMLC;
     SettingsRelief m_SettRelief;
 
@@ -158,12 +158,4 @@ public class SettingsMLC extends SettingsBase {
 
         return m_SectionMultiLabel;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

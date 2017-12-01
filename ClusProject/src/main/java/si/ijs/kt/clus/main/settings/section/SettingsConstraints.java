@@ -15,7 +15,6 @@ public class SettingsConstraints extends SettingsBase {
     
     public SettingsConstraints(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
 

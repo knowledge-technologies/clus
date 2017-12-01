@@ -239,10 +239,12 @@ public class ClusOutput {
             if (outputtrain) {
                 ClusErrorList tr_err = cr.getTrainError();
                 if (tr_err != null) {
-                    if (ClusOOBErrorEstimate.isOOBCalculation())
+                    if (ClusOOBErrorEstimate.isOOBCalculation()) {
                         m_Writer.println("Out-Of-Bag Estimate of Error");
-                    else
+                    }
+                    else {
                         m_Writer.println("Training error");
+                    }
                     m_Writer.println("--------------");
                     m_Writer.println();
                     tr_err.showError(cr, ClusModelInfo.TRAIN_ERR, bName + ".train", m_Writer, m_Sett);
@@ -297,40 +299,30 @@ public class ClusOutput {
                         // prints the python code for the default model
                         m_Writer.print("def clus_default(xs):");
                         root.printModelToPythonScript(m_Writer);// root is a forest
-                        
-                        
-                        
+
                         /*
-                        try {
-                            File pyscript = new File(m_AppName + "_default.py");
-                            PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
-                            wrtr.println("# Python code of the trees in the ensemble");
-                            wrtr.println();
-                            
-                            for (int i = 0; i < m_Forest.size(); i++) {
-                                ClusModel model = m_Forest.get(i);
-                                wrtr.println("#Model " + (i + 1));
-                                wrtr.println("def clus_tree_" + (i + 1) + "(xs):"); // m_AttributeList
-                                ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
-                                wrtr.println();
-                            }
-                            
-                            wrtr.flush();
-                            wrtr.close();
-                            System.out.println("Python code for Forest model written to: " + pyscript.getName());
-                        }
-                        catch (IOException e) {
-                            System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");
-                            e.printStackTrace();
-                        }                        
-                        
-                        */
-                        
-                        
-                        
-                        
-                        
-                        
+                         * try {
+                         * File pyscript = new File(m_AppName + "_default.py");
+                         * PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
+                         * wrtr.println("# Python code of the trees in the ensemble");
+                         * wrtr.println();
+                         * for (int i = 0; i < m_Forest.size(); i++) {
+                         * ClusModel model = m_Forest.get(i);
+                         * wrtr.println("#Model " + (i + 1));
+                         * wrtr.println("def clus_tree_" + (i + 1) + "(xs):"); // m_AttributeList
+                         * ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
+                         * wrtr.println();
+                         * }
+                         * wrtr.flush();
+                         * wrtr.close();
+                         * System.out.println("Python code for Forest model written to: " + pyscript.getName());
+                         * }
+                         * catch (IOException e) {
+                         * System.err.println(this.getClass().getName() +
+                         * ".printForestToPython(): Error while writing models to python script");
+                         * e.printStackTrace();
+                         * }
+                         */
 
                     }
                 }
@@ -375,7 +367,7 @@ public class ClusOutput {
             String jsonFileName = m_Sett2.getGeneric().getAppName() + ".json";
             PrintWriter jsonWriter = m_Sett2.getGeneric().getFileAbsoluteWriter(jsonFileName);
             jsonWriter.write(output.toString());
-            //System.out.print(output.toString());
+            // System.out.print(output.toString());
             jsonWriter.close();
         }
         m_Writer.flush();

@@ -42,9 +42,13 @@ public abstract class SettingsBase implements Serializable {
 
     /**
      * Method should handle initialization of named values.
-     * E.g.: Use si.ijs.kt.clus.util.jeans.io.ini.INIFileInt.setNamedValue(int, String) and similar methods
+     * E.g.: Use si.ijs.kt.clus.util.jeans.io.ini.INIFileInt.setNamedValue(int, String) and similar methods.
+     * This method is not used by all settings sections. It is not abstract, so that it does not have to be implemented
+     * by all those
+     * sections that do not need it.
      */
-    public abstract void initNamedValues();
+    public void initNamedValues() {
+    }
 
 
     /**

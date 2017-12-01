@@ -213,11 +213,5 @@ public class SettingsRelief extends SettingsBase {
         m_SectionRelief.setEnabled(false);
 
         return m_SectionRelief;
-
-    }
-
-
-    @Override
-    public void initNamedValues() {
     }
 }

@@ -16,7 +16,6 @@ public class SettingsKNN extends SettingsBase {
 
     public SettingsKNN(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -104,13 +103,6 @@ public class SettingsKNN extends SettingsBase {
         m_SectionKNN.setEnabled(false);
 
         return m_SectionKNN;
-
-    }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
 
     }
 }

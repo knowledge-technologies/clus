@@ -19,7 +19,6 @@ public class SettingsRules extends SettingsBase {
 
     public SettingsRules(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -968,12 +967,5 @@ public class SettingsRules extends SettingsBase {
         m_SectionRules.setEnabled(false);
 
         return m_SectionRules;
-    }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
     }
 }

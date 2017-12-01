@@ -14,7 +14,6 @@ public class SettingsNominal extends SettingsBase {
 
     public SettingsNominal(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -34,12 +33,5 @@ public class SettingsNominal extends SettingsBase {
         INIFileSection nominal = new INIFileSection("Nominal");
         nominal.addNode(m_MEstimate = new INIFileDouble("MEstimate", 1.0));
         return nominal;
-    }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
     }
 }

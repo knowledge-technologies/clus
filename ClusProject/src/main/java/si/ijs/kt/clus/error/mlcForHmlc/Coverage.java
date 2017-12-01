@@ -16,9 +16,9 @@ public class Coverage implements MlcHmlcSubError {
 	}
 
 	@Override
-	public double compute(int dim) {
+	public double getModelError(int dim) {
 		if (ClusUtil.isZero(m_NbKnown)) {
-			return ClusUtil.ZERO;
+			return ClusUtil.NaN;
 		} else {
 			return ((double) m_RankSum) / m_NbKnown;
 		}

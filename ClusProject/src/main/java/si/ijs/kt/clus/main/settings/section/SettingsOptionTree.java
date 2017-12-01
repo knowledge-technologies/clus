@@ -17,7 +17,6 @@ public class SettingsOptionTree extends SettingsBase {
 
     public SettingsOptionTree(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -81,14 +80,5 @@ public class SettingsOptionTree extends SettingsBase {
         m_SectionOptionTree.setEnabled(false);
 
         return m_SectionOptionTree;
-
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

@@ -13,7 +13,7 @@ public class MicroRecall implements MlcHmlcSubError {
 	}
 
 	@Override
-	public double compute(int dim) {
+	public double getModelError(int dim) {
 		int truePositives = 0, falseNegatives = 0;
 		for (int i = 0; i < dim; i++) {
 			truePositives += m_NbTruePositives[i];
@@ -21,7 +21,7 @@ public class MicroRecall implements MlcHmlcSubError {
 		}
 
 		if (ClusUtil.isZero(truePositives + falseNegatives)) {
-			return ClusUtil.ZERO;
+			return ClusUtil.NaN;
 		} else {
 			return ((double) truePositives) / (truePositives + falseNegatives);
 		}

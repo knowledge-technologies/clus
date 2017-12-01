@@ -17,7 +17,6 @@ public class SettingsAttribute extends SettingsBase {
 
     public SettingsAttribute(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -40,13 +39,14 @@ public class SettingsAttribute extends SettingsBase {
     }
 
 
-//    public void setGIS(String str) {
-//        m_GIS.setValue(str);
-//    }
+    // public void setGIS(String str) {
+    // m_GIS.setValue(str);
+    // }
 
-    public boolean isNullGIS(){
+    public boolean isNullGIS() {
         return StringUtils.unCaseCompare(m_GIS.getValue(), NONE);
     }
+
 
     public String getTarget() {
         return m_Target.getValue();
@@ -165,12 +165,4 @@ public class SettingsAttribute extends SettingsBase {
 
         return attrs;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

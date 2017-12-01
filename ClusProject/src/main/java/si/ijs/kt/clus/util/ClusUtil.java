@@ -27,7 +27,7 @@ public class ClusUtil {
 	public final static double MICRO = 1e-6;
 	public final static double NANO = 1e-9;
 	public final static double PICO = 1e-12;
-	public static final double ZERO = 0.0F;
+	public static final double NaN = Double.NaN;
 
 	public static boolean grOrEq(double a, double b) {
 		/* a > b - MICRO */

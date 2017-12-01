@@ -16,7 +16,6 @@ public class SettingsKNNTree extends SettingsBase {
 
     public SettingsKNNTree(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -61,12 +60,4 @@ public class SettingsKNNTree extends SettingsBase {
 
         return m_SectionKNNT;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

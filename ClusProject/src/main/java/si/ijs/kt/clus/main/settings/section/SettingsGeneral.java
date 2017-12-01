@@ -96,12 +96,4 @@ public class SettingsGeneral extends SettingsBase {
 
         return settings;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

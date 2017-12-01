@@ -13,7 +13,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 public class SettingsModel extends SettingsBase {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-    
+
     /***********************************************************************
      * Section: Model *
      ***********************************************************************/
@@ -28,7 +28,6 @@ public class SettingsModel extends SettingsBase {
 
     public SettingsModel(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
 
@@ -78,12 +77,4 @@ public class SettingsModel extends SettingsBase {
 
         return model;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

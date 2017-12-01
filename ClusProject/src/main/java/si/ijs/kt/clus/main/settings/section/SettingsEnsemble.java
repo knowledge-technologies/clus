@@ -21,7 +21,6 @@ public class SettingsEnsemble extends SettingsBase {
 
     public SettingsEnsemble(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -457,12 +456,4 @@ public class SettingsEnsemble extends SettingsBase {
 
         return m_SectionEnsembles;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

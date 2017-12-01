@@ -16,7 +16,6 @@ public class SettingsPhylogeny extends SettingsBase {
 
     public SettingsPhylogeny(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -115,12 +114,5 @@ public class SettingsPhylogeny extends SettingsBase {
         m_SectionPhylogeny.setEnabled(false);
 
         return m_SectionPhylogeny;
-    }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
     }
 }

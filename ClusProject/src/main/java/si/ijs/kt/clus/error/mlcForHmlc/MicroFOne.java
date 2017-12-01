@@ -14,7 +14,7 @@ public class MicroFOne implements MlcHmlcSubError {
 	}
 
 	@Override
-	public double compute(int dim) {
+	public double getModelError(int dim) {
 		int truePositives = 0, falsePositives = 0, falseNegatives = 0;
 		for (int i = 0; i < dim; i++) {
 			truePositives += m_NbTruePositives[i];
@@ -24,11 +24,11 @@ public class MicroFOne implements MlcHmlcSubError {
 		double precision = ((double) truePositives) / (truePositives + falsePositives);
 		double recall = ((double) truePositives) / (truePositives + falseNegatives);
 
-		precision = ClusUtil.isNaNOrZero(precision) ? ClusUtil.ZERO : precision;
-		recall = ClusUtil.isNaNOrZero(recall) ? ClusUtil.ZERO : recall;
+		precision = ClusUtil.isNaNOrZero(precision) ? ClusUtil.NaN : precision;
+		recall = ClusUtil.isNaNOrZero(recall) ? ClusUtil.NaN : recall;
 
 		if (ClusUtil.isNaNOrZero(precision + recall)) {
-			return ClusUtil.ZERO;
+			return ClusUtil.NaN;
 		} else {
 			return 2.0 * precision * recall / (precision + recall);
 		}

@@ -11,9 +11,10 @@ public class SettingsDistances extends SettingsBase {
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
 
+    // this class needs love
+
     public SettingsDistances(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -38,12 +39,4 @@ public class SettingsDistances extends SettingsBase {
 
         return m_SectionDistances;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

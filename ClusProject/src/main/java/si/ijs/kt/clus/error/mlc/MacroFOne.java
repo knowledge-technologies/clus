@@ -85,9 +85,9 @@ public class MacroFOne extends ClusNominalError implements ComponentError {
     }
 
 
-    public double getMacroFOne(int i) {
-        return getModelErrorComponent(i);
-    }
+//    public double getMacroFOne(int i) {
+//        return getModelErrorComponent(i);
+//    }
 
 
     @Override

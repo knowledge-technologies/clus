@@ -1,14 +1,14 @@
 package si.ijs.kt.clus.error.mlcForHmlc;
 
 public class MLaverageAUROC extends MLROCAndPRCurve implements MlcHmlcSubError {
-    private final int m_Measure = averageAUROC;
+    private final CurveType m_Measure = CurveType.averageAUROC;
 
     public MLaverageAUROC(int dim) {
         super(dim);
     }
     @Override
-    public double compute(int dim) {
-        return getModelError(m_Measure);
+    public double getModelError(int dim) {
+        return super.getCurveError(m_Measure);
     }
 
     @Override

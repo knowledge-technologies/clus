@@ -15,7 +15,6 @@ public class SettingsSIT extends SettingsBase {
 
     public SettingsSIT(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -81,12 +80,5 @@ public class SettingsSIT extends SettingsBase {
         m_SectionSIT.setEnabled(false);
 
         return m_SectionSIT;
-    }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
     }
 }

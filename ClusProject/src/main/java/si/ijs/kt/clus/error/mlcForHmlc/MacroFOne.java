@@ -15,7 +15,7 @@ public class MacroFOne implements MlcHmlcSubError, ComponentError {
 	}
 
 	@Override
-	public double compute(int dim) {
+	public double getModelError(int dim) {
 		double avg = 0.0;
 		for (int i = 0; i < dim; i++) {
 			avg += getModelErrorComponent(i);
@@ -49,11 +49,11 @@ public class MacroFOne implements MlcHmlcSubError, ComponentError {
 		double prec = ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalsePositives[i]);
 		double recall = ((double) m_NbTruePositives[i]) / (m_NbTruePositives[i] + m_NbFalseNegatives[i]);
 
-		prec = ClusUtil.isNaNOrZero(prec) ? ClusUtil.ZERO : prec;
-		recall = ClusUtil.isNaNOrZero(recall) ? ClusUtil.ZERO : recall;
+		prec = ClusUtil.isNaNOrZero(prec) ? ClusUtil.NaN : prec;
+		recall = ClusUtil.isNaNOrZero(recall) ? ClusUtil.NaN : recall;
 		
 		if (ClusUtil.isNaNOrZero(prec + recall)) {
-			return ClusUtil.ZERO;
+			return ClusUtil.NaN;
 		} else {
 			return 2.0 * prec * recall / (prec + recall);
 		}

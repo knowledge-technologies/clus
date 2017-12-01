@@ -155,7 +155,6 @@ public class OptXVal {
         output = new ClusOutput(appname + ".xval", schema, sett);
         output.writeHeader();
         
-        sett.getExperimental();
         if (SettingsExperimental.SHOW_XVAL_FOREST)
             showForest(output.getWriter(), root);
         for (int i = 0; i < sel.getNbFolds(); i++) {

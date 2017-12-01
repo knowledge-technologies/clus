@@ -13,7 +13,7 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 public class SettingsOutput extends SettingsBase {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-    
+
     /***********************************************************************
      * Section: Output *
      ***********************************************************************/
@@ -286,12 +286,5 @@ public class SettingsOutput extends SettingsBase {
      */
     public boolean isGzipOutput() {
         return m_GzipOutput.getValue();
-    }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
     }
 }

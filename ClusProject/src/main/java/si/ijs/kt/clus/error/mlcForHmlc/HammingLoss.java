@@ -14,9 +14,9 @@ public class HammingLoss implements MlcHmlcSubError {
 	}
 
 	@Override
-	public double compute(int dimensions) {
+	public double getModelError(int dimensions) {
 		if (ClusUtil.isZero(m_NbKnown)) {
-			return ClusUtil.ZERO;
+			return ClusUtil.NaN;
 		} else {
 			return ((double) m_NbWrong) / m_NbKnown / dimensions;
 		}

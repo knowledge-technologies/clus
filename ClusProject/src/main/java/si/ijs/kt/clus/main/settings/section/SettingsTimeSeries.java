@@ -14,7 +14,6 @@ public class SettingsTimeSeries extends SettingsBase {
 
     public SettingsTimeSeries(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -82,18 +81,10 @@ public class SettingsTimeSeries extends SettingsBase {
     public INIFileSection create() {
         m_SectionTimeSeries = new INIFileSection("TimeSeries");
         m_SectionTimeSeries.addNode(m_TimeSeriesDistance = new INIFileNominal("DistanceMeasure", TIME_SERIES_DISTANCE_MEASURE, TIME_SERIES_DISTANCE_MEASURE_DTW));
-        m_SectionTimeSeries.addNode(m_TimeSeriesHeuristicSampling = new INIFileNominal("PrototypeComlexity", TIME_SERIES_PROTOTYPE_COMPLEXITY, TIME_SERIES_PROTOTYPE_COMPLEXITY_N2));
+        m_SectionTimeSeries.addNode(m_TimeSeriesHeuristicSampling = new INIFileNominal("PrototypeComplexity", TIME_SERIES_PROTOTYPE_COMPLEXITY, TIME_SERIES_PROTOTYPE_COMPLEXITY_N2));
 
         setSectionTimeSeriesEnabled(false); // disabled by default
 
         return m_SectionTimeSeries;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

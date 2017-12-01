@@ -948,7 +948,7 @@ public class ClusSchema implements Serializable {
     }
 
 
-    public ArrayList getAttr() {
+    public ArrayList<ClusAttrType> getAttr() {
         return m_Attr;
     }
 

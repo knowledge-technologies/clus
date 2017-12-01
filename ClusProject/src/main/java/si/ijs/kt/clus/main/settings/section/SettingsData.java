@@ -15,10 +15,10 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
 public class SettingsData extends SettingsBase {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-    
+
+
     public SettingsData(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -138,14 +138,17 @@ public class SettingsData extends SettingsBase {
     public int getNormalizeData() {
         return m_NormalizeData.getValue();
     }
-    
+
+
     public void setPruneSetMaxEnabled(boolean value) {
         m_PruneSetMax.setEnabled(value);
     }
 
+
     public boolean isPruneSetString(String str) {
         return m_PruneSet.isString(str);
     }
+
 
     @Override
     public INIFileSection create() {
@@ -158,15 +161,7 @@ public class SettingsData extends SettingsBase {
         m_XValFolds.setIntValue(10);
         data.addNode(m_RemoveMissingTarget = new INIFileBool("RemoveMissingTarget", false));
         data.addNode(m_NormalizeData = new INIFileNominal("NormalizeData", NORMALIZE_DATA_VALUES, 0));
-        
+
         return data;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-        
-    }
-
 }

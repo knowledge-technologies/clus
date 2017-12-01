@@ -1,15 +1,15 @@
 package si.ijs.kt.clus.error.mlcForHmlc;
 
 public class MLpooledAUPRC extends MLROCAndPRCurve implements MlcHmlcSubError {
-    private final int m_Measure = pooledAUPRC;
+    private final CurveType m_Measure = CurveType.pooledAUPRC;
 
     public MLpooledAUPRC(int dim) {
         super(dim);
     }
 
     @Override
-    public double compute(int dim) {
-        return getModelError(m_Measure);
+    public double getModelError(int dim) {
+        return super.getCurveError(m_Measure);
     }
 
     @Override

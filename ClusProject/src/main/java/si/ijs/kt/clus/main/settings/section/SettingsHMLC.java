@@ -20,7 +20,6 @@ public class SettingsHMLC extends SettingsBase {
 
     public SettingsHMLC(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -221,12 +220,4 @@ public class SettingsHMLC extends SettingsBase {
 
         return m_SectionHierarchical;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

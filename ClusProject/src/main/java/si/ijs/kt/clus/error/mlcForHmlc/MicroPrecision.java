@@ -13,7 +13,7 @@ public class MicroPrecision implements MlcHmlcSubError {
 	}
 
 	@Override
-	public double compute(int dim) {
+	public double getModelError(int dim) {
 		int truePositives = 0, falsePositives = 0;
 		for (int i = 0; i < dim; i++) {
 			truePositives += m_NbTruePositives[i];
@@ -21,7 +21,7 @@ public class MicroPrecision implements MlcHmlcSubError {
 		}
 
 		if (ClusUtil.isZero(truePositives + falsePositives)) {
-			return ClusUtil.ZERO;
+			return ClusUtil.NaN;
 		} else {
 			return ((double) truePositives) / (truePositives + falsePositives);
 		}

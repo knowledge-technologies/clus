@@ -15,7 +15,6 @@ public class SettingsExhaustiveSearch extends SettingsBase {
 
     public SettingsExhaustiveSearch(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
@@ -60,12 +59,4 @@ public class SettingsExhaustiveSearch extends SettingsBase {
 
         return m_SectionExhaustive;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }

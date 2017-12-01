@@ -20,7 +20,6 @@ public class SettingsSSL extends SettingsBase {
 
     public SettingsSSL(int position) {
         super(position);
-        // TODO Auto-generated constructor stub
     }
 
     private INIFileSection m_SectionSSL;
@@ -385,12 +384,4 @@ public class SettingsSSL extends SettingsBase {
 
         return m_SectionSSL;
     }
-
-
-    @Override
-    public void initNamedValues() {
-        // TODO Auto-generated method stub
-
-    }
-
 }
