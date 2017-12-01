@@ -24,7 +24,7 @@
  * Created on August 4, 2006
  */
 
-package si.ijs.kt.clus.algo.rules;
+package si.ijs.kt.clus.heuristic.rules;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.main.ClusStatManager;
@@ -34,9 +34,9 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
 
 
-public class ClusRuleHeuristicDispersionMlt extends ClusRuleHeuristicDispersion {
+public class ClusRuleHeuristicRDispersionAdt extends ClusRuleHeuristicDispersion {
 
-    public ClusRuleHeuristicDispersionMlt(ClusStatManager stat_mgr, ClusAttributeWeights prod, Settings sett) {
+    public ClusRuleHeuristicRDispersionAdt(ClusStatManager stat_mgr, ClusAttributeWeights prod, Settings sett) {
         super(sett);
 
         m_StatManager = stat_mgr;
@@ -54,9 +54,7 @@ public class ClusRuleHeuristicDispersionMlt extends ClusRuleHeuristicDispersion 
         if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { // (n_pos < Settings.MINIMAL_WEIGHT)
             return Double.NEGATIVE_INFINITY;
         }
-        double disp = ((CombStat) c_pstat).dispersionMltHeur();
-        double disp1 = disp;
-        double ad = -1;
+        double disp = ((CombStat) c_pstat).rDispersionAdtHeur();
         // Rule distance part
         if (((CombStat) c_pstat).getSettings().getRules().isHeurRuleDist() && (m_CoveredBitVectArray.size() > 0)) {
             double avg_dist = 0.0;
@@ -79,19 +77,16 @@ public class ClusRuleHeuristicDispersionMlt extends ClusRuleHeuristicDispersion 
             }
             avg_dist /= nb_rules;
             double dist_par = ((CombStat) c_pstat).getSettings().getRules().getHeurRuleDistPar();
-            // double dist_part = avg_dist > 0 ? 1 / avg_dist * dist_par : 100; // 100 ???
-            // disp *= 1.0 + dist_part;
-            disp = avg_dist > 0 ? disp / Math.pow(avg_dist, dist_par) : 100;
-            ad = avg_dist;
+            double dist_part = avg_dist * dist_par;
+            disp += 1.0 - dist_part; // TODO: Check if this offset is ok!
         }
-        // System.err.println("Avg.dist: " + ad + " Before: " + disp1 + " after: " + disp + "\n");
         return -disp;
     }
 
 
     @Override
     public String getName() {
-        return "Rule Heuristic (Reduced Dispersion, Multiplicative ver.)";
+        return "Rule Heuristic (Reduced Relative Dispersion, Additive ver.)";
     }
 
 }

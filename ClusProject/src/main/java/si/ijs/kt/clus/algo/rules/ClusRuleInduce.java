@@ -42,6 +42,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeamModel;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
+import si.ijs.kt.clus.heuristic.rules.ClusRuleHeuristicDispersion;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;

@@ -24,7 +24,7 @@
  * Created on August 4, 2006
  */
 
-package si.ijs.kt.clus.algo.rules;
+package si.ijs.kt.clus.heuristic.rules;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.main.ClusStatManager;
@@ -34,11 +34,11 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
 
 
-public class ClusRuleHeuristicRDispersionAdt extends ClusRuleHeuristicDispersion {
+public class ClusRuleHeuristicDispersionAdt extends ClusRuleHeuristicDispersion {
 
-    public ClusRuleHeuristicRDispersionAdt(ClusStatManager stat_mgr, ClusAttributeWeights prod, Settings sett) {
+    public ClusRuleHeuristicDispersionAdt(ClusStatManager stat_mgr, ClusAttributeWeights prod, Settings sett) {
         super(sett);
-
+        
         m_StatManager = stat_mgr;
     }
 
@@ -54,7 +54,7 @@ public class ClusRuleHeuristicRDispersionAdt extends ClusRuleHeuristicDispersion
         if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { // (n_pos < Settings.MINIMAL_WEIGHT)
             return Double.NEGATIVE_INFINITY;
         }
-        double disp = ((CombStat) c_pstat).rDispersionAdtHeur();
+        double disp = ((CombStat) c_pstat).dispersionAdtHeur();
         // Rule distance part
         if (((CombStat) c_pstat).getSettings().getRules().isHeurRuleDist() && (m_CoveredBitVectArray.size() > 0)) {
             double avg_dist = 0.0;
@@ -86,7 +86,7 @@ public class ClusRuleHeuristicRDispersionAdt extends ClusRuleHeuristicDispersion
 
     @Override
     public String getName() {
-        return "Rule Heuristic (Reduced Relative Dispersion, Additive ver.)";
+        return "Rule Heuristic (Reduced Dispersion, Additive ver.)";
     }
 
 }

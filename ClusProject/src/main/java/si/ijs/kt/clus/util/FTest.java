@@ -20,14 +20,13 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.heuristic;
+package si.ijs.kt.clus.util;
 
 import java.util.ArrayList;
 
 import org.apache.commons.math3.distribution.FDistribution;
 
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
-import si.ijs.kt.clus.util.ClusFormat;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 

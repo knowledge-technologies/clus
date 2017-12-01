@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.heuristic;
+package si.ijs.kt.clus.heuristic.stopCriterion;
 
 import si.ijs.kt.clus.statistic.ClusStatistic;
 

@@ -52,6 +52,7 @@ import si.ijs.kt.clus.ext.ilevelc.DerivedConstraintsComputer;
 import si.ijs.kt.clus.ext.ilevelc.ILevelCStatistic;
 import si.ijs.kt.clus.ext.ilevelc.ILevelConstraint;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
+import si.ijs.kt.clus.heuristic.rules.ClusRuleHeuristicDispersion;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;

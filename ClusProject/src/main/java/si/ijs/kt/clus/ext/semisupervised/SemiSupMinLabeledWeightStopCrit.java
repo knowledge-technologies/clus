@@ -1,7 +1,7 @@
 
 package si.ijs.kt.clus.ext.semisupervised;
 
-import si.ijs.kt.clus.heuristic.ClusStopCriterion;
+import si.ijs.kt.clus.heuristic.stopCriterion.ClusStopCriterion;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
 

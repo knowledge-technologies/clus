@@ -27,7 +27,7 @@
  * Original ClusRuleHeuristicCompactnes created on June 23, 2005
  */
 
-package si.ijs.kt.clus.algo.rules;
+package si.ijs.kt.clus.heuristic.rules;
 
 import java.util.ArrayList;
 

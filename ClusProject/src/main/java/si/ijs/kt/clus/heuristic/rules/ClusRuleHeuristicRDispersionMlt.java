@@ -24,7 +24,7 @@
  * Created on August 4, 2006
  */
 
-package si.ijs.kt.clus.algo.rules;
+package si.ijs.kt.clus.heuristic.rules;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.main.ClusStatManager;

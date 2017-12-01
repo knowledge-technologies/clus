@@ -21,27 +21,30 @@
  *************************************************************************/
 
 /*
- * Created on May 3, 2005
+ * Created on May 2, 2005
  */
 
-package si.ijs.kt.clus.algo.rules;
+package si.ijs.kt.clus.heuristic.rules;
 
+import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
+import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
+import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 
 
-public class ClusRuleHeuristicMEstimate extends ClusHeuristic {
+public class ClusRuleHeuristicError extends ClusHeuristic {
 
-    double m_MValue;
-    double m_Prior;
+    private ClusStatManager m_StatManager = null;
 
 
-    public ClusRuleHeuristicMEstimate(double m_value, Settings sett) {
+    public ClusRuleHeuristicError(ClusStatManager stat_mgr, ClusAttributeWeights prod, Settings sett) {
         super(sett);
-        
-        m_MValue = m_value;
+
+        m_StatManager = stat_mgr;
+        m_ClusteringWeights = prod;
     }
 
 
@@ -51,21 +54,20 @@ public class ClusRuleHeuristicMEstimate extends ClusHeuristic {
         // Acceptable?
         // if (n_pos < Settings.MINIMAL_WEIGHT) {
         if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { return Double.NEGATIVE_INFINITY; }
-        double correct = n_pos - c_pstat.getError();
-        double m_estimate = (correct + m_MValue * m_Prior) / (n_pos + m_MValue);
-        return m_estimate;
-    }
+        double pos_error = c_pstat.getError(m_ClusteringWeights);
+        // Prefer rules that cover more examples
+        double global_sum_w = m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING).getTotalWeight();
+        double heur_par = getSettings().getRules().getHeurCoveragePar();
+        pos_error *= (1 + heur_par * global_sum_w / c_pstat.getTotalWeight());
 
-
-    @Override
-    public void setRootStatistic(ClusStatistic stat) {
-        m_Prior = (stat.getTotalWeight() - stat.getError()) / stat.getTotalWeight();
-        System.out.println("Setting prior: " + m_Prior);
+        return -pos_error;
     }
 
 
     @Override
     public String getName() {
-        return "Rule Heuristic (M-Estimate, M = " + m_MValue + ")";
+        return "Rule Heuristic (Reduced Error)";
     }
+ 
+
 }

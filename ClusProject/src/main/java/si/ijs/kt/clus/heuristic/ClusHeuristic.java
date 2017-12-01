@@ -24,6 +24,7 @@ package si.ijs.kt.clus.heuristic;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.heuristic.stopCriterion.ClusStopCriterion;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
