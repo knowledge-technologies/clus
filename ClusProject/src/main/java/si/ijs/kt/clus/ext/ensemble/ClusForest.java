@@ -899,7 +899,7 @@ public class ClusForest implements ClusModel, Serializable {
      * @throws ClusException
      * @throws IOException
      */
-    public void convertToRules(ClusRun cr, boolean addOnlyUnique) throws InterruptedException {
+    public void convertToRules(ClusRun cr, boolean addOnlyUnique) throws InterruptedException, ClusException {
         /**
          * The class for transforming single trees to rules
          */

@@ -24,63 +24,80 @@ package si.ijs.kt.clus.util;
 
 public class ClusUtil {
 
-    public final static double MICRO = 1e-6;
-    public final static double NANO = 1e-9;
-    public final static double PICO = 1e-12;
+	public final static double MICRO = 1e-6;
+	public final static double NANO = 1e-9;
+	public final static double PICO = 1e-12;
+	public static final double ZERO = 0.0F;
 
+	public static boolean grOrEq(double a, double b) {
+		/* a > b - MICRO */
+		return (b - a < MICRO);
+	}
 
-    public static boolean grOrEq(double a, double b) {
-        /* a > b - MICRO */
-        return (b - a < MICRO);
-    }
+	public static boolean smOrEq(double a, double b) {
+		return (a - b < MICRO);
+	}
 
+	public static boolean eq(double a, double b) {
+		// return (a - b < MICRO) && (b - a < MICRO);
+		return eq(a, b, MICRO);
+	}
 
-    public static boolean smOrEq(double a, double b) {
-        return (a - b < MICRO);
-    }
+	public static boolean eq(double a, double b, double allowedDifference) {
+		return Math.abs(a - b) < allowedDifference;
+	}
 
+	public static double roundToSignificantFigures(double num, int n) {
+		if (num == 0) {
+			return 0;
+		}
 
-    public static boolean eq(double a, double b) {
-        // return (a - b < MICRO) && (b - a < MICRO);
-        return eq(a, b, MICRO);
-    }
+		final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
+		final int power = n - (int) d;
 
+		final double magnitude = Math.pow(10, power);
+		final long shifted = Math.round(num * magnitude);
+		return shifted / magnitude;
+	}
 
-    public static boolean eq(double a, double b, double allowedDifference) {
-        return Math.abs(a - b) < allowedDifference;
-    }
+	public static void main(String[] arg) {
+		double d1 = -1.23456789;
+		double d2 = -0.0;
+		double d3 = -1234567.89;
+		double d4 = -1.234E-12;
+		double d5 = 2.23E-13;
+		int n = 3;
+		System.out.println(roundToSignificantFigures(d1, n));
+		System.out.println(roundToSignificantFigures(d2, n));
+		System.out.println(roundToSignificantFigures(d3, n));
+		System.out.println(roundToSignificantFigures(d4, n));
+		System.out.println(roundToSignificantFigures(d5, n));
+	}
 
+	public static double roundDouble(double value, int afterDecimalPoint) {
+		double mask = Math.pow(10.0, afterDecimalPoint);
 
-    public static double roundToSignificantFigures(double num, int n) {
-        if (num == 0) { return 0; }
+		return (Math.round(value * mask)) / mask;
+	}
 
-        final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
-        final int power = n - (int) d;
+	public static boolean isNaN(double d) {
+		return Double.isNaN(d);
+	}
 
-        final double magnitude = Math.pow(10, power);
-        final long shifted = Math.round(num * magnitude);
-        return shifted / magnitude;
-    }
+	public static boolean isZero(double d) {
+		return d == 0.0F;
+	}
 
+	public static boolean isNaNOrZero(double d) {
+		return isNaN(d) || isZero(d);
+	}
 
-    public static void main(String[] arg) {
-        double d1 = -1.23456789;
-        double d2 = -0.0;
-        double d3 = -1234567.89;
-        double d4 = -1.234E-12;
-        double d5 = 2.23E-13;
-        int n = 3;
-        System.out.println(roundToSignificantFigures(d1, n));
-        System.out.println(roundToSignificantFigures(d2, n));
-        System.out.println(roundToSignificantFigures(d3, n));
-        System.out.println(roundToSignificantFigures(d4, n));
-        System.out.println(roundToSignificantFigures(d5, n));
-    }
+	public static boolean isAnyNaNOrZero(double[] numbers) {
+		for (double d : numbers) {
+			if (isNaNOrZero(d))
+				return true;
+		}
+		return false;
+	}
 
-
-    public static double roundDouble(double value, int afterDecimalPoint) {
-        double mask = Math.pow(10.0, afterDecimalPoint);
-
-        return (Math.round(value * mask)) / mask;
-    }
 }

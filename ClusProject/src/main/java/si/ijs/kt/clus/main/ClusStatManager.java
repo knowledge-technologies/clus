@@ -1145,7 +1145,7 @@ public class ClusStatManager implements Serializable {
     }
 
 
-    public ClusErrorList createErrorMeasure(MultiScore score) {
+    public ClusErrorList createErrorMeasure(MultiScore score) throws ClusException {
         ClusErrorList parent = new ClusErrorList();
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
@@ -1156,34 +1156,34 @@ public class ClusStatManager implements Serializable {
             parent.addError(new MSNominalError(parent, nom, m_NormalizationWeights));
         }
         if (getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
-            parent.addError(new HammingLoss(parent, nom));
-            parent.addError(new RankingLoss(parent, nom));
-            parent.addError(new OneError(parent, nom));
-            parent.addError(new Coverage(parent, nom));
-            parent.addError(new AveragePrecision(parent, nom));
-            parent.addError(new MLAccuracy(parent, nom));
-            parent.addError(new MLPrecision(parent, nom));
-            parent.addError(new MLRecall(parent, nom));
-            parent.addError(new MLFOneMeasure(parent, nom));
-            parent.addError(new SubsetAccuracy(parent, nom));
-            parent.addError(new MacroPrecision(parent, nom));
-            parent.addError(new MacroRecall(parent, nom));
-            parent.addError(new MacroFOne(parent, nom));
-            parent.addError(new MicroPrecision(parent, nom));
-            parent.addError(new MicroRecall(parent, nom));
-            parent.addError(new MicroFOne(parent, nom));
-            parent.addError(new MLaverageAUROC(parent, nom));
-            parent.addError(new MLaverageAUPRC(parent, nom));
-            parent.addError(new MLweightedAUPRC(parent, nom));
-            parent.addError(new MLpooledAUPRC(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.HammingLoss(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.RankingLoss(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.OneError(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.Coverage(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.AveragePrecision(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MLAccuracy(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MLPrecision(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MLRecall(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MLFOneMeasure(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.SubsetAccuracy(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MacroPrecision(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MacroRecall(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MacroFOne(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MicroPrecision(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MicroRecall(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MicroFOne(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MLaverageAUROC(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MLaverageAUPRC(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MLweightedAUPRC(parent, nom));
+            parent.addError(new si.ijs.kt.clus.error.mlc.MLpooledAUPRC(parent, nom));
         }
 
         if (num.length != 0) {
-            parent.addError(new AbsoluteError(parent, num));
-            parent.addError(new MSError(parent, num));
-            parent.addError(new RMSError(parent, num));
+            parent.addError(new si.ijs.kt.clus.error.AbsoluteError(parent, num));
+            parent.addError(new si.ijs.kt.clus.error.MSError(parent, num));
+            parent.addError(new si.ijs.kt.clus.error.RMSError(parent, num));
             if (getSettings().getAttribute().hasNonTrivialWeights()) {
-                parent.addError(new RMSError(parent, num, m_NormalizationWeights));
+                parent.addError(new si.ijs.kt.clus.error.RMSError(parent, num, m_NormalizationWeights));
             }
             parent.addError(new RRMSError(parent, num));
             parent.addError(new PearsonCorrelation(parent, num));

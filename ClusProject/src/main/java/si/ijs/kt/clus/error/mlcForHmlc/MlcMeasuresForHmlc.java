@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.common.ClusError;
@@ -16,6 +17,7 @@ import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
 import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 
 
@@ -39,7 +41,7 @@ public class MlcMeasuresForHmlc extends ClusError {
     private double[] m_ComputedErrors;
 
 
-    public MlcMeasuresForHmlc(ClusErrorList par, ClassHierarchy hier) {
+    public MlcMeasuresForHmlc(ClusErrorList par, ClassHierarchy hier) throws ClusException {
         super(par, hier.getTotal());
         m_Hier = hier;
         m_EvalClass = hier.getEvalClassesVector();
@@ -47,6 +49,8 @@ public class MlcMeasuresForHmlc extends ClusError {
         for (boolean shouldEval : m_EvalClass) {
             m_DimEval += shouldEval ? 1 : 0;
         }
+        
+        if (m_DimEval == 0) throw new ClusException("MLC measures: Number of dimensions to evaluate is zero.");
 
         m_SubErrors = new ArrayList<MlcHmlcSubError>();
         m_SubErrors.add(new HammingLoss());
@@ -214,7 +218,7 @@ public class MlcMeasuresForHmlc extends ClusError {
 
 
     @Override
-    public ClusError getErrorClone(ClusErrorList par) {
+    public ClusError getErrorClone(ClusErrorList par) throws ClusException {
         return new MlcMeasuresForHmlc(par, m_Hier);
     }
 

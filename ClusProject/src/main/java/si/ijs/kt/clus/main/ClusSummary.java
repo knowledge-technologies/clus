@@ -112,7 +112,7 @@ public class ClusSummary extends ClusModelInfoList {
     }
 
 
-    public ClusSummary getSummaryClone() {
+    public ClusSummary getSummaryClone() throws ClusException {
         ClusSummary summ = new ClusSummary();
         summ.m_StatMgr = getStatManager();
 		if (m_TestErr != null) summ.m_TestErr = m_TestErr.getErrorClone();
