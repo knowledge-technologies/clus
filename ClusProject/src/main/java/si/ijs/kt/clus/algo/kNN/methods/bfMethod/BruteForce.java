@@ -25,6 +25,7 @@ package si.ijs.kt.clus.algo.kNN.methods.bfMethod;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import si.ijs.kt.clus.algo.kNN.methods.NN;
 import si.ijs.kt.clus.algo.kNN.methods.NNStack;
 import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
 import si.ijs.kt.clus.data.rows.DataTuple;
@@ -37,30 +38,38 @@ import si.ijs.kt.clus.util.ClusException;
 /**
  * @author Mitja Pugelj, matejp
  */
-public class BrutForce extends SearchAlgorithm {
+public class BruteForce extends SearchAlgorithm {
 
     // private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-    private DataTuple[] m_List;
+    protected DataTuple[] m_ListTrain;
+    protected DataTuple[] m_ListTest; // Used in Oracle
     private NNStack m_Stack;
 
 
-    public BrutForce(ClusRun run, SearchDistance dist) {
+    public BruteForce(ClusRun run, SearchDistance dist) {
         super(run, dist);
     }
 
 
     @Override
-    public void build() throws ClusException, IOException, InterruptedException {
+    public void build(int k) throws ClusException, IOException, InterruptedException {
         // does nothing at all
-        m_List = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData(); // m_Data;
+        m_ListTrain = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData();
     }
 
 
     @Override
     public LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) throws ClusException {
         m_Stack = new NNStack(k);
-        for (DataTuple d : m_List)
+        for (DataTuple d : m_ListTrain)
             m_Stack.addToStack(d, getDistance().calcDistance(tuple, d));
         return m_Stack.returnStack();
+    }
+    
+    public NN[] returnPureNNs(DataTuple tuple, int k) throws ClusException {
+        m_Stack = new NNStack(k);
+        for (DataTuple d : m_ListTrain)
+            m_Stack.addToStack(d, getDistance().calcDistance(tuple, d));
+        return m_Stack.returnPureStack();
     }
 }

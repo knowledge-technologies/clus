@@ -65,7 +65,7 @@ public class KDTree extends SearchAlgorithm {
      * @throws InterruptedException 
      */
     @Override
-    public void build() throws ClusException, IOException, InterruptedException {
+    public void build(int k) throws ClusException, IOException, InterruptedException {
         RowData data = getRun().getDataSet(ClusModelInfoList.TRAINSET);
         // copy tuples into LinkedList for easier manipulation
         LinkedList<DataTuple> tuples = new LinkedList<DataTuple>();

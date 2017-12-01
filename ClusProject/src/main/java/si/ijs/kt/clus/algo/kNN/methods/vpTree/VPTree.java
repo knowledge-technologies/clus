@@ -58,7 +58,7 @@ public class VPTree extends SearchAlgorithm {
 
 
     @Override
-    public void build() throws ClusException, IOException, InterruptedException {
+    public void build(int k) throws ClusException, IOException, InterruptedException {
         RowData data = getRun().getDataSet(ClusModelInfoList.TRAINSET);
         LinkedList<VPItem> list = new LinkedList<VPItem>();
         for (DataTuple tuple : data.getData()) // data.m_Data
