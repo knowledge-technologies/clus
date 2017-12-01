@@ -929,7 +929,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
     }
 
 
-    public void setError(ClusErrorList error, int subset) {
+    public void setError(ClusErrorList error, int subset) throws ClusException {
         m_HasRuleErrors = true;
         for (int i = 0; i < m_Rules.size(); i++) {
             ClusRule rule = getRule(i);

@@ -138,9 +138,10 @@ public abstract class ClusModelInfoList implements Serializable {
 
     /***************************************************************************
      * Adding models to it
+     * @throws ClusException 
      ***************************************************************************/
 
-    public ClusModelInfo initModelInfo(int i) {
+    public ClusModelInfo initModelInfo(int i) throws ClusException {
         String name = "M" + (i + 1);
         if (i == ClusModel.DEFAULT)
             name = "Default";
@@ -161,34 +162,35 @@ public abstract class ClusModelInfoList implements Serializable {
      * @param name
      *        Name of the kNN model.
      * @return
+     * @throws ClusException 
      */
-    public ClusModelInfo initModelInfo(int i, String name) {
+    public ClusModelInfo initModelInfo(int i, String name) throws ClusException {
         ClusModelInfo inf = new ClusModelInfo(name);
         initModelInfo(inf);
         return inf;
     }
 
 
-    public void initModelInfo(ClusModelInfo inf) {
+    public void initModelInfo(ClusModelInfo inf) throws ClusException {
         inf.setSelectedErrorsClone(getTrainError(), getTestError(), getValidationError());
         inf.setStatManager(getStatManager());
     }
 
 
-    public ClusModelInfo addModelInfo(String name) {
+    public ClusModelInfo addModelInfo(String name) throws ClusException {
         ClusModelInfo inf = new ClusModelInfo(name);
         addModelInfo(inf);
         return inf;
     }
 
 
-    public void addModelInfo(ClusModelInfo inf) {
+    public void addModelInfo(ClusModelInfo inf) throws ClusException {
         initModelInfo(inf);
         m_Models.add(inf);
     }
 
 
-    public ClusModelInfo addModelInfo(int i) {
+    public ClusModelInfo addModelInfo(int i) throws ClusException {
         while (i >= m_Models.size())
             m_Models.add(null);
         ClusModelInfo inf = m_Models.get(i);
@@ -207,8 +209,9 @@ public abstract class ClusModelInfoList implements Serializable {
      * @param model_name
      *        The name of the model
      * @return
+     * @throws ClusException 
      */
-    public ClusModelInfo addModelInfo(int i, String model_name) {
+    public ClusModelInfo addModelInfo(int i, String model_name) throws ClusException {
         while (i >= m_Models.size())
             m_Models.add(null);
         ClusModelInfo inf = m_Models.get(i);
@@ -234,9 +237,10 @@ public abstract class ClusModelInfoList implements Serializable {
 
     /***************************************************************************
      * Functions for all models
+     * @throws ClusException 
      ***************************************************************************/
 
-    public ArrayList<ClusModelInfo> cloneModels() {
+    public ArrayList<ClusModelInfo> cloneModels() throws ClusException {
         int nb_models = getNbModels();
         ArrayList<ClusModelInfo> clones = new ArrayList<ClusModelInfo>();
         for (int i = 0; i < nb_models; i++) {

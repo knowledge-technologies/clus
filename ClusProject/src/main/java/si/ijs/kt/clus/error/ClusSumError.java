@@ -91,7 +91,7 @@ public class ClusSumError extends ClusError {
 
 
     @Override
-    public ClusError getErrorClone(ClusErrorList par) {
+    public ClusError getErrorClone(ClusErrorList par) throws ClusException {
         ClusSumError result = new ClusSumError(par);
         for (int i = 0; i < m_Errors.size(); i++) {
             ClusError err = (ClusError) m_Errors.get(i);

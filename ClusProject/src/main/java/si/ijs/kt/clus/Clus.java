@@ -414,7 +414,7 @@ public class Clus implements CMDLineArgsProvider {
     }
 
 
-    public final void initializeSummary(ClusInductionAlgorithmType clss) {
+    public final void initializeSummary(ClusInductionAlgorithmType clss) throws ClusException {
         ClusStatManager mgr = m_Induce.getStatManager();
         ClusErrorList error = mgr.createErrorMeasure(m_Score);
         m_Summary.resetAll();
@@ -929,7 +929,7 @@ public class Clus implements CMDLineArgsProvider {
     }
 
 
-    public void addModelErrorMeasures(ClusRun cr) {
+    public void addModelErrorMeasures(ClusRun cr) throws ClusException {
         for (int i = 0; i < cr.getNbModels(); i++) {
             ClusModelInfo info = cr.getModelInfo(i);
             // Compute rule-wise error measures
@@ -1747,7 +1747,7 @@ public class Clus implements CMDLineArgsProvider {
 
 
     public void updateStatistic(String fname, ClusStatistic[] stats) throws ClusException, IOException {
-        MyClusInitializer init = new MyClusInitializer();
+    	MyClusInitializer init = new MyClusInitializer();
         TupleIterator iter = new DiskTupleIterator(fname, init, getPreprocs(true), m_Sett);
         iter.init();
         DataTuple tuple = iter.readTuple();

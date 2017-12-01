@@ -140,7 +140,7 @@ public class TreeErrorComputer extends ClusModelProcessor {
     }
 
 
-    public static void initializeTestErrors(ClusNode node, ClusError error) {
+    public static void initializeTestErrors(ClusNode node, ClusError error) throws ClusException {
         ErrorVisitor visitor = (ErrorVisitor) node.getVisitor();
         visitor.testerr = error.getErrorClone(error.getParent());
         for (int i = 0; i < node.getNbChildren(); i++) {

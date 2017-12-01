@@ -32,6 +32,7 @@ import si.ijs.kt.clus.error.common.ClusNominalError;
 import si.ijs.kt.clus.error.common.ClusNumericError;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusException;
 
 
 public class MultiScoreWrapper extends ClusNumericError {
@@ -119,7 +120,7 @@ public class MultiScoreWrapper extends ClusNumericError {
 
 
     @Override
-    public ClusError getErrorClone(ClusErrorList par) {
+    public ClusError getErrorClone(ClusErrorList par) throws ClusException {
         return new MultiScoreWrapper((ClusNominalError) m_Child.getErrorClone(par), m_Attrs);
     }
 }
