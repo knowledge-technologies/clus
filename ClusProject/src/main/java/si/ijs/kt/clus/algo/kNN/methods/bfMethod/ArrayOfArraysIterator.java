@@ -13,8 +13,9 @@ public class ArrayOfArraysIterator<T> implements Iterable<T> {
 
 	public ArrayOfArraysIterator(T[][] array2d) {
 		m_Array2D = array2d;
-		m_CurrentArray = 0;
 		m_CurrentPosition = 0;
+		m_CurrentArray = 0;
+		firstNonempty();
 	}
 	
 	@Override
@@ -23,23 +24,29 @@ public class ArrayOfArraysIterator<T> implements Iterable<T> {
 
 			@Override
 			public boolean hasNext() {
-				return m_CurrentArray < m_Array2D.length;
+				return m_CurrentArray < m_Array2D.length - 1 || m_CurrentArray == m_Array2D.length - 1 && m_CurrentPosition < m_Array2D[m_CurrentArray].length;
 			}
 
 			@Override
 			public T next() {
-				T item = m_Array2D[m_CurrentArray][m_CurrentPosition];
+				T item = m_Array2D[m_CurrentArray][m_CurrentPosition];				
 				if (m_CurrentPosition == m_Array2D[m_CurrentArray].length - 1) {
 					m_CurrentArray++;
-					m_CurrentPosition = 0;					
+					m_CurrentPosition = 0;
+					firstNonempty();
 				} else {
 					m_CurrentPosition++;
 				}
 				return item;
 			}
-			
 		};
 		return myIter;
+	}
+	
+	private void firstNonempty() {
+		while (m_CurrentArray < m_Array2D.length && 0 == m_Array2D[m_CurrentArray].length) {
+			m_CurrentArray++;
+		}
 	}
 
 }

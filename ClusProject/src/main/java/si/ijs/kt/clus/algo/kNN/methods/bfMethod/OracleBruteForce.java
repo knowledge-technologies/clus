@@ -17,13 +17,16 @@ import si.ijs.kt.clus.util.ClusException;
 
 public class OracleBruteForce extends BruteForce {
 	
-	HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> m_NearestNeighbours;
+	private HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> m_NearestNeighbours;
+	private DataTuple[] m_ChosenInstancesTrain;
+	private DataTuple[] m_ChosenInstancesTest;
 	
 	
 	public OracleBruteForce(ClusRun run, SearchDistance dist) {
 		super(run, dist);
 		m_NearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
 		m_NearestNeighbours.put(SaveLoadNeighbours.DUMMY_TARGET, new HashMap<Integer, NearestNeighbour[][]>());
+		
 	}
 
    
@@ -43,6 +46,19 @@ public class OracleBruteForce extends BruteForce {
 	   }
 	   
 	   Settings sett =  getRun().getStatManager().getSettings();
+	   // get chosen instances
+	   int[] tmp;
+	   tmp = sett.getKNN().getChosenIntancesTrain(m_ListTrain.length);
+	   m_ChosenInstancesTrain = new DataTuple[tmp.length];
+	   for(int i = 0; i < m_ChosenInstancesTrain.length; i++) {
+		   m_ChosenInstancesTrain[i] = m_ListTrain[tmp[i]];
+	   }
+	   tmp = sett.getKNN().getChosenIntancesTest(m_ListTest.length);
+	   m_ChosenInstancesTest = new DataTuple[tmp.length];
+	   for(int i = 0; i < m_ChosenInstancesTest.length; i++) {
+		   m_ChosenInstancesTest[i] = m_ListTest[tmp[i]];
+	   }
+	   
 	   // obtaining neighbours
 	   if (sett.getKNN().shouldLoadNeighbours()) {
 		   ClusReliefFeatureRanking.printMessage("Loading nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
@@ -51,7 +67,7 @@ public class OracleBruteForce extends BruteForce {
 		   SaveLoadNeighbours.assureIsFlatNearestNeighbours(m_NearestNeighbours);		   
 	   } else {
 		   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
-		   for(DataTuple tuple : new ArrayOfArraysIterator<>(new DataTuple[][] {m_ListTrain, m_ListTest})) {
+		   for(DataTuple tuple : new ArrayOfArraysIterator<>(new DataTuple[][] {m_ChosenInstancesTrain, m_ChosenInstancesTest})) {
 			   NN[] temp = super.returnPureNNs(tuple, k);
 			   NearestNeighbour[] nns = new NearestNeighbour[temp.length];
 			   for(int n = 0; n < nns.length; n++) {

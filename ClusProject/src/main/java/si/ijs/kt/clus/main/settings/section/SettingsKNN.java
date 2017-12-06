@@ -87,6 +87,7 @@ public class SettingsKNN extends SettingsBase {
     
     public int[] getChosenIntancesTrain(int nbTrainInstances) {
     	int[] inSettings = m_ChosenInstancesTrain.getIntVector();
+    	Arrays.sort(inSettings);
     	if(Arrays.equals(inSettings, DUMMY_INSTANCES)) {
     		return rangeInterval(nbTrainInstances);
     	} else {
@@ -96,6 +97,7 @@ public class SettingsKNN extends SettingsBase {
     
     public int[] getChosenIntancesTest(int nbTestInstances) {
     	int[] inSettings = m_ChosenInstancesTest.getIntVector();
+    	Arrays.sort(inSettings);
     	if(Arrays.equals(inSettings, DUMMY_INSTANCES)) {
     		return rangeInterval(nbTestInstances);
     	} else {
