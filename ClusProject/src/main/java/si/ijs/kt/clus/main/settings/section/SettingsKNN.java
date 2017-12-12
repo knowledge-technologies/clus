@@ -87,22 +87,12 @@ public class SettingsKNN extends SettingsBase {
     
     public int[] getChosenIntancesTrain(int nbTrainInstances) {
     	int[] inSettings = m_ChosenInstancesTrain.getIntVector();
-    	Arrays.sort(inSettings);
-    	if(Arrays.equals(inSettings, DUMMY_INSTANCES)) {
-    		return rangeInterval(nbTrainInstances);
-    	} else {
-    		return inSettings;
-    	}
+    	return getChosenInstances(nbTrainInstances, inSettings);
     }
     
     public int[] getChosenIntancesTest(int nbTestInstances) {
     	int[] inSettings = m_ChosenInstancesTest.getIntVector();
-    	Arrays.sort(inSettings);
-    	if(Arrays.equals(inSettings, DUMMY_INSTANCES)) {
-    		return rangeInterval(nbTestInstances);
-    	} else {
-    		return inSettings;
-    	}
+    	return getChosenInstances(nbTestInstances, inSettings);
     }
    
     public boolean shouldSaveNeighbours() {
@@ -135,14 +125,13 @@ public class SettingsKNN extends SettingsBase {
     
     private static boolean mustNotComputeError(int nb_instances, int[] chosenInstances) {
     	Arrays.sort(chosenInstances);
-    	int[] range = new int[nb_instances];
-    	for (int i = 0; i < nb_instances; i++) {
-    		range[i] = i;
-    	}
+    	int[] range = rangeInterval(nb_instances);
     	return !Arrays.equals(chosenInstances, range);
     }
     
-    private int[] getChosenInstances(int nbInstances, int[] chosenInstances) {
+    
+    private static int[] getChosenInstances(int nbInstances, int[] chosenInstances) {
+    	Arrays.sort(chosenInstances);
     	if (Arrays.equals(chosenInstances, DUMMY_INSTANCES)) {
     		return rangeInterval(nbInstances);
     	} else {
@@ -150,7 +139,8 @@ public class SettingsKNN extends SettingsBase {
     	}
     }
     
-    private int[] rangeInterval(int upperBound) {
+    
+    private static int[] rangeInterval(int upperBound) {
     	int[] interval = new int[upperBound];
     	for (int i = 0; i < upperBound; i++) {
     		interval[i] = i;

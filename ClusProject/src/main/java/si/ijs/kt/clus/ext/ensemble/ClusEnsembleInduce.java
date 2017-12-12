@@ -298,6 +298,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 nbRankings = weights.length;
                 franking.setSymbolicFimpHeader(weights);
                 break;
+            case None:
+            	break;
             default:
             	throw new RuntimeException("Wrong feature ranking method: " + sett.getRankingMethod().toString());
         }
