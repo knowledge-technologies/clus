@@ -143,7 +143,7 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
         	double summ_variances_comp = 0.0;
             for (int j = 0; j < node.getNbChildren(); j++) {
                 ClusNode child = (ClusNode) node.getChild(j);
-                summ_variances += ((ComponentStatistic) child.getClusteringStat()).getSVarS(i - 1);
+                summ_variances_comp += ((ComponentStatistic) child.getClusteringStat()).getSVarS(i - 1);
             }
         	gain[i] = total_variance_comp - summ_variances_comp;
         }
