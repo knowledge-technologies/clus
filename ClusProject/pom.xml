@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>si.ijs.kt</groupId>
   <artifactId>clus</artifactId>
-  <version>1.0</version>
+  <version>1.0.0</version>
   <properties>
     <project.build.sourceEncoding>Cp1250</project.build.sourceEncoding>
   </properties>
