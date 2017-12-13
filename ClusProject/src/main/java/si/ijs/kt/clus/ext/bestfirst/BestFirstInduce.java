@@ -108,18 +108,18 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
         }
         else {
             switch (sett.getEnsembleMethod()) {
-                case SettingsEnsemble.ENSEMBLE_METHOD_BAGGING:
+                case Bagging:
                     return schema.getDescriptiveAttributes();
-                case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST:
+                case RForest:
                     ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
                     //ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), null);
                     ClusEnsembleInduce.setRandomSubspaces(ClusEnsembleInduce.selectRandomSubspaces(attrsAll, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandom.RANDOM_SELECTION, null));
                     return ClusEnsembleInduce.getRandomSubspaces();
-                case SettingsEnsemble.ENSEMBLE_METHOD_RSUBSPACES:
+                case RSubspaces:
                     return ClusEnsembleInduce.getRandomSubspaces();
-                case SettingsEnsemble.ENSEMBLE_METHOD_BAGSUBSPACES:
+                case BagSubspaces:
                     return ClusEnsembleInduce.getRandomSubspaces();
-                case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
+                case RFeatSelection: //SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
                     //ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), null);
                     ClusEnsembleInduce.setRandomSubspaces(ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandom.RANDOM_SELECTION, null));

@@ -86,6 +86,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     public RowData(RowData data) {
         this(data.m_Data, data.getNbRows());
         m_Schema = data.m_Schema;
+        setIndices();
     }
 
 
@@ -93,12 +94,20 @@ public class RowData extends ClusData implements MSortable, Serializable {
         m_Data = new DataTuple[size];
         System.arraycopy(data, 0, m_Data, 0, size);
         setNbRows(size);
+        setIndices();
     }
 
 
     public RowData(ArrayList list, ClusSchema schema) {
         m_Schema = schema;
         setFromList(list);
+        setIndices();
+    }
+    
+    private void setIndices() {
+        for(int i = 0; i < m_Data.length; i++) {
+        	m_Data[i].setDatasetIndex(i);
+        }
     }
 
 

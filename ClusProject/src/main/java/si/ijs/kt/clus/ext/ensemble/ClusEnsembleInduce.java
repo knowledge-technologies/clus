@@ -63,6 +63,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.section.SettingsMLC;
@@ -163,7 +164,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         m_NbMaxBags = getNbTrees(m_OutEnsembleAt.length - 1);
         settMain.getExperimental();
         m_FeatRank = sett.shouldPerformRanking() && !SettingsExperimental.IS_XVAL;
-        if (m_FeatRank && !sett.shouldEstimateOOB() && sett.getRankingMethod() == SettingsEnsemble.RANKING_TYPE_RFOREST) {
+        if (m_FeatRank && !sett.shouldEstimateOOB() && sett.getRankingMethod() == EnsembleRanking.RForest) {
             System.err.println("For Feature Ranking RForest, OOB estimate of error should also be performed.");
             System.err.println("OOB Error Estimate is set to true.");
 
@@ -253,7 +254,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         ArrayList<String> rankingNames = new ArrayList<String>();
         switch (sett.getRankingMethod()) {
-            case SettingsEnsemble.RANKING_TYPE_RFOREST:
+            case RForest:
                 ClusErrorList errLst = franking.computeErrorList(schema, mgr);
                 int nbErrors = errLst.getNbErrors();
                 for (int i = 0; i < nbErrors; i++) {
@@ -270,7 +271,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
                 franking.setRForestFimpHeader(rankingNames);
                 break;
-            case SettingsEnsemble.RANKING_TYPE_GENIE3:
+            case Genie3:
                 nbRankings++; // overall
                 rankingNames.add(String.format("overAll"));
                 if (sett.shouldPerformRankingPerTarget()) {
@@ -289,7 +290,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
                 franking.setGenie3FimpHeader(rankingNames);
                 break;
-            case SettingsEnsemble.RANKING_TYPE_SYMBOLIC:
+            case Symbolic:
                 double[] weights = sett.getSymbolicWeights();
                 if (weights == null) {
                     weights = new double[] { sett.getSymbolicWeight() };
@@ -297,11 +298,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 nbRankings = weights.length;
                 franking.setSymbolicFimpHeader(weights);
                 break;
+            case None:
+            	break;
+            default:
+            	throw new RuntimeException("Wrong feature ranking method: " + sett.getRankingMethod().toString());
         }
         franking.setNbFeatureRankings(nbRankings);
-        int ensType = sett.getEnsembleMethod();
-        int rankType = sett.getRankingMethod();
-        franking.setEnsembleRankigDescription(ensType, rankType, nbTrees);
+        franking.setEnsembleRankigDescription(nbTrees);
     }
 
 
@@ -407,41 +410,43 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         switch (set.getEnsembleMethod()) {
-            case SettingsEnsemble.ENSEMBLE_METHOD_BAGGING: { // Bagging
+            case Bagging: { // Bagging
                 System.out.println("Ensemble Method: Bagging");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST: { // RForest
+            case RForest: { // RForest
                 System.out.println("Ensemble Method: Random Forest");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_RSUBSPACES: { // RSubspaces
+            case RSubspaces: { // RSubspaces
                 System.out.println("Ensemble Method: Random Subspaces");
                 induceSubspaces(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_BAGSUBSPACES: { // Bagging Subspaces
+            case BagSubspaces: { // Bagging Subspaces
                 System.out.println("Ensemble Method: Bagging of Subspaces");
                 induceBaggingSubspaces(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP: { // RForest without bootstrapping (setting: RFeatSelection)
+            case RFeatSelection: { // RForest without bootstrapping (setting: RFeatSelection)
                 System.out.println("Ensemble Method: Random Forest without bootstrapping");
                 induceRForestNoBootstrap(cr); // TODO: martinb has a problem with the name of this method
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_PERT: { // PERT in combination with bagging
+            case Pert: { // PERT in combination with bagging
                 System.out.println("Ensemble Method: PERT (in combination with Bagging)");
                 induceBagging(cr);
                 break;
             }
-            case SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES: { // Extra-Trees ensemble (published by Geurts et al.)
+            case ExtraTrees: { // Extra-Trees ensemble (published by Geurts et al.)
                 System.out.println("Ensemble Method: Extra-trees");
                 induceExtraTrees(cr);
                 break;
             }
+            default:
+            	throw new RuntimeException(String.format("Inappropriate ensemble method: %s", set.getEnsembleMethod().toString()));
         }
         if (m_FeatRank) {
             //            m_FeatureRanking.createFimp(cr);
@@ -872,16 +877,16 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (m_FeatRank) {// franking
             // this suffices even in the case when we grow more than one forest 
             //if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
-            if (sett.getRankingMethod() == SettingsEnsemble.RANKING_TYPE_RFOREST) {
+            if (sett.getRankingMethod() == EnsembleRanking.RForest) {
                 fimportances = m_FeatureRankings[0].calculateRFimportance(model, cr, oob_sel, rnd, ind.getStatManager());
             }
             //else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3) {
-            else if (sett.getRankingMethod() == SettingsEnsemble.RANKING_TYPE_GENIE3) {
+            else if (sett.getRankingMethod() == EnsembleRanking.Genie3) {
                 // m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
                 fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model, ind.getStatManager());
             }
             //else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
-            else if (sett.getRankingMethod() == SettingsEnsemble.RANKING_TYPE_SYMBOLIC) {
+            else if (sett.getRankingMethod() == EnsembleRanking.Symbolic) {
                 double[] weights = sett.getSymbolicWeights(); // m_BagClus.getSettings().getSymbolicWeights();
                 if (weights == null) {
                     weights = new double[] { sett.getSymbolicWeight() }; //m_BagClus.getSettings().getSymbolicWeight() };
@@ -1224,12 +1229,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             // if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST)
             // m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
             //if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3) {
-            if (getSettings().getEnsemble().getRankingMethod() == SettingsEnsemble.RANKING_TYPE_GENIE3) {
+            if (getSettings().getEnsemble().getRankingMethod() == EnsembleRanking.Genie3) {
                 // m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
                 fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model, ind.getStatManager());
             }
             //else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
-            else if (getSettings().getEnsemble().getRankingMethod() == SettingsEnsemble.RANKING_TYPE_SYMBOLIC) {
+            else if (getSettings().getEnsemble().getRankingMethod() == EnsembleRanking.Symbolic) {
                 double[] weights = getSettings().getEnsemble().getSymbolicWeights(); //m_BagClus.getSettings().getSymbolicWeights();
                 if (weights == null) {
                     weights = new double[] { getSettings().getEnsemble().getSymbolicWeight() }; //m_BagClus.getSettings().getSymbolicWeight() };
@@ -1241,7 +1246,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 System.err.println("The following feature ranking methods are implemented for Extra trees:");
                 System.err.println("Genie3");
                 System.err.println("Symbolic");
-                System.err.println("But you have chosen ranking method " + getSettings().getEnsemble().getRankingTypeName(getSettings().getEnsemble().getRankingMethod()));
+                System.err.println("But you have chosen ranking method " + getSettings().getEnsemble().getRankingMethodName());
                 System.err.println("No ranking will be computed.");
                 m_FeatRank = false;
 

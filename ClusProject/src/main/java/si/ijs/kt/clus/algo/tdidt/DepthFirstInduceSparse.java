@@ -16,7 +16,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.data.type.primitive.SparseNumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.util.ClusException;
@@ -81,8 +81,8 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 
     @Override
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws Exception {
-        if (getSettings().getEnsemble().isEnsembleMode() && ((getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST)
-                || (getSettings().getEnsemble().getEnsembleMethod() == SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP))) {
+        if (getSettings().getEnsemble().isEnsembleMode() && ((getSettings().getEnsemble().getEnsembleMethod() == EnsembleMethod.RForest)
+                || (getSettings().getEnsemble().getEnsembleMethod() == EnsembleMethod.RFeatSelection))) {
             induceRandomForest(node, data, rnd);
         }
         else {

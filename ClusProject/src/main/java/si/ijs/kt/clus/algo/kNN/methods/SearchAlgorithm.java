@@ -56,7 +56,7 @@ public abstract class SearchAlgorithm {
      * Building search structure on known samples.
      * @throws InterruptedException 
      */
-    public abstract void build() throws ClusException, IOException, InterruptedException;
+    public abstract void build(int k) throws ClusException, IOException, InterruptedException;
 
 
     /**
