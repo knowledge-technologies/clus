@@ -240,4 +240,14 @@ public class MlcMeasuresForHmlc extends ClusError {
             super.add(other);
         }
     }
+    
+    
+    @Override
+    public void showModelError(PrintWriter out, int detail) {
+    	try {
+			showModelError(out, null, detail);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
 }
