@@ -22,7 +22,11 @@
 
 package si.ijs.kt.clus.util;
 
-import javax.swing.filechooser.FileNameExtensionFilter;
+import java.util.HashMap;
+
+import si.ijs.kt.clus.data.ClusSchema;
+import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.main.ClusStatManager;
 
 public class ClusUtil {
 
@@ -116,6 +120,20 @@ public class ClusUtil {
 		String answer = pathToFile.replace("\\", "/");
 		int i = answer.lastIndexOf("/") + 1;		
 		return answer.substring(i);		
+	}
+	
+	
+	public static HashMap<String, Integer> getDiscriptiveAttributesIndices(ClusStatManager statmgr){
+		HashMap<String, Integer> indices = new HashMap<String, Integer>();
+		ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(ClusAttrType.ATTR_USE_DESCRIPTIVE, ClusAttrType.THIS_TYPE));
+        if (statmgr.getSettings().getOutput().isOutputPythonModel()) {
+            for (int ii = 0; ii < cat.length - 1; ii++){
+                indices.put(cat[ii].getName(), ii);
+            }
+            int ii = cat.length - 1;
+            indices.put(cat[ii].getName(), ii);
+        }
+        return indices;
 	}
 
 }

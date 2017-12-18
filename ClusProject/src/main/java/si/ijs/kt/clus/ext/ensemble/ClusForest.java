@@ -100,8 +100,8 @@ public class ClusForest implements ClusModel, Serializable {
 
     ClusStatistic m_Stat;
     boolean m_PrintModels;
-    String m_AttributeList;
-    HashMap<String, Integer> m_DescriptiveIndex;
+//    String m_AttributeList;
+    
     String m_AppName;
 
     private ClusEnsembleInduceOptimization m_Optimization;
@@ -109,8 +109,10 @@ public class ClusForest implements ClusModel, Serializable {
     protected Settings m_Settings;
     protected ClusStatManager m_StatManager;
     
-    private String m_PythonFileTreePattern = "_trees";
+    private static String m_PythonFileTreePattern = "_trees";
     private String m_PythonFileEnsemblePattern = "_ensemble_%dtrees";
+
+	private HashMap<String, Integer> m_DescriptiveIndex;
 
 
     public ClusForest(ClusStatManager statmgr) {
@@ -163,18 +165,8 @@ public class ClusForest implements ClusModel, Serializable {
         }
 
         m_AppName = statmgr.getSettings().getGeneric().getFileAbsolute(statmgr.getSettings().getGeneric().getAppName());
-        m_AttributeList = "";
-        m_DescriptiveIndex = new HashMap<String, Integer>();
-        ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(ClusAttrType.ATTR_USE_DESCRIPTIVE, ClusAttrType.THIS_TYPE));
-        if (statmgr.getSettings().getOutput().isOutputPythonModel()) {
-            for (int ii = 0; ii < cat.length - 1; ii++){
-                m_AttributeList = m_AttributeList.concat(cat[ii].getName() + ", ");
-                m_DescriptiveIndex.put(cat[ii].getName(), ii);
-            }
-            m_AttributeList = m_AttributeList.concat(cat[cat.length - 1].getName());
-            int ii = cat.length - 1;
-            m_DescriptiveIndex.put(cat[ii].getName(), ii);
-        }
+//        m_AttributeList = "";
+        m_DescriptiveIndex = ClusUtil.getDiscriptiveAttributesIndices(statmgr);
         m_Optimization = opt;
 
     }
@@ -699,15 +691,10 @@ public class ClusForest implements ClusModel, Serializable {
         }
     }
 
-
+    
     @Override
-    public void printModelToPythonScript(PrintWriter wrt) {
-        printForestToPython();
-    }
-    
-    
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
-        printForestToPython(dict);
+        printForestToPython();
     }
     
 
@@ -723,69 +710,61 @@ public class ClusForest implements ClusModel, Serializable {
      * def ensemble(xs): return aggregate(trees' predictions)
      * 
      */
-    public void writePythonEnsembleFile(ClusRun cr) {
-    	String treeFile = ClusUtil.fileName(m_AppName) + m_PythonFileTreePattern;
-        try {
-            File pyscript = new File(m_AppName + String.format(m_PythonFileEnsemblePattern, m_NbModels) + ".py");
-            PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
-//            for(int i = 0; i < m_Forest.size(); i++) {
-//            	wrtr.println("import " + String.format(m_PythonFileTreePatterns[0], i + 1)); // import the base models
-//            }
-            wrtr.println(String.format("import %s", treeFile));
-            wrtr.print("\n\n"); // two empty lines
-            wrtr.println("def ensemble(xs):");
-            wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_Forest.size()));
-            wrtr.println("\tfor i in range(len(base_predictions)):");
-            wrtr.println(String.format("\t\ttree = eval(\"%s.tree_{}\".format(i + 1))", treeFile));
-            wrtr.println("\t\tbase_predictions[i] = tree(xs)");
-            wrtr.println("\treturn aggregate(base_predictions)");
-            wrtr.println();
-            String aggregation;
-            switch(cr.getStatManager().getMode()) {
-            	case ClusStatManager.MODE_CLASSIFY:
-            		aggregation = 
-	            	   "def aggregate(predictions):\n" + 
-	            		"    n = len(predictions)\n" + 
-	            		"    m = len(predictions[0])\n" + 
-	            		"    counts = [{} for _ in range(m)]\n" + 
-	            		"    for i in range(n):\n" + 
-	            		"        for j in range(m):\n" + 
-	            		"            pred = predictions[i][j]\n" + 
-	            		"            if pred not in counts[j]:\n" + 
-	            		"                counts[j][pred] = 0\n" + 
-	            		"            counts[j][pred] += 1\n" + 
-	            		"    return [max(counts[j], key=lambda pred: counts[j][pred]) for j in range(m)]";
-            	   break;
-            	case ClusStatManager.MODE_REGRESSION:
-            		aggregation =
-            			"def aggregate(predictions):\n" + 
-            			"    n = len(predictions)\n" + 
-            			"    m = len(predictions[0])\n" + 
-            			"    sums = [0 for _ in range(m)]\n" + 
-            			"    for i in range(n):\n" + 
-            			"        for j in range(m):\n" + 
-            			"            sums[j] += predictions[i][j]\n" + 
-            			"    return [sums[j] / n for j in range(m)]";
-            		break;
-            	default:
-            		System.err.println("Unsupported mode, you will have to write your own aggregation function.");
-            		aggregation =
-            			"def aggregate(predictions):\n" +
-            			"    return None";
-            }
-            wrtr.println(aggregation);           
-
-            
-            wrtr.flush();
-            wrtr.close();
-            System.out.println(String.format("Python ensemble code for the model %s written to: ", getModelInfo()) + pyscript.getName());
+    public void writePythonEnsembleFile(PrintWriter wrtr, String treeFile) {
+        wrtr.println(String.format("def ensemble_%d(xs):", m_Forest.size()));
+		wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_Forest.size()));
+		wrtr.println("\tfor i in range(len(base_predictions)):");
+		wrtr.println(String.format("\t\ttree = eval(\"%s.tree_{}\".format(i + 1))", treeFile));
+		wrtr.println("\t\tbase_predictions[i] = tree(xs)");
+		wrtr.println("\treturn aggregate(base_predictions)");
+		wrtr.println();
+		wrtr.println();
+    }
+    
+    public static String getTreeFile(String appName) {
+    	return ClusUtil.fileName(appName) + m_PythonFileTreePattern;
+    }
+    
+       
+    public static void writePythonAggregation(PrintWriter wrtr, String treeFile, int mode) {
+    	wrtr.println(String.format("import %s", treeFile));
+        wrtr.print("\n\n"); // two empty lines
+    	String aggregation;
+        switch(mode) {
+        	case ClusStatManager.MODE_CLASSIFY:
+        		aggregation = 
+            	   "def aggregate(predictions):\n" + 
+            		"    n = len(predictions)\n" + 
+            		"    m = len(predictions[0])\n" + 
+            		"    counts = [{} for _ in range(m)]\n" + 
+            		"    for i in range(n):\n" + 
+            		"        for j in range(m):\n" + 
+            		"            pred = predictions[i][j]\n" + 
+            		"            if pred not in counts[j]:\n" + 
+            		"                counts[j][pred] = 0\n" + 
+            		"            counts[j][pred] += 1\n" + 
+            		"    return [max(counts[j], key=lambda pred: counts[j][pred]) for j in range(m)]";
+        	   break;
+        	case ClusStatManager.MODE_REGRESSION:
+        		aggregation =
+        			"def aggregate(predictions):\n" + 
+        			"    n = len(predictions)\n" + 
+        			"    m = len(predictions[0])\n" + 
+        			"    sums = [0 for _ in range(m)]\n" + 
+        			"    for i in range(n):\n" + 
+        			"        for j in range(m):\n" + 
+        			"            sums[j] += predictions[i][j]\n" + 
+        			"    return [sums[j] / n for j in range(m)]";
+        		break;
+        	default:
+        		System.err.println("Unsupported mode, you will have to write your own aggregation function.");
+        		aggregation =
+        			"def aggregate(predictions):\n" +
+        			"    return None";
         }
-        catch (IOException e) {
-            System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+        wrtr.println(aggregation);
+        wrtr.println();
+        wrtr.println();
     }
     
 
@@ -807,8 +786,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public void printForestToPython(HashMap<String, Integer> dict) {
-        // create a separate .py file
+    public void printForestToPython() {
         try {
             File pyscript = new File(m_AppName + m_PythonFileTreePattern + ".py");
             PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
@@ -821,11 +799,7 @@ public class ClusForest implements ClusModel, Serializable {
                 wrtr.println("def tree_" + (i + 1) + "(xs):"); // m_AttributeList
                 ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
                 wrtr.println();
-            }
-            
-            // TODO: matejp please add voting procedure python script:)
-            // http://source.ijs.si/mpetkovic/clusproject/issues/54
-            
+            }          
             
             wrtr.flush();
             wrtr.close();
@@ -839,10 +813,6 @@ public class ClusForest implements ClusModel, Serializable {
 		}
     }
     
-    public void printForestToPython() {
-        printForestToPython(null);
-    }
-
 
     @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean ex) {

@@ -1110,7 +1110,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             for (int i = 0; i < m_NbTarget; i++) {
                 if (i != 0)
                     buf.append(",");
-                buf.append(m_Attrs[i].getValue(m_MajorityClasses[i]));
+                buf.append("\"" + m_Attrs[i].getValue(m_MajorityClasses[i]) + "\"");
             }
             buf.append("]");
         }

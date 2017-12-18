@@ -400,7 +400,7 @@ public class KnnModel implements ClusModel, Serializable {
 
 
     @Override
-    public void printModelToPythonScript(PrintWriter wrt) {
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToPythonScript() - Not supported yet for kNN.");
     }
 

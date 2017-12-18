@@ -160,7 +160,7 @@ public class ClusOptionNode extends MyNode {
 
 
     @Override
-    public void printModelToPythonScript(PrintWriter wrt) {
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices) {
         printTreeToPythonScript(wrt, "\t");
     }
 

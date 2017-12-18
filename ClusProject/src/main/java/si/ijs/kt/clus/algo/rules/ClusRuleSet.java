@@ -662,7 +662,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
 
     @Override
-    public void printModelToPythonScript(PrintWriter wrt) {
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices) {
     }
 
 

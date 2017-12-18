@@ -102,7 +102,7 @@ public class HMCAverageTreeModel implements ClusModel {
 
 
     @Override
-    public void printModelToPythonScript(PrintWriter wrt) {
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices) {
     }
 
     @Override

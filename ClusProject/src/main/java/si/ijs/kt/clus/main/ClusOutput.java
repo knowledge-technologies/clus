@@ -22,12 +22,15 @@
 
 package si.ijs.kt.clus.main;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -45,6 +48,7 @@ import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -294,8 +298,14 @@ public class ClusOutput {
         
 
         if (getSettings().getOutput().isOutputPythonModel()) {
-        	// print only max sized forest trees (the others are nested)
+        	String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
+        	String pyName = appName + "_models.py";
+        	File pyscript = new File(getSettings().getGeneric().getFileAbsolute(pyName));
+        	PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
+        	
         	if (getSettings().getEnsemble().isEnsembleMode()) {
+        		String treeFile = ClusForest.getTreeFile(appName);
+        		ClusForest.writePythonAggregation(wrtr, treeFile, cr.getStatManager().getMode());        		
         		int maxSize = -1;
         		int maxSizedForest = -1;
         		// write ensemble files
@@ -307,34 +317,28 @@ public class ClusOutput {
                 			maxSize = trees;
                 			maxSizedForest = i;
                 		}
-                		((ClusForest) root).writePythonEnsembleFile(cr);
+                		((ClusForest) root).writePythonEnsembleFile(wrtr, treeFile);
                 	}
                 }
-        		// write trees files
+        		System.out.println(String.format("Python ensemble code written to: %s", pyName));
+        		// print only max sized forest trees (the other forests are nested)
         		ClusForest root = (ClusForest) models.get(maxSizedForest);
-        		root.printModelToPythonScript(m_Writer);
-        		
+        		root.printForestToPython();        		
         	} else {
-        		ClusModel root = models.get(ClusModel.DEFAULT);
-        		m_Writer.print("def clus_default(xs):");
-                root.printModelToPythonScript(m_Writer);
+        		HashMap<Integer, String> pythonNames = new HashMap<Integer, String>();
+        		pythonNames.put(ClusModel.DEFAULT, "default");
+        		pythonNames.put(ClusModel.ORIGINAL, "original");
+        		pythonNames.put(ClusModel.PRUNED, "pruned");
+        		String defPattern = "def %s(xs):";
+        		HashMap<String, Integer> descrIndices = ClusUtil.getDiscriptiveAttributesIndices(cr.getStatManager());
+        		for(int i = 0; i < cr.getNbModels(); i++) {
+        			ClusModel root = models.get(i);
+        			wrtr.println(String.format(defPattern, pythonNames.get(i)));
+        			root.printModelToPythonScript(wrtr, descrIndices);
+        		}
         	}
-            
-//        	
-//        	
-//        	
-//            if (getSettings().getEnsemble().isEnsembleMode()) { // && (i == ClusModel.ORIGINAL)
-//            	int trees = ((ClusForest) root).getNbModels();
-//            	
-//            	
-//                root.printModelToPythonScript(m_Writer);// root is a forest
-//            }
-//            else if (i == ClusModel.DEFAULT) {
-//                // prints the python code for the default model
-//                m_Writer.print("def clus_default(xs):");
-//                root.printModelToPythonScript(m_Writer);// root is a forest             
-//
-//            }
+        	
+        	wrtr.close();
         }
         
         

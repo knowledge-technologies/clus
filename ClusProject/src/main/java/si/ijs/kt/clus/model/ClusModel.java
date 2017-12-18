@@ -83,7 +83,7 @@ public interface ClusModel {
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive);
 
 
-    public void printModelToPythonScript(PrintWriter wrt);
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> descriptiveAttributeIndices);
     
 
     public JsonObject getModelJSON();
