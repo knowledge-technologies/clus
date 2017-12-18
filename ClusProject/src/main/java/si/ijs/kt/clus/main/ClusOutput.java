@@ -302,13 +302,15 @@ public class ClusOutput {
         	String pyName = appName + "_models.py";
         	File pyscript = new File(getSettings().getGeneric().getFileAbsolute(pyName));
         	PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
-        	
         	if (getSettings().getEnsemble().isEnsembleMode()) {
+        		// If in enseble mode, we write two files:
+        		// - <app name>_models.py with ensemble methods which use the imported methods from
+        		// - <app_name>_trees.py where the trees are defined
         		String treeFile = ClusForest.getTreeFile(appName);
+        		// write ensemble file
         		ClusForest.writePythonAggregation(wrtr, treeFile, cr.getStatManager().getMode());        		
         		int maxSize = -1;
         		int maxSizedForest = -1;
-        		// write ensemble files
         		for(int i = 0; i < cr.getNbModels(); i++) {
                 	ClusModel root = models.get(i);
                 	if(root instanceof ClusForest) {
@@ -325,6 +327,8 @@ public class ClusOutput {
         		ClusForest root = (ClusForest) models.get(maxSizedForest);
         		root.printForestToPython();        		
         	} else {
+        		// Otherwise, we write only the <app name>_models.py file
+        		// Tested for clus.jar something.s case
         		HashMap<Integer, String> pythonNames = new HashMap<Integer, String>();
         		pythonNames.put(ClusModel.DEFAULT, "default");
         		pythonNames.put(ClusModel.ORIGINAL, "original");
@@ -333,8 +337,13 @@ public class ClusOutput {
         		HashMap<String, Integer> descrIndices = ClusUtil.getDiscriptiveAttributesIndices(cr.getStatManager());
         		for(int i = 0; i < cr.getNbModels(); i++) {
         			ClusModel root = models.get(i);
-        			wrtr.println(String.format(defPattern, pythonNames.get(i)));
-        			root.printModelToPythonScript(wrtr, descrIndices);
+        			if(pythonNames.containsKey(i)) {
+        				wrtr.println(String.format(defPattern, pythonNames.get(i)));
+        				root.printModelToPythonScript(wrtr, descrIndices);
+        			} else {
+        				System.err.println("Warning: das ist kein DEFAULT/ORIGINAL/PRUNED model and will not be printed. Extend the pythonNames hash map!");
+        			}
+        			
         		}
         	}
         	
