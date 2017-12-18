@@ -37,7 +37,6 @@ import com.google.gson.JsonObject;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.algo.rules.ClusRulesFromTree;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
-import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
@@ -711,8 +710,8 @@ public class ClusForest implements ClusModel, Serializable {
      * 
      */
     public void writePythonEnsembleFile(PrintWriter wrtr, String treeFile) {
-        wrtr.println(String.format("def ensemble_%d(xs):", m_Forest.size()));
-		wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_Forest.size()));
+        wrtr.println(String.format("def ensemble_%d(xs):", m_NbModels));
+		wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_NbModels));
 		wrtr.println("\tfor i in range(len(base_predictions)):");
 		wrtr.println(String.format("\t\ttree = eval(\"%s.tree_{}\".format(i + 1))", treeFile));
 		wrtr.println("\t\tbase_predictions[i] = tree(xs)");
