@@ -59,6 +59,7 @@ import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.RegressionStatBase;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 
@@ -107,6 +108,9 @@ public class ClusForest implements ClusModel, Serializable {
 
     protected Settings m_Settings;
     protected ClusStatManager m_StatManager;
+    
+    private String m_PythonFileTreePattern = "_trees";
+    private String m_PythonFileEnsemblePattern = "_ensemble_%dtrees";
 
 
     public ClusForest(ClusStatManager statmgr) {
@@ -705,7 +709,85 @@ public class ClusForest implements ClusModel, Serializable {
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
         printForestToPython(dict);
     }
+    
 
+    /**
+     * Creates a file of the following form:
+     * 
+     * import tree1<br>
+     * import tree2<br>
+     * ...<br>
+     * import treeN<br>
+     * <br>
+     * <br>
+     * def ensemble(xs): return aggregate(trees' predictions)
+     * 
+     */
+    public void writePythonEnsembleFile(ClusRun cr) {
+    	String treeFile = ClusUtil.fileName(m_AppName) + m_PythonFileTreePattern;
+        try {
+            File pyscript = new File(m_AppName + String.format(m_PythonFileEnsemblePattern, m_NbModels) + ".py");
+            PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
+//            for(int i = 0; i < m_Forest.size(); i++) {
+//            	wrtr.println("import " + String.format(m_PythonFileTreePatterns[0], i + 1)); // import the base models
+//            }
+            wrtr.println(String.format("import %s", treeFile));
+            wrtr.print("\n\n"); // two empty lines
+            wrtr.println("def ensemble(xs):");
+            wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_Forest.size()));
+            wrtr.println("\tfor i in range(len(base_predictions)):");
+            wrtr.println(String.format("\t\ttree = eval(\"%s.tree_{}\".format(i + 1))", treeFile));
+            wrtr.println("\t\tbase_predictions[i] = tree(xs)");
+            wrtr.println("\treturn aggregate(base_predictions)");
+            wrtr.println();
+            String aggregation;
+            switch(cr.getStatManager().getMode()) {
+            	case ClusStatManager.MODE_CLASSIFY:
+            		aggregation = 
+	            	   "def aggregate(predictions):\n" + 
+	            		"    n = len(predictions)\n" + 
+	            		"    m = len(predictions[0])\n" + 
+	            		"    counts = [{} for _ in range(m)]\n" + 
+	            		"    for i in range(n):\n" + 
+	            		"        for j in range(m):\n" + 
+	            		"            pred = predictions[i][j]\n" + 
+	            		"            if pred not in counts[j]:\n" + 
+	            		"                counts[j][pred] = 0\n" + 
+	            		"            counts[j][pred] += 1\n" + 
+	            		"    return [max(counts[j], key=lambda pred: counts[j][pred]) for j in range(m)]";
+            	   break;
+            	case ClusStatManager.MODE_REGRESSION:
+            		aggregation =
+            			"def aggregate(predictions):\n" + 
+            			"    n = len(predictions)\n" + 
+            			"    m = len(predictions[0])\n" + 
+            			"    sums = [0 for _ in range(m)]\n" + 
+            			"    for i in range(n):\n" + 
+            			"        for j in range(m):\n" + 
+            			"            sums[j] += predictions[i][j]\n" + 
+            			"    return [sums[j] / n for j in range(m)]";
+            		break;
+            	default:
+            		System.err.println("Unsupported mode, you will have to write your own aggregation function.");
+            		aggregation =
+            			"def aggregate(predictions):\n" +
+            			"    return None";
+            }
+            wrtr.println(aggregation);           
+
+            
+            wrtr.flush();
+            wrtr.close();
+            System.out.println(String.format("Python ensemble code for the model %s written to: ", getModelInfo()) + pyscript.getName());
+        }
+        catch (IOException e) {
+            System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");
+            e.printStackTrace();
+        } catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+    }
+    
 
     @Override
     public JsonObject getModelJSON() {
@@ -728,15 +810,15 @@ public class ClusForest implements ClusModel, Serializable {
     public void printForestToPython(HashMap<String, Integer> dict) {
         // create a separate .py file
         try {
-            File pyscript = new File(m_AppName + "_models.py");
+            File pyscript = new File(m_AppName + m_PythonFileTreePattern + ".py");
             PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
             wrtr.println("# Python code of the trees in the ensemble");
             wrtr.println();
             
             for (int i = 0; i < m_Forest.size(); i++) {
                 ClusModel model = m_Forest.get(i);
-                wrtr.println("#Model " + (i + 1));
-                wrtr.println("def clus_tree_" + (i + 1) + "(xs):"); // m_AttributeList
+                wrtr.println("# Model " + (i + 1));
+                wrtr.println("def tree_" + (i + 1) + "(xs):"); // m_AttributeList
                 ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
                 wrtr.println();
             }
@@ -747,12 +829,14 @@ public class ClusForest implements ClusModel, Serializable {
             
             wrtr.flush();
             wrtr.close();
-            System.out.println("Python code for Forest model written to: " + pyscript.getName());
+            System.out.println(String.format("Python trees for the model %s written to: ", getModelInfo()) + pyscript.getName());
         }
         catch (IOException e) {
             System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");
             e.printStackTrace();
-        }
+        } catch (InterruptedException e) {
+			e.printStackTrace();
+		}
     }
     
     public void printForestToPython() {

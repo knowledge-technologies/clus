@@ -22,6 +22,8 @@
 
 package si.ijs.kt.clus.util;
 
+import javax.swing.filechooser.FileNameExtensionFilter;
+
 public class ClusUtil {
 
 	public final static double MICRO = 1e-6;
@@ -72,6 +74,11 @@ public class ClusUtil {
 		System.out.println(roundToSignificantFigures(d3, n));
 		System.out.println(roundToSignificantFigures(d4, n));
 		System.out.println(roundToSignificantFigures(d5, n));
+		
+		String[] tests = new String[] {"dsa", "sdaaa/dsa", "a/a/a/dsa", "s\\c\\dsa"};
+		for (String test : tests) {
+			System.out.println(fileName(test));
+		}
 	}
 
 	public static double roundDouble(double value, int afterDecimalPoint) {
@@ -98,6 +105,17 @@ public class ClusUtil {
 				return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * From "a/b/c/d" or "a\\b\\c\\d" or "d" extracts d.
+	 * @param pathToFile
+	 * @return
+	 */
+	public static String fileName(String pathToFile) {
+		String answer = pathToFile.replace("\\", "/");
+		int i = answer.lastIndexOf("/") + 1;		
+		return answer.substring(i);		
 	}
 
 }

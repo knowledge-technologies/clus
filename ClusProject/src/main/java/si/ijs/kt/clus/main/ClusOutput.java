@@ -289,53 +289,55 @@ public class ClusOutput {
                     root.printModel(m_Writer, info);
                 }
                 m_Writer.println();
-                if (getSettings().getOutput().isOutputPythonModel()) {
-                    if (getSettings().getEnsemble().isEnsembleMode() && (i == ClusModel.ORIGINAL)) {
-                        root.printModelToPythonScript(m_Writer);// root is a forest
-                    }
-                    else if (i == ClusModel.DEFAULT) {
-                        // prints the python code for the default model
-                        m_Writer.print("def clus_default(xs):");
-                        root.printModelToPythonScript(m_Writer);// root is a forest
-                        
-                        
-                        
-                        /*
-                        try {
-                            File pyscript = new File(m_AppName + "_default.py");
-                            PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
-                            wrtr.println("# Python code of the trees in the ensemble");
-                            wrtr.println();
-                            
-                            for (int i = 0; i < m_Forest.size(); i++) {
-                                ClusModel model = m_Forest.get(i);
-                                wrtr.println("#Model " + (i + 1));
-                                wrtr.println("def clus_tree_" + (i + 1) + "(xs):"); // m_AttributeList
-                                ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
-                                wrtr.println();
-                            }
-                            
-                            wrtr.flush();
-                            wrtr.close();
-                            System.out.println("Python code for Forest model written to: " + pyscript.getName());
-                        }
-                        catch (IOException e) {
-                            System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");
-                            e.printStackTrace();
-                        }                        
-                        
-                        */
-                        
-                        
-                        
-                        
-                        
-                        
-
-                    }
-                }
             }
         }
+        
+
+        if (getSettings().getOutput().isOutputPythonModel()) {
+        	// print only max sized forest trees (the others are nested)
+        	if (getSettings().getEnsemble().isEnsembleMode()) {
+        		int maxSize = -1;
+        		int maxSizedForest = -1;
+        		// write ensemble files
+        		for(int i = 0; i < cr.getNbModels(); i++) {
+                	ClusModel root = models.get(i);
+                	if(root instanceof ClusForest) {
+                		int trees = ((ClusForest) root).getNbModels();
+                		if(trees > maxSize) {
+                			maxSize = trees;
+                			maxSizedForest = i;
+                		}
+                		((ClusForest) root).writePythonEnsembleFile(cr);
+                	}
+                }
+        		// write trees files
+        		ClusForest root = (ClusForest) models.get(maxSizedForest);
+        		root.printModelToPythonScript(m_Writer);
+        		
+        	} else {
+        		ClusModel root = models.get(ClusModel.DEFAULT);
+        		m_Writer.print("def clus_default(xs):");
+                root.printModelToPythonScript(m_Writer);
+        	}
+            
+//        	
+//        	
+//        	
+//            if (getSettings().getEnsemble().isEnsembleMode()) { // && (i == ClusModel.ORIGINAL)
+//            	int trees = ((ClusForest) root).getNbModels();
+//            	
+//            	
+//                root.printModelToPythonScript(m_Writer);// root is a forest
+//            }
+//            else if (i == ClusModel.DEFAULT) {
+//                // prints the python code for the default model
+//                m_Writer.print("def clus_default(xs):");
+//                root.printModelToPythonScript(m_Writer);// root is a forest             
+//
+//            }
+        }
+        
+        
         if (getSettings().getOutput().isOutputDatabaseQueries()) {
             int starttree = getSettings().getExhaustiveSearch().getStartTreeCpt();
             int startitem = getSettings().getExhaustiveSearch().getStartItemCpt();
