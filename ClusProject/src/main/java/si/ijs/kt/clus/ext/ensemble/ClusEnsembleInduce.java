@@ -22,6 +22,8 @@
 
 package si.ijs.kt.clus.ext.ensemble;
 
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
@@ -90,7 +92,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     Clus m_BagClus;
     static ClusAttrType[] m_RandomSubspaces; // TODO: this field should be removed in the future
     //ClusForest m_OForest;// Forest with the original models
-    ClusForest[] m_OForests;
+    private ClusForest[] m_OForests;
 
     //ClusForest m_DForest;
     static int m_Mode;
@@ -899,6 +901,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (m_OptMode) {
             //        	m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
             updatePredictionsForTuples(model, train_iterator, test_iterator, i);
+            
+            if(cr.getStatManager().getSettings().getOutput().isOutputPythonModel()) {
+            	writeTreeToTempPythonFile(cr, model, i);
+            }
+            
+            
             model = null;
             unmodifiedManager = null;
             ind = null;
@@ -1589,9 +1597,34 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
     }
     
-    private ClusStatManager cloneStatManager(ClusStatManager statManager) {
+    private static ClusStatManager cloneStatManager(ClusStatManager statManager) {
     	 Cloner cloner = new Cloner();
          return cloner.deepClone(statManager);
+    }
+    
+    
+    /**
+     * Writes the tree to a temporary file.
+     * @param cr
+     * @param tree
+     * @param treeIndex
+     * @throws FileNotFoundException
+     */
+    private void writeTreeToTempPythonFile(ClusRun cr, ClusModel tree, int treeIndex) throws FileNotFoundException {
+    	File tempPy = new File(getTemporaryPythonTreeFileName(cr, treeIndex));
+    	PrintWriter wrtr = new PrintWriter(new FileOutputStream(tempPy));
+    	m_OForests[0].printOneTree(wrtr, (ClusNode) tree, treeIndex);    	
+    	wrtr.close();
+    }
+    
+    /**
+     * Returns the name of temporary python script, containing a single tree in the forests.
+     * @param cr
+     * @param treeIndex
+     * @return
+     */
+    public static String getTemporaryPythonTreeFileName(ClusRun cr, int treeIndex) {
+    	return cr.getStatManager().getSettings().getGeneric().getFileAbsolute(String.format("temp_tree%d.py", treeIndex));
     }
 
 }

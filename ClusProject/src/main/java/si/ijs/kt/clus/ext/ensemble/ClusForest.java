@@ -23,10 +23,14 @@
 package si.ijs.kt.clus.ext.ensemble;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -170,6 +174,9 @@ public class ClusForest implements ClusModel, Serializable {
 
     }
 
+    public HashMap<String, Integer> getDescriptiveIndices() {
+    	return m_DescriptiveIndex;
+    }
 
     private Settings getSettings() {
         return m_Settings;
@@ -698,15 +705,7 @@ public class ClusForest implements ClusModel, Serializable {
     
 
     /**
-     * Creates a file of the following form:
-     * 
-     * import tree1<br>
-     * import tree2<br>
-     * ...<br>
-     * import treeN<br>
-     * <br>
-     * <br>
-     * def ensemble(xs): return aggregate(trees' predictions)
+     * Adds an ensemble predictor to python models file.
      * 
      */
     public void writePythonEnsembleFile(PrintWriter wrtr, String treeFile) {
@@ -783,24 +782,28 @@ public class ClusForest implements ClusModel, Serializable {
     public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
         return null;
     }
+    
+    public static String pythonTreeFunctionDefinition(int treeIndex) {
+    	return "def tree_" + treeIndex + "(xs):";
+    }
+    
+    private String getPythonForestTreesFileName() {
+    	return m_AppName + m_PythonFileTreePattern + ".py";
+    }
 
-
+    /**
+     * Prints the trees of the forest into a python file.
+     */
     public void printForestToPython() {
         try {
-            File pyscript = new File(m_AppName + m_PythonFileTreePattern + ".py");
+            File pyscript = new File(getPythonForestTreesFileName());
             PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
             wrtr.println("# Python code of the trees in the ensemble");
-            wrtr.println();
-            
+            wrtr.println();    
             for (int i = 0; i < m_Forest.size(); i++) {
                 ClusModel model = m_Forest.get(i);
-                wrtr.println("# Model " + (i + 1));
-                wrtr.println("def tree_" + (i + 1) + "(xs):"); // m_AttributeList
-                ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
-                wrtr.println();
-            }          
-            
-            wrtr.flush();
+                printOneTree(wrtr, (ClusNode) model, i + 1);
+            }
             wrtr.close();
             System.out.println(String.format("Python trees for the model %s written to: ", getModelInfo()) + pyscript.getPath());
         }
@@ -812,7 +815,45 @@ public class ClusForest implements ClusModel, Serializable {
 		}
     }
     
-
+    
+    public void printOneTree(PrintWriter wrtr, ClusNode tree, int treeIndex) {
+    	wrtr.println("# Model " + treeIndex);
+        wrtr.println(pythonTreeFunctionDefinition(treeIndex));
+        tree.printModelToPythonScript(wrtr, m_DescriptiveIndex);
+    }
+    
+    
+    /**
+     * Used when optimization of ensembles is ON. Reads the temporary files and joins them into one file,
+     * so that the output is the same as in the case of {@link #printForestToPython()}.
+     * @param cr
+     */
+    public void joinPythonForestInOneFile(ClusRun cr) {
+    	File pyscript = new File(getPythonForestTreesFileName());
+        PrintWriter wrtr;
+		try {
+			wrtr = new PrintWriter(new FileOutputStream(pyscript));
+			wrtr.println("# Python code of the trees in the ensemble");
+		    wrtr.println();    
+		    for(int i = 1; i <= m_NbModels; i++) {
+		    	String inputFile = ClusEnsembleInduce.getTemporaryPythonTreeFileName(cr, i);
+		    	String treeString = new String(Files.readAllBytes(Paths.get(inputFile)), StandardCharsets.UTF_8);
+		    	wrtr.print(treeString);
+		    	// delete temporary file
+		    	File temp = new File(inputFile);
+		    	if(! temp.delete()) {
+		    		System.err.println("Warning: the file " + temp + " was not deleted.");
+		    	}
+		    }
+		    wrtr.close();
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    
     @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean ex) {
         // TODO Auto-generated method stub

@@ -325,7 +325,11 @@ public class ClusOutput {
         		System.out.println(String.format("Python ensemble code written to: %s", pyName));
         		// print only max sized forest trees (the other forests are nested)
         		ClusForest root = (ClusForest) models.get(maxSizedForest);
-        		root.printForestToPython();        		
+        		if (getSettings().getEnsemble().shouldOptimizeEnsemble()) {
+        			root.joinPythonForestInOneFile(cr);
+        		} else {
+	        		root.printForestToPython();
+        		}
         	} else {
         		// Otherwise, we write only the <app name>_models.py file
         		// Tested for clus.jar something.s case
