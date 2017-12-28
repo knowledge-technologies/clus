@@ -1,0 +1,19 @@
+gene_AAA-AAA > 2.0
++--yes: [NoMS] [17.0]: 17
++--no:  gene_BBB > 0.0
+       +--yes: gene_CCCC > 0.0
+       |      +--yes: [MS] [4.0]: 4
+       |      +--no:  gene_DDDD > 0.0
+       |             +--yes: gene_EEEEE > 0.0
+       |             |      +--yes: [NoMS] [3.0]: 3
+       |             |      +--no:  [MS] [4.0]: 4
+       |             +--no:  [NoMS] [25.0]: 25
+       +--no:  gene_FFFFF > 0.0
+              +--yes: gene_GGGGGGG > 0.0
+              |      +--yes: [MS] [5.0]: 5
+              |      +--no:  gene_HHHHHHH > 0.0
+              |             +--yes: [MS] [3.0]: 3
+              |             +--no:  gene_IIIIIII > 0.0
+              |                    +--yes: [MS] [2.0]: 2
+              |                    +--no:  [NoMS] [24.0]: 24
+              +--no:  [NoMS] [6.0]: 6
