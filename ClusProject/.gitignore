@@ -6,5 +6,6 @@
 *.pdf
 *.iml
 .idea
+__pycache__
 /src/META-INF/
 /target/
