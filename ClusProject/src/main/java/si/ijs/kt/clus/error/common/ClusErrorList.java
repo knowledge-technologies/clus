@@ -27,6 +27,7 @@ import java.io.PrintWriter;
 import java.io.Serializable;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
@@ -53,6 +54,7 @@ public class ClusErrorList implements Serializable {
     protected int m_NbCover;
     protected ArrayList<ClusError> m_Error = new ArrayList<ClusError>();
     protected ArrayList<ClusError> m_ErrorWithNulls = new ArrayList<ClusError>();
+    private HashMap<String, Integer> m_ErrorNameMap = new HashMap<String, Integer>(); // this is an index of errors->restriction: error names must be unique!
 
 
     public ClusErrorList() {
@@ -140,8 +142,11 @@ public class ClusErrorList implements Serializable {
 
     public void addError(ClusError err) {
         // If error list is sublist of other list, still allow indexing by introducing nulls
-        if (err != null)
+        if (err != null) {
             m_Error.add(err);
+
+            m_ErrorNameMap.putIfAbsent(err.getName(), m_Error.size() - 1);
+        }
         m_ErrorWithNulls.add(err);
     }
 
@@ -164,9 +169,9 @@ public class ClusErrorList implements Serializable {
 
 
     public ClusError getError(int idx) {
+        if (idx >= getNbErrors()) { return null; }
         return m_Error.get(idx);
     }
-
 
     public ClusError getErrorOrNull(int idx) {
         return m_ErrorWithNulls.get(idx);
@@ -181,12 +186,16 @@ public class ClusErrorList implements Serializable {
 
 
     public ClusError getErrorByName(String name) {
-        int nb_e = m_Error.size();
-        for (int i = 0; i < nb_e; i++) {
+        if (m_ErrorNameMap.containsKey(name)) 
+            return getError(m_ErrorNameMap.get(name));
+        
+        /*
+        for (int i = 0; i < m_Error.size(); i++) {
             ClusError err = m_Error.get(i);
             if (err.getName().equals(name))
                 return err;
-        }
+        }*/
+        
         return null;
     }
 
@@ -269,7 +278,7 @@ public class ClusErrorList implements Serializable {
         for (int i = 0; i < nb; i++) {
             ClusError my = m_ErrorWithNulls.get(i);
             ClusError your = par.getErrorOrNull(i);
-            if (your != null)
+            if (your != null && my != null)
                 my.add(your);
         }
         m_NbExamples += par.getNbExamples();
@@ -345,11 +354,11 @@ public class ClusErrorList implements Serializable {
         // public void showError(ClusModelInfoList models, int type, PrintWriter out) throws IOException {
         int nb = m_Error.size();
         ClusModelInfo definf = models.getModelInfo(ClusModel.DEFAULT);
-        if (definf == null) { 
+        if (definf == null) {
             System.err.println("DEFAULT model is null!");
             return;
         }
-        
+
         ClusErrorList defpar = definf.getError(type);
         out.println("Number of examples: " + defpar.getNbExamples());
 
@@ -379,8 +388,9 @@ public class ClusErrorList implements Serializable {
             boolean has_models = false;
             for (int j = 0; j < nb_models; j++) {
                 ClusModelInfo inf = models.getModelInfo(j);
-                if (inf != null && inf.getError(type).getErrorOrNull(i) != null) {
+                if (inf != null && inf.getError(type).getErrorByName(err1.getName()) != null) {
                     has_models = true;
+                    break;
                 }
             }
             if (has_models) {
@@ -388,7 +398,7 @@ public class ClusErrorList implements Serializable {
                 for (int j = 0; j < nb_models; j++) {
                     ClusModelInfo inf = models.getModelInfo(j);
                     if (inf != null) {
-                        ClusError err2 = inf.getError(type).getErrorOrNull(i);
+                        ClusError err2 = inf.getError(type).getErrorByName(err1.getName());
                         if (err2 != null) {
                             if (err2.isMultiLine()) {
                                 out.print("   " + inf.getName() + ": ");
@@ -429,22 +439,49 @@ public class ClusErrorList implements Serializable {
     }
 
 
+    /*
+     * public void showErrorBrief(ClusModelInfoList models, int type, PrintWriter out) {
+     * int nb = m_Error.size();
+     * for (int i = 0; i < nb; i++) {
+     * ClusError err1 = getError(i);
+     * if (type == ClusModelInfo.TRAIN_ERR)
+     * out.print("Train ");
+     * else
+     * out.print("Test ");
+     * out.println(err1.getName());
+     * int nb_models = models.getNbModels();
+     * for (int j = 0; j < nb_models; j++) {
+     * ClusModelInfo inf = models.getModelInfo(j);
+     * ClusErrorList parent = inf.getError(type);
+     * ClusError err2 = parent.getError(i);
+     * out.print("   " + StringUtils.printStr(inf.getName(), 15) + ": ");
+     * err2.showModelError(out, ClusError.DETAIL_VERY_SMALL);
+     * }
+     * }
+     * }
+     */
+
     public void showErrorBrief(ClusModelInfoList models, int type, PrintWriter out) {
-        int nb = m_Error.size();
-        for (int i = 0; i < nb; i++) {
+        for (int i = 0; i < m_Error.size(); i++) {
             ClusError err1 = getError(i);
-            if (type == ClusModelInfo.TRAIN_ERR)
+            if (type == ClusModelInfo.TRAIN_ERR) {
                 out.print("Train ");
-            else
+            }
+            else {
                 out.print("Test ");
+            }
+            
             out.println(err1.getName());
             int nb_models = models.getNbModels();
             for (int j = 0; j < nb_models; j++) {
                 ClusModelInfo inf = models.getModelInfo(j);
                 ClusErrorList parent = inf.getError(type);
-                ClusError err2 = parent.getError(i);
-                out.print("   " + StringUtils.printStr(inf.getName(), 15) + ": ");
-                err2.showModelError(out, ClusError.DETAIL_VERY_SMALL);
+
+                ClusError err2 = parent.getErrorByName(err1.getName());
+                if (err2 != null) {
+                    out.print("   " + StringUtils.printStr(inf.getName(), 15) + ": ");
+                    err2.showModelError(out, ClusError.DETAIL_VERY_SMALL);
+                }
             }
         }
     }
