@@ -1,14 +1,16 @@
 
 package si.ijs.kt.clus.main.settings;
 
+import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
-public abstract class SettingsBase {
+public abstract class SettingsBase implements Serializable {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     /***********************************************************************
      * Simple constants *
      ***********************************************************************/

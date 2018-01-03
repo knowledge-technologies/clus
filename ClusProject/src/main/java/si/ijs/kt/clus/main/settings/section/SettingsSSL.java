@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
@@ -14,11 +15,13 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrDouble;
 
 public class SettingsSSL extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
+
     public SettingsSSL(int position) {
         super(position);
         // TODO Auto-generated constructor stub
     }
-
 
     private INIFileSection m_SectionSSL;
     private boolean m_SemiSupervisedMode = false;
@@ -35,13 +38,32 @@ public class SettingsSSL extends SettingsBase {
      */
     private final String[] SSL_UNLABELED_CRITERIA = { "Threshold", "KMostConfident", "KPercentageMostConfident", "AutomaticOOB", "ExhaustiveSearch", "KPercentageMostAverage", "AutomaticOOBInitial" };
     private INIFileNominal m_SSL_UnlabeledCriteria;
-    public final static int SSL_UNLABELED_CRITERIA_THRESHOLD = 0; // Threshold - all of the unlabeled instances with confidence of prediction greater than Threshold will be added to the training set
-    public final static int SSL_UNLABELED_CRITERIA_KMOSTCONFIDENT = 1; // KMostConfident - K unlabeled instances with the most confident predictions will be added to the training set, K is a parameter
-    public final static int SSL_UNLABELED_CRITERIA_KPERCENTAGEMOSTCONFIDENT = 2; // KPercentageMostConfident - K percentage of unlabeled instances with the most confident predictions will be added to the training set
-    public final static int SSL_UNLABELED_CRITERIA_AUTOMATICOOB = 3; // AutomaticOOB - the optimal threshold will be selected on the basis of OOB error of the labeled examples
-    public final static int SSL_UNLABELED_CRITERIA_EXHAUSTIVESEARCH = 4; // ExhaustiveSearch - the optimal threshold will be selected from the specified list at each iteration
-    public final static int SSL_UNLABELED_CRITERIA_KPERCENTAGEMOSTAVERAGE = 5; // KPercentageMostAverage - the threshold is set to average confidence score of the K percentage most confident examples (set initially, and then this threshold is used throughout iterations)
-    public final static int SSL_UNLABELED_CRITERIA_AUTOMATICOOBINITIAL = 6; // AutomaticOOBInitial - the threshold will be selected according to AutomaticOOB at initial iteration, this threshold is in next iterations 
+    public final static int SSL_UNLABELED_CRITERIA_THRESHOLD = 0; // Threshold - all of the unlabeled instances with
+                                                                  // confidence of prediction greater than Threshold
+                                                                  // will be added to the training set
+    public final static int SSL_UNLABELED_CRITERIA_KMOSTCONFIDENT = 1; // KMostConfident - K unlabeled instances with
+                                                                       // the most confident predictions will be added
+                                                                       // to the training set, K is a parameter
+    public final static int SSL_UNLABELED_CRITERIA_KPERCENTAGEMOSTCONFIDENT = 2; // KPercentageMostConfident - K
+                                                                                 // percentage of unlabeled instances
+                                                                                 // with the most confident predictions
+                                                                                 // will be added to the training set
+    public final static int SSL_UNLABELED_CRITERIA_AUTOMATICOOB = 3; // AutomaticOOB - the optimal threshold will be
+                                                                     // selected on the basis of OOB error of the
+                                                                     // labeled examples
+    public final static int SSL_UNLABELED_CRITERIA_EXHAUSTIVESEARCH = 4; // ExhaustiveSearch - the optimal threshold
+                                                                         // will be selected from the specified list at
+                                                                         // each iteration
+    public final static int SSL_UNLABELED_CRITERIA_KPERCENTAGEMOSTAVERAGE = 5; // KPercentageMostAverage - the threshold
+                                                                               // is set to average confidence score of
+                                                                               // the K percentage most confident
+                                                                               // examples (set initially, and then this
+                                                                               // threshold is used throughout
+                                                                               // iterations)
+    public final static int SSL_UNLABELED_CRITERIA_AUTOMATICOOBINITIAL = 6; // AutomaticOOBInitial - the threshold will
+                                                                            // be selected according to AutomaticOOB at
+                                                                            // initial iteration, this threshold is in
+                                                                            // next iterations
 
     /** Stopping criteria for self training */
     private final String[] SSL_STOPPING_CRITERIA = { "NoneAdded", "Iterations", "Airbag" };
@@ -128,10 +150,12 @@ public class SettingsSSL extends SettingsBase {
     private INIFileNominal m_SSL_normalization;
     /** Normalization of per target reliability scores */
     private final String[] SSL_NORMALIZATION = { "MinMaxNormalization", "Ranking", "Standardization", "NoNormalization" };
-    public final static int SSL_NORMALIZATION_MINMAXNORM = 0; //normalization to [0,1] interval
-    public final static int SSL_NORMALIZATION_RANKING = 1; //ranks per target scores according to their reliability
-    public final static int SSL_NORMALIZATION_STANDARDIZATION = 2; //standardization to 0.5 mean and 0.125 standard deviation (ensures that 99.98% of the scores are in [0,1] interval)
-    public final static int SSL_NORMALIZATION_NONORMALIZATION = 3; //does nothing, leaves per-target scores as they are
+    public final static int SSL_NORMALIZATION_MINMAXNORM = 0; // normalization to [0,1] interval
+    public final static int SSL_NORMALIZATION_RANKING = 1; // ranks per target scores according to their reliability
+    public final static int SSL_NORMALIZATION_STANDARDIZATION = 2; // standardization to 0.5 mean and 0.125 standard
+                                                                   // deviation (ensures that 99.98% of the scores are
+                                                                   // in [0,1] interval)
+    public final static int SSL_NORMALIZATION_NONORMALIZATION = 3; // does nothing, leaves per-target scores as they are
 
     private INIFileNominal m_SSL_aggregation;
     /** Aggregation of per target reliability scores */
@@ -139,7 +163,8 @@ public class SettingsSSL extends SettingsBase {
     public final static int SSL_AGGREGATION_AVERAGE = 0;
     public final static int SSL_AGGREGATION_MINIMUM = 1;
     public final static int SSL_AGGREGATION_MAXIMUM = 2;
-    public final static int SSL_AGGREGATION_AVERAGEIGNOREZEROS = 3; //can be used for HMC, averages all values but zeros 
+    public final static int SSL_AGGREGATION_AVERAGEIGNOREZEROS = 3; // can be used for HMC, averages all values but
+                                                                    // zeros
 
     private INIFileBool m_CalibrateHmcThreshold;
     /**
@@ -168,9 +193,11 @@ public class SettingsSSL extends SettingsBase {
         return m_CalibrateHmcThreshold.getValue();
     }
 
-    public String getSemiSupervisedMethodName(int method){
+
+    public String getSemiSupervisedMethodName(int method) {
         return SSL_METHOD[method];
     }
+
 
     public boolean isSemiSupervisedMode() {
         return m_SemiSupervisedMode;
@@ -346,7 +373,7 @@ public class SettingsSSL extends SettingsBase {
         m_SectionSSL.addNode(m_SSL_normalization = new INIFileNominal("Normalization", SSL_NORMALIZATION, SSL_NORMALIZATION_MINMAXNORM));
         m_SectionSSL.addNode(m_SSL_aggregation = new INIFileNominal("Aggregation", SSL_AGGREGATION, SSL_AGGREGATION_AVERAGE));
         m_SectionSSL.addNode(m_CalibrateHmcThreshold = new INIFileBool("CalibrateHmcThreshold", false));
-        // end added section by Jurica 
+        // end added section by Jurica
         // added 25/1/2017, Tomaz Stepisnik Perdih (JSI)
         m_SectionSSL.addNode(m_SSL_PruningWhenTuning = new INIFileBool("PruningWhenTuning", false));
         m_SectionSSL.addNode(m_SSL_InternalFolds = new INIFileInt("InternalFolds", 5));
@@ -359,10 +386,11 @@ public class SettingsSSL extends SettingsBase {
         return m_SectionSSL;
     }
 
+
     @Override
     public void initNamedValues() {
         // TODO Auto-generated method stub
-        
+
     }
 
 }

@@ -25,8 +25,6 @@ package si.ijs.kt.clus.statistic;
 import java.text.NumberFormat;
 import java.util.Arrays;
 
-import org.apache.commons.lang.NotImplementedException;
-
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;

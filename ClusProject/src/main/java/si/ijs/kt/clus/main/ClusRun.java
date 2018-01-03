@@ -59,7 +59,7 @@ public class ClusRun extends ClusModelInfoList {
     }
 
 
-    public ClusRun(ClusRun other) {
+    public ClusRun(ClusRun other) throws ClusException {
         m_Index = 1;
         m_Train = other.m_Train;
         m_Prune = other.m_Prune;
@@ -247,7 +247,7 @@ public class ClusRun extends ClusModelInfoList {
     }
 
 
-    public void combineTrainAndValidSets() throws InterruptedException {
+    public void combineTrainAndValidSets() throws InterruptedException, ClusException {
         RowData valid = (RowData) getPruneSet();
         if (valid != null) {
             RowData train = (RowData) getTrainingSet();
@@ -287,9 +287,10 @@ public class ClusRun extends ClusModelInfoList {
 
     /***************************************************************************
      * Preparation
+     * @throws ClusException 
      ***************************************************************************/
 
-    public void changeTestError(ClusErrorList par) {
+    public void changeTestError(ClusErrorList par) throws ClusException {
         m_Summary.setTestError(par);
         int nb_models = getNbModels();
         for (int i = 0; i < nb_models; i++) {
@@ -299,7 +300,7 @@ public class ClusRun extends ClusModelInfoList {
     }
 
 
-    public void changePruneError(ClusErrorList par) {
+    public void changePruneError(ClusErrorList par) throws ClusException {
         m_Summary.setValidationError(par);
         int nb_models = getNbModels();
         for (int i = 0; i < nb_models; i++) {

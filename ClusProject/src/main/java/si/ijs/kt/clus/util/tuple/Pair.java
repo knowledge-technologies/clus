@@ -7,7 +7,6 @@ package si.ijs.kt.clus.util.tuple;
  *
  * @param <T1>
  * @param <T2>
- * @param <T3>
  */
 public class Pair<T1, T2> {
     private T1 m_First;

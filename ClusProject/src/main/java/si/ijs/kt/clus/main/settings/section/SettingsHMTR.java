@@ -8,6 +8,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRNode;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
@@ -17,6 +18,8 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 public class SettingsHMTR extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+    
     SettingsAttribute m_SettAttribute;
     SettingsGeneral m_SettGeneral;
 

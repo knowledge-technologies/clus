@@ -8,8 +8,7 @@ import java.util.Arrays;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
-import weka.core.Utils;
-
+import si.ijs.kt.clus.util.ClusUtil;
 
 /**
  * @author martinb
@@ -83,7 +82,7 @@ public class ClusEnsembleROSInfo implements Serializable {
             m_AverageTargetsUsed += m_Coverage[i];
         }
 
-        m_AverageTargetsUsed = Utils.roundDouble(m_AverageTargetsUsed / m_AllSubspaces.size(), 3);
+        m_AverageTargetsUsed = ClusUtil.roundDouble(m_AverageTargetsUsed / m_AllSubspaces.size(), 3);
     }
 
 
@@ -96,7 +95,7 @@ public class ClusEnsembleROSInfo implements Serializable {
         double[] d = new double[m_Coverage.length];
 
         for (int t = 0; t < m_Coverage.length; t++)
-            d[t] = Utils.roundDouble(m_Coverage[t] / m_AllSubspaces.size(), 3);
+            d[t] = ClusUtil.roundDouble(m_Coverage[t] / m_AllSubspaces.size(), 3);
 
         return d;
     }
@@ -143,7 +142,7 @@ public class ClusEnsembleROSInfo implements Serializable {
 
 
     public String getAverageNumberOfTargetsUsedInfo() {
-        return String.format("Average number of targets used: %s | Average percentage of targets used: %s", String.valueOf(m_AverageTargetsUsed), String.valueOf(Utils.roundDouble(m_AverageTargetsUsed / m_Schema.getNbTargetAttributes() * 100, 3) + "%"));
+        return String.format("Average number of targets used: %s | Average percentage of targets used: %s", String.valueOf(m_AverageTargetsUsed), String.valueOf(ClusUtil.roundDouble(m_AverageTargetsUsed / m_Schema.getNbTargetAttributes() * 100, 3) + "%"));
     }
 
 

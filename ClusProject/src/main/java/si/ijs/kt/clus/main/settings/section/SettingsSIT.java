@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
@@ -9,11 +10,13 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 public class SettingsSIT extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
+
     public SettingsSIT(int position) {
         super(position);
         // TODO Auto-generated constructor stub
     }
-
 
     /***********************************************************************
      * Section: Selective inductive transfer *
@@ -84,6 +87,6 @@ public class SettingsSIT extends SettingsBase {
     @Override
     public void initNamedValues() {
         // TODO Auto-generated method stub
-        
+
     }
 }

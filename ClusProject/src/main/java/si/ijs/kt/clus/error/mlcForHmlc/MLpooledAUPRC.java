@@ -17,4 +17,8 @@ public class MLpooledAUPRC extends MLROCAndPRCurve implements MlcHmlcSubError {
         return "pooledAUPRC";
     }
 
+    @Override
+    public void add(MlcHmlcSubError other) {
+        super.add(other);
+    }
 }

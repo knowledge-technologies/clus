@@ -37,7 +37,7 @@ import si.ijs.kt.clus.util.ClusException;
 
 public class ClusModelInfo implements Serializable {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static int TRAIN_ERR = 0;
     public final static int TEST_ERR = 1;
@@ -64,7 +64,7 @@ public class ClusModelInfo implements Serializable {
     }
 
 
-    public void setAllErrorsClone(ClusErrorList train, ClusErrorList test, ClusErrorList valid) {
+    public void setAllErrorsClone(ClusErrorList train, ClusErrorList test, ClusErrorList valid) throws ClusException {
         m_TrainErr = null;
         m_TestErr = null;
         m_ValidErr = null;
@@ -77,7 +77,7 @@ public class ClusModelInfo implements Serializable {
     }
 
 
-    public void setSelectedErrorsClone(ClusErrorList train, ClusErrorList test, ClusErrorList valid) {
+    public void setSelectedErrorsClone(ClusErrorList train, ClusErrorList test, ClusErrorList valid) throws ClusException {
         m_TrainErr = null;
         m_TestErr = null;
         m_ValidErr = null;
@@ -286,7 +286,7 @@ public class ClusModelInfo implements Serializable {
     }
 
 
-    public final ClusModelInfo cloneModelInfo() {
+    public final ClusModelInfo cloneModelInfo() throws ClusException {
         ClusModelInfo clone = new ClusModelInfo(m_Name);
         clone.setAllErrorsClone(m_TrainErr, m_TestErr, m_ValidErr);
         clone.setShouldSave(m_ShouldSave);
@@ -388,7 +388,7 @@ public class ClusModelInfo implements Serializable {
     }
 
 
-    public final ClusErrorList getCreateTestError() {
+    public final ClusErrorList getCreateTestError() throws ClusException {
         if (m_TestErr == null)
             m_TestErr = m_TrainErr.getErrorClone();
         return m_TestErr;

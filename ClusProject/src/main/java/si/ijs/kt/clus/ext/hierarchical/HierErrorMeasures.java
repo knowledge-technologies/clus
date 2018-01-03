@@ -90,10 +90,7 @@ public class HierErrorMeasures extends ClusError {
 
     @Override
     public boolean isComputeForModel(String name) {
-        if (name.equals("Original")) {
-            return true;
-        }
-        else if (name.equals("Pruned")) {
+        if (name.equals("Original") || name.equals("Pruned") || name.equals("Default")) {
             return true;
         }
         else if (name.startsWith("Original ") && name.contains("-nn model with ") || name.equals("Default 1-nn model with no weighting")) {
@@ -375,8 +372,8 @@ public class HierErrorMeasures extends ClusError {
             m_ROCCurves = null;
         }
     }
-
-
+    
+    
     @Override
     public String getName() {
         return "Hierarchical error measures";
@@ -386,5 +383,14 @@ public class HierErrorMeasures extends ClusError {
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
         return new HierErrorMeasures(par, m_Hier, m_RecallValues, m_Compatibility, m_OptimizeMeasure, m_WriteCurves, m_IsGzipOutput);
+    }
+    
+    @Override
+    public void showModelError(PrintWriter out, int detail) {
+    	try {
+			showModelError(out, null, detail);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 }

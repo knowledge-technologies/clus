@@ -156,6 +156,7 @@ public class MultiLabelDistance {
     }
     
     
+    @Override
     public String toString() {
     	String fullClassName = this.getClass().toString();
     	int lastIndex = fullClassName.lastIndexOf(".") + 1;

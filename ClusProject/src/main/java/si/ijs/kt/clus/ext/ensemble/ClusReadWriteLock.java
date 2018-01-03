@@ -24,8 +24,6 @@ package si.ijs.kt.clus.ext.ensemble;
 
 import java.io.Serializable;
 
-import si.ijs.kt.clus.util.ClusException;
-
 
 public class ClusReadWriteLock implements Serializable {
 

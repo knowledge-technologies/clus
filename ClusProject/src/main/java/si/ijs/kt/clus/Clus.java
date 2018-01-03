@@ -239,7 +239,6 @@ public class Clus implements CMDLineArgsProvider {
 
         // Set XVal field in Settings
         if (isxval) {
-            getSettings().getExperimental();
             SettingsExperimental.IS_XVAL = true;
         }
 
@@ -415,7 +414,7 @@ public class Clus implements CMDLineArgsProvider {
     }
 
 
-    public final void initializeSummary(ClusInductionAlgorithmType clss) {
+    public final void initializeSummary(ClusInductionAlgorithmType clss) throws ClusException {
         ClusStatManager mgr = m_Induce.getStatManager();
         ClusErrorList error = mgr.createErrorMeasure(m_Score);
         m_Summary.resetAll();
@@ -868,11 +867,10 @@ public class Clus implements CMDLineArgsProvider {
         if (iter.shouldAttach())
             attachModels(mschema, cr);
         cr.initModelProcessors(type, mschema);
-        getSettings().getExperimental();
-        getSettings().getExperimental();
+
         boolean wr_ens_tr_preds = (!SettingsExperimental.IS_XVAL) || (SettingsExperimental.IS_XVAL && cr.getTestSet() == null);
         wr_ens_tr_preds = wr_ens_tr_preds && (type == ClusModelInfo.TRAIN_ERR) && (getSettings().getEnsemble().shouldWritePredictionsFromEnsemble());
-        getSettings().getExperimental();
+        
         boolean wr_ens_te_preds = (!SettingsExperimental.IS_XVAL && cr.getTestSet() != null);
         wr_ens_te_preds = wr_ens_te_preds && (type == ClusModelInfo.TEST_ERR) && (getSettings().getEnsemble().shouldWritePredictionsFromEnsemble());
         // boolean wr_ens_xval_preds = (getSettings().shouldWritePredictionsFromEnsemble() && getSettings().IS_XVAL &&
@@ -931,7 +929,7 @@ public class Clus implements CMDLineArgsProvider {
     }
 
 
-    public void addModelErrorMeasures(ClusRun cr) {
+    public void addModelErrorMeasures(ClusRun cr) throws ClusException {
         for (int i = 0; i < cr.getNbModels(); i++) {
             ClusModelInfo info = cr.getModelInfo(i);
             // Compute rule-wise error measures
@@ -1749,7 +1747,7 @@ public class Clus implements CMDLineArgsProvider {
 
 
     public void updateStatistic(String fname, ClusStatistic[] stats) throws ClusException, IOException {
-        MyClusInitializer init = new MyClusInitializer();
+    	MyClusInitializer init = new MyClusInitializer();
         TupleIterator iter = new DiskTupleIterator(fname, init, getPreprocs(true), m_Sett);
         iter.init();
         DataTuple tuple = iter.readTuple();

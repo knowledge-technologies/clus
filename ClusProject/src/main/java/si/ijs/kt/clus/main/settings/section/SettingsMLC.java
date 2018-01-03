@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
@@ -10,13 +11,15 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 public class SettingsMLC extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+    
     SettingsHMLC m_SettHMLC;
     SettingsRelief m_SettRelief;
 
 
     public SettingsMLC(int position, SettingsHMLC settHMLC, SettingsRelief settRelief) {
         super(position);
-        
+
         m_SettHMLC = settHMLC;
         m_SettRelief = settRelief;
     }

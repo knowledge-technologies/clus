@@ -37,7 +37,6 @@ import si.ijs.kt.clus.algo.tdidt.tune.CDTTuneFTest;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.rows.SparseDataTuple;
 import si.ijs.kt.clus.data.rows.TupleIterator;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleClassifier;

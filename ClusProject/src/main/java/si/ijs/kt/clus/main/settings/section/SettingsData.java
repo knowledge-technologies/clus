@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
@@ -13,6 +14,8 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 public class SettingsData extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+    
     public SettingsData(int position) {
         super(position);
         // TODO Auto-generated constructor stub

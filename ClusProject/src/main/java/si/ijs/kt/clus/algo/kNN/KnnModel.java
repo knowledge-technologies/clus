@@ -41,7 +41,8 @@ import si.ijs.kt.clus.algo.kNN.distance.distanceWeighting.WeightConstant;
 import si.ijs.kt.clus.algo.kNN.distance.distanceWeighting.WeightMinus;
 import si.ijs.kt.clus.algo.kNN.distance.distanceWeighting.WeightOver;
 import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
-import si.ijs.kt.clus.algo.kNN.methods.bfMethod.BrutForce;
+import si.ijs.kt.clus.algo.kNN.methods.bfMethod.BruteForce;
+import si.ijs.kt.clus.algo.kNN.methods.bfMethod.OracleBruteForce;
 import si.ijs.kt.clus.algo.kNN.methods.kdTree.KDTree;
 import si.ijs.kt.clus.algo.kNN.methods.vpTree.VPTree;
 import si.ijs.kt.clus.data.ClusSchema;
@@ -103,10 +104,10 @@ public class KnnModel implements ClusModel, Serializable {
 
 
     // Default constructor.
-    public KnnModel(ClusRun cr, int k, int weighting) throws ClusException, IOException, InterruptedException {
+    public KnnModel(ClusRun cr, int k, int weighting, int maxK) throws ClusException, IOException, InterruptedException {
         this.cr = cr;
         this.m_K = k;
-        this.m_MaxK = Math.max(this.m_K, this.m_MaxK);
+        this.m_MaxK = Math.max(Math.max(this.m_K, this.m_MaxK), maxK);
         this.weightingOption = weighting;
         // settings file name; use name for .weight file
         String fName = this.cr.getStatManager().getSettings().getGeneric().getAppName();
@@ -220,7 +221,8 @@ public class KnnModel implements ClusModel, Serializable {
         searchDistance.setNormalizationWeights(mins, maxs);
 
         // Select search method according to settings file.
-        SearchMethod searchMethod = this.cr.getStatManager().getSettings().getKNN().getSearchMethod();
+        Settings sett = this.cr.getStatManager().getSettings();
+        SearchMethod searchMethod = sett.getKNN().getSearchMethod();
         switch(searchMethod) {
         case VPTree:
         	this.search = new VPTree(this.cr, searchDistance);
@@ -228,21 +230,38 @@ public class KnnModel implements ClusModel, Serializable {
         case KDTree:
         	this.search = new KDTree(this.cr, searchDistance);
         	break;
-        case BrutForce:
-        	this.search = new BrutForce(this.cr, searchDistance);
-        	break;        	
+        case BruteForce:
+        	this.search = new BruteForce(this.cr, searchDistance);
+        	break;
+        case Oracle:
+        	this.search = new OracleBruteForce(this.cr, searchDistance);
+        	break;
+		default:
+			throw new RuntimeException("Wrong search method: " + searchMethod.toString());       	
         }
 
         // debug info
-        System.out.println("------------------------------------------------");
-        System.out.println(this.search.getClass());
-        System.out.println(searchDistance.getBasicDistance().getClass());
-        System.out.println(this.m_K);
-        System.out.println(this.cr.getStatManager().getSettings().getKNN().getKNNDistanceWeight());
-        System.out.println("------------------------------------------------");
-
+        if(this.cr.getStatManager().getSettings().getGeneral().getVerbose() >= 1) {
+        	System.out.println("Search method: " + this.search.getClass());
+            System.out.println("Search distance: " + searchDistance.getBasicDistance().getClass());
+            System.out.println("Number of neighbours: " + this.m_K);
+            System.out.println("Distance weights: " + Arrays.toString(sett.getKNN().getKNNDistanceWeight()));
+        }
+        
         // build tree, preprocessing
-        this.search.build();
+        this.search.build(m_MaxK);
+        RowData train = this.cr.getDataSet(ClusModelInfoList.TRAINSET);
+        RowData test = this.cr.getDataSet(ClusModelInfoList.TESTSET);
+        if (searchMethod == SearchMethod.Oracle) {
+        	if(sett.getKNN().mustNotComputeTrainingError(train.getNbRows())) {
+        		sett.getOutput().setOutTrainError(false);
+        		System.err.println("Training error will not be computed, since we do not know the neighbours for each training instance.");
+        	}
+        	if(test != null && sett.getKNN().mustNotComputeTestError(test.getNbRows())) {
+        		sett.getOutput().setOutTestError(false);
+        		System.err.println("Testing error will not be computed, since we do not know the neighbours for each testing instance.");
+        	}
+        }
 
         // save prediction template
         // @todo : should all this be repalced with:
@@ -338,7 +357,7 @@ public class KnnModel implements ClusModel, Serializable {
 
     @Override
     public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
-        System.out.println("-----------");
+        // System.out.println("-----------");
     }
 
 
@@ -381,7 +400,7 @@ public class KnnModel implements ClusModel, Serializable {
 
 
     @Override
-    public void printModelToPythonScript(PrintWriter wrt) {
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToPythonScript() - Not supported yet for kNN.");
     }
 

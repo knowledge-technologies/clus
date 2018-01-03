@@ -2,7 +2,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>si.ijs.kt</groupId>
   <artifactId>clus</artifactId>
-  <version>1.0</version>
+  <version>1.0.0</version>
   <properties>
     <project.build.sourceEncoding>Cp1250</project.build.sourceEncoding>
   </properties>
@@ -48,19 +48,9 @@
   		<version>3.0</version>
   	</dependency>
   	<dependency>
-  		<groupId>nz.ac.waikato.cms.weka</groupId>
-  		<artifactId>weka-stable</artifactId>
-  		<version>3.8.1</version>
-  	</dependency>
-  	<dependency>
   		<groupId>net.sf.jgap</groupId>
   		<artifactId>jgap</artifactId>
   		<version>3.4.4</version>
-  	</dependency>
-  	<dependency>
-  		<groupId>com.google.guava</groupId>
-  		<artifactId>guava</artifactId>
-  		<version>15.0</version>
   	</dependency>
   	<dependency>
   		<groupId>org.objenesis</groupId>
@@ -78,11 +68,18 @@
   		<version>4.12</version>
   	</dependency>
   	<dependency>
-  		<groupId>org.apache.maven.plugins</groupId>
-  		<artifactId>maven-assembly-plugin</artifactId>
-  		<version>3.0.0</version>
-  		<type>maven-plugin</type>
+  		<groupId>com.google.guava</groupId>
+  		<artifactId>guava-primitives</artifactId>
+  		<version>r03</version>
   	</dependency>
   </dependencies>
   <name>Clus</name>
+  <description>Clus is a decision tree and rule induction software that implements the predictive clustering framework. This framework combines clustering with predictive modelling and allows for a natural extension to more complex prediction tasks. 
+
+Clus is able to solve tasks such as (hierarchical) multi-label classification, (hierarchical) multi-target regression, network regression, and tasks with even more complex output types such as tuples and sets. In addition to this, ensemble learning, feature ranking and semi-supervised learning methods are also included. The software is available as a standalone tool.</description>
+  <url>http://source.ijs.si/mpetkovic/clusproject</url>
+  <organization>
+  	<name>Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia</name>
+  	<url>http://kt.ijs.si</url>
+  </organization>
 </project>

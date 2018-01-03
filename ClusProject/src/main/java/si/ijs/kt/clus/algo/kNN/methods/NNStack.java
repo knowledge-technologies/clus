@@ -22,13 +22,14 @@
 
 package si.ijs.kt.clus.algo.kNN.methods;
 
+import java.util.Arrays;
 import java.util.LinkedList;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 
 
 /**
- * @author Mitja Pugelj
+ * @author Mitja Pugelj, matejp
  */
 
 /**
@@ -36,7 +37,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
  */
 public class NNStack {
 
-    private int m_NbNeighbors;// Number of nearest neighbors we are searching = size of stack (+ extra guard element)
+    private int m_NbNeighbors;// Number of nearest neighbors we are searching = size of stack - extra guard element
     private NN[] m_NearestNeighbors;// stack
 
 
@@ -47,7 +48,7 @@ public class NNStack {
      */
     public NNStack(int k) {
         m_NbNeighbors = k;
-        m_NearestNeighbors = new NN[k + 1]; // +1 is guard element which simplifies addToStack method.
+        m_NearestNeighbors = new NN[k + 1]; // + 1 is guard element which simplifies addToStack method.
     }
 
 
@@ -105,28 +106,9 @@ public class NNStack {
             nns.add(m_NearestNeighbors[i].getTuple());
         return nns;
     }
-}
-
-
-
-class NN {
-
-    protected DataTuple m_Tuple;
-    protected double m_Distance;
-
-
-    public NN(DataTuple tuple, double dist) {
-        m_Tuple = tuple;
-        m_Distance = dist;
-    }
-
-
-    public DataTuple getTuple() {
-        return m_Tuple;
-    }
-
-
-    public double getDistance() {
-        return m_Distance;
+    
+    public NN[] returnPureStack() {
+    	return Arrays.copyOf(m_NearestNeighbors, m_NbNeighbors);
     }
 }
+

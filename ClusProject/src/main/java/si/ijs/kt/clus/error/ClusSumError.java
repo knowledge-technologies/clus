@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
 import si.ijs.kt.clus.util.ClusException;
@@ -13,7 +14,7 @@ import si.ijs.kt.clus.util.ClusException;
 
 public class ClusSumError extends ClusError {
 
-    public final static long serialVersionUID = 1L;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected ArrayList m_Errors = new ArrayList();
 
@@ -90,7 +91,7 @@ public class ClusSumError extends ClusError {
 
 
     @Override
-    public ClusError getErrorClone(ClusErrorList par) {
+    public ClusError getErrorClone(ClusErrorList par) throws ClusException {
         ClusSumError result = new ClusSumError(par);
         for (int i = 0; i < m_Errors.size(); i++) {
             ClusError err = (ClusError) m_Errors.get(i);

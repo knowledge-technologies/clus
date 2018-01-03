@@ -81,6 +81,7 @@ public class ClusNode extends MyNode implements ClusModel {
                                         // - adde by Jurica Levatic (E8_IJS), March 2014
     public List<Integer> m_LeafTuples; //contains hash codes of tuples which ended in a leaf
     // - end added by Jurica
+    
 
 
     @Override
@@ -1165,16 +1166,12 @@ public class ClusNode extends MyNode implements ClusModel {
         printTree(wrt, info, "", examples, true);
     }
 
-
-    @Override
-    public void printModelToPythonScript(PrintWriter wrt) {
-        // changed tab to 4 spaces
-        printTreeToPythonScript(wrt, "\t");
-    }
-
+    
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
         // changed tab to 4 spaces
         printTreeToPythonScript(wrt, "\t", dict);
+        wrt.println();
+        wrt.println();
     }
 
     @Override
@@ -1604,33 +1601,6 @@ public class ClusNode extends MyNode implements ClusModel {
         }
         else {
             return ("not(" + a + ")");
-        }
-    }
-
-    public final void printTreeToPythonScript(PrintWriter writer, String prefix) {
-        int arity = getNbChildren();
-        if (arity > 0) {
-            int delta = hasUnknownBranch() ? 1 : 0;
-            if (arity - delta == 2) {
-                writer.println(prefix + "if " + m_Test.getPythonTestString() + ":");
-                ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "\t");
-                writer.println(prefix + "else: ");
-                if (hasUnknownBranch()) {
-                    // TODO anything to do???
-                }
-                else {
-                    ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "\t");
-                }
-            }
-            else {
-                // TODO what to do?
-            }
-        }
-        else {
-            if (m_TargetStat != null) {
-                writer.println(prefix + "return " + m_TargetStat.getArrayOfStatistic());
-                // System.out.println(m_TargetStat.getClass());
-            }
         }
     }
 

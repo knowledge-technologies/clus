@@ -22,8 +22,14 @@
 
 package si.ijs.kt.clus.util.jeans.io.range;
 
-public class DoubleRangeCheck implements ValueCheck {
+import java.io.Serializable;
 
+import si.ijs.kt.clus.main.settings.Settings;
+
+
+public class DoubleRangeCheck implements ValueCheck, Serializable {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     protected double m_MinDouble, m_MaxDouble;
 
 

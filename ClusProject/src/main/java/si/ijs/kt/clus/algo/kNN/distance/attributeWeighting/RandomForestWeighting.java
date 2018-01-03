@@ -25,8 +25,6 @@ package si.ijs.kt.clus.algo.kNN.distance.attributeWeighting;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
-import java.util.HashMap;
-
 import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
@@ -85,7 +83,7 @@ public class RandomForestWeighting extends AttributeWeighting {
             new_sett.getEnsemble().setNbBags(nbBags); // TO-DO User Defined!
             new_sett.getEnsemble().setNbRandomAttrSelected(0); // Selects LOG of number of descriptive attributes
             new_sett.getEnsemble().setOOBestimate(true);
-            new_sett.getEnsemble().setFeatureRankingMethod(orig_sett.getEnsemble().getRankingMethod());
+            new_sett.getEnsemble().setFeatureRankingMethod(orig_sett.getEnsemble().getRankingMethod().toString());
             ClusRandom.initialize(new_sett);
 
             RowData trainData = (RowData) run.getTrainingSet().cloneData();

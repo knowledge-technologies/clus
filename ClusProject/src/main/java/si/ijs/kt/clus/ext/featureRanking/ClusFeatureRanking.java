@@ -61,8 +61,8 @@ import si.ijs.kt.clus.ext.hierarchical.HierErrorMeasures;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsMLC;
 import si.ijs.kt.clus.model.ClusModel;
@@ -268,14 +268,14 @@ public class ClusFeatureRanking {
         JsonObject algorithmSpec = new JsonObject();
         JsonElement algorithmName;
         EnsembleMethod ens_method = getSettings().getEnsemble().getEnsembleMethod();
-        int fr_method = getSettings().getEnsemble().getRankingMethod();
+        EnsembleRanking fr_method = getSettings().getEnsemble().getRankingMethod();
         if (ens_method == EnsembleMethod.ExtraTrees) {
             algorithmName = new JsonPrimitive("ExtraTrees/GENIE3");
         }
-        else if ((ens_method == EnsembleMethod.RForest) && (fr_method == SettingsEnsemble.RANKING_TYPE_RFOREST)) {
+        else if ((ens_method == EnsembleMethod.RForest) && (fr_method == EnsembleRanking.RForest)) {
             algorithmName = new JsonPrimitive("RandomForestRanking");
         }
-        else if ((ens_method == EnsembleMethod.RForest) && (fr_method == SettingsEnsemble.RANKING_TYPE_GENIE3)) {
+        else if ((ens_method == EnsembleMethod.RForest) && (fr_method == EnsembleRanking.Genie3)) {
             algorithmName = new JsonPrimitive("RandomForest/GENIE3");
         }
         else {

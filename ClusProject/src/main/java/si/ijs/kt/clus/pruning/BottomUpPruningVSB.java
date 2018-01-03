@@ -38,7 +38,7 @@ public class BottomUpPruningVSB extends PruneTree {
     protected RowData m_Data;
 
 
-    public BottomUpPruningVSB(ClusErrorList parent, RowData data) {
+    public BottomUpPruningVSB(ClusErrorList parent, RowData data) throws ClusException {
         m_TreeErr = parent.getFirstError();
         m_NodeErr = m_TreeErr.getErrorClone(parent);
         m_Data = data;

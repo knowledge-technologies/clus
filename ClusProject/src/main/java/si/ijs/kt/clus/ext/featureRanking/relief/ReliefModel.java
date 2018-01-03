@@ -41,9 +41,9 @@ public class ReliefModel implements ClusModel {
     }
 
 
-    private int[] getNeighboursOrIterations(int[] candidateValues,  int nbExamples, boolean isNeighbours){
+    private static int[] getNeighboursOrIterations(int[] candidateValues,  int nbExamples, boolean isNeighbours){
     	HashSet<Integer> ok = new HashSet<Integer>();
-    	int lowerBound = 0;
+    	int lowerBound = isNeighbours ? 0 : -1;
     	int upperBound = nbExamples;
     	upperBound -= isNeighbours ? 1 : 0;
     	String parameter = isNeighbours ? "neighbours <" : "iterations <=";
@@ -131,7 +131,7 @@ public class ReliefModel implements ClusModel {
 
 
     @Override
-    public void printModelToPythonScript(PrintWriter wrt) {
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices) {
         // TODO Auto-generated method stub
 
     }

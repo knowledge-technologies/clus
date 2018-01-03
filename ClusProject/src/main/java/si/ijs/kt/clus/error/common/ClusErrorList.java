@@ -111,7 +111,7 @@ public class ClusErrorList implements Serializable {
     }
 
 
-    public ClusErrorList getErrorClone() {
+    public ClusErrorList getErrorClone() throws ClusException {
         ClusErrorList res = new ClusErrorList();
         int nb = m_Error.size();
         for (int i = 0; i < nb; i++) {
@@ -122,7 +122,7 @@ public class ClusErrorList implements Serializable {
     }
 
 
-    public ClusErrorList getErrorClone(String model) {
+    public ClusErrorList getErrorClone(String model) throws ClusException {
         ClusErrorList res = new ClusErrorList();
         int nb = m_Error.size();
         for (int i = 0; i < nb; i++) {

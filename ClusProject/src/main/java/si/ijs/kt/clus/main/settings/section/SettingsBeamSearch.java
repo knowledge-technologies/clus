@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
@@ -12,6 +13,9 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
 public class SettingsBeamSearch extends SettingsBase {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
 
     public SettingsBeamSearch(int position) {
         super(position);

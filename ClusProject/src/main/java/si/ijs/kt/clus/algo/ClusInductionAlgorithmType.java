@@ -108,6 +108,7 @@ public abstract class ClusInductionAlgorithmType {
         def_info.setModel(ClusDecisionTree.induceDefault(cr));
 
         long start_time = ResourceInfo.getTime();
+
         getInduce().induceAll(cr); // Train the algorithms of this type.
         long done_time = ResourceInfo.getTime();
         

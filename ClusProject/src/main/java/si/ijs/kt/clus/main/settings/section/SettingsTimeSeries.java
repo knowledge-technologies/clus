@@ -1,6 +1,7 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
@@ -8,11 +9,13 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 public class SettingsTimeSeries extends SettingsBase {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
+
     public SettingsTimeSeries(int position) {
         super(position);
         // TODO Auto-generated constructor stub
     }
-
 
     /***********************************************************************
      * Section: Time series *
@@ -59,12 +62,12 @@ public class SettingsTimeSeries extends SettingsBase {
         return m_TimeSeriesDistance.getValue();
     }
 
+
     public void setTimeSeriesDistance(int value) {
         m_TimeSeriesDistance.setSingleValue(value);
     }
 
 
-   
     public int getTimeSeriesHeuristicSampling() {
         return m_TimeSeriesHeuristicSampling.getValue();
     }
@@ -73,15 +76,14 @@ public class SettingsTimeSeries extends SettingsBase {
     public boolean checkTimeSeriesDistance(String value) {
         return m_TimeSeriesDistance.getStringSingle().equals(value);
     }
-    
-    
+
+
     @Override
     public INIFileSection create() {
         m_SectionTimeSeries = new INIFileSection("TimeSeries");
         m_SectionTimeSeries.addNode(m_TimeSeriesDistance = new INIFileNominal("DistanceMeasure", TIME_SERIES_DISTANCE_MEASURE, TIME_SERIES_DISTANCE_MEASURE_DTW));
         m_SectionTimeSeries.addNode(m_TimeSeriesHeuristicSampling = new INIFileNominal("PrototypeComlexity", TIME_SERIES_PROTOTYPE_COMPLEXITY, TIME_SERIES_PROTOTYPE_COMPLEXITY_N2));
-        
-        
+
         setSectionTimeSeriesEnabled(false); // disabled by default
 
         return m_SectionTimeSeries;
@@ -91,7 +93,7 @@ public class SettingsTimeSeries extends SettingsBase {
     @Override
     public void initNamedValues() {
         // TODO Auto-generated method stub
-        
+
     }
 
 }
