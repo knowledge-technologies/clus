@@ -35,6 +35,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
  * This class calculates several usefull statistics of
  * the training data used for kNN and kNNTree
  */
+@Deprecated
 public class KNNStatistics {
 
     private DataTuple[] $prototypes;

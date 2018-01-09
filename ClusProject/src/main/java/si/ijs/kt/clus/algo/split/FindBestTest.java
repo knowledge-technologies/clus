@@ -365,7 +365,7 @@ public class FindBestTest {
                 tuple = sample.getTuple(indicesSorted[i]); // every such tuple is positive or, as some people say, sekoj vakov tuple pripaga vo positive
                 double value = at.getNumeric(tuple);
                 if (value != prev) {
-                    if (value != Double.NaN) {
+                    if (!Double.isNaN(value)) {
                         m_BestTest.calculateHMinMax(value, at);
                         //System.out.println(at +" za: "+m_BestTest.hMax+"-->"+m_BestTest.hMin);
                     }

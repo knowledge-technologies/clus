@@ -42,7 +42,8 @@ import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.util.list.MyListIter;
 import si.ijs.kt.clus.util.tools.debug.Debug;
 
-
+// only non-referenced classes access this one  
+@Deprecated
 public class OptXValIndOV extends OptXValInduce {
 
     protected ClusStatistic[][] m_TestExtraStat;

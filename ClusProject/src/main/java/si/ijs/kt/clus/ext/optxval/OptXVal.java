@@ -46,7 +46,8 @@ import si.ijs.kt.clus.util.jeans.util.array.MDoubleArray;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 import si.ijs.kt.clus.util.tools.debug.Debug;
 
-
+// Nothing accesses this class matejp
+@Deprecated
 public class OptXVal {
 
     protected Clus m_Clus;

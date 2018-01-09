@@ -163,7 +163,7 @@ public class FindBestTests {
             tuple = sample.getTuple(j);
             double value = at.getNumeric(tuple);
             if (value != prev) {
-                if (value != Double.NaN) {
+                if (!Double.isNaN(value)) {
                     // System.err.println("Value (>): " + value);
                     tnh.updateNumeric(value, at);
                 }

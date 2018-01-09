@@ -175,7 +175,7 @@ public class FindBestTestRules extends FindBestTest {
             tuple = data.getTuple(i);
             double value = at.getNumeric(tuple);
             if (value != prev) {
-                if (value != Double.NaN) {
+                if (!Double.isNaN(value)) {
                     if (getSettings().getRules().isHeurRuleDist()) {
                         int[] subset_idx = new int[i - first];
                         System.arraycopy(data_idx, first, subset_idx, 0, i - first);
@@ -199,7 +199,7 @@ public class FindBestTestRules extends FindBestTest {
                 double value = next;
                 next = at.getNumeric(next_tuple);
                 m_BestTest.m_PosStat.updateWeighted(tuple, i);
-                if ((value != next) && (value != Double.NaN)) {
+                if ((value != next) && (!Double.isNaN(value))) {
                     if (getSettings().getRules().isHeurRuleDist()) {
                         int[] subset_idx = new int[nb_rows - i];
                         System.arraycopy(data_idx, i, subset_idx, 0, nb_rows - i);
