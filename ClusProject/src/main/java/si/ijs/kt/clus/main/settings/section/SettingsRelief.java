@@ -35,25 +35,13 @@ public class SettingsRelief extends SettingsBase {
     private INIFileNominalOrDoubleOrVector m_ReliefNbIterations;
     private INIFileBool m_ReliefShouldHaveNeighbourWeighting;
     private INIFileDouble m_ReliefWeightingSigma;
-    // private INIFileBool m_ReliefLoadNeighboursFromFile;
-    // private INIFileBool m_ReliefSaveNeighboursToFile;
-    private INIFileArray m_ReliefLoadNeighboursFiles;
-    private INIFileString m_ReliefSaveNeighboursFile;
-    private static String EMPTY_STRING = "";
-    private static String[] EMPTY_STRING_ARRAY = new String[] {};
-
     private INIFileNominalOrIntOrVector m_ChosenInstances;
-    public static int[] DUMMY_INSTANCES = new int[] { -1 };
-
-    // private INIFileString m_NeighboursFile;
-
-    // If new types are introduced use the same names as in SettingsMLC class
-    public enum MultilabelDistance {
-        HammingLoss, MLAccuracy, MLFOne, SubsetAccuracy
-    };
-
-    private INIFileEnum<MultilabelDistance> m_MultilabelDistance;
-
+    public static int[] DUMMY_INSTANCES = new int[] {-1};
+    
+	// If new types are introduced use the same names as in SettingsMLC class
+    public enum MultilabelDistance {HammingLoss, MLAccuracy, MLFOne, SubsetAccuracy};
+	private INIFileEnum<MultilabelDistance> m_MultilabelDistance;	
+    
 
     public void setSectionReliefEnabled(boolean value) {
         m_SectionRelief.setEnabled(value);
@@ -139,40 +127,14 @@ public class SettingsRelief extends SettingsBase {
         return m_ReliefWeightingSigma.getValue();
     }
 
-
-    public boolean shouldSaveNeighbours() {
-        // return m_ReliefSaveNeighboursToFile.getValue();
-        return !m_ReliefSaveNeighboursFile.getValue().equals(EMPTY_STRING);
-    }
-
-
+    
     public int[] getChosenIntances() {
         return m_ChosenInstances.getIntVector();
     }
-
-
-    // public void turnOffSaveNeighbours() {
-    // m_ReliefSaveNeighboursToFile.setValue(false);
-    // }
-
-    public boolean shouldLoadNeighbours() {
-        // return m_ReliefLoadNeighboursFromFile.getValue();
-        return m_ReliefLoadNeighboursFiles.getSize() > 0;
-    }
-
-
-    public String[] getLoadNeighboursFiles() {
-        String[] files = new String[m_ReliefLoadNeighboursFiles.getSize()];
-        for (int i = 0; i < files.length; i++) {
-            files[i] = m_ReliefLoadNeighboursFiles.getStringAt(i);
-        }
-        return files;
-    }
-
-
-    public String getSaveNeighboursFile() {
-        return m_ReliefSaveNeighboursFile.getValue();
-    }
+    
+//    public void turnOffSaveNeighbours() {
+//    	m_ReliefSaveNeighboursToFile.setValue(false);
+//    }
 
 
     public MultilabelDistance getMultilabelDistance() {
@@ -202,10 +164,6 @@ public class SettingsRelief extends SettingsBase {
                                                                                                     // the authors do
                                                                                                     // not give any
                                                                                                     // suggestions
-        // m_SectionRelief.addNode(m_ReliefSaveNeighboursToFile = new INIFileBool("SaveNeighboursToFile", false));
-        // m_SectionRelief.addNode(m_ReliefLoadNeighboursFromFile = new INIFileBool("LoadNeighboursFromFile", false));
-        m_SectionRelief.addNode(m_ReliefLoadNeighboursFiles = new INIFileArray("LoadNeighboursFiles", EMPTY_STRING_ARRAY));
-        m_SectionRelief.addNode(m_ReliefSaveNeighboursFile = new INIFileString("SaveNeighboursFile", EMPTY_STRING));
         m_SectionRelief.addNode(m_ChosenInstances = new INIFileNominalOrIntOrVector("ChosenInstances", NONELIST));
         m_ChosenInstances.setIntVector(DUMMY_INSTANCES);
         m_SectionRelief.addNode(m_MultilabelDistance = new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.class, MultilabelDistance.HammingLoss));

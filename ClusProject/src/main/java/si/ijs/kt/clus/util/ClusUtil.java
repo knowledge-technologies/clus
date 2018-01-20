@@ -22,6 +22,12 @@
 
 package si.ijs.kt.clus.util;
 
+import java.util.HashMap;
+
+import si.ijs.kt.clus.data.ClusSchema;
+import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.main.ClusStatManager;
+
 public class ClusUtil {
 
 	public final static double MICRO = 1e-6;
@@ -72,6 +78,11 @@ public class ClusUtil {
 		System.out.println(roundToSignificantFigures(d3, n));
 		System.out.println(roundToSignificantFigures(d4, n));
 		System.out.println(roundToSignificantFigures(d5, n));
+		
+		String[] tests = new String[] {"dsa", "sdaaa/dsa", "a/a/a/dsa", "s\\c\\dsa"};
+		for (String test : tests) {
+			System.out.println(fileName(test));
+		}
 	}
 
 	public static double roundDouble(double value, int afterDecimalPoint) {
@@ -98,6 +109,31 @@ public class ClusUtil {
 				return true;
 		}
 		return false;
+	}
+	
+	/**
+	 * From "a/b/c/d" or "a\\b\\c\\d" or "d" extracts d.
+	 * @param pathToFile
+	 * @return
+	 */
+	public static String fileName(String pathToFile) {
+		String answer = pathToFile.replace("\\", "/");
+		int i = answer.lastIndexOf("/") + 1;		
+		return answer.substring(i);		
+	}
+	
+	
+	public static HashMap<String, Integer> getDiscriptiveAttributesIndices(ClusStatManager statmgr){
+		HashMap<String, Integer> indices = new HashMap<String, Integer>();
+		ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(ClusAttrType.ATTR_USE_DESCRIPTIVE, ClusAttrType.THIS_TYPE));
+        if (statmgr.getSettings().getOutput().isOutputPythonModel()) {
+            for (int ii = 0; ii < cat.length - 1; ii++){
+                indices.put(cat[ii].getName(), ii);
+            }
+            int ii = cat.length - 1;
+            indices.put(cat[ii].getName(), ii);
+        }
+        return indices;
 	}
 
 }

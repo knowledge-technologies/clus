@@ -34,7 +34,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
     protected String m_Fname;
     protected MyArray m_Attrs;
     protected PrintWriter m_Writer;
-    protected ArrayList m_AttributeNames;
+    protected ArrayList<String> m_AttributeNames;
     protected int m_NbTargetAttributes;
     static int m_Type; // training or testing
     protected double[] m_StDev;
@@ -45,13 +45,13 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
 
     public ClusEnsemblePredictionWriter(String fname) {
         m_Fname = fname;
-        m_AttributeNames = new ArrayList();
+        m_AttributeNames = new ArrayList<String>();
     }
 
 
     public ClusEnsemblePredictionWriter(String fname, ClusSchema schema, Settings sett) {
         m_Fname = fname;
-        m_AttributeNames = new ArrayList();
+        m_AttributeNames = new ArrayList<String>();
         m_NbTargetAttributes = schema.getNbTargetAttributes();
         m_Sett = sett;
         m_Initialized = true;
@@ -199,7 +199,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
     }
 
 
-    private double[] calcStDev(double[][] values) {
+    private static double[] calcStDev(double[][] values) {
         double[] result = new double[values.length];
         for (int i = 0; i < result.length; i++)
             result[i] = stDevOpt(values[i]);
@@ -207,9 +207,9 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
     }
 
 
-    private double stDevOpt(double[] a) {
+    private static double stDevOpt(double[] a) {
         double avg = 0;
-        ;
+
         double summ = 0;
         for (int i = 0; i < a.length; i++) {
             avg += a[i];

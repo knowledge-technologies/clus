@@ -180,8 +180,9 @@ public class MlcMeasuresForHmlc extends ClusError {
         int n = m_SubErrors.size();
         m_ComputedErrors = new double[n];
         for (int i = 0; i < n; i++) {
-            m_ComputedErrors[i] = m_SubErrors.get(i).getModelError(m_DimEval);
+            m_ComputedErrors[i] = m_SubErrors.get(i).compute(m_DimEval);
         }
+
     }
 
 
@@ -238,5 +239,15 @@ public class MlcMeasuresForHmlc extends ClusError {
         else {
             super.add(other);
         }
+    }
+    
+    
+    @Override
+    public void showModelError(PrintWriter out, int detail) {
+    	try {
+			showModelError(out, null, detail);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
     }
 }

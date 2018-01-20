@@ -9,6 +9,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.util.ClusRandom;
 
 
@@ -97,11 +98,11 @@ public class ClusROS {
     public static ClusEnsembleROSInfo prepareROSEnsembleInfo(Settings settMain, ClusSchema schema) {
         SettingsEnsemble sett = settMain.getEnsemble();
 
-        int method = sett.getEnsembleMethod();
-        if (method != SettingsEnsemble.ENSEMBLE_METHOD_BAGGING
-                && method != SettingsEnsemble.ENSEMBLE_METHOD_RFOREST
-                && method != SettingsEnsemble.ENSEMBLE_METHOD_RSUBSPACES
-                && method != SettingsEnsemble.ENSEMBLE_METHOD_EXTRA_TREES)
+        EnsembleMethod method = sett.getEnsembleMethod();
+        if (method != EnsembleMethod.Bagging
+                && method != EnsembleMethod.RForest
+                && method != EnsembleMethod.RSubspaces
+                && method != EnsembleMethod.ExtraTrees)
 
             throw new RuntimeException("ROS extension is not implemented for the selected ensemble method!");
 

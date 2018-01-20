@@ -86,9 +86,13 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             	weights[i] = s;
                 i++;
             }
+            int maxK = 1;
+            for(int k: ks) {
+            	maxK = Math.max(maxK, k);
+            }
             // base model
             String model_name = "Default 1-nn model with no weighting"; // DO NOT CHANGE THE NAME!!!
-            KnnModel model = new KnnModel(cr, 1, SettingsKNN.DISTANCE_WEIGHTING_CONSTANT);
+            KnnModel model = new KnnModel(cr, 1, SettingsKNN.DISTANCE_WEIGHTING_CONSTANT, maxK);
             ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL, model_name);
             model_info.setModel(model);
             model_info.setName(model_name);

@@ -212,7 +212,7 @@ public class ILevelCInduce extends DepthFirstInduce {
         for (int i = 0; i < nb_rows; i++) {
             DataTuple tuple = data.getTuple(i);
             double value = tuple.getDoubleVal(idx);
-            if (value != prev && prev != Double.NaN) {
+            if (value != prev && !Double.isNaN(prev)) {
                 // m_Selector.updateNumeric(value, at);
                 double heuristic = computeHeuristic(pos, neg, tot, use_p_lab, ss_offset, violated_offset + nb_violated);
                 if (heuristic < m_BestHeur) {

@@ -22,12 +22,15 @@
 
 package si.ijs.kt.clus.main;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -45,6 +48,7 @@ import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -239,12 +243,10 @@ public class ClusOutput {
             if (outputtrain) {
                 ClusErrorList tr_err = cr.getTrainError();
                 if (tr_err != null) {
-                    if (ClusOOBErrorEstimate.isOOBCalculation()) {
+                    if (ClusOOBErrorEstimate.isOOBCalculation())
                         m_Writer.println("Out-Of-Bag Estimate of Error");
-                    }
-                    else {
+                    else
                         m_Writer.println("Training error");
-                    }
                     m_Writer.println("--------------");
                     m_Writer.println();
                     tr_err.showError(cr, ClusModelInfo.TRAIN_ERR, bName + ".train", m_Writer, m_Sett);
@@ -291,43 +293,68 @@ public class ClusOutput {
                     root.printModel(m_Writer, info);
                 }
                 m_Writer.println();
-                if (getSettings().getOutput().isOutputPythonModel()) {
-                    if (getSettings().getEnsemble().isEnsembleMode() && (i == ClusModel.ORIGINAL)) {
-                        root.printModelToPythonScript(m_Writer);// root is a forest
-                    }
-                    else if (i == ClusModel.DEFAULT) {
-                        // prints the python code for the default model
-                        m_Writer.print("def clus_default(xs):");
-                        root.printModelToPythonScript(m_Writer);// root is a forest
-
-                        /*
-                         * try {
-                         * File pyscript = new File(m_AppName + "_default.py");
-                         * PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
-                         * wrtr.println("# Python code of the trees in the ensemble");
-                         * wrtr.println();
-                         * for (int i = 0; i < m_Forest.size(); i++) {
-                         * ClusModel model = m_Forest.get(i);
-                         * wrtr.println("#Model " + (i + 1));
-                         * wrtr.println("def clus_tree_" + (i + 1) + "(xs):"); // m_AttributeList
-                         * ((ClusNode) model).printModelToPythonScript(wrtr, m_DescriptiveIndex);
-                         * wrtr.println();
-                         * }
-                         * wrtr.flush();
-                         * wrtr.close();
-                         * System.out.println("Python code for Forest model written to: " + pyscript.getName());
-                         * }
-                         * catch (IOException e) {
-                         * System.err.println(this.getClass().getName() +
-                         * ".printForestToPython(): Error while writing models to python script");
-                         * e.printStackTrace();
-                         * }
-                         */
-
-                    }
-                }
             }
         }
+        
+
+        if (getSettings().getOutput().isOutputPythonModel()) {
+        	String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
+        	String pyName = appName + "_models.py";
+        	File pyscript = new File(getSettings().getGeneric().getFileAbsolute(pyName));
+        	PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
+        	if (getSettings().getEnsemble().isEnsembleMode()) {
+        		// If in enseble mode, we write two files:
+        		// - <app name>_models.py with ensemble methods which use the imported methods from
+        		// - <app_name>_trees.py where the trees are defined
+        		String treeFile = ClusForest.getTreeFile(appName);
+        		// write ensemble file
+        		ClusForest.writePythonAggregation(wrtr, treeFile, cr.getStatManager().getMode());        		
+        		int maxSize = -1;
+        		int maxSizedForest = -1;
+        		for(int i = 0; i < cr.getNbModels(); i++) {
+                	ClusModel root = models.get(i);
+                	if(root instanceof ClusForest) {
+                		int trees = ((ClusForest) root).getNbModels();
+                		if(trees > maxSize) {
+                			maxSize = trees;
+                			maxSizedForest = i;
+                		}
+                		((ClusForest) root).writePythonEnsembleFile(wrtr, treeFile);
+                	}
+                }
+        		System.out.println(String.format("Python ensemble code written to: %s", pyName));
+        		// print only max sized forest trees (the other forests are nested)
+        		ClusForest root = (ClusForest) models.get(maxSizedForest);
+        		if (getSettings().getEnsemble().shouldOptimizeEnsemble()) {
+        			root.joinPythonForestInOneFile(cr);
+        		} else {
+	        		root.printForestToPython();
+        		}
+        	} else {
+        		// Otherwise, we write only the <app name>_models.py file
+        		// Tested for clus.jar something.s case
+        		HashMap<Integer, String> pythonNames = new HashMap<Integer, String>();
+        		pythonNames.put(ClusModel.DEFAULT, "default");
+        		pythonNames.put(ClusModel.ORIGINAL, "original");
+        		pythonNames.put(ClusModel.PRUNED, "pruned");
+        		String defPattern = "def %s(xs):";
+        		HashMap<String, Integer> descrIndices = ClusUtil.getDiscriptiveAttributesIndices(cr.getStatManager());
+        		for(int i = 0; i < cr.getNbModels(); i++) {
+        			ClusModel root = models.get(i);
+        			if(pythonNames.containsKey(i)) {
+        				wrtr.println(String.format(defPattern, pythonNames.get(i)));
+        				root.printModelToPythonScript(wrtr, descrIndices);
+        			} else {
+        				System.err.println("Warning: das ist kein DEFAULT/ORIGINAL/PRUNED model and will not be printed. Extend the pythonNames hash map!");
+        			}
+        			
+        		}
+        	}
+        	
+        	wrtr.close();
+        }
+        
+        
         if (getSettings().getOutput().isOutputDatabaseQueries()) {
             int starttree = getSettings().getExhaustiveSearch().getStartTreeCpt();
             int startitem = getSettings().getExhaustiveSearch().getStartItemCpt();
@@ -367,7 +394,7 @@ public class ClusOutput {
             String jsonFileName = m_Sett2.getGeneric().getAppName() + ".json";
             PrintWriter jsonWriter = m_Sett2.getGeneric().getFileAbsoluteWriter(jsonFileName);
             jsonWriter.write(output.toString());
-            // System.out.print(output.toString());
+            //System.out.print(output.toString());
             jsonWriter.close();
         }
         m_Writer.flush();

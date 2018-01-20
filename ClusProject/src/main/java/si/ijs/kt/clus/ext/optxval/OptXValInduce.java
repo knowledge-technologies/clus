@@ -174,7 +174,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
                 for (int j = 0; j < folds.length; j++) {
                     int cr_fold = folds[j];
                     if (foldnr != cr_fold) {
-                        if (m_PrevCl[j] == -1 && value != m_PrevVl[j] && m_PrevVl[j] != Double.NaN) {
+                        if (m_PrevCl[j] == -1 && value != m_PrevVl[j] && !Double.isNaN(m_PrevVl[j])) {
                             if (no_sum_calc) {
                                 if (Debug.debug == 1) {
                                     ClusStat.deltaTest();
@@ -246,7 +246,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
                 for (int j = 0; j < folds.length; j++) {
                     int cr_fold = folds[j];
                     if (foldnr != cr_fold) {
-                        if (value != m_PrevVl[j] && m_PrevVl[j] != Double.NaN) {
+                        if (value != m_PrevVl[j] && !Double.isNaN(m_PrevVl[j])) {
                             if (no_sum_calc) {
                                 if (Debug.debug == 1) {
                                     ClusStat.deltaTest();

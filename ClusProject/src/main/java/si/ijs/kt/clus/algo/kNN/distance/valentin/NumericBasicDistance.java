@@ -51,12 +51,12 @@ public class NumericBasicDistance extends BasicDistance {
         double x = at.getNumeric(t1); //returns the attribute value for given attribute in tuple t1
 
         //Check if missing value
-        if (x == Double.NaN) {
+        if (Double.isNaN(x)) {
             x = at.getStatistic().mean();
         }
         double y = at.getNumeric(t2); //same for t2
         //Check if missing value
-        if (y == Double.NaN) {
+        if (Double.isNaN(y)) {
             y = at.getStatistic().mean();
         }
         //normalize if wanted
