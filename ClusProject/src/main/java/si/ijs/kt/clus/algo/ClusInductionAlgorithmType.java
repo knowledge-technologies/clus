@@ -118,17 +118,6 @@ public abstract class ClusInductionAlgorithmType {
         cr.setPruneTime(ResourceInfo.getTime() - done_time);
         postProcess(cr);
         
-        if (getSettings().getGeneral().getVerbose() > 0) {
-            
-            String parallelTime = "";
-            if (getSettings().getEnsemble().isEnsembleWithParallelExecution()){
-                parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format((cr.getInductionTimeSequential() / 1000.0)) + " sec)";
-            }
-            
-            String cpu = ResourceInfo.isLibLoaded() ? " (CPU)" : "";
-            System.out.println("Induction Time: " + (double) cr.getInductionTime() / 1000 + " sec" + parallelTime + cpu);
-            System.out.println("Pruning Time: " + (double) cr.getPruneTime() / 1000 + " sec" + cpu);
-        }
     }
 
 

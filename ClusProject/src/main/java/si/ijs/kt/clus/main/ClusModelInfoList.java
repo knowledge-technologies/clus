@@ -43,7 +43,8 @@ public abstract class ClusModelInfoList implements Serializable {
 
     protected ClusModelInfo m_AllModelsMI = new ClusModelInfo("AllModels");
     protected ArrayList<ClusModelInfo> m_Models = new ArrayList<ClusModelInfo>();
-    protected long m_IndTime, m_PrepTime, m_PruneTime;
+    protected long m_IndTime, m_PrepTime, m_PruneTime, m_PredictionTime; // for storing execution time info
+    protected int m_PredictionTimeNbExamples; // this counts all the examples that pass over predictWeighted() for each model (needed to properly calculate average prediction time per example)
     protected long m_IndTimeSequential = 0; // to be used with ensemble parallel execution
 
 
@@ -365,5 +366,23 @@ public abstract class ClusModelInfoList implements Serializable {
 
     public final long getPrepareTime() {
         return m_PrepTime;
+    }
+    
+
+    public final void addToPredictionTime(long time, int nbExamples) {
+    	m_PredictionTime += time;
+    	m_PredictionTimeNbExamples += nbExamples;
+    }
+
+    public final long getPredictionTime() {
+        return m_PredictionTime;
+    }
+    
+    public final long getPredictionTimeNbExamples() {
+    	return m_PredictionTimeNbExamples;
+    }
+    
+    public final long getPredictionTimeAverage() {
+    	return m_PredictionTime / m_PredictionTimeNbExamples;
     }
 }
