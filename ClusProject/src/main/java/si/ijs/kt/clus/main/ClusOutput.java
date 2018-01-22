@@ -164,6 +164,9 @@ public class ClusOutput {
         m_Writer.println("FTValue (FTest): " + m_Sett.getTree().getFTest());
         double tsec = cr.getInductionTime() / 1000.0;
         double tpru = cr.getPruneTime() / 1000.0;
+        long tpred = cr.getPredictionTime();
+        long tpredavg = cr.getPredictionTimeAverage(); 
+        
         // Prepare models for printing if required
         for (int i = 0; i < cr.getNbModels(); i++) {
             ClusModelInfo mi = cr.getModelInfo(i);
@@ -188,6 +191,13 @@ public class ClusOutput {
         String cpu = ResourceInfo.isLibLoaded() ? " (CPU)" : "";
         m_Writer.println("Induction Time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec" + parallelTime + cpu);
         m_Writer.println("Pruning Time: " + ClusFormat.FOUR_AFTER_DOT.format(tpru) + " sec" + cpu);
+        m_Writer.println("Prediction Time (total for ClusModel.Original): " + System.lineSeparator() 
+        				+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 3)) + " microsecs" + System.lineSeparator() 
+        				+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 6)) + " millisecs" + System.lineSeparator()
+        				+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 9)) + " secs");
+        m_Writer.println("Prediction Time (average for ClusModel.Original): " + ClusFormat.FOUR_AFTER_DOT.format(tpredavg / Math.pow(10, 3)) + " microsecs");
+        
+        
         m_Writer.println("Model information:");
         for (int i = 0; i < cr.getNbModels(); i++) {
             ClusModelInfo mi = cr.getModelInfo(i);
@@ -411,12 +421,26 @@ public class ClusOutput {
         m_Writer.println("Summary");
         m_Writer.println("*******");
         m_Writer.println();
+        
         int runs = summary.getNbRuns();
         m_Writer.println("Runs: " + runs);
+        
         double tsec = summary.getInductionTime() / 1000.0;
         m_Writer.println("Induction time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec");
+        
         double psec = summary.getPrepareTime() / 1000.0;
         m_Writer.println("Preprocessing time: " + ClusFormat.ONE_AFTER_DOT.format(psec) + " sec");
+        
+        long tpred = summary.getPredictionTime();
+        long tpredavg = summary.getPredictionTimeAverage();
+        m_Writer.println("Prediction Time (total for ClusModel.Original, " + runs + " runs, " + summary.getPredictionTimeNbExamples() + " examples): " + System.lineSeparator() 
+			+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 3)) + " microsecs" + System.lineSeparator() 
+			+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 6)) + " millisecs" + System.lineSeparator()
+			+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 9)) + " secs");
+        m_Writer.println("Prediction Time (average for ClusModel.Original): " + ClusFormat.FOUR_AFTER_DOT.format(tpredavg / Math.pow(10, 3)) + " microsecs");
+
+        
+        
         m_Writer.println("Mean number of tests");
         for (int i = ClusModel.ORIGINAL; i <= ClusModel.PRUNED; i++) {
             ClusModelInfo mi = summary.getModelInfo(i);
@@ -471,7 +495,7 @@ public class ClusOutput {
     public static void printHeader() {
         System.out.println("Clus v" + Clus.VERSION + " - Software for Predictive Clustering");
         System.out.println();
-        System.out.println("Copyright (C) 2007, 2008, 2009, 2010");
+        System.out.println("Copyright (C) 2007, 2008, 2009, 2010, 2011, 2012, 2013, 2014, 2015, 2016, 2017, 2018");
         System.out.println("   Katholieke Universiteit Leuven, Leuven, Belgium");
         System.out.println("   Jozef Stefan Institute, Ljubljana, Slovenia");
         System.out.println();
