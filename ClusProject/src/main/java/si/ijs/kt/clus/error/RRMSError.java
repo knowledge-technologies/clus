@@ -137,7 +137,7 @@ public class RRMSError extends MSError {
         
         if (defaultModelError == 0 )
         {
-            System.out.println("DASDASD");
+            System.out.println("Default error is zero.");
         }
         return Math.sqrt(modelError / defaultModelError);
 

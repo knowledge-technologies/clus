@@ -345,9 +345,8 @@ public class ClusOutput {
         				wrtr.println(String.format(defPattern, pythonNames.get(i)));
         				root.printModelToPythonScript(wrtr, descrIndices);
         			} else {
-        				System.err.println("Warning: das ist kein DEFAULT/ORIGINAL/PRUNED model and will not be printed. Extend the pythonNames hash map!");
+        				System.err.println("Warning: this is not DEFAULT/ORIGINAL/PRUNED model and will not be printed. Extend the pythonNames hash map!");
         			}
-        			
         		}
         	}
         	
