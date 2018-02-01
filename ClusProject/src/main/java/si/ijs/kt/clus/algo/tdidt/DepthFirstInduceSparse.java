@@ -122,6 +122,9 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 
 
     public void induce(ClusNode node, RowData data, Object[] attrs, ClusRandomNonstatic rnd) throws Exception { // , Object[] examplelists
+        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
+            System.out.println("Depth " + node.getLevel() + ": inducing new node: " + attrs.length + " attributes, " + data.getNbRows() + " examples");
+        }
         // System.out.println("INDUCE SPARSE with " + attrs.length + " attributes and " + data.getNbRows() + "
         // examples");
         // Initialize selector and perform various stopping criteria
@@ -149,7 +152,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         if (best.hasBestTest()) {
             node.testToNode(best);
             // Output best test
-            if (getSettings().getGeneral().getVerbose() > 1)
+            if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();
@@ -197,6 +200,9 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         }
         else {
             makeLeaf(node);
+        }
+        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
+            System.out.println("Depth " + node.getLevel() + ": node finished.");
         }
     }
 

@@ -79,7 +79,7 @@ public class ClusRuleConstraintInduceTest extends NodeTest {
 
 
     @Override
-    public String getPythonString() {
+    public String getPythonString(String xsElement) {
         return getString();
     }
 

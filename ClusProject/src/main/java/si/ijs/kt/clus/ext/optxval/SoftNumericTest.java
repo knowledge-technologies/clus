@@ -59,10 +59,9 @@ public class SoftNumericTest extends SoftTest {
     }
 
 
-    @Override
-    public String getString() {
+    public String getStringWithPrefix(String prefix) {
         StringBuffer buff = new StringBuffer();
-        buff.append(m_Type.getName());
+        buff.append(prefix);
         buff.append(" > [");
         for (int i = 0; i < m_Bounds.length; i++) {
             if (i != 0)
@@ -79,11 +78,16 @@ public class SoftNumericTest extends SoftTest {
         buff.append("]");
         return buff.toString();
     }
+    
+    @Override
+    public String getString() {
+    	return getStringWithPrefix(m_Type.getName());
+    }
 
 
     @Override
-    public String getPythonString() {
-        return getString();
+    public String getPythonString(String xsElement) {
+        return getStringWithPrefix(xsElement);
     }
 
 
