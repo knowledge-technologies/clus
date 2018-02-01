@@ -25,6 +25,7 @@ package si.ijs.kt.clus.data.type.primitive;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
@@ -70,6 +71,8 @@ public class NominalAttrType extends ClusAttrType {
             if (!value.equals("?"))
                 values.add(value);
         }
+        // sort values, so that @attribute attr {a,b,c} and @attribute attr {b,c,a} result in the same attribute
+        Collections.sort(values);
         if (values.size() == 2 && values.get(0).equals("0") && values.get(1).equals("1")) {
             // Make sure that binary attributes have "1" first!
             values.set(0, "1");
