@@ -41,11 +41,12 @@ public abstract class NodeTest implements Serializable {
     public final static int S_EQ = 1; // Soft equal
     public final static int H_EQ = 2; // Hard equal
 
-    public boolean m_UnknownBranch;
-    public double m_UnknownFreq;
+    @Deprecated // the value of this field never changes: the method private void addUnknownBranch() down there is commented out ...
+    private boolean m_UnknownBranch;
+    private double m_UnknownFreq;
     public double[] m_BranchFreq;
-    public double m_HeuristicValue;
-    public double m_IValue; //daniela
+    private double m_HeuristicValue;
+    private double m_IValue; //daniela
 
 
     public final boolean hasUnknownBranch() {
@@ -250,7 +251,7 @@ public abstract class NodeTest implements Serializable {
 
 
     // String representation for Python
-    public abstract String getPythonString();
+    public abstract String getPythonString(String xsElement);
 
 
     // String representation (for branch - not used for binary)
@@ -317,8 +318,8 @@ public abstract class NodeTest implements Serializable {
     }
 
 
-    public final String getPythonTestString() {
-        String str = getPythonString();
+    public final String getPythonTestString(String xsElement) {
+        String str = getPythonString(xsElement);
         if (SettingsOutput.SHOW_BRANCH_FREQ) {
             if (getPosFreq() != Double.NEGATIVE_INFINITY) {
                 String bfr = ClusFormat.ONE_AFTER_DOT.format(getPosFreq() * 100);

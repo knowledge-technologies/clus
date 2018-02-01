@@ -303,7 +303,7 @@ public class ClusOutput {
         	File pyscript = new File(getSettings().getGeneric().getFileAbsolute(pyName));
         	PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
         	if (getSettings().getEnsemble().isEnsembleMode()) {
-        		// If in enseble mode, we write two files:
+        		// If in ensemble mode, we write two files:
         		// - <app name>_models.py with ensemble methods which use the imported methods from
         		// - <app_name>_trees.py where the trees are defined
         		String treeFile = ClusForest.getTreeFile(appName);
