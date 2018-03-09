@@ -22,15 +22,29 @@
 
 package si.ijs.kt.clus.main;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.StringReader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+
+import javax.xml.stream.util.StreamReaderDelegate;
+
+import org.apache.maven.model.Model;
+import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+import org.codehaus.plexus.util.xml.pull.XmlPullParserException;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -295,65 +309,66 @@ public class ClusOutput {
                 m_Writer.println();
             }
         }
-        
 
         if (getSettings().getOutput().isOutputPythonModel()) {
-        	String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
-        	String pyName = appName + "_models.py";
-        	File pyscript = new File(getSettings().getGeneric().getFileAbsolute(pyName));
-        	PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
-        	if (getSettings().getEnsemble().isEnsembleMode()) {
-        		// If in ensemble mode, we write two files:
-        		// - <app name>_models.py with ensemble methods which use the imported methods from
-        		// - <app_name>_trees.py where the trees are defined
-        		String treeFile = ClusForest.getTreeFile(appName);
-        		// write ensemble file
-        		ClusForest.writePythonAggregation(wrtr, treeFile, cr.getStatManager().getMode());        		
-        		int maxSize = -1;
-        		int maxSizedForest = -1;
-        		for(int i = 0; i < cr.getNbModels(); i++) {
-                	ClusModel root = models.get(i);
-                	if(root instanceof ClusForest) {
-                		int trees = ((ClusForest) root).getNbModels();
-                		if(trees > maxSize) {
-                			maxSize = trees;
-                			maxSizedForest = i;
-                		}
-                		((ClusForest) root).writePythonEnsembleFile(wrtr, treeFile);
-                	}
+            String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
+            String pyName = appName + "_models.py";
+            File pyscript = new File(getSettings().getGeneric().getFileAbsolute(pyName));
+            PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
+            if (getSettings().getEnsemble().isEnsembleMode()) {
+                // If in ensemble mode, we write two files:
+                // - <app name>_models.py with ensemble methods which use the imported methods from
+                // - <app_name>_trees.py where the trees are defined
+                String treeFile = ClusForest.getTreeFile(appName);
+                // write ensemble file
+                ClusForest.writePythonAggregation(wrtr, treeFile, cr.getStatManager().getMode());
+                int maxSize = -1;
+                int maxSizedForest = -1;
+                for (int i = 0; i < cr.getNbModels(); i++) {
+                    ClusModel root = models.get(i);
+                    if (root instanceof ClusForest) {
+                        int trees = ((ClusForest) root).getNbModels();
+                        if (trees > maxSize) {
+                            maxSize = trees;
+                            maxSizedForest = i;
+                        }
+                        ((ClusForest) root).writePythonEnsembleFile(wrtr, treeFile);
+                    }
                 }
-        		System.out.println(String.format("Python ensemble code written to: %s", pyName));
-        		// print only max sized forest trees (the other forests are nested)
-        		ClusForest root = (ClusForest) models.get(maxSizedForest);
-        		if (getSettings().getEnsemble().shouldOptimizeEnsemble()) {
-        			root.joinPythonForestInOneFile(cr);
-        		} else {
-	        		root.printForestToPython();
-        		}
-        	} else {
-        		// Otherwise, we write only the <app name>_models.py file
-        		// Tested for clus.jar something.s case
-        		HashMap<Integer, String> pythonNames = new HashMap<Integer, String>();
-        		pythonNames.put(ClusModel.DEFAULT, "default");
-        		pythonNames.put(ClusModel.ORIGINAL, "original");
-        		pythonNames.put(ClusModel.PRUNED, "pruned");
-        		String defPattern = "def %s(xs):";
-        		HashMap<String, Integer> descrIndices = ClusUtil.getDiscriptiveAttributesIndices(cr.getStatManager());
-        		for(int i = 0; i < cr.getNbModels(); i++) {
-        			ClusModel root = models.get(i);
-        			if(pythonNames.containsKey(i)) {
-        				wrtr.println(String.format(defPattern, pythonNames.get(i)));
-        				root.printModelToPythonScript(wrtr, descrIndices);
-        			} else {
-        				System.err.println("Warning: this is not DEFAULT/ORIGINAL/PRUNED model and will not be printed. Extend the pythonNames hash map!");
-        			}
-        		}
-        	}
-        	
-        	wrtr.close();
+                System.out.println(String.format("Python ensemble code written to: %s", pyName));
+                // print only max sized forest trees (the other forests are nested)
+                ClusForest root = (ClusForest) models.get(maxSizedForest);
+                if (getSettings().getEnsemble().shouldOptimizeEnsemble()) {
+                    root.joinPythonForestInOneFile(cr);
+                }
+                else {
+                    root.printForestToPython();
+                }
+            }
+            else {
+                // Otherwise, we write only the <app name>_models.py file
+                // Tested for clus.jar something.s case
+                HashMap<Integer, String> pythonNames = new HashMap<Integer, String>();
+                pythonNames.put(ClusModel.DEFAULT, "default");
+                pythonNames.put(ClusModel.ORIGINAL, "original");
+                pythonNames.put(ClusModel.PRUNED, "pruned");
+                String defPattern = "def %s(xs):";
+                HashMap<String, Integer> descrIndices = ClusUtil.getDiscriptiveAttributesIndices(cr.getStatManager());
+                for (int i = 0; i < cr.getNbModels(); i++) {
+                    ClusModel root = models.get(i);
+                    if (pythonNames.containsKey(i)) {
+                        wrtr.println(String.format(defPattern, pythonNames.get(i)));
+                        root.printModelToPythonScript(wrtr, descrIndices);
+                    }
+                    else {
+                        System.err.println("Warning: this is not DEFAULT/ORIGINAL/PRUNED model and will not be printed. Extend the pythonNames hash map!");
+                    }
+                }
+            }
+
+            wrtr.close();
         }
-        
-        
+
         if (getSettings().getOutput().isOutputDatabaseQueries()) {
             int starttree = getSettings().getExhaustiveSearch().getStartTreeCpt();
             int startitem = getSettings().getExhaustiveSearch().getStartItemCpt();
@@ -393,7 +408,7 @@ public class ClusOutput {
             String jsonFileName = m_Sett2.getGeneric().getAppName() + ".json";
             PrintWriter jsonWriter = m_Sett2.getGeneric().getFileAbsoluteWriter(jsonFileName);
             jsonWriter.write(output.toString());
-            //System.out.print(output.toString());
+            // System.out.print(output.toString());
             jsonWriter.close();
         }
         m_Writer.flush();
@@ -467,10 +482,32 @@ public class ClusOutput {
     }
 
 
+    private static String getClusVersion() {
+        MavenXpp3Reader reader = new MavenXpp3Reader();
+        Model model = null;
+
+        try {
+            String file = "pom.xml";
+            if ((new File(file)).exists()) {
+                model = reader.read(new FileReader(file));
+            }
+            else {
+                InputStreamReader isr = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/META-INF/maven/si.ijs.kt/clus/" + file));
+                model = reader.read(isr);
+                isr.close();
+            }
+            return model.getVersion();
+        }
+        catch (Exception ex) {
+            throw new RuntimeException("Unable to get CLUS version");
+        }
+    }
+
+
     public static void printHeader() {
-        System.out.println("Clus v" + Clus.VERSION + " - Software for Predictive Clustering");
+        System.out.println("Clus v" + getClusVersion() + " - Software for Predictive Clustering");
         System.out.println();
-        System.out.println("Copyright (C) 2007, 2008, 2009, 2010");
+        System.out.println("Copyright (C) 2007 - 2018");
         System.out.println("   Katholieke Universiteit Leuven, Leuven, Belgium");
         System.out.println("   Jozef Stefan Institute, Ljubljana, Slovenia");
         System.out.println();
@@ -487,12 +524,31 @@ public class ClusOutput {
         System.out.println("Settings: appname.s");
         System.out.println("Output:   appname.out");
         System.out.println();
-        System.out.println("More information on:");
-        System.out.println("http://www.cs.kuleuven.be/~dtai/clus");
     }
 
 
     public static void printGPL() {
-        System.out.println("The GNU GENERAL PUBLIC LICENSE is written in the file 'LICENSE.txt'.");
+        try {
+            String file = "CLUS_LICENSE.txt";
+            String contents = "";
+            if ((new File(file)).exists()) {
+                byte[] b = Files.readAllBytes(Paths.get(file));
+                contents = new String(b, Charset.defaultCharset());
+            }
+            else {
+                InputStreamReader br = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + file));
+
+                char[] buffer = new char[4096];
+                StringBuilder sb = new StringBuilder();
+                for (int len; (len = br.read(buffer)) > 0;)
+                    sb.append(buffer, 0, len);
+                contents = sb.toString();
+                br.close();
+            }
+            System.out.println(contents);
+        }
+        catch (Exception ex) {
+            throw new RuntimeException("Unable to get LICENSE information.");
+        }
     }
 }

@@ -142,8 +142,6 @@ public class Clus implements CMDLineArgsProvider {
 
     public final static boolean m_UseHier = true;
 
-    public final static String VERSION = "2.11";
-
     // exhaustive was added the 1/08/2006
     // ssl was added 10/12/2013, Jurica Levatic
     // relief was added 29/08/2016
