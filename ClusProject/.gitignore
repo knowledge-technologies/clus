@@ -9,3 +9,6 @@
 __pycache__
 /src/META-INF/
 /target/
+/.settings/
+.project
+.classpath

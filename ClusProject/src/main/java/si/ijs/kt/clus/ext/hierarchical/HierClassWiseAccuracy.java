@@ -49,6 +49,8 @@ public class HierClassWiseAccuracy extends ClusError {
     protected double[] m_NbPosActual;
     protected boolean[] m_EvalClass;
 
+    private int hierarchyIndex = 0;
+
 
     public HierClassWiseAccuracy(ClusErrorList par, ClassHierarchy hier) {
         super(par, hier.getTotal());
@@ -57,13 +59,15 @@ public class HierClassWiseAccuracy extends ClusError {
         m_NbPosPredictions = new double[m_Dim];
         m_TP = new double[m_Dim];
         m_NbPosActual = new double[m_Dim];
+
+        hierarchyIndex = hier.m_Type.getArrayIndex();
     }
 
 
     @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
         // System.out.println("tuple: "+tuple.toString());
-        ClassesTuple tp = (ClassesTuple) tuple.getObjVal(0);
+        ClassesTuple tp = (ClassesTuple) tuple.getObjVal(hierarchyIndex);
         boolean[] predarr = ((WHTDStatistic) pred).getDiscretePred();
         for (int i = 0; i < m_Dim; i++) {
             if (predarr[i]) {
@@ -304,8 +308,8 @@ public class HierClassWiseAccuracy extends ClusError {
     }
 
 
-	@Override
+    @Override
     public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
-		return false;
-	}
+        return false;
+    }
 }

@@ -164,6 +164,9 @@ public class ClusErrorList implements Serializable {
 
 
     public ClusError getError(int idx) {
+        if (idx + 1 > m_Error.size()) {
+            System.out.println("ERORR");
+        }
         return m_Error.get(idx);
     }
 
@@ -268,9 +271,13 @@ public class ClusErrorList implements Serializable {
         int nb = m_ErrorWithNulls.size();
         for (int i = 0; i < nb; i++) {
             ClusError my = m_ErrorWithNulls.get(i);
-            ClusError your = par.getErrorOrNull(i);
-            if (your != null)
-                my.add(your);
+            if (my != null) {
+                //ClusError your = par.getErrorOrNull(i);
+                ClusError your = par.getErrorByName(my.getName());
+                if (your != null) {
+                    my.add(your);
+                }
+            }
         }
         m_NbExamples += par.getNbExamples();
         m_NbCover += par.getNbCover();
@@ -345,11 +352,11 @@ public class ClusErrorList implements Serializable {
         // public void showError(ClusModelInfoList models, int type, PrintWriter out) throws IOException {
         int nb = m_Error.size();
         ClusModelInfo definf = models.getModelInfo(ClusModel.DEFAULT);
-        if (definf == null) { 
+        if (definf == null) {
             System.err.println("DEFAULT model is null!");
             return;
         }
-        
+
         ClusErrorList defpar = definf.getError(type);
         out.println("Number of examples: " + defpar.getNbExamples());
 
@@ -442,9 +449,12 @@ public class ClusErrorList implements Serializable {
             for (int j = 0; j < nb_models; j++) {
                 ClusModelInfo inf = models.getModelInfo(j);
                 ClusErrorList parent = inf.getError(type);
-                ClusError err2 = parent.getError(i);
-                out.print("   " + StringUtils.printStr(inf.getName(), 15) + ": ");
-                err2.showModelError(out, ClusError.DETAIL_VERY_SMALL);
+                ClusError err2 = parent.getErrorByName(err1.getName());
+
+                if (err2 != null) {
+                    out.print("   " + StringUtils.printStr(inf.getName(), 15) + ": ");
+                    err2.showModelError(out, ClusError.DETAIL_VERY_SMALL);
+                }
             }
         }
     }
