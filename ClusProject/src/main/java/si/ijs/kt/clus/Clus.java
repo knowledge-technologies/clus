@@ -198,7 +198,7 @@ public class Clus implements CMDLineArgsProvider {
 
         // Update schema based on settings
         m_Sett.updateTarget(m_Schema);
-        m_Sett.getHMTR().addHMTRTargets(m_Schema, m_HMTRHierarchy); //only if HMTR is enabled
+        m_Sett.getHMTR().addHMTRTargets(m_Schema, m_HMTRHierarchy); // only if HMTR is enabled
         m_Schema.initializeSettings(m_Sett);
 
         m_Sett.getAttribute().setTarget(m_Schema.getTarget().toString());
@@ -297,8 +297,8 @@ public class Clus implements CMDLineArgsProvider {
                 System.out.println("Creating hierarchy for HMTR" + System.lineSeparator());
             }
 
-            m_HMTRHierarchy.initialize(m_Sett);//m_Sett.getHMTRHierarchyString().getStringValue(), 
-                                               //m_Sett.getHMTRHierarchyWeight().getValue());
+            m_HMTRHierarchy.initialize(m_Sett);// m_Sett.getHMTRHierarchyString().getStringValue(),
+                                               // m_Sett.getHMTRHierarchyWeight().getValue());
 
             if (m_Sett.getGeneral().getVerbose() > 0) {
                 m_HMTRHierarchy.printHierarchy();
@@ -423,8 +423,7 @@ public class Clus implements CMDLineArgsProvider {
             m_Summary.setTrainError(error);
         }
 
-        if ((hasTestSet() || m_Sett.getSSL().isSemiSupervisedMode())
-                && m_Sett.getOutput().isOutTestError()) {
+        if ((hasTestSet() || m_Sett.getSSL().isSemiSupervisedMode()) && m_Sett.getOutput().isOutTestError()) {
             m_Summary.setTestError(error);
         }
         if (hasPruneSet() && m_Sett.getOutput().isOutValidError()) {
@@ -432,36 +431,6 @@ public class Clus implements CMDLineArgsProvider {
         }
     }
 
-
-    // added by Leander 7-4-2006
-//    @Deprecated  // matejp found out that this is not referenced
-//    public final void initializeClassWeights() {
-//        double[] we = m_Sett.getModel().getClassWeight();
-//        // add the weight to all examples of specific classes (in DataTuple)
-//        // if there are no weights specified, are they automatically 1? yes
-//        System.out.println(we);
-//        ClusAttrType[] classes = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
-//        // int nbClasses = 1;
-//        // for (int i = 0; i < nbClasses; i++){
-//        // ClusAttrType targetclass = classes[i];
-//        // }
-//        ClusAttrType targetclass = classes[0];
-//        RowData data = m_Data;
-//        int nbrows = m_Data.getNbRows();
-//        for (int i = 0; i < nbrows; i++) {
-//            DataTuple tuple = data.getTuple(i);
-//            if (targetclass.getString(tuple).equals("[pos]")) { // tuple is
-//                                                                // positive
-//                                                                // System.out.println("Tuple"+tuple.toString()+" Klasse"+targetclass.getString(tuple));
-//                DataTuple newTuple = tuple.changeWeight(we[0]);
-//                data.setTuple(newTuple, i);
-//                // make hash table for mapping classes with their weights?
-//            }
-//        }
-//    }
-
-
-    // end added by Leander 7-4-2006
 
     public final void sample(String svalue) {
         ClusSelection sel;
@@ -494,7 +463,7 @@ public class Clus implements CMDLineArgsProvider {
      *        Information about this run.
      * @param clss
      *        Type of learning algorithm used.
-     * @throws Exception 
+     * @throws Exception
      */
     public final void induce(ClusRun cr, ClusInductionAlgorithmType clss) throws Exception {
         if (getSettings().getGeneral().getVerbose() > 0) {
@@ -509,16 +478,16 @@ public class Clus implements CMDLineArgsProvider {
     }
 
 
-    //    public final void showTree(String fname) throws ClusException, IOException, ClassNotFoundException {
-    //        TreeFrame.showTree(getSettings().getGeneric().getFileAbsolute(fname));
-    //    }
+    // public final void showTree(String fname) throws ClusException, IOException, ClassNotFoundException {
+    // TreeFrame.showTree(getSettings().getGeneric().getFileAbsolute(fname));
+    // }
     //
     //
-    //    public final void gui(String lok) throws ClusException, IOException, ClassNotFoundException {
-    //        ClusSchema schema = new ClusSchema("Clus");
-    //        ClusStatManager mgr = new ClusStatManager(schema, m_Sett, false);
-    //        TreeFrame.start(mgr, lok);
-    //    }
+    // public final void gui(String lok) throws ClusException, IOException, ClassNotFoundException {
+    // ClusSchema schema = new ClusSchema("Clus");
+    // ClusStatManager mgr = new ClusStatManager(schema, m_Sett, false);
+    // TreeFrame.start(mgr, lok);
+    // }
 
     public final void postprocModel(ClusModel model, TupleIterator iter, ModelProcessorCollection coll) throws IOException, ClusException {
         iter.init();
@@ -731,8 +700,7 @@ public class Clus implements CMDLineArgsProvider {
         }
         if (!m_Sett.getSSL().isNullUnlabeledFile()) {
             MyClusInitializer initUnlabeled = new MyClusInitializer();
-            TupleIterator iterUnlabeled = new DiskTupleIterator(m_Sett.getSSL().getUnlabeledFile(), initUnlabeled,
-                    getPreprocs(true), m_Sett);
+            TupleIterator iterUnlabeled = new DiskTupleIterator(m_Sett.getSSL().getUnlabeledFile(), initUnlabeled, getPreprocs(true), m_Sett);
             iterUnlabeled.setShouldAttach(true);
             cr.setUnlabeledSet(iterUnlabeled);
         }
@@ -859,8 +827,11 @@ public class Clus implements CMDLineArgsProvider {
     }
 
 
-    /** Compute either test or train error 
-     * @throws InterruptedException */
+    /**
+     * Compute either test or train error
+     * 
+     * @throws InterruptedException
+     */
     public final void calcError(TupleIterator iter, int type, ClusRun cr, ClusEnsemblePredictionWriter ens_pred) throws IOException, ClusException, InterruptedException {
         iter.init();
         ClusSchema mschema = iter.getSchema();
@@ -870,7 +841,7 @@ public class Clus implements CMDLineArgsProvider {
 
         boolean wr_ens_tr_preds = (!SettingsExperimental.IS_XVAL) || (SettingsExperimental.IS_XVAL && cr.getTestSet() == null);
         wr_ens_tr_preds = wr_ens_tr_preds && (type == ClusModelInfo.TRAIN_ERR) && (getSettings().getEnsemble().shouldWritePredictionsFromEnsemble());
-        
+
         boolean wr_ens_te_preds = (!SettingsExperimental.IS_XVAL && cr.getTestSet() != null);
         wr_ens_te_preds = wr_ens_te_preds && (type == ClusModelInfo.TEST_ERR) && (getSettings().getEnsemble().shouldWritePredictionsFromEnsemble());
         // boolean wr_ens_xval_preds = (getSettings().shouldWritePredictionsFromEnsemble() && getSettings().IS_XVAL &&
@@ -1392,12 +1363,14 @@ public class Clus implements CMDLineArgsProvider {
         // ClusOutput output = new ClusOutput(m_Sett.getAppName() + ".out",
         // m_Schema, m_Sett);
         ClusOutput output;
-        //        if (ClusEnsembleInduce.isOptimized() && (m_Sett.getNbBaggingSets().getVectorLength() > 1) && (m_Sett.getBagSelection().getIntVectorSorted()[0] < 1)) {
-        //            output = new ClusOutput(m_Sett.getAppName() + "_" + ClusEnsembleInduce.getMaxNbBags() + "_.out", m_Schema, m_Sett);
-        //        }
-        //        else {
+        // if (ClusEnsembleInduce.isOptimized() && (m_Sett.getNbBaggingSets().getVectorLength() > 1) &&
+        // (m_Sett.getBagSelection().getIntVectorSorted()[0] < 1)) {
+        // output = new ClusOutput(m_Sett.getAppName() + "_" + ClusEnsembleInduce.getMaxNbBags() + "_.out", m_Schema,
+        // m_Sett);
+        // }
+        // else {
         output = new ClusOutput(m_Sett.getGeneric().getAppName() + ".out", m_Schema, m_Sett);
-        //        }
+        // }
 
         ClusRun cr = partitionData();
         // Compute statistic on training data
@@ -1589,10 +1562,7 @@ public class Clus implements CMDLineArgsProvider {
     public final void xvalRun(ClusInductionAlgorithmType clss) throws Exception {
         ClusErrorOutput errFileOutput = null;
         if (getSettings().getOutput().isWriteErrorFile()) {
-            errFileOutput = new ClusErrorOutput(
-                    m_Sett.getGeneric().getAppName() + ".err",
-                    m_Schema,
-                    m_Sett);
+            errFileOutput = new ClusErrorOutput(m_Sett.getGeneric().getAppName() + ".err", m_Schema, m_Sett);
 
             errFileOutput.writeHeader();
         }
@@ -1747,7 +1717,7 @@ public class Clus implements CMDLineArgsProvider {
 
 
     public void updateStatistic(String fname, ClusStatistic[] stats) throws ClusException, IOException {
-    	MyClusInitializer init = new MyClusInitializer();
+        MyClusInitializer init = new MyClusInitializer();
         TupleIterator iter = new DiskTupleIterator(fname, init, getPreprocs(true), m_Sett);
         iter.init();
         DataTuple tuple = iter.readTuple();
@@ -1801,7 +1771,7 @@ public class Clus implements CMDLineArgsProvider {
 
 
     private static void tryAnalyzePredictions(Clus clus, Settings sett) {
-        //daniela  only form 1 target
+        // daniela only form 1 target
         int ts_size = clus.getNbRows();
         double b = clus.getSettings().getTree().getBandwidth();
         String ts_name = sett.getGeneric().getAppNameWithSuffix() + ".test.pred.arff";
@@ -1820,7 +1790,7 @@ public class Clus implements CMDLineArgsProvider {
             e.printStackTrace();
             System.err.println("Prediction analysis failed.");
         }
-        //end daniela
+        // end daniela
     }
 
 
@@ -1915,8 +1885,7 @@ public class Clus implements CMDLineArgsProvider {
                     clus.getSettings().getOptionTree().setSectionOptionEnabled(true);
                     clss = new ClusOptionTree(clus);
                     if (sett.getTree().getFTestArray().isVector())
-                        clss = new CDTTuneFTest(clss, sett.getTree().getFTestArray()
-                                .getDoubleVector());
+                        clss = new CDTTuneFTest(clss, sett.getTree().getFTestArray().getDoubleVector());
                 }
                 else {
                     clss = new ClusDecisionTree(clus);
@@ -1924,13 +1893,16 @@ public class Clus implements CMDLineArgsProvider {
                         clss = new CDTTuneFTest(clss, sett.getTree().getFTestArray().getDoubleVector());
                 }
 
-                //check if semi-supervised is turned on
+                // check if semi-supervised is turned on
                 if (cargs.hasOption("ssl")) {
                     sett.getSSL().setSemiSupervisedMode(true);
 
-                    //by default SSL-PCTs takes all descriptive attributes as clustering (if clustering atts are not explicitly set)
+                    // by default SSL-PCTs takes all descriptive attributes as clustering (if clustering atts are not
+                    // explicitly set)
                     if (sett.getSSL().getSemiSupervisedMethod() == SettingsSSL.SSL_METHOD_PCT) {
-                        if (sett.getAttribute().getClustering().equals("Default")) //Clustering attributes are not set, use Descriptive+Target as Clustering
+                        if (sett.getAttribute().getClustering().equals("Default")) // Clustering attributes are not set,
+                                                                                   // use Descriptive+Target as
+                                                                                   // Clustering
                             sett.getAttribute().setClustering(sett.getAttribute().getDescriptive() + "," + sett.getAttribute().getTarget());
                     }
 
@@ -1994,13 +1966,13 @@ public class Clus implements CMDLineArgsProvider {
                     clus.initialize(cargs, clss);
                     clus.baggingRun(clss);
                 }
-                //                else if (cargs.hasOption("show")) {
-                //                    // clus.showModel(clus.getAppName());
-                //                    clus.showTree(clus.getAppName());
-                //                }
-                //                else if (cargs.hasOption("gui")) {
-                //                    clus.gui(cargs.getMainArg(0));
-                //                }
+                // else if (cargs.hasOption("show")) {
+                // // clus.showModel(clus.getAppName());
+                // clus.showTree(clus.getAppName());
+                // }
+                // else if (cargs.hasOption("gui")) {
+                // clus.gui(cargs.getMainArg(0));
+                // }
                 else if (cargs.hasOption("tseries")) {
                     clus.getSettings().getTimeSeries().setSectionTimeSeriesEnabled(true);
                     clus.initialize(cargs, clss);

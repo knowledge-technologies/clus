@@ -162,9 +162,5 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
             ClusModelInfo model = cr.getModelInfoFallback(ClusModel.PRUNED, ClusModel.ORIGINAL);
             convertToRules(cr, model);
         }
-        
-        ClusNode originalTree = (ClusNode)cr.getModel(ClusModel.ORIGINAL);
-        
-        
     }
 }
