@@ -11,8 +11,4 @@ __pycache__
 /target/
 /.settings/
 .project
-<<<<<<< HEAD
 .classpath
-=======
-.classpath
->>>>>>> refs/heads/bugfix-55
