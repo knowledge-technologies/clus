@@ -34,6 +34,7 @@
 
 \newcommand{\clus}{\textsc{Clus}}
 \newcommand{\clusphy}{\textsc{Clus}-$\varphi$}
+\newcommand{\clusgit}{http://source.ijs.si/mpetkovic/clusproject.git}
 %\newcommand{\comment}[1]{{\color{red}\textbf{COMMENT:} #1}}
 \newcommand{\comment}[1]{} % off
 
@@ -161,33 +162,41 @@ A longer list of publications describing different aspects and applications of \
 \label{sec:run}
 
 \begin{sloppypar}
-\clus{} is written in the Java programming language, which is available from {\tt http://java.sun.com}. You will need Java version 1.5.x or newer. To run \clus{}, it suffices to install the Java Runtime Environment (JRE). If you want to make changes to \clus{} and compile its source code, then you will need to install the Java Development Kit (JDK) instead of the JRE.
+\clus{} is written in the Java programming language, which is available from {\tt http://www.oracle.com}. You will need Java version 1.8.x or newer and Apache Maven 3.3.9 or newer. To run \clus{}, it suffices to install the Java Runtime Environment (JRE). If you want to make changes to \clus{} and compile its source code, then you will need to install the Java Development Kit (JDK) instead of the JRE.
 \end{sloppypar}
 
-The \clus\ software is released under the GNU General Public License version 3 or later and is available for download at \url{http://www.cs.kuleuven.be/~dtai/clus/}. After downloading \clus{}, unpack it into a directory of your choice. \clus{} is a command line application and should be started from the command prompt (Windows) or a terminal window (Unix). To start \clus{}, enter the command:
+The \clus\ software is released under the GNU General Public License version 3 or later and is available for download at \url{http://www.cs.kuleuven.be/~dtai/clus/}. After downloading \clus{}, unpack it into a directory of your choice. \clus{} is a command line application and should be started from the command prompt (Windows) or a terminal window (Unix). To build \clus{}, enter the following commands:
 \begin{flushleft}
-\verb^java -jar $CLUS_DIR/Clus.jar^ {\em filename}\verb^.s^
+	\verb^git clone^ \clusgit{} \\
+	\verb^cd ClusProject^ \\
+	\verb^mvn package^
 \end{flushleft}
 
-\noindent{}with \verb^$CLUS_DIR/Clus.jar^ the location of \verb^Clus.jar^ in your \clus{} distribution and {\tt {\em filename}.s} the name of your settings file. In order to verify that your \clus\ installation is working properly, you might try something like:
+\clus{} executable is located in the \verb^ClusProject/target^ folder. In order to verify that your copy of \clus{} is working properly, you can run it without parameters like so:
+\begin{flushleft}
+	\verb^java -jar Clus-<version>.jar^
+\end{flushleft}
 
-\begin{list}{\labelitemi}{\leftmargin=1.5cm}
-\item[Windows:]\mbox{}
-\begin{verbatim}
-cd C:\Clus\data\weather
-java -jar ..\..\Clus.jar weather.s
-\end{verbatim}
+\noindent{}You should receive an output similar to the one below:\\
+\verb^Clus v2.12.0 - Software for Predictive Clustering^\\
+\verb^Copyright (C) 2007 - 2018^\\
+\verb^Katholieke Universiteit Leuven, Leuven, Belgium^\\
+\verb^Jozef Stefan Institute, Ljubljana, Slovenia^\\
+\\
+\verb^This program is free software and comes with ABSOLUTELY NO^\\
+\verb^WARRANTY. You are welcome to redistribute it under certain^\\
+\verb^conditions. Type 'clus -copying' for distribution details.^\\
+\\
+\verb^Usage: clus appname^\\
+\verb^Database: appname.arff^\\
+\verb^Settings: appname.s^\\
+\verb^Output:   appname.out^\\
+\verb^Expected main argument^\\
 
-\item[Unix:]\mbox{}
-\begin{verbatim}
-cd $HOME/Clus/data/weather
-java -jar ../../Clus.jar weather.s
-\end{verbatim}
-\end{list}
 
-\noindent{}This runs \clus{} on a simple example \emph{Weather.} You can also try other example data sets in the \texttt{data} directory of the \clus{} distribution.
+%\noindent{}This runs \clus{} on a simple example \emph{Weather.} You can also try other example data sets in the \texttt{data} directory of the \clus{} distribution.
 
-Note that the above instructions are for running the pre-compiled version of \clus{} (\texttt{Clus.jar}), which is included with the \clus{} download. If you have modified and recompiled \clus{}, or if you are using the SVN developers version, then you should run \clus{} in a different way, as is explained in Chapter~\ref{ch:devel}.
+%Note that the above instructions are for running the pre-compiled version of \clus{} (\texttt{Clus.jar}), which is included with the \clus{} download. If you have modified and recompiled \clus{}, or if you are using the SVN developers version, then you should run \clus{} in a different way, as is explained in Chapter~\ref{ch:devel}.
 
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -908,7 +917,7 @@ If only one ranking is computed, depending on the {\tt [Ensemble]/SortRankingByR
 %
 
 
-\chapter{Developer Documentation}
+\chapter{Developer Documentation - this is not up to date!}
 \label{ch:devel}
 
 \section{Compiling Clus}
