@@ -240,7 +240,7 @@ public class SettingsRules extends SettingsBase {
     private INIFileBool m_ComputeDispersion;
     private INIFileDouble m_VarBasedDispNormWeight;
     private INIFileNominalOrDoubleOrVector m_DispersionWeights;
-    /** How many random rules are wanted. If > 0 only random rules are generated */
+    /** How many random rules are wanted. If &gt; 0 only random rules are generated */
     private INIFileInt m_RandomRules;
     private INIFileBool m_RuleWiseErrors;
 

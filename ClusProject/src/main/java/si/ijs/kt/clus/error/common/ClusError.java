@@ -80,8 +80,7 @@ public abstract class ClusError implements Serializable {
 	}
 
 	/**
-	 * @param name
-	 *            of the model
+	 * @param name of the model
 	 * @return can this error be used for the model?
 	 */
 	public boolean isComputeForModel(String name) {
