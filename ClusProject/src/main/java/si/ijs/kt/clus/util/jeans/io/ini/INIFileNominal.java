@@ -51,12 +51,9 @@ public class INIFileNominal extends INIFileEntry {
     /**
      * Constructor for INIFileNominal
      * 
-     * @param name
-     *        Parameter name
-     * @param values
-     *        Possible values in strings
-     * @param def
-     *        The default value number
+     * @param name Parameter name
+     * @param values Possible values in strings
+     * @param def The default value number
      */
     public INIFileNominal(String name, String[] values, int def) {
         super(name);

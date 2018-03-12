@@ -67,8 +67,7 @@ public class DePop {
     /**
      * Evaluate population fitness with the population's function.
      * 
-     * @param num_eval
-     *        How many individuals have already been evaluated? Usually 0.
+     * @param num_eval How many individuals have already been evaluated? Usually 0.
      * @return num_eval + no. evaluated individuals. That is, number of evaluated individuals so far.
      */
     public int evaluatePop(int num_eval) {

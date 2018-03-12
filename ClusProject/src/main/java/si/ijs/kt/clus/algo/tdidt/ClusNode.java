@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Stack;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -54,6 +55,7 @@ import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
 import si.ijs.kt.clus.util.ClusUtil;
+import si.ijs.kt.clus.util.UniqueNodeIdentifier;
 import si.ijs.kt.clus.util.jeans.tree.MyNode;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -81,7 +83,16 @@ public class ClusNode extends MyNode implements ClusModel {
                                         // - adde by Jurica Levatic (E8_IJS), March 2014
     public List<Integer> m_LeafTuples; //contains hash codes of tuples which ended in a leaf
     // - end added by Jurica
+    private UniqueNodeIdentifier m_UniqueNodeIdentifier; // matejp: used because hashCode & equals do not form a considerable good team for leaves
     
+    
+    private void setUniqueNodeIdentifier(int value) {
+    	m_UniqueNodeIdentifier = new UniqueNodeIdentifier(value);
+    }
+    
+    private UniqueNodeIdentifier getUniqueNodeIdentifier() {
+		return m_UniqueNodeIdentifier;
+	}
 
 
     @Override
@@ -252,17 +263,18 @@ public class ClusNode extends MyNode implements ClusModel {
         return m_ID;
     }
 
-
     @Override
     public boolean equals(Object other) {
         ClusNode o = (ClusNode) other;
-        if (m_Test != null && o.m_Test != null) {
-            if (!m_Test.equals(o.m_Test))
-                return false;
+        if (m_Test != null && o.m_Test != null) {  		// two internal nodes: same tests and same children
+            if (!m_Test.equals(o.m_Test)) {
+            	return false;
+            }
         }
-        else {
-            if (m_Test != null || o.m_Test != null)
-                return false;
+        else if (m_Test != null || o.m_Test != null) {  // internal node is not equal to a leaf
+            	return false;
+        } else {										// two leaves should give the at least same predictions, but this is not good enough for use in HashMap!
+        	System.err.println("Warning: you are comparing two leaves. This always results in true.");
         }
         int nb_c = getNbChildren();
         for (int i = 0; i < nb_c; i++) {
@@ -270,9 +282,9 @@ public class ClusNode extends MyNode implements ClusModel {
                 return false;
         }
         return true;
-    }
+    } 
 
-
+    
     @Override
     public int hashCode() {
         int hashCode = 1234;
@@ -1168,8 +1180,7 @@ public class ClusNode extends MyNode implements ClusModel {
 
     
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
-        // changed tab to 4 spaces
-        printTreeToPythonScript(wrt, "\t", dict);
+    	printTreeToPythonScriptIterative(wrt, "\t", dict);
         wrt.println();
         wrt.println();
     }
@@ -1612,29 +1623,113 @@ public class ClusNode extends MyNode implements ClusModel {
             if (arity - delta == 2) {
                 int index = dict.get(m_Test.getType().getName());
                 String atrNameReplacement = String.format("xs[%d]", index);
-                String original = "if " + m_Test.getPythonTestString() + ":";
-                String neww = original.replace(m_Test.getType().getName(), atrNameReplacement);
-                writer.println(prefix + neww);
+                String testString = "if " + m_Test.getPythonTestString(atrNameReplacement) + ":";
+                writer.println(prefix + testString);
                 ((ClusNode) getChild(YES)).printTreeToPythonScript(writer, prefix + "\t", dict);
-                writer.println(prefix + "else: ");
+                writer.println(prefix + "else:");
                 if (hasUnknownBranch()) {
-                    // TODO anything to do???
+                    System.err.println("has unknown branch");
+                    writer.println(prefix + "Let there be syntax errors. This is unknown branch!");
                 }
                 else {
                     ((ClusNode) getChild(NO)).printTreeToPythonScript(writer, prefix + "\t", dict);
                 }
             }
             else {
-                // TODO what to do?
+            	System.err.println("arity - delta != 2 becauese arity: " + arity + " and delta: " + delta);
+                writer.println(prefix + "Let there be syntax errors. Situation: here arity - delta != 2");
             }
         }
         else {
             if (m_TargetStat != null) {
                 writer.println(prefix + "return " + m_TargetStat.getArrayOfStatistic());
                 // System.out.println(m_TargetStat.getClass());
+            } else {
+            	System.err.println("m_TargetStat == null");
+            	writer.println(prefix + "return null, because m_TargetStat is null");
             }
         }
     }
+    
+    
+    /**
+     * The iterative version of the method for printing Python code. This should be called only at the root node of the tree.
+     * Two stages:<br>
+     * <ul>
+     * <li>create hash map node: number of visits, of all nodes in the tree </li>
+     * <li>perform depth first search and print Python trees</li>
+     * </ul>
+     * @param writer
+     * @param prefix
+     * @param dict
+     */
+    public final void printTreeToPythonScriptIterative(PrintWriter writer, String prefix, HashMap<String, Integer> dict) {
+    	// Hash map node: number of visits
+    	HashMap<UniqueNodeIdentifier, Integer> tree_nodes = new HashMap<UniqueNodeIdentifier, Integer>();
+    	int identifier = 0;
+    	Stack<ClusNode> temp = new Stack<>();
+    	temp.push(this);
+    	ClusNode current;
+    	while(!temp.isEmpty()) {
+    		current = temp.pop();
+    		current.setUniqueNodeIdentifier(identifier);
+    		identifier++;
+    		if (tree_nodes.containsKey(current.getUniqueNodeIdentifier())) {
+    			System.out.println(current + " existss");
+    		}
+    		tree_nodes.put(current.getUniqueNodeIdentifier(), 0);
+    		int children = current.getNbChildren();
+    		if(children != 0 && children != 2) {
+    			System.err.println("Warning: not a binary tree! Python code won't work properly with high probability.");
+    		}
+    		for(int i = 0; i < children; i++) {
+    			temp.push((ClusNode) current.getChild(i));
+    		}
+     	}
+    	// print the code
+    	current = this;
+    	int current_indentation = prefix.length() - prefix.replace("\t", "").length();
+    	while(current != null) {
+    		int arity = current.getNbChildren();
+    		String current_prefix = StringUtils.makeString('\t', current_indentation);
+    		if (arity > 0) {
+    			// internal node
+    			int visits = tree_nodes.get(current.getUniqueNodeIdentifier()).intValue();
+    			tree_nodes.put(current.getUniqueNodeIdentifier(), visits + 1);
+        		if (visits == 0) {
+        			// print if test and follow the YES branch
+        			String atrNameReplacement = String.format("xs[%d]", dict.get(current.m_Test.getType().getName()));
+                    String testString = "if " + current.m_Test.getPythonTestString(atrNameReplacement) + ":";
+                    writer.println(current_prefix + testString);
+                    current = (ClusNode) current.getChild(YES);
+                    current_indentation++;
+        		} else if(visits == 1) {
+        			// print else and follow the NO branch
+        			writer.println(current_prefix + "else:");
+        			current = (ClusNode) current.getChild(NO);
+        			current_indentation++;
+        		} else if(visits == 2) {
+        			// go up
+        			current = (ClusNode) current.m_Parent;
+                    current_indentation--;
+        		} else {
+        			System.err.println("Warning: more than two visits of the node " + this.toString());
+        		}
+    		} else {
+    			// leaf
+                if (m_TargetStat != null) {
+                    writer.println(current_prefix + "return " + current.m_TargetStat.getArrayOfStatistic());
+                } else {
+                	System.err.println("m_TargetStat == null");
+                	writer.println(current_prefix + "return null, because m_TargetStat is null");
+                }
+                // go up
+                current = (ClusNode) current.m_Parent;
+                current_indentation--;
+    		}
+    	}
+    }
+
 
 
     public final void showAlternatives(PrintWriter writer) {

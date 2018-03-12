@@ -85,9 +85,9 @@ public class SettingsEnsemble extends SettingsBase {
     private INIFileBool m_PrintAllModelInfo;
     private INIFileBool m_PrintPaths;
     private boolean m_EnsembleMode = false;
-    /** Time & memory optimization */
+    /** Time and memory optimization */
     private INIFileBool m_EnsembleShouldOpt;
-    /** Estimate error with time & memory optimization */
+    /** Estimate error with time and memory optimization */
     private INIFileBool m_EnsembleOOBestimate;
     // protected INIFileBool m_FeatureRanking;
 //    private INIFileNominal m_FeatureRanking;

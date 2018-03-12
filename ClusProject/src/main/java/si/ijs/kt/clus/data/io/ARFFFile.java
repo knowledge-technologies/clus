@@ -189,7 +189,7 @@ public class ARFFFile {
             }
         }
     }
-
+    
 
     public static void writeArffHeader(PrintWriter wrt, ClusSchema schema) throws IOException, ClusException {
         wrt.println("@RELATION '" + StringUtils.removeSingleQuote(schema.getRelationName()) + "'");

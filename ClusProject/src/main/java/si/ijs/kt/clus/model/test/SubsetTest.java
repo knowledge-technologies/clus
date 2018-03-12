@@ -98,13 +98,13 @@ public class SubsetTest extends NodeTest {
 
 
     @Override
-    public String getPythonString() {
+    public String getPythonString(String xsElement) {
         if (m_Values.length == 1) {
-            return m_Type.getName() + " == '" + m_Type.getValue(m_Values[0]) + "'";
+            return xsElement + " == '" + m_Type.getValue(m_Values[0]) + "'";
         }
         else {
             StringBuffer buffer = new StringBuffer();
-            buffer.append(m_Type.getName());
+            buffer.append(xsElement);
             if (m_Values.length == 0) {
                 buffer.append(" in ?");
             }

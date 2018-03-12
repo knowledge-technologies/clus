@@ -825,6 +825,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         long one_bag_time = ResourceInfo.getTime();
         SettingsEnsemble sett = cr.getStatManager().getSettings().getEnsemble();
         SettingsGeneral setg = cr.getStatManager().getSettings().getGeneral();
+        SettingsOutput seto = cr.getStatManager().getSettings().getOutput();
 
         if (setg.getVerbose() > 0)
             System.out.println("Bag: " + i);
@@ -932,7 +933,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         // Valid only when test set is supplied
-        if (checkToOutEnsemble(i) && (sett.getBagSelection().getIntVectorSorted()[0] == -1)) {
+        if (checkToOutEnsemble(i) && sett.getBagSelection().getIntVectorSorted()[0] == -1) {
             //crSingle.setInductionTime(m_SummTime);
             crSingle.setInductionTime(one_bag_time);
             canForgetTheRun = false;
@@ -960,7 +961,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             }
         }
 
-        if ((sett.getBagSelection().getIntVectorSorted()[0] != -1) || (sett.isPrintEnsembleModelFiles())) {
+        if (seto.shouldWritePerBagModelFiles() && (sett.getBagSelection().getIntVectorSorted()[0] != -1 || sett.isPrintEnsembleModelFiles())) {
             ClusModelCollectionIO io = new ClusModelCollectionIO();
             ClusModelInfo orig_info = crSingle.addModelInfo("Original");
             orig_info.setModel(model);

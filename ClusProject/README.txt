@@ -3,7 +3,7 @@ Copyright Notice
 ----------------
 
 Clus - Software for Predictive Clustering
-Copyright (C) 2007
+Copyright (C) 2007 - 2018
     Katholieke Universiteit Leuven, Leuven, Belgium
     Jozef Stefan Institute, Ljubljana, Slovenia    
 

@@ -9,3 +9,11 @@
 __pycache__
 /src/META-INF/
 /target/
+/.settings/
+.project
+.classpath
+/resources/unitTests/**/*.fimp
+/resources/unitTests/**/*.out
+/resources/unitTests/**/*.xval
+/resources/unitTests/**/*.model
+/resources/unitTests/**/*.oob

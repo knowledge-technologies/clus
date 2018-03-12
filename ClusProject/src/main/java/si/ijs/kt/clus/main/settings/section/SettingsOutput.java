@@ -36,6 +36,7 @@ public class SettingsOutput extends SettingsBase {
     protected INIFileBool m_GzipOutput; // added by Jurica Levatic JSI, July 2014
     protected INIFileBool m_WriteErrorFile;
     protected INIFileBool m_WriteModelFile;
+    protected INIFileBool m_WritePerBagModelFiles;
     protected INIFileBool m_WriteOOBFile;
     protected INIFileBool m_ModelIDFiles;
     protected INIFileBool m_OutputPythonModel;
@@ -48,6 +49,11 @@ public class SettingsOutput extends SettingsBase {
 
     public SettingsOutput(int position) {
         super(position);
+    }
+    
+    
+    public boolean shouldWritePerBagModelFiles() {
+    	return m_WritePerBagModelFiles.getValue();
     }
 
 
@@ -256,6 +262,7 @@ public class SettingsOutput extends SettingsBase {
         output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); // TODO: bug: see issue #51 in the
                                                                                      // repository
         output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
+        output.addNode(m_WritePerBagModelFiles = new INIFileBool("WritePerBagModelFile", true));
         output.addNode(m_WriteOOBFile = new INIFileBool("WriteOOBFile", false));
         output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
         output.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));
