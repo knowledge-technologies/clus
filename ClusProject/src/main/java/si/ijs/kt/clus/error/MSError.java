@@ -51,8 +51,8 @@ public class MSError extends ClusNumericError implements ComponentError {
     protected ClusAttributeWeights m_Weights;
     protected boolean m_PrintAllComps;
     
-    protected double[] m_SumTrueValues;			// these two fields used for
-    protected double[] m_SumSquaredTrueValues;  // relative errors
+    protected double[] m_SumTrueValues;			// these two fields used
+    protected double[] m_SumSquaredTrueValues;  // for relative errors
 
     public MSError(ClusErrorList par, NumericAttrType[] num) {
         this(par, num, null, true);

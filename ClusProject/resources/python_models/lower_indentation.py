@@ -85,7 +85,7 @@ def lower_indentation(py_file, out_file, steps):
 
 
 if __name__ == "__main__":
-    print("Usage: python lower_indentation.py path/to/input/py/script path/to/output/py/script max_depth")
+    print("\nUsage: python lower_indentation.py path/to/input/py/script path/to/output/py/script max_depth\n\n")
     in_f = sys.argv[1]
     out_f = sys.argv[2]
     depth = int(sys.argv[3])
