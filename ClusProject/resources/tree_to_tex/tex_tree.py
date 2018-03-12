@@ -142,7 +142,7 @@ HEADER = r"""\documentclass{article}
     leaf/.style     = {treenode, shape=rectangle}
 }
 
-\begin{tikzpicture}
+\begin{tikzpicture}%[thick,scale=0.7, every node/.style={scale=0.7}, every edge/.style={scale=0.7}]
 [
 grow                    = down,
 level distance          = 7em,

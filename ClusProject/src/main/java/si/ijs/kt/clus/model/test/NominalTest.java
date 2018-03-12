@@ -74,16 +74,16 @@ public class NominalTest extends NodeTest {
 
 
     @Override
-    public String getPythonString() {
+    public String getPythonString(String xsElement) {
         if (m_Type.getNbValues() > 2) {
-            return m_Type.getName();
+            return xsElement; // m_Type.getName();
         }
         else {
             String val = m_Type.getValue(0);
             if (hasBranchLabels())
-                return m_Type.getName();
+                return xsElement;   // m_Type.getName();
             else
-                return m_Type.getName() + " == " + "'" + val + "'";
+                return xsElement + " == " + "'" + val + "'"; // m_Type.getName()
         }
     }
 

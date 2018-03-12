@@ -135,9 +135,9 @@ public class RRMSError extends MSError {
         double modelError = super.getModelErrorComponent(i);
         double defaultModelError = (m_SumSquaredTrueValues[i] - m_SumTrueValues[i] * m_SumTrueValues[i] / m_nbEx[i]) / m_nbEx[i];
         
-        if (defaultModelError ==0 )
+        if (defaultModelError == 0 )
         {
-            System.out.println("DASDASD");
+            System.out.println("Default error is zero.");
         }
         return Math.sqrt(modelError / defaultModelError);
 

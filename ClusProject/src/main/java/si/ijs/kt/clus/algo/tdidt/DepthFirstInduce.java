@@ -58,6 +58,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     protected FindBestTest m_FindBestTest;
     protected FindBestTest m_Find_MinMax; // daniela
     protected ClusNode m_Root;
+    
+    protected static int SHOW_INDUCE_PROGRESS = 2;
 
 
     public DepthFirstInduce(ClusSchema schema, Settings sett) throws ClusException, IOException {
@@ -255,6 +257,9 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 
     public void makeLeaf(ClusNode node) {
+        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
+            System.out.println("Creating a leaf ...");
+        }
         node.makeLeaf();
         if (getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_CLUSTERING_STATS)) {
             node.setClusteringStat(null);
@@ -263,6 +268,9 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws Exception {
+        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
+            System.out.println("Depth " + node.getLevel() + ": inducing new node: "  + data.getNbRows() + " examples");
+        }
         if (rnd == null) {
             // rnd may be null due to some calls of induce that do not support parallelisation yet
             ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
@@ -346,7 +354,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
             node.testToNode(best);
             // Output best test
-            if (getSettings().getGeneral().getVerbose() > 1)
+            if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS)
                 System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
 
             // Create children
@@ -382,6 +390,9 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         }
         else {
             makeLeaf(node);
+        }
+        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
+            System.out.println("Depth " + node.getLevel() + ": node finished.");
         }
     }
 

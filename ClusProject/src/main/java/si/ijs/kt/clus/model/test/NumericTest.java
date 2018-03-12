@@ -88,16 +88,25 @@ public class NumericTest extends NodeTest {
     }
 
 
+//    @Override
+//    public String getString() {
+//        String value = m_Bound != Double.NEGATIVE_INFINITY ? String.valueOf(m_Bound) : "?";
+//        return m_Type.getName() + " > " + value;
+//    }
+    
     @Override
     public String getString() {
-        String value = m_Bound != Double.NEGATIVE_INFINITY ? String.valueOf(m_Bound) : "?";
-        return m_Type.getName() + " > " + value;
+    	return getStringWithPrefix(m_Type.getName());
     }
 
+    public String getStringWithPrefix(String prefix) {
+    	String value = m_Bound != Double.NEGATIVE_INFINITY ? String.valueOf(m_Bound) : "?";
+    	return prefix + " > " + value;
+    }
 
     @Override
-    public String getPythonString() {
-        return getString();
+    public String getPythonString(String xsElement) {
+        return getStringWithPrefix(xsElement);
     }
 
 
