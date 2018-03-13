@@ -18,7 +18,9 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 
 
 	<properties>
-		<project.build.sourceEncoding>Cp1250</project.build.sourceEncoding>
+		<!-- <project.build.sourceEncoding>Cp1250</project.build.sourceEncoding> -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<project.mainclass>si.ijs.kt.clus.Clus</project.mainclass>
 
 		<jdk.version>1.8</jdk.version>
 
@@ -34,7 +36,8 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 		<surefire.report.plugin.version>2.20</surefire.report.plugin.version>
 		<jxr.plugin.version>2.5</jxr.plugin.version>
 		<javadoc.report.plugin>3.0.0</javadoc.report.plugin>
-		
+		<antrun.plugin.version>1.8</antrun.plugin.version>
+
 		<maven.enforcer.plugin.version>3.0.0-M1</maven.enforcer.plugin.version>
 		<maven.version>3.3.9</maven.version>
 		<maven-model.version>3.5.2</maven-model.version>
@@ -135,53 +138,13 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 					</dependency>
 				</dependencies>
 			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<version>${assembly.plugin.version}</version>
-				<configuration>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-			</plugin>
+			<!-- <plugin> <artifactId>maven-assembly-plugin</artifactId> <version>${assembly.plugin.version}</version> 
+				<configuration> <descriptorRefs> <descriptorRef>jar-with-dependencies</descriptorRef> 
+				</descriptorRefs> </configuration> </plugin> -->
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-site-plugin</artifactId>
 				<version>${site.plugin.version}</version>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-shade-plugin</artifactId>
-				<version>${shade.plugin.version}</version>
-				<executions>
-					<execution>
-						<phase>package</phase>
-						<goals>
-							<goal>shade</goal>
-						</goals>
-						<configuration>
-							<finalName>${project.artifactId}-${project.version}-deps</finalName>
-							<transformers>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
-									<manifestEntries>
-										<Main-Class>si.ijs.kt.Clus.clus.Main</Main-Class>
-										<X-Compile-Source-JDK>${jdk.version}</X-Compile-Source-JDK>
-										<X-Compile-Target-JDK>${jdk.version}</X-Compile-Target-JDK>
-									</manifestEntries>
-								</transformer>
-								<transformer
-									implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
-									<resources>
-										<resource>.SF</resource>
-										<resource>.DSA</resource>
-										<resource>.RSA</resource>
-									</resources>
-								</transformer>
-							</transformers>
-						</configuration>
-					</execution>
-				</executions>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -196,7 +159,7 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 						<configuration>
 							<rules>
 								<bannedPlugins>
-									<!-- will only display a warning but does not fail the build. -->
+									<!-- will only display a warning but does not fail the build. <level>WARN</level> -->
 									<level>ERROR</level>
 									<excludes>
 										<exclude>org.apache.maven.plugins:maven-verifier-plugin</exclude>
@@ -211,6 +174,74 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 									<version>${jdk.version}</version>
 								</requireJavaVersion>
 							</rules>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-shade-plugin</artifactId>
+				<version>${shade.plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>shade</goal>
+						</goals>
+						<configuration>
+							<minimizeJar>true</minimizeJar>
+							<finalName>${project.artifactId}-${project.version}-deps</finalName>
+							<transformers>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+									<manifestEntries>
+										<Main-Class>${project.mainclass}</Main-Class>
+										<X-Compile-Source-JDK>${jdk.version}</X-Compile-Source-JDK>
+										<X-Compile-Target-JDK>${jdk.version}</X-Compile-Target-JDK>
+									</manifestEntries>
+								</transformer>
+								<transformer
+									implementation="org.apache.maven.plugins.shade.resource.DontIncludeResourceTransformer">
+									<resources>
+										<resource>.SF</resource>
+										<resource>.DSA</resource>
+										<resource>.RSA</resource>
+									</resources>
+								</transformer>
+							</transformers>
+							<artifactSet>
+								<excludes>
+									<exclude>classworlds:classworlds</exclude>
+									<exclude>junit:junit</exclude>
+									<exclude>jmock:*</exclude>
+									<exclude>*:xml-apis</exclude>
+									<exclude>org.apache.maven:lib:tests</exclude>
+									<exclude>log4j:log4j:jar:</exclude>
+								</excludes>
+							</artifactSet>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>${antrun.plugin.version}</version>
+				<executions>
+					<execution>
+						<phase>package</phase>
+						<goals>
+							<goal>run</goal>
+						</goals>
+						<configuration>
+							<target>
+								<delete
+									file="${project.basedir}/target/${project.artifactId}-${project.version}.jar" />
+								<delete
+									file="${project.basedir}/target/original-${project.artifactId}-${project.version}-deps.jar" />
+								<delete
+									file="${project.basedir}/target/${project.artifactId}-${project.version}-shaded.jar" />
+							</target>
 						</configuration>
 					</execution>
 				</executions>
@@ -235,11 +266,15 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 				<artifactId>maven-jxr-plugin</artifactId>
 				<version>${jxr.plugin.version}</version>
 			</plugin>
-			<!-- <plugin>
+			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>${javadoc.report.plugin}</version>
-			</plugin> -->
+				<artifactId>maven-antrun-plugin</artifactId>
+				<version>
+				${antrun.plugin.version}
+				</version>
+			</plugin>
+			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
+				<version>${javadoc.report.plugin}</version> </plugin> -->
 		</plugins>
 	</reporting>
 
