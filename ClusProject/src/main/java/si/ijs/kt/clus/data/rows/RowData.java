@@ -103,10 +103,11 @@ public class RowData extends ClusData implements MSortable, Serializable {
         setFromList(list);
         setIndices();
     }
-    
+
+
     private void setIndices() {
-        for(int i = 0; i < m_Data.length; i++) {
-        	m_Data[i].setDatasetIndex(i);
+        for (int i = 0; i < m_Data.length; i++) {
+            m_Data[i].setDatasetIndex(i);
         }
     }
 
@@ -146,7 +147,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         for (int j = 0; j < m_Schema.getKeyAttribute().length; j++) {
             ClusAttrType key = m_Schema.getKeyAttribute()[j];
             // sb.append(prefix);
-            sb.append(key.getName()+": ");
+            sb.append(key.getName() + ": ");
             for (int i = 0; i < getNbRows(); i++) {
                 if (i != 0)
                     sb.append(",");
@@ -163,6 +164,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     public String getSummary() {
         return getSummary("");
     }
+
 
     @Deprecated
     public String getSummaryDT(String prefix) {
@@ -242,7 +244,8 @@ public class RowData extends ClusData implements MSortable, Serializable {
         int nbrows = getNbRows();
         for (int i = 0; i < nbrows; i++) {
             temp = getTuple(i);
-            ClusSchema schema = temp.getSchema(); // TODO: TU JE NEKAJ CUDNEGA: na chloru dobimo 9 vrednosti ?! (descriptive =
+            ClusSchema schema = temp.getSchema(); // TODO: TU JE NEKAJ CUDNEGA: na chloru dobimo 9 vrednosti ?!
+                                                  // (descriptive =
                                                   // 24, disabled = 4, target = 5)
             for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
                 ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)[j];
@@ -281,7 +284,8 @@ public class RowData extends ClusData implements MSortable, Serializable {
         double[] avg, min, max, stddev;
         try {
             DataTuple temp = getTuple(0);
-        } catch (ArrayIndexOutOfBoundsException e) {
+        }
+        catch (ArrayIndexOutOfBoundsException e) {
             return summary;
         }
         DataTuple temp = getTuple(0);
@@ -393,8 +397,6 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    
-    
     public DataTuple createTuple() {
         return new DataTuple(m_Schema);
     }
@@ -507,7 +509,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         boolean swapPerformed;
 
         for (int i = 0; i < m_Data.length; i++) {
-            //if unlabeled example is found, we try to find labeled example after its position, and swap them.
+            // if unlabeled example is found, we try to find labeled example after its position, and swap them.
             if (m_Data[i].isUnlabeled()) {
                 swapPerformed = false;
                 for (int j = i + 1; j < m_Data.length; j++) {
@@ -518,7 +520,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
                     }
                 }
 
-                if (!swapPerformed) {//if no swap was performed, then dataset is already sorted
+                if (!swapPerformed) {// if no swap was performed, then dataset is already sorted
                     return;
                 }
             }
@@ -549,7 +551,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     public Integer[] smartSort(NumericAttrType at) {
         if (m_SortedInstances.containsKey(at) && m_SortedInstances.get(at).length == m_Data.length) {
             // here, we assume that m_Data has not changed from the last call of this method
-            //throw new RuntimeException("This should not be true");
+            // throw new RuntimeException("This should not be true");
             return m_SortedInstances.get(at);
         }
         else if (at.isSparse()) {
@@ -1291,7 +1293,8 @@ public class RowData extends ClusData implements MSortable, Serializable {
     // Be careful when using this method! Current use in FindBestTest is wrong in the case when N != 0:
     // this is used for finding the best test. However, if N != 0 (otherwise we simply return all the data),
     // this can lead to problems (duplicates of tuples --> wrong statistics --> ...)
-    // This is considered a small bug since usually N = 0, because the option SplitSampling in section [Tree] is usually not used.
+    // This is considered a small bug since usually N = 0, because the option SplitSampling in section [Tree] is usually
+    // not used.
     public RowData sample(int N, ClusRandomNonstatic rnd) {
         if (N < 0)
             throw new IllegalArgumentException("N should be larger than or equal to zero");

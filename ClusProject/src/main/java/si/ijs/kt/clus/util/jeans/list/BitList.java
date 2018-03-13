@@ -25,8 +25,6 @@ package si.ijs.kt.clus.util.jeans.list;
 import java.io.Serializable;
 import java.util.Arrays;
 
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
-
 
 public class BitList implements Serializable {
 
@@ -162,6 +160,6 @@ public class BitList implements Serializable {
 
 
     public void copyAndSubtractFromThis(BitList bits, BitList bits2) {
-        throw new NotImplementedException();
+        throw new UnsupportedOperationException();
     }
 }

@@ -52,7 +52,6 @@ import si.ijs.kt.clus.distance.primitive.timeseries.DTWTimeSeriesDist;
 import si.ijs.kt.clus.distance.primitive.timeseries.QDMTimeSeriesDist;
 import si.ijs.kt.clus.distance.primitive.timeseries.TSCTimeSeriesDist;
 import si.ijs.kt.clus.distance.primitive.timeseries.TimeSeriesDist;
-import si.ijs.kt.clus.error.AbsoluteError;
 import si.ijs.kt.clus.error.Accuracy;
 import si.ijs.kt.clus.error.AvgDistancesError;
 import si.ijs.kt.clus.error.ContingencyTable;
@@ -65,26 +64,6 @@ import si.ijs.kt.clus.error.RMSError;
 import si.ijs.kt.clus.error.RRMSError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.error.common.multiscore.MultiScore;
-import si.ijs.kt.clus.error.mlc.AveragePrecision;
-import si.ijs.kt.clus.error.mlc.Coverage;
-import si.ijs.kt.clus.error.mlc.HammingLoss;
-import si.ijs.kt.clus.error.mlc.MLAccuracy;
-import si.ijs.kt.clus.error.mlc.MLFOneMeasure;
-import si.ijs.kt.clus.error.mlc.MLPrecision;
-import si.ijs.kt.clus.error.mlc.MLRecall;
-import si.ijs.kt.clus.error.mlc.MLaverageAUPRC;
-import si.ijs.kt.clus.error.mlc.MLaverageAUROC;
-import si.ijs.kt.clus.error.mlc.MLpooledAUPRC;
-import si.ijs.kt.clus.error.mlc.MLweightedAUPRC;
-import si.ijs.kt.clus.error.mlc.MacroFOne;
-import si.ijs.kt.clus.error.mlc.MacroPrecision;
-import si.ijs.kt.clus.error.mlc.MacroRecall;
-import si.ijs.kt.clus.error.mlc.MicroFOne;
-import si.ijs.kt.clus.error.mlc.MicroPrecision;
-import si.ijs.kt.clus.error.mlc.MicroRecall;
-import si.ijs.kt.clus.error.mlc.OneError;
-import si.ijs.kt.clus.error.mlc.RankingLoss;
-import si.ijs.kt.clus.error.mlc.SubsetAccuracy;
 import si.ijs.kt.clus.error.mlcForHmlc.MlcMeasuresForHmlc;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeamHeuristicError;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeamHeuristicMEstimate;
@@ -404,7 +383,7 @@ public class ClusStatManager implements Serializable {
                 temp = ((ClusNormalizedAttributeWeights) m_ClusteringWeights).getNormalizationWeights();
                 double sum = Helper.sum(weights);
                 for (int i = 0; i < weights.length; i++) {
-                    weights[i] = weights[i] / sum; // normalization with sum of all weights, as Aljaž suggested
+                    weights[i] = weights[i] / sum; // normalization with sum of all weights, as Aljaz suggested
                 }
             }
 
