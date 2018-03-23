@@ -27,25 +27,32 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
 
 
     public MSNominalError(ClusErrorList par, NominalAttrType[] nom, ClusAttributeWeights weights) {
+        this(par, nom, weights, "");
+    }
+
+
+    public MSNominalError(ClusErrorList par, NominalAttrType[] nom, ClusAttributeWeights weights, String info) {
         super(par, nom);
         m_Weights = weights;
         m_SumErr = new double[m_Dim];
         m_SumSqErr = new double[m_Dim];
+
+        setAdditionalInfo(info);
     }
 
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new MSNominalError(par, m_Attrs, m_Weights);
+        return new MSNominalError(par, m_Attrs, m_Weights, getAdditionalInfo());
     }
 
 
     @Override
     public String getName() {
         if (m_Weights == null)
-            return "Mean squared error (MSE) for Nominal Attributes";
+            return "Mean squared error (MSE) for Nominal Attributes" + getAdditionalInfoFormatted();
         else
-            return "Weighted mean squared error (MSE) for Nominal Attributes (" + m_Weights.getName(m_Attrs) + ")";
+            return "Weighted mean squared error (MSE) for Nominal Attributes (" + m_Weights.getName(m_Attrs) + ")" + getAdditionalInfoFormatted();
     }
 
 
@@ -188,8 +195,8 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
     }
 
 
-	@Override
+    @Override
     public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
-		return true;
-	}
+        return true;
+    }
 }

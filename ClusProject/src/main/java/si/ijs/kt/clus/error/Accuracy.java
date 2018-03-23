@@ -44,9 +44,16 @@ public class Accuracy extends ClusNominalError implements ComponentError {
 
 
     public Accuracy(ClusErrorList par, NominalAttrType[] nom) {
+        this(par, nom, "");
+    }
+
+
+    public Accuracy(ClusErrorList par, NominalAttrType[] nom, String info) {
         super(par, nom);
         m_NbCorrect = new int[m_Dim];
         m_NbKnown = new int[m_Dim];
+
+        setAdditionalInfo(info);
     }
 
 
@@ -103,13 +110,13 @@ public class Accuracy extends ClusNominalError implements ComponentError {
 
     @Override
     public String getName() {
-        return "Accuracy";
+        return "Accuracy" + getAdditionalInfoFormatted();
     }
 
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new Accuracy(par, m_Attrs);
+        return new Accuracy(par, m_Attrs, getAdditionalInfo());
     }
 
 

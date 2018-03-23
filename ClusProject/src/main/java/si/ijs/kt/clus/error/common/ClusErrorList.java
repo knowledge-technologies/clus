@@ -54,7 +54,9 @@ public class ClusErrorList implements Serializable {
     protected int m_NbCover;
     protected ArrayList<ClusError> m_Error = new ArrayList<ClusError>();
     protected ArrayList<ClusError> m_ErrorWithNulls = new ArrayList<ClusError>();
-    private HashMap<String, Integer> m_ErrorNameMap = new HashMap<String, Integer>(); // this is an index of errors->restriction: error names must be unique!
+    private HashMap<String, Integer> m_ErrorNameMap = new HashMap<String, Integer>(); // this is an index of
+                                                                                      // errors->restriction: error
+                                                                                      // names must be unique!
 
 
     public ClusErrorList() {
@@ -143,9 +145,19 @@ public class ClusErrorList implements Serializable {
     public void addError(ClusError err) {
         // If error list is sublist of other list, still allow indexing by introducing nulls
         if (err != null) {
+
+            String name = err.getName();
+
             m_Error.add(err);
 
-            m_ErrorNameMap.putIfAbsent(err.getName(), m_Error.size() - 1);
+            if (!m_ErrorNameMap.containsKey(name)) {
+                m_ErrorNameMap.put(name, m_Error.size() - 1);
+            }
+            else {
+                System.err.println("Error names must be unique!");
+                System.err.println(name + " already exists in the list. Exiting...");
+                System.exit(1);
+            }
         }
         m_ErrorWithNulls.add(err);
     }
@@ -170,10 +182,11 @@ public class ClusErrorList implements Serializable {
 
     public ClusError getError(int idx) {
         if (idx + 1 > m_Error.size()) {
-            System.out.println("ERORR");
+            System.err.println("Unable to get error at index " + idx);
         }
         return m_Error.get(idx);
     }
+
 
     public ClusError getErrorOrNull(int idx) {
         return m_ErrorWithNulls.get(idx);
@@ -188,16 +201,17 @@ public class ClusErrorList implements Serializable {
 
 
     public ClusError getErrorByName(String name) {
-        if (m_ErrorNameMap.containsKey(name)) 
+        if (m_ErrorNameMap.containsKey(name))
             return getError(m_ErrorNameMap.get(name));
-        
+
         /*
-        for (int i = 0; i < m_Error.size(); i++) {
-            ClusError err = m_Error.get(i);
-            if (err.getName().equals(name))
-                return err;
-        }*/
-        
+         * for (int i = 0; i < m_Error.size(); i++) {
+         * ClusError err = m_Error.get(i);
+         * if (err.getName().equals(name))
+         * return err;
+         * }
+         */
+
         return null;
     }
 
@@ -280,7 +294,7 @@ public class ClusErrorList implements Serializable {
         for (int i = 0; i < nb; i++) {
             ClusError my = m_ErrorWithNulls.get(i);
             if (my != null) {
-                //ClusError your = par.getErrorOrNull(i);
+                // ClusError your = par.getErrorOrNull(i);
                 ClusError your = par.getErrorByName(my.getName());
                 if (your != null) {
                     my.add(your);
@@ -383,6 +397,7 @@ public class ClusErrorList implements Serializable {
                 }
             }
         }
+
         for (int i = 0; i < nb; i++) {
             if (sett.getHMTR().isSectionHMTREnabled() && i == (nb / 2)) {
                 out.println();
@@ -412,7 +427,6 @@ public class ClusErrorList implements Serializable {
                             else {
                                 out.print("   " + StringUtils.printStr(inf.getName(), 15) + ": ");
                             }
-                            // err2.showModelError(out, ClusError.DETAIL_SMALL);
                             err2.showModelError(out, bName, ClusError.DETAIL_SMALL);
                         }
                     }
@@ -476,7 +490,7 @@ public class ClusErrorList implements Serializable {
             else {
                 out.print("Test ");
             }
-            
+
             out.println(err1.getName());
             int nb_models = models.getNbModels();
             for (int j = 0; j < nb_models; j++) {

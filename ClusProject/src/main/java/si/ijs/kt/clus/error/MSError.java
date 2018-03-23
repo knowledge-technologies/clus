@@ -50,42 +50,60 @@ public class MSError extends ClusNumericError implements ComponentError {
     protected double[] m_SumSqErr;
     protected ClusAttributeWeights m_Weights;
     protected boolean m_PrintAllComps;
-    
-    protected double[] m_SumTrueValues;			// these two fields used
-    protected double[] m_SumSquaredTrueValues;  // for relative errors
+
+    protected double[] m_SumTrueValues; // these two fields used
+    protected double[] m_SumSquaredTrueValues; // for relative errors
+
 
     public MSError(ClusErrorList par, NumericAttrType[] num) {
-        this(par, num, null, true);
+        this(par, num, null, true, "");
+    }
+
+
+    public MSError(ClusErrorList par, NumericAttrType[] num, String info) {
+        this(par, num, null, true, info);
     }
 
 
     public MSError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights) {
-        this(par, num, weights, true);
+        this(par, num, weights, true, "");
+    }
+
+
+    public MSError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights, String info) {
+        this(par, num, weights, true, info);
     }
 
 
     public MSError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights, boolean printall) {
+        this(par, num, weights, printall, "");
+    }
+
+
+    public MSError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights, boolean printall, String info) {
         super(par, num);
         m_nbEx = new int[m_Dim];
         m_SumErr = new double[m_Dim];
         m_SumSqErr = new double[m_Dim];
         m_Weights = weights;
         m_PrintAllComps = printall;
-        
+
         m_SumTrueValues = new double[m_Dim];
         m_SumSquaredTrueValues = new double[m_Dim];
+
+        setAdditionalInfo(info);
     }
 
-    
+
     @Override
     public void reset() {
         for (int i = 0; i < m_Dim; i++) {
             m_SumErr[i] = 0.0;
             m_SumSqErr[i] = 0.0;
             m_nbEx[i] = 0;
-            
-	        m_SumTrueValues[i] = 0.0;
-	        m_SumSquaredTrueValues[i] = 0.0;
+
+            m_SumTrueValues[i] = 0.0;
+            m_SumSquaredTrueValues[i] = 0.0;
         }
     }
 
@@ -167,8 +185,8 @@ public class MSError extends ClusNumericError implements ComponentError {
         return value * value;
     }
 
-    
-    public void addExample(double[] real, double[] predicted, boolean isRelative){
+
+    public void addExample(double[] real, double[] predicted, boolean isRelative) {
         for (int i = 0; i < m_Dim; i++) {
             double err = sqr(real[i] - predicted[i]);
             System.out.println(err);
@@ -176,20 +194,21 @@ public class MSError extends ClusNumericError implements ComponentError {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);
                 m_nbEx[i]++;
-                if (isRelative){
-            		m_SumTrueValues[i] += real[i];
-            		m_SumSquaredTrueValues[i] += real[i] * real[i];
+                if (isRelative) {
+                    m_SumTrueValues[i] += real[i];
+                    m_SumSquaredTrueValues[i] += real[i] * real[i];
                 }
             }
         }
     }
 
+
     @Override
     public void addExample(double[] real, double[] predicted) {
-    	addExample(real, predicted, false);
+        addExample(real, predicted, false);
     }
 
-    
+
     public void addExample(double[] real, boolean[] predicted, boolean isRelative) {
         for (int i = 0; i < m_Dim; i++) {
             double predicted_i = predicted[i] ? 1.0 : 0.0;
@@ -199,38 +218,41 @@ public class MSError extends ClusNumericError implements ComponentError {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);
                 m_nbEx[i]++;
-                if(isRelative){
-            		m_SumTrueValues[i] += real[i];
-            		m_SumSquaredTrueValues[i] += real[i] * real[i];
+                if (isRelative) {
+                    m_SumTrueValues[i] += real[i];
+                    m_SumSquaredTrueValues[i] += real[i] * real[i];
                 }
             }
         }
     }
+
+
     public void addExample(double[] real, boolean[] predicted) {
-    	addExample(real, predicted, false);
+        addExample(real, predicted, false);
     }
 
-    
+
     public void addExample(DataTuple tuple, ClusStatistic pred, boolean isRelative) {
         double[] predicted = pred.getNumericPred();
         for (int i = 0; i < m_Dim; i++) {
-        	double real_i = getAttr(i).getNumeric(tuple);
+            double real_i = getAttr(i).getNumeric(tuple);
             double err = sqr(real_i - predicted[i]);
             if (!Double.isInfinite(err) && !Double.isNaN(err)) {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);
                 m_nbEx[i]++;
-                if(isRelative){
-            		m_SumTrueValues[i] += real_i;
-            		m_SumSquaredTrueValues[i] += real_i * real_i;
+                if (isRelative) {
+                    m_SumTrueValues[i] += real_i;
+                    m_SumSquaredTrueValues[i] += real_i * real_i;
                 }
             }
         }
     }
-    
+
+
     @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
-    	addExample(tuple, pred, false);
+        addExample(tuple, pred, false);
     }
 
 
@@ -243,14 +265,15 @@ public class MSError extends ClusNumericError implements ComponentError {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);
                 m_nbEx[i]++;
-                if(isRelative){
-            		m_SumTrueValues[i] += real_i;
-            		m_SumSquaredTrueValues[i] += real_i * real_i;
+                if (isRelative) {
+                    m_SumTrueValues[i] += real_i;
+                    m_SumSquaredTrueValues[i] += real_i * real_i;
                 }
             }
         }
     }
-    
+
+
     @Override
     public void addExample(DataTuple real, DataTuple pred) {
         addExample(real, pred, false);
@@ -305,15 +328,15 @@ public class MSError extends ClusNumericError implements ComponentError {
     @Override
     public String getName() {
         if (m_Weights == null)
-            return "Mean squared error (MSE)";
+            return "Mean squared error (MSE)" + getAdditionalInfoFormatted();
         else
-            return "Weighted mean squared error (MSE) (" + m_Weights.getName(m_Attrs) + ")";
+            return "Weighted mean squared error (MSE) (" + m_Weights.getName(m_Attrs) + ")" + getAdditionalInfoFormatted();
     }
 
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new MSError(par, m_Attrs, m_Weights, m_PrintAllComps);
+        return new MSError(par, m_Attrs, m_Weights, m_PrintAllComps, getAdditionalInfo());
     }
 
 
@@ -324,8 +347,8 @@ public class MSError extends ClusNumericError implements ComponentError {
     }
 
 
-	@Override
+    @Override
     public boolean shouldBeLow() {
-		return true;
-	}
+        return true;
+    }
 }

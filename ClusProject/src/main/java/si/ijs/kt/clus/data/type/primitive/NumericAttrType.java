@@ -269,7 +269,7 @@ public class NumericAttrType extends ClusAttrType {
             int dis = schema.getDisabled().getTotal();
             int tar = schema.getTargetAttributes().length;
 
-            int pos = m_Index - key - dis - desc - tar + schema.getNbHMTR();
+            int pos = m_Index - key - dis - desc - tar + schema.getNbHMTRAttributes();
 
             String[] lineElements = line.split(",");
 

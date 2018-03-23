@@ -45,12 +45,19 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
 
 
     public PearsonCorrelation(ClusErrorList par, NumericAttrType[] num) {
+        this(par, num, "");
+    }
+
+
+    public PearsonCorrelation(ClusErrorList par, NumericAttrType[] num, String info) {
         super(par, num);
         m_SumPi = new double[m_Dim];
         m_SumSPi = new double[m_Dim];
         m_SumAi = new double[m_Dim];
         m_SumSAi = new double[m_Dim];
         m_SumPiAi = new double[m_Dim];
+
+        setAdditionalInfo(info);
     }
 
 
@@ -190,11 +197,11 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
         int nb = getNbExamples();
         double avg_sq_r = 0.0;
         double root, above, el, Ai_ss, Pi_ss;
-        
+
         for (int i = 0; i < m_Dim; i++) {
             Pi_ss = m_SumSPi[i] - m_SumPi[i] * m_SumPi[i] / nb;
             Ai_ss = m_SumSAi[i] - m_SumAi[i] * m_SumAi[i] / nb;
-            
+
             if (Pi_ss <= 0 || Ai_ss <= 0) {
                 el = 0F;
             }
@@ -206,7 +213,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
             }
             if (i != 0)
                 buf.append(",");
-            
+
             buf.append(fr.format(el));
             avg_sq_r += el * el;
         }
@@ -232,12 +239,12 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
 
     @Override
     public String getName() {
-        return "Pearson correlation coefficient";
+        return "Pearson correlation coefficient" + getAdditionalInfoFormatted();
     }
 
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new PearsonCorrelation(par, m_Attrs);
+        return new PearsonCorrelation(par, m_Attrs, getAdditionalInfo());
     }
 }

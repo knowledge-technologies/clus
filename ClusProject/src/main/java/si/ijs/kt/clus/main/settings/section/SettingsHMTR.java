@@ -31,6 +31,8 @@ public class SettingsHMTR extends SettingsBase {
         m_SettGeneral = settGeneral;
     }
 
+    public static final String HMTR_ERROR_POSTFIX = "HMTR";
+    
     /***********************************************************************
      * Section: Hierarchical multi-target regression *
      ***********************************************************************/
@@ -142,44 +144,33 @@ public class SettingsHMTR extends SettingsBase {
         if (this.isSectionHMTREnabled()) {
 
             ArrayList<ClusAttrType> attributes = schema.getAttr();
-
             ArrayList<String> attrNames = new ArrayList<String>();
 
-            for (ClusAttrType attribute : attributes) {
+            attributes.stream().forEach(a -> attrNames.add(a.getName()));
 
-                attrNames.add(attribute.getName());
-
-            }
-
-            if (m_SettGeneral.getVerbose() > 0)
-                System.out.print("Aggregate attributes (a.k.a. not present in the database): ");
-
-            String comma = "";
-            int numAggregates = 0;
-
+            ArrayList<String> aggregates = new ArrayList<String>();
             for (ClusHMTRNode node : hmtrHierarchy.getNodes()) {
                 if (!attrNames.contains(node.getName())) {
-
                     node.setAggregate(true);
-                    System.out.print(comma + node.getName());
-                    comma = ", ";
+                    aggregates.add(node.getName());
                     schema.addAttrType(new NumericAttrType(node.getName()));
-                    numAggregates++;
-
                 }
             }
 
-            System.out.println();
+            if (m_SettGeneral.getVerbose() > 0) {
+                System.out.print("Aggregate attributes (a.k.a. not present in the database): ");
+                System.out.println(String.join(", ", aggregates));
+                System.out.println();
+            }
+
             int nb = schema.getNbAttributes();
 
             String targets = m_SettAttribute.getTarget();
-
-            for (int i = numAggregates; i > 0; i--) {
-                targets += "," + (nb - i + 1);
-            }
+            int nbAggregates = aggregates.size();
+            targets += "," + (nb - nbAggregates + 1) + "-" + nb;
 
             m_SettAttribute.setTarget(targets);
-            schema.setNbHMTR(numAggregates);
+            schema.setNbHMTRAttributes(nbAggregates);
         }
     }
 }

@@ -42,22 +42,37 @@ public class RMSError extends MSError {
     }
 
 
+    public RMSError(ClusErrorList par, NumericAttrType[] num, String info) {
+        super(par, num, info);
+    }
+
+
     public RMSError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights) {
         super(par, num, weights);
     }
 
 
+    public RMSError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights, String info) {
+        super(par, num, weights, info);
+    }
+
+
     public RMSError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights, boolean printall) {
-        super(par, num, weights, printall);
+        super(par, num, weights, printall, "");
+    }
+
+
+    public RMSError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights, boolean printall, String info) {
+        super(par, num, weights, printall, info);
     }
 
 
     @Override
     public double getModelError() {
-    	double sum = 0.0;
-    	for(int i = 0; i < m_Attrs.length; i++){
-    		sum += getModelErrorComponent(i);
-    	}
+        double sum = 0.0;
+        for (int i = 0; i < m_Attrs.length; i++) {
+            sum += getModelErrorComponent(i);
+        }
         return sum / m_Attrs.length;
     }
 
@@ -78,14 +93,14 @@ public class RMSError extends MSError {
     @Override
     public String getName() {
         if (m_Weights == null)
-            return "Root mean squared error (RMSE)";
+            return "Root mean squared error (RMSE)" + getAdditionalInfoFormatted();
         else
-            return "Weighted root mean squared error (RMSE) (" + m_Weights.getName(m_Attrs) + ")";
+            return "Weighted root mean squared error (RMSE) (" + m_Weights.getName(m_Attrs) + ")" + getAdditionalInfoFormatted();
     }
 
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new RMSError(par, m_Attrs, m_Weights, m_PrintAllComps);
+        return new RMSError(par, m_Attrs, m_Weights, m_PrintAllComps, getAdditionalInfo());
     }
 }

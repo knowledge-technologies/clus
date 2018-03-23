@@ -226,7 +226,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             int nbTrees = getNbTrees(forest);
             setNbFeatureRankings(m_FeatureRankings[forest], schema, mgr, nbTrees);
         }
-
     }
 
 

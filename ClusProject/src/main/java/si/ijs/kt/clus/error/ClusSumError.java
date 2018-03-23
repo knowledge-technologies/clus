@@ -16,7 +16,7 @@ public class ClusSumError extends ClusError {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    protected ArrayList m_Errors = new ArrayList();
+    protected ArrayList<ClusError> m_Errors = new ArrayList<>();
 
 
     public ClusSumError(ClusErrorList par) {
@@ -29,7 +29,7 @@ public class ClusSumError extends ClusError {
         int dim = 0;
         double result = 0.0;
         for (int i = 0; i < m_Errors.size(); i++) {
-            ClusError err = (ClusError) m_Errors.get(i);
+            ClusError err = m_Errors.get(i);
             result += err.getModelError() * err.getDimension();
             dim += err.getDimension();
         }
@@ -40,7 +40,7 @@ public class ClusSumError extends ClusError {
     @Override
     public void reset() {
         for (int i = 0; i < m_Errors.size(); i++) {
-            ClusError err = (ClusError) m_Errors.get(i);
+            ClusError err = m_Errors.get(i);
             err.reset();
         }
     }
@@ -50,7 +50,7 @@ public class ClusSumError extends ClusError {
     public void add(ClusError other) {
         ClusSumError others = (ClusSumError) other;
         for (int i = 0; i < m_Errors.size(); i++) {
-            ClusError err = (ClusError) m_Errors.get(i);
+            ClusError err = m_Errors.get(i);
             err.add(others.getComponent(i));
         }
     }
@@ -75,7 +75,7 @@ public class ClusSumError extends ClusError {
     @Override
     public void addExample(DataTuple real, DataTuple pred) throws ClusException {
         for (int i = 0; i < m_Errors.size(); i++) {
-            ClusError err = (ClusError) m_Errors.get(i);
+            ClusError err = m_Errors.get(i);
             err.addExample(real, pred);
         }
     }
@@ -84,7 +84,7 @@ public class ClusSumError extends ClusError {
     @Override
     public void addInvalid(DataTuple tuple) {
         for (int i = 0; i < m_Errors.size(); i++) {
-            ClusError err = (ClusError) m_Errors.get(i);
+            ClusError err = m_Errors.get(i);
             err.addInvalid(tuple);
         }
     }
@@ -94,7 +94,7 @@ public class ClusSumError extends ClusError {
     public ClusError getErrorClone(ClusErrorList par) throws ClusException {
         ClusSumError result = new ClusSumError(par);
         for (int i = 0; i < m_Errors.size(); i++) {
-            ClusError err = (ClusError) m_Errors.get(i);
+            ClusError err = m_Errors.get(i);
             result.addComponent(err.getErrorClone(par));
         }
         return result;
@@ -105,7 +105,7 @@ public class ClusSumError extends ClusError {
     public String getName() {
         StringBuffer name = new StringBuffer();
         for (int i = 0; i < m_Errors.size(); i++) {
-            ClusError err = (ClusError) m_Errors.get(i);
+            ClusError err = m_Errors.get(i);
             if (i != 0)
                 name.append(", ");
             name.append(err.getName());
@@ -124,8 +124,8 @@ public class ClusSumError extends ClusError {
     }
 
 
-	@Override
+    @Override
     public boolean shouldBeLow() {
-		return true;
-	}
+        return true;
+    }
 }

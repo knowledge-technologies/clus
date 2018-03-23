@@ -45,8 +45,15 @@ public class WAHNDError extends ClusError {
 
 
     public WAHNDError(ClusErrorList par, double weight) {
+        this(par, weight, "");
+    }
+
+
+    public WAHNDError(ClusErrorList par, double weight, String info) {
         super(par, 0);
         m_Weight = weight;
+
+        setAdditionalInfo(info);
     }
 
 
@@ -98,18 +105,18 @@ public class WAHNDError extends ClusError {
 
     @Override
     public String getName() {
-        return "WAHND RE with parameter " + m_Weight;
+        return "WAHND RE with parameter " + m_Weight + getAdditionalInfoFormatted();
     }
 
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new WAHNDError(par, m_Weight);
+        return new WAHNDError(par, m_Weight, getAdditionalInfo());
     }
 
 
-	@Override
-	public boolean shouldBeLow() {
-		throw new RuntimeException("should WAHNDError be high or low?");
-	}
+    @Override
+    public boolean shouldBeLow() {
+        throw new RuntimeException("should WAHNDError be high or low?");
+    }
 }

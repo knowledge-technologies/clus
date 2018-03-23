@@ -19,6 +19,11 @@ public class RelativeError extends ClusNumericError implements ComponentError {
 
 
     public RelativeError(ClusErrorList par, NumericAttrType[] num) {
+        this(par, num, "");
+    }
+
+
+    public RelativeError(ClusErrorList par, NumericAttrType[] num, String info) {
         this(par, num, null, true);
         m_SumRelErr = new double[m_Dim];
     }
@@ -31,8 +36,15 @@ public class RelativeError extends ClusNumericError implements ComponentError {
 
 
     public RelativeError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights, boolean printall) {
+        this(par, num, weights, printall, "");
+    }
+
+
+    public RelativeError(ClusErrorList par, NumericAttrType[] num, ClusAttributeWeights weights, boolean printall, String info) {
         super(par, num);
         m_SumRelErr = new double[m_Dim];
+
+        setAdditionalInfo(info);
     }
 
 
@@ -73,6 +85,7 @@ public class RelativeError extends ClusNumericError implements ComponentError {
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
         // TODO Auto-generated method stub
+        // should also take into account the getAdditionalError() method!
         return null;
     }
 
@@ -91,13 +104,13 @@ public class RelativeError extends ClusNumericError implements ComponentError {
     @Override
     public String getName() {
 
-        return "Relative Error";
+        return "Relative Error" + getAdditionalInfoFormatted();
     }
 
 
-	@Override
-	public boolean shouldBeLow() {
-		return true;
-	}
+    @Override
+    public boolean shouldBeLow() {
+        return true;
+    }
 
 }

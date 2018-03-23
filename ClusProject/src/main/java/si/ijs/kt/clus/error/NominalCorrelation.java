@@ -19,10 +19,17 @@ public class NominalCorrelation extends ClusNominalError {
 
 
     public NominalCorrelation(ClusErrorList par, NominalAttrType[] nom, int ind1, int ind2) {
+        this(par, nom, ind1, ind2, "");
+    }
+
+
+    public NominalCorrelation(ClusErrorList par, NominalAttrType[] nom, int ind1, int ind2, String info) {
         super(par, nom);
         int size1 = m_Attrs[ind1].getNbValues();
         int size2 = m_Attrs[ind2].getNbValues();
         m_ContTable = new int[size1][size2];
+
+        setAdditionalInfo(info);
     }
 
 
@@ -127,19 +134,19 @@ public class NominalCorrelation extends ClusNominalError {
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new NominalCorrelation(par, m_Attrs, 0, 0);
+        return new NominalCorrelation(par, m_Attrs, 0, 0, getAdditionalInfo());
     }
 
 
     @Override
     public String getName() {
-        return "Cramer's V coefficient or Mutual information";
+        return "Cramer's V coefficient or Mutual information" + getAdditionalInfoFormatted();
     }
 
 
-	@Override
-    public boolean shouldBeLow() { //previously, this method was in ClusError and returned true
-		throw new RuntimeException("should NominalCorrelation be high or low?");
-	}
+    @Override
+    public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
+        throw new RuntimeException("should NominalCorrelation be high or low?");
+    }
 
 }

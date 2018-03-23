@@ -78,7 +78,7 @@ public class ClusSchema implements Serializable {
     protected IntervalCollection m_GIS = IntervalCollection.EMPTY; //daniela
     protected IntervalCollection m_Key = IntervalCollection.EMPTY;
     protected int[] m_NbVt;
-    protected int m_NbHMTR;
+    protected int m_NbHMTRAttributes;
     private ClusHMTRHierarchy m_HMTRHierarchy;
 
 
@@ -963,12 +963,12 @@ public class ClusSchema implements Serializable {
     }
 
 
-    public int getNbHMTR() {
-        return m_NbHMTR;
+    public int getNbHMTRAttributes() {
+        return m_NbHMTRAttributes;
     }
 
 
-    public void setNbHMTR(int nbHMTR) {
-        this.m_NbHMTR = nbHMTR;
+    public void setNbHMTRAttributes(int nbHMTR) {
+        this.m_NbHMTRAttributes = nbHMTR;
     }
 }

@@ -52,7 +52,7 @@ public class HierRMSError extends MSError {
 
 
     public HierRMSError(ClusErrorList par, ClusAttributeWeights weights, boolean printall, boolean root, boolean proto, ClassHierarchy hier) {
-        super(par, hier.getDummyAttrs(), weights, printall);
+        super(par, hier.getDummyAttrs(), weights, printall, "");
         m_Hier = hier;
         m_Root = root;
         m_ContPred = proto;

@@ -46,6 +46,9 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
 
 
     public ContingencyTable(ClusErrorList par, NominalAttrType[] nom) {
+        this(par,nom,"");
+    }
+    public ContingencyTable(ClusErrorList par, NominalAttrType[] nom, String info) {
         super(par, nom);
         m_ContTable = new int[m_Dim][][];
         for (int i = 0; i < m_Dim; i++) {
@@ -53,6 +56,8 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
             int size = m_Attrs[i].getNbValuesInclMissing();
             m_ContTable[i] = new int[size][size];
         }
+        
+        setAdditionalInfo(info);
     }
 
 
@@ -321,13 +326,13 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
 
     @Override
     public String getName() {
-        return "Classification Error";
+        return "Classification Error" + getAdditionalInfoFormatted();
     }
 
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new ContingencyTable(par, m_Attrs);
+        return new ContingencyTable(par, m_Attrs, getAdditionalInfo());
     }
 
 

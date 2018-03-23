@@ -40,7 +40,14 @@ public class MisclassificationError extends Accuracy {
 
 
     public MisclassificationError(ClusErrorList par, NominalAttrType[] nom) {
+        this(par, nom, "");
+    }
+
+
+    public MisclassificationError(ClusErrorList par, NominalAttrType[] nom, String info) {
         super(par, nom);
+
+        setAdditionalInfo(info);
     }
 
 
@@ -58,13 +65,13 @@ public class MisclassificationError extends Accuracy {
 
     @Override
     public String getName() {
-        return "Misclassification error";
+        return "Misclassification error" + getAdditionalInfoFormatted();
     }
 
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new MisclassificationError(par, m_Attrs);
+        return new MisclassificationError(par, m_Attrs, getAdditionalInfo());
     }
 
 

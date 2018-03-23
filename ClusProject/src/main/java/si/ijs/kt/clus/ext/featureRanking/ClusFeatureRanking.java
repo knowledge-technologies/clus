@@ -343,8 +343,10 @@ public class ClusFeatureRanking {
      * 
      * @param selection
      * @param data
-     * @param type 0 nominal, 1 numeric
-     * @param position position at which the attribute whose values are being shuffled, is
+     * @param type
+     *        0 nominal, 1 numeric
+     * @param position
+     *        position at which the attribute whose values are being shuffled, is
      */
     public RowData createRandomizedOOBdata(OOBSelection selection, RowData data, int type, int position, int seed) throws ClusException {
         RowData result = data;

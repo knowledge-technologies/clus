@@ -48,8 +48,15 @@ public class ICVPairwiseDistancesError extends ClusError {
 
 
     public ICVPairwiseDistancesError(ClusErrorList par, ClusDistance dist) {
+        this(par, dist, "");
+    }
+
+
+    public ICVPairwiseDistancesError(ClusErrorList par, ClusDistance dist, String info) {
         super(par);
         m_Dist = dist;
+
+        setAdditionalInfo(info);
     }
 
 
@@ -145,20 +152,19 @@ public class ICVPairwiseDistancesError extends ClusError {
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new ICVPairwiseDistancesError(getParent(), m_Dist);
+        return new ICVPairwiseDistancesError(getParent(), m_Dist, getAdditionalInfo());
     }
 
 
     @Override
     public String getName() {
-        return "ICV-Pairwise-Distances";
+        return "ICV-Pairwise-Distances" + getAdditionalInfoFormatted();
     }
 
 
-	@Override
+    @Override
     public boolean shouldBeLow() { // previously, this method was in ClusError and returned true
-		return true;
-	}
-    
-    
+        return true;
+    }
+
 }

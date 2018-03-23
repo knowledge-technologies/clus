@@ -42,8 +42,15 @@ public class AvgDistancesError extends ClusError { // does not implements Compon
 
 
     public AvgDistancesError(ClusErrorList par, ClusDistance dist) {
+        this(par, dist, "");
+    }
+
+
+    public AvgDistancesError(ClusErrorList par, ClusDistance dist, String info) {
         super(par);
         m_Distance = dist;
+
+        setAdditionalInfo(info);
     }
 
 
@@ -93,7 +100,7 @@ public class AvgDistancesError extends ClusError { // does not implements Compon
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new AvgDistancesError(par, m_Distance);
+        return new AvgDistancesError(par, m_Distance, getAdditionalInfo());
     }
 
 
@@ -107,7 +114,7 @@ public class AvgDistancesError extends ClusError { // does not implements Compon
 
     @Override
     public String getName() {
-        return "AvgDistancesError";
+        return "AvgDistancesError" + getAdditionalInfoFormatted();
     }
 
 

@@ -59,9 +59,7 @@ import si.ijs.kt.clus.error.ICVPairwiseDistancesError;
 import si.ijs.kt.clus.error.MSError;
 import si.ijs.kt.clus.error.MSNominalError;
 import si.ijs.kt.clus.error.MisclassificationError;
-import si.ijs.kt.clus.error.PearsonCorrelation;
 import si.ijs.kt.clus.error.RMSError;
-import si.ijs.kt.clus.error.RRMSError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.error.common.multiscore.MultiScore;
 import si.ijs.kt.clus.error.mlcForHmlc.MlcMeasuresForHmlc;
@@ -1166,8 +1164,7 @@ public class ClusStatManager implements Serializable {
             if (getSettings().getAttribute().hasNonTrivialWeights()) {
                 parent.addError(new si.ijs.kt.clus.error.RMSError(parent, num, m_NormalizationWeights));
             }
-            parent.addError(new RRMSError(parent, num));
-            parent.addError(new PearsonCorrelation(parent, num));
+            parent.addError(new si.ijs.kt.clus.error.PearsonCorrelation(parent, num));
         }
         if (ts.length != 0) {
             ClusStatistic stat = createTargetStat();
@@ -1186,6 +1183,22 @@ public class ClusStatManager implements Serializable {
                 if (class_thr.hasVector()) {
                     parent.addError(new HierClassWiseAccuracy(parent, m_Hier));
                 }
+                break;
+            case MODE_HIERARCHICAL_MTR:
+                int nbHMTR = getSchema().getNbHMTRAttributes();
+
+                NumericAttrType[] numHMTR = new NumericAttrType[num.length - nbHMTR];
+
+                for (int i = 0; i < num.length - nbHMTR; i++) {
+                    numHMTR[i] = num[i];
+                }
+                parent.addError(new si.ijs.kt.clus.error.AbsoluteError(parent, numHMTR, SettingsHMTR.HMTR_ERROR_POSTFIX));
+                parent.addError(new si.ijs.kt.clus.error.MSError(parent, numHMTR, SettingsHMTR.HMTR_ERROR_POSTFIX));
+                parent.addError(new si.ijs.kt.clus.error.RMSError(parent, numHMTR, SettingsHMTR.HMTR_ERROR_POSTFIX));
+                if (getSettings().getAttribute().hasNonTrivialWeights()) {
+                    parent.addError(new si.ijs.kt.clus.error.RMSError(parent, numHMTR, m_NormalizationWeights, SettingsHMTR.HMTR_ERROR_POSTFIX));
+                }
+                parent.addError(new si.ijs.kt.clus.error.PearsonCorrelation(parent, numHMTR, SettingsHMTR.HMTR_ERROR_POSTFIX));
                 break;
             case MODE_ILEVELC:
                 NominalAttrType cls = (NominalAttrType) getSchema().getLastNonDisabledType();
@@ -1225,7 +1238,7 @@ public class ClusStatManager implements Serializable {
     }
 
 
-    public ClusErrorList createEvalError() {
+    public ClusErrorList createEvalError() throws ClusException {
         ClusErrorList parent = new ClusErrorList();
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
@@ -1244,7 +1257,7 @@ public class ClusStatManager implements Serializable {
     }
 
 
-    public ClusErrorList createDefaultError() {
+    public ClusErrorList createDefaultError() throws ClusException {
         ClusErrorList parent = new ClusErrorList();
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
@@ -1264,7 +1277,7 @@ public class ClusStatManager implements Serializable {
 
 
     // additive and weighted targets
-    public ClusErrorList createAdditiveError() {
+    public ClusErrorList createAdditiveError() throws ClusException {
         ClusErrorList parent = new ClusErrorList();
         NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
@@ -1332,7 +1345,7 @@ public class ClusStatManager implements Serializable {
         INIFileNominalOrDoubleOrVector class_thr = getSettings().getHMLC().getClassificationThresholds();
         if (class_thr.hasVector()) { return new HierClassTresholdPruner(class_thr.getDoubleVector()); }
 
-        if (m_Mode == MODE_REGRESSION) {
+        if (m_Mode == MODE_REGRESSION || m_Mode == MODE_HIERARCHICAL_MTR) {
             double mult = sett.getM5PruningMult();
             if (sett.getPruningMethod() == SettingsTree.PRUNING_METHOD_M5_MULTI) { return new M5PrunerMulti(getClusteringWeights(), mult); }
             if (sett.getPruningMethod() == SettingsTree.PRUNING_METHOD_DEFAULT || sett.getPruningMethod() == SettingsTree.PRUNING_METHOD_M5) {

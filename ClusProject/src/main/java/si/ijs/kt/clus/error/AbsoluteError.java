@@ -43,9 +43,16 @@ public class AbsoluteError extends ClusNumericError {
 
 
     public AbsoluteError(ClusErrorList par, NumericAttrType[] num) {
+        this(par, num, "");
+    }
+
+
+    public AbsoluteError(ClusErrorList par, NumericAttrType[] num, String info) {
         super(par, num);
         m_AbsError = new double[m_Dim];
         m_AbsDefError = new double[m_Dim];
+
+        setAdditionalInfo(info);
     }
 
 
@@ -138,18 +145,18 @@ public class AbsoluteError extends ClusNumericError {
 
     @Override
     public String getName() {
-        return "Mean absolute error (MAE)";
+        return "Mean absolute error (MAE)" + getAdditionalInfoFormatted();
     }
 
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new AbsoluteError(par, m_Attrs);
+        return new AbsoluteError(par, m_Attrs, getAdditionalInfo());
     }
 
 
-	@Override
+    @Override
     public boolean shouldBeLow() {
-		return true;
-	}
+        return true;
+    }
 }
