@@ -100,6 +100,11 @@ public abstract class NodeTest implements Serializable {
      * Proportion of examples in different branches
      ***************************************************************************/
 
+    
+    public final double[] getProportions() {
+    	return m_BranchFreq;
+    }
+    
     // Get proportion of examples in branch
     public final double getProportion(int branch) {
         return m_BranchFreq[branch];

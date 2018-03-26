@@ -17,4 +17,8 @@ public class UniqueNodeIdentifier {
 		return m_ID == ((UniqueNodeIdentifier) other).m_ID;
 	}
 	
+	public int getID() {
+		return m_ID;
+	}
+	
 }

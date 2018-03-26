@@ -27,6 +27,7 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -1675,7 +1676,7 @@ public class ClusNode extends MyNode implements ClusModel {
     		current.setUniqueNodeIdentifier(identifier);
     		identifier++;
     		if (tree_nodes.containsKey(current.getUniqueNodeIdentifier())) {
-    			System.out.println(current + " existss");
+    			System.out.println(current + " exists");
     		}
     		tree_nodes.put(current.getUniqueNodeIdentifier(), 0);
     		int children = current.getNbChildren();
@@ -1728,6 +1729,82 @@ public class ClusNode extends MyNode implements ClusModel {
                 current_indentation--;
     		}
     	}
+    }
+    
+        
+    public final void printTreeToPythonTree(PrintWriter writer, String prefix, HashMap<String, Integer> dict) {
+    	HashMap<UniqueNodeIdentifier, Integer> children_left = new HashMap<UniqueNodeIdentifier, Integer>();  // node id: number of children that have not been processed yet
+    	int identifier = 0;
+    	Stack<ClusNode> temp = new Stack<>();
+    	temp.push(this);
+    	ClusNode current;
+    	while(!temp.isEmpty()) {
+    		current = temp.pop();
+    		current.setUniqueNodeIdentifier(identifier);
+    		identifier++;
+    		if (children_left.containsKey(current.getUniqueNodeIdentifier())) {
+    			System.out.println(current + " exists");
+    		}
+    		int children = current.getNbChildren();
+    		if(children != 0 && children != 2) {
+    			System.err.println("Warning: not a binary tree! Python code won't work properly with high probability.");
+    		}
+    		children_left.put(current.getUniqueNodeIdentifier(), children);
+    		for(int i = 0; i < children; i++) {
+    			temp.push((ClusNode) current.getChild(i));
+    		}
+     	}
+    	temp = new Stack<>();
+    	temp.push(this);
+    	while(!temp.isEmpty()) {
+    		current = temp.peek();
+    		UniqueNodeIdentifier currentID = current.getUniqueNodeIdentifier();
+    		boolean isProcessed = false;
+    		if(current.atBottomLevel()) {
+    			// write leaf line
+    			writer.println(pythonTreeLeafNodeLine(current));
+    			// mark as processed
+    			isProcessed = true;
+    			
+    		} else if(children_left.get(currentID) == 0){
+    			// write internal line
+    			writer.println(pythonTreeInternalNodeLines(current,  dict.get(current.m_Test.getType().getName())));
+    			// mark as processed
+    			isProcessed = true;
+    		} else if (children_left.get(currentID) == current.getNbChildren()){
+    			// process children first
+    			for (int i = 0; i < current.getNbChildren(); i++) {
+    				temp.push((ClusNode) current.getChild(i));
+    			}
+    		} else {
+    			System.err.println("printTreeToPythonTree:\n    Probably something went wrong: the #processed children is neither #children nor 0!");
+    		}
+    		if (isProcessed) {
+    			if (current.getParent() != null) {
+    				int previous = children_left.get(currentID);
+    				children_left.put(currentID, previous - 1);
+    			}
+    			temp.pop();
+    		}
+    	}
+    }
+    
+    
+   private static String pythonTreeInternalNodeLines(ClusNode node, int inputAttrIndex) {
+	   int nodeID = node.getUniqueNodeIdentifier().getID();
+	   int[] childrenIDs = new int[node.getNbChildren()];
+	   for(int i = 0; i < childrenIDs.length; i++) {
+		   childrenIDs[i] = ((ClusNode) node.getChild(i)).getUniqueNodeIdentifier().getID();
+	   }
+	   String childrenArg = String.format("children=%s", Arrays.toString(childrenIDs));
+	   String frequenciesArg = String.format("branch_frequencies=%s", Arrays.toString(node.getTest().getProportions()));
+	   String testArg = String.format("test=BinaryNodeTest(%d, test_function=lambda t: t %s)", inputAttrIndex, node.m_Test.getPythonTestString(""));
+	   return String.format("node%d = TreeNode(%s, %s, %s)", nodeID, childrenArg, frequenciesArg, testArg);
+   }
+    
+    private static String pythonTreeLeafNodeLine(ClusNode leaf) {
+    	//TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!! REGRESSION
+    	return String.format("node%d = TreeNode(prediction_statistics=%s)", leaf.getUniqueNodeIdentifier().getID(), leaf.m_TargetStat.getArrayOfStatistic());
     }
 
 
