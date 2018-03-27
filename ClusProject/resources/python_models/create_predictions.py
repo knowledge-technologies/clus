@@ -58,11 +58,15 @@ def parse_index_intervals(intervals):
 
 
 def instances_generator(arff_file):
-    def my_eval(value):
-        try:
-            return float(value)
-        except ValueError:
-            return value.strip()
+    def my_eval(attr_ind, attr_value):
+        if attributes[attr_ind][1] == "numeric":
+            try:
+                return float(attr_value)
+            except ValueError:
+                return attr_value.strip()
+        else:
+            return attr_value.strip()
+    _, attributes, _ = load_nonsparse_arff(arff_file)
     found = 0
     with open(arff_file) as f:
         for x in f:
@@ -70,7 +74,7 @@ def instances_generator(arff_file):
                 break
         for x in f:
             if x.strip():
-                candidate = [my_eval(t) for t in x.strip().split(",")]
+                candidate = [my_eval(i, t) for i, t in enumerate(x.strip().split(","))]
                 found += 1
                 yield candidate
     print("Number of instances found:", found)
@@ -85,18 +89,27 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
                        out_file):
     """
     Computes predictions of the examples and writes everything to a file.
-    :param python_ensemble_dir: Path to the directory that contains the file python_ensemble_file, e.g.,
-    C:/Users/matej/results
-    :param python_ensemble_file: Name of the file (without .py exentsion) where ensemble model methods are defined,
-    e.g., forest_models for the file C:/Users/matej/results/forest_models.py
-    :param arff_file: Path to the arff file, e.g., C:/Users/matej/data/something.arff
-    :param descriptive_attributes_string: comma-separated string of intervals or single numbers that defined the
-    1-based indices of descriptive attributes, e.g., 3,4-42,44,45
-    :param key_attribute: None (if there is no key) or the 1-based index of the key
-    :param target_attributes_string: the analogue of descriptive_attributes_string for target attributes
-    :param num_trees: number of trees in the ensemble
-    :param out_file: Path to the file where predictions are written to, e.g., C:/Users/matej/predictions/experiment1.txt
-    :return:
+
+    Parameters
+    ----------
+    python_ensemble_dir : string
+        Path to the directory that contains the file python_ensemble_file, e.g., 'C:/Users/matej/results'
+    python_ensemble_file : string
+        Name of the file (without .py exentsion) where ensemble model methods are defined, e.g.,
+        'forest_models' for the file C:/Users/matej/results/forest_models.py
+    arff_file : string
+        Path to the arff file, e.g., 'C:/Users/matej/data/something.arff'
+    descriptive_attributes_string : string
+        Comma-separated string of intervals or single numbers that define 1-based indices of descriptive attributes,
+        e.g., '3,4-42,44,45'
+    key_attribute : None or int
+        None if there is no key, or the 1-based index of the key attribute otherwise
+    target_attributes_string: string
+        The analogue of descriptive_attributes_string for target attributes
+    num_trees : int
+        Number of trees in the ensemble
+    out_file : string
+        Path to the file where predictions are written to, e.g., 'C:/Users/matej/predictions/experiment1.txt'
     """
     def get_sublist(indices, whole_list, one_based=True):
         return [whole_list[t - one_based] for t in indices]
@@ -105,7 +118,7 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
     exec("import {}".format(python_ensemble_file))
     print("Ensemble imported from", python_ensemble_file)
     descriptive_indices = parse_index_intervals(descriptive_attributes_string)
-    target_indices = parse_index_interval(target_attributes_string)
+    target_indices = parse_index_intervals(target_attributes_string)
 
     examples_generator = instances_generator(arff_file)
     _, attributes, _ = load_nonsparse_arff(arff_file, False)
@@ -123,3 +136,13 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
             print(new_line, file=f)
 
 
+# ensemble_dir = "C:/Users/matej/Documents/clusTesti/testPredikicijPython"
+# ensemble_fil = "test_models"
+# arff_train = ensemble_dir + "/test.arff"
+# arff_test = ensemble_dir + "/test2.arff"
+# descriptive_attrs = "1-24"
+# key_attribute = None
+# target_attrs = "25,26,27,28,29"
+# num_trees = 50
+# arff = "C:/Users/matej/git/e8datasets/MTR/chlor_alkali_complete.arff"
+# create_predictions(ensemble_dir, ensemble_fil, arff, descriptive_attrs, key_attribute, target_attrs, num_trees, ensemble_dir + "/out.txt")
