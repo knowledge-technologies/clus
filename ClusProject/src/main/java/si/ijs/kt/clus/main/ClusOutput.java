@@ -23,15 +23,20 @@
 package si.ijs.kt.clus.main;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -315,8 +320,23 @@ public class ClusOutput {
         }
 
         if (getSettings().getOutput().isOutputPythonModel()) {
+        	String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
         	PythonModelType pyModelType = cr.getStatManager().getSettings().getOutput().getPythonModelType();
-            String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
+        	if (pyModelType == PythonModelType.Object) {        		
+        		// copy the file from resources 
+        		String fileName="tree_as_object.py";
+        		try
+        		{
+        			InputStream is = si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + fileName);
+        			String fullFileName = getSettings().getGeneric().getFileAbsolute(fileName);
+        			Files.copy(is, Paths.get(fullFileName), StandardCopyOption.REPLACE_EXISTING);
+        		}
+        		catch(IOException ex)
+        		{
+        			System.err.println("Error while copying " + fileName + " to the output folder.");
+        			ex.printStackTrace();
+        		}
+        	}
             String pyName = appName + "_models.py";
             File pyscript = new File(getSettings().getGeneric().getFileAbsolute(pyName));
             PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
@@ -353,6 +373,9 @@ public class ClusOutput {
             else {
                 // Otherwise, we create only the <app name>_models.py file
                 // Tested for clus.jar something.s case
+            	if (pyModelType == PythonModelType.Object) {
+                	wrtr.println("from tree_as_object import *\n\n");
+                }
                 HashMap<Integer, String> pythonNames = new HashMap<Integer, String>();
                 pythonNames.put(ClusModel.DEFAULT, "default");
                 pythonNames.put(ClusModel.ORIGINAL, "original");
@@ -369,6 +392,7 @@ public class ClusOutput {
                     		break;
                     	case Object:
                     		root.printModelToPythonScript(wrtr, descrIndices, pythonNames.get(i));
+                    		break;
                     	default:
                     		throw new RuntimeException("Wrong PythonModelType: " + cr.getStatManager().getSettings().getOutput().getPythonModelType());
                     	}
@@ -518,7 +542,7 @@ public class ClusOutput {
                 model = reader.read(new FileReader(file));
             }
             else {
-                InputStreamReader isr = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/META-INF/maven/si.ijs.kt/clus/" + file));
+            	 InputStreamReader isr = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + file));
                 model = reader.read(isr);
                 isr.close();
             }

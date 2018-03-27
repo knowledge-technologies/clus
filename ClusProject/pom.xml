@@ -99,6 +99,18 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 					<include>CLUS_LICENSE.txt</include>
 				</includes>
 			</resource>
+			<resource>
+				<directory>${project.basedir}/resources/python_models/</directory>
+				<includes>
+					<include>tree_as_object.py</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>${project.basedir}/</directory>
+				<includes>
+					<include>pom.xml</include>
+				</includes>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>

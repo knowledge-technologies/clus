@@ -814,7 +814,10 @@ public class ClusForest implements ClusModel, Serializable {
             File pyscript = new File(getPythonForestTreesFileName());
             PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
             wrtr.println("# Python code of the trees in the ensemble");
-            wrtr.println();    
+            wrtr.println();
+            if (type == PythonModelType.Object) {
+            	wrtr.println("from tree_as_object import *\n\n");
+            }
             for (int i = 0; i < m_Forest.size(); i++) {
                 ClusModel model = m_Forest.get(i);
                 printOneTree(wrtr, (ClusNode) model, i + 1, type);
@@ -858,7 +861,10 @@ public class ClusForest implements ClusModel, Serializable {
 		try {
 			wrtr = new PrintWriter(new FileOutputStream(pyscript));
 			wrtr.println("# Python code of the trees in the ensemble");
-		    wrtr.println();    
+		    wrtr.println(); 
+		    if (cr.getStatManager().getSettings().getOutput().getPythonModelType() == PythonModelType.Object) {
+            	wrtr.println("from tree_as_object import *\n\n");
+            }
 		    for(int i = 1; i <= m_NbModels; i++) {
 		    	String inputFile = ClusEnsembleInduce.getTemporaryPythonTreeFileName(cr, i);
 		    	String treeString = new String(Files.readAllBytes(Paths.get(inputFile)), StandardCharsets.UTF_8);
