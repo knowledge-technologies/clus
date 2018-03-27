@@ -155,6 +155,11 @@ public class ClusSplitNode extends MyNode {
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices){
         printTreeToPythonScript(wrt, "\t");  // This is probably obsolete, 18. 12. 2017, matejp
     }
+    
+    @Override
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices, String modelIdentifier){
+    	printModelToPythonScript(wrt, indices);
+    }
 
     @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive){

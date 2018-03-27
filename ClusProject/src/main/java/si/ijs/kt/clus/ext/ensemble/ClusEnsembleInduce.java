@@ -66,6 +66,7 @@ import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.section.SettingsMLC;
@@ -1639,8 +1640,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      */
     private void writeTreeToTempPythonFile(ClusRun cr, ClusModel tree, int treeIndex) throws FileNotFoundException {
         File tempPy = new File(getTemporaryPythonTreeFileName(cr, treeIndex));
+        PythonModelType modelType = cr.getStatManager().getSettings().getOutput().getPythonModelType();
         PrintWriter wrtr = new PrintWriter(new FileOutputStream(tempPy));
-        m_OForests[0].printOneTree(wrtr, (ClusNode) tree, treeIndex);
+        m_OForests[0].printOneTree(wrtr, (ClusNode) tree, treeIndex, modelType);
         wrtr.close();
     }
 

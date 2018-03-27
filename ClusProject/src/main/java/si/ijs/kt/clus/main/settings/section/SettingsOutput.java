@@ -3,9 +3,11 @@ package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
@@ -39,7 +41,11 @@ public class SettingsOutput extends SettingsBase {
     protected INIFileBool m_WritePerBagModelFiles;
     protected INIFileBool m_WriteOOBFile;
     protected INIFileBool m_ModelIDFiles;
+    
     protected INIFileBool m_OutputPythonModel;
+    public enum PythonModelType {Function, Object};
+    private INIFileEnum<PythonModelType> m_PythonModelType;
+    
     protected INIFileBool m_OutputJSONModel;
     protected INIFileBool m_OutputDatabaseQueries;
     protected INIFileBool m_WriteCurves;
@@ -144,6 +150,10 @@ public class SettingsOutput extends SettingsBase {
 
     public boolean isOutputPythonModel() {
         return m_OutputPythonModel.getValue();
+    }
+    
+    public PythonModelType getPythonModelType() {
+    	return m_PythonModelType.getChosenOption();
     }
 
 
@@ -270,7 +280,10 @@ public class SettingsOutput extends SettingsBase {
         // output.addNode(m_ModelIDFiles = new INIFileBool("WriteModelIDFiles", false));
         output.addNode(m_ModelIDFiles = new INIFileBool("ModelIDFiles", false));
         output.addNode(m_WriteCurves = new INIFileBool("WriteCurves", false));
+        
         output.addNode(m_OutputPythonModel = new INIFileBool("OutputPythonModel", false));
+        output.addNode(m_PythonModelType = new INIFileEnum<PythonModelType>("PythonModelType", PythonModelType.class, PythonModelType.Object));
+        
         output.addNode(m_OutputROSSubspaces = new INIFileBool("OutputROSSubspaces", false));
         output.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
         output.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));

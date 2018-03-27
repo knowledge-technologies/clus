@@ -85,6 +85,8 @@ public interface ClusModel {
 
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> descriptiveAttributeIndices);
     
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> descriptiveAttributeIndices, String modelIdentifier);
+    
 
     public JsonObject getModelJSON();
 

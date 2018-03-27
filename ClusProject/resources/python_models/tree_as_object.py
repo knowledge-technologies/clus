@@ -5,6 +5,7 @@ Created on Mon Mar 26 14:30:05 2018
 @author: matej
 """
 
+
 class Statistics:
     def fresh_stats(self, number_targets):
         raise NotImplementedError("Implement this in subclass")
@@ -109,7 +110,9 @@ class TreeNode:
     def __repr__(self):
         def pomo(x):
             return "None" if x is None else str(x)
-        return "Node: test: {}, stat: {}, temp_stat: {}".format(pomo(self.test), pomo(self.prediction_statistics), pomo(self.temp_statistics))
+        return "Node: test: {}, stat: {}, temp_stat: {}".format(pomo(self.test),
+                                                                pomo(self.prediction_statistics),
+                                                                pomo(self.temp_statistics))
         
     def is_leaf(self):
         """
@@ -179,58 +182,3 @@ class Tree:
         prediction = self.root.temp_statistics.stats_to_predictions()
         self.root.reset_temp_statistics()
         return prediction
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-                
-    

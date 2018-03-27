@@ -131,9 +131,11 @@ public class ReliefModel implements ClusModel {
 
 
     @Override
-    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices) {
-        // TODO Auto-generated method stub
-
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices) {}
+    
+    @Override
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices, String modelIdentifier) {
+    	printModelToPythonScript(wrt, indices);
     }
 
     @Override

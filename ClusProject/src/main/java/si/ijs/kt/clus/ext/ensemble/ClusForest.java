@@ -52,6 +52,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.processor.ClusEnsemblePredictionWriter;
@@ -700,7 +701,12 @@ public class ClusForest implements ClusModel, Serializable {
     
     @Override
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
-        printForestToPython();
+        printForestToPython(PythonModelType.Function);
+    }
+    
+    @Override
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict, String modelIdentifier) {
+    	printModelToPythonScript(wrt, dict);
     }
     
 
@@ -708,12 +714,21 @@ public class ClusForest implements ClusModel, Serializable {
      * Adds an ensemble predictor to python models file.
      * 
      */
-    public void writePythonEnsembleFile(PrintWriter wrtr, String treeFile) {
+    public void writePythonEnsembleFile(PrintWriter wrtr, String treeFile, PythonModelType pyModelType) {
         wrtr.println(String.format("def ensemble_%d(xs):", m_NbModels));
 		wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_NbModels));
 		wrtr.println("\tfor i in range(len(base_predictions)):");
 		wrtr.println(String.format("\t\ttree = eval(\"%s.tree_{}\".format(i + 1))", treeFile));
-		wrtr.println("\t\tbase_predictions[i] = tree(xs)");
+		switch (pyModelType) {
+		case Function:
+			wrtr.println("\t\tbase_predictions[i] = tree(xs)");
+			break;
+		case Object:
+			wrtr.println("\t\tbase_predictions[i] = tree.predict(xs)");
+			break;
+		default:
+			throw new RuntimeException("This will never happen:)");
+		}
 		wrtr.println("\treturn aggregate(base_predictions)");
 		wrtr.println();
 		wrtr.println();
@@ -794,7 +809,7 @@ public class ClusForest implements ClusModel, Serializable {
     /**
      * Prints the trees of the forest into a python file.
      */
-    public void printForestToPython() {
+    public void printForestToPython(PythonModelType type) {
         try {
             File pyscript = new File(getPythonForestTreesFileName());
             PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
@@ -802,7 +817,7 @@ public class ClusForest implements ClusModel, Serializable {
             wrtr.println();    
             for (int i = 0; i < m_Forest.size(); i++) {
                 ClusModel model = m_Forest.get(i);
-                printOneTree(wrtr, (ClusNode) model, i + 1);
+                printOneTree(wrtr, (ClusNode) model, i + 1, type);
             }
             wrtr.close();
             System.out.println(String.format("Python trees for the model %s written to: ", getModelInfo()) + pyscript.getPath());
@@ -816,10 +831,19 @@ public class ClusForest implements ClusModel, Serializable {
     }
     
     
-    public void printOneTree(PrintWriter wrtr, ClusNode tree, int treeIndex) {
+    public void printOneTree(PrintWriter wrtr, ClusNode tree, int treeIndex, PythonModelType type) {
     	wrtr.println("# Model " + treeIndex);
-        wrtr.println(pythonTreeFunctionDefinition(treeIndex));
-        tree.printModelToPythonScript(wrtr, m_DescriptiveIndex);
+    	switch(type) {
+    	case Function:
+    		wrtr.println(pythonTreeFunctionDefinition(treeIndex));
+            tree.printModelToPythonScript(wrtr, m_DescriptiveIndex);
+            break;
+    	case Object:
+    		tree.printModelToPythonScript(wrtr, m_DescriptiveIndex, Integer.toString(treeIndex));
+    		break;
+    	default:
+    		throw new RuntimeException("Wrong PythonModelType: " + type);
+    	}        
     }
     
     

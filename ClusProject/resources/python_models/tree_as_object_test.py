@@ -26,7 +26,7 @@ Created on Mon Mar 26 16:12:01 2018
 #
 # [1.0, 21.21]
 
-from tree import *
+from tree_as_object import *
 import unittest
 
 

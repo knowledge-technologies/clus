@@ -52,6 +52,8 @@ import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.statistic.GeneticDistanceStat;
+import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusFormat;
@@ -1179,9 +1181,16 @@ public class ClusNode extends MyNode implements ClusModel {
         printTree(wrt, info, "", examples, true);
     }
 
-    
+    @Override
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
     	printTreeToPythonScriptIterative(wrt, "\t", dict);
+        wrt.println();
+        wrt.println();
+    }
+    
+    @Override
+    public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict, String name) {
+    	printTreeToPythonTreeObject(wrt, dict, name);
         wrt.println();
         wrt.println();
     }
@@ -1732,8 +1741,8 @@ public class ClusNode extends MyNode implements ClusModel {
     }
     
         
-    public final void printTreeToPythonTree(PrintWriter writer, String prefix, HashMap<String, Integer> dict) {
-    	HashMap<UniqueNodeIdentifier, Integer> children_left = new HashMap<UniqueNodeIdentifier, Integer>();  // node id: number of children that have not been processed yet
+    public final void printTreeToPythonTreeObject(PrintWriter writer, HashMap<String, Integer> dict, String modelIdentifier) {
+    	HashMap<UniqueNodeIdentifier, Integer> children_left = new HashMap<UniqueNodeIdentifier, Integer>();  // {nodeID: number of children that have not been processed yet, ...}
     	int identifier = 0;
     	Stack<ClusNode> temp = new Stack<>();
     	temp.push(this);
@@ -1762,14 +1771,11 @@ public class ClusNode extends MyNode implements ClusModel {
     		boolean isProcessed = false;
     		if(current.atBottomLevel()) {
     			// write leaf line
-    			writer.println(pythonTreeLeafNodeLine(current));
-    			// mark as processed
+    			writer.println(pythonTreeLeafNodeLine(current, modelIdentifier));
     			isProcessed = true;
-    			
     		} else if(children_left.get(currentID) == 0){
     			// write internal line
-    			writer.println(pythonTreeInternalNodeLines(current,  dict.get(current.m_Test.getType().getName())));
-    			// mark as processed
+    			writer.println(pythonTreeInternalNodeLine(current, modelIdentifier, dict.get(current.m_Test.getType().getName())));
     			isProcessed = true;
     		} else if (children_left.get(currentID) == current.getNbChildren()){
     			// process children first
@@ -1781,30 +1787,39 @@ public class ClusNode extends MyNode implements ClusModel {
     		}
     		if (isProcessed) {
     			if (current.getParent() != null) {
-    				int previous = children_left.get(currentID);
-    				children_left.put(currentID, previous - 1);
+    				UniqueNodeIdentifier parentID = ((ClusNode) current.getParent()).getUniqueNodeIdentifier(); 
+    				int previous = children_left.get(parentID);
+    				children_left.put(parentID, previous - 1);
     			}
     			temp.pop();
     		}
     	}
+    	writer.println(String.format("tree_%s = Tree(%s)", modelIdentifier, pythonNodeName(this, modelIdentifier)));
     }
     
-    
-   private static String pythonTreeInternalNodeLines(ClusNode node, int inputAttrIndex) {
-	   int nodeID = node.getUniqueNodeIdentifier().getID();
-	   int[] childrenIDs = new int[node.getNbChildren()];
-	   for(int i = 0; i < childrenIDs.length; i++) {
-		   childrenIDs[i] = ((ClusNode) node.getChild(i)).getUniqueNodeIdentifier().getID();
-	   }
-	   String childrenArg = String.format("children=%s", Arrays.toString(childrenIDs));
-	   String frequenciesArg = String.format("branch_frequencies=%s", Arrays.toString(node.getTest().getProportions()));
-	   String testArg = String.format("test=BinaryNodeTest(%d, test_function=lambda t: t %s)", inputAttrIndex, node.m_Test.getPythonTestString(""));
-	   return String.format("node%d = TreeNode(%s, %s, %s)", nodeID, childrenArg, frequenciesArg, testArg);
+   private static String pythonNodeName(ClusNode node, String modelIdentifier) {
+	   return String.format("node_%s_%d", modelIdentifier, node.getUniqueNodeIdentifier().getID());
    }
     
-    private static String pythonTreeLeafNodeLine(ClusNode leaf) {
-    	//TODO: !!!!!!!!!!!!!!!!!!!!!!!!!!! REGRESSION
-    	return String.format("node%d = TreeNode(prediction_statistics=%s)", leaf.getUniqueNodeIdentifier().getID(), leaf.m_TargetStat.getArrayOfStatistic());
+   private static String pythonTreeInternalNodeLine(ClusNode node, String modelIdentifier, int inputAttrIndex) {
+	   String[] children = new String[node.getNbChildren()];
+	   for(int i = 0; i < children.length; i++) {
+		   children[i] = pythonNodeName((ClusNode) node.getChild(i), modelIdentifier);
+	   }
+	   String childrenArg = String.format("children=%s", Arrays.toString(children));
+	   String frequenciesArg = String.format("branch_frequencies=%s", Arrays.toString(node.getTest().getProportions()));
+	   String testArg = String.format("test=BinaryNodeTest(%d, test_function=lambda t: t%s)", inputAttrIndex, node.m_Test.getPythonTestString(""));
+	   return String.format("%s = TreeNode(%s, %s, %s)", pythonNodeName(node, modelIdentifier), childrenArg, frequenciesArg, testArg);
+   }
+    
+    private String pythonTreeLeafNodeLine(ClusNode leaf, String modelIdentifier) {
+    	String statArg;
+    	if (m_TargetStat instanceof RegressionStat) {
+    		statArg = String.format("prediction_statistics=RegressionStat(%s)", leaf.m_TargetStat.getArrayOfStatistic());
+    	} else {
+    		throw new RuntimeException("Python code for your target-type statistics not implemented.");
+    	}
+    	return String.format("%s = TreeNode(%s)", pythonNodeName(leaf, modelIdentifier), statArg);
     }
 
 

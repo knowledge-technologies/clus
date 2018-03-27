@@ -39,6 +39,7 @@ import java.util.HashMap;
 
 import org.apache.maven.model.Model;
 import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
@@ -49,6 +50,7 @@ import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.ensemble.ClusOOBErrorEstimate;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
@@ -313,14 +315,15 @@ public class ClusOutput {
         }
 
         if (getSettings().getOutput().isOutputPythonModel()) {
+        	PythonModelType pyModelType = cr.getStatManager().getSettings().getOutput().getPythonModelType();
             String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
             String pyName = appName + "_models.py";
             File pyscript = new File(getSettings().getGeneric().getFileAbsolute(pyName));
             PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
             if (getSettings().getEnsemble().isEnsembleMode()) {
-                // If in ensemble mode, we write two files:
+                // If in ensemble mode, we create two files:
                 // - <app name>_models.py with ensemble methods which use the imported methods from
-                // - <app_name>_trees.py where the trees are defined
+                // - <app name>_trees.py where the trees are defined
                 String treeFile = ClusForest.getTreeFile(appName);
                 // write ensemble file
                 ClusForest.writePythonAggregation(wrtr, treeFile, cr.getStatManager().getMode());
@@ -334,21 +337,21 @@ public class ClusOutput {
                             maxSize = trees;
                             maxSizedForest = i;
                         }
-                        ((ClusForest) root).writePythonEnsembleFile(wrtr, treeFile);
+                        ((ClusForest) root).writePythonEnsembleFile(wrtr, treeFile, pyModelType);
                     }
                 }
-                System.out.println(String.format("Python ensemble code written to: %s", pyName));
-                // print only max sized forest trees (the other forests are nested)
+                System.out.println(String.format("Python ensemble aggregation code written to: %s", pyName));
+                // print only max sized forest trees, since it contains the other forests
                 ClusForest root = (ClusForest) models.get(maxSizedForest);
                 if (getSettings().getEnsemble().shouldOptimizeEnsemble()) {
                     root.joinPythonForestInOneFile(cr);
                 }
                 else {
-                    root.printForestToPython();
+                    root.printForestToPython(pyModelType);
                 }
             }
             else {
-                // Otherwise, we write only the <app name>_models.py file
+                // Otherwise, we create only the <app name>_models.py file
                 // Tested for clus.jar something.s case
                 HashMap<Integer, String> pythonNames = new HashMap<Integer, String>();
                 pythonNames.put(ClusModel.DEFAULT, "default");
@@ -359,15 +362,22 @@ public class ClusOutput {
                 for (int i = 0; i < cr.getNbModels(); i++) {
                     ClusModel root = models.get(i);
                     if (pythonNames.containsKey(i)) {
-                        wrtr.println(String.format(defPattern, pythonNames.get(i)));
-                        root.printModelToPythonScript(wrtr, descrIndices);
+                    	switch (pyModelType) {
+                    	case Function:
+                    		wrtr.println(String.format(defPattern, pythonNames.get(i)));
+                            root.printModelToPythonScript(wrtr, descrIndices);
+                    		break;
+                    	case Object:
+                    		root.printModelToPythonScript(wrtr, descrIndices, pythonNames.get(i));
+                    	default:
+                    		throw new RuntimeException("Wrong PythonModelType: " + cr.getStatManager().getSettings().getOutput().getPythonModelType());
+                    	}
                     }
                     else {
                         System.err.println("Warning: this is not DEFAULT/ORIGINAL/PRUNED model and will not be printed. Extend the pythonNames hash map!");
                     }
                 }
             }
-
             wrtr.close();
         }
 
