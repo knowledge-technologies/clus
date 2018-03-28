@@ -16,6 +16,7 @@ def tree(xs):
 ```
 
 This does not allow for the missing values in `xs`.
+
 - as object: Every tree is represented by a `Tree` object, something like
 
 ```
