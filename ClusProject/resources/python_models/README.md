@@ -3,6 +3,7 @@
 As you may know, Clus+ supports Python output in some cases. Currently, the Python-models come in two different formats:
 
 - as function: Every tree is written as a if-else function, something like
+
 ```
 def tree(xs):
     if xs[0] < 3.3:
