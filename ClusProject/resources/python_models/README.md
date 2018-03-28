@@ -13,8 +13,10 @@ def tree(xs):
         else:
             return [6.66, 6.66]
 ```
+
 This does not allow for the missing values in `xs`.
 - as object: Every tree is represented by a `Tree` object, something like
+
 ```
 node_no_yes = Node(prediction=[4.3, 3.2])
 node_no_no = Node(prediction=[6.66, 6.66])
