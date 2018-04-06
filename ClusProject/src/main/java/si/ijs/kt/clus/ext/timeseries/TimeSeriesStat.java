@@ -22,7 +22,6 @@
 
 package si.ijs.kt.clus.ext.timeseries;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.ClusSchema;
@@ -40,6 +39,7 @@ import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class TimeSeriesStat extends SumPairwiseDistancesStat {
@@ -336,7 +336,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
      */
     @Override
     public String getString(StatisticPrintInfo info) {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("Mean: ");
         buf.append(m_RepresentativeMean.toString());

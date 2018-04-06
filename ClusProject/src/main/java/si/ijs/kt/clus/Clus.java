@@ -30,7 +30,6 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -124,6 +123,7 @@ import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.DebugFile;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
 import si.ijs.kt.clus.util.jeans.io.ObjectLoadStream;
 import si.ijs.kt.clus.util.jeans.io.ObjectSaveStream;
@@ -1244,7 +1244,7 @@ public class Clus implements CMDLineArgsProvider {
             NumericAttrType type = numtypes[j];
             if (type.isTarget()) {
                 tcnt++;
-                NumberFormat format = ClusFormat.THREE_AFTER_DOT;
+                ClusNumberFormat format = ClusFormat.THREE_AFTER_DOT;
                 System.out.print(StringUtils.printStr("T" + tcnt + " ", 5));
                 System.out.print(StringUtils.printStr(type.getName() + " ", 30));
                 System.out.print(StringUtils.printStr(format.format(rstat.getMean(j)), 10));

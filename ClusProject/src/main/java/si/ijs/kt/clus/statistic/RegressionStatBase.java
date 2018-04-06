@@ -24,7 +24,6 @@ package si.ijs.kt.clus.statistic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import org.apache.commons.math3.distribution.TDistribution;
@@ -39,6 +38,7 @@ import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
@@ -304,7 +304,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
     @Override
     public String getArrayOfStatistic() {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -331,7 +331,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
     @Override
     public String getDebugString() {
-        NumberFormat fr = ClusFormat.THREE_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -353,7 +353,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
     @Override
     public void printDistribution(PrintWriter wrt) throws IOException {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         for (int i = 0; i < m_Attrs.length; i++) {
             wrt.print(StringUtils.printStr(m_Attrs[i].getName(), 35));
             wrt.print(" [");

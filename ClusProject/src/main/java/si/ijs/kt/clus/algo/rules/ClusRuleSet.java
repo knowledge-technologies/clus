@@ -30,7 +30,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.text.DecimalFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -62,6 +61,7 @@ import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 // import si.ijs.kt.clus.tools.optimization.de.DeProbl; // Optimization information (data, predictions)
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 import si.ijs.kt.clus.util.tools.optimization.OptProbl;
 
@@ -527,7 +527,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
     @Override
     public void printModel(PrintWriter wrt, StatisticPrintInfo info) {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         // boolean headers = getSettings().computeDispersion() || hasRuleErrors();
         boolean headers = true;
         // [train/test][comb/num/nom]

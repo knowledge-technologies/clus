@@ -30,7 +30,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -54,6 +53,7 @@ import si.ijs.kt.clus.statistic.RegressionStatBinaryNomiss;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.util.array.MIntArray;
 
 
@@ -2678,7 +2678,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             return pred + " [" + ClusFormat.TWO_AFTER_DOT.format(getTotalWeight()) + "]";
         }
         else {
-            NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
             StringBuffer buf = new StringBuffer();
             buf.append("[");
             for (int i = 0; i < getHier().getTotal(); i++) {

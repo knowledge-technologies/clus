@@ -22,7 +22,6 @@
 
 package si.ijs.kt.clus.statistic;
 
-import java.text.NumberFormat;
 import java.util.Arrays;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
@@ -31,6 +30,7 @@ import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class RegressionStatBinaryNomiss extends RegressionStatBase implements ComponentStatistic {
@@ -236,7 +236,7 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     
     @Override
     public String getString(StatisticPrintInfo info) {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < m_NbAttrs; i++) {

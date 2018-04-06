@@ -26,10 +26,10 @@
 
 package si.ijs.kt.clus.util.tools.optimization.de;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 /**
@@ -77,7 +77,7 @@ public class DeInd {
 
 
     public String getIndString() {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         int i;
         String result = "";
         result += fr.format(m_Fitness) + "\t";

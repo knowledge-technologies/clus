@@ -35,6 +35,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public abstract class ClusError implements Serializable {
@@ -317,7 +318,7 @@ public abstract class ClusError implements Serializable {
     }
 
 
-    public NumberFormat getFormat() {
+    public ClusNumberFormat getFormat() {
         return m_Parent.getFormat();
     }
 
@@ -328,7 +329,7 @@ public abstract class ClusError implements Serializable {
 
 
     public String showDoubleArray(double[] arr) {
-        NumberFormat fr = getFormat();
+    	ClusNumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < arr.length; i++) {
@@ -342,7 +343,7 @@ public abstract class ClusError implements Serializable {
 
 
     public String showDoubleArray(double[] arr1, double[] arr2) {
-        NumberFormat fr = getFormat();
+    	ClusNumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < arr1.length; i++) {
@@ -357,7 +358,7 @@ public abstract class ClusError implements Serializable {
 
 
     public String showDoubleArray(double[] arr1, double div) {
-        NumberFormat fr = getFormat();
+    	ClusNumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < arr1.length; i++) {

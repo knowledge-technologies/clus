@@ -1,12 +1,11 @@
 
 package si.ijs.kt.clus.statistic;
 
-import java.text.NumberFormat;
-
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.list.BitList;
 
 
@@ -173,7 +172,7 @@ public class GeneticDistanceStat extends BitVectorStat {
     @Override
     public String getString(StatisticPrintInfo info) {
         StringBuffer buf = new StringBuffer();
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         buf.append("LEAF : ");
         buf.append(fr.format(m_SumWeight));
         buf.append(" sequence(s)");

@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DateFormat;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.rows.RowData;
@@ -35,6 +34,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class ClusBeamSimilarityOutput {
@@ -70,7 +70,7 @@ public class ClusBeamSimilarityOutput {
         double[] sim = new double[2];
         // sim[0] - training
         // sim[1] - testing
-        NumberFormat outF = ClusFormat.FOUR_AFTER_DOT;
+        ClusNumberFormat outF = ClusFormat.FOUR_AFTER_DOT;
         if ((run.getStatManager().getMode() != 1) && (run.getStatManager().getMode() != 0)) {
             System.err.println(getClass().getName() + ".appendToFile(): Unhandled Type of Target Attribute");
             throw new ClusException("Unhandled Type of Target Attribute");

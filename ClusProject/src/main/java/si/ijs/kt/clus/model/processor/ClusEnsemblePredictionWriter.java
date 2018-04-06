@@ -3,7 +3,6 @@ package si.ijs.kt.clus.model.processor;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.ClusSchema;
@@ -15,6 +14,7 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStatBase;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
@@ -39,7 +39,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
     static int m_Type; // training or testing
     protected double[] m_StDev;
     static ArrayList m_Votes = new ArrayList();
-    protected NumberFormat m_Format = ClusFormat.FOUR_AFTER_DOT;
+    protected ClusNumberFormat m_Format = ClusFormat.FOUR_AFTER_DOT;
     boolean m_Initialized = false;
 
 

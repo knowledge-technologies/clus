@@ -36,6 +36,7 @@ import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class HierClassWiseAccuracy extends ClusError {
@@ -228,7 +229,7 @@ public class HierClassWiseAccuracy extends ClusError {
 
     // prints the evaluation results for each single predicted class
     // added a value for recall (next to def and acc)
-    public void printNonZeroAccuraciesRec(NumberFormat fr, PrintWriter out, ClassTerm node, boolean[] printed) {
+    public void printNonZeroAccuraciesRec(ClusNumberFormat fr, PrintWriter out, ClassTerm node, boolean[] printed) {
         int idx = node.getIndex();
         // avoid printing a given node several times
         if (printed[idx])
@@ -260,7 +261,7 @@ public class HierClassWiseAccuracy extends ClusError {
     }
 
 
-    public void printNonZeroAccuracies(NumberFormat fr, PrintWriter out, ClassHierarchy hier) {
+    public void printNonZeroAccuracies(ClusNumberFormat fr, PrintWriter out, ClassHierarchy hier) {
         boolean[] printed = new boolean[hier.getTotal()];
         ClassTerm node = hier.getRoot();
         for (int i = 0; i < node.getNbChildren(); i++) {
@@ -272,8 +273,8 @@ public class HierClassWiseAccuracy extends ClusError {
     // does it make sense to make averages of TP, FP and nbPos (look into this: methods implemented but not used)
     @Override
     public void showModelError(PrintWriter out, int detail) {
-        NumberFormat fr1 = getFormat();
-        NumberFormat fr2 = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr1 = getFormat();
+    	ClusNumberFormat fr2 = ClusFormat.SIX_AFTER_DOT;
         out.print("precision: " + fr2.format(getPrecision()));
         out.print(", recall: " + fr2.format(getRecall()));
         out.print(", coverage: " + fr2.format(getCoverage()));

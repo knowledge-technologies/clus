@@ -43,6 +43,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class Precision extends ClusSetError {
@@ -236,7 +237,7 @@ public class Precision extends ClusSetError {
 
     @Override
     public void showModelError(PrintWriter out, int detail) {
-        NumberFormat fr = getFormat();
+    	ClusNumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
         if (m_PrintAllComps) {
             buf.append("[");
@@ -258,7 +259,7 @@ public class Precision extends ClusSetError {
 
 
     public void showSummaryError(PrintWriter out, boolean detail) {
-        NumberFormat fr = getFormat();
+    	ClusNumberFormat fr = getFormat();
         out.println(getPrefix() + "Mean over components Precision: " + fr.format(getModelError()));
     }
 

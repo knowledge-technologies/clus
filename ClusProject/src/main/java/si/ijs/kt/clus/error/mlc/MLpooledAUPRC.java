@@ -2,13 +2,13 @@
 package si.ijs.kt.clus.error.mlc;
 
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class MLpooledAUPRC extends MLROCAndPRCurve {
@@ -36,7 +36,7 @@ public class MLpooledAUPRC extends MLROCAndPRCurve {
 
     @Override
     public void showModelError(PrintWriter out, int detail) {
-        NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
         computeAll();
         out.println(fr1.format(m_PooledAUPRC));
     }

@@ -23,13 +23,13 @@
 package si.ijs.kt.clus.error;
 
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class RMSError extends MSError {
@@ -85,7 +85,7 @@ public class RMSError extends MSError {
 
     @Override
     public void showSummaryError(PrintWriter out, boolean detail) {
-        NumberFormat fr = getFormat();
+    	ClusNumberFormat fr = getFormat();
         out.println(getPrefix() + "Mean over components RMSE: " + fr.format(getModelError()));
     }
 

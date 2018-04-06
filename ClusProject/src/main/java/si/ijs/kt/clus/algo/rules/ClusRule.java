@@ -21,7 +21,6 @@ package si.ijs.kt.clus.algo.rules;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -52,6 +51,7 @@ import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 public class ClusRule implements ClusModel, Serializable {
@@ -620,7 +620,7 @@ public class ClusRule implements ClusModel, Serializable {
 
   /** Print for also nonregular rules */
   protected void commonPrintForRuleTypes(PrintWriter wrt, StatisticPrintInfo info) {
-    NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+	  ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
     if (getSettings().getRules().isRulePredictionOptimized()) {
       wrt.println("\n   Rule weight        : " + fr.format(getOptWeight()));
     }

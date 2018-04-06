@@ -33,23 +33,16 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 public class ClusFormat {
 
-    public final static NumberFormat ONE_AFTER_DOT = makeNAfterDot(1);
-    public final static NumberFormat TWO_AFTER_DOT = makeNAfterDot(2);
-    public final static NumberFormat THREE_AFTER_DOT = makeNAfterDot(3);
-    public final static NumberFormat MM3_AFTER_DOT = makeNAfterDot2(3);
-    public final static NumberFormat SIX_AFTER_DOT = makeNAfterDot(6);
-    public final static NumberFormat FOUR_AFTER_DOT = makeNAfterDot(4);
+    public final static ClusNumberFormat ONE_AFTER_DOT = new ClusNumberFormat(1);
+    public final static ClusNumberFormat TWO_AFTER_DOT = new ClusNumberFormat(2);
+    public final static ClusNumberFormat THREE_AFTER_DOT = new ClusNumberFormat(3);
+//    public final static NumberFormat MM3_AFTER_DOT = makeNAfterDot(3);
+    public final static ClusNumberFormat SIX_AFTER_DOT = new ClusNumberFormat(6);
+    public final static ClusNumberFormat FOUR_AFTER_DOT = new ClusNumberFormat(4);
     public final static PrintWriter OUT_WRITER = new PrintWriter(new OutputStreamWriter(System.out));
 
-
-    public static NumberFormat makeNAfterDot(int n) {
-    	// significant places: name is for now misleading not to mess with everything ...
-    	String pattern = String.format("#.%sE0", StringUtils.makeString('#', n));
-    	DecimalFormat df = new DecimalFormat(pattern);
-    	return df;
-    }
-    
-    public static NumberFormat makeNAfterDotWithBug(int n) { // See issue #65
+   
+    public static NumberFormat makeNAfterDot(int n) { // See issue #65
         NumberFormat fr = NumberFormat.getInstance();
         fr.setMaximumFractionDigits(n);
         try {
@@ -59,11 +52,13 @@ public class ClusFormat {
             df.setGroupingUsed(false);
             df.setDecimalFormatSymbols(sym);
         }
-        catch (ClassCastException e) {}
+        catch (ClassCastException e) {
+        	e.printStackTrace();
+        }
         return fr;
     }
 
-
+    @Deprecated
     public static NumberFormat makeNAfterDot2(int n) {
         NumberFormat fr = makeNAfterDot(n);
         fr.setMinimumFractionDigits(n);
@@ -92,12 +87,13 @@ public class ClusFormat {
     }
     // TODO: move this to unit tests in the next commit 
     public static void main(String[] args) {
-    	int n = 2;
-    	DecimalFormat df = new DecimalFormat(String.format("#.%sE0", StringUtils.makeString('#', n)));
-    	double[] xs = new double[] {9, 9.0, 9876.6, 0.0098766, 0.0000000098766};
-    	String[] xsStr = new String[] {"9", "9.0", "9876.6", "0.0098766", "0.0000000098766"};
+    	int n = 1;
+    	DecimalFormat df = new DecimalFormat(String.format("0.%sE0", StringUtils.makeString('0', n)));
+    	double[] xs = new double[] {9, 9.0, 9876.6, 0.0098766, 0.0000000098766, 9876543.456789, 0.987654};
+    	String[] xsStr = new String[] {"9", "9.0", "9876.6", "0.0098766", "0.0000000098766", "9876543.456789", "0.987654"};
+    	NumberFormat dff = makeNAfterDot(n);
     	for(int i = 0; i < xs.length; i++) {
-    		System.out.println("Representation of " + xsStr[i] + ": " + df.format(xs[i]));
+    		System.out.println("Representation of " + xsStr[i] + ": " + df.format(xs[i]) + " : " + dff.format(xs[i]));
     	}
     }
 }

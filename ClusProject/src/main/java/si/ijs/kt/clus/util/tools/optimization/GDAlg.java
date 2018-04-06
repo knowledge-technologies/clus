@@ -30,13 +30,13 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 /**
@@ -447,7 +447,7 @@ public class GDAlg extends OptAlg {
         if (!GDProbl.m_printGDDebugInformation)
             return;
 
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         double trainingFitness = m_GDProbl.calcFitness(m_weights);
         double testFitness = 0;
         if (getSettings().getRules().getOptGDEarlyStopAmount() > 0)

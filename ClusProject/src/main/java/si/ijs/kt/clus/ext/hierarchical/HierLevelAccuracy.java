@@ -27,7 +27,6 @@
 package si.ijs.kt.clus.ext.hierarchical;
 
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.Arrays;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
@@ -35,6 +34,7 @@ import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class HierLevelAccuracy extends ClusError {
@@ -184,7 +184,7 @@ public class HierLevelAccuracy extends ClusError {
 
     @Override
     public void showModelError(PrintWriter out, int detail) {
-        NumberFormat fr = getFormat();
+    	ClusNumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         // int nb = getNbExamples();

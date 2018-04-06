@@ -2,7 +2,6 @@
 package si.ijs.kt.clus.error;
 
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
@@ -14,6 +13,7 @@ import si.ijs.kt.clus.error.common.ComponentError;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class MSNominalError extends ClusNominalError implements ComponentError {
@@ -161,7 +161,7 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
 
     @Override
     public void showModelError(PrintWriter out, int detail) {
-        NumberFormat fr = getFormat();
+    	ClusNumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
         if (m_PrintAllComps) {
             buf.append("[");
@@ -183,7 +183,7 @@ public class MSNominalError extends ClusNominalError implements ComponentError {
 
 
     public void showSummaryError(PrintWriter out, boolean detail) {
-        NumberFormat fr = getFormat();
+    	ClusNumberFormat fr = getFormat();
         out.println(getPrefix() + "Mean over components MSE: " + fr.format(getModelError()));
     }
 

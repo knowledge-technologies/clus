@@ -30,7 +30,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.BitSet;
@@ -46,6 +45,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 // Created 28.11.2008 from previous DeProbl class
@@ -1147,7 +1147,7 @@ public class OptProbl {
 
 
     private String printPred(int ruleIndex, int exampleIndex) {
-        NumberFormat fr = ClusFormat.THREE_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
         String print = "[";
         for (int iTarg = 0; iTarg < getNbOfTargets(); iTarg++) {
             double pred = getPredictionsWhenCovered(ruleIndex, exampleIndex, iTarg);
@@ -1194,7 +1194,7 @@ public class OptProbl {
 
     /** Print true values to output file. */
     protected void printTrueValuesToFile(PrintWriter wrt) {
-        NumberFormat fr = ClusFormat.THREE_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
         for (int iTrueVal = 0; iTrueVal < getNbOfInstances(); iTrueVal++) {
 
             wrt.print("[");

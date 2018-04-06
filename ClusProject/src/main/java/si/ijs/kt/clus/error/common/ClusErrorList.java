@@ -25,7 +25,6 @@ package si.ijs.kt.clus.error.common;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -40,6 +39,7 @@ import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
@@ -522,7 +522,7 @@ public class ClusErrorList implements Serializable {
     }
 
 
-    public NumberFormat getFormat() {
+    public ClusNumberFormat getFormat() {
         return ClusFormat.FOUR_AFTER_DOT;
         // return NumberFormat.getInstance();
     }

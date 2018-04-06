@@ -28,7 +28,6 @@ package si.ijs.kt.clus.statistic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.ClusSchema;
@@ -42,6 +41,7 @@ import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class CombStat extends ClusStatistic {
@@ -717,7 +717,7 @@ public class CombStat extends ClusStatistic {
      */
     public String getDispersionString() {
         StringBuffer buf = new StringBuffer();
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         buf.append("[");
         buf.append(fr.format(dispersionCalc()));
         buf.append(" : ");

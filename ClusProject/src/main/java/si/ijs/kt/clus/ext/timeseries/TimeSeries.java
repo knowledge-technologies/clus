@@ -23,12 +23,12 @@
 package si.ijs.kt.clus.ext.timeseries;
 
 import java.io.Serializable;
-import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class TimeSeries implements Serializable {
@@ -205,7 +205,7 @@ public class TimeSeries implements Serializable {
      */
     @Override
     public String toString() {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer a = new StringBuffer("[");
         for (int i = 0; i < length() - 1; i++) {
             a.append(fr.format(m_Values[i]));

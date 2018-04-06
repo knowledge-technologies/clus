@@ -30,12 +30,12 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.tools.optimization.OptAlg;
 import si.ijs.kt.clus.util.tools.optimization.OptProbl;
 
@@ -143,7 +143,7 @@ public class DeAlg extends OptAlg {
 
     /** Print the gene to output file. */
     public void OutputLog(DeInd ind, int index, PrintWriter wrt) {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         wrt.print("" + fr.format(index));
         wrt.print("\t");
         wrt.print("" + fr.format(m_Best.m_Fitness));

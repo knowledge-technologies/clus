@@ -22,7 +22,6 @@
 
 package si.ijs.kt.clus.error.common.multiscore;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.cols.ColTarget;
@@ -33,6 +32,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class MultiScoreStat extends ClusStatistic {
@@ -61,7 +61,7 @@ public class MultiScoreStat extends ClusStatistic {
 
     @Override
     public String getString(StatisticPrintInfo info) {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < m_NbTarget; i++) {

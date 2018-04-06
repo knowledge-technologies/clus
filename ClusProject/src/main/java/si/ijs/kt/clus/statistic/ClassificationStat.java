@@ -45,6 +45,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -1094,7 +1095,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     @Override
     public String getString2() {
         StringBuffer buf = new StringBuffer();
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         buf.append(fr.format(m_SumWeight));
         buf.append(" ");
         buf.append(super.toString());
@@ -1125,7 +1126,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     @Override
     public String getString(StatisticPrintInfo info) {
         StringBuffer buf = new StringBuffer();
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         if (m_MajorityClasses != null) {// print the name of the majority class
             buf.append("[");
             for (int i = 0; i < m_NbTarget; i++) {
@@ -1311,7 +1312,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     @Override
     public void printDistribution(PrintWriter wrt) throws IOException {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         for (int i = 0; i < m_Attrs.length; i++) {
             wrt.print(StringUtils.printStr(m_Attrs[i].getName(), 35));
             wrt.print(" [");

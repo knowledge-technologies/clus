@@ -3,10 +3,8 @@ package si.ijs.kt.clus.error.mlcForHmlc;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.common.ClusError;
@@ -19,6 +17,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 /**
@@ -188,7 +187,7 @@ public class MlcMeasuresForHmlc extends ClusError {
 
     @Override
     public void showModelError(PrintWriter out, String bName, int detail) throws IOException {
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         int maxLength = 0;
         for (MlcHmlcSubError suberror : m_SubErrors) {
             maxLength = Math.max(maxLength, suberror.getName().length());

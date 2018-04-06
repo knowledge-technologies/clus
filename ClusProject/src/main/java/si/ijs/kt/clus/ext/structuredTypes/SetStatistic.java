@@ -22,7 +22,6 @@
 
 package si.ijs.kt.clus.ext.structuredTypes;
 
-import java.text.NumberFormat;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.ClusSchema;
@@ -39,6 +38,7 @@ import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 public class SetStatistic extends SumPairwiseDistancesStat {
 
@@ -214,7 +214,7 @@ public class SetStatistic extends SumPairwiseDistancesStat {
 	 */
 	@Override
     public String getString(StatisticPrintInfo info){
-		NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+		ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
 		StringBuffer buf = new StringBuffer();
 		if (m_RepresentativeMean!=null){
 		buf.append("Mean: ");

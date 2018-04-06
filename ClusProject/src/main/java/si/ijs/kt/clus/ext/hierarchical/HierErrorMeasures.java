@@ -19,6 +19,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 public class HierErrorMeasures extends ClusError {
@@ -162,7 +163,7 @@ public class HierErrorMeasures extends ClusError {
 
 
     // prints the evaluation results for each single predicted class
-    public void printResultsRec(NumberFormat fr, PrintWriter out, ClassTerm node, boolean[] printed) {
+    public void printResultsRec(ClusNumberFormat fr, PrintWriter out, ClassTerm node, boolean[] printed) {
         int idx = node.getIndex();
         // avoid printing a given node several times
         if (printed[idx])
@@ -189,7 +190,7 @@ public class HierErrorMeasures extends ClusError {
     }
 
 
-    public void printResults(NumberFormat fr, PrintWriter out, ClassHierarchy hier) {
+    public void printResults(ClusNumberFormat fr, PrintWriter out, ClassHierarchy hier) {
         ClassTerm node = hier.getRoot();
         boolean[] printed = new boolean[hier.getTotal()];
         for (int i = 0; i < node.getNbChildren(); i++) {
@@ -346,7 +347,7 @@ public class HierErrorMeasures extends ClusError {
             writeCSVFilesPR(bName + ".pr.csv");
             writeCSVFilesROC(bName + ".roc.csv");
         }
-        NumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr1 = ClusFormat.SIX_AFTER_DOT;
         computeAll();
         out.println();
         out.println("      Average AUROC:            " + m_AverageAUROC);

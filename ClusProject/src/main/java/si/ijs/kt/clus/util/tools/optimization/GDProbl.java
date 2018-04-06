@@ -27,7 +27,6 @@
 package si.ijs.kt.clus.util.tools.optimization;
 
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.LinkedList;
@@ -36,6 +35,7 @@ import java.util.ListIterator;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 // Created 28.11.2008 from previous DeProbl class
@@ -935,7 +935,7 @@ public class GDProbl extends OptProbl {
         if (!m_printGDDebugInformation)
             return;
 
-        NumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         wrt.print("Iteration " + iterNro + ":");
         for (int i = 0; i < m_gradients.length; i++) {
             wrt.print(fr.format(m_gradients[i]) + "\t");
