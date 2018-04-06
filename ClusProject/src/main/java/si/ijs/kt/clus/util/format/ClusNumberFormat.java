@@ -1,6 +1,7 @@
 package si.ijs.kt.clus.util.format;
 
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
 import javax.management.RuntimeErrorException;
@@ -29,6 +30,7 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
  *  <il>
  * </ul>
  * A negative number {@code x} is transformed to the string {@code "-" + transformation(-x)}.
+ * As a decimal separator, dot is always used.
  * 
  * @author matej
  *
@@ -48,6 +50,10 @@ public class ClusNumberFormat {
 			pattern_for_small = String.format("0.%sE0", StringUtils.makeString('0', precision));
 		}
     	m_SmallNumbersFormat = new DecimalFormat(pattern_for_small);
+    	DecimalFormatSymbols sym = m_SmallNumbersFormat.getDecimalFormatSymbols();
+        sym.setDecimalSeparator('.');
+        m_SmallNumbersFormat.setGroupingUsed(false);
+        m_SmallNumbersFormat.setDecimalFormatSymbols(sym);
     	m_BigNumbersFormat = ClusFormat.makeNAfterDot(precision);
     	m_AfterDot = precision;
 	}
