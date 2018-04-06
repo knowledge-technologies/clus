@@ -8,7 +8,7 @@ import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 
 
 public class MLweightedAUPRC extends MLROCAndPRCurve {

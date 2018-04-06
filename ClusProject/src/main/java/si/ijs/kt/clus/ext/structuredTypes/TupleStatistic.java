@@ -38,7 +38,7 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
 import si.ijs.kt.clus.util.ClusException;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 
 
 public class TupleStatistic extends SumPairwiseDistancesStat {

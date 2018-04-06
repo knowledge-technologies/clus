@@ -32,7 +32,7 @@ import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 
 
 public class MultiScoreStat extends ClusStatistic {

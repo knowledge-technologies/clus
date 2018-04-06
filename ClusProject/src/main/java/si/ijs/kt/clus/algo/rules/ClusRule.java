@@ -51,7 +51,7 @@ import si.ijs.kt.clus.statistic.CombStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.ClusException;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 public class ClusRule implements ClusModel, Serializable {

@@ -61,7 +61,7 @@ import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 // import si.ijs.kt.clus.tools.optimization.de.DeAlg;
 // import si.ijs.kt.clus.tools.optimization.de.DeProbl; // Optimization information (data, predictions)
 import si.ijs.kt.clus.util.ClusException;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 import si.ijs.kt.clus.util.tools.optimization.OptProbl;
 

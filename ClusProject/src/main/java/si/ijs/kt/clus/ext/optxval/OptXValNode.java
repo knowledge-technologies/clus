@@ -27,7 +27,7 @@ import java.util.Arrays;
 
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.jeans.tree.MyNode;
 import si.ijs.kt.clus.util.jeans.util.array.MyIntArray;
 

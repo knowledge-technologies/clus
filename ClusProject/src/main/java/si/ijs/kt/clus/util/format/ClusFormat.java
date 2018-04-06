@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.util;
+package si.ijs.kt.clus.util.format;
 
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;

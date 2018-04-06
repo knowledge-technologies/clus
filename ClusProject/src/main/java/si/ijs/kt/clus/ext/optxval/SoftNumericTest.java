@@ -33,7 +33,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.NumericTest;
 import si.ijs.kt.clus.model.test.SoftTest;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.jeans.util.array.MyIntArray;
 import si.ijs.kt.clus.util.jeans.util.sort.DoubleIndexSorter;
 

@@ -31,7 +31,7 @@ import java.util.Arrays;
 
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 
 
 public class ClusAttributeWeights implements Serializable {

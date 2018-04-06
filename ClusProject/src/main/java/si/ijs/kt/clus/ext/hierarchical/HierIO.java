@@ -29,7 +29,7 @@ import java.io.LineNumberReader;
 import java.io.PrintWriter;
 
 import si.ijs.kt.clus.util.ClusException;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.jeans.util.array.StringTable;
 

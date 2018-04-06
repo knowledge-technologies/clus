@@ -30,7 +30,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput;
 import si.ijs.kt.clus.util.ClusException;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 
 
 public abstract class NodeTest implements Serializable {

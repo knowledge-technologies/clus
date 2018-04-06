@@ -30,7 +30,7 @@ import java.util.HashSet;
 import java.util.Stack;
 
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.jeans.math.SingleStat;
 import si.ijs.kt.clus.util.jeans.tree.Node;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;

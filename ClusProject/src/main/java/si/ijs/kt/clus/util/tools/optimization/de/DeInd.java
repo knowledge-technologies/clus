@@ -29,7 +29,7 @@ package si.ijs.kt.clus.util.tools.optimization.de;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.format.ClusFormat;
 
 
 /**

@@ -27,8 +27,8 @@ import java.text.NumberFormat;
 import java.util.StringTokenizer;
 
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusFormat;
 import si.ijs.kt.clus.util.ClusUtil;
+import si.ijs.kt.clus.util.format.ClusFormat;
 
 
 public class TimeSeries implements Serializable {
