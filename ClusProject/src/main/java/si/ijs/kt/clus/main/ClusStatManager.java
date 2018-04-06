@@ -1164,6 +1164,7 @@ public class ClusStatManager implements Serializable {
             if (getSettings().getAttribute().hasNonTrivialWeights()) {
                 parent.addError(new si.ijs.kt.clus.error.RMSError(parent, num, m_NormalizationWeights));
             }
+            parent.addError(new si.ijs.kt.clus.error.RRMSError(parent, num));
             parent.addError(new si.ijs.kt.clus.error.PearsonCorrelation(parent, num));
         }
         if (ts.length != 0) {

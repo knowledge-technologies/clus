@@ -77,7 +77,7 @@ def instances_generator(arff_file):
                 candidate = [my_eval(i, t) for i, t in enumerate(x.strip().split(","))]
                 found += 1
                 yield candidate
-    print("Number of instances found:", found)
+    print("Number of instances generated:", found)
 
 
 def create_predictions(python_ensemble_dir, python_ensemble_file,

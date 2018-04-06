@@ -28,6 +28,8 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
+import si.ijs.kt.clus.util.jeans.util.StringUtils;
+
 
 public class ClusFormat {
 
@@ -41,6 +43,13 @@ public class ClusFormat {
 
 
     public static NumberFormat makeNAfterDot(int n) {
+    	// significant places: name is for now misleading not to mess with everything ...
+    	String pattern = String.format("#.%sE0", StringUtils.makeString('#', n));
+    	DecimalFormat df = new DecimalFormat(pattern);
+    	return df;
+    }
+    
+    public static NumberFormat makeNAfterDotWithBug(int n) { // See issue #65
         NumberFormat fr = NumberFormat.getInstance();
         fr.setMaximumFractionDigits(n);
         try {
@@ -80,5 +89,15 @@ public class ClusFormat {
                 out.print(", ");
             out.print(nf.format(a1[i]));
         }
+    }
+    // TODO: move this to unit tests in the next commit 
+    public static void main(String[] args) {
+    	int n = 2;
+    	DecimalFormat df = new DecimalFormat(String.format("#.%sE0", StringUtils.makeString('#', n)));
+    	double[] xs = new double[] {9, 9.0, 9876.6, 0.0098766, 0.0000000098766};
+    	String[] xsStr = new String[] {"9", "9.0", "9876.6", "0.0098766", "0.0000000098766"};
+    	for(int i = 0; i < xs.length; i++) {
+    		System.out.println("Representation of " + xsStr[i] + ": " + df.format(xs[i]));
+    	}
     }
 }

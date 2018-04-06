@@ -12,7 +12,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
-import si.ijs.kt.clus.util.ClusFormat;
+import si.ijs.kt.clus.util.ClusUtil;
 
 
 public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptimization {
@@ -169,7 +169,8 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
             for (int j = 0; j < m_AvgPredictions[i].length; j++) {
                 for (int k = 0; k < m_AvgPredictions[i][j].length; k++) {
                     //System.err.println("Before: " + m_AvgPredictions[i][j][k]);
-                    m_AvgPredictions[i][j][k] = Double.parseDouble(ClusFormat.FOUR_AFTER_DOT.format(m_AvgPredictions[i][j][k]));
+//                    m_AvgPredictions[i][j][k] = Double.parseDouble(ClusFormat.FOUR_AFTER_DOT.format(m_AvgPredictions[i][j][k]));
+                	m_AvgPredictions[i][j][k] = ClusUtil.roundToSignificantFigures(m_AvgPredictions[i][j][k], SIGNIFICANT_DIGITS_IN_PREDICTIONS);
                     //System.err.println("After: " + m_AvgPredictions[i][j][k]);
                 }
             }

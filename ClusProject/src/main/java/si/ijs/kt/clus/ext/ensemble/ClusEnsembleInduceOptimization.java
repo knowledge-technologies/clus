@@ -18,6 +18,7 @@ import si.ijs.kt.clus.util.ClusException;
 public abstract class ClusEnsembleInduceOptimization implements Serializable {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+    public static final int SIGNIFICANT_DIGITS_IN_PREDICTIONS = 4;
 
     // protected int[] m_HashCodeTuple; // train + test tuples: m_HashCodeTuple[i] = hash of the i-th tuple
     /** The keys are (hashes of) DataTuples, which are mapped to the position of the tuple in the predictions */
