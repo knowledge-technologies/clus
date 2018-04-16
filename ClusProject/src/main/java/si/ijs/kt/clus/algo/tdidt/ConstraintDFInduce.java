@@ -200,7 +200,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
             // Call induce on each leaf
             induceRecursive(root, data);
         }
-        root.afterInduce(null);
+        root.afterInduce(getStatManager());
         cleanSplit();
         return root;
     }
