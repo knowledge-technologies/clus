@@ -160,6 +160,10 @@ public class SettingsOutput extends SettingsBase {
     public boolean isWriteOOBFile() {
         return m_WriteOOBFile.getValue();
     }
+    
+    public void setWriteOOBFile(boolean value) {
+    	m_WriteOOBFile.setValue(value);
+    }
 
 
     public boolean isOutputJSONModel() {

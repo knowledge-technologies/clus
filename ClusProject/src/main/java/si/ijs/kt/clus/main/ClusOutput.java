@@ -81,7 +81,7 @@ public class ClusOutput {
     protected Settings m_Sett2;
     protected StringWriter m_StrWrt;
 
-
+    
     public ClusOutput(String fname, ClusSchema schema, Settings sett) throws IOException {
         m_Schema = schema;
         m_Sett = sett;
@@ -266,11 +266,13 @@ public class ClusOutput {
             if (outputtrain) {
                 ClusErrorList tr_err = cr.getTrainError();
                 if (tr_err != null) {
-                    if (ClusOOBErrorEstimate.isOOBCalculation())
-                        m_Writer.println("Out-Of-Bag Estimate of Error");
-                    else
-                        m_Writer.println("Training error");
-                    m_Writer.println("--------------");
+                    if (ClusOOBErrorEstimate.isOOBCalculation()) {
+                    	m_Writer.println("Out-Of-Bag Estimate of Error");
+                    	m_Writer.println("----------------------------");
+                    } else {
+                    	m_Writer.println("Training error");
+                    	m_Writer.println("--------------");
+                    }
                     m_Writer.println();
                     tr_err.showError(cr, ClusModelInfo.TRAIN_ERR, bName + ".train", m_Writer, m_Sett);
                     // tr_err.showError(cr, ClusModelInfo.TRAIN_ERR, m_Writer);
@@ -279,7 +281,7 @@ public class ClusOutput {
                 ClusErrorList.printExtraError(cr, ClusModelInfo.TRAIN_ERR, m_Writer);
             }
             ClusErrorList va_err = cr.getValidationError();
-            if (va_err != null && m_Sett.getOutput().isOutValidError()) {
+            if (!ClusOOBErrorEstimate.isOOBCalculation() && va_err != null && m_Sett.getOutput().isOutValidError()) {
                 m_Writer.println("Validation error");
                 m_Writer.println("----------------");
                 m_Writer.println();
@@ -287,7 +289,7 @@ public class ClusOutput {
                 // va_err.showError(cr, ClusModelInfo.VALID_ERR, m_Writer);
                 m_Writer.println();
             }
-            if (te_err != null && m_Sett.getOutput().isOutTestError()) {
+            if (!ClusOOBErrorEstimate.isOOBCalculation() && te_err != null && m_Sett.getOutput().isOutTestError()) {
                 m_Writer.println("Testing error");
                 m_Writer.println("-------------");
                 m_Writer.println();
@@ -297,29 +299,32 @@ public class ClusOutput {
             }
         }
         StatisticPrintInfo info = m_Sett.getOutput().getStatisticPrintInfo();
-        for (int i = 0; i < cr.getNbModels(); i++) {
-            if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.getOutput().shouldShowModel(i)) {
-                ClusModelInfo mi = cr.getModelInfo(i);
-                ClusModel root = models.get(i);
-                String modelname = mi.getName() + " Model";
-                m_Writer.println(modelname);
-                m_Writer.println(StringUtils.makeString('*', modelname.length()));
-                m_Writer.println();
-                if (m_Sett.getOutput().isPrintModelAndExamples()) {
-                    RowData pex = (RowData) cr.getTrainingSet();
-                    // System.out.println(te_err);
-                    if (te_err != null)
-                        pex = cr.getTestSet();
-                    root.printModelAndExamples(m_Writer, info, pex);
-                }
-                else {
-                    root.printModel(m_Writer, info);
-                }
-                m_Writer.println();
-            }
+        if(!ClusOOBErrorEstimate.isOOBCalculation()) {
+	        
+	        for (int i = 0; i < cr.getNbModels(); i++) {
+	            if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.getOutput().shouldShowModel(i)) {
+	                ClusModelInfo mi = cr.getModelInfo(i);
+	                ClusModel root = models.get(i);
+	                String modelname = mi.getName() + " Model";
+	                m_Writer.println(modelname);
+	                m_Writer.println(StringUtils.makeString('*', modelname.length()));
+	                m_Writer.println();
+	                if (m_Sett.getOutput().isPrintModelAndExamples()) {
+	                    RowData pex = (RowData) cr.getTrainingSet();
+	                    // System.out.println(te_err);
+	                    if (te_err != null)
+	                        pex = cr.getTestSet();
+	                    root.printModelAndExamples(m_Writer, info, pex);
+	                }
+	                else {
+	                    root.printModel(m_Writer, info);
+	                }
+	                m_Writer.println();
+	            }
+	        }
         }
 
-        if (getSettings().getOutput().isOutputPythonModel()) {
+        if (!ClusOOBErrorEstimate.isOOBCalculation() && getSettings().getOutput().isOutputPythonModel()) {
         	String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
         	PythonModelType pyModelType = cr.getStatManager().getSettings().getOutput().getPythonModelType();
         	if (pyModelType == PythonModelType.Object) {        		
@@ -405,7 +410,7 @@ public class ClusOutput {
             wrtr.close();
         }
 
-        if (getSettings().getOutput().isOutputDatabaseQueries()) {
+        if (!ClusOOBErrorEstimate.isOOBCalculation() && getSettings().getOutput().isOutputDatabaseQueries()) {
             int starttree = getSettings().getExhaustiveSearch().getStartTreeCpt();
             int startitem = getSettings().getExhaustiveSearch().getStartItemCpt();
             ClusModel root = models.get(cr.getNbModels() - 1);
@@ -417,7 +422,7 @@ public class ClusOutput {
             System.out.println("The queries are in " + out_database_name);
         }
 
-        if (getSettings().getOutput().isOutputClowdFlowsJSON()) {
+        if (!ClusOOBErrorEstimate.isOOBCalculation() && getSettings().getOutput().isOutputClowdFlowsJSON()) {
             JsonObject output = new JsonObject();
             StringWriter settingsStringWriter = new StringWriter();
             PrintWriter settingsWriter = new PrintWriter(settingsStringWriter);

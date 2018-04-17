@@ -175,6 +175,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         if (sett.shouldEstimateOOB())
             m_OOBEstimation = new ClusOOBErrorEstimate(m_Mode, settMain);
+        	settMain.getOutput().setWriteOOBFile(true);
         if (m_FeatRank) {
             if (m_BagClus.getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
                 int[] rankingMeasures = m_BagClus.getSettings().getMLC().getMultiLabelRankingMeasures();
