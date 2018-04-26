@@ -45,7 +45,6 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
-import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -57,6 +56,7 @@ import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 // import si.ijs.kt.clus.tools.optimization.de.DeAlg;
 // import si.ijs.kt.clus.tools.optimization.de.DeProbl; // Optimization information (data, predictions)
 import si.ijs.kt.clus.util.ClusException;

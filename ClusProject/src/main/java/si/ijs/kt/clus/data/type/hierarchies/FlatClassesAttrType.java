@@ -20,12 +20,13 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.data.type.hierarchies;
 
 import java.io.IOException;
 
 import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.data.rows.DataTuple;
+import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
 import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.ClusException;

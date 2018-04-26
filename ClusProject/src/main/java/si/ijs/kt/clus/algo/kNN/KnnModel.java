@@ -55,7 +55,6 @@ import si.ijs.kt.clus.distance.primitive.ChebyshevDistance;
 import si.ijs.kt.clus.distance.primitive.EuclideanDistance;
 import si.ijs.kt.clus.distance.primitive.ManhattanDistance;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
-import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.ext.timeseries.TimeSeriesStat;
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
@@ -66,6 +65,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsKNN.SearchMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 

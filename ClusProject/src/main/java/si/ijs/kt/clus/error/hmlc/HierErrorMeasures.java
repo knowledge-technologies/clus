@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.error.hmlc;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -13,10 +13,15 @@ import si.ijs.kt.clus.error.BinaryPredictionList;
 import si.ijs.kt.clus.error.ROCAndPRCurve;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
+import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
+import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
+import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 

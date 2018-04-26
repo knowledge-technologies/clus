@@ -5,11 +5,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
-import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.MDoubleArrayComparator;
 

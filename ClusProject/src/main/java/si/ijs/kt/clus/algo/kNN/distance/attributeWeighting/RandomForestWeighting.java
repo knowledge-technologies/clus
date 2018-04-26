@@ -25,6 +25,7 @@ package si.ijs.kt.clus.algo.kNN.distance.attributeWeighting;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
+
 import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
@@ -34,8 +35,6 @@ import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.util.ClusRandom;
 
 

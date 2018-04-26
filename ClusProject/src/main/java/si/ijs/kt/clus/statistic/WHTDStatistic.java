@@ -20,11 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-/*
- * Created on May 17, 2005
- */
-
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.statistic;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -42,15 +38,16 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
+import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
+import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
+import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
+import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
 import si.ijs.kt.clus.heuristic.GISHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
-import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.statistic.RegressionStatBinaryNomiss;
-import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
@@ -61,7 +58,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    //protected static DistributionFactory m_Fac = DistributionFactory.newInstance(); 
+    // protected static DistributionFactory m_Fac = DistributionFactory.newInstance();
 
     protected ClassHierarchy m_Hier;
     protected boolean[] m_DiscrMean;
@@ -79,7 +76,6 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     // daniela matejp: public -> private, commented out unused fields
     private RowData m_data;
-    // private double[] m_SumValuesSpatial;
     private int splitIndex;
     private int prevIndex;
     private double[] previousSumW;
@@ -92,7 +88,6 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     private double[] previousSumWXR;
     private double[] previousSumWR;
     private double[] previousSumX2R;
-    // private String m_BasicDist;
     private double[] m_Weights;
     public static boolean INITIALIZEPARTIALSUM = true;
     // daniela end
@@ -119,11 +114,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
      * @param distance
      */
     public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean, int comp, int distance) {
-        //super(hier.getDummyAttrs(), onlymean);
+        // super(hier.getDummyAttrs(), onlymean);
         this(sett, hier, onlymean, comp);
 
-        //m_Compatibility = comp;
-        //m_Hier = hier;
+        // m_Compatibility = comp;
+        // m_Hier = hier;
 
         m_Distance = distance;
         m_P = new double[m_Hier.getTotal()];
@@ -214,7 +209,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     @Override
     public ClusStatistic cloneSimple() {
         WHTDStatistic res = (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) ? new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility, m_Distance) : new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility);
-        // poolAUPRC         
+        // poolAUPRC
         // case
         // :
         // normal
@@ -256,7 +251,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         int sidx = m_Hier.getType().getArrayIndex();
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(sidx);
 
-        if (tp.getNbClasses() > 0) { //if nbClasses == 0, example is unlabeled
+        if (tp.getNbClasses() > 0) { // if nbClasses == 0, example is unlabeled
             m_SumWeight += weight;
             // Add one to the elements in the tuple, zero to the others
             for (int j = 0; j < tp.getNbClasses(); j++) {
@@ -348,7 +343,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             return (m_SumValues[i] + m_Training.m_Means[i]) / (m_SumWeight + 1.0);
         }
 
-        if (m_SumWeight == 0.0) { //if there are no examples with known value for attribute i
+        if (m_SumWeight == 0.0) { // if there are no examples with known value for attribute i
             switch (getSettings().getTree().getMissingTargetAttrHandling()) {
                 case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
                     return m_Training.getMean(i);
@@ -401,18 +396,19 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         System.out.println("rule = " + m_Validation.getTotalWeight() * m_Validation.m_Means[i]);
                         System.out.println("pop_tot = " + pop_tot + " pop_cls = " + pop_cls + " rule_tot = " + rule_tot + " rule_cls = " + rule_cls);
                     }
-                    //HypergeometricDistribution dist = m_Fac.createHypergeometricDistribution(pop_tot, pop_cls, rule_tot);
+                    // HypergeometricDistribution dist = m_Fac.createHypergeometricDistribution(pop_tot, pop_cls,
+                    // rule_tot);
                     HypergeometricDistribution dist = new org.apache.commons.math3.distribution.HypergeometricDistribution(pop_tot, pop_cls, rule_tot);
 
-                    //                    try {
+                    // try {
                     double stat = dist.cumulativeProbability(lower, upper);
                     if (stat >= m_SigLevel) {
                         m_DiscrMean[i] = false;
                     }
-                    //                    }
-                    //                    catch (MathException me) {
-                    //                        System.err.println("Math error: " + me.getMessage());
-                    //                    }
+                    // }
+                    // catch (MathException me) {
+                    // System.err.println("Math error: " + me.getMessage());
+                    // }
                 }
             }
         }
@@ -459,11 +455,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
-    //daniela
-    //Compute squared Euclidean distance between tuple's target attributes and this statistic's mean.
+    // daniela
+    // Compute squared Euclidean distance between tuple's target attributes and this statistic's mean.
     public double getSquaredDistanceH(DataTuple tuple, double[] m_Weights) {
         if (m_Means == null)
-            calcMean();//this depends on the Compatibility
+            calcMean();// this depends on the Compatibility
         double sum = 0.0;
         boolean[] actual = new boolean[m_Hier.getTotal()];
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(m_Hier.getType().getArrayIndex());
@@ -477,7 +473,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
-    //Compute squared Euclidean distance between two tuple's target attributes
+    // Compute squared Euclidean distance between two tuple's target attributes
     public double calcDistance(ClassesTuple t1, ClassesTuple t2) {
         double sum = 0.0;
         boolean[] actual1 = new boolean[m_Hier.getTotal()];
@@ -494,7 +490,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
-    //RA
+    // RA
     @Override
     public double calcPtotal(Integer[] permutation) throws ClusException {
         double avgik = 0;
@@ -512,7 +508,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else {
             M = -splitIndex;
         }
-        //left      
+        // left
         for (int i = M; i < N; i++) {
             DataTuple exi = m_data.getTuple(permutation[i]);
             boolean[] actual = new boolean[m_Hier.getTotal()];
@@ -545,7 +541,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgik = 1;
         double IL = avgik * (N - M);
 
-        //right side
+        // right side
         N = m_data.getNbRows();
         M = splitIndex;
         double avgikR = 0;
@@ -580,14 +576,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else
             avgikR = 1;
         double I = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
-        if (Double.isNaN(I)) {
-            throw new ClusException("err!");
-        }
+        if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
     }
 
 
-    //global Geary C
+    // global Geary C
     @Override
     public double calcGtotal(Integer[] permutation) throws ClusException {
         double num, den;
@@ -606,7 +600,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else {
             M = -splitIndex;
         }
-        //left      
+        // left
         for (int i = M; i < N; i++) {
             DataTuple exi = m_data.getTuple(permutation[i]);
             boolean[] actual = new boolean[m_Hier.getTotal()];
@@ -648,10 +642,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         else
             avgik = 0;
-        //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
+        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
         double IL = avgik * (N - M);
 
-        //right side
+        // right side
         N = m_data.getNbRows();
         M = splitIndex;
         double avgikR = 0;
@@ -696,18 +690,17 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgikR = num / den;
         else
             avgikR = 0;
-        //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+upsumR+" downsum: "+downsumR);
+        // System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+upsumR+" downsum:
+        // "+downsumR);
         double scaledI = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
-        //System.out.println();
-        if (Double.isNaN(scaledI)) {
-            throw new ClusException("err!");
-        }
+        // System.out.println();
+        if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
 
 
-    //calculate EquvalentI
-    //Equvalent I
+    // calculate EquvalentI
+    // Equvalent I
     @Override
     public double calcEquvalentItotal(Integer[] permutation) throws ClusException {
         int M = 0;
@@ -722,7 +715,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         M = prevIndex;
         N = splitIndex;
 
-        if (INITIALIZEPARTIALSUM) { //Annalisa: to check that you need to inizialize the partial sums
+        if (INITIALIZEPARTIALSUM) { // Annalisa: to check that you need to inizialize the partial sums
             INITIALIZEPARTIALSUM = false;
             M = 0;
             for (int i = M; i < NR; i++) {
@@ -744,10 +737,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     previousSumWXXR[0] += w * Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                 }
             }
-            //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
-        //else
+        // else
         boolean flagRightAllEqual = true;
         boolean flagLeftAllEqual = true;
         {
@@ -759,12 +754,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumXR[0] -= Math.sqrt(getSquaredDistanceH(exi, m_Weights));
             }
 
-            //left (0-old)(old-new)
+            // left (0-old)(old-new)
             flagLeftAllEqual = true;
             double oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(0), m_Weights));
             for (int i = 1; i < N; i++) {
                 DataTuple exi = m_data.getTuple(permutation[i]);
-                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // Annalisa : to check that partition does not contain values which are all the same
+                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // Annalisa : to check that partition does
+                                                                            // not contain values which are all the same
                 {
                     flagLeftAllEqual = false;
                     break;
@@ -788,7 +784,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     previousSumWXX[0] += w * Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                 }
             }
-            //left (old-new)(0-old)
+            // left (old-new)(0-old)
             for (int i = M; i < N; i++) {
                 for (int j = 0; j < M; j++) {
                     long indexMap = permutation[i] * (NR) + permutation[j];
@@ -806,7 +802,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     previousSumWXX[0] += w * Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                 }
             }
-            //left (old-new)(old-new)
+            // left (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 DataTuple exi = m_data.getTuple(permutation[i]);
                 for (int j = M; j < N; j++) {
@@ -831,7 +827,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 }
             }
 
-            //right side (new-end)(old-new) 
+            // right side (new-end)(old-new)
             flagRightAllEqual = true;
             oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(N), m_Weights));
             for (int i = N; i < NR; i++) {
@@ -856,7 +852,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     ;
                 }
             }
-            //right (old-new)(new-end)
+            // right (old-new)(new-end)
             for (int i = M; i < N; i++) {
                 for (int j = N; j < NR; j++) {
                     long indexMap = permutation[i] * (NR) + permutation[j];
@@ -874,7 +870,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     previousSumWXXR[0] -= w * Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                 }
             }
-            //right (old-new)(old-new)
+            // right (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 DataTuple exi = m_data.getTuple(permutation[i]);
                 for (int j = M; j < N; j++) {
@@ -900,8 +896,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             }
         }
 
-        //System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-        //System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+        // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+        // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+        // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+        // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
 
         vkupenBrojElementiVoOvojSplit = N;
         num = vkupenBrojElementiVoOvojSplit * previousSumWXX[0];
@@ -921,29 +919,29 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
         avgikR += ikkR;
         avgik += ikk;
-        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
+        // "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (avgik * N + avgikR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
         N = splitIndex;
         double scaledI = 1 + I;
-        if (Double.isNaN(scaledI)) {
-            throw new ClusException("err!");
-        }
+        if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
 
 
-    //calculate Equvalent Geary C
+    // calculate Equvalent Geary C
     @Override
     public double calcEquvalentGtotal(Integer[] permutation) throws ClusException {
         int M = 0;
         int N = 0;
         int NR = m_data.getNbRows();
         double I = 0;
-//        double avgik = 0.0;
-//        double avgikR = 0.0;
-        double num, den, numR, denR, ikk, ikkR; //, W, WR = 0.0;
+        // double avgik = 0.0;
+        // double avgikR = 0.0;
+        double num, den, numR, denR, ikk, ikkR; // , W, WR = 0.0;
         int vkupenBrojElementiVoOvojSplit = N - M;
         int vkupenBrojElementiVoCelataSuma = NR;
         M = prevIndex;
@@ -987,10 +985,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
-        //else
+        // else
         boolean flagRightAllEqual = true;
         boolean flagLeftAllEqual = true;
         {
@@ -1005,7 +1005,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumXR[0] -= Math.sqrt(getSquaredDistanceH(exi, m_Weights));
             }
 
-            //left (0-old)(old-new)
+            // left (0-old)(old-new)
             flagLeftAllEqual = true;
             double oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(0), m_Weights));
             for (int i = 1; i < N; i++) {
@@ -1013,7 +1013,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 boolean[] actual = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp = (ClassesTuple) exi.getObjVal(m_Hier.getType().getArrayIndex());
                 tp.fillBoolArrayNodeAndAncestors(actual);
-                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // to check that partition does not contain values which are all the same
+                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // to check that partition does not contain
+                                                                            // values which are all the same
                 {
                     flagLeftAllEqual = false;
                     break;
@@ -1053,7 +1054,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //left (old-new)(0-old)
+            // left (old-new)(0-old)
             for (int i = M; i < N; i++) {
                 for (int j = 0; j < M; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -1087,7 +1088,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //left (old-new)(old-new)
+            // left (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 for (int j = M; j < N; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -1121,7 +1122,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //right side (new-end)(old-new) 
+            // right side (new-end)(old-new)
             flagRightAllEqual = true;
             oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(N), m_Weights));
             for (int i = N; i < NR; i++) {
@@ -1161,7 +1162,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //right (old-new)(new-end)
+            // right (old-new)(new-end)
             for (int i = M; i < N; i++) {
                 for (int j = N; j < NR; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -1195,7 +1196,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //right (old-new)(old-new)
+            // right (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 DataTuple exi = m_data.getTuple(permutation[i]);
                 boolean[] actual = new boolean[m_Hier.getTotal()];
@@ -1231,8 +1232,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             }
         }
 
-        //System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-        //System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+        // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+        // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+        // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+        // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         vkupenBrojElementiVoOvojSplit = N;
         num = (vkupenBrojElementiVoOvojSplit - 1) * previousSumWXX[0];
         den = 2 * previousSumW[0] * previousSumX2[0];
@@ -1249,21 +1252,21 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else
             ikkR = 0;
 
-        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
+        // "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (ikk * N + ikkR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
         N = splitIndex;
         double scaledI = 1 + I;
-        //System.out.println(scaledI);
-        if (Double.isNaN(scaledI)) {
-            throw new ClusException("err!");
-        }
+        // System.out.println(scaledI);
+        if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
 
 
-    //Moran I
+    // Moran I
     @Override
     public double calcItotal(Integer[] permutation) throws ClusException {
         double num, den;
@@ -1282,7 +1285,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else {
             M = -splitIndex;
         }
-        //left      
+        // left
         for (int i = M; i < N; i++) {
             DataTuple exi = m_data.getTuple(permutation[i]);
             boolean[] actual = new boolean[m_Hier.getTotal()];
@@ -1324,11 +1327,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         else
             avgik = 1;
-        //System.out.println("w: "+W+"num: "+num+"den: "+den+"Left Moran I: "+avgik+"ex: "+((N-M)));
-        //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
+        // System.out.println("w: "+W+"num: "+num+"den: "+den+"Left Moran I: "+avgik+"ex: "+((N-M)));
+        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
         double IL = avgik * (N - M);
 
-        //right side
+        // right side
         N = m_data.getNbRows();
         M = splitIndex;
         double avgikR = 0;
@@ -1373,17 +1376,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgikR = num / den;
         else
             avgikR = 1;
-        //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+num+" downsum: "+den);
+        // System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+num+" downsum: "+den);
         double I = (IL + avgikR * (N - M)) / m_data.getNbRows();
         double scaledI = 1 + I;
-        if (Double.isNaN(I)) {
-            throw new ClusException("err!");
-        }
+        if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return scaledI;
     }
 
 
-    //global I with distance file
+    // global I with distance file
     @Override
     public double calcItotalD(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
@@ -1397,14 +1398,14 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double downsumR = 0.0;
         int M = 0;
         int N = m_data.getNbRows();
-//        long NR = m_data.getNbRows();
+        // long NR = m_data.getNbRows();
         if (splitIndex > 0) {
             N = splitIndex;
         }
         else {
             M = -splitIndex;
         }
-        //left      
+        // left
         for (int i = M; i < N; i++) {
             DataTuple exi = m_data.getTuple(permutation[i]);
             String xxi = xt.getString(exi);
@@ -1437,10 +1438,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgik = num / den;
         else
             avgik = 1;
-        //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
+        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
         double IL = avgik * (N - M);
 
-        //right side
+        // right side
         N = m_data.getNbRows();
         M = splitIndex;
         double avgikR = 0;
@@ -1477,18 +1478,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgikR = num / den;
         else
             avgikR = 1;
-        //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+upsum+" downsum: "+downsum);
+        // System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+upsum+" downsum: "+downsum);
         double I = (IL + avgikR * (N - M)) / m_data.getNbRows();
         double scaledI = 1 + I;
-        //System.out.println(scaledI);
-        if (Double.isNaN(I)) {
-            throw new ClusException("err!");
-        }
+        // System.out.println(scaledI);
+        if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return scaledI;
     }
 
 
-    //RA with distance file
+    // RA with distance file
     @Override
     public double calcPDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
@@ -1506,7 +1505,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else {
             M = -splitIndex;
         }
-        //left      
+        // left
         for (int i = M; i < N; i++) {
             DataTuple exi = m_data.getTuple(permutation[i]);
             String xxi = xt.getString(exi);
@@ -1536,7 +1535,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgik = 1;
         double IL = avgik * (N - M);
 
-        //right side
+        // right side
         N = m_data.getNbRows();
         M = splitIndex;
         double avgikR = 0;
@@ -1568,15 +1567,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else
             avgikR = 1;
         double I = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
-        //System.out.println(I);
-        if (Double.isNaN(I)) {
-            throw new ClusException("err!");
-        }
+        // System.out.println(I);
+        if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
     }
 
 
-    //Geary with distance file
+    // Geary with distance file
     // global C calculation with a separate distance file
     @Override
     public double calcGtotalD(Integer[] permutation) throws ClusException {
@@ -1591,14 +1588,14 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double downsumR = 0.0;
         int M = 0;
         int N = m_data.getNbRows();
-//        long NR = m_data.getNbRows();
+        // long NR = m_data.getNbRows();
         if (splitIndex > 0) {
             N = splitIndex;
         }
         else {
             M = -splitIndex;
         }
-        //left      
+        // left
         for (int i = M; i < N; i++) {
             DataTuple exi = m_data.getTuple(permutation[i]);
             String xxi = xt.getString(exi);
@@ -1638,10 +1635,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         else
             avgik = 0;
-        //System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
+        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
         double IL = avgik * (N - M);
 
-        //right side
+        // right side
         N = m_data.getNbRows();
         M = splitIndex;
         double avgikR = 0;
@@ -1684,17 +1681,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgikR = num / den;
         else
             avgikR = 0;
-        //System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+num+" downsum: "+den);
+        // System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+num+" downsum:
+        // "+den);
         double scaledI = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
-        //System.out.println(scaledI);
-        if (Double.isNaN(scaledI)) {
-            throw new ClusException("err!");
-        }
+        // System.out.println(scaledI);
+        if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
 
 
-    //calculate EquvalentI with Distance file
+    // calculate EquvalentI with Distance file
     @Override
     public double calcEquvalentIDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
@@ -1745,10 +1741,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
-        //else
+        // else
         boolean flagRightAllEqual = true;
         boolean flagLeftAllEqual = true;
         {
@@ -1763,7 +1761,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumXR[0] -= Math.sqrt(getSquaredDistanceH(exi, m_Weights));
             }
 
-            //left (0-old)(old-new)
+            // left (0-old)(old-new)
             flagLeftAllEqual = true;
             double oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(0), m_Weights));
             for (int i = 1; i < N; i++) {
@@ -1771,7 +1769,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 boolean[] actual = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp = (ClassesTuple) exi.getObjVal(m_Hier.getType().getArrayIndex());
                 tp.fillBoolArrayNodeAndAncestors(actual);
-                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // to check that partition does not contain values which are all the same
+                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // to check that partition does not contain
+                                                                            // values which are all the same
                 {
                     flagLeftAllEqual = false;
                     break;
@@ -1809,7 +1808,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //left (old-new)(0-old)
+            // left (old-new)(0-old)
             for (int i = M; i < N; i++) {
                 for (int j = 0; j < M; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -1841,7 +1840,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //left (old-new)(old-new)
+            // left (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 for (int j = M; j < N; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -1873,7 +1872,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //right side (new-end)(old-new) 
+            // right side (new-end)(old-new)
             flagRightAllEqual = true;
             oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(N), m_Weights));
             for (int i = N; i < NR; i++) {
@@ -1911,7 +1910,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //right (old-new)(new-end)
+            // right (old-new)(new-end)
             for (int i = M; i < N; i++) {
                 for (int j = N; j < NR; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -1943,7 +1942,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //right (old-new)(old-new)
+            // right (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 DataTuple exi = m_data.getTuple(permutation[i]);
                 String xxi = xt.getString(exi);
@@ -1977,13 +1976,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             }
         }
 
-        //System.out.println("Update SumLeft : sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]);
-        //System.out.println("Update SumRight : sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]);
+        // System.out.println("Update SumLeft : sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W
+        // "+previousSumWXX[0]);
+        // System.out.println("Update SumRight : sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W
+        // "+previousSumWXXR[0]);
         vkupenBrojElementiVoOvojSplit = N;
         num = vkupenBrojElementiVoOvojSplit * previousSumWXX[0];
         den = previousSumW[0] * previousSumX2[0];
         if (den != 0 && num != 0 && !flagLeftAllEqual)
-            ikk = num / den; //I for each target
+            ikk = num / den; // I for each target
         else
             ikk = 1;
 
@@ -1991,24 +1992,24 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         numR = vkupenBrojElementiVoOvojSplit * previousSumWXXR[0];
         denR = previousSumWR[0] * previousSumX2R[0];
         if (denR != 0 && numR != 0 && !flagRightAllEqual)
-            ikkR = numR / denR; //I for each target
+            ikkR = numR / denR; // I for each target
         else
             ikkR = 1;
-        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
+        // "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (ikk * N + ikkR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
         N = splitIndex;
         double scaledI = 1 + I;
-        //System.out.println(scaledI);
-        if (Double.isNaN(scaledI)) {
-            throw new ClusException("err!");
-        }
+        // System.out.println(scaledI);
+        if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
 
 
-    //calculate EquvalentP with Distance file
+    // calculate EquvalentP with Distance file
     @Override
     public double calcEquvalentPDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
@@ -2047,13 +2048,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         if (temp != null)
                             previousSumWXXR[0] += Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                     }
-                    //else {previousSumWXXR[0]+=getSquaredDistanceH(exi,m_Weights);}
+                    // else {previousSumWXXR[0]+=getSquaredDistanceH(exi,m_Weights);}
                 }
             }
-            //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
-        //else
+        // else
         boolean flagRightAllEqual = true;
         boolean flagLeftAllEqual = true;
         {
@@ -2068,7 +2071,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumXR[0] -= Math.sqrt(getSquaredDistanceH(exi, m_Weights));
             }
 
-            //left (0-old)(old-new)
+            // left (0-old)(old-new)
             flagLeftAllEqual = true;
             double oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(0), m_Weights));
             for (int i = 1; i < N; i++) {
@@ -2076,7 +2079,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 boolean[] actual = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp = (ClassesTuple) exi.getObjVal(m_Hier.getType().getArrayIndex());
                 tp.fillBoolArrayNodeAndAncestors(actual);
-                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // to check that partition does not contain values which are all the same
+                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // to check that partition does not contain
+                                                                            // values which are all the same
                 {
                     flagLeftAllEqual = false;
                     break;
@@ -2103,10 +2107,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         if (temp != null)
                             previousSumWXX[0] += Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                     }
-                    //else {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                    // else
+                    // {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
                 }
             }
-            //left (old-new)(0-old)
+            // left (old-new)(0-old)
             for (int i = M; i < N; i++) {
                 for (int j = 0; j < M; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -2127,10 +2132,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         if (temp != null)
                             previousSumWXX[0] += Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                     }
-                    //else {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                    // else
+                    // {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
                 }
             }
-            //left (old-new)(old-new)
+            // left (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 for (int j = M; j < N; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -2151,10 +2157,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         if (temp != null)
                             previousSumWXX[0] += Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                     }
-                    //else {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                    // else
+                    // {previousSumWXX[0]+=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
                 }
             }
-            //right side (new-end)(old-new) 
+            // right side (new-end)(old-new)
             flagRightAllEqual = true;
             oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(N), m_Weights));
             for (int i = N; i < NR; i++) {
@@ -2181,10 +2188,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         if (temp != null)
                             previousSumWXXR[0] -= Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                     }
-                    //else {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                    // else
+                    // {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
                 }
             }
-            //right (old-new)(new-end)
+            // right (old-new)(new-end)
             for (int i = M; i < N; i++) {
                 for (int j = N; j < NR; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -2205,10 +2213,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         if (temp != null)
                             previousSumWXXR[0] -= Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                     }
-                    //else {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                    // else
+                    // {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
                 }
             }
-            //right (old-new)(old-new)
+            // right (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 DataTuple exi = m_data.getTuple(permutation[i]);
                 String xxi = xt.getString(exi);
@@ -2229,7 +2238,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                         if (temp != null)
                             previousSumWXXR[0] -= Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                     }
-                    //else {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
+                    // else
+                    // {previousSumWXXR[0]-=Math.sqrt(getSquaredDistanceH(exi,m_Weights)*getSquaredDistanceH(exj,m_Weights));}
                 }
             }
         }
@@ -2242,22 +2252,22 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ikkR = previousSumWXXR[0] / previousSumX2R[0];
         else
             ikkR = 1;
-        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
+        // "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (ikk * N + ikkR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
         N = splitIndex;
         double scaledI = 1 + I;
-        //System.out.println(scaledI);
-        if (Double.isNaN(scaledI)) {
-            throw new ClusException("err!");
-        }
+        // System.out.println(scaledI);
+        if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
 
 
-    //Equvalent Geary with distance file
-    //calculate Equvalent Geary C with Distance file
+    // Equvalent Geary with distance file
+    // calculate Equvalent Geary C with Distance file
     @Override
     public double calcEquvalentGDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
@@ -2268,7 +2278,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         double I = 0;
         double avgik = 0.0;
         double avgikR = 0.0;
-        double num, den, numR, denR; //, ikk, ikkR, W, WR = 0.0;
+        double num, den, numR, denR; // , ikk, ikkR, W, WR = 0.0;
         int vkupenBrojElementiVoOvojSplit = N - M;
         int vkupenBrojElementiVoCelataSuma = NR;
         M = prevIndex;
@@ -2310,10 +2320,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            //System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
-        //else
+        // else
         boolean flagRightAllEqual = true;
         boolean flagLeftAllEqual = true;
         {
@@ -2328,7 +2340,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 previousSumXR[0] -= Math.sqrt(getSquaredDistanceH(exi, m_Weights));
             }
 
-            //left (0-old)(old-new)
+            // left (0-old)(old-new)
             flagLeftAllEqual = true;
             double oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(0), m_Weights));
             for (int i = 1; i < N; i++) {
@@ -2336,7 +2348,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 boolean[] actual = new boolean[m_Hier.getTotal()];
                 ClassesTuple tp = (ClassesTuple) exi.getObjVal(m_Hier.getType().getArrayIndex());
                 tp.fillBoolArrayNodeAndAncestors(actual);
-                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // to check that partition does not contain values which are all the same
+                if (Math.sqrt(getSquaredDistanceH(exi, m_Weights)) != oldX) // to check that partition does not contain
+                                                                            // values which are all the same
                 {
                     flagLeftAllEqual = false;
                     break;
@@ -2374,7 +2387,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //left (old-new)(0-old)
+            // left (old-new)(0-old)
             for (int i = M; i < N; i++) {
                 for (int j = 0; j < M; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -2406,7 +2419,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //left (old-new)(old-new)
+            // left (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 for (int j = M; j < N; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -2438,7 +2451,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //right side (new-end)(old-new) 
+            // right side (new-end)(old-new)
             flagRightAllEqual = true;
             oldX = Math.sqrt(getSquaredDistanceH(m_data.getTuple(N), m_Weights));
             for (int i = N; i < NR; i++) {
@@ -2476,7 +2489,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //right (old-new)(new-end)
+            // right (old-new)(new-end)
             for (int i = M; i < N; i++) {
                 for (int j = N; j < NR; j++) {
                     DataTuple exi = m_data.getTuple(permutation[i]);
@@ -2508,7 +2521,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            //right (old-new)(old-new)
+            // right (old-new)(old-new)
             for (int i = M; i < N; i++) {
                 DataTuple exi = m_data.getTuple(permutation[i]);
                 String xxi = xt.getString(exi);
@@ -2542,38 +2555,40 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             }
         }
 
-        //System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-        //System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
+        // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+        // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
+        // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+        // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         vkupenBrojElementiVoOvojSplit = N;
         num = (vkupenBrojElementiVoOvojSplit - 1) * previousSumWXX[0];
         den = 2 * previousSumW[0] * previousSumX2[0];
-        if (den != 0 && num != 0 && !flagLeftAllEqual){
-//            ikk = num / den;
+        if (den != 0 && num != 0 && !flagLeftAllEqual) {
+            // ikk = num / den;
         }
-        else{
-//            ikk = 0;
+        else {
+            // ikk = 0;
         }
 
         vkupenBrojElementiVoOvojSplit = NR - N;
         numR = (vkupenBrojElementiVoOvojSplit - 1) * previousSumWXXR[0];
         denR = 2 * previousSumWR[0] * previousSumX2R[0];
-        if (denR != 0 && numR != 0 && !flagRightAllEqual){
-//            ikkR = numR / denR;
+        if (denR != 0 && numR != 0 && !flagRightAllEqual) {
+            // ikkR = numR / denR;
         }
-        else{
-//            ikkR = 0;
+        else {
+            // ikkR = 0;
         }
 
-        //System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        //System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+den+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
+        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
+        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+den+" "+" NM: "+(NR-splitIndex)+" WR
+        // "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (avgik * N + avgikR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
         N = splitIndex;
         double scaledI = 2 - I;
-        //System.out.println(scaledI);
-        if (Double.isNaN(scaledI)) {
-            throw new ClusException("err!");
-        }
+        // System.out.println(scaledI);
+        if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
 
@@ -2624,7 +2639,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     public RowData getData() {
         return m_data;
     }
-    //end daniela
+    // end daniela
 
 
     /**
@@ -2636,10 +2651,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(m_Hier.getType().getArrayIndex());
         tp.fillBoolArrayNodeAndAncestors(actual);
         for (int i = 0; i < m_Hier.getTotal(); i++) {
-//            NumericAttrType type = getAttribute(i);
+            // NumericAttrType type = getAttribute(i);
             double actual_zo = actual[i] ? 1.0 : 0.0;
             double dist = actual_zo - m_Means[i];
-            distances[i] = dist * dist * m_Hier.m_Weights[i];
+            distances[i] = dist * dist * m_Hier.getWeight(i);
         }
 
         return distances;
@@ -2678,7 +2693,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             return pred + " [" + ClusFormat.TWO_AFTER_DOT.format(getTotalWeight()) + "]";
         }
         else {
-        	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+            ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
             StringBuffer buf = new StringBuffer();
             buf.append("[");
             for (int i = 0; i < getHier().getTotal(); i++) {
@@ -2758,10 +2773,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 int nb_other = pop_tot - pop_cls;
                 int min_this = rule_tot - nb_other;
                 int lower = Math.max(rule_cls, min_this);
-                //HypergeometricDistribution dist = m_Fac.createHypergeometricDistribution(pop_tot, pop_cls, rule_tot);
+                // HypergeometricDistribution dist = m_Fac.createHypergeometricDistribution(pop_tot, pop_cls, rule_tot);
                 org.apache.commons.math3.distribution.HypergeometricDistribution dist = new org.apache.commons.math3.distribution.HypergeometricDistribution(pop_tot, pop_cls, rule_tot);
 
-                //try {
+                // try {
                 double stat = dist.cumulativeProbability(lower, upper);
                 out.append(node.toStringHuman(getHier()) + ":");
                 out.append(" pop_tot = " + String.valueOf(pop_tot));
@@ -2772,10 +2787,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 out.append(" prob = " + ClusFormat.SIX_AFTER_DOT.format(stat));
                 // out.append(" siglevel = "+m_SigLevel);
                 out.append("\n");
-                //                }
-                //                catch (MathException me) {
-                //                    System.err.println("Math error: " + me.getMessage());
-                //                }
+                // }
+                // catch (MathException me) {
+                // System.err.println("Math error: " + me.getMessage());
+                // }
             }
         }
         for (int i = 0; i < node.getNbChildren(); i++) {
@@ -3047,7 +3062,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
      */
     @Override
     public double getTargetSumWeights() {
-        return getTotalWeight(); //FIXME not sure if this is correct, in HMC there is no partially labeled examples, they are either labeled or unlabeled?
+        return getTotalWeight(); // FIXME not sure if this is correct, in HMC there is no partially labeled examples,
+                                 // they are either labeled or unlabeled?
     }
 
 

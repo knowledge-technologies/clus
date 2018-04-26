@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.heuristic.hierarchical;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.type.ClusAttrType;

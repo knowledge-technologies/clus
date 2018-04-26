@@ -29,6 +29,7 @@ package si.ijs.kt.clus.ext.hierarchical;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.pruning.PruneTree;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.ClusException;
 
 

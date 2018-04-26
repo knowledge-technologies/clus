@@ -6,9 +6,9 @@ import java.util.HashSet;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
 import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
-import si.ijs.kt.clus.ext.hierarchical.ClassesAttrType;
 import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 

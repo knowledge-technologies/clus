@@ -2,12 +2,12 @@ package si.ijs.kt.clus.ext.semisupervised.confidence;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.ext.ensemble.ClusForest;
-import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStatBase;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.ClusException;
 
 /**

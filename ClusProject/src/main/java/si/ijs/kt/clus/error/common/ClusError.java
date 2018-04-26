@@ -25,7 +25,6 @@ package si.ijs.kt.clus.error.common;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
-import java.text.NumberFormat;
 
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;

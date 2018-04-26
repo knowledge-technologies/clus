@@ -5,12 +5,12 @@ import java.util.Map;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.ext.ensemble.ClusForest;
-import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.ext.semisupervised.Helper;
 import si.ijs.kt.clus.ext.semisupervised.confidence.PredictionConfidence;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.ClusException;
 
 /**

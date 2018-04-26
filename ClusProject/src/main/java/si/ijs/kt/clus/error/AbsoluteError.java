@@ -23,7 +23,6 @@
 package si.ijs.kt.clus.error;
 
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;

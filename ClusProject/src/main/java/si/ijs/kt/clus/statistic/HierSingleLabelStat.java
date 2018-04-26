@@ -24,15 +24,16 @@
  * Created on August 20, 2009
  */
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.statistic;
 
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
+import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
+import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.statistic.ClusStatistic;
 
 
 public class HierSingleLabelStat extends WHTDStatistic {

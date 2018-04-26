@@ -2,7 +2,7 @@ package si.ijs.kt.clus.ext.hierarchical.thresholdcalibration;
 
 import java.util.LinkedHashMap;
 
-import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 
 /**
  * Threshold calibration method by choosing the threshold that minimizes the

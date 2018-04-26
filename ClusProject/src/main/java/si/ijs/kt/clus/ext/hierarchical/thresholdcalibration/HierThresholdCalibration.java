@@ -1,6 +1,6 @@
 package si.ijs.kt.clus.ext.hierarchical.thresholdcalibration;
 
-import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 
 /**
  *

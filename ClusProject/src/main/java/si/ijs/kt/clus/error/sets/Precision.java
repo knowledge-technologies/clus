@@ -27,7 +27,6 @@
 package si.ijs.kt.clus.error.sets;
 
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;

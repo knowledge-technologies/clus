@@ -20,11 +20,10 @@ import si.ijs.kt.clus.error.Accuracy;
 import si.ijs.kt.clus.error.RMSError;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.error.hmlc.HierErrorMeasures;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
-import si.ijs.kt.clus.ext.hierarchical.HierErrorMeasures;
-import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.ext.hierarchical.thresholdcalibration.HierThresholdCalibration;
 import si.ijs.kt.clus.ext.hierarchical.thresholdcalibration.calibrateByLabelCardinality;
 import si.ijs.kt.clus.ext.semisupervised.confidence.OracleScore;
@@ -43,6 +42,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.ClusException;
 
 

@@ -38,8 +38,10 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.math.SingleStat;
 import si.ijs.kt.clus.util.jeans.tree.CompleteTreeIterator;
@@ -58,15 +60,15 @@ public class ClassHierarchy implements Serializable {
 
     protected int m_MaxDepth = 0;
     protected int m_HierType = TREE;
+
     /** Classes to be evaluated at the end, ignoring hierarchy */
     protected ClassesTuple m_Eval;
     protected ArrayList<ClassTerm> m_ClassList = new ArrayList<ClassTerm>();
-    protected HashMap<String,ClassTerm> m_ClassMap = new HashMap<String,ClassTerm>();
+    protected HashMap<String, ClassTerm> m_ClassMap = new HashMap<String, ClassTerm>();
     protected ClassTerm m_Root;
     protected NumericAttrType[] m_DummyTypes;
     protected boolean m_IsLocked;
-    protected transient double[] m_Weights;
-    // protected transient Hashtable m_ErrorWeights = new Hashtable(); matejp: this was not used anywhere ...
+    protected double[] m_Weights;
     protected transient ClassesAttrType m_Type;
 
 
@@ -213,7 +215,8 @@ public class ClassHierarchy implements Serializable {
             }
         }
     }
-    
+
+
     public ArrayList<String> getAllPaths() {
         ArrayList<String> paths = new ArrayList<String>();
         boolean[] visited = new boolean[getTotal()];
@@ -627,7 +630,8 @@ public class ClassHierarchy implements Serializable {
                 findCycleRecursive(term, visited, pi, hasCycle);
             }
         }
-        if (hasCycle[0]) throw new ClusException("hasCycle[0] == true");
+        if (hasCycle[0])
+            throw new ClusException("hasCycle[0] == true");
     }
 
 
@@ -743,16 +747,18 @@ public class ClassHierarchy implements Serializable {
         val.setClassTerm(term);
         return val;
     }
-    
+
+
     /**
      * Computes whether a given class term index corresponds to a leaf in the hierarchy or not.
+     * 
      * @return list, whose i-th element equals i-th term is leaf.
      */
-    public boolean[] getIsLeafVector(){
-    	boolean[] answer = new boolean[m_ClassList.size()];
-    	for(int classInd = 0; classInd < answer.length; classInd++){
-    		answer[classInd] = getTermAt(classInd).atBottomLevel();
-    	}
-    	return answer;
+    public boolean[] getIsLeafVector() {
+        boolean[] answer = new boolean[m_ClassList.size()];
+        for (int classInd = 0; classInd < answer.length; classInd++) {
+            answer[classInd] = getTermAt(classInd).atBottomLevel();
+        }
+        return answer;
     }
 }

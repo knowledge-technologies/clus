@@ -28,6 +28,7 @@ import java.util.Arrays;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.util.jeans.util.array.MDoubleArray;
 
 

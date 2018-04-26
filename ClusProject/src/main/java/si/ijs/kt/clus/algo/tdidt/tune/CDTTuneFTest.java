@@ -40,7 +40,7 @@ import si.ijs.kt.clus.error.Accuracy;
 import si.ijs.kt.clus.error.RMSError;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
-import si.ijs.kt.clus.ext.hierarchical.HierErrorMeasures;
+import si.ijs.kt.clus.error.hmlc.HierErrorMeasures;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;

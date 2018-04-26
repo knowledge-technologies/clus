@@ -13,7 +13,7 @@ import si.ijs.kt.clus.error.PearsonCorrelation;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.error.common.ClusErrorOutput;
-import si.ijs.kt.clus.ext.hierarchical.HierClassWiseAccuracy;
+import si.ijs.kt.clus.error.hmlc.HierClassWiseAccuracy;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
@@ -24,7 +24,6 @@ import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.util.IntervalCollection;
 

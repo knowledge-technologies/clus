@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 
+import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.tree.CompleteTreeIterator;
 import si.ijs.kt.clus.util.jeans.util.MStreamTokenizer;

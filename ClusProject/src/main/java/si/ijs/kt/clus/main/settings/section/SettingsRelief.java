@@ -3,14 +3,12 @@ package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileArray;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 

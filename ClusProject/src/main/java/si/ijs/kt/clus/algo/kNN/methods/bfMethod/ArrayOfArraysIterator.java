@@ -2,8 +2,6 @@ package si.ijs.kt.clus.algo.kNN.methods.bfMethod;
 
 import java.util.Iterator;
 
-import si.ijs.kt.clus.data.rows.DataTuple;
-
 
 public class ArrayOfArraysIterator<T> implements Iterable<T> {
 	

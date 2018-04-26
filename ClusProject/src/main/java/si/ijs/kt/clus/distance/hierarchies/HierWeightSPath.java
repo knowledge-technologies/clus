@@ -20,14 +20,19 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.distance.hierarchies;
 
-public class HierWPenalty implements HierBasicDistance {
+import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
+
+public class HierWeightSPath implements HierBasicDistance {
 
     protected double[] m_Weights;
+    protected double m_RootDelta = 1.0;
+    protected double fac;
 
 
-    public HierWPenalty(int depth, double fac) {
+    public HierWeightSPath(int depth, double fac) {
+        this.fac = fac;
         m_Weights = new double[depth];
         for (int i = 0; i < depth; i++) {
             m_Weights[i] = Math.pow(fac, i);
@@ -35,14 +40,19 @@ public class HierWPenalty implements HierBasicDistance {
     }
 
 
+    protected final double getFac() {
+        return fac;
+    }
+
+
     protected final double getWeight(int level) {
-        return m_Weights[level - 1];
+        return m_Weights[level];
     }
 
 
     @Override
     public double getVirtualRootWeight() {
-        return 0.0;
+        return m_RootDelta;
     }
 
 
@@ -53,18 +63,17 @@ public class HierWPenalty implements HierBasicDistance {
         int d2 = t2.getLevel();
         int com_d = Math.min(d1, d2);
         while (d1 > com_d) {
-            distance = getWeight(d1);
+            distance += getWeight(d1);
             t1 = t1.getCTParent();
             d1--;
         }
         while (d2 > com_d) {
-            distance = getWeight(d2);
+            distance += getWeight(d2);
             t2 = t2.getCTParent();
             d2--;
         }
-        while (com_d >= 0) {
-            if (t1 != t2)
-                distance = getWeight(com_d);
+        while (t1 != t2) {
+            distance += 2.0 * getWeight(com_d);
             t1 = t1.getCTParent();
             t2 = t2.getCTParent();
             com_d--;

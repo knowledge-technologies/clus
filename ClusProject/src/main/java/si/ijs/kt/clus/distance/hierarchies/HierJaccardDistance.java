@@ -1,8 +1,10 @@
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.distance.hierarchies;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
+import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.distance.ClusDistance;
+import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 

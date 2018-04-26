@@ -29,14 +29,14 @@ import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.data.io.ARFFFile;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
-import si.ijs.kt.clus.ext.hierarchical.ClassesAttrType;
 import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
-import si.ijs.kt.clus.ext.hierarchical.WHTDStatistic;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 
 

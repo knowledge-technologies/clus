@@ -3,7 +3,6 @@ package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;

@@ -36,13 +36,12 @@ import si.ijs.kt.clus.data.type.BitwiseNominalAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.complex.SetAttrType;
 import si.ijs.kt.clus.data.type.complex.TupleAttrType;
+import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
+import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrTypeSingleLabel;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.data.type.primitive.StringAttrType;
 import si.ijs.kt.clus.data.type.primitive.TimeSeriesAttrType;
-// FIXME - use plugin system
-import si.ijs.kt.clus.ext.hierarchical.ClassesAttrType;
-import si.ijs.kt.clus.ext.hierarchical.ClassesAttrTypeSingleLabel;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MStreamTokenizer;

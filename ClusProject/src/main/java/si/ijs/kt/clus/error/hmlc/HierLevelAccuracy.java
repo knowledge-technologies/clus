@@ -24,7 +24,7 @@
  * Created on May 23, 2005
  */
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.error.hmlc;
 
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -32,6 +32,8 @@ import java.util.Arrays;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
+import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;

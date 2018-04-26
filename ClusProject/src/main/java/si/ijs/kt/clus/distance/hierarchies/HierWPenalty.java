@@ -20,9 +20,27 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.distance.hierarchies;
 
-public class HierLevelDistance implements HierBasicDistance {
+import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
+
+public class HierWPenalty implements HierBasicDistance {
+
+    protected double[] m_Weights;
+
+
+    public HierWPenalty(int depth, double fac) {
+        m_Weights = new double[depth];
+        for (int i = 0; i < depth; i++) {
+            m_Weights[i] = Math.pow(fac, i);
+        }
+    }
+
+
+    protected final double getWeight(int level) {
+        return m_Weights[level - 1];
+    }
+
 
     @Override
     public double getVirtualRootWeight() {
@@ -30,25 +48,25 @@ public class HierLevelDistance implements HierBasicDistance {
     }
 
 
-    // First argument = actual, second = predicted
     @Override
     public double calcDistance(ClassTerm t1, ClassTerm t2) {
+        double distance = 0.0;
         int d1 = t1.getLevel();
         int d2 = t2.getLevel();
-        int d_correct = d1;
         int com_d = Math.min(d1, d2);
-        double distance = (double) d2 - d1;
         while (d1 > com_d) {
+            distance = getWeight(d1);
             t1 = t1.getCTParent();
             d1--;
         }
         while (d2 > com_d) {
+            distance = getWeight(d2);
             t2 = t2.getCTParent();
             d2--;
         }
         while (com_d >= 0) {
             if (t1 != t2)
-                distance = (double) com_d - d_correct - 1;
+                distance = getWeight(com_d);
             t1 = t1.getCTParent();
             t2 = t2.getCTParent();
             com_d--;

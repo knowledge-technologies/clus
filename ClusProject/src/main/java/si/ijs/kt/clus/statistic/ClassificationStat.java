@@ -24,7 +24,6 @@ package si.ijs.kt.clus.statistic;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 

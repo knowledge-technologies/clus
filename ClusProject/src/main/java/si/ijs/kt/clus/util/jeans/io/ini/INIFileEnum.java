@@ -2,7 +2,6 @@
 package si.ijs.kt.clus.util.jeans.io.ini;
 
 import java.io.IOException;
-import java.lang.Enum;
 import java.util.Arrays;
 
 import si.ijs.kt.clus.main.settings.Settings;

@@ -1,13 +1,12 @@
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.statistic;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.ClusDistance;
+import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
 import si.ijs.kt.clus.util.ClusException;
 
 

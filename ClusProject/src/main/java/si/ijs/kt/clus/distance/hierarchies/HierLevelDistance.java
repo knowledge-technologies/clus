@@ -20,13 +20,41 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.distance.hierarchies;
 
-public interface HierBasicDistance {
+import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
 
-    public double getVirtualRootWeight();
+public class HierLevelDistance implements HierBasicDistance {
+
+    @Override
+    public double getVirtualRootWeight() {
+        return 0.0;
+    }
 
 
-    public double calcDistance(ClassTerm a, ClassTerm b);
-
+    // First argument = actual, second = predicted
+    @Override
+    public double calcDistance(ClassTerm t1, ClassTerm t2) {
+        int d1 = t1.getLevel();
+        int d2 = t2.getLevel();
+        int d_correct = d1;
+        int com_d = Math.min(d1, d2);
+        double distance = (double) d2 - d1;
+        while (d1 > com_d) {
+            t1 = t1.getCTParent();
+            d1--;
+        }
+        while (d2 > com_d) {
+            t2 = t2.getCTParent();
+            d2--;
+        }
+        while (com_d >= 0) {
+            if (t1 != t2)
+                distance = (double) com_d - d_correct - 1;
+            t1 = t1.getCTParent();
+            t2 = t2.getCTParent();
+            com_d--;
+        }
+        return distance;
+    }
 }

@@ -24,7 +24,7 @@
  * Created on May 19, 2005
  */
 
-package si.ijs.kt.clus.ext.hierarchical;
+package si.ijs.kt.clus.error.hmlc;
 
 import java.util.Arrays;
 
@@ -33,8 +33,12 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.MSError;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
+import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
+import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.statistic.WHTDStatistic;
 
 
 public class HierRMSError extends MSError {
