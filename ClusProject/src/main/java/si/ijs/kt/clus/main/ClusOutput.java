@@ -23,7 +23,6 @@
 package si.ijs.kt.clus.main;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
@@ -31,10 +30,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
@@ -81,7 +78,7 @@ public class ClusOutput {
     protected Settings m_Sett2;
     protected StringWriter m_StrWrt;
 
-    
+
     public ClusOutput(String fname, ClusSchema schema, Settings sett) throws IOException {
         m_Schema = schema;
         m_Sett = sett;
@@ -175,11 +172,26 @@ public class ClusOutput {
         m_Writer.println("----------");
         m_Writer.println();
         m_Writer.println("FTValue (FTest): " + m_Sett.getTree().getFTest());
-        double tsec = cr.getInductionTime() / 1000.0;
-        double tpru = cr.getPruneTime() / 1000.0;
-        long tpred = cr.getPredictionTime();
-        long tpredavg = cr.getPredictionTimeAverage(); 
-        
+
+        if (!ClusOOBErrorEstimate.isOOBCalculation()) {
+            double tsec = cr.getInductionTime() / 1000.0;
+            double tpru = cr.getPruneTime() / 1000.0;
+            long tpred = cr.getPredictionTime();
+            long tpredavg = cr.getPredictionTimeAverage();
+
+            String parallelTime = "";
+            if (getSettings().getEnsemble().isEnsembleWithParallelExecution()) {
+                parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format((cr.getInductionTimeSequential() / 1000.0)) + " sec)";
+            }
+
+            // Compute statistics
+            String cpu = ResourceInfo.isLibLoaded() ? " (CPU)" : "";
+            m_Writer.println("Induction Time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec" + parallelTime + cpu);
+            m_Writer.println("Pruning Time: " + ClusFormat.FOUR_AFTER_DOT.format(tpru) + " sec" + cpu);
+            m_Writer.println("Prediction Time (total for ClusModel.Original): " + System.lineSeparator() + "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 3)) + " microsecs" + System.lineSeparator() + "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 6)) + " millisecs" + System.lineSeparator() + "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 9)) + " secs");
+            m_Writer.println("Prediction Time (average for ClusModel.Original): " + ClusFormat.FOUR_AFTER_DOT.format(tpredavg / Math.pow(10, 3)) + " microsecs");
+        }
+
         // Prepare models for printing if required
         for (int i = 0; i < cr.getNbModels(); i++) {
             ClusModelInfo mi = cr.getModelInfo(i);
@@ -195,22 +207,6 @@ public class ClusOutput {
             }
         }
 
-        String parallelTime = "";
-        if (getSettings().getEnsemble().isEnsembleWithParallelExecution()) {
-            parallelTime = " (sequential " + ClusFormat.FOUR_AFTER_DOT.format((cr.getInductionTimeSequential() / 1000.0)) + " sec)";
-        }
-
-        // Compute statistics
-        String cpu = ResourceInfo.isLibLoaded() ? " (CPU)" : "";
-        m_Writer.println("Induction Time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec" + parallelTime + cpu);
-        m_Writer.println("Pruning Time: " + ClusFormat.FOUR_AFTER_DOT.format(tpru) + " sec" + cpu);
-        m_Writer.println("Prediction Time (total for ClusModel.Original): " + System.lineSeparator() 
-        				+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 3)) + " microsecs" + System.lineSeparator() 
-        				+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 6)) + " millisecs" + System.lineSeparator()
-        				+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 9)) + " secs");
-        m_Writer.println("Prediction Time (average for ClusModel.Original): " + ClusFormat.FOUR_AFTER_DOT.format(tpredavg / Math.pow(10, 3)) + " microsecs");
-        
-        
         m_Writer.println("Model information:");
         for (int i = 0; i < cr.getNbModels(); i++) {
             ClusModelInfo mi = cr.getModelInfo(i);
@@ -267,11 +263,12 @@ public class ClusOutput {
                 ClusErrorList tr_err = cr.getTrainError();
                 if (tr_err != null) {
                     if (ClusOOBErrorEstimate.isOOBCalculation()) {
-                    	m_Writer.println("Out-Of-Bag Estimate of Error");
-                    	m_Writer.println("----------------------------");
-                    } else {
-                    	m_Writer.println("Training error");
-                    	m_Writer.println("--------------");
+                        m_Writer.println("Out-Of-Bag Estimate of Error");
+                        m_Writer.println("----------------------------");
+                    }
+                    else {
+                        m_Writer.println("Training error");
+                        m_Writer.println("--------------");
                     }
                     m_Writer.println();
                     tr_err.showError(cr, ClusModelInfo.TRAIN_ERR, bName + ".train", m_Writer, m_Sett);
@@ -299,49 +296,47 @@ public class ClusOutput {
             }
         }
         StatisticPrintInfo info = m_Sett.getOutput().getStatisticPrintInfo();
-        if(!ClusOOBErrorEstimate.isOOBCalculation()) {
-	        
-	        for (int i = 0; i < cr.getNbModels(); i++) {
-	            if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.getOutput().shouldShowModel(i)) {
-	                ClusModelInfo mi = cr.getModelInfo(i);
-	                ClusModel root = models.get(i);
-	                String modelname = mi.getName() + " Model";
-	                m_Writer.println(modelname);
-	                m_Writer.println(StringUtils.makeString('*', modelname.length()));
-	                m_Writer.println();
-	                if (m_Sett.getOutput().isPrintModelAndExamples()) {
-	                    RowData pex = (RowData) cr.getTrainingSet();
-	                    // System.out.println(te_err);
-	                    if (te_err != null)
-	                        pex = cr.getTestSet();
-	                    root.printModelAndExamples(m_Writer, info, pex);
-	                }
-	                else {
-	                    root.printModel(m_Writer, info);
-	                }
-	                m_Writer.println();
-	            }
-	        }
+        if (!ClusOOBErrorEstimate.isOOBCalculation()) {
+
+            for (int i = 0; i < cr.getNbModels(); i++) {
+                if (cr.getModelInfo(i) != null && models.get(i) != null && m_Sett.getOutput().shouldShowModel(i)) {
+                    ClusModelInfo mi = cr.getModelInfo(i);
+                    ClusModel root = models.get(i);
+                    String modelname = mi.getName() + " Model";
+                    m_Writer.println(modelname);
+                    m_Writer.println(StringUtils.makeString('*', modelname.length()));
+                    m_Writer.println();
+                    if (m_Sett.getOutput().isPrintModelAndExamples()) {
+                        RowData pex = (RowData) cr.getTrainingSet();
+                        // System.out.println(te_err);
+                        if (te_err != null)
+                            pex = cr.getTestSet();
+                        root.printModelAndExamples(m_Writer, info, pex);
+                    }
+                    else {
+                        root.printModel(m_Writer, info);
+                    }
+                    m_Writer.println();
+                }
+            }
         }
 
         if (!ClusOOBErrorEstimate.isOOBCalculation() && getSettings().getOutput().isOutputPythonModel()) {
-        	String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
-        	PythonModelType pyModelType = cr.getStatManager().getSettings().getOutput().getPythonModelType();
-        	if (pyModelType == PythonModelType.Object) {        		
-        		// copy the file from resources 
-        		String fileName="tree_as_object.py";
-        		try
-        		{
-        			InputStream is = si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + fileName);
-        			String fullFileName = getSettings().getGeneric().getFileAbsolute(fileName);
-        			Files.copy(is, Paths.get(fullFileName), StandardCopyOption.REPLACE_EXISTING);
-        		}
-        		catch(IOException ex)
-        		{
-        			System.err.println("Error while copying " + fileName + " to the output folder.");
-        			ex.printStackTrace();
-        		}
-        	}
+            String appName = m_Fname.substring(0, m_Fname.lastIndexOf(".out"));
+            PythonModelType pyModelType = cr.getStatManager().getSettings().getOutput().getPythonModelType();
+            if (pyModelType == PythonModelType.Object) {
+                // copy the file from resources
+                String fileName = "tree_as_object.py";
+                try {
+                    InputStream is = si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + fileName);
+                    String fullFileName = getSettings().getGeneric().getFileAbsolute(fileName);
+                    Files.copy(is, Paths.get(fullFileName), StandardCopyOption.REPLACE_EXISTING);
+                }
+                catch (IOException ex) {
+                    System.err.println("Error while copying " + fileName + " to the output folder.");
+                    ex.printStackTrace();
+                }
+            }
             String pyName = appName + "_models.py";
             File pyscript = new File(getSettings().getGeneric().getFileAbsolute(pyName));
             PrintWriter wrtr = new PrintWriter(new FileOutputStream(pyscript));
@@ -378,8 +373,8 @@ public class ClusOutput {
             else {
                 // Otherwise, we create only the <app name>_models.py file
                 // Tested for clus.jar something.s case
-            	if (pyModelType == PythonModelType.Object) {
-                	wrtr.println("from tree_as_object import *\n\n");
+                if (pyModelType == PythonModelType.Object) {
+                    wrtr.println("from tree_as_object import *\n\n");
                 }
                 HashMap<Integer, String> pythonNames = new HashMap<Integer, String>();
                 pythonNames.put(ClusModel.DEFAULT, "default");
@@ -390,17 +385,17 @@ public class ClusOutput {
                 for (int i = 0; i < cr.getNbModels(); i++) {
                     ClusModel root = models.get(i);
                     if (pythonNames.containsKey(i)) {
-                    	switch (pyModelType) {
-                    	case Function:
-                    		wrtr.println(String.format(defPattern, pythonNames.get(i)));
-                            root.printModelToPythonScript(wrtr, descrIndices);
-                    		break;
-                    	case Object:
-                    		root.printModelToPythonScript(wrtr, descrIndices, pythonNames.get(i));
-                    		break;
-                    	default:
-                    		throw new RuntimeException("Wrong PythonModelType: " + cr.getStatManager().getSettings().getOutput().getPythonModelType());
-                    	}
+                        switch (pyModelType) {
+                            case Function:
+                                wrtr.println(String.format(defPattern, pythonNames.get(i)));
+                                root.printModelToPythonScript(wrtr, descrIndices);
+                                break;
+                            case Object:
+                                root.printModelToPythonScript(wrtr, descrIndices, pythonNames.get(i));
+                                break;
+                            default:
+                                throw new RuntimeException("Wrong PythonModelType: " + cr.getStatManager().getSettings().getOutput().getPythonModelType());
+                        }
                     }
                     else {
                         System.err.println("Warning: this is not DEFAULT/ORIGINAL/PRUNED model and will not be printed. Extend the pythonNames hash map!");
@@ -466,26 +461,21 @@ public class ClusOutput {
         m_Writer.println("Summary");
         m_Writer.println("*******");
         m_Writer.println();
-        
+
         int runs = summary.getNbRuns();
         m_Writer.println("Runs: " + runs);
-        
+
         double tsec = summary.getInductionTime() / 1000.0;
         m_Writer.println("Induction time: " + ClusFormat.FOUR_AFTER_DOT.format(tsec) + " sec");
-        
+
         double psec = summary.getPrepareTime() / 1000.0;
         m_Writer.println("Preprocessing time: " + ClusFormat.ONE_AFTER_DOT.format(psec) + " sec");
-        
+
         long tpred = summary.getPredictionTime();
         long tpredavg = summary.getPredictionTimeAverage();
-        m_Writer.println("Prediction Time (total for ClusModel.Original, " + runs + " runs, " + summary.getPredictionTimeNbExamples() + " examples): " + System.lineSeparator() 
-			+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 3)) + " microsecs" + System.lineSeparator() 
-			+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 6)) + " millisecs" + System.lineSeparator()
-			+ "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 9)) + " secs");
+        m_Writer.println("Prediction Time (total for ClusModel.Original, " + runs + " runs, " + summary.getPredictionTimeNbExamples() + " examples): " + System.lineSeparator() + "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 3)) + " microsecs" + System.lineSeparator() + "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 6)) + " millisecs" + System.lineSeparator() + "\t" + ClusFormat.FOUR_AFTER_DOT.format(tpred / Math.pow(10, 9)) + " secs");
         m_Writer.println("Prediction Time (average for ClusModel.Original): " + ClusFormat.FOUR_AFTER_DOT.format(tpredavg / Math.pow(10, 3)) + " microsecs");
 
-        
-        
         m_Writer.println("Mean number of tests");
         for (int i = ClusModel.ORIGINAL; i <= ClusModel.PRUNED; i++) {
             ClusModelInfo mi = summary.getModelInfo(i);
@@ -547,7 +537,7 @@ public class ClusOutput {
                 model = reader.read(new FileReader(file));
             }
             else {
-            	 InputStreamReader isr = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + file));
+                InputStreamReader isr = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + file));
                 model = reader.read(isr);
                 isr.close();
             }
