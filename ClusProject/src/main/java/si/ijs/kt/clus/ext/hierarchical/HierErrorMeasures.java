@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
-import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.zip.GZIPOutputStream;
 
@@ -43,8 +42,9 @@ public class HierErrorMeasures extends ClusError {
 
     protected transient PrintWriter m_PRCurves;
     protected transient PrintWriter m_ROCCurves;
-    
+
     private boolean m_IsGzipOutput;
+
 
     public HierErrorMeasures(ClusErrorList par, ClassHierarchy hier, double[] recalls, int compat, int optimize, boolean wrCurves, boolean isGzipOutput) {
         super(par, hier.getTotal());
@@ -63,7 +63,7 @@ public class HierErrorMeasures extends ClusError {
             m_ClassWisePredictions[i] = predlist;
             m_ROCAndPRCurves[i] = new ROCAndPRCurve(predlist);
         }
-        
+
         m_IsGzipOutput = isGzipOutput;
     }
 
@@ -97,7 +97,9 @@ public class HierErrorMeasures extends ClusError {
         else if (name.startsWith("Original ") && name.contains("-nn model with ") || name.equals("Default 1-nn model with no weighting")) {
             // this is kNN hackish solution
             return true;
-        } else if(name.startsWith("Forest with ") && !name.contains("T = ")){  // added because of the option Iterations  = [10, 20, 30, ...]
+        }
+        else if (name.startsWith("Forest with ") && !name.contains("T = ")) { // added because of the option Iterations
+                                                                              // = [10, 20, 30, ...]
             return true;
         }
         return false;
@@ -317,11 +319,11 @@ public class HierErrorMeasures extends ClusError {
 
 
     public void writeCSVFilesPR(String fname) throws IOException {
-    	if (m_IsGzipOutput) {
+        if (m_IsGzipOutput) {
             fname += ".gz";
-            m_PRCurves = new PrintWriter(new OutputStreamWriter(
-                    new GZIPOutputStream(new FileOutputStream(fname))));
-        } else {
+            m_PRCurves = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fname))));
+        }
+        else {
             m_PRCurves = new PrintWriter(fname);
         }
         m_PRCurves.println("Class,Recall,Precision");
@@ -331,9 +333,9 @@ public class HierErrorMeasures extends ClusError {
     public void writeCSVFilesROC(String fname) throws IOException {
         if (m_IsGzipOutput) {
             fname += ".gz";
-            m_ROCCurves = new PrintWriter(new OutputStreamWriter(
-                    new GZIPOutputStream(new FileOutputStream(fname))));
-        } else {
+            m_ROCCurves = new PrintWriter(new OutputStreamWriter(new GZIPOutputStream(new FileOutputStream(fname))));
+        }
+        else {
             m_ROCCurves = new PrintWriter(fname);
         }
 
@@ -373,8 +375,8 @@ public class HierErrorMeasures extends ClusError {
             m_ROCCurves = null;
         }
     }
-    
-    
+
+
     @Override
     public String getName() {
         return "Hierarchical error measures";
@@ -385,13 +387,15 @@ public class HierErrorMeasures extends ClusError {
     public ClusError getErrorClone(ClusErrorList par) {
         return new HierErrorMeasures(par, m_Hier, m_RecallValues, m_Compatibility, m_OptimizeMeasure, m_WriteCurves, m_IsGzipOutput);
     }
-    
+
+
     @Override
     public void showModelError(PrintWriter out, int detail) {
-    	try {
-			showModelError(out, null, detail);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        try {
+            showModelError(out, null, detail);
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }
