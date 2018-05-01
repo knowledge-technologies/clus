@@ -9,6 +9,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesPrototypeComplexity;
 import si.ijs.kt.clus.util.ClusException;
 
 
@@ -21,17 +22,17 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
 
     protected double m_SVarS;
     protected ClusDistance m_Distance;
-    protected int m_Efficiency = 2;
+    protected TimeSeriesPrototypeComplexity m_Efficiency = TimeSeriesPrototypeComplexity.Linear;
 
 
     public SumPairwiseDistancesStat(Settings sett, ClusDistance dist) {
         super(sett);
-        
+
         m_Distance = dist;
     }
 
 
-    public SumPairwiseDistancesStat(Settings sett, ClusDistance dist, int efflvl) {
+    public SumPairwiseDistancesStat(Settings sett, ClusDistance dist, TimeSeriesPrototypeComplexity efflvl) {
         this(sett, dist);
         m_Efficiency = efflvl;
     }
@@ -50,7 +51,7 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
     }
 
 
-    public int getEfficiencyLevel() {
+    public TimeSeriesPrototypeComplexity getEfficiencyLevel() {
         return m_Efficiency;
     }
 
@@ -60,10 +61,10 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
         if (!m_Modified)
             return;
         switch (getEfficiencyLevel()) {
-            case 1:
+            case Log:
                 optimizeLogPreCalc(data);
                 break;
-            case 2:
+            case Linear:
                 optimizeLinearPreCalc(data);
                 break;
             default:
@@ -83,40 +84,41 @@ public class SumPairwiseDistancesStat extends BitVectorStat {
         return m_Distance.calcDistanceToCentroid(t1, this);
     }
 
-    // matejp: optimized time complexity 
+
+    // matejp: optimized time complexity
     public void optimizePreCalcExact(RowData data) throws ClusException {
         m_SVarS = 0.0;
         double sumWiDiag = 0.0;
         double sumWiTria = 0.0;
         int nb = m_Bits.size();
         ArrayList<Integer> presentIndices = new ArrayList<Integer>();
-        for(int i = 0; i < nb; i++) {
-        	if (m_Bits.getBit(i)) {
-        		presentIndices.add(i);
-        	}
+        for (int i = 0; i < nb; i++) {
+            if (m_Bits.getBit(i)) {
+                presentIndices.add(i);
+            }
         }
         int nbPresent = presentIndices.size();
-//        for(int i = 0; i < nb; i++) {
-        for(int ii = 0; ii < nbPresent; ii++) {
-        	int i = presentIndices.get(ii);
-//            if (m_Bits.getBit(i)) {
-                DataTuple a = data.getTuple(i);
-                double a_weight = a.getWeight();
-                // sum up elements in upper triangle of matrix (and give double weights)
-//                for(int j = 0; j < i; j++) {
-                for (int jj = 0; jj < ii; jj++) {
-                	int j = presentIndices.get(jj);
-//                    if (m_Bits.getBit(j)) {
-                        DataTuple b = data.getTuple(j);
-                        double wi = a_weight * b.getWeight();
-                        double d = calcDistance(a, b);
-                        m_SVarS += wi * d;
-                        sumWiTria += wi;
-//                    }
-                }
-                // sum up weights for elements on diagonal (with corresponding zero distances)
-                sumWiDiag += a_weight * a_weight;
-//            }
+        // for(int i = 0; i < nb; i++) {
+        for (int ii = 0; ii < nbPresent; ii++) {
+            int i = presentIndices.get(ii);
+            // if (m_Bits.getBit(i)) {
+            DataTuple a = data.getTuple(i);
+            double a_weight = a.getWeight();
+            // sum up elements in upper triangle of matrix (and give double weights)
+            // for(int j = 0; j < i; j++) {
+            for (int jj = 0; jj < ii; jj++) {
+                int j = presentIndices.get(jj);
+                // if (m_Bits.getBit(j)) {
+                DataTuple b = data.getTuple(j);
+                double wi = a_weight * b.getWeight();
+                double d = calcDistance(a, b);
+                m_SVarS += wi * d;
+                sumWiTria += wi;
+                // }
+            }
+            // sum up weights for elements on diagonal (with corresponding zero distances)
+            sumWiDiag += a_weight * a_weight;
+            // }
         }
         m_SVarS = getTotalWeight() * m_SVarS / (2 * sumWiTria + sumWiDiag);
     }

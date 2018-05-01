@@ -42,6 +42,8 @@ import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsExhaustiveSearch;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral.ResourceInfoLoad;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsHMTR;
@@ -151,38 +153,13 @@ public class Settings implements Serializable {
         m_SettSSL = new SettingsSSL(25);
 
         // store all settings classes in m_Sections
-        Collections.addAll(m_Sections,
-                m_SettGeneral,
-                m_SettData,
-                m_SettAttribute,
-                m_SettConstraints,
-                m_SettOutput,
-                m_SettNominal,
-                m_SettModel,
-                m_SettTree,
-                m_SettRules,
-                m_SettMLC,
-                m_SettHMLC,
-                m_SettHMTR,
-                m_SettILevelC,
-                m_SettBeamSearch,
-                m_SettExhaustiveSearch,
-                m_SettTimeSeries,
-                m_SettPhylogeny,
-                m_SettRelief,
-                m_SettDistances,
-                m_SettEnsemble,
-                m_SettKNN,
-                m_SettKNNTree,
-                m_SettOptionTree,
-                m_SettExperimental,
-                m_SettSIT,
-                m_SettSSL);
+        Collections.addAll(m_Sections, m_SettGeneral, m_SettData, m_SettAttribute, m_SettConstraints, m_SettOutput, m_SettNominal, m_SettModel, m_SettTree, m_SettRules, m_SettMLC, m_SettHMLC, m_SettHMTR, m_SettILevelC, m_SettBeamSearch, m_SettExhaustiveSearch, m_SettTimeSeries, m_SettPhylogeny, m_SettRelief, m_SettDistances, m_SettEnsemble, m_SettKNN, m_SettKNNTree, m_SettOptionTree, m_SettExperimental, m_SettSIT, m_SettSSL);
 
     }
-    
+
+
     public Enumeration<INIFileNode> getSectionsIterator() {
-    	return m_Ini.getNodes();
+        return m_Ini.getNodes();
     }
 
 
@@ -429,10 +406,12 @@ public class Settings implements Serializable {
 
         m_SettData.setPruneSetMaxEnabled(!m_SettData.isPruneSetString(SettingsBase.NONE));
 
-        if (ResourceInfo.isLibLoaded())
-            m_SettGeneral.getResourceInfoLoaded().setSingleValue(SettingsGeneral.RESOURCE_INFO_LOAD_YES);
-        else
-            m_SettGeneral.getResourceInfoLoaded().setSingleValue(SettingsGeneral.RESOURCE_INFO_LOAD_NO);
+        if (ResourceInfo.isLibLoaded()) {
+            m_SettGeneral.getResourceInfoLoaded().setValue(ResourceInfoLoad.Yes);
+        }
+        else {
+            m_SettGeneral.getResourceInfoLoaded().setValue(ResourceInfoLoad.No);
+        }
     }
 
 
@@ -440,22 +419,23 @@ public class Settings implements Serializable {
         updateDisabledSettings();
 
         // For TreeToRules PredictionMethod might have been temporarily put to DecisionList instead of some other
-        boolean tempInduceParamNeeded = m_SettRules.getRuleInduceParamsDisabled(); // They were changed in the first place
+        boolean tempInduceParamNeeded = m_SettRules.getRuleInduceParamsDisabled(); // They were changed in the first
+                                                                                   // place
 
-        if (m_SettRules.getCoveringMethod() == SettingsRules.COVERING_METHOD_RULES_FROM_TREE && tempInduceParamNeeded)
+        if (m_SettRules.getCoveringMethod().equals(CoveringMethod.RulesFromTree) && tempInduceParamNeeded)
             m_SettRules.returnRuleInduceParams();
 
         m_Ini.save(where);
 
-        if (m_SettRules.getCoveringMethod() == SettingsRules.COVERING_METHOD_RULES_FROM_TREE && tempInduceParamNeeded)
+        if (m_SettRules.getCoveringMethod().equals(CoveringMethod.RulesFromTree) && tempInduceParamNeeded)
             m_SettRules.disableRuleInduceParams();
     }
-    
-    
+
+
     public static Settings getDefaultSettings() {
-    	Settings sett = new Settings();
-    	sett.create();
-    	return sett;        
+        Settings sett = new Settings();
+        sett.create();
+        return sett;
     }
 
 }

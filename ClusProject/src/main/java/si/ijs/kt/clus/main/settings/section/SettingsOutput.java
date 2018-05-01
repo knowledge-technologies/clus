@@ -1,13 +1,16 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import java.util.Arrays;
+import java.util.List;
+
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnumList;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
@@ -29,22 +32,26 @@ public class SettingsOutput extends SettingsBase {
 
     protected INIFileBool m_ShowBrFreq;
     protected INIFileBool m_ShowUnknown;
-    protected INIFileNominal m_ShowInfo;
-    protected INIFileNominal m_ShowModels;
+    protected INIFileEnumList<ShowInfo> m_ShowInfo;
+    protected INIFileEnumList<ShowModels> m_ShowModels;
     protected INIFileBool m_PrintModelAndExamples;
     /** Write test/train predictions to files */
-    protected INIFileNominal m_WritePredictions;
+    protected INIFileEnumList<WritePredictions> m_WritePredictions;
     protected INIFileBool m_GzipOutput; // added by Jurica Levatic JSI, July 2014
     protected INIFileBool m_WriteErrorFile;
     protected INIFileBool m_WriteModelFile;
     protected INIFileBool m_WritePerBagModelFiles;
     protected INIFileBool m_WriteOOBFile;
     protected INIFileBool m_ModelIDFiles;
-    
+
     protected INIFileBool m_OutputPythonModel;
-    public enum PythonModelType {Function, Object};
+
+    public enum PythonModelType {
+        Function, Object
+    };
+
     private INIFileEnum<PythonModelType> m_PythonModelType;
-    
+
     protected INIFileBool m_OutputJSONModel;
     protected INIFileBool m_OutputDatabaseQueries;
     protected INIFileBool m_WriteCurves;
@@ -55,10 +62,10 @@ public class SettingsOutput extends SettingsBase {
     public SettingsOutput(int position) {
         super(position);
     }
-    
-    
+
+
     public boolean shouldWritePerBagModelFiles() {
-    	return m_WritePerBagModelFiles.getValue();
+        return m_WritePerBagModelFiles.getValue();
     }
 
 
@@ -128,12 +135,12 @@ public class SettingsOutput extends SettingsBase {
 
 
     public boolean isWriteTestSetPredictions() {
-        return m_WritePredictions.contains(WRITE_PRED_TEST);
+        return m_WritePredictions.getValue().contains(WritePredictions.Test);
     }
 
 
     public boolean isWriteTrainSetPredictions() {
-        return m_WritePredictions.contains(WRITE_PRED_TRAIN);
+        return m_WritePredictions.getValue().contains(WritePredictions.Train);
     }
 
 
@@ -150,18 +157,20 @@ public class SettingsOutput extends SettingsBase {
     public boolean isOutputPythonModel() {
         return m_OutputPythonModel.getValue();
     }
-    
+
+
     public PythonModelType getPythonModelType() {
-    	return m_PythonModelType.getChosenOption();
+        return m_PythonModelType.getValue();
     }
 
 
     public boolean isWriteOOBFile() {
         return m_WriteOOBFile.getValue();
     }
-    
+
+
     public void setWriteOOBFile(boolean value) {
-    	m_WriteOOBFile.setValue(value);
+        m_WriteOOBFile.setValue(value);
     }
 
 
@@ -190,18 +199,18 @@ public class SettingsOutput extends SettingsBase {
     }
 
 
-    public boolean getShowModel(int i) {
-        return m_ShowModels.contains(i);
+    public boolean getShowModel(ShowModels model) {
+        return m_ShowModels.getValue().contains(model);
     }
 
 
     public boolean shouldShowModel(int model) {
-        boolean others = getShowModel(SHOW_MODELS_OTHERS);
-        if (model == ClusModel.DEFAULT && getShowModel(SHOW_MODELS_DEFAULT))
+        boolean others = getShowModel(ShowModels.Others);
+        if (model == ClusModel.DEFAULT && getShowModel(ShowModels.Default))
             return true;
-        else if (model == ClusModel.ORIGINAL && getShowModel(SHOW_MODELS_ORIGINAL))
+        else if (model == ClusModel.ORIGINAL && getShowModel(ShowModels.Original))
             return true;
-        else if (model == ClusModel.PRUNED && (getShowModel(SHOW_MODELS_PRUNED) || others))
+        else if (model == ClusModel.PRUNED && (getShowModel(ShowModels.Pruned) || others))
             return true;
         else if (others)
             return true;
@@ -211,12 +220,15 @@ public class SettingsOutput extends SettingsBase {
 
     public StatisticPrintInfo getStatisticPrintInfo() {
         StatisticPrintInfo info = new StatisticPrintInfo();
-        info.SHOW_EXAMPLE_COUNT = m_ShowInfo.contains(0);
-        info.SHOW_EXAMPLE_COUNT_BYTARGET = m_ShowInfo.contains(1);
-        info.SHOW_DISTRIBUTION = m_ShowInfo.contains(2);
-        info.SHOW_INDEX = m_ShowInfo.contains(3);
-        info.INTERNAL_DISTR = m_ShowInfo.contains(4);
-        info.SHOW_KEY = m_ShowInfo.contains(5);
+        List<ShowInfo> vals = m_ShowInfo.getValue();
+
+        info.SHOW_EXAMPLE_COUNT = vals.contains(ShowInfo.Count);
+        info.SHOW_EXAMPLE_COUNT_BYTARGET = vals.contains(ShowInfo.CountByTarget);
+        info.SHOW_DISTRIBUTION = vals.contains(ShowInfo.Distribution);
+        info.SHOW_INDEX = vals.contains(ShowInfo.Index);
+        info.INTERNAL_DISTR = vals.contains(ShowInfo.NodePrototypes);
+        info.SHOW_KEY = vals.contains(ShowInfo.Key);
+
         return info;
     }
 
@@ -224,23 +236,17 @@ public class SettingsOutput extends SettingsBase {
      * Section: Output - Show info in .out file *
      ***********************************************************************/
 
-    public final static String[] SHOW_MODELS = { "Default", "Original", "Pruned", "Others" };
+    public enum ShowModels {
+        Default, Original, Pruned, Others
+    };
 
-    public final static int[] SHOW_MODELS_VALUES = { 0, 2, 3 };
-    public final static int SHOW_MODELS_DEFAULT = 0;
-    public final static int SHOW_MODELS_ORIGINAL = 1;
-    public final static int SHOW_MODELS_PRUNED = 2;
-    public final static int SHOW_MODELS_OTHERS = 3;
+    public enum ShowInfo {
+        Count, CountByTarget, Distribution, Index, NodePrototypes, Key
+    };
 
-    public final static String[] SHOW_INFO = { "Count", "CountByTarget", "Distribution", "Index", "NodePrototypes", "Key" };
-
-    public final static int[] SHOW_INFO_VALUES = { 0 };
-
-    public final static String[] CONVERT_RULES = { "No", "Leaves", "AllNodes" };
-
-    public final static int CONVERT_RULES_NONE = 0;
-    public final static int CONVERT_RULES_LEAVES = 1;
-    public final static int CONVERT_RULES_ALLNODES = 2;
+    public enum ConvertRules {
+        No, Leaves, AllNodes
+    };
 
     public static boolean SHOW_UNKNOWN_FREQ;
     public static boolean SHOW_BRANCH_FREQ;
@@ -249,19 +255,16 @@ public class SettingsOutput extends SettingsBase {
      * Section: Output - Write predictions to file *
      ***********************************************************************/
 
-    public final static String[] WRITE_PRED = { "None", "Test", "Train" };
-
-    public final static int[] WRITE_PRED_VALUES = { 0 };
-    public final static int WRITE_PRED_NONE = 0;
-    public final static int WRITE_PRED_TEST = 1;
-    public final static int WRITE_PRED_TRAIN = 2;
+    public enum WritePredictions {
+        None, Test, Train
+    };
 
 
     @Override
     public INIFileSection create() {
 
         INIFileSection output = new INIFileSection("Output");
-        output.addNode(m_ShowModels = new INIFileNominal("ShowModels", SHOW_MODELS, SHOW_MODELS_VALUES));
+        output.addNode(m_ShowModels = new INIFileEnumList<>("ShowModels", Arrays.asList(ShowModels.Default, ShowModels.Pruned, ShowModels.Others)));
         output.addNode(m_OutTrainErr = new INIFileBool("TrainErrors", true));
         output.addNode(m_OutValidErr = new INIFileBool("ValidErrors", true));
         output.addNode(m_OutTestErr = new INIFileBool("TestErrors", true));
@@ -270,23 +273,24 @@ public class SettingsOutput extends SettingsBase {
         output.addNode(m_OutFoldData = new INIFileBool("AllFoldDatasets", false));
         output.addNode(m_ShowUnknown = new INIFileBool("UnknownFrequency", false));
         output.addNode(m_ShowBrFreq = new INIFileBool("BranchFrequency", false));
-        output.addNode(m_ShowInfo = new INIFileNominal("ShowInfo", SHOW_INFO, SHOW_INFO_VALUES));
+        output.addNode(m_ShowInfo = new INIFileEnumList<>("ShowInfo", Arrays.asList(ShowInfo.Count)));
         output.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
         output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); // TODO: bug: see issue #51 in the
                                                                                      // repository
         output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
         output.addNode(m_WritePerBagModelFiles = new INIFileBool("WritePerBagModelFile", true));
         output.addNode(m_WriteOOBFile = new INIFileBool("WriteOOBFile", false));
-        output.addNode(m_WritePredictions = new INIFileNominal("WritePredictions", WRITE_PRED, WRITE_PRED_VALUES));
+        output.addNode(m_WritePredictions = new INIFileEnumList<>("WritePredictions", Arrays.asList(WritePredictions.None)));
         output.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));
+
         // If this option name is to be changed, it must also be changed in testsets/iris-classify.s
         // output.addNode(m_ModelIDFiles = new INIFileBool("WriteModelIDFiles", false));
         output.addNode(m_ModelIDFiles = new INIFileBool("ModelIDFiles", false));
         output.addNode(m_WriteCurves = new INIFileBool("WriteCurves", false));
-        
+
         output.addNode(m_OutputPythonModel = new INIFileBool("OutputPythonModel", false));
-        output.addNode(m_PythonModelType = new INIFileEnum<PythonModelType>("PythonModelType", PythonModelType.class, PythonModelType.Object));
-        
+        output.addNode(m_PythonModelType = new INIFileEnum<>("PythonModelType", PythonModelType.Object));
+
         output.addNode(m_OutputROSSubspaces = new INIFileBool("OutputROSSubspaces", false));
         output.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
         output.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));

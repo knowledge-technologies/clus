@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import java.util.concurrent.ExecutionException;
@@ -65,12 +66,16 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingFunctionScope;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.section.SettingsMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsMLC.MultiLabelMeasures;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -108,7 +113,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     static int m_NbMaxBags;
 
     // members for ROS ensembles (target subspacing)
-    static int m_EnsembleROSScope;
+    static EnsembleROSVotingFunctionScope m_EnsembleROSScope;
     ClusEnsembleROSInfo m_EnsembleROSInfo = null;
 
     // Out-Of-Bag Error Estimate
@@ -175,11 +180,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         if (sett.shouldEstimateOOB())
             m_OOBEstimation = new ClusOOBErrorEstimate(m_Mode, settMain);
-        	settMain.getOutput().setWriteOOBFile(true);
+        settMain.getOutput().setWriteOOBFile(true);
         if (m_FeatRank) {
             if (m_BagClus.getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
-                int[] rankingMeasures = m_BagClus.getSettings().getMLC().getMultiLabelRankingMeasures();
-                if (rankingMeasures.length == 1 && rankingMeasures[0] == SettingsMLC.MULTILABEL_MEASURES_ALL) {
+                List<MultiLabelMeasures> rankingMeasures = m_BagClus.getSettings().getMLC().getMultiLabelRankingMeasures();
+
+                if (rankingMeasures.contains(MultiLabelMeasures.All)) {
                     m_BagClus.getSettings().getMLC().setToAllMultiLabelRankingMeasures();
                 }
             }
@@ -1373,7 +1379,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         // If we want to convert trees to rules but not use
         // any of the rule learning tehniques anymore (if CoveringMethod != RulesFromTree)
-        if (getSettings().getTree().rulesFromTree() != SettingsOutput.CONVERT_RULES_NONE && getSettings().getRules().getCoveringMethod() != SettingsRules.COVERING_METHOD_RULES_FROM_TREE) {
+        if (!getSettings().getTree().rulesFromTree().equals(ConvertRules.No) && !getSettings().getRules().getCoveringMethod().equals(CoveringMethod.RulesFromTree)) {
             // m_OForest.convertToRules(cr, false);
             for (int i = 0; i < m_OForests.length; i++) {
                 m_OForests[i].convertToRules(cr, false);

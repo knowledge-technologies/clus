@@ -47,6 +47,11 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationLinearTermNormalizeValues;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.RuleAddingMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.test.NodeTest;
@@ -122,7 +127,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         CurrentBestTestAndHeuristic sel = m_FindBestTest.getBestTest();
         ClusAttrType[] attrs = data.getSchema().getDescriptiveAttributes();
         for (int i = 0; i < attrs.length; i++) {
-            // if (getSettings().getGeneral().getVerbose() > 1) System.out.print("\n Ref.Attribute: " + attrs[i].getName() + ": ");
+            // if (getSettings().getGeneral().getVerbose() > 1) System.out.print("\n Ref.Attribute: " +
+            // attrs[i].getName() + ": ");
             sel.resetBestTest();
             double beam_min_value = beam.getMinValue();
             sel.setBestHeur(beam_min_value);
@@ -141,7 +147,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                 ref_rule.addTest(test);
                 ref_rule.setVisitor(subset);
                 ref_rule.setClusteringStat(createTotalClusteringStat(subset));
-                // if (getSettings().getGeneral().getVerbose() > 0) System.out.println(" Sanity.check.val: " + sel.m_BestHeur);
+                // if (getSettings().getGeneral().getVerbose() > 0) System.out.println(" Sanity.check.val: " +
+                // sel.m_BestHeur);
                 if (getSettings().getRules().isHeurRuleDist()) {
                     int[] subset_idx = new int[subset.getNbRows()];
                     for (int j = 0; j < subset_idx.length; j++) {
@@ -153,7 +160,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                 // Do a sanity check only for exact (non-approximative) heuristics
                 if (getSettings().getTimeSeries().isTimeSeriesProtoComlexityExact()) {
                     new_heur = sanityCheck(sel.m_BestHeur, ref_rule);
-                    // if (getSettings().getGeneral().getVerbose() > 0) System.out.println(" Sanity.check.exp: " + new_heur);
+                    // if (getSettings().getGeneral().getVerbose() > 0) System.out.println(" Sanity.check.exp: " +
+                    // new_heur);
                 }
                 else {
                     new_heur = sel.m_BestHeur;
@@ -234,7 +242,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param data
      * @return array of rules
-     * @throws ClusException 
+     * @throws ClusException
      */
     public ClusRule[] learnBeamOfRules(RowData data) throws ClusException {
         ClusBeam beam = initializeBeam(data);
@@ -281,7 +289,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     /**
      * Standard covering algorithm for learning ordered rules. Data is removed
      * when it is covered. Default rule is added at the end.
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      */
     public void separateAndConquor(ClusRuleSet rset, RowData data) throws ClusException {
         int max_rules = getSettings().getRules().getMaxRulesNb();
@@ -858,11 +867,11 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * @return
      * @throws ClusException
      * @throws IOException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public ClusModel induce(ClusRun run) throws ClusException, IOException, InterruptedException {
-        int method = getSettings().getRules().getCoveringMethod();
-        int add_method = getSettings().getRules().getRuleAddingMethod();
+        CoveringMethod method = getSettings().getRules().getCoveringMethod();
+        RuleAddingMethod add_method = getSettings().getRules().getRuleAddingMethod();
         RowData data = (RowData) run.getTrainingSet();
         ClusStatistic stat = createTotalClusteringStat(data);
         m_FindBestTest.initSelectorAndSplit(stat);
@@ -880,29 +889,29 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         /// Actual rule learning is called here with the given method.
         // Settings.* check if the given option is given on the command line
         ClusRuleSet rset = new ClusRuleSet(getStatManager());
-        if (method == SettingsRules.COVERING_METHOD_STANDARD) {
+        if (method.equals(CoveringMethod.Standard)) {
             separateAndConquor(rset, data);
         }
-        else if (method == SettingsRules.COVERING_METHOD_BEAM_RULE_DEF_SET) { // Obsolete!
+        else if (method.equals(CoveringMethod.BeamRuleDefSet)) { // Obsolete!
             separateAndConquorAddRulesIfBetterFromBeam2(rset, data);
 
             /**
              * Can be put on by CoveringMethod = RandomRuleSet
              */
         }
-        else if (method == SettingsRules.COVERING_METHOD_RANDOM_RULE_SET) {
+        else if (method.equals(CoveringMethod.RandomRuleSet)) {
             separateAndConquorRandomly(rset, data);
         }
-        else if (method == SettingsRules.COVERING_METHOD_STANDARD_BOOTSTRAP) {
+        else if (method.equals(CoveringMethod.StandardBootstrap)) {
             separateAndConquorBootstraped(rset, data);
         }
-        else if (method == SettingsRules.COVERING_METHOD_HEURISTIC_ONLY) {
+        else if (method.equals(CoveringMethod.HeurOnly)) {
             separateAndConquorWithHeuristic(rset, data);
         }
-        else if (add_method == SettingsRules.RULE_ADDING_METHOD_IF_BETTER) {
+        else if (add_method.equals(RuleAddingMethod.IfBetter)) {
             separateAndConquorAddRulesIfBetter(rset, data);
         }
-        else if (add_method == SettingsRules.RULE_ADDING_METHOD_IF_BETTER_BEAM) {
+        else if (add_method.equals(RuleAddingMethod.IfBetterBeam)) {
             separateAndConquorAddRulesIfBetterFromBeam(rset, data);
         }
         else {
@@ -958,23 +967,23 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             System.out.println("Preparing for optimization.");
 
         // Find the rule weights with optimization algorithm.
-        if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+        if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized)) {
             optAlg = new GDAlg(getStatManager(), param, rset);
         }
-        else if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED) {
+        else if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.Optimized)) {
             optAlg = new DeAlg(getStatManager(), param, rset);
         }
-        else if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY) {
+        else if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
             weights = CallExternGD.main(getStatManager(), param, rset);
         }
 
-        if (getSettings().getGeneral().getVerbose() > 0 && getSettings().getRules().getRulePredictionMethod() != SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY)
+        if (getSettings().getGeneral().getVerbose() > 0 && !getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary))
             System.out.println("Preparations ended. Starting optimization.");
 
-        if (getSettings().getRules().getRulePredictionMethod() != SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY) {
+        if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
             // If using external binary, optimization is already done.
 
-            if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED && getSettings().getRules().getOptGDNbOfTParameterTry() > 1) {
+            if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized) && getSettings().getRules().getOptGDNbOfTParameterTry() > 1) {
 
                 // Running optimization multiple times and selecting the best one.
                 GDAlg gdalg = (GDAlg) optAlg;
@@ -1036,7 +1045,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         }
 
         // Postprocessing if needed. -- Undo inside normalization on rule set if needed
-        if (getSettings().getRules().getRulePredictionMethod() != SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY)
+        if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary))
             optAlg.postProcess(rset);
 
         // Print weights of all terms
@@ -1050,12 +1059,12 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         int indexOfLastHandledWeight = rset.removeLowWeightRules() + 1;
 
         // if needed, add implicit linear terms explicitly. this has to be done after removing low weight rules
-        if (getSettings().getRules().getOptAddLinearTerms() == SettingsRules.OPT_GD_ADD_LIN_YES_SAVE_MEMORY) {
+        if (getSettings().getRules().getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory)) {
             rset.addImplicitLinearTermsExplicitly(weights, indexOfLastHandledWeight);
         }
 
         // If linear terms are used, include the normalizing to their weights and the all covering rule
-        if (getSettings().getRules().isOptAddLinearTerms() && getSettings().getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_CONVERT) {
+        if (getSettings().getRules().isOptAddLinearTerms() && getSettings().getRules().getOptNormalizeLinearTerms().equals(OptimizationLinearTermNormalizeValues.YesAndConvert)) {
             rset.convertToPlainLinearTerms();
         }
 
@@ -1068,7 +1077,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     /**
      * Updates the default rule. This is the rule that is used if no other rule covers the example.
      * For rule ensembles this is, in effect, void rule.
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      */
     public void updateDefaultRule(ClusRuleSet rset, RowData data) throws ClusException {
         for (int i = 0; i < rset.getModelSize(); i++) {
@@ -1089,7 +1099,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * @param cr
      *        ClusRun
      * @return RuleSet
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public ClusModel induceRandomly(ClusRun run) throws ClusException, IOException, InterruptedException {
         int number = getSettings().getRules().nbRandomRules();
@@ -1147,7 +1157,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * @param data
      * @param rn
      * @return
-     * @throws ClusException 
+     * @throws ClusException
      */
     private ClusRule generateOneRandomRule(RowData data, Random rn) throws ClusException {
         // TODO: Remove/change the beam stuff!!!

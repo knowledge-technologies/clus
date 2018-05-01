@@ -17,6 +17,8 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.VotingType;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLUnlabeledCriteria;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.processor.ModelProcessorCollection;
@@ -35,8 +37,9 @@ public class ClusOOBErrorEstimate {
     static boolean m_OOBCalculation;
     int m_Mode;
     Settings m_Settings;
-    static HashMap m_OOBVotes; //individual votes for the OOB examples (we need this for automatic selection of threshold for SSL self-training)
-    static HashMap OOBMapping; //to store which examples are OOB in which trees
+    static HashMap m_OOBVotes; // individual votes for the OOB examples (we need this for automatic selection of
+                               // threshold for SSL self-training)
+    static HashMap OOBMapping; // to store which examples are OOB in which trees
     static ClusReadWriteLock m_LockPredictions = new ClusReadWriteLock();
     static ClusReadWriteLock m_LockUsage = new ClusReadWriteLock();
     static ClusReadWriteLock m_LockCalculation = new ClusReadWriteLock();
@@ -107,13 +110,13 @@ public class ClusOOBErrorEstimate {
         // allmi.addModelProcessor(ClusModelInfo.TRAIN_ERR, wrt);
         // cr.copyAllModelsMIs();
         // wrt.initializeAll(schema);
-        if(sett.getOutput().isWriteOOBFile()) {
-	        calcOOBError(oob_total, all_data, ClusModelInfo.TRAIN_ERR, cr);
-	        cl.calcExtraTrainingSetErrors(cr);
-	        output.writeHeader();
-	        output.writeOutput(cr, true, cl.getSettings().getOutput().isOutTrainError());
-	        output.close();
-	        // wrt.close();
+        if (sett.getOutput().isWriteOOBFile()) {
+            calcOOBError(oob_total, all_data, ClusModelInfo.TRAIN_ERR, cr);
+            cl.calcExtraTrainingSetErrors(cr);
+            output.writeHeader();
+            output.writeOutput(cr, true, cl.getSettings().getOutput().isOutTrainError());
+            output.close();
+            // wrt.close();
         }
         setOOBCalculation(false);
         // m_OOBCalculation = false;
@@ -198,7 +201,7 @@ public class ClusOOBErrorEstimate {
                 // this should have a [][].for each attribute we store: Majority: the winning class, for Probability
                 // distribution, the class distribution
 
-                if (getSettings().getEnsemble().getClassificationVoteType() == SettingsEnsemble.VOTING_TYPE_PROBAB_DISTR) {
+                if (getSettings().getEnsemble().getClassificationVoteType().equals(VotingType.ProbabilityDistribution)) {
                     // m_OOBPredictions.put(tuple.hashCode(),
                     // ClusEnsembleInduceOptimization.transformToProbabilityDistribution(stat.m_ClassCounts));
                     put2DArrayToOOBPredictions(tuple, ClusEnsembleInduceOptimization.transformToProbabilityDistribution(((ClassificationStat) stat).m_ClassCounts));
@@ -212,11 +215,11 @@ public class ClusOOBErrorEstimate {
                 break;
         }
 
-        //store votes (we need this for automatic selection of threshold for SSL self-training)
-        //FIXME: call of static Settings, should be refactored to avoid this 
-        if (getSettings().getSSL().getUnlabeledCriteria() == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOB
-                || getSettings().getSSL().getUnlabeledCriteria() == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOBINITIAL) {
-            ArrayList votes = new ArrayList();
+        // store votes (we need this for automatic selection of threshold for SSL self-training)
+        // FIXME: call of static Settings, should be refactored to avoid this
+
+        if (Arrays.asList(SSLUnlabeledCriteria.AutomaticOOB, SSLUnlabeledCriteria.AutomaticOOBInitial).contains(getSettings().getSSL().getUnlabeledCriteria())) {
+            ArrayList<ClusStatistic> votes = new ArrayList<>();
             votes.add(stat);
             m_OOBVotes.put(tuple.hashCode(), votes);
         }
@@ -254,14 +257,14 @@ public class ClusOOBErrorEstimate {
                 ClassificationStat statc = (ClassificationStat) stat;
                 double[][] preds = statc.m_ClassCounts.clone();
 
-                if (getSettings().getEnsemble().getClassificationVoteType() == SettingsEnsemble.VOTING_TYPE_PROBAB_DISTR) {
+                if (getSettings().getEnsemble().getClassificationVoteType().equals(VotingType.ProbabilityDistribution)) {
                     preds = ClusEnsembleInduceOptimization.transformToProbabilityDistribution(preds);
                 }
                 else {
                     // default is Majority Vote
                     preds = ClusEnsembleInduceOptimization.transformToMajority(preds);
                 }
-               
+
                 double[][] sum_predictions = get2DArrayFromOOBPredictions(tuple); // (double[][])m_OOBPredictions.get(tuple.hashCode());
                 sum_predictions = ClusEnsembleInduceOptimization.incrementPredictions(sum_predictions, preds);
                 put2DArrayToOOBPredictions(tuple, sum_predictions);// m_OOBPredictions.put(tuple.hashCode(),
@@ -269,10 +272,10 @@ public class ClusOOBErrorEstimate {
                 break;
         }
 
-        //store votes (we need this for automatic selection of threshold for SSL self-training)
-        //FIXME: call of static Settings, should be refactored to avoid this
-        if (getSettings().getSSL().getUnlabeledCriteria() == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOB 
-                || getSettings().getSSL().getUnlabeledCriteria() == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOBINITIAL) {
+        // store votes (we need this for automatic selection of threshold for SSL self-training)
+        // FIXME: call of static Settings, should be refactored to avoid this
+
+        if (Arrays.asList(SSLUnlabeledCriteria.AutomaticOOB, SSLUnlabeledCriteria.AutomaticOOBInitial).contains(getSettings().getSSL().getUnlabeledCriteria())) {
             ((ArrayList) m_OOBVotes.get(tuple.hashCode())).add(stat);
         }
     }
@@ -320,7 +323,7 @@ public class ClusOOBErrorEstimate {
      *
      * @param treeNumber
      * @return
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public static boolean isOOBForTree(DataTuple tuple, int treeNumber) throws InterruptedException {
         boolean isOOB;

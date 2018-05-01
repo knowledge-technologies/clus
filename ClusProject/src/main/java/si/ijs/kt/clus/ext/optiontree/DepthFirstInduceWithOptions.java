@@ -36,6 +36,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.TreeOptimizeValues;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.test.NodeTest;
@@ -51,7 +52,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
     public FindBestTests m_FindBestTests;
 
 
-    //private int MODE = 0; // 0 = Kohavi, Kunz / 1 = Ikonomovska 
+    // private int MODE = 0; // 0 = Kohavi, Kunz / 1 = Ikonomovska
 
     private DepthFirstInduceWithOptions(ClusInductionAlgorithm other) {
         super(other);
@@ -77,8 +78,8 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
 
     private void makeLeaf(MyNode node) {
         node.makeLeaf();
-        //node.m_TargetStat.calcMean(); // TODO WTH why do I need this?
-        if (getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_CLUSTERING_STATS)) {
+        // node.m_TargetStat.calcMean(); // TODO WTH why do I need this?
+        if (getSettings().getTree().hasTreeOptimize(TreeOptimizeValues.NoClusteringStats)) {
             node.setClusteringStat(null);
         }
     }
@@ -91,7 +92,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
         }
 
         ClusRandomNonstatic rnd = new ClusRandomNonstatic(getSettings().getGeneral().getRandomSeed());
-        
+
         m_FindBestTests = new FindBestTests(m_StatManager);
         initSelectorAndSplit(m_Root.getClusteringStat());
         setInitialData(m_Root.getClusteringStat(), data);
@@ -142,7 +143,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
                 subsets[j] = data.applyWeighted(test, j);
             }
 
-            if (node != m_Root && getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_INODE_STATS)) {
+            if (node != m_Root && getSettings().getTree().hasTreeOptimize(TreeOptimizeValues.NoInodeStats)) {
                 // Don't remove statistics of root node; code below depends on them
                 node.setClusteringStat(null);
                 node.setTargetStat(null);

@@ -42,6 +42,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.TreeOptimizeValues;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.ClusModel;
@@ -58,7 +59,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     protected FindBestTest m_FindBestTest;
     protected FindBestTest m_Find_MinMax; // daniela
     protected ClusNode m_Root;
-    
+
     protected static int SHOW_INDUCE_PROGRESS = 2;
 
 
@@ -119,8 +120,23 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public boolean initSelectorAndStopCrit(ClusNode node, RowData data) {
         int max = getSettings().getConstraints().getTreeMaxDepth();
         if (max != -1 && node.getLevel() >= max) { return true; }
-        m_Find_MinMax.initSelectorAndStopCrit(node.getClusteringStat(), data); // daniela   
-        if (node.getTargetStat().getTargetSumWeights() < 2 * getSettings().getModel().getMinimalWeight()) { // FIXME: not sure how to deal with partially labeled data, should we allow split if, for example, only one target has labels?  
+        m_Find_MinMax.initSelectorAndStopCrit(node.getClusteringStat(), data); // daniela
+        if (node.getTargetStat().getTargetSumWeights() < 2 * getSettings().getModel().getMinimalWeight()) { // FIXME:
+                                                                                                            // not sure
+                                                                                                            // how to
+                                                                                                            // deal with
+                                                                                                            // partially
+                                                                                                            // labeled
+                                                                                                            // data,
+                                                                                                            // should we
+                                                                                                            // allow
+                                                                                                            // split if,
+                                                                                                            // for
+                                                                                                            // example,
+                                                                                                            // only one
+                                                                                                            // target
+                                                                                                            // has
+                                                                                                            // labels?
             return true;
         }
         return m_FindBestTest.initSelectorAndStopCrit(node.getClusteringStat(), data);
@@ -135,15 +151,17 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         }
         else {
             ClusAttrType[] selected;
-            //boolean shouldSet = false;
-            switch (sett.getEnsemble().getEnsembleMethod()) { // setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd)
+            // boolean shouldSet = false;
+            switch (sett.getEnsemble().getEnsembleMethod()) { // setRandomSubspaces(ClusAttrType[] attrs, int select,
+                                                              // ClusRandomNonstatic rnd)
                 case Bagging:
                     selected = schema.getDescriptiveAttributes();
                     break;
                 case RForest:
                     ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
-                    //shouldSet = true; //ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    // shouldSet = true; //ClusEnsembleInduce.setRandomSubspaces(attrsAll,
+                    // schema.getSettings().getNbRandomAttrSelected(), rnd);
                     break;
                 // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
                 // schema.getSettings().getNbRandomAttrSelected());
@@ -155,16 +173,18 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     selected = ClusEnsembleInduce.getRandomSubspaces();
                     break;
-                case RFeatSelection: //SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
+                case RFeatSelection: // SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
                     ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
-                    //shouldSet = true;// ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    // shouldSet = true;// ClusEnsembleInduce.setRandomSubspaces(attrsAll1,
+                    // schema.getSettings().getNbRandomAttrSelected(), rnd);
                     break;
                 case ExtraTrees:// same as for Random Forests
                     ClusAttrType[] attrs_all = schema.getDescriptiveAttributes();
                     selected = ClusEnsembleInduce.selectRandomSubspaces(attrs_all, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandomNonstatic.RANDOM_SELECTION, rnd);
-                    //shouldSet = true; // ClusEnsembleInduce.setRandomSubspaces(attrs_all, schema.getSettings().getNbRandomAttrSelected(), rnd);
+                    // shouldSet = true; // ClusEnsembleInduce.setRandomSubspaces(attrs_all,
+                    // schema.getSettings().getNbRandomAttrSelected(), rnd);
                     // ClusEnsembleInduce.setRandomSubspacesProportionalToSparsity(attrsAll,
                     // schema.getSettings().getNbRandomAttrSelected());
                     break;
@@ -174,7 +194,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             }
             // Current references of the method do not need this
             // if (shouldSet){
-            // 	ClusEnsembleInduce.setRandomSubspaces(selected);
+            // ClusEnsembleInduce.setRandomSubspaces(selected);
             // }
             return selected;
         }
@@ -244,7 +264,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                     alternatives.remove(k);
                     k--;
                     System.out.println("Alternative split with different ex in subsets: " + nt.getString());
-                    //removed = true;
+                    // removed = true;
                 }
 
             }
@@ -257,19 +277,19 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
 
     public void makeLeaf(ClusNode node) {
-        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
+        if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
             System.out.println("Creating a leaf ...");
         }
         node.makeLeaf();
-        if (getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_CLUSTERING_STATS)) {
+        if (getSettings().getTree().hasTreeOptimize(TreeOptimizeValues.NoClusteringStats)) {
             node.setClusteringStat(null);
         }
     }
 
 
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws Exception {
-        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
-            System.out.println("Depth " + node.getLevel() + ": inducing new node: "  + data.getNbRows() + " examples");
+        if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
+            System.out.println("Depth " + node.getLevel() + ": inducing new node: " + data.getNbRows() + " examples");
         }
         if (rnd == null) {
             // rnd may be null due to some calls of induce that do not support parallelisation yet
@@ -286,7 +306,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         // Find best test
 
         // long start_time = System.currentTimeMillis();
-        //if all values are missing for some attribute, statistic of parent node are used for estimation of heuristic score and prototype calculation. Needed for SSL-PCTs
+        // if all values are missing for some attribute, statistic of parent node are used for estimation of heuristic
+        // score and prototype calculation. Needed for SSL-PCTs
         if (getSettings().getTree().getMissingClusteringAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT) {
             m_FindBestTest.setParentStatsToChildren();
         }
@@ -295,7 +316,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         boolean isGIS = !getSettings().getAttribute().isNullGIS();
         if (isGIS) {
             // daniela
-            //only for every binary attribute or, as some say, samo za site binarni atr
+            // only for every binary attribute or, as some say, samo za site binarni atr
             double globalMax = Double.NEGATIVE_INFINITY, globalMin = Double.POSITIVE_INFINITY;
             m_Find_MinMax.resetMinMax();
             for (int i = 0; i < attrs.length; i++) {
@@ -315,7 +336,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             if (isGIS) {
                 // daniela
                 ClusStatistic.INITIALIZEPARTIALSUM = true; // This way the first time a split threshold of the current
-                ClassificationStat.INITIALIZEPARTIALSUM = true; // attribute is evaluated, the corresponding partial sums of
+                ClassificationStat.INITIALIZEPARTIALSUM = true; // attribute is evaluated, the corresponding partial
+                                                                // sums of
                 WHTDStatistic.INITIALIZEPARTIALSUM = true; // Optimized Moran I would be computed
                 // daniela end
             }
@@ -347,7 +369,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         if (best.hasBestTest()) {
             // start_time = System.currentTimeMillis();
 
-            //if all values are missing for some attribute, statistic of parent node are used for estimation of heuristic score and prototype calculation. Needed for SSL-PCTs
+            // if all values are missing for some attribute, statistic of parent node are used for estimation of
+            // heuristic score and prototype calculation. Needed for SSL-PCTs
             if (getSettings().getTree().getMissingClusteringAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT) {
                 m_FindBestTest.setParentStatsToThis(node.getClusteringStat());
             }
@@ -367,7 +390,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             if (getSettings().getTree().showAlternativeSplits()) {
                 filterAlternativeSplits(node, data, subsets);
             }
-            if (node != m_Root && getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_INODE_STATS)) {
+            if (node != m_Root && getSettings().getTree().hasTreeOptimize(TreeOptimizeValues.NoInodeStats)) {
                 // Don't remove statistics of root node; code below depends on them
                 node.setClusteringStat(null);
                 node.setTargetStat(null);
@@ -378,9 +401,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 child.initClusteringStat(m_StatManager, m_Root.getClusteringStat(), subsets[j]);
                 child.initTargetStat(m_StatManager, m_Root.getTargetStat(), subsets[j]);
 
-                //added by Jurica Levatic, JSI. Needed for SSL-PCTs
-                if (getSettings().getTree().getMissingClusteringAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT
-                        || getSettings().getTree().getMissingTargetAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT) {
+                // added by Jurica Levatic, JSI. Needed for SSL-PCTs
+                if (getSettings().getTree().getMissingClusteringAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT || getSettings().getTree().getMissingTargetAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT) {
                     child.getClusteringStat().setParentStat(node.getClusteringStat());
                     child.getTargetStat().setParentStat(node.getTargetStat());
                 }
@@ -391,7 +413,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         else {
             makeLeaf(node);
         }
-        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
+        if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
             System.out.println("Depth " + node.getLevel() + ": node finished.");
         }
     }
@@ -559,10 +581,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
     public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
         int threads = getSettings().getEnsemble().getNumberOfThreads();
         if (threads != 1) {
-            String warning = String.format("Potential WARNING:\n" + "It seems that you are trying"
-                    + " to build an ensemble in parallel.\n If this is not the case, ignore this message. Otherwise:" + "The "
-                    + "chosen number of threads (%d) is not equal to 1, and the method\n" + "induceSingleUnpruned(ClusRun cr) is not appropriate for parallelism"
-                    + " (the results might not be reproducible).\n" + "The method induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) should be used instead.", threads);
+            String warning = String.format("Potential WARNING:\n" + "It seems that you are trying" + " to build an ensemble in parallel.\n If this is not the case, ignore this message. Otherwise:" + "The " + "chosen number of threads (%d) is not equal to 1, and the method\n" + "induceSingleUnpruned(ClusRun cr) is not appropriate for parallelism" + " (the results might not be reproducible).\n" + "The method induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) should be used instead.", threads);
             System.err.println(warning);
         }
         return induceSingleUnpruned((RowData) cr.getTrainingSet(), null);

@@ -38,6 +38,8 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.util.ClusException;
@@ -67,11 +69,11 @@ public class ClusRulesFromTree {
      * Settings.CONVERT_RULES_ALLNODES:
      * Generate one rule for each node of the tree (including internal nodes) except for the root
      */
-    protected int m_Mode;
+    protected ConvertRules m_Mode;
 
 
     /** The parameter seems to be always true? */
-    public ClusRulesFromTree(boolean onlyValidated, int mode) {
+    public ClusRulesFromTree(boolean onlyValidated, ConvertRules mode) {
         m_Validated = onlyValidated;
         m_Mode = mode;
     }
@@ -95,30 +97,22 @@ public class ClusRulesFromTree {
      * @return The created rule set.
      * @throws ClusException
      * @throws IOException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
-    public ClusRuleSet constructRules(
-            ClusRun cr,
-            ClusNode node,
-            ClusStatManager mgr,
-            boolean computeDispersion,
-            int optimizeRuleWeights)
-            throws ClusException,
-            IOException, InterruptedException {
+    public ClusRuleSet constructRules(ClusRun cr, ClusNode node, ClusStatManager mgr, boolean computeDispersion, RulePredictionMethod optimizeRuleWeights) throws ClusException, IOException, InterruptedException {
 
         ClusRuleSet ruleSet = constructRules(node, mgr);
 
         RowData data = (RowData) cr.getTrainingSet();
 
         // Optimizing rule set if needed
-        if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED
-                || optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+        if (optimizeRuleWeights.equals(RulePredictionMethod.Optimized) || optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
             OptAlg optAlg = null;
 
             OptProbl.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
 
             // Find the rule weights with optimization algorithm.
-            if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+            if (optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
                 optAlg = new GDAlg(mgr, param, ruleSet);
             }
             else {
@@ -161,29 +155,21 @@ public class ClusRulesFromTree {
         return ruleSet;
     }
 
-    
-    public ClusRuleSet constructOptionRules(
-            ClusRun cr,
-            MyNode node,
-            ClusStatManager mgr,
-            boolean computeDispersion,
-            int optimizeRuleWeights)
-            throws ClusException,
-            IOException, InterruptedException {
+
+    public ClusRuleSet constructOptionRules(ClusRun cr, MyNode node, ClusStatManager mgr, boolean computeDispersion, RulePredictionMethod optimizeRuleWeights) throws ClusException, IOException, InterruptedException {
 
         ClusRuleSet ruleSet = constructOptionRules(node, mgr);
 
         RowData data = (RowData) cr.getTrainingSet();
 
         // Optimizing rule set if needed
-        if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED ||
-                optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+        if (optimizeRuleWeights.equals(RulePredictionMethod.Optimized) || optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
             OptAlg optAlg = null;
 
             OptProbl.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
 
             // Find the rule weights with optimization algorithm.
-            if (optimizeRuleWeights == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+            if (optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
                 optAlg = new GDAlg(mgr, param, ruleSet);
             }
             else {
@@ -226,6 +212,7 @@ public class ClusRulesFromTree {
         return ruleSet;
     }
 
+
     /**
      * Construct rules from terminal nodes of the given tree. Does not do any processing
      * like dispersion or weight optimization. Especially used
@@ -248,12 +235,12 @@ public class ClusRulesFromTree {
         return ruleSet;
     }
 
-    
+
     /** Option tree conversion */
     public ClusRuleSet constructOptionRules(MyNode node, ClusStatManager mgr) {
         ClusRuleSet ruleSet = new ClusRuleSet(mgr);
         ClusRule init = new ClusRule(mgr);
-        //      System.out.println("Constructing rules from an option tree.");
+        // System.out.println("Constructing rules from an option tree.");
         constructRecursiveOption(node, init, ruleSet);
         ruleSet.removeEmptyRules();
         ruleSet.simplifyRules();
@@ -264,7 +251,7 @@ public class ClusRulesFromTree {
 
     /** Only terminal nodes are added to rule set */
     public void constructRecursive(ClusNode node, ClusRule rule, ClusRuleSet set) {
-        if (node.atBottomLevel() || m_Mode == SettingsOutput.CONVERT_RULES_ALLNODES) {
+        if (node.atBottomLevel() || m_Mode.equals(ConvertRules.AllNodes)) {
             if (!m_Validated || node.getTargetStat().isValidPrediction()) {
                 rule.setTargetStat(node.getTargetStat());
                 rule.setID(node.getID());
@@ -280,8 +267,8 @@ public class ClusRulesFromTree {
             constructRecursive(child, child_rule, set);
         }
     }
-    
-    
+
+
     /** Only terminal nodes are added to rule set (OPTION TREE) */
     public void constructRecursiveOption(MyNode node, ClusRule rule, ClusRuleSet set) {
         if (node instanceof ClusOptionNode) {
@@ -289,7 +276,7 @@ public class ClusRulesFromTree {
                 constructRecursiveOption(node.getChild(i), rule, set);
         }
         else {
-            if (node.atBottomLevel() || m_Mode == SettingsOutput.CONVERT_RULES_ALLNODES) {
+            if (node.atBottomLevel() || m_Mode.equals(ConvertRules.AllNodes)) {
                 if (!m_Validated || node.getTargetStat().isValidPrediction()) {
                     rule.setTargetStat(node.getTargetStat());
                     rule.setID(node.getID());

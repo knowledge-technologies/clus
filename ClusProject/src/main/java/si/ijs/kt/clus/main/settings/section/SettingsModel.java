@@ -56,10 +56,6 @@ public class SettingsModel extends SettingsBase {
     }
 
 
-    // public double[] getClassWeight() {
-    // return m_ClassWeight.getDoubleVector();
-    // }
-
     public boolean isNominalSubsetTests() {
         return m_NominalSubsetTests.getValue();
     }
@@ -72,7 +68,6 @@ public class SettingsModel extends SettingsBase {
         model.addNode(m_MinNbEx = new INIFileInt("MinimalNumberExamples", 0));
         model.addNode(m_MinKnownW = new INIFileDouble("MinimalKnownWeight", 0));
         model.addNode(m_TuneFolds = new INIFileString("ParamTuneNumberFolds", "10"));
-        // model.addNode(m_ClassWeight = new INIFileNominalOrDoubleOrVector("ClassWeights", EMPTY));
         model.addNode(m_NominalSubsetTests = new INIFileBool("NominalSubsetTests", true));
 
         return model;

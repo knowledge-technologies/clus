@@ -40,7 +40,6 @@ import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRNode;
 import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsHMTR;
 import si.ijs.kt.clus.util.ClusException;
 
 
@@ -337,25 +336,14 @@ public class NumericAttrType extends ClusAttrType {
                             values.add(res);
                         }
                     }
-                    //            HMTR_AGG_SUM = 0;
-                    //            HMTR_AGG_AVG = 1;
-                    //            HMTR_AGG_MEDIAN = 2;
-                    //            HMTR_AGG_MIN = 3;
-                    //            HMTR_AGG_MAX = 4;
-                    //            HMTR_AGG_AND = 5;
-                    //            HMTR_AGG_OR = 6;
-                    //            HMTR_AGG_COUNT = 7;
-                    //            HMTR_AGG_VAR = 8;
-                    //            HMTR_AGG_STDEV = 9;
-                    //            HMTR_AGG_ZERO = 10
-                    //            HMTR_AGG_ONE = 11
+
                     Collections.sort(values);
                     switch (getSettings().getHMTR().getHMTRAggregation()) {
-                        case SettingsHMTR.HMTR_AGG_SUM:
+                        case SUM:
                             return sum;
-                        case SettingsHMTR.HMTR_AGG_AVG:
+                        case AVG:
                             return sum / children.size();
-                        case SettingsHMTR.HMTR_AGG_MEDIAN:
+                        case MEDIAN:
                             int middle = values.size() / 2;
                             if (values.size() % 2 == 1) {
                                 return values.get(middle);
@@ -363,11 +351,11 @@ public class NumericAttrType extends ClusAttrType {
                             else {
                                 return ((values.get(middle - 1) + values.get(middle)) / 2.0);
                             }
-                        case SettingsHMTR.HMTR_AGG_MIN:
+                        case MIN:
                             return Collections.min(values);
-                        case SettingsHMTR.HMTR_AGG_MAX:
+                        case MAX:
                             return Collections.max(values);
-                        case SettingsHMTR.HMTR_AGG_AND:
+                        case AND:
                             for (int i = 0; i < values.size(); i++) {
                                 double val = values.get(i);
                                 if (!(val == 0) && !(val == 1))
@@ -376,7 +364,7 @@ public class NumericAttrType extends ClusAttrType {
                                     return 0;
                             }
                             return 1;
-                        case SettingsHMTR.HMTR_AGG_OR:
+                        case OR:
                             for (int i = 0; i < values.size(); i++) {
                                 double val = values.get(i);
                                 if (!(val == 0) && !(val == 1))
@@ -385,9 +373,9 @@ public class NumericAttrType extends ClusAttrType {
                                     return 1;
                             }
                             return 0;
-                        case SettingsHMTR.HMTR_AGG_COUNT:
+                        case COUNT:
                             return values.size();
-                        case SettingsHMTR.HMTR_AGG_VAR:
+                        case VAR:
                             double sumDiffsSquared = 0.0;
                             double avg = sum / children.size();
                             for (int i = 0; i < values.size(); i++) {
@@ -396,7 +384,7 @@ public class NumericAttrType extends ClusAttrType {
                                 sumDiffsSquared += diff;
                             }
                             return sumDiffsSquared / (values.size());
-                        case SettingsHMTR.HMTR_AGG_STDEV:
+                        case STDEV:
                             double mean = sum / children.size();
                             double temp = 0;
                             for (int i = 0; i < values.size(); i++) {
@@ -406,9 +394,9 @@ public class NumericAttrType extends ClusAttrType {
                             }
                             double meanOfDiffs = temp / (values.size());
                             return Math.sqrt(meanOfDiffs);
-                        case SettingsHMTR.HMTR_AGG_ZERO:
+                        case ZERO:
                             return 0;
-                        case SettingsHMTR.HMTR_AGG_ONE:
+                        case ONE:
                             return 1;
                     }
                 }

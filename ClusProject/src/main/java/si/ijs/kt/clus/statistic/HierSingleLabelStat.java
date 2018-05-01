@@ -34,6 +34,7 @@ import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
 import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral.Compatibility;
 
 
 public class HierSingleLabelStat extends WHTDStatistic {
@@ -41,12 +42,12 @@ public class HierSingleLabelStat extends WHTDStatistic {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
 
-    public HierSingleLabelStat(Settings sett, ClassHierarchy hier, int comp) {
+    public HierSingleLabelStat(Settings sett, ClassHierarchy hier, Compatibility comp) {
         this(sett, hier, false, comp);
     }
 
 
-    public HierSingleLabelStat(Settings sett, ClassHierarchy hier, boolean onlymean, int comp) {
+    public HierSingleLabelStat(Settings sett, ClassHierarchy hier, boolean onlymean, Compatibility comp) {
         super(sett, hier, onlymean, comp);
     }
 

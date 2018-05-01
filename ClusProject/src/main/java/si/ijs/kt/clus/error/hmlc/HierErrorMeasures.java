@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.zip.GZIPOutputStream;
 
+import si.ijs.kt.clus.algo.kNN.KnnClassifier;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.BinaryPredictionList;
 import si.ijs.kt.clus.error.ROCAndPRCurve;
@@ -18,8 +19,8 @@ import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
 import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
 import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
-import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral.Compatibility;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.format.ClusFormat;
@@ -34,8 +35,8 @@ public class HierErrorMeasures extends ClusError {
     protected boolean[] m_EvalClass;
     protected BinaryPredictionList[] m_ClassWisePredictions;
     protected ROCAndPRCurve[] m_ROCAndPRCurves;
-    protected int m_Compatibility;
-    protected int m_OptimizeMeasure;
+    protected Compatibility m_Compatibility;
+    protected HierarchyMeasures m_OptimizeMeasure;
     protected boolean m_WriteCurves;
     protected double[] m_RecallValues;
     protected double[] m_AvgPrecisionAtRecall;
@@ -51,10 +52,10 @@ public class HierErrorMeasures extends ClusError {
     private boolean m_IsGzipOutput;
 
 
-    public HierErrorMeasures(ClusErrorList par, ClassHierarchy hier, double[] recalls, int compat, int optimize, boolean wrCurves, boolean isGzipOutput) {
+    public HierErrorMeasures(ClusErrorList par, ClassHierarchy hier, double[] recalls, Compatibility comp, HierarchyMeasures optimize, boolean wrCurves, boolean isGzipOutput) {
         super(par, hier.getTotal());
         m_Hier = hier;
-        m_Compatibility = compat;
+        m_Compatibility = comp;
         m_OptimizeMeasure = optimize;
         m_WriteCurves = wrCurves;
         m_RecallValues = recalls;
@@ -99,7 +100,7 @@ public class HierErrorMeasures extends ClusError {
         if (name.equals("Original") || name.equals("Pruned") || name.equals("Default")) {
             return true;
         }
-        else if (name.startsWith("Original ") && name.contains("-nn model with ") || name.equals("Default 1-nn model with no weighting")) {
+        else if (name.startsWith("Original ") && name.contains("-nn model with ") || name.equals(KnnClassifier.DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS)) {
             // this is kNN hackish solution
             return true;
         }
@@ -121,13 +122,13 @@ public class HierErrorMeasures extends ClusError {
     public double getModelError() {
         computeAll();
         switch (m_OptimizeMeasure) {
-            case SettingsHMLC.HIERMEASURE_AUROC:
+            case AverageAUROC:
                 return m_AverageAUROC;
-            case SettingsHMLC.HIERMEASURE_AUPRC:
+            case AverageAUPRC:
                 return m_AverageAUPRC;
-            case SettingsHMLC.HIERMEASURE_WEIGHTED_AUPRC:
+            case WeightedAverageAUPRC:
                 return m_WAvgAUPRC;
-            case SettingsHMLC.HIERMEASURE_POOLED_AUPRC:
+            case PooledAUPRC:
                 return m_PooledAUPRC;
         }
         return 0.0;
@@ -214,7 +215,7 @@ public class HierErrorMeasures extends ClusError {
 
     public void compatibility(ROCAndPRCurve[] curves, ROCAndPRCurve pooled) {
         double[] thr = null;
-        if (m_Compatibility <= SettingsGeneral.COMPATIBILITY_MLJ08) {
+        if (m_Compatibility.getCompatibilityLevel() <= Compatibility.MLJ08.getCompatibilityLevel()) {
             thr = new double[51];
             for (int i = 0; i <= 50; i++) {
                 thr[i] = (double) 2 * i / 100.0;

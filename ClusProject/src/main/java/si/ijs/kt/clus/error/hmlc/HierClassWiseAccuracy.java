@@ -29,6 +29,7 @@ package si.ijs.kt.clus.error.hmlc;
 import java.io.PrintWriter;
 import java.util.Arrays;
 
+import si.ijs.kt.clus.algo.kNN.KnnClassifier;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
@@ -104,7 +105,7 @@ public class HierClassWiseAccuracy extends ClusError {
         else if (name.equals("Original")) {
             return false;
         }
-        else if (name.startsWith("Original") && name.contains("-nn model with ") || name.equals("Default 1-nn model with no weighting")) {
+        else if (name.startsWith("Original") && name.contains("-nn model with ") || name.equals(KnnClassifier.DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS)) {
             // this is kNN hackish solution: obviously, this else-if is not necessary and is here to be seen
             return true;
         }

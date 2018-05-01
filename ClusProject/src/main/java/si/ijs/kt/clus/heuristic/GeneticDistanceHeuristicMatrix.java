@@ -37,10 +37,11 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     protected double m_RootAvgAllDistances; // avg of pairwise distances in the complete dataset
     protected double m_RootSumEntropyWithin; // sum of entropies in the complete dataset
 
-    
+
     public GeneticDistanceHeuristicMatrix(Settings sett) {
         super(sett);
     }
+
 
     // executed once, when splitting the root node
     @Override
@@ -304,11 +305,11 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     @Override
     public double calcHeuristic(ClusStatistic c_tstat, ClusStatistic c_pstat, ClusStatistic missing) {
         switch (getSettings().getPhylogeny().getPhylogenyCriterion()) {
-            case SettingsPhylogeny.PHYLOGENY_CRITERION_BRANCHLENGTHS:
+            case MinTotBranchLength:
                 return calcHeuristicBranchLengths(c_tstat, c_pstat, null);
-            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXAVGPWDIST:
+            case MaxAvgPWDistance:
                 return calcHeuristicArslan(c_tstat, c_pstat, null);
-            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXMINPWDIST:
+            case MaxMinPWDistance:
                 return calcHeuristicMaxMinDistance(c_tstat, c_pstat, null);
         }
         return 0.0; // never executed
@@ -320,11 +321,11 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         ClusStatistic p_stat = array_stat[0];
         ClusStatistic part_stat = array_stat[1];
         switch (getSettings().getPhylogeny().getPhylogenyCriterion()) {
-            case SettingsPhylogeny.PHYLOGENY_CRITERION_BRANCHLENGTHS:
+            case MinTotBranchLength:
                 return calcHeuristicBranchLengths(c_tstat, p_stat, part_stat);
-            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXAVGPWDIST:
+            case MaxAvgPWDistance:
                 return calcHeuristicArslan(c_tstat, p_stat, null);
-            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXMINPWDIST:
+            case MaxMinPWDistance:
                 return calcHeuristicMaxMinDistance(c_tstat, p_stat, null);
         }
         return 0.0; // never executed
@@ -349,8 +350,8 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         double stop = checkStopCriterion(tstat, pstat, nstat);
         if (stop != 0.0) { return stop; }
 
-        //double n_pos = pstat.getTotalWeight();
-        //double n_neg = nstat.getTotalWeight();
+        // double n_pos = pstat.getTotalWeight();
+        // double n_neg = nstat.getTotalWeight();
 
         int[] posindices = constructIndexVector(m_Data, pstat);
         int[] negindices = constructIndexVector(m_Data, nstat);
@@ -377,8 +378,8 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         double stop = checkStopCriterion(tstat, pstat, nstat);
         if (stop != 0.0) { return stop; }
 
-//        double n_pos = pstat.getTotalWeight();
-//        double n_neg = nstat.getTotalWeight();
+        // double n_pos = pstat.getTotalWeight();
+        // double n_neg = nstat.getTotalWeight();
 
         int[] posindices = constructIndexVector(m_Data, pstat);
         int[] negindices = constructIndexVector(m_Data, nstat);
@@ -647,12 +648,12 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
     @Override
     public String getName() {
         switch (getSettings().getPhylogeny().getPhylogenyCriterion()) {
-            case SettingsPhylogeny.PHYLOGENY_CRITERION_BRANCHLENGTHS:
+            case MinTotBranchLength:
                 return "GeneticDistanceHeuristicMatrix -> Minimize total branch length";
-            case SettingsPhylogeny.PHYLOGENY_CRITERION_MAXAVGPWDIST:
+            case MaxAvgPWDistance:
                 return "GeneticDistanceHeuristicMatrix -> Maximize avg pairwise distance";
+            default:
+                return "GeneticDistanceHeuristicMatrix";
         }
-        return "GeneticDistanceHeuristicMatrix";
     }
-
 }

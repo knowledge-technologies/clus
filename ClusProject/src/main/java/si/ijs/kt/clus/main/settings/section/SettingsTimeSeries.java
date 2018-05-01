@@ -3,6 +3,7 @@ package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
@@ -20,21 +21,17 @@ public class SettingsTimeSeries extends SettingsBase {
      * Section: Time series *
      ***********************************************************************/
 
-    private final String[] TIME_SERIES_DISTANCE_MEASURE = { "DTW", "QDM", "TSC" };
-    public final static int TIME_SERIES_DISTANCE_MEASURE_DTW = 0;
-    public final static int TIME_SERIES_DISTANCE_MEASURE_QDM = 1;
-    public final static int TIME_SERIES_DISTANCE_MEASURE_TSC = 2;
+    public enum TimeSeriesDistanceMeasure {
+        DTW, QDM, TSC
+    };
 
-    private final String[] TIME_SERIES_PROTOTYPE_COMPLEXITY = { "N2", "LOG", "LINEAR", "NPAIRS", "TEST" };
-    public final static int TIME_SERIES_PROTOTYPE_COMPLEXITY_N2 = 0;
-    public final static int TIME_SERIES_PROTOTYPE_COMPLEXITY_LOG = 1;
-    public final static int TIME_SERIES_PROTOTYPE_COMPLEXITY_LINEAR = 2;
-    public final static int TIME_SERIES_PROTOTYPE_COMPLEXITY_NPAIRS = 3;
-    public final static int TIME_SERIES_PROTOTYPE_COMPLEXITY_TEST = 4;
+    public enum TimeSeriesPrototypeComplexity {
+        N2, Log, Linear, NPairs, Test
+    };
 
     private INIFileSection m_SectionTimeSeries;
-    private INIFileNominal m_TimeSeriesDistance;
-    private INIFileNominal m_TimeSeriesHeuristicSampling;
+    private INIFileEnum<TimeSeriesDistanceMeasure> m_TimeSeriesDistance;
+    private INIFileEnum<TimeSeriesPrototypeComplexity> m_TimeSeriesHeuristicSampling;
 
 
     public boolean isSectionTimeSeriesEnabled() {
@@ -48,40 +45,35 @@ public class SettingsTimeSeries extends SettingsBase {
 
 
     public boolean isTimeSeriesProtoComlexityExact() {
-        if (m_TimeSeriesHeuristicSampling.getValue() == 0) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        return m_TimeSeriesHeuristicSampling.getValue().equals(TimeSeriesPrototypeComplexity.N2);
     }
 
 
-    public int getTimeSeriesDistance() {
+    public TimeSeriesDistanceMeasure getTimeSeriesDistance() {
         return m_TimeSeriesDistance.getValue();
     }
 
 
-    public void setTimeSeriesDistance(int value) {
-        m_TimeSeriesDistance.setSingleValue(value);
+    public void setTimeSeriesDistance(TimeSeriesDistanceMeasure value) {
+        m_TimeSeriesDistance.setValue(value);
     }
 
 
-    public int getTimeSeriesHeuristicSampling() {
+    public TimeSeriesPrototypeComplexity getTimeSeriesHeuristicSampling() {
         return m_TimeSeriesHeuristicSampling.getValue();
     }
 
 
-    public boolean checkTimeSeriesDistance(String value) {
-        return m_TimeSeriesDistance.getStringSingle().equals(value);
+    public boolean checkTimeSeriesDistance(TimeSeriesDistanceMeasure value) {
+        return m_TimeSeriesDistance.getValue().equals(value);
     }
 
 
     @Override
     public INIFileSection create() {
         m_SectionTimeSeries = new INIFileSection("TimeSeries");
-        m_SectionTimeSeries.addNode(m_TimeSeriesDistance = new INIFileNominal("DistanceMeasure", TIME_SERIES_DISTANCE_MEASURE, TIME_SERIES_DISTANCE_MEASURE_DTW));
-        m_SectionTimeSeries.addNode(m_TimeSeriesHeuristicSampling = new INIFileNominal("PrototypeComplexity", TIME_SERIES_PROTOTYPE_COMPLEXITY, TIME_SERIES_PROTOTYPE_COMPLEXITY_N2));
+        m_SectionTimeSeries.addNode(m_TimeSeriesDistance = new INIFileEnum<TimeSeriesDistanceMeasure>("DistanceMeasure", TimeSeriesDistanceMeasure.DTW));
+        m_SectionTimeSeries.addNode(m_TimeSeriesHeuristicSampling = new INIFileEnum<>("PrototypeComplexity", TimeSeriesPrototypeComplexity.N2));
 
         setSectionTimeSeriesEnabled(false); // disabled by default
 

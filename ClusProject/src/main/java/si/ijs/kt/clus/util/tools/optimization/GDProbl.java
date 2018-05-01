@@ -34,6 +34,7 @@ import java.util.ListIterator;
 
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDMTCombineGradient;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
@@ -198,7 +199,7 @@ public class GDProbl extends OptProbl {
 
         m_isWeightNonZero = new boolean[nbWeights];
 
-        if (getSettings().getRules().getOptGDMTGradientCombine() == SettingsRules.OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE) {
+        if (getSettings().getRules().getOptGDMTGradientCombine().equals(OptimizationGDMTCombineGradient.MaxLoss)) {
             m_bannedWeights = new int[nbWeights]; // Are used only for MaxLoss
         }
         else {
@@ -542,11 +543,11 @@ public class GDProbl extends OptProbl {
 
         double gradient = 0;
         switch (getSettings().getRules().getOptGDLossFunction()) {
-            case SettingsRules.OPT_LOSS_FUNCTIONS_01ERROR:
+            case ZeroOneError:
                 // gradient = loss01(trueValue, prediction);
                 // break;
-            case SettingsRules.OPT_LOSS_FUNCTIONS_HUBER:
-            case SettingsRules.OPT_LOSS_FUNCTIONS_RRMSE:
+            case Huber:
+            case RRMSE:
                 // gradient = lossHuber(trueValue, prediction);
                 // break;
                 try {
@@ -556,7 +557,7 @@ public class GDProbl extends OptProbl {
                     s.printStackTrace();
                 } // TODO Huber and alpha computing
                   // Default case
-            case SettingsRules.OPT_LOSS_FUNCTIONS_SQUARED:
+            case Squared:
             default:
                 gradient = gradientSquared(iWeightDim, weights);
                 break;

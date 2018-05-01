@@ -57,6 +57,9 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.RuleAddingMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.test.ClusRuleConstraintInduceTest;
@@ -289,7 +292,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
      * 
      * @param data
      * @return array of rules
-     * @throws ClusException 
+     * @throws ClusException
      */
     public ClusRule[] learnBeamOfRules(RowData data) throws ClusException {
         ClusBeam beam = initializeBeam(data);
@@ -417,14 +420,14 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 
 
     public ClusModel induce(ClusRun run) throws ClusException, IOException, InterruptedException {
-        int method = getSettings().getRules().getCoveringMethod();
-        int add_method = getSettings().getRules().getRuleAddingMethod();
+        CoveringMethod method = getSettings().getRules().getCoveringMethod();
+        RuleAddingMethod add_method = getSettings().getRules().getRuleAddingMethod();
         RowData data = (RowData) run.getTrainingSet();
         ClusStatistic stat = createTotalClusteringStat(data);
         m_FindBestTest.initSelectorAndSplit(stat);
         setHeuristic(m_FindBestTest.getBestTest().getHeuristic());
         ClusRuleSet rset = new ClusRuleSet(getStatManager());
-        if (method == SettingsRules.COVERING_METHOD_STANDARD) {
+        if (method.equals(CoveringMethod.Standard)) {
             separateAndConquor(rset, data);
         }
         else {
@@ -432,7 +435,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         }
         rset.postProc();
         // Optimizing rule set
-        if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED) {
+        if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.Optimized)) {
             rset = optimizeRuleSet(rset, data);
         }
         // Computing dispersion
@@ -462,7 +465,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         OptProbl.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
 
         // Find the rule weights with optimization algorithm.
-        if (getSettings().getRules().getRulePredictionMethod() == SettingsRules.RULE_PREDICTION_METHOD_GD_OPTIMIZED) {
+        if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized)) {
             optAlg = new GDAlg(getStatManager(), param, rset);
         }
         else {
@@ -593,7 +596,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
      * @param cr
      *        ClusRun
      * @return RuleSet
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public ClusModel induceRandomly(ClusRun run) throws ClusException, IOException, InterruptedException {
         int number = getSettings().getRules().nbRandomRules();
@@ -639,7 +642,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
      * @param data
      * @param rn
      * @return
-     * @throws ClusException 
+     * @throws ClusException
      */
     private ClusRule generateOneRandomRule(RowData data, Random rn) throws ClusException {
         // TODO: Remove/change the beam stuff!!!

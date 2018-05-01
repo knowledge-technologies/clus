@@ -131,14 +131,13 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
                 ClassificationStat stat = (ClassificationStat) model.predictWeighted(tuple);
                 double[][] counts = stat.getClassCounts().clone();
                 switch (getSettings().getEnsemble().getClassificationVoteType()) {// default is Probability distribution vote
-                    case SettingsEnsemble.VOTING_TYPE_MAJORITY:
+                    case Majority:
                         counts = transformToMajority(counts);
                         break;
-                    case SettingsEnsemble.VOTING_TYPE_PROBAB_DISTR:
-                        counts = transformToProbabilityDistribution(counts);
-                        break;
+                    case ProbabilityDistribution:
                     default:
                         counts = transformToProbabilityDistribution(counts);
+                        break;
                 }
 
                 //m_AvgPredictions[position] = (m_NbUpdates == 1) ? counts : incrementPredictions(m_AvgPredictions[position], counts, m_NbUpdates);

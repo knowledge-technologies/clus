@@ -61,6 +61,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.Distance;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN.DistanceWeights;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.SearchMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -79,7 +80,7 @@ public class KnnModel implements ClusModel, Serializable {
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     private SearchAlgorithm search;
-    private int weightingOption;
+    private DistanceWeights weightingOption;
     private ClusRun cr;
     protected ClusStatistic statTemplate;
     private int m_K = 1; // the number of nearest neighbours, see also https://www.youtube.com/watch?v=KqOsrniBooQ
@@ -91,7 +92,7 @@ public class KnnModel implements ClusModel, Serializable {
 
 
     // Slave mode - this model is used only for voting, searching is done by master
-    public KnnModel(ClusRun cr, int k, int weighting, KnnModel master) {
+    public KnnModel(ClusRun cr, int k, DistanceWeights weighting, KnnModel master) {
         this.cr = cr;
         this.m_K = k;
         this.m_MaxK = Math.max(this.m_K, master.m_MaxK);
@@ -104,7 +105,8 @@ public class KnnModel implements ClusModel, Serializable {
 
 
     // Default constructor.
-    public KnnModel(ClusRun cr, int k, int weighting, int maxK) throws ClusException, IOException, InterruptedException {
+    @SuppressWarnings("unused")
+    public KnnModel(ClusRun cr, int k, DistanceWeights weighting, int maxK) throws ClusException, IOException, InterruptedException {
         this.cr = cr;
         this.m_K = k;
         this.m_MaxK = Math.max(Math.max(this.m_K, this.m_MaxK), maxK);
@@ -113,7 +115,7 @@ public class KnnModel implements ClusModel, Serializable {
         String fName = this.cr.getStatManager().getSettings().getGeneric().getAppName();
         // Initialize attribute weighting according to settings file
         AttributeWeighting attrWe = new NoWeighting();
-        
+
         String attrWeighting = this.cr.getStatManager().getSettings().getKNN().getKNNAttrWeight();
         boolean loadedWeighting = false;
         if (attrWeighting.toLowerCase().compareTo("none") == 0) {
@@ -161,25 +163,25 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // Initialize distance according to settings file
-//        int dist = this.cr.getStatManager().getSettings().getKNN().getKNNDistance();
+        // int dist = this.cr.getStatManager().getSettings().getKNN().getKNNDistance();
         Distance dist = this.cr.getStatManager().getSettings().getKNN().getDistance();
-        
+
         SearchDistance searchDistance = new SearchDistance();
         ClusDistance distance;
 
-        switch(dist) {
-	        case Euclidean:
-	        	distance = new EuclideanDistance(searchDistance);
-	        	break;
-	        case Chebyshev:
-	        	distance = new ChebyshevDistance(searchDistance);
-	        	break;
-	        case Manhattan:
-	        	distance = new ManhattanDistance(searchDistance);
-	        	break;
-        	default:
-        		throw new RuntimeException("Wrong distance.");
-        		
+        switch (dist) {
+            case Euclidean:
+                distance = new EuclideanDistance(searchDistance);
+                break;
+            case Chebyshev:
+                distance = new ChebyshevDistance(searchDistance);
+                break;
+            case Manhattan:
+                distance = new ManhattanDistance(searchDistance);
+                break;
+            default:
+                throw new RuntimeException("Wrong distance.");
+
         }
 
         // initialize min values of numeric attributes: needed for normalization in the distance computation
@@ -223,44 +225,45 @@ public class KnnModel implements ClusModel, Serializable {
         // Select search method according to settings file.
         Settings sett = this.cr.getStatManager().getSettings();
         SearchMethod searchMethod = sett.getKNN().getSearchMethod();
-        switch(searchMethod) {
-        case VPTree:
-        	this.search = new VPTree(this.cr, searchDistance);
-        	break;
-        case KDTree:
-        	this.search = new KDTree(this.cr, searchDistance);
-        	break;
-        case BruteForce:
-        	this.search = new BruteForce(this.cr, searchDistance);
-        	break;
-        case Oracle:
-        	this.search = new OracleBruteForce(this.cr, searchDistance);
-        	break;
-		default:
-			throw new RuntimeException("Wrong search method: " + searchMethod.toString());       	
+        switch (searchMethod) {
+            case VPTree:
+                this.search = new VPTree(this.cr, searchDistance);
+                break;
+            case KDTree:
+                this.search = new KDTree(this.cr, searchDistance);
+                break;
+            case BruteForce:
+                this.search = new BruteForce(this.cr, searchDistance);
+                break;
+            case Oracle:
+                this.search = new OracleBruteForce(this.cr, searchDistance);
+                break;
+            default:
+                throw new RuntimeException("Wrong search method: " + searchMethod.toString());
         }
 
         // debug info
-        if(this.cr.getStatManager().getSettings().getGeneral().getVerbose() >= 1) {
-        	System.out.println("Search method: " + this.search.getClass());
+        if (this.cr.getStatManager().getSettings().getGeneral().getVerbose() >= 1) {
+            System.out.println("Search method: " + this.search.getClass());
             System.out.println("Search distance: " + searchDistance.getBasicDistance().getClass());
             System.out.println("Number of neighbours: " + this.m_K);
-            System.out.println("Distance weights: " + Arrays.toString(sett.getKNN().getKNNDistanceWeight()));
+            System.out.println("Distance weights: " + sett.getKNN().getKNNDistanceWeights());
+            
         }
-        
+
         // build tree, preprocessing
         this.search.build(m_MaxK);
         RowData train = this.cr.getDataSet(ClusModelInfoList.TRAINSET);
         RowData test = this.cr.getDataSet(ClusModelInfoList.TESTSET);
         if (searchMethod == SearchMethod.Oracle) {
-        	if(sett.getKNN().mustNotComputeTrainingError(train.getNbRows())) {
-        		sett.getOutput().setOutTrainError(false);
-        		System.err.println("Training error will not be computed, since we do not know the neighbours for each training instance.");
-        	}
-        	if(test != null && sett.getKNN().mustNotComputeTestError(test.getNbRows())) {
-        		sett.getOutput().setOutTestError(false);
-        		System.err.println("Testing error will not be computed, since we do not know the neighbours for each testing instance.");
-        	}
+            if (sett.getKNN().mustNotComputeTrainingError(train.getNbRows())) {
+                sett.getOutput().setOutTrainError(false);
+                System.err.println("Training error will not be computed, since we do not know the neighbours for each training instance.");
+            }
+            if (test != null && sett.getKNN().mustNotComputeTestError(test.getNbRows())) {
+                sett.getOutput().setOutTestError(false);
+                System.err.println("Testing error will not be computed, since we do not know the neighbours for each testing instance.");
+            }
         }
 
         // save prediction template
@@ -320,15 +323,23 @@ public class KnnModel implements ClusModel, Serializable {
 
         // Initialize distance weighting according to setting file
         DistanceWeighting weighting;
-        if (this.weightingOption == SettingsKNN.DISTANCE_WEIGHTING_INVERSE) {
-            weighting = new WeightOver(nearest, this.search, tuple);
+        switch (this.weightingOption) {
+            case OneOverD:
+                weighting = new WeightOver(nearest, this.search, tuple);
+                break;
+
+            case OneMinusD:
+                weighting = new WeightMinus(nearest, this.search, tuple);
+                break;
+
+            case Constant:
+                weighting = new WeightConstant(nearest, this.search, tuple);
+                break;
+
+            default:
+                throw new RuntimeException("DistanceWeights unknown!");
         }
-        else if (this.weightingOption == SettingsKNN.DISTANCE_WEIGHTING_MINUS) {
-            weighting = new WeightMinus(nearest, this.search, tuple);
-        }
-        else {
-            weighting = new WeightConstant(nearest, this.search, tuple);
-        }
+
         // Vote
         ClusStatistic stat = statTemplate.cloneStat();
         if (stat instanceof TimeSeriesStat) {
@@ -370,7 +381,7 @@ public class KnnModel implements ClusModel, Serializable {
 
     @Override
     public String getModelInfo() {
-        return "kNN model weighted with " + SettingsKNN.DISTANCE_WEIGHTS[this.weightingOption] + " and " + m_K + " neighbors.";
+        return "kNN model weighted with " + this.weightingOption.toString() + " and " + m_K + " neighbors.";
     }
 
 
@@ -403,21 +414,25 @@ public class KnnModel implements ClusModel, Serializable {
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToPythonScript() - Not supported yet for kNN.");
     }
-    
+
+
     @Override
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> indices, String modelIdentifier) {
         throw new UnsupportedOperationException(this.getClass().getName() + ":printModelToPythonScript() - Not supported yet for kNN.");
     }
+
 
     @Override
     public JsonObject getModelJSON() {
         return null;
     }
 
+
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info) {
         return null;
     }
+
 
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {

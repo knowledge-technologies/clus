@@ -45,6 +45,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.selection.ClusSelection;
@@ -105,7 +106,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
     public ClusErrorList createTuneError(ClusStatManager mgr) {
         ClusErrorList parent = new ClusErrorList();
         if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            int optimize = getSettings().getHMLC().getHierOptimizeErrorMeasure();
+            HierarchyMeasures optimize = getSettings().getHMLC().getHierOptimizeErrorMeasure();
             parent.addError(new HierErrorMeasures(parent, mgr.getHier(), null, getSettings().getGeneral().getCompatibility(), optimize, false, getSettings().getOutput().isGzipOutput()));
             return parent;
         }

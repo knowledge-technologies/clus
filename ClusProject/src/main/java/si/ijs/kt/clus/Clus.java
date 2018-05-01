@@ -92,11 +92,12 @@ import si.ijs.kt.clus.main.ClusStat;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsData;
+import si.ijs.kt.clus.main.settings.section.SettingsData.NormalizeDataValues;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
-import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral.ResourceInfoLoad;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
-import si.ijs.kt.clus.main.settings.section.SettingsHMTR;
+import si.ijs.kt.clus.main.settings.section.SettingsHMTR.HierarchyTypesHMTR;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.ClusModel;
@@ -165,7 +166,7 @@ public class Clus implements CMDLineArgsProvider {
         m_CmdLine = cargs;
         m_Classifier = clss;
         // Load resource info (this measures among others CPU time on Linux)
-        boolean test = m_Sett.getGeneral().getResourceInfoLoadedValue() == SettingsGeneral.RESOURCE_INFO_LOAD_TEST;
+        boolean test = m_Sett.getGeneral().getResourceInfoLoadedValue().equals(ResourceInfoLoad.Test);
         ResourceInfo.loadLibrary(test);
 
         // Load settings file
@@ -220,7 +221,7 @@ public class Clus implements CMDLineArgsProvider {
         if (m_Sett.getGeneral().getVerbose() > 0)
             System.out.println("Found " + m_Data.getNbRows() + " rows");
 
-        if (getSettings().getData().getNormalizeData() != SettingsData.NORMALIZE_DATA_NONE) {
+        if (!getSettings().getData().getNormalizeData().equals(NormalizeDataValues.None)) {
             if (m_Sett.getGeneral().getVerbose() > 0)
                 System.out.println("Normalizing numerical data");
             m_Data = returnNormalizedData(m_Data);
@@ -301,7 +302,7 @@ public class Clus implements CMDLineArgsProvider {
             if (m_Sett.getGeneral().getVerbose() > 0) {
                 m_HMTRHierarchy.printHierarchy();
 
-                if (m_Sett.getHMTR().getHMTRType() == SettingsHMTR.HMTR_HIERTYPE_TREE) {
+                if (m_Sett.getHMTR().getHMTRType().equals(HierarchyTypesHMTR.Tree)) {
                     System.out.println(m_HMTRHierarchy.printHierarchyTree());
                 }
 
@@ -342,7 +343,7 @@ public class Clus implements CMDLineArgsProvider {
         m_Data = view.readData(reader, m_Schema);
         reader.close();
 
-        if (getSettings().getData().getNormalizeData() != SettingsData.NORMALIZE_DATA_NONE) {
+        if (!getSettings().getData().getNormalizeData().equals(NormalizeDataValues.None)) {
             if (m_Sett.getGeneral().getVerbose() > 0)
                 System.out.println("Normalizing numerical data");
             m_Data = returnNormalizedData(m_Data);
@@ -1897,7 +1898,7 @@ public class Clus implements CMDLineArgsProvider {
 
                     // by default SSL-PCTs takes all descriptive attributes as clustering (if clustering atts are not
                     // explicitly set)
-                    if (sett.getSSL().getSemiSupervisedMethod() == SettingsSSL.SSL_METHOD_PCT) {
+                    if (sett.getSSL().getSemiSupervisedMethod().equals(SSLMethod.PCT)) {
                         if (sett.getAttribute().getClustering().equals("Default")) // Clustering attributes are not set,
                                                                                    // use Descriptive+Target as
                                                                                    // Clustering

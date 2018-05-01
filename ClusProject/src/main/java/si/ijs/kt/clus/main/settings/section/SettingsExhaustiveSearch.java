@@ -49,8 +49,6 @@ public class SettingsExhaustiveSearch extends SettingsBase {
 
     @Override
     public INIFileSection create() {
-        //
-        // added by elisa 1/08/2006
         m_SectionExhaustive = new INIFileSection("Exhaustive");
         m_SectionExhaustive.addNode(m_Exhaustive = new INIFileBool("Exhaustive", true));
         m_SectionExhaustive.addNode(m_StartTreeCpt = new INIFileInt("StartTreeCpt", 0));

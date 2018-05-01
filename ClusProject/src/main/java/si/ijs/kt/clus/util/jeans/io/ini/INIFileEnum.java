@@ -14,9 +14,10 @@ public class INIFileEnum<T extends Enum<T>> extends INIFileEntry {
     Class<T> m_EnumType;
 
 
-    public INIFileEnum(String name, Class<T> enumClass, T defaultValue) {
+    @SuppressWarnings("unchecked")
+    public INIFileEnum(String name, T defaultValue) {
         super(name);
-        m_EnumType = enumClass;
+        m_EnumType = (Class<T>) defaultValue.getClass();
         m_ChosenOption = defaultValue;
     }
 
@@ -28,26 +29,36 @@ public class INIFileEnum<T extends Enum<T>> extends INIFileEntry {
 
 
     @Override
+    public String toString() {
+        return m_ChosenOption.toString();
+    }
+
+
+    @Override
     public void setValue(String value) throws IOException {
         try {
             m_ChosenOption = Enum.valueOf(m_EnumType, value);
         }
         catch (IllegalArgumentException e) {
-            System.err.println(String.format("Value %s is illigal for the option %s", value, m_hName));
-            System.err.println(String.format("List of allowed values: " + Arrays.toString(m_ChosenOption.getDeclaringClass().getEnumConstants())));
+            System.err.println(String.format("Value %s is illegal for the option %s", value, m_hName));
+            System.err.println(String.format("List of allowed values: " + Arrays.toString(m_EnumType.getEnumConstants())));
             throw e;
         }
-
     }
 
 
     @Override
     public INIFileNode cloneNode() {
-        return new INIFileEnum<T>(getName(), m_EnumType, m_ChosenOption);
+        return new INIFileEnum<T>(getName(), m_ChosenOption);
     }
 
 
-    public T getChosenOption() {
+    public void setValue(T value) {
+        m_ChosenOption = value;
+    }
+
+
+    public T getValue() {
         return m_ChosenOption;
     }
 }

@@ -45,9 +45,10 @@ import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
 import si.ijs.kt.clus.heuristic.GISHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyDistance;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral.Compatibility;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
@@ -65,10 +66,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     protected WHTDStatistic m_Global, m_Validation;
     protected double m_SigLevel;
     protected double m_Threshold = -1.0;
-    protected int m_Compatibility;
+    protected Compatibility m_Compatibility;
     // Hackishe Porzion des Codes fuer die pooled AUPRC: all other parts of the code that serve this purpose will be
     // simply denoted by poolAUPRC case
-    protected int m_Distance = -1;
+    protected HierarchyDistance m_Distance;
     protected double[] m_P;
 
     // Thresholds used in making predictions in multi-label classification
@@ -100,7 +101,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
      * @param comp
      * @param distance
      */
-    public WHTDStatistic(Settings sett, ClassHierarchy hier, int comp, int distance) {
+    public WHTDStatistic(Settings sett, ClassHierarchy hier, Compatibility comp, HierarchyDistance distance) {
         this(sett, hier, false, comp, distance);
     }
 
@@ -113,7 +114,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
      * @param comp
      * @param distance
      */
-    public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean, int comp, int distance) {
+    public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean, Compatibility comp, HierarchyDistance distance) {
         // super(hier.getDummyAttrs(), onlymean);
         this(sett, hier, onlymean, comp);
 
@@ -125,12 +126,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
-    public WHTDStatistic(Settings sett, ClassHierarchy hier, int comp) {
+    public WHTDStatistic(Settings sett, ClassHierarchy hier, Compatibility comp) {
         this(sett, hier, false, comp);
     }
 
 
-    public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean, int comp) {
+    public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean, Compatibility comp) {
         super(sett, hier.getDummyAttrs(), onlymean);
 
         m_Compatibility = comp;
@@ -152,7 +153,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     }
 
 
-    public int getCompatibility() {
+    public Compatibility getCompatibility() {
         return m_Compatibility;
     }
 
@@ -191,7 +192,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     @Override
     public ClusStatistic cloneStat() {
 
-        if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) {// poolAUPRC case
+        if (m_Distance.equals(HierarchyDistance.NoDistance)) {// poolAUPRC case
             WHTDStatistic res = new WHTDStatistic(this.m_Settings, m_Hier, false, m_Compatibility, m_Distance);
             res.m_Training = m_Training;
             res.m_ParentStat = m_ParentStat;
@@ -208,12 +209,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     @Override
     public ClusStatistic cloneSimple() {
-        WHTDStatistic res = (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) ? new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility, m_Distance) : new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility);
-        // poolAUPRC
-        // case
-        // :
-        // normal
-        // case
+        WHTDStatistic res = (m_Distance.equals(HierarchyDistance.NoDistance)) ? new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility, m_Distance) : new WHTDStatistic(this.m_Settings, m_Hier, true, m_Compatibility);
+        /* poolAUPRC case : normal case */
         res.m_Threshold = m_Threshold;
         res.m_Thresholds = m_Thresholds;
         res.m_Training = m_Training;
@@ -259,7 +256,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 int idx = val.getIndex();
                 // if (Settings.VERBOSE > 10) System.out.println("idx = "+idx+" weight = "+weight);
                 m_SumValues[idx] += weight;
-                if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) {// poolAUPRC case
+                if (m_Distance.equals(HierarchyDistance.NoDistance)) {// poolAUPRC case
                     m_P[idx] += weight;
                 }
             }
@@ -369,7 +366,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
 
     public int round(double value) {
-        if (getCompatibility() == SettingsGeneral.COMPATIBILITY_CMB05) {
+        if (getCompatibility().equals(Compatibility.CMB05)) {
             return (int) value;
         }
         else {
@@ -2883,7 +2880,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     @Override
     public double getSVarS(ClusAttributeWeights scale) {
-        if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC case
+        if (m_Distance.equals(HierarchyDistance.NoDistance)) { // poolAUPRC case
             ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
             for (int i = 0; i < m_NbAttrs; i++) {
                 classInd.add(i, i);
@@ -2937,7 +2934,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     @Override
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC case
+        if (m_Distance.equals(HierarchyDistance.NoDistance)) { // poolAUPRC case
             ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
             for (int i = 0; i < m_NbAttrs; i++) {
                 classInd.add(i, i);
@@ -3015,7 +3012,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     @Override
     public void copy(ClusStatistic other) {
-        if (m_Distance == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC case
+        if (m_Distance.equals(HierarchyDistance.NoDistance)) { // poolAUPRC case
             WHTDStatistic or = (WHTDStatistic) other;
             m_SumWeight = or.m_SumWeight;
             m_NbExamples = or.m_NbExamples;

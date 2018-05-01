@@ -37,8 +37,14 @@ import si.ijs.kt.clus.ext.semisupervised.utils.IndiceValuePair;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLAggregation;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLConfidenceMeasure;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLNormalization;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLOOBErrorCalculation;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLStoppingCriteria;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLUnlabeledCriteria;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -48,90 +54,96 @@ import si.ijs.kt.clus.util.ClusException;
 
 public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
-    ClusInductionAlgorithm m_Induce; //underlying algorithm for self-training
+    ClusInductionAlgorithm m_Induce; // underlying algorithm for self-training
     PredictionConfidence m_PredConfidence;
-    double m_Threshold; //threshold to instances will be put into training set
-    int m_StoppingCriteria, m_UnlabeledCriteria, m_K, m_Iterations, m_maxAirbagTrials, m_OOBErrorCalculation, m_Mode, m_Normalization, m_Aggregation;
+    double m_Threshold; // threshold to instances will be put into training set
+    SSLStoppingCriteria m_StoppingCriteria;
+    int m_K, m_Iterations, m_maxAirbagTrials, m_Mode;
+    SSLAggregation m_Aggregation;
+    SSLNormalization m_Normalization;
+    SSLOOBErrorCalculation m_OOBErrorCalculation;
+    SSLUnlabeledCriteria m_UnlabeledCriteria;
     boolean m_UseWeights;
     double[] m_ExhaustiveSearchThresholds;
-    double HMCthreshold = 0; //used only in HMCmode
+    double HMCthreshold = 0; // used only in HMCmode
 
 
-
-    public ClusSelfTrainingInduce(ClusSchema schema, Settings sett, ClusInductionAlgorithm clss_induce)
-            throws ClusException,
-            IOException {
+    public ClusSelfTrainingInduce(ClusSchema schema, Settings sett, ClusInductionAlgorithm clss_induce) throws ClusException, IOException {
         super(schema, sett);
 
         m_Induce = clss_induce;
         m_Mode = m_StatManager.getMode();
 
-        //maybe initialize settings parameters
+        // maybe initialize settings parameters
         initialize(getSchema(), getSettings());
 
         switch (m_Mode) {
             case ClusStatManager.MODE_REGRESSION:
                 switch (sett.getSSL().getConfidenceMeasure()) {
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_RANDOMUNIFORM:
+                    case RandomUniform:
                         m_PredConfidence = new RandomScore(m_StatManager, RandomScore.RANDOM_UNIFORM);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_RANDOMGAUSSIAN:
+                    case RandomGaussian:
                         m_PredConfidence = new RandomScore(m_StatManager, RandomScore.RANDOM_GAUSSIAN);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_ORACLE:
+                    case Oracle:
                         m_PredConfidence = new OracleScore(m_StatManager, m_Normalization, m_Aggregation);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_VARIANCE:
+                    case Variance:
                         m_PredConfidence = new VarianceScore(m_StatManager, m_Normalization, m_Aggregation);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_RFPROXIMITIES:
+                    case RForestProximities:
                         m_PredConfidence = new RForestProximities(m_StatManager, m_Normalization, m_Aggregation);
                         break;
                     default:
-                        //default
+                        // default
                         m_PredConfidence = new VarianceScore(m_StatManager, m_Normalization, m_Aggregation);
                         break;
                 }
                 break;
             case ClusStatManager.MODE_HIERARCHICAL:
                 switch (sett.getSSL().getConfidenceMeasure()) {
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_CLASSESPROBABILITIES:
-                        if (m_Aggregation == SettingsSSL.SSL_AGGREGATION_AVERAGE) {
-                            m_Aggregation = SettingsSSL.SSL_AGGREGATION_AVERAGEIGNOREZEROS; //in HMC it probably makes sense to use average which ignores zeros, because usually there are a lot of zeros
+                    case ClassesProbabilities:
+                        if (m_Aggregation.equals(SSLAggregation.Average)) {
+                            m_Aggregation = SSLAggregation.AverageIgnoreZeros; // in HMC it probably makes
+                                                                               // sense to use average
+                                                                               // which ignores zeros,
+                                                                               // because usually there are
+                                                                               // a lot of zeros
                         }
                         m_PredConfidence = new VarianceScore(m_StatManager, m_Normalization, m_Aggregation);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_ORACLE:
+                    case Oracle:
                         m_PredConfidence = new OracleScore(m_StatManager, m_Normalization, m_Aggregation);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_RANDOMUNIFORM:
+                    case RandomUniform:
                         m_PredConfidence = new RandomScore(m_StatManager, RandomScore.RANDOM_UNIFORM);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_RANDOMGAUSSIAN:
+                    case RandomGaussian:
                         m_PredConfidence = new RandomScore(m_StatManager, RandomScore.RANDOM_GAUSSIAN);
                         break;
                     default:
-                        //default
-                        m_PredConfidence = new VarianceScore(m_StatManager, m_Normalization, SettingsSSL.SSL_AGGREGATION_AVERAGEIGNOREZEROS);
+                        // default
+                        m_PredConfidence = new VarianceScore(m_StatManager, m_Normalization, SSLAggregation.AverageIgnoreZeros);
                         break;
                 }
                 break;
             case ClusStatManager.MODE_CLASSIFY:
                 switch (sett.getSSL().getConfidenceMeasure()) {
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_CLASSESPROBABILITIES:
+                    case ClassesProbabilities:
                         m_PredConfidence = new ClassesProbabilities(m_StatManager, m_Normalization, m_Aggregation);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_ORACLE:
+                    case Oracle:
                         m_PredConfidence = new OracleScore(m_StatManager, m_Normalization, m_Aggregation);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_RANDOMUNIFORM:
+                    case RandomUniform:
                         m_PredConfidence = new RandomScore(m_StatManager, RandomScore.RANDOM_UNIFORM);
                         break;
-                    case SettingsSSL.SSL_CONFIDENCE_MEASURE_RANDOMGAUSSIAN:
+                    case RandomGaussian:
                         m_PredConfidence = new RandomScore(m_StatManager, RandomScore.RANDOM_GAUSSIAN);
                         break;
                     default:
-                        //default
+                        // default
                         m_PredConfidence = new ClassesProbabilities(m_StatManager, m_Normalization, m_Aggregation);
                         break;
                 }
@@ -140,7 +152,6 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                 throw new ClusException("Mode not yet supported, for now you can do SSL for multi-target regression, classification and HMC");
         }
     }
-
 
 
     public void initialize(ClusSchema schema, Settings settx) {
@@ -162,21 +173,22 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
 
     @Override
-    public ClusModel induceSingleUnpruned(ClusRun cr)
-            throws Exception {
+    public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
 
-        partitionData(cr); //set training set, unlabeled set and testing set (if needed) 
+        partitionData(cr); // set training set, unlabeled set and testing set (if needed)
 
-        int origLabeledMax = m_TrainingSet.getNbRows(); //store the indice of the last originally labeled instance, we can use this later to limit the OOBError estimate only in the originally labeled data
+        int origLabeledMax = m_TrainingSet.getNbRows(); // store the indice of the last originally labeled instance, we
+                                                        // can use this later to limit the OOBError estimate only in the
+                                                        // originally labeled data
         int nb_unlabeled = m_UnlabeledData.getNbRows();
-        int unlabeledAdded = 1, unlabeledAddeddTotal = 0; //set unlabeledAdded to 1 to enter the loop initially 
+        int unlabeledAdded = 1, unlabeledAddeddTotal = 0; // set unlabeledAdded to 1 to enter the loop initially
         int iterations = 0;
         int airBagTrials = 0;
         boolean first = true;
         double OOBError = Double.MAX_VALUE, newOOBError;
         double originalError = 0;
         double labelCardinalityTrainHMC = 0; // used for threshold calibration in HMC
-        PrintWriter writer = null; //with this we write performances at each iterations to a separate file
+        PrintWriter writer = null; // with this we write performances at each iterations to a separate file
         String errorType = "";
         switch (m_Mode) {
             case ClusStatManager.MODE_HIERARCHICAL:
@@ -196,12 +208,12 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
         ClusModel oldModel = null;
 
-        //initialize OOB error, for HMC and classification more is better
+        // initialize OOB error, for HMC and classification more is better
         if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_CLASSIFY) {
             OOBError = Double.MIN_VALUE;
         }
 
-        //calculate label cardinality of train set, used to select the threshold for classification
+        // calculate label cardinality of train set, used to select the threshold for classification
         if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
             for (int i = 0; i < m_TrainingSet.getNbRows(); i++) {
                 DataTuple t = m_TrainingSet.getTuple(i);
@@ -210,20 +222,18 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
             labelCardinalityTrainHMC /= m_TrainingSet.getNbRows();
         }
 
-        //turn on calculation of RForest proximities if needed
-        if (cr.getStatManager().getSettings().getSSL().getConfidenceMeasure() == SettingsSSL.SSL_CONFIDENCE_MEASURE_RFPROXIMITIES) {
+        // turn on calculation of RForest proximities if needed
+        if (cr.getStatManager().getSettings().getSSL().getConfidenceMeasure().equals(SSLConfidenceMeasure.RForestProximities)) {
             ((RForestProximities) m_PredConfidence).setTrainingSet(m_TrainingSet, origLabeledMax);
         }
 
-        // 
+        //
         // BEGIN - MAIN LOOP
         // StoppingCriteria are:
         // 1) if no new instances are added to the training set, stop (always applies)
         // 2) if the number of iterations is set, stop after specified number of iterations
         // 3) airbag criteria, if set
-        while (unlabeledAdded > 0
-                && !(m_StoppingCriteria == SettingsSSL.SSL_STOPPING_CRITERIA_ITERATIONS
-                        && iterations >= m_Iterations)) {
+        while (unlabeledAdded > 0 && !(m_StoppingCriteria.equals(SSLStoppingCriteria.Iterations) && iterations >= m_Iterations)) {
 
             unlabeledAdded = 0;
             iterations++;
@@ -232,17 +242,17 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
             System.out.println("SelfTraining iteration: " + iterations);
             System.out.println();
 
-            //we have to reset ClusOOBErrorEstimate, because it has static variables
+            // we have to reset ClusOOBErrorEstimate, because it has static variables
             if (getSettings().getEnsemble().shouldEstimateOOB()) {
                 ((ClusEnsembleInduce) m_Induce).resetClusOOBErrorEstimate();
             }
 
-            //train base model
-            if (!(m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_EXHAUSTIVESEARCH) || first) {
+            // train base model
+            if (!(m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.ExhaustiveSearch)) || first) {
                 m_Model = m_Induce.induceSingleUnpruned(myClusRun);
             }
 
-            //save default models, which is supervised model, i.e., trained only on labeled data
+            // save default models, which is supervised model, i.e., trained only on labeled data
             if (first) {
                 first = false;
                 ClusModelInfo defInfo = cr.addModelInfo(ClusModel.DEFAULT);
@@ -258,26 +268,24 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
             }
 
             // BEGIN - AIRBAG stopping criteria
-            if (m_StoppingCriteria == SettingsSSL.SSL_STOPPING_CRITERIA_AIRBAG) {
+            if (m_StoppingCriteria.equals(SSLStoppingCriteria.Airbag)) {
 
-                //calculate OOBError
+                // calculate OOBError
                 newOOBError = getOOBError(m_TrainingSet, origLabeledMax).getModelError();
-                //    writer.println(unlabeledAdded + "," + newOOBError);
+                // writer.println(unlabeledAdded + "," + newOOBError);
 
-                //for HMC more is better, for regression less is better
-                if ((m_Mode == ClusStatManager.MODE_CLASSIFY && newOOBError < OOBError)
-                        || (m_Mode == ClusStatManager.MODE_HIERARCHICAL && newOOBError < OOBError)
-                        || (m_Mode == ClusStatManager.MODE_REGRESSION && newOOBError > OOBError)) {
+                // for HMC more is better, for regression less is better
+                if ((m_Mode == ClusStatManager.MODE_CLASSIFY && newOOBError < OOBError) || (m_Mode == ClusStatManager.MODE_HIERARCHICAL && newOOBError < OOBError) || (m_Mode == ClusStatManager.MODE_REGRESSION && newOOBError > OOBError)) {
                     airBagTrials++;
                     if (airBagTrials > m_maxAirbagTrials) {
                         m_Model = oldModel;
-                        //System.out.println("");
+                        // System.out.println("");
                         System.out.println("Stopping because of airbag.");
-                        break; //this stops the main while loop
+                        break; // this stops the main while loop
                     }
                 }
                 else {
-                    //store last models which improved over the previous one
+                    // store last models which improved over the previous one
                     OOBError = newOOBError;
                     oldModel = m_Model;
                     airBagTrials = 0;
@@ -285,22 +293,24 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
             } // END - AIRBAG stopping criteria
 
             // BEGIN - Automatic threshold selection, AUTOMATICOOB procedure
-            if (m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOB
-                    || m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOBINITIAL) {
+            if (m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.AutomaticOOB) || m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.AutomaticOOBInitial)) {
 
-                m_PredConfidence.calculateOOBConfidenceScores((ClusForest) m_Model, m_TrainingSet); //get OOB confidence scores of labeled examples 
+                m_PredConfidence.calculateOOBConfidenceScores((ClusForest) m_Model, m_TrainingSet); // get OOB
+                                                                                                    // confidence scores
+                                                                                                    // of labeled
+                                                                                                    // examples
 
                 int maxInd;
                 DoublesPair[] confidencesOOBErrors;
                 double[] OOBErrors;
 
                 switch (m_OOBErrorCalculation) {
-                    case SettingsSSL.SSL_OOB_ERROR_CALCULATION_LABELED_ONLY: //calculate OOB error only on original labeled part
+                    case LabeledOnly:
                         maxInd = origLabeledMax;
                         confidencesOOBErrors = new DoublesPair[origLabeledMax];
                         OOBErrors = new double[origLabeledMax];
                         break;
-                    case SettingsSSL.SSL_OOB_ERROR_CALCULATION_ALL_DATA: //calculate OOB error on all examples in the training set, i.e., unlabeled examples added to the training set are also considered
+                    case AllData:
                         maxInd = m_TrainingSet.getNbRows();
                         confidencesOOBErrors = new DoublesPair[m_PredConfidence.getCounter()];
                         OOBErrors = new double[m_PredConfidence.getCounter()];
@@ -314,17 +324,12 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
                 int j = 0;
 
-                for (int i = 0; i < maxInd; i++) { //calculate OOB errors             
+                for (int i = 0; i < maxInd; i++) { // calculate OOB errors
                     ClusErrorList errListOOB = new ClusErrorList();
                     ClusError error = null;
 
                     if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
-                        error = new HierErrorMeasures(errListOOB, m_StatManager.getHier(),
-                                m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(),
-                                getSettings().getGeneral().getCompatibility(),
-                                SettingsHMLC.HIERMEASURE_POOLED_AUPRC,
-                                m_StatManager.getSettings().getOutput().isWriteCurves(),
-                                m_StatManager.getSettings().getOutput().isGzipOutput());
+                        error = new HierErrorMeasures(errListOOB, m_StatManager.getHier(), m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(), getSettings().getGeneral().getCompatibility(), HierarchyMeasures.PooledAUPRC, m_StatManager.getSettings().getOutput().isWriteCurves(), m_StatManager.getSettings().getOutput().isGzipOutput());
                     }
 
                     if (m_Mode == ClusStatManager.MODE_REGRESSION) {
@@ -337,9 +342,11 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
                     errListOOB.addError(error);
 
-                    //careful, it can happen that RF do not contain OOB estimates for all tuples (theoretically, it can happen that tuple is not OOB)
+                    // careful, it can happen that RF do not contain OOB estimates for all tuples (theoretically, it can
+                    // happen that tuple is not OOB)
                     if (!Double.isNaN(m_PredConfidence.getConfidence(i))) {
-                        //FIXME: now instance is predicted once here and once in m_PredictionConfidence, it should be predicted only once
+                        // FIXME: now instance is predicted once here and once in m_PredictionConfidence, it should be
+                        // predicted only once
                         errListOOB.addExample(m_TrainingSet.getTuple(i), ((ClusForest) m_Model).predictWeightedOOB(m_TrainingSet.getTuple(i)));
 
                         DoublesPair dPair = new DoublesPair(m_PredConfidence.getConfidence(i), error.getModelError());
@@ -351,24 +358,25 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
                 System.out.println(m_PredConfidence.getCounter());
 
-                Arrays.sort(confidencesOOBErrors); //sort confidence scores
+                Arrays.sort(confidencesOOBErrors); // sort confidence scores
 
                 OOBErrors = Helper.getArrayOfSecond(confidencesOOBErrors);
 
                 org.apache.commons.math3.stat.inference.TTest tTest = new org.apache.commons.math3.stat.inference.TTest();
                 boolean thresholdFound = false;
-                double confidenceLevel = 0.05; //TODO: probably should move to settings
+                double confidenceLevel = 0.05; // TODO: probably should move to settings
                 double pValue;
 
-                //the need to be at least two examples in a set for tTest to be performed, that's why we check i > 1 (for loop) and i > 2 (while loop) 
+                // the need to be at least two examples in a set for tTest to be performed, that's why we check i > 1
+                // (for loop) and i > 2 (while loop)
                 for (int i = OOBErrors.length - 1; i > 1; i--) {
-                    //check if we have more examples with the same confidence score, if yes, they all go together
+                    // check if we have more examples with the same confidence score, if yes, they all go together
                     while (i > 2 && confidencesOOBErrors[i].getFirst() == confidencesOOBErrors[i - 1].getFirst()) {
                         i--;
                     }
 
                     pValue = tTest.tTest(OOBErrors, Arrays.copyOfRange(OOBErrors, 0, i));
-                    //pValue = tTest.tTest(OOBErrors, Arrays.copyOfRange(OOBErrors, i, OOBErrors.length));
+                    // pValue = tTest.tTest(OOBErrors, Arrays.copyOfRange(OOBErrors, i, OOBErrors.length));
 
                     if (pValue < confidenceLevel) {
                         System.out.println("AutomaticOOB: found threshold: " + confidencesOOBErrors[i].getFirst() + " (p-value = " + pValue + ")");
@@ -381,16 +389,17 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                 if (!thresholdFound) {
                     System.out.println("AutomaticOOB: threshold not found, using 0.0");
                     m_Threshold = 0.0;
-                    //confidenceLevel += 0.025;
+                    // confidenceLevel += 0.025;
                 }
 
-                if (m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOBINITIAL) {
-                    m_UnlabeledCriteria = SettingsSSL.SSL_UNLABELED_CRITERIA_THRESHOLD;
+                if (m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.AutomaticOOBInitial)) {
+                    m_UnlabeledCriteria = SSLUnlabeledCriteria.Threshold;
                 }
             } // END - Automatic threshold selection
 
-            // BEGIN -  find classification threshold such that the difference between label cardinality of labeled examples and predicted unlabeled examples is minimum
-            //          Applicable only when Hierarchical multi-label classification (HMC) is performed
+            // BEGIN - find classification threshold such that the difference between label cardinality of labeled
+            // examples and predicted unlabeled examples is minimum
+            // Applicable only when Hierarchical multi-label classification (HMC) is performed
             if (m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
                 if (cr.getStatManager().getSettings().getSSL().shouldCalibrateHmcThreshold()) {
                     HierThresholdCalibration thCalib = new calibrateByLabelCardinality(5, labelCardinalityTrainHMC);
@@ -402,127 +411,132 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                         }
                     }
                     HMCthreshold = thCalib.getThreshold();
-                    //System.out.println("best th: " + HMCthreshold + "   card: " + ((calibrateByLabelCardinality)thCalib).getCardinality(HMCthreshold))
+                    // System.out.println("best th: " + HMCthreshold + " card: " +
+                    // ((calibrateByLabelCardinality)thCalib).getCardinality(HMCthreshold))
                 }
                 else {
-                    HMCthreshold = 50;//m_Threshold * 100; //majority class
-                } // END -  Find classification threshold
-                if (m_StatManager.getSettings().getSSL().getConfidenceMeasure() == SettingsSSL.SSL_CONFIDENCE_MEASURE_ORACLE)
+                    HMCthreshold = 50;// m_Threshold * 100; //majority class
+                } // END - Find classification threshold
+                if (m_StatManager.getSettings().getSSL().getConfidenceMeasure().equals(SSLConfidenceMeasure.Oracle))
                     ((OracleScore) m_PredConfidence).setHmcThreshold(HMCthreshold);
             }
 
-            m_PredConfidence.calculateConfidenceScores(m_Model, m_UnlabeledData); //calculate confidence scores on unlabeled examples 
+            m_PredConfidence.calculateConfidenceScores(m_Model, m_UnlabeledData); // calculate confidence scores on
+                                                                                  // unlabeled examples
 
             //
-            // BEGIN - SELECTION OF THE UNLABELED EXAMPLES WHICH WILL BE MOVED TO THE TRAINING SET 
+            // BEGIN - SELECTION OF THE UNLABELED EXAMPLES WHICH WILL BE MOVED TO THE TRAINING SET
             //
-            List<DataTuple> unlabeledForTrain = new ArrayList(); //instances which will be put from unlabeled set to the training set according to UnlabeledCriteria 
+            List<DataTuple> unlabeledForTrain = new ArrayList(); // instances which will be put from unlabeled set to
+                                                                 // the training set according to UnlabeledCriteria
 
-            // BEGIN -  K PERCENTAGE MOST AVERAGE
-            //          The threshold is set to average confidence score of the K percentage most confident examples (set initially, and then this threshold is used throughout iterations)
-            if (m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_KPERCENTAGEMOSTAVERAGE) {
-                //compute the number of examples from percentage
+            // BEGIN - K PERCENTAGE MOST AVERAGE
+            // The threshold is set to average confidence score of the K percentage most confident examples (set
+            // initially, and then this threshold is used throughout iterations)
+            if (m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.KPercentageMostAverage)) {
+                // compute the number of examples from percentage
                 IndiceValuePair[] topK = Helper.greatestKelements(m_PredConfidence.getConfidenceScores(), (int) ((nb_unlabeled - unlabeledAddeddTotal) * (m_K / 100.0)));
                 double threshold = 0;
 
-                //calculate confidence score
+                // calculate confidence score
                 for (int i = 0; i < topK.length; i++) {
                     threshold += topK[i].getValue();
                 }
 
                 m_Threshold = threshold / topK.length;
 
-                //we calculate new threshold only initially, therefore we set unlabeled criteria from now on to Threshold
-                m_UnlabeledCriteria = SettingsSSL.SSL_UNLABELED_CRITERIA_THRESHOLD;
+                // we calculate new threshold only initially, therefore we set unlabeled criteria from now on to
+                // Threshold
+                m_UnlabeledCriteria = SSLUnlabeledCriteria.Threshold;
 
                 System.out.println("Threshold selected: " + m_Threshold);
-            } // END - K PERCENTAGE MOST AVERAGE 
+            } // END - K PERCENTAGE MOST AVERAGE
 
-            // BEGIN -  THRESHOLD, OR AUTOMATICOOB
-            //          Unlabeled instances with confidence greater than the specified threshold will be added to the training set
-            //          The Threshold may be determined previously in automatic fashion by AUTOMATICOOB procedure  
-            if (m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_THRESHOLD
-                    || m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_AUTOMATICOOB) {
+            // BEGIN - THRESHOLD, OR AUTOMATICOOB
+            // Unlabeled instances with confidence greater than the specified threshold will be added to the training
+            // set
+            // The Threshold may be determined previously in automatic fashion by AUTOMATICOOB procedure
+            if (m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.Threshold) || m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.AutomaticOOB)) {
 
                 for (int i = 0; i < nb_unlabeled; i++) {
                     if (m_PredConfidence.getConfidence(i) >= m_Threshold) {
-                        //add unlabeled with predicted target value(s) example to the train set 
+                        // add unlabeled with predicted target value(s) example to the train set
                         DataTuple t = m_UnlabeledData.getTuple(i).deepCloneTuple();
 
                         processUnlabeledExample(t, i);
 
-                        //add example to the train set
+                        // add example to the train set
                         unlabeledForTrain.add(t);
 
                         unlabeledAdded++;
                     }
                 }
-            } // END -  THRESHOLD, OR AUTOMATICOOB
+            } // END - THRESHOLD, OR AUTOMATICOOB
 
-            // BEGIN -  K MOST CONFIDENT
-            //          K most confident unlabeled examples are added to the training set
-            if (m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_KMOSTCONFIDENT) {
+            // BEGIN - K MOST CONFIDENT
+            // K most confident unlabeled examples are added to the training set
+            if (m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.KMostConfident)) {
 
                 IndiceValuePair[] topK = Helper.greatestKelements(m_PredConfidence.getConfidenceScores(), m_K);
 
                 int index;
 
                 for (int i = 0; i < topK.length; i++) {
-                    //get index of the an example
+                    // get index of the an example
                     index = topK[i].getIndice();
 
-                    //should we check also if the confidence is above threshold???
-                    //if (m_PredConfidence.getConfidence(index) >= m_Threshold) {
+                    // should we check also if the confidence is above threshold???
+                    // if (m_PredConfidence.getConfidence(index) >= m_Threshold) {
                     DataTuple t = m_UnlabeledData.getTuple(index).deepCloneTuple();
 
                     processUnlabeledExample(t, index);
 
-                    //add example to the train set
+                    // add example to the train set
                     unlabeledForTrain.add(t);
 
                     unlabeledAdded++;
-                    //}
+                    // }
                 }
-            } // END -  K MOST CONFIDENT
+            } // END - K MOST CONFIDENT
 
-            // BEGIN -  K PERCENTAGE MOST CONFIDENT
-            //          K perfent of most confident unlabeled examples are added to the training set
-            if (m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_KPERCENTAGEMOSTCONFIDENT) {
+            // BEGIN - K PERCENTAGE MOST CONFIDENT
+            // K perfent of most confident unlabeled examples are added to the training set
+            if (m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.KPercentageMostConfident)) {
 
-                //compute the number of examples from percentage
+                // compute the number of examples from percentage
                 IndiceValuePair[] topK = Helper.greatestKelements(m_PredConfidence.getConfidenceScores(), (int) ((nb_unlabeled /*- unlabeledAddeddTotal*/) * (m_K / 100.0)));
 
                 int index;
 
                 for (int i = 0; i < topK.length; i++) {
-                    //get index of the an example
+                    // get index of the an example
                     index = topK[i].getIndice();
 
-                    //should we check also if the confidence is above threshold???
-                    //if (m_PredConfidence.getConfidence(index) >= m_Threshold) {
+                    // should we check also if the confidence is above threshold???
+                    // if (m_PredConfidence.getConfidence(index) >= m_Threshold) {
                     DataTuple t = m_UnlabeledData.getTuple(index).deepCloneTuple();
 
                     processUnlabeledExample(t, index);
 
-                    //add example to the train set
+                    // add example to the train set
                     unlabeledForTrain.add(t);
 
                     unlabeledAdded++;
-                    //}
+                    // }
                 }
-            } // END -  K PERCENTAGE MOST CONFIDENT
+            } // END - K PERCENTAGE MOST CONFIDENT
 
             //
-            // END - SELECTION OF THE UNLABELED EXAMPLES WHICH WILL BE MOVED TO THE TRAINING SET 
+            // END - SELECTION OF THE UNLABELED EXAMPLES WHICH WILL BE MOVED TO THE TRAINING SET
             //
             // BEGIN - EXHAUSTIVE SEARCH
             // 1) for each threshold, build a model
             // 2) evaluate model with OOBError
             // 3) if we are able to find better model than current, advance to next iteration
-            // 3.1) TODO: maybe just use the best model we are able to found??? regardless if the OOB error is higher than current???
+            // 3.1) TODO: maybe just use the best model we are able to found??? regardless if the OOB error is higher
+            // than current???
             // 4) otherwise stop iterating
-            if (m_UnlabeledCriteria == SettingsSSL.SSL_UNLABELED_CRITERIA_EXHAUSTIVESEARCH) {
-
+            if (m_UnlabeledCriteria.equals(SSLUnlabeledCriteria.ExhaustiveSearch)) {
                 Boolean betterFound, firstIteration = true;
                 ClusModel bestModel = m_Model;
                 double conf, bestOOB = Double.NaN;
@@ -530,7 +544,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                 RowData bestTrainingSet;
                 ClusStatistic stat;
 
-                //thresholds given in settings file should be sorted from biggest to smallest
+                // thresholds given in settings file should be sorted from biggest to smallest
                 Arrays.sort(m_ExhaustiveSearchThresholds);
                 Collections.reverse(Doubles.asList(m_ExhaustiveSearchThresholds));
 
@@ -540,14 +554,16 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     double bestThreshold = 0;
 
                     if (firstIteration) {
-                        bestOOB = getOOBError(m_TrainingSet, origLabeledMax).getModelError(); //calculate OOB Error only on original labeled data
+                        bestOOB = getOOBError(m_TrainingSet, origLabeledMax).getModelError(); // calculate OOB Error
+                                                                                              // only on original
+                                                                                              // labeled data
                         firstIteration = false;
                     }
 
                     int bestUnlabeledAdded = 0;
                     int i = 0, best_i = 0;
 
-                    //sort confidence scores
+                    // sort confidence scores
                     IndiceValuePair[] confidenceScoresSorted = new IndiceValuePair[nb_unlabeled];
                     for (int j = 0; j < nb_unlabeled; j++) {
                         confidenceScoresSorted[j] = new IndiceValuePair(j, m_PredConfidence.getConfidence(j));
@@ -561,18 +577,19 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     System.out.println();
 
                     for (double threshold : m_ExhaustiveSearchThresholds) {
-                        //it would we useful to have confidences sorted(0 - biggest conf, max - lower conf), so we dont have to loop over entire set of unlabeld examples every time
-                        //from top to bottom
+                        // it would we useful to have confidences sorted(0 - biggest conf, max - lower conf), so we dont
+                        // have to loop over entire set of unlabeld examples every time
+                        // from top to bottom
                         examplesAddedPerThreshold = 0;
 
                         while (conf >= threshold && i < nb_unlabeled) {
                             DataTuple t = m_UnlabeledData.getTuple(confidenceScoresSorted[i].getIndice());
-                            //compute prediction
-                            stat = m_Model.predictWeighted(t); //model.predictWeighted(tuple);
+                            // compute prediction
+                            stat = m_Model.predictWeighted(t); // model.predictWeighted(tuple);
                             stat.computePrediction();
                             stat.predictTuple(t);
 
-                            //add example to the train set
+                            // add example to the train set
                             m_TrainingSet.add(t);
 
                             examplesAddedPerThreshold++;
@@ -583,7 +600,8 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                             }
                         }
 
-                        //train new model only if some unlabeled data were added (i.e., confidence was greater than threshold at least once)
+                        // train new model only if some unlabeled data were added (i.e., confidence was greater than
+                        // threshold at least once)
                         if (examplesAddedPerThreshold > 0) {
 
                             ((ClusEnsembleInduce) m_Induce).resetClusOOBErrorEstimate();
@@ -591,13 +609,13 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
                             unlabeledAdded += examplesAddedPerThreshold;
 
-                            //ClusError errTest = calculateError(myClusRun.getTestSet());
+                            // ClusError errTest = calculateError(myClusRun.getTestSet());
                             ClusError errOOB;
                             switch (m_OOBErrorCalculation) {
-                                case SettingsSSL.SSL_OOB_ERROR_CALCULATION_LABELED_ONLY:
+                                case LabeledOnly:
                                     errOOB = getOOBError(m_TrainingSet, origLabeledMax);
                                     break;
-                                case SettingsSSL.SSL_OOB_ERROR_CALCULATION_ALL_DATA:
+                                case AllData:
                                     errOOB = getOOBError(m_TrainingSet, m_TrainingSet.getNbRows());
                                     break;
                                 default:
@@ -606,7 +624,8 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
                             OOBError = errOOB.getModelError();
 
-                            //writerTest.println(errTest.getModelError() + "," + errTrain.getModelError() + "," + OOBError);
+                            // writerTest.println(errTest.getModelError() + "," + errTrain.getModelError() + "," +
+                            // OOBError);
                             System.out.println("Trying threshold: " + threshold);
                             System.out.println("OOBError: " + OOBError);
                             System.out.println("Examples added: " + unlabeledAdded);
@@ -634,9 +653,9 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     if (betterFound) {
                         System.out.println("Found threshold: " + bestThreshold + " (new OOBError = " + bestOOB + ")");
                         m_Model = bestModel;
-                        //remove unlabeled examples which were moved to training set from unlabeled set
+                        // remove unlabeled examples which were moved to training set from unlabeled set
                         for (int j = 0; j < best_i; j++) {
-                            //m_UnlabeledData.getTuple(confidenceScoresSorted[j].getIndice()).setWeight(0);
+                            // m_UnlabeledData.getTuple(confidenceScoresSorted[j].getIndice()).setWeight(0);
                             m_UnlabeledData.setTuple(null, confidenceScoresSorted[j].getIndice());
                         }
 
@@ -657,7 +676,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
             unlabeledAddeddTotal += unlabeledAdded;
 
-            //add selected unlabeled examples to the training set
+            // add selected unlabeled examples to the training set
             for (DataTuple dataTuple : unlabeledForTrain) {
                 m_TrainingSet.add(dataTuple);
             }
@@ -671,10 +690,8 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
         writer.close();
 
         System.out.println();
-        System.out.println(
-                "Total self-training iterations performed: " + iterations);
-        System.out.println(
-                "Unlabeled examples added: " + unlabeledAddeddTotal);
+        System.out.println("Total self-training iterations performed: " + iterations);
+        System.out.println("Unlabeled examples added: " + unlabeledAddeddTotal);
         System.out.println();
         ClusModelInfo origInfo = cr.addModelInfo(ClusModel.ORIGINAL);
         String additionalInfo;
@@ -696,12 +713,12 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
      *        Example which should be processed
      * @param index
      *        Index of the example in the unlabeled set
-     * @throws ClusException 
-     * @throws InterruptedException 
+     * @throws ClusException
+     * @throws InterruptedException
      */
     private void processUnlabeledExample(DataTuple t, int index) throws ClusException, InterruptedException {
 
-        ClusStatistic stat = m_Model.predictWeighted(t); //model.predictWeighted(tuple);
+        ClusStatistic stat = m_Model.predictWeighted(t); // model.predictWeighted(tuple);
 
         if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
             ((WHTDStatistic) stat).setThreshold(HMCthreshold);
@@ -709,10 +726,10 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
         stat.computePrediction();
         stat.predictTuple(t);
-        //eliminate tuple t from unlabeled set
+        // eliminate tuple t from unlabeled set
         m_UnlabeledData.setTuple(null, index);
 
-        //set weight to unlabeled example (if needed), weight is equal to prediction confidence
+        // set weight to unlabeled example (if needed), weight is equal to prediction confidence
         if (m_UseWeights) {
             t.setWeight(t.getWeight() * m_PredConfidence.getConfidence(index));
         }
@@ -722,7 +739,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
     @Override
     public void initialize() throws ClusException, IOException {
 
-        //initialize underlying algorithm
+        // initialize underlying algorithm
         m_Induce.initialize();
     }
 
@@ -759,7 +776,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
     @Override
     public void initializeHeuristic() {
 
-        //initialize heuristic of underlying algorithm
+        // initialize heuristic of underlying algorithm
         m_Induce.initializeHeuristic();
     }
 }

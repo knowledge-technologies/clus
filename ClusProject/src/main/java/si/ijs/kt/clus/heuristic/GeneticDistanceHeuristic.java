@@ -98,15 +98,15 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
 
     public double getDistance(String[] seq1, String[] seq2) {
         switch (getSettings().getPhylogeny().getPhylogenyDM()) {
-            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_EDIT:
+            case Edit:
                 return getEditDistance(seq1, seq2);
-            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_PDIST:
+            case PDist:
                 return getPDistance(seq1, seq2);
-            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_JC:
+            case JC:
                 return getJukesCantorDistance(seq1, seq2);
-            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_KIMURA:
+            case Kimura:
                 return getKimuraDistance(seq1, seq2);
-            case SettingsPhylogeny.PHYLOGENY_DISTANCE_MEASURE_AMINOKIMURA:
+            case AminoKimura:
                 return getAminoKimuraDistance(seq1, seq2);
         }
         return 0.0; // is never executed

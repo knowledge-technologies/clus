@@ -111,12 +111,19 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsAttribute;
 import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
 import si.ijs.kt.clus.main.settings.section.SettingsConstraints;
-import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsHMTR;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.RuleAddingMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
+import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesPrototypeComplexity;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsGeneral.Compatibility;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyDistance;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
+import si.ijs.kt.clus.main.settings.section.SettingsHMTR.HierarchyDistanceHMTR;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.pruning.BottomUpPruningVSB;
 import si.ijs.kt.clus.pruning.C45Pruner;
@@ -227,7 +234,7 @@ public class ClusStatManager implements Serializable {
     }
 
 
-    public int getCompatibility() {
+    public Compatibility getCompatibility() {
         return getSettings().getGeneral().getCompatibility();
     }
 
@@ -646,14 +653,15 @@ public class ClusStatManager implements Serializable {
             case MODE_HIERARCHICAL:
 
                 WHTDStatistic clustering;
-                if (getSettings().getHMLC().getHierDistance() == SettingsHMLC.HIERDIST_NO_DIST) { // poolAUPRC induction
+                if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.NoDistance)) { // poolAUPRC
+                                                                                                      // induction
                     // setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility(),
                     // getSettings().getHMLC().getHierDistance()));
                     clustering = new WHTDStatistic(getSettings(), m_Hier, getCompatibility(), getSettings().getHMLC().getHierDistance());
                     setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility(), getSettings().getHMLC().getHierDistance()));
                 }
                 else {
-                    if (getSettings().getHMLC().getHierDistance() == SettingsHMLC.HIERDIST_WEIGHTED_EUCLIDEAN) {
+                    if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.WeightedEuclidean)) {
                         if (getSettings().getHMLC().getHierSingleLabel()) {
                             // setClusteringStatistic(new HierSingleLabelStat(getSettings(), m_Hier,
                             // getCompatibility()));
@@ -668,7 +676,7 @@ public class ClusStatManager implements Serializable {
                     }
                     else {
                         ClusDistance dist = null;
-                        if (getSettings().getHMLC().getHierDistance() == SettingsHMLC.HIERDIST_JACCARD) {
+                        if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.Jaccard)) {
                             dist = new HierJaccardDistance(m_Hier.getType());
                         }
 
@@ -687,11 +695,11 @@ public class ClusStatManager implements Serializable {
                 }
                 break;
             case MODE_HIERARCHICAL_MTR:
-                if (getSettings().getHMTR().getHMTRDistance().getValue() == SettingsHMTR.HMTR_HIERDIST_WEIGHTED_EUCLIDEAN) {
+                if (getSettings().getHMTR().getHMTRDistance().getValue().equals(HierarchyDistanceHMTR.WeightedEuclidean)) {
                     if (getSettings().getGeneral().getVerbose() > 0)
                         System.out.println("HMTR - Euclidean distance");
                 }
-                else if (getSettings().getHMTR().getHMTRDistance().getValue() == SettingsHMTR.HMTR_HIERDIST_JACCARD) {
+                else if (getSettings().getHMTR().getHMTRDistance().getValue().equals(HierarchyDistanceHMTR.Jaccard)) {
                     if (getSettings().getGeneral().getVerbose() > 0)
                         System.out.println("HMTR - Jaccard distance");
                 }
@@ -703,20 +711,20 @@ public class ClusStatManager implements Serializable {
             case MODE_SSPD:
                 ClusAttrType[] target = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
                 m_SSPDMtrx.setTarget(target);
-                setClusteringStatistic(new SumPairwiseDistancesStat(getSettings(), m_SSPDMtrx, 3));
-                setTargetStatistic(new SumPairwiseDistancesStat(getSettings(), m_SSPDMtrx, 3));
+                setClusteringStatistic(new SumPairwiseDistancesStat(getSettings(), m_SSPDMtrx, TimeSeriesPrototypeComplexity.NPairs));
+                setTargetStatistic(new SumPairwiseDistancesStat(getSettings(), m_SSPDMtrx, TimeSeriesPrototypeComplexity.NPairs));
                 break;
             case MODE_TIME_SERIES:
                 ClusAttrType[] targets = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
                 TimeSeriesAttrType type = (TimeSeriesAttrType) targets[0];
-                int efficiency = getSettings().getTimeSeries().getTimeSeriesHeuristicSampling();
+                TimeSeriesPrototypeComplexity efficiency = getSettings().getTimeSeries().getTimeSeriesHeuristicSampling();
                 switch (getSettings().getTimeSeries().getTimeSeriesDistance()) {
-                    case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_DTW:
+                    case DTW:
                         TimeSeriesDist dist = new DTWTimeSeriesDist(type);
                         setClusteringStatistic(new TimeSeriesStat(getSettings(), type, dist, efficiency));
                         setTargetStatistic(new TimeSeriesStat(getSettings(), type, dist, efficiency));
                         break;
-                    case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_QDM:
+                    case QDM:
                         if (type.isEqualLength()) {
                             TimeSeriesDist qdm = new QDMTimeSeriesDist(type);
                             setClusteringStatistic(new TimeSeriesStat(getSettings(), type, qdm, efficiency));
@@ -726,7 +734,7 @@ public class ClusStatManager implements Serializable {
                             throw new ClusException("QDM Distance is not implemented for time series with different length");
                         }
                         break;
-                    case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_TSC:
+                    case TSC:
                         TimeSeriesDist tsc = new TSCTimeSeriesDist(type);
                         setClusteringStatistic(new TimeSeriesStat(getSettings(), type, tsc, efficiency));
                         setTargetStatistic(new TimeSeriesStat(getSettings(), type, tsc, efficiency));
@@ -816,10 +824,10 @@ public class ClusStatManager implements Serializable {
             ClusDistance cd = null;
             if (def.equalsIgnoreCase("TIMESERIES")) {
                 switch (m_Settings.getTimeSeries().getTimeSeriesDistance()) {
-                    case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_DTW:
+                    case DTW:
                         cd = new DTWTimeSeriesDist(null);
                         break;
-                    case SettingsTimeSeries.TIME_SERIES_DISTANCE_MEASURE_QDM:
+                    case QDM:
                         cd = new QDMTimeSeriesDist(null);
                         break;
                 }
@@ -975,7 +983,7 @@ public class ClusStatManager implements Serializable {
                 m_Heuristic = new GISHeuristic(getClusteringWeights(), m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING), getSettings());
             } // daniela end
             else {
-                if (getSettings().getGeneral().getCompatibility() <= SettingsGeneral.COMPATIBILITY_MLJ08) {
+                if (getSettings().getGeneral().getCompatibility().getCompatibilityLevel() <= Compatibility.MLJ08.getCompatibilityLevel()) {
                     m_Heuristic = new VarianceReductionHeuristicCompatibility(createClusteringStat(), getClusteringWeights(), getSettings());
                 }
                 else {
@@ -1176,7 +1184,7 @@ public class ClusStatManager implements Serializable {
                 double[] recalls = getSettings().getHMLC().getRecallValues().getDoubleVector();
                 boolean wrCurves = getSettings().getOutput().isWriteCurves();
                 if (getSettings().getHMLC().isCalError()) {
-                    parent.addError(new HierErrorMeasures(parent, m_Hier, recalls, getSettings().getGeneral().getCompatibility(), -1, wrCurves, getSettings().getOutput().isGzipOutput()));
+                    parent.addError(new HierErrorMeasures(parent, m_Hier, recalls, getSettings().getGeneral().getCompatibility(), HierarchyMeasures.Undefined, wrCurves, getSettings().getOutput().isGzipOutput()));
                     parent.addError(new MlcMeasuresForHmlc(parent, m_Hier));
                 }
 
@@ -1542,7 +1550,7 @@ public class ClusStatManager implements Serializable {
 
     /** Often Tree to Rule is a exception for isRuleInduceOnly */
     public boolean isTreeToRuleInduce() {
-        return getSettings().getRules().getCoveringMethod() == SettingsRules.COVERING_METHOD_RULES_FROM_TREE;
+        return getSettings().getRules().getCoveringMethod().equals(CoveringMethod.RulesFromTree);
     }
 
 
@@ -1612,8 +1620,8 @@ public class ClusStatManager implements Serializable {
         SettingsRules setr = getSettings().getRules();
         SettingsTree sett = getSettings().getTree();
 
-        int covering = setr.getCoveringMethod();
-        int prediction = setr.getRulePredictionMethod();
+        CoveringMethod covering = setr.getCoveringMethod();
+        RulePredictionMethod prediction = setr.getRulePredictionMethod();
         // General
         if (((sett.getHeuristic() != SettingsTree.HEURISTIC_DISPERSION_ADT) || (sett.getHeuristic() != SettingsTree.HEURISTIC_DISPERSION_MLT) || (sett.getHeuristic() != SettingsTree.HEURISTIC_R_DISPERSION_ADT) || (sett.getHeuristic() != SettingsTree.HEURISTIC_R_DISPERSION_MLT)) && setr.isHeurRuleDist()) {
             setr.setHeurRuleDistPar(0.0);
@@ -1623,44 +1631,62 @@ public class ClusStatManager implements Serializable {
             // Is this faster than calling isRuleSignificanceTesting()
             // from Dispersion heuristic each time?
         }
+
         // Random rules
         if (setr.isRandomRules()) {
-            setr.setCoveringMethod(SettingsRules.COVERING_METHOD_STANDARD);
+            setr.setCoveringMethod(CoveringMethod.Standard);
             // sett.setRulePredictionMethod(Settings.RULE_PREDICTION_METHOD_DECISION_LIST);
             setr.setCoveringWeight(0);
             // Ordered rules
         }
-        else if (covering == SettingsRules.COVERING_METHOD_STANDARD) {
-            // sett.setRulePredictionMethod(Settings.RULE_PREDICTION_METHOD_DECISION_LIST);
-            setr.setCoveringWeight(0);
-            // Unordered rules - Heuristic covering
-        }
-        else if (covering == SettingsRules.COVERING_METHOD_HEURISTIC_ONLY) {
-            if ((prediction == SettingsRules.RULE_PREDICTION_METHOD_DECISION_LIST) || (prediction == SettingsRules.RULE_PREDICTION_METHOD_UNION)) {
-                setr.setRulePredictionMethod(SettingsRules.RULE_PREDICTION_METHOD_COVERAGE_WEIGHTED);
+        else {
+            switch (covering) {
+                case Standard:
+                    // sett.setRulePredictionMethod(Settings.RULE_PREDICTION_METHOD_DECISION_LIST);
+                    setr.setCoveringWeight(0);
+                    // Unordered rules - Heuristic covering
+                    break;
+
+                case HeurOnly:
+                    if ((prediction.equals(RulePredictionMethod.DecisionList)) || (prediction.equals(RulePredictionMethod.Union))) {
+                        setr.setRulePredictionMethod(RulePredictionMethod.CoverageWeighted);
+                    }
+                    setr.setCoveringWeight(0.0);
+                    if (setr.getHeurRuleDistPar() < 0) { throw new ClusException("Clus heuristic covering: HeurRuleDistPar must be >= 0!"); }
+                    if ((sett.getHeuristic() != SettingsTree.HEURISTIC_DISPERSION_ADT) || (sett.getHeuristic() != SettingsTree.HEURISTIC_DISPERSION_MLT) || (sett.getHeuristic() != SettingsTree.HEURISTIC_R_DISPERSION_ADT) || (sett.getHeuristic() != SettingsTree.HEURISTIC_R_DISPERSION_MLT)) { throw new ClusException("Clus heuristic covering: Only dispersion-based heuristics supported!"); }
+                    // Unordered rules - Weighted coverings
+                    break;
+
+                case WeightedAdditive:
+                case WeightedMultiplicative:
+                case WeightedError:
+                case BeamRuleDefSet:
+                case RandomRuleSet:
+
+                    if (Arrays.asList(RulePredictionMethod.DecisionList, RulePredictionMethod.Union).contains(prediction)) {
+                        setr.setRulePredictionMethod(RulePredictionMethod.CoverageWeighted);
+                    }
+
+                    if (setr.getCoveringWeight() < 0) { throw new ClusException("Clus weighted covering: Covering weight must be >= 0!"); }
+                    // Rule induction from bootstrap sampled data, optimized ...
+                    break;
+
+                case StandardBootstrap:
+                    setr.setRulePredictionMethod(RulePredictionMethod.Optimized);
+                    // Multi-label classification
+                    break;
+
+                case Union:
+                    setr.setRulePredictionMethod(RulePredictionMethod.Union);
+                    break;
+
+                case RulesFromTree:
+                    sett.setHeuristic(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
+                    setr.setRuleAddingMethod(RuleAddingMethod.Always);
+                    break;
+                default:
+                    throw new RuntimeException("Covering method is not handled!");
             }
-            setr.setCoveringWeight(0.0);
-            if (setr.getHeurRuleDistPar() < 0) { throw new ClusException("Clus heuristic covering: HeurRuleDistPar must be >= 0!"); }
-            if ((sett.getHeuristic() != SettingsTree.HEURISTIC_DISPERSION_ADT) || (sett.getHeuristic() != SettingsTree.HEURISTIC_DISPERSION_MLT) || (sett.getHeuristic() != SettingsTree.HEURISTIC_R_DISPERSION_ADT) || (sett.getHeuristic() != SettingsTree.HEURISTIC_R_DISPERSION_MLT)) { throw new ClusException("Clus heuristic covering: Only dispersion-based heuristics supported!"); }
-            // Unordered rules - Weighted coverings
-        }
-        else if ((covering == SettingsRules.COVERING_METHOD_WEIGHTED_ADDITIVE) || (covering == SettingsRules.COVERING_METHOD_WEIGHTED_MULTIPLICATIVE) || (covering == SettingsRules.COVERING_METHOD_WEIGHTED_ERROR) || (covering == SettingsRules.COVERING_METHOD_BEAM_RULE_DEF_SET) || (covering == SettingsRules.COVERING_METHOD_RANDOM_RULE_SET)) {
-            if ((prediction == SettingsRules.RULE_PREDICTION_METHOD_DECISION_LIST) || (prediction == SettingsRules.RULE_PREDICTION_METHOD_UNION)) {
-                setr.setRulePredictionMethod(SettingsRules.RULE_PREDICTION_METHOD_COVERAGE_WEIGHTED);
-            }
-            if (setr.getCoveringWeight() < 0) { throw new ClusException("Clus weighted covering: Covering weight must be >= 0!"); }
-            // Rule induction from bootstrap sampled data, optimized ...
-        }
-        else if (covering == SettingsRules.COVERING_METHOD_STANDARD_BOOTSTRAP) {
-            setr.setRulePredictionMethod(SettingsRules.RULE_PREDICTION_METHOD_OPTIMIZED);
-            // Multi-label classification
-        }
-        else if (covering == SettingsRules.COVERING_METHOD_UNION) {
-            setr.setRulePredictionMethod(SettingsRules.RULE_PREDICTION_METHOD_UNION);
-        }
-        else if (covering == SettingsRules.COVERING_METHOD_RULES_FROM_TREE) {
-            sett.setHeuristic(SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
-            setr.setRuleAddingMethod(SettingsRules.RULE_ADDING_METHOD_ALWAYS);
         }
     }
 }

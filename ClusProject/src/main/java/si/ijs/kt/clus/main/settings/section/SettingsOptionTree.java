@@ -66,12 +66,10 @@ public class SettingsOptionTree extends SettingsBase {
         m_SectionOptionTree = new INIFileSection("OptionTree");
         m_SectionOptionTree.addNode(m_optionDecayFactor = new INIFileDouble("DecayFactor", 0.9));
         m_SectionOptionTree.addNode(m_optionEpsilon = new INIFileDouble("Epsilon", 0.1));
-        m_SectionOptionTree.addNode(m_optionMaxNumberOfOptionsPerNode = new INIFileInt("MaxNumberOfOptionsPerNode", 5)); /*
-                                                                                                                          * Constant
-                                                                                                                          * by
-                                                                                                                          * Kohavi,
-                                                                                                                          * Kunz
-                                                                                                                          */
+
+        /* Constant by Kohavi Kunz */
+        m_SectionOptionTree.addNode(m_optionMaxNumberOfOptionsPerNode = new INIFileInt("MaxNumberOfOptionsPerNode", 5));
+
         m_SectionOptionTree.addNode(m_optionMaxDepthOfOptionNode = new INIFileInt("MaxDepthOfOptionNode", 3));
         m_optionMaxNumberOfOptionsPerNode.setValueCheck(new IntRangeCheck(2, Integer.MAX_VALUE));
         m_optionMaxDepthOfOptionNode.setValueCheck(new IntRangeCheck(1, Integer.MAX_VALUE));

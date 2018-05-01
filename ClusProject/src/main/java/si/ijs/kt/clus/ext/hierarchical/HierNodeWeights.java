@@ -25,6 +25,7 @@ package si.ijs.kt.clus.ext.hierarchical;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyWeight;
 
 
 public class HierNodeWeights {
@@ -67,7 +68,7 @@ public class HierNodeWeights {
     }
 
 
-    public void initExponentialDepthWeightsDAG(ClassHierarchy hier, int wtype, double w0) {
+    public void initExponentialDepthWeightsDAG(ClassHierarchy hier, HierarchyWeight wtype, double w0) {
     	// 1 ---> 1/w0, otherwise: the weights in this and DAG case differ by a factor w0
     	double rootWeight = 1.0 / w0;
         boolean[] weight_computed = new boolean[hier.getTotal()];
@@ -92,7 +93,7 @@ public class HierNodeWeights {
                     term.setMinDepth(minDepth);
                     term.setMaxDepth(maxDepth);
                     double agg_wi;
-                    if (wtype == SettingsHMLC.HIERWEIGHT_EXP_MIN_PARENT_WEIGHT) {
+                    if (wtype.equals(HierarchyWeight.ExpMinParentWeight)) {
                         agg_wi = Double.MAX_VALUE;
                         for (int j = 0; j < term.getNbParents(); j++) {
                             ClassTerm parent = term.getParent(j);
@@ -101,7 +102,7 @@ public class HierNodeWeights {
                             else
                                 agg_wi = Math.min(agg_wi, m_Weights[parent.getIndex()]);
                         }
-                    } else if (wtype == SettingsHMLC.HIERWEIGHT_EXP_MAX_PARENT_WEIGHT) {
+                    } else if (wtype.equals(HierarchyWeight.ExpMaxParentWeight)) {
                             agg_wi = Double.MIN_VALUE;
                             for (int j = 0; j < term.getNbParents(); j++) {
                                 ClassTerm parent = term.getParent(j);
@@ -119,7 +120,7 @@ public class HierNodeWeights {
                             else
                                 agg_wi += m_Weights[parent.getIndex()];
                         }
-                        if (wtype == SettingsHMLC.HIERWEIGHT_EXP_AVG_PARENT_WEIGHT) {
+                        if (wtype.equals(HierarchyWeight.ExpAvgParentWeight)) {
                             agg_wi = agg_wi / term.getNbParents();
                         }
                     }
@@ -147,7 +148,7 @@ public class HierNodeWeights {
 
     public void initNoWeights(ClassHierarchy hier) {
         boolean[] weight_computed = new boolean[hier.getTotal()];
-        ArrayList todo = new ArrayList();
+        ArrayList<ClassTerm> todo = new ArrayList<>();
         for (int i = 0; i < hier.getTotal(); i++) {
             ClassTerm term = hier.getTermAt(i);
             todo.add(term);
@@ -176,9 +177,9 @@ public class HierNodeWeights {
     }
 
 
-    public void initExponentialDepthWeights(ClassHierarchy hier, int wtype, double w0) {
+    public void initExponentialDepthWeights(ClassHierarchy hier, HierarchyWeight wtype, double w0) {
         m_Weights = new double[hier.getTotal()];
-        if (wtype == SettingsHMLC.HIERWEIGHT_NO_WEIGHT) {
+        if (wtype.equals(HierarchyWeight.NoWeight)) {
             initNoWeights(hier);
         }
         else {

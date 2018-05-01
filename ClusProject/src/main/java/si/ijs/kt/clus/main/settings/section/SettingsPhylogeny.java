@@ -4,6 +4,7 @@ package si.ijs.kt.clus.main.settings.section;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
@@ -22,27 +23,22 @@ public class SettingsPhylogeny extends SettingsBase {
      * Section: Phylogeny *
      ***********************************************************************/
 
-    private final String[] PHYLOGENY_DISTANCE_MEASURE = { "PDist", "Edit", "JC", "Kimura", "AminoKimura" };
-    public final static int PHYLOGENY_DISTANCE_MEASURE_PDIST = 0;
-    public final static int PHYLOGENY_DISTANCE_MEASURE_EDIT = 1;
-    public final static int PHYLOGENY_DISTANCE_MEASURE_JC = 2;
-    public final static int PHYLOGENY_DISTANCE_MEASURE_KIMURA = 3;
-    public final static int PHYLOGENY_DISTANCE_MEASURE_AMINOKIMURA = 4;
+    public enum PhylogenyDistanceMeasure {
+        PDist, Edit, JC, Kimura, AminoKimura
+    };
 
-    private final String[] PHYLOGENY_SEQUENCE = { "DNA", "Protein", "Any" };
-    public final static int PHYLOGENY_SEQUENCE_DNA = 0;
-    public final static int PHYLOGENY_SEQUENCE_AMINO = 1;
-    public final static int PHYLOGENY_SEQUENCE_ANY = 2;
+    public enum PhylogenySequence {
+        DNA, Protein, Any
+    };
 
-    private final String[] PHYLOGENY_CRITERION = { "MinTotBranchLength", "MaxAvgPWDistance", "MaxMinPWDistance" };
-    public final static int PHYLOGENY_CRITERION_BRANCHLENGTHS = 0;
-    public final static int PHYLOGENY_CRITERION_MAXAVGPWDIST = 1;
-    public final static int PHYLOGENY_CRITERION_MAXMINPWDIST = 2;
+    public enum PhylogenyCriterion {
+        MinTotBranchLength, MaxAvgPWDistance, MaxMinPWDistance
+    };
 
     private INIFileSection m_SectionPhylogeny;
-    private INIFileNominal m_PhylogenyDM;
-    private INIFileNominal m_PhylogenyCriterion;
-    private INIFileNominal m_PhylogenySequence;
+    private INIFileEnum<PhylogenyDistanceMeasure> m_PhylogenyDM;
+    private INIFileEnum<PhylogenyCriterion> m_PhylogenyCriterion;
+    private INIFileEnum<PhylogenySequence> m_PhylogenySequence;
     private INIFileString m_PhylogenyDistanceMatrix;
     private INIFileDouble m_PhylogenyEntropyVsRootStop;
     private INIFileDouble m_PhylogenyDistancesVsRootStop;
@@ -50,17 +46,17 @@ public class SettingsPhylogeny extends SettingsBase {
     private INIFileDouble m_PhylogenyDistancesVsParentStop;
 
 
-    public int getPhylogenySequence() {
+    public PhylogenySequence getPhylogenySequence() {
         return m_PhylogenySequence.getValue();
     }
 
 
-    public int getPhylogenyDM() {
+    public PhylogenyDistanceMeasure getPhylogenyDM() {
         return m_PhylogenyDM.getValue();
     }
 
 
-    public int getPhylogenyCriterion() {
+    public PhylogenyCriterion getPhylogenyCriterion() {
         return m_PhylogenyCriterion.getValue();
     }
 
@@ -103,9 +99,9 @@ public class SettingsPhylogeny extends SettingsBase {
     @Override
     public INIFileSection create() {
         m_SectionPhylogeny = new INIFileSection("Phylogeny");
-        m_SectionPhylogeny.addNode(m_PhylogenyDM = new INIFileNominal("DistanceMeasure", PHYLOGENY_DISTANCE_MEASURE, PHYLOGENY_DISTANCE_MEASURE_PDIST));
-        m_SectionPhylogeny.addNode(m_PhylogenyCriterion = new INIFileNominal("OptimizationCriterion", PHYLOGENY_CRITERION, PHYLOGENY_CRITERION_BRANCHLENGTHS));
-        m_SectionPhylogeny.addNode(m_PhylogenySequence = new INIFileNominal("Sequence", PHYLOGENY_SEQUENCE, PHYLOGENY_SEQUENCE_DNA));
+        m_SectionPhylogeny.addNode(m_PhylogenyDM = new INIFileEnum<>("DistanceMeasure", PhylogenyDistanceMeasure.PDist));
+        m_SectionPhylogeny.addNode(m_PhylogenyCriterion = new INIFileEnum<>("OptimizationCriterion", PhylogenyCriterion.MinTotBranchLength));
+        m_SectionPhylogeny.addNode(m_PhylogenySequence = new INIFileEnum<>("Sequence", PhylogenySequence.DNA));
         m_SectionPhylogeny.addNode(m_PhylogenyDistanceMatrix = new INIFileString("DistanceMatrix", "dist"));
         m_SectionPhylogeny.addNode(m_PhylogenyEntropyVsRootStop = new INIFileDouble("EntropyVsRootStopCriterion", 0));
         m_SectionPhylogeny.addNode(m_PhylogenyDistancesVsRootStop = new INIFileDouble("SumPWDistancesVsRootStopCriterion", 0));

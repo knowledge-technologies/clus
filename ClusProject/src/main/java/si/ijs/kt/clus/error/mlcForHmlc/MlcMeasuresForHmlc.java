@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import si.ijs.kt.clus.algo.kNN.KnnClassifier;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
@@ -133,7 +134,7 @@ public class MlcMeasuresForHmlc extends ClusError {
         if (name.equals("Original") || name.equals("Pruned") || name.equals("Default")) {
             return true;
         }
-        else if (name.startsWith("Original ") && name.contains("-nn model with ") || name.equals("Default 1-nn model with no weighting")) {
+        else if (name.startsWith("Original ") && name.contains("-nn model with ") || name.equals(KnnClassifier.DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS)) {
             // this is kNN hackish solution
             return true;
         }

@@ -4,7 +4,7 @@ package si.ijs.kt.clus.main.settings.section;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrDouble;
@@ -34,16 +34,21 @@ public class SettingsData extends SettingsBase {
     private INIFileBool m_RemoveMissingTarget;
 
     // Gradient descent optimization algorithm
+    public enum NormalizeDataValues {
+        None, Numeric
+    };
+
     /** Possible values for normalizeData */
-    private final String[] NORMALIZE_DATA_VALUES = { "None", "Numeric" };
+    //private final String[] NORMALIZE_DATA_VALUES = { "None", "Numeric" };
     /** Do not normalize data. DEFAULT */
-    public final static int NORMALIZE_DATA_NONE = 0;
+    //public final static int NORMALIZE_DATA_NONE = 0;
     /** Normalize only numeric variables */
-    public final static int NORMALIZE_DATA_NUMERIC = 1;
+    //public final static int NORMALIZE_DATA_NUMERIC = 1;
     /** Normalize all the variables Not implemented */
     // public final static int NORMALIZE_DATA_ALL = 3;
     /** Do normalization for the data in the beginning. Done by dividing with the variance. */
-    private INIFileNominal m_NormalizeData;
+    
+    private INIFileEnum<NormalizeDataValues> m_NormalizeData;
 
 
     public String getDataFile() {
@@ -135,7 +140,7 @@ public class SettingsData extends SettingsBase {
 
 
     /** Do we want to normalize the data */
-    public int getNormalizeData() {
+    public NormalizeDataValues getNormalizeData() {
         return m_NormalizeData.getValue();
     }
 
@@ -160,7 +165,7 @@ public class SettingsData extends SettingsBase {
         data.addNode(m_XValFolds = new INIFileStringOrInt("XVal"));
         m_XValFolds.setIntValue(10);
         data.addNode(m_RemoveMissingTarget = new INIFileBool("RemoveMissingTarget", false));
-        data.addNode(m_NormalizeData = new INIFileNominal("NormalizeData", NORMALIZE_DATA_VALUES, 0));
+        data.addNode(m_NormalizeData = new INIFileEnum<>("NormalizeData", NormalizeDataValues.None));
 
         return data;
     }

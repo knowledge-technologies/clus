@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDMTCombineGradient;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
@@ -249,8 +250,7 @@ public class GDAlg extends OptAlg {
                 // For MaxLoss combination the oscillation may be because we are finding some local
                 // optimum point for some weight and it is the most significant. Let us put this weight
                 // to a banned list for some iterations
-                if (nbOfIterations > 10 && (getSettings().getRules().getOptGDMTGradientCombine() == SettingsRules.OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE 
-                        || getSettings().getRules().getOptGDMTGradientCombine() == SettingsRules.OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE_FAST)) {
+                if (nbOfIterations > 10 && (getSettings().getRules().getOptGDMTGradientCombine().equals(OptimizationGDMTCombineGradient.MaxLoss) || getSettings().getRules().getOptGDMTGradientCombine().equals(OptimizationGDMTCombineGradient.MaxLossFast))) {
                     putOscillatingWeightsToBan(nbOfIterations);
                 }
                 else {

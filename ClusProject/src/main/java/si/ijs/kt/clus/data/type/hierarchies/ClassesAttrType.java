@@ -41,6 +41,7 @@ import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
 import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyType;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.StringTable;
 
@@ -86,11 +87,13 @@ public class ClassesAttrType extends ClusAttrType {
         return m_Hier;
     }
 
+
     @Override
     public boolean isMissing(DataTuple tuple) {
         return this.getValue(tuple).getNbClasses() == 0;
     }
-    
+
+
     @Override
     public ClusAttrType cloneType() {
         ClassesAttrType at = new ClassesAttrType(m_Name, m_Hier);
@@ -120,20 +123,24 @@ public class ClassesAttrType extends ClusAttrType {
     public ClassesTuple getValue(DataTuple t1) {
         return (ClassesTuple) t1.getObjVal(getArrayIndex());
     }
-    
+
+
     public void setValue(DataTuple t1, ClassesTuple val) {
-    	t1.setObjectVal(val, getArrayIndex());
+        t1.setObjectVal(val, getArrayIndex());
     }
-    
-	@Override
-	public void setToMissing(DataTuple t) {
-		try {
-			setValue(t, new ClassesTuple(ClassesValue.EMPTY_SET_INDICATOR, null));
-		} catch (ClusException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}	
-	}
+
+
+    @Override
+    public void setToMissing(DataTuple t) {
+        try {
+            setValue(t, new ClassesTuple(ClassesValue.EMPTY_SET_INDICATOR, null));
+        }
+        catch (ClusException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void updatePredictWriterSchema(ClusSchema schema) {
@@ -207,7 +214,7 @@ public class ClassesAttrType extends ClusAttrType {
         }
         if (m_Labels != null) {
             // Load definition from labels in type specification in .arff
-            if (sett.getHierType() == SettingsHMLC.HIERTYPE_DAG) {
+            if (sett.getHierType().equals(HierarchyType.DAG)) {
                 m_Hier.loadDAG(m_Labels);
             }
             else {
@@ -234,7 +241,7 @@ public class ClassesAttrType extends ClusAttrType {
     // For HMC, this is whether it uses a tree or DAG representation
     public void initSettings(Settings sett) {
 
-        if (sett.getHMLC().getHierType() == SettingsHMLC.HIERTYPE_DAG) {
+        if (sett.getHMLC().getHierType().equals(HierarchyType.DAG)) {
             getHier().setHierType(ClassHierarchy.DAG);
         }
     }
@@ -242,8 +249,8 @@ public class ClassesAttrType extends ClusAttrType {
 
     @Override
     public void writeARFFType(PrintWriter wrt) throws ClusException {
-        ArrayList list;
-        if (getSettings().getHMLC().getHierType() == SettingsHMLC.HIERTYPE_DAG) {
+        ArrayList<String> list = null;
+        if (getSettings().getHMLC().getHierType().equals(HierarchyType.DAG)) {
             list = getHier().getAllParentChildTuples();
         }
         else {

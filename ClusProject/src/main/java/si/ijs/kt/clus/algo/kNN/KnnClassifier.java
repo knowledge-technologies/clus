@@ -23,6 +23,7 @@
 package si.ijs.kt.clus.algo.kNN;
 
 import java.io.IOException;
+import java.util.List;
 
 import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.algo.ClusInductionAlgorithm;
@@ -32,7 +33,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsKNN;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN.DistanceWeights;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.util.ClusException;
@@ -44,6 +45,9 @@ import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
  * @author Mitja Pugelj, matejp
  */
 public class KnnClassifier extends ClusInductionAlgorithmType {
+
+    public static String DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS = "Default 1-nn model with " + DistanceWeights.Constant.toString() + " weights";
+    private final String modelNameTemplate ="Original {0} -nn model with {1} weighting"; 
 
     public KnnClassifier(Clus clus) {
         super(clus);
@@ -78,21 +82,17 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
         @Override
         public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
 
-            int[] ks = getSettings().getKNN().getKNNk(); //.split(",");
-            int[] distWeight = getSettings().getKNN().getKNNDistanceWeight(); //.split(",");
-            int[] weights = new int[distWeight.length];
-            int i = 0;
-            for (int s : distWeight) {
-            	weights[i] = s;
-                i++;
-            }
+            int[] ks = getSettings().getKNN().getKNNk(); // .split(",");
+            List<DistanceWeights> distWeight = getSettings().getKNN().getKNNDistanceWeights(); // .split(",");
+
             int maxK = 1;
-            for(int k: ks) {
-            	maxK = Math.max(maxK, k);
+            for (int k : ks) {
+                maxK = Math.max(maxK, k);
             }
+
             // base model
-            String model_name = "Default 1-nn model with no weighting"; // DO NOT CHANGE THE NAME!!!
-            KnnModel model = new KnnModel(cr, 1, SettingsKNN.DISTANCE_WEIGHTING_CONSTANT, maxK);
+            String model_name = DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS; // DO NOT CHANGE THE NAME!!!
+            KnnModel model = new KnnModel(cr, 1, DistanceWeights.Constant, maxK);
             ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL, model_name);
             model_info.setModel(model);
             model_info.setName(model_name);
@@ -105,13 +105,13 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             int modelCnt = 2;
 
             for (int k : ks) {
-                i = -1;
-                for (int w : weights) {
-                    i++;
-                    if (k == 1 && w == SettingsKNN.DISTANCE_WEIGHTING_CONSTANT)
+                for (DistanceWeights w : distWeight) {
+                    if (k == 1 && w.equals(DistanceWeights.Constant))
                         continue; // same as default model
                     KnnModel tmpmodel = new KnnModel(cr, k, w, model);
-                    model_name = "Original " + k + "-nn model with " + SettingsKNN.DISTANCE_WEIGHTS[weights[i]] + " weighting";// DO NOT CHANGE THE NAME!!!
+                     
+                    model_name = String.format(modelNameTemplate, k, w.toString()); // DO NOT CHANGE THE NAME!!!
+                    
                     ClusModelInfo tmpmodel_info = cr.addModelInfo(modelCnt++, model_name);
                     tmpmodel_info.setModel(tmpmodel);
                     tmpmodel_info.setName(model_name);
@@ -128,8 +128,8 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
      * 
      * @param cr
      * @return
-     * @throws ClusException 
-     * @throws InterruptedException 
+     * @throws ClusException
+     * @throws InterruptedException
      */
     public static ClusModel induceDefaultModel(ClusRun cr) throws ClusException, InterruptedException {
         ClusNode node = new ClusNode();
@@ -144,6 +144,6 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
     @Override
     public void postProcess(ClusRun cr) throws ClusException, IOException {
         // TODO Auto-generated method stub
-        
+
     }
 }

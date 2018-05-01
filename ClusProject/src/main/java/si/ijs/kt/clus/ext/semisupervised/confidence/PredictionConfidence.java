@@ -18,7 +18,9 @@ import si.ijs.kt.clus.ext.semisupervised.confidence.normalization.Normalization;
 import si.ijs.kt.clus.ext.semisupervised.confidence.normalization.Ranking;
 import si.ijs.kt.clus.ext.semisupervised.confidence.normalization.Standardization;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.section.SettingsSSL;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLAggregation;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLConfidenceMeasure;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLNormalization;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.util.ClusException;
 
@@ -27,14 +29,15 @@ public abstract class PredictionConfidence {
 
     protected double[] m_ConfidenceScores;
     protected Map<Integer, double[]> m_perTargetScores;
-    //    protected ClusStatistic[] m_Predictions;
-    protected int m_counter, m_NbTargets; // m_counter is counter for examples with weight larger than 0. Examples with weight=0 are not considered for calculation of confidence score
+    // protected ClusStatistic[] m_Predictions;
+    protected int m_counter, m_NbTargets; // m_counter is counter for examples with weight larger than 0. Examples with
+                                          // weight=0 are not considered for calculation of confidence score
     protected Normalization m_Normalization;
     protected Aggregation m_Aggregation;
     protected ClusStatManager m_StatManager;
 
 
-    public PredictionConfidence(ClusStatManager statManager, int normalizationType, int aggregationType) {
+    public PredictionConfidence(ClusStatManager statManager, SSLNormalization normalizationType, SSLAggregation aggregationType) {
         m_StatManager = statManager;
 
         switch (m_StatManager.getMode()) {
@@ -50,16 +53,16 @@ public abstract class PredictionConfidence {
         }
 
         switch (normalizationType) {
-            case SettingsSSL.SSL_NORMALIZATION_MINMAXNORM:
+            case MinMaxNormalization:
                 m_Normalization = new MinMaxNormalization(m_NbTargets);
                 break;
-            case SettingsSSL.SSL_NORMALIZATION_RANKING:
+            case Ranking:
                 m_Normalization = new Ranking(m_NbTargets);
                 break;
-            case SettingsSSL.SSL_NORMALIZATION_STANDARDIZATION:
+            case Standardization:
                 m_Normalization = new Standardization(m_NbTargets);
                 break;
-            case SettingsSSL.SSL_NORMALIZATION_NONORMALIZATION:
+            case NoNormalization:
                 m_Normalization = new NoNormalization();
                 break;
             default:
@@ -67,23 +70,22 @@ public abstract class PredictionConfidence {
         }
 
         switch (aggregationType) {
-            case SettingsSSL.SSL_AGGREGATION_AVERAGE:
+            case Average:
                 m_Aggregation = new Average();
                 break;
-            case SettingsSSL.SSL_AGGREGATION_MINIMUM:
+            case Minimum:
                 m_Aggregation = new Minimum();
                 break;
-            case SettingsSSL.SSL_AGGREGATION_MAXIMUM:
+            case Maximum:
                 m_Aggregation = new Maximum();
                 break;
-            case SettingsSSL.SSL_AGGREGATION_AVERAGEIGNOREZEROS:
+            case AverageIgnoreZeros:
                 m_Aggregation = new AverageHMC();
             default:
                 m_Aggregation = new Average();
         }
 
-        if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY
-                && m_StatManager.getSettings().getSSL().getConfidenceMeasure() == SettingsSSL.SSL_CONFIDENCE_MEASURE_VARIANCE) {
+        if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY && m_StatManager.getSettings().getSSL().getConfidenceMeasure().equals(SSLConfidenceMeasure.Variance)) {
             m_Normalization.setIsLessBetter(false);
         }
     }
@@ -101,12 +103,12 @@ public abstract class PredictionConfidence {
 
             double[] instancePerTargetScores = null;
 
-            //we will not consider instances with weight = 0
+            // we will not consider instances with weight = 0
             if (tuple != null && tuple.getWeight() > 0) {
                 if (OOB) {
                     if (((ClusForest) model).containsOOBForTuple(tuple)) {
 
-                        //calculate OOB per-target scores
+                        // calculate OOB per-target scores
                         instancePerTargetScores = calculatePerTargetOOBScores((ClusForest) model, tuple);
                         m_perTargetScores.put(i, instancePerTargetScores);
 
@@ -127,10 +129,10 @@ public abstract class PredictionConfidence {
             }
         }
 
-        //normalize per-target scores
+        // normalize per-target scores
         m_Normalization.normalize(m_perTargetScores);
 
-        //aggregate per target scores into single score
+        // aggregate per target scores into single score
         for (Integer key : m_perTargetScores.keySet()) {
             m_ConfidenceScores[key] = m_Aggregation.aggregate(m_perTargetScores.get(key));
         }
@@ -157,8 +159,8 @@ public abstract class PredictionConfidence {
      * @param model
      * @param tuple
      * @return
-     * @throws ClusException 
-     * @throws InterruptedException 
+     * @throws ClusException
+     * @throws InterruptedException
      */
     public abstract double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) throws ClusException, InterruptedException;
 
@@ -170,8 +172,8 @@ public abstract class PredictionConfidence {
      * @param model
      * @param tuple
      * @return
-     * @throws ClusException 
-     * @throws InterruptedException 
+     * @throws ClusException
+     * @throws InterruptedException
      */
     public abstract double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple) throws ClusException, InterruptedException;
 

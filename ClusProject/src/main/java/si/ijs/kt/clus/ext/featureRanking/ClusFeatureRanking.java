@@ -11,6 +11,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Random;
 import java.util.Set;
 import java.util.TreeMap;
@@ -64,7 +65,9 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
 import si.ijs.kt.clus.main.settings.section.SettingsMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsMLC.MultiLabelMeasures;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -478,67 +481,67 @@ public class ClusFeatureRanking {
         NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
         if (mgr.getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (sett.getMLC().getSectionMultiLabel().isEnabled()) {
-                int[] measures = sett.getMLC().getMultiLabelRankingMeasures();
-                for (int measure : measures) {
+                List<MultiLabelMeasures> measures = sett.getMLC().getMultiLabelRankingMeasures();
+                for (MultiLabelMeasures measure : measures) {
                     switch (measure) {
-                        case SettingsMLC.MULTILABEL_MEASURES_HAMMINGLOSS:
+                        case HammingLoss:
                             error.addError(new HammingLoss(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MLACCURACY:
+                        case MLAccuracy:
                             error.addError(new MLAccuracy(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MLPRECISION:
+                        case MLPrecision:
                             error.addError(new MLPrecision(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MLRECALL:
+                        case MLRecall:
                             error.addError(new MLRecall(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MLFONE:
+                        case MLFOne:
                             error.addError(new MLFOneMeasure(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_SUBSETACCURACY:
+                        case SubsetAccuracy:
                             error.addError(new SubsetAccuracy(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MACROPRECISION:
+                        case MacroPrecision:
                             error.addError(new MacroPrecision(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MACRORECALL:
+                        case MacroRecall:
                             error.addError(new MacroRecall(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MACROFONE:
+                        case MacroFOne:
                             error.addError(new MacroFOne(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MICROPRECISION:
+                        case MicroPrecision:
                             error.addError(new MicroPrecision(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MICRORECALL:
+                        case MicroRecall:
                             error.addError(new MicroRecall(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_MICROFONE:
+                        case MicroFOne:
                             error.addError(new MisclassificationError(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_ONEERROR:
+                        case OneError:
                             error.addError(new OneError(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_COVERAGE:
+                        case Coverage:
                             error.addError(new Coverage(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_RANKINGLOSS:
+                        case RankingLoss:
                             error.addError(new RankingLoss(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_AVERAGEPRECISION:
+                        case AveragePrecision:
                             error.addError(new AveragePrecision(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_AUROC:
+                        case AverageAUROC:
                             error.addError(new MLaverageAUROC(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_AUPRC:
+                        case AverageAUPRC:
                             error.addError(new MLaverageAUPRC(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_WEIGHTED_AUPRC:
+                        case WeightedAverageAUPRC:
                             error.addError(new MLweightedAUPRC(error, nom));
                             break;
-                        case SettingsMLC.MULTILABEL_MEASURES_POOLED_AUPRC:
+                        case PooledAUPRC:
                             error.addError(new MLpooledAUPRC(error, nom));
                             break;
                     }
@@ -554,7 +557,7 @@ public class ClusFeatureRanking {
             error.addError(new RMSError(error, num));
         }
         else if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            error.addError(new HierErrorMeasures(error, mgr.getHier(), sett.getHMLC().getRecallValues().getDoubleVector(), sett.getGeneral().getCompatibility(), SettingsHMLC.HIERMEASURE_POOLED_AUPRC, false, getSettings().getOutput().isGzipOutput()));
+            error.addError(new HierErrorMeasures(error, mgr.getHier(), sett.getHMLC().getRecallValues().getDoubleVector(), sett.getGeneral().getCompatibility(), HierarchyMeasures.PooledAUPRC, false, getSettings().getOutput().isGzipOutput()));
         }
         else {
             System.err.println("Feature ranking with Random Forests is supported only for:");

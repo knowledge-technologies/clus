@@ -1,11 +1,17 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import java.util.ArrayList;
+
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
+import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesPrototypeComplexity;
 import si.ijs.kt.clus.util.FTest;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnumList;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
@@ -25,11 +31,9 @@ public class SettingsTree extends SettingsBase {
     /***********************************************************************
      * Section: Tree *
      ***********************************************************************/
-
-    private final String[] TREE_OPTIMIZE_VALUES = { "NoClusteringStats", "NoInodeStats" };
-    public final static int[] TREE_OPTIMIZE_NONE = {};
-    public final static int TREE_OPTIMIZE_NO_CLUSTERING_STATS = 0;
-    public final static int TREE_OPTIMIZE_NO_INODE_STATS = 1;
+    public enum TreeOptimizeValues {
+        NoClusteringStats, NoInodeStats
+    };
 
     // @!TODO
     /* consider creating new section Structured Data for heuristic and structured data distance measures */
@@ -63,7 +67,7 @@ public class SettingsTree extends SettingsBase {
     private INIFileNominal m_SetDistance;
     private INIFileNominal m_TupleDistance;
     private INIFileNominal m_TSDistance;
-    private INIFileNominal m_HeuristicComplexity;
+    private INIFileEnum<TimeSeriesPrototypeComplexity> m_HeuristicComplexity;
 
     private INIFileBool m_BinarySplit;
     private INIFileBool m_AlternativeSplits;
@@ -73,8 +77,8 @@ public class SettingsTree extends SettingsBase {
     private INIFileBool m_MSENominal;
     private INIFileDouble m_M5PruningMult;
     /** Do we transform leaves or all nodes of tree to rules */
-    private INIFileNominal m_RulesFromTree;
-    private INIFileNominal m_TreeOptimize;
+    private INIFileEnum<ConvertRules> m_RulesFromTree;
+    private INIFileEnumList<TreeOptimizeValues> m_TreeOptimize;
     // daniela
     private INIFileNominal m_SpatialMatrix;
     private INIFileNominal m_SpatialMeasure;
@@ -167,7 +171,7 @@ public class SettingsTree extends SettingsBase {
     }
 
 
-    public int getHeuristicComplexity() {
+    public TimeSeriesPrototypeComplexity getHeuristicComplexity() {
         return m_HeuristicComplexity.getValue();
     }
 
@@ -355,13 +359,13 @@ public class SettingsTree extends SettingsBase {
     /**
      * If we transform the induced trees to rules.
      */
-    public int rulesFromTree() {
+    public ConvertRules rulesFromTree() {
         return m_RulesFromTree.getValue();
     }
 
 
-    public boolean hasTreeOptimize(int value) {
-        return m_TreeOptimize.contains(value);
+    public boolean hasTreeOptimize(TreeOptimizeValues value) {
+        return m_TreeOptimize.getValue().contains(value);
     }
 
     /***********************************************************************
@@ -504,7 +508,7 @@ public class SettingsTree extends SettingsBase {
         m_SectionTree = new INIFileSection("Tree");
         m_SectionTree.addNode(m_Heuristic = new INIFileNominal("Heuristic", HEURISTICS, HEURISTIC_DEFAULT));
 
-        m_SectionTree.addNode(m_HeuristicComplexity = new INIFileNominal("HeuristicComplexity", HEURISTIC_COMPLEXITY, 0));
+        m_SectionTree.addNode(m_HeuristicComplexity = new INIFileEnum<>("HeuristicComplexity", TimeSeriesPrototypeComplexity.N2));
         m_SectionTree.addNode(m_SetDistance = new INIFileNominal("SetDistance", SETDISTANCES, SETDISTANCES_GSM));
         m_SectionTree.addNode(m_TupleDistance = new INIFileNominal("TupleDistance", TUPLEDISTANCES, TUPLEDISTANCES_EUCLIDEAN));
         m_SectionTree.addNode(m_TSDistance = new INIFileNominal("TSDistance", TIME_SERIES_DISTANCE_MEASURE, TIME_SERIES_DISTANCE_MEASURE_DTW));
@@ -515,9 +519,9 @@ public class SettingsTree extends SettingsBase {
         m_SectionTree.addNode(m_FTest = new INIFileNominalOrDoubleOrVector("FTest", NONELIST));
         m_FTest.setDouble(1.0);
         m_SectionTree.addNode(m_BinarySplit = new INIFileBool("BinarySplit", true));
-        m_SectionTree.addNode(m_RulesFromTree = new INIFileNominal("ConvertToRules", SettingsOutput.CONVERT_RULES, SettingsOutput.CONVERT_RULES_NONE));
+        m_SectionTree.addNode(m_RulesFromTree = new INIFileEnum<>("ConvertToRules", ConvertRules.No));
         m_SectionTree.addNode(m_AlternativeSplits = new INIFileBool("AlternativeSplits", false));
-        m_SectionTree.addNode(m_TreeOptimize = new INIFileNominal("Optimize", TREE_OPTIMIZE_VALUES, TREE_OPTIMIZE_NONE));
+        m_SectionTree.addNode(m_TreeOptimize = new INIFileEnumList<>("Optimize", new ArrayList<TreeOptimizeValues>() {}));
         m_SectionTree.addNode(m_MSENominal = new INIFileBool("MSENominal", false));
         m_SectionTree.addNode(m_TreeSplitSampling = new INIFileInt("SplitSampling", 0));
         m_TreeSplitSampling.setValueCheck(new IntRangeCheck(0, Integer.MAX_VALUE));

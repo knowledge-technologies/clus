@@ -25,6 +25,8 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.InitialRuleGeneratingMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -65,9 +67,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * @throws ClusException
      * @throws IOException
      */
-    public ClusRuleProbabilisticRuleSetInduce(ClusSchema schema, Settings sett, Clus clus)
-            throws ClusException,
-            IOException {
+    public ClusRuleProbabilisticRuleSetInduce(ClusSchema schema, Settings sett, Clus clus) throws ClusException, IOException {
         super(schema, sett);
 
         if (sett.getGeneral().hasRandomSeed()) {
@@ -86,7 +86,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
 
     void splitData(double validationRatio) {
-        // splitting initial dataset into two parts 
+        // splitting initial dataset into two parts
         RowData all_data = (RowData) m_originalFullData.cloneData();
 
         all_data.addIndices(); // enumerate data !!!!!
@@ -108,7 +108,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
         while (validationData.getNbRows() < validationSize) {
             newIndex = m_randGen.nextInt(all_data.getNbRows() - 1);
-            //newIndex = randInt(0, all_data.getNbRows() - 1);
+            // newIndex = randInt(0, all_data.getNbRows() - 1);
             if (!validationExamples.contains(newIndex)) {
                 validationData.add(all_data.getTuple(newIndex).cloneTuple());
                 validationExamples.add(newIndex);
@@ -147,13 +147,16 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
             getSettings().getEnsemble().setNbBags(1); // make estimation on one PCT
 
             // get initial rule set
-            ClusRuleSet initialRuleSet = getInitialRuleSet(1 - m_validationRatio); // take 10%  (1-0.9) of data to create rules and estimate weights
-            //m_validationData = m_trainingData; // when we run the weight estimation procedure, we just use the training data (reduced)
+            ClusRuleSet initialRuleSet = getInitialRuleSet(1 - m_validationRatio); // take 10% (1-0.9) of data to create
+                                                                                   // rules and estimate weights
+            // m_validationData = m_trainingData; // when we run the weight estimation procedure, we just use the
+            // training data (reduced)
 
-            // calculate (correct)coverage bit vectors for all data but later use a validation set (this is an optimization) 
+            // calculate (correct)coverage bit vectors for all data but later use a validation set (this is an
+            // optimization)
             initialRuleSet.calculateCoverageBitVectors(m_originalFullData);
 
-            // calculate default rule and prototypes for the sampled set 
+            // calculate default rule and prototypes for the sampled set
             calculateDefaultRuleAndPrototypesForRuleSet(initialRuleSet);
 
             ClusRuleSet finalSet = null; // the final result
@@ -161,10 +164,10 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
             String bestWeightsString = "";
 
             // weights to try
-            //ArrayList<Integer> lambdas = new ArrayList<Integer>();
+            // ArrayList<Integer> lambdas = new ArrayList<Integer>();
 
-            double lowerBound = 0;//1;
-            double upperBound = 2;//5;		
+            double lowerBound = 0;// 1;
+            double upperBound = 2;// 5;
             int upperMax = 1000;
             int lowerMin = -1000;
             double step = 10;
@@ -210,17 +213,17 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
             System.err.println("BEST:\nWeights: " + bestWeightsString + "\nRule set size: " + finalSet.getModelSize() + "\nRMSE: " + finalSet.computeErrorScore(m_validationData));
             estimateWeights = false; // so that rf induce does not save models
-            //			
-            //			// calculate statistics - does this work properly?
-            //			TupleIterator ti = m_trainingData.getIterator();
-            //			DataTuple tuple;
-            //			while ((tuple = ti.readTuple()) != null)
-            //			{
-            //				for (int i = 0; i < initialRuleSet.getModelSize(); i++)
-            //				{
-            //					initialRuleSet.getRule(i).m_TargetStat.updateWeighted(tuple, i);
-            //				}
-            //			}
+            //
+            // // calculate statistics - does this work properly?
+            // TupleIterator ti = m_trainingData.getIterator();
+            // DataTuple tuple;
+            // while ((tuple = ti.readTuple()) != null)
+            // {
+            // for (int i = 0; i < initialRuleSet.getModelSize(); i++)
+            // {
+            // initialRuleSet.getRule(i).m_TargetStat.updateWeighted(tuple, i);
+            // }
+            // }
         }
 
         // take bestWeights (they could have been optimized beforehand)
@@ -229,10 +232,10 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         getSettings().getEnsemble().setNbBags(m_ensembleSize);
         ClusRuleSet initialRuleSet = getInitialRuleSet(m_validationRatio);
 
-        // calculate (correct)coverage bit vectors for all data but later use a validation set (this is an optimization) 
+        // calculate (correct)coverage bit vectors for all data but later use a validation set (this is an optimization)
         initialRuleSet.calculateCoverageBitVectors(m_originalFullData);
 
-        // calculate default rule and prototypes for the sampled set 
+        // calculate default rule and prototypes for the sampled set
         calculateDefaultRuleAndPrototypesForRuleSet(initialRuleSet);
 
         // QUICK TEST HACK
@@ -270,7 +273,13 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         ClusRuleSet optimizedSet1 = optAlg.SmoothLocalSearch(initialRuleSet, bias, bias, objectiveFunction);
         ClusRuleSet optimizedSet2 = optAlg.SmoothLocalSearch(initialRuleSet, bias, -1, objectiveFunction);
 
-        ClusRuleSet finalSet = objectiveFunction.apply(optimizedSet1) > objectiveFunction.apply(optimizedSet2) ? optimizedSet1 : optimizedSet2; // take the better performing of the two
+        ClusRuleSet finalSet = objectiveFunction.apply(optimizedSet1) > objectiveFunction.apply(optimizedSet2) ? optimizedSet1 : optimizedSet2; // take
+                                                                                                                                                // the
+                                                                                                                                                // better
+                                                                                                                                                // performing
+                                                                                                                                                // of
+                                                                                                                                                // the
+                                                                                                                                                // two
 
         // calculate default rule
         calculateDefaultRuleAndPrototypesForRuleSet(finalSet);
@@ -284,8 +293,8 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * 
      * @param ruleSet
      * @return rule set with a default rule
-     * @throws ClusException 
-     * @throws InterruptedException 
+     * @throws ClusException
+     * @throws InterruptedException
      */
     public ClusRuleSet calculateDefaultRuleAndPrototypesForRuleSet(ClusRuleSet ruleSet) throws ClusException, InterruptedException {
 
@@ -293,17 +302,17 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         RowData trainingData = (RowData) m_mainClusRun.getTrainingSet();
         RowData uncoveredData = trainingData;
 
-        //		// find examples that were left uncovered
-        //		BitSet uncovered = ruleSet.getUncovered(trainingData.getNbRows());
+        // // find examples that were left uncovered
+        // BitSet uncovered = ruleSet.getUncovered(trainingData.getNbRows());
         //
-        //		// get uncovered data
-        //		RowData uncoveredData = trainingData.getDataWithMask(uncovered);
-        //		if (uncoveredData.getNbRows() == 0) // everything is covered, default to full training set
-        //		{
-        //			uncoveredData = (RowData) m_mainClusRun.getTrainingSet();
-        //			ruleSet.m_Comment = new String(" (on entire training set)");
-        //		}
-        //		
+        // // get uncovered data
+        // RowData uncoveredData = trainingData.getDataWithMask(uncovered);
+        // if (uncoveredData.getNbRows() == 0) // everything is covered, default to full training set
+        // {
+        // uncoveredData = (RowData) m_mainClusRun.getTrainingSet();
+        // ruleSet.m_Comment = new String(" (on entire training set)");
+        // }
+        //
 
         // the default rule
         ClusStatistic defaultRule = createTotalTargetStat(uncoveredData);
@@ -333,8 +342,11 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
                 tmpMaxGlobalRuleCardinality = initialRuleSet.getRule(r).getModelSize();
         }
 
-        final int N = m_trainingData.getNbRows(); // number of instances in the training dataset (upper bound used in overlap objective)
-        final int maxGlobalRuleCardinality = tmpMaxGlobalRuleCardinality; // maximum cardinality of any rule in initialRuleSet (upper bound used in cardinality objective)
+        final int N = m_trainingData.getNbRows(); // number of instances in the training dataset (upper bound used in
+                                                  // overlap objective)
+        final int maxGlobalRuleCardinality = tmpMaxGlobalRuleCardinality; // maximum cardinality of any rule in
+                                                                          // initialRuleSet (upper bound used in
+                                                                          // cardinality objective)
         final int initialRuleSetSize = initialRuleSet.getModelSize();
 
         // 1. Conciseness: we favor decision sets with smaller number of rules
@@ -379,17 +391,18 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
             @Override
             public Double apply(ClusRuleSet t) {
-                double errorScore = - 1; // this will crash the application if catch is invoked 
+                double errorScore = -1; // this will crash the application if catch is invoked
                 try {
                     errorScore = t.computeErrorScore(m_validationData);
-                    return 1 / Math.abs(errorScore + 1); // if errorScore=0 ==> objectiveValue = 1 (max); else objectiveValue in (0,1)
-                    //  average RMSE over all targets
+                    return 1 / Math.abs(errorScore + 1); // if errorScore=0 ==> objectiveValue = 1 (max); else
+                                                         // objectiveValue in (0,1)
+                    // average RMSE over all targets
                 }
                 catch (ClusException e) {
                     // TODO Auto-generated catch block
                     e.printStackTrace();
                     return Double.POSITIVE_INFINITY;
-                }               
+                }
             }
         };
 
@@ -430,15 +443,18 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
             @Override
             public Double apply(ClusRuleSet t) {
-                double sum = (weights.isEnabledObjectiveAccuracy() ? weights.WEIGHT_OBJECTIVE_ACCURACY * objectiveAccuracy.apply(t) : 0)
-                        + (weights.isEnabledObjectiveSize() ? weights.WEIGHT_OBJECTIVE_SIZE * objectiveRuleSetSize.apply(t) : 0)
-                //						+	(weights.isEnabledObjectiveCardinality() ? weights.WEIGHT_OBJECTIVE_CARDINALITY * objectiveCardinality.apply(t) : 0)
-                //						+	(weights.isEnabledObjectiveOverlap() ? weights.WEIGHT_OBJECTIVE_OVERLAP * objectiveRuleOverlap.apply(t) : 0)				
-                //						+	(weights.isEnabledObjectiveCorrectCover() ? weights.WEIGHT_OBJECTIVE_CORRECT_COVER * objectiveCorrectCover.apply(t) : 0)
-                //						+	(weights.isEnabledObjectiveIncorrectCover() ? weights.WEIGHT_OBJECTIVE_INCORRECT_COVER * objectiveIncorrectCover.apply(t) : 0)						
+                double sum = (weights.isEnabledObjectiveAccuracy() ? weights.WEIGHT_OBJECTIVE_ACCURACY * objectiveAccuracy.apply(t) : 0) + (weights.isEnabledObjectiveSize() ? weights.WEIGHT_OBJECTIVE_SIZE * objectiveRuleSetSize.apply(t) : 0)
+                // + (weights.isEnabledObjectiveCardinality() ? weights.WEIGHT_OBJECTIVE_CARDINALITY *
+                // objectiveCardinality.apply(t) : 0)
+                // + (weights.isEnabledObjectiveOverlap() ? weights.WEIGHT_OBJECTIVE_OVERLAP *
+                // objectiveRuleOverlap.apply(t) : 0)
+                // + (weights.isEnabledObjectiveCorrectCover() ? weights.WEIGHT_OBJECTIVE_CORRECT_COVER *
+                // objectiveCorrectCover.apply(t) : 0)
+                // + (weights.isEnabledObjectiveIncorrectCover() ? weights.WEIGHT_OBJECTIVE_INCORRECT_COVER *
+                // objectiveIncorrectCover.apply(t) : 0)
                 ;
 
-                //System.out.println(sum);
+                // System.out.println(sum);
 
                 return sum;
             }
@@ -453,7 +469,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * INITIAL RULE GENERATION
      * 
      * @return A set of generated rules which is later used as input for the optimization.
-     * @throws Exception 
+     * @throws Exception
      */
     ClusRuleSet getInitialRuleSet(double validationRatio) throws Exception {
         // split the learning data into train and validation set
@@ -461,16 +477,16 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
         int tmpVerbose = getSettings().getGeneral().enableVerbose(0);
 
-        int generatingMode = getSettings().getRules().getInitialRuleGeneratingMethod();
+        InitialRuleGeneratingMethod generatingMode = getSettings().getRules().getInitialRuleGeneratingMethod();
 
         ClusRuleSet initialRules = null;
 
         switch (generatingMode) {
-            case SettingsRules.INITIAL_RULE_GENERATING_METHOD_RANDOM_FOREST:
+            case RandomForest:
                 initialRules = getRandomForestRules(m_trainingData);
                 break;
 
-            case SettingsRules.INITIAL_RULE_GENERATING_METHOD_OPTION_TREE:
+            case OptionTree:
                 initialRules = getOptionTreeRules(m_trainingData);
                 break;
 
@@ -481,8 +497,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         // return VERBOSE to its initial value
         getSettings().getGeneral().enableVerbose(tmpVerbose);
 
-        if (initialRules.getModelSize() == 0) { throw new RuntimeException(
-                String.format("No rules have been induced! Decrease validation set size (current value: %s).", getSettings().getRules().getValidationSetPercentage())); }
+        if (initialRules.getModelSize() == 0) { throw new RuntimeException(String.format("No rules have been induced! Decrease validation set size (current value: %s).", getSettings().getRules().getValidationSetPercentage())); }
 
         // remove rules with too high cardinalities
         for (int r = initialRules.getModelSize() - 1; r >= 0; r--) {
@@ -494,7 +509,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         // enumerate rules
         initialRules.numberRules();
 
-        // save to disk		
+        // save to disk
         ClusRuleHelperMethods.debug_PrintInitialRules(initialRules, m_folderName, "InitialRuleSet", true);
         ClusRuleHelperMethods.debug_PrintInitialRules(initialRules, m_folderName, "InitialRuleSet_Reduced", false);
 
@@ -506,7 +521,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * Generate initial rules from Random Forest ensemble.
      * 
      * @return A set of generated rules.
-     * @throws Exception 
+     * @throws Exception
      */
     ClusRuleSet getRandomForestRules(RowData dataToUse) throws Exception {
         System.out.println("Inducing random forest for initial rule set");
@@ -534,7 +549,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
         ClusForest forestModel = (ClusForest) forestRun.getModel(ClusModel.ORIGINAL);
 
-        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, 2); // 2 = allnodes
+        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, ConvertRules.AllNodes);
         ClusRuleSet ruleSet = new ClusRuleSet(getStatManager()); // Manager from super class
 
         // Get the trees and transform to rules
@@ -544,15 +559,13 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
             ClusNode treeRootNode = (ClusNode) forestModel.getModel(iTree);
 
             // Transform the tree into rules and add them to current rule set
-            numberOfUniqueRules += ruleSet.addRuleSet(treeTransform.constructRules(
-                    treeRootNode,
-                    getStatManager()));
+            numberOfUniqueRules += ruleSet.addRuleSet(treeTransform.constructRules(treeRootNode, getStatManager()));
         }
 
-        System.out.println("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules.\n\tCreated " +
-                +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
+        System.out.println("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules.\n\tCreated " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
 
-        getSettings().getEnsemble().setSectionEnsembleEnabled(sectionEnsembleEnabled); // For printing out the ensemble texts
+        getSettings().getEnsemble().setSectionEnsembleEnabled(sectionEnsembleEnabled); // For printing out the ensemble
+                                                                                       // texts
         getSettings().getEnsemble().setEnsembleMode(ensembleMode); // For ensemble things working
 
         System.out.println("==============================================================================");
@@ -567,7 +580,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
             ensemble_model_info_original.setName("RF Ensemble");
             m_mainClusRun.addModelInfo(ensemble_model_info_original);
 
-            // get initial rule set		
+            // get initial rule set
             ClusModelInfo rules_model_info = new ClusModelInfo("Rules");
             rules_model_info.setModel(ruleSet);
             m_mainClusRun.addModelInfo(rules_model_info);
@@ -583,7 +596,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * @return A set of generated rules.
      * @throws ClusException
      * @throws IOException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     ClusRuleSet getOptionTreeRules(RowData dataToUse) throws ClusException, IOException, InterruptedException {
 
@@ -605,7 +618,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         inducer.getStatManager().createTargetStat();
 
         inducer.getStatManager().initClusteringWeights();
-        //inducer.getStatManager().initWeights();
+        // inducer.getStatManager().initWeights();
         inducer.getStatManager().initBeamSearchHeuristic();
 
         inducer.getStatManager().initHeuristic();
@@ -622,7 +635,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         origInfo.setName("Option Tree");
         origInfo.setModel(optionModel);
 
-        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, 2); // 2 = allnodes
+        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, ConvertRules.AllNodes);
         ClusRuleSet ruleSet = new ClusRuleSet(getStatManager()); // Manager from super class
 
         // Get the option tree and transform it to rules
@@ -631,17 +644,15 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         MyNode treeRootNode = optionModel.getParent();
 
         // Transform the tree into rules and add them to current rule set
-        numberOfUniqueRules += ruleSet.addRuleSet(treeTransform.constructOptionRules(optionModel,
-                getStatManager()));
+        numberOfUniqueRules += ruleSet.addRuleSet(treeTransform.constructOptionRules(optionModel, getStatManager()));
 
         for (int i = 0; i < ruleSet.getModelSize(); i++) {
-            //			ruleSet.getRule(i).computePrediction();
-            //			ruleSet.getRule(i).computeCovered(m_trainingData);
+            // ruleSet.getRule(i).computePrediction();
+            // ruleSet.getRule(i).computeCovered(m_trainingData);
             ruleSet.getRule(i).getTargetStat().calcMean();
         }
 
-        System.out.println("Transformed an Option Tree into "
-                + ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
+        System.out.println("Transformed an Option Tree into " + ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
 
         m_mainClus.getSettings().getOptionTree().setSectionOptionEnabled(sectionOptionEnabled);
 
@@ -649,245 +660,249 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
     }
 
-    //	/**
-    //	 * Calculate the default rule for a given rule set 
-    //	 * @param ruleSet
-    //	 * @return rule set with a default rule
-    //	 */
-    //	ClusRuleSet calculateDefaultRuleAndPrototypesForRuleSet(ClusRuleSet ruleSet)
-    //	{
-    //		RowData trainingData = (RowData)m_mainClusRun.getTrainingSet();
-    //		
-    //		// find examples that were left uncovered
-    //		BitSet uncovered = ruleSet.getUncovered(trainingData.getNbRows());
+    // /**
+    // * Calculate the default rule for a given rule set
+    // * @param ruleSet
+    // * @return rule set with a default rule
+    // */
+    // ClusRuleSet calculateDefaultRuleAndPrototypesForRuleSet(ClusRuleSet ruleSet)
+    // {
+    // RowData trainingData = (RowData)m_mainClusRun.getTrainingSet();
     //
-    //		// get uncovered data
-    //		RowData uncoveredData = trainingData.getDataWithMask(uncovered);
-    //		if (uncoveredData.getNbRows() == 0) // everything is covered, default to full training set
-    //		{
-    //			uncoveredData = (RowData) m_mainClusRun.getTrainingSet();
-    //			ruleSet.m_Comment = new String(" (on entire training set)");
-    //		}
-    //		
-    //		 
-    //		// the default rule
-    //		ClusStatistic defaultRule = createTotalTargetStat(uncoveredData);
-    //		
-    //		defaultRule = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET).cloneStat();
-    //		defaultRule.copy(getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET));
-    //		defaultRule.calcMean();
-    //		ruleSet.setTargetStat(defaultRule);
-    //		
-    //		ruleSet.postProc();		 
-    //		
-    //		return ruleSet;
-    //		
-    //	}
+    // // find examples that were left uncovered
+    // BitSet uncovered = ruleSet.getUncovered(trainingData.getNbRows());
+    //
+    // // get uncovered data
+    // RowData uncoveredData = trainingData.getDataWithMask(uncovered);
+    // if (uncoveredData.getNbRows() == 0) // everything is covered, default to full training set
+    // {
+    // uncoveredData = (RowData) m_mainClusRun.getTrainingSet();
+    // ruleSet.m_Comment = new String(" (on entire training set)");
+    // }
+    //
+    //
+    // // the default rule
+    // ClusStatistic defaultRule = createTotalTargetStat(uncoveredData);
+    //
+    // defaultRule = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET).cloneStat();
+    // defaultRule.copy(getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET));
+    // defaultRule.calcMean();
+    // ruleSet.setTargetStat(defaultRule);
+    //
+    // ruleSet.postProc();
+    //
+    // return ruleSet;
+    //
+    // }
 
-    //	/**
-    //	 * Smooth Local Search optimization
-    //	 * @param initialRuleSet
-    //	 * @param delta
-    //	 * @param deltaPrime
-    //	 * @return
-    //	 */
-    //	ClusRuleSet SmoothLocalSearch(ClusRuleSet initialRuleSet, double delta, double deltaPrime, Function<ClusRuleSet, Double> objectiveFunction)
-    //	{
-    //		System.out.println("Smooth Local Search optimization: started");
-    //		
-    //		// calculate tresholds only once
-    //		double probabilityBiased = (1+delta)/2;
-    //		double probabilityPrimeBiased = (1+deltaPrime)/2;
-    //		ArrayList<Integer> indices = new ArrayList<Integer>();
-    //		
-    //		// prepare shuffle index
-    //		for(int i = 0;i < initialRuleSet.getModelSize(); i++) indices.add(i);
-    //		
-    //		// biased rules indices
-    //		HashSet<Integer> A = new HashSet<Integer>();
-    //		
-    //		// estimate of the scale of objective f
-    //		ClusRuleSet rndSet = randomSampleWithBias(initialRuleSet, A, 0.5, (ArrayList<Integer>) indices.clone()); // delta = 0
-    //		double OPT = objectiveFunction.apply(rndSet);
-    //		
-    //		// error margin for estimates calculations
-    //		double errorMargin = (1/Math.pow(initialRuleSet.getModelSize(), 2)) * OPT;
-    //		double[] estimates = new double[initialRuleSet.getModelSize()];
-    //		
-    //		// tmp variables
-    //		ClusRuleSet setWithRuleToCheck;
-    //		ClusRuleSet setWithoutRuleToCheck;
-    //		ClusRule ruleToCheck;
+    // /**
+    // * Smooth Local Search optimization
+    // * @param initialRuleSet
+    // * @param delta
+    // * @param deltaPrime
+    // * @return
+    // */
+    // ClusRuleSet SmoothLocalSearch(ClusRuleSet initialRuleSet, double delta, double deltaPrime, Function<ClusRuleSet,
+    // Double> objectiveFunction)
+    // {
+    // System.out.println("Smooth Local Search optimization: started");
     //
-    //		 
-    //		// calculate estimates
-    //		startover:
-    //		{
-    //			for (int rule = 0; rule < initialRuleSet.getModelSize(); rule++)
-    //			{
-    //				// get randomly sampled rule set with bias
-    //				rndSet = randomSampleWithBias(initialRuleSet, A, probabilityBiased, (ArrayList<Integer>) indices.clone());
-    //				setWithRuleToCheck = rndSet.cloneRuleSet();
-    //				setWithoutRuleToCheck = rndSet.cloneRuleSet();
-    //				
-    //				// current rule
-    //				//ruleToCheck = initialRuleSet.getRule(rule).cloneRule();
-    //				ruleToCheck = initialRuleSet.getRule(rule);
-    //				
-    //				// add / remove ruleToCheck from two sets that we are estimating the quality of
-    //				setWithRuleToCheck.add(ruleToCheck);
-    //				setWithoutRuleToCheck.remove(ruleToCheck);
-    //				
-    //				// calculate estimate
-    //				estimates[rule] = getExpectedValue(setWithRuleToCheck, errorMargin, objectiveFunction) - 
-    //								  getExpectedValue(setWithoutRuleToCheck, errorMargin, objectiveFunction);
-    //			}
-    //			
-    //			//System.out.println("SLS: Finding biased rules");
-    //			for (int rule = 0; rule < initialRuleSet.getModelSize(); rule++)
-    //			{
-    //				if (!A.contains(rule) &&
-    //					estimates[rule] > 2 * errorMargin)
-    //				{
-    //					// add rule to biased set
-    //					A.add(rule);
+    // // calculate tresholds only once
+    // double probabilityBiased = (1+delta)/2;
+    // double probabilityPrimeBiased = (1+deltaPrime)/2;
+    // ArrayList<Integer> indices = new ArrayList<Integer>();
     //
-    //					// go calculate estimates again
-    //					continue startover;
-    //				}
-    //			}
-    //			
-    //			System.out.println("SLS: Removing bad rules"); 
-    //			for (int rule : A)
-    //			{				
-    //				if (estimates[rule] < -2*errorMargin)
-    //				{
-    //					// remove rule from biased set
-    //					A.remove(rule);
-    //					
-    //					// go calculate estimates again
-    //					continue startover; 
-    //				}
-    //			}
-    //		}// label block
-    //		
-    //		
-    //		
-    //		// return a random subset with bias deltaPrime on A
-    //		rndSet = randomSampleWithBias(initialRuleSet, A, probabilityPrimeBiased, (ArrayList<Integer>) indices.clone());
-    //		
-    //		System.out.println("Smooth local search optimization: finished");
-    //		return rndSet;
-    //	}
+    // // prepare shuffle index
+    // for(int i = 0;i < initialRuleSet.getModelSize(); i++) indices.add(i);
+    //
+    // // biased rules indices
+    // HashSet<Integer> A = new HashSet<Integer>();
+    //
+    // // estimate of the scale of objective f
+    // ClusRuleSet rndSet = randomSampleWithBias(initialRuleSet, A, 0.5, (ArrayList<Integer>) indices.clone()); // delta
+    // = 0
+    // double OPT = objectiveFunction.apply(rndSet);
+    //
+    // // error margin for estimates calculations
+    // double errorMargin = (1/Math.pow(initialRuleSet.getModelSize(), 2)) * OPT;
+    // double[] estimates = new double[initialRuleSet.getModelSize()];
+    //
+    // // tmp variables
+    // ClusRuleSet setWithRuleToCheck;
+    // ClusRuleSet setWithoutRuleToCheck;
+    // ClusRule ruleToCheck;
+    //
+    //
+    // // calculate estimates
+    // startover:
+    // {
+    // for (int rule = 0; rule < initialRuleSet.getModelSize(); rule++)
+    // {
+    // // get randomly sampled rule set with bias
+    // rndSet = randomSampleWithBias(initialRuleSet, A, probabilityBiased, (ArrayList<Integer>) indices.clone());
+    // setWithRuleToCheck = rndSet.cloneRuleSet();
+    // setWithoutRuleToCheck = rndSet.cloneRuleSet();
+    //
+    // // current rule
+    // //ruleToCheck = initialRuleSet.getRule(rule).cloneRule();
+    // ruleToCheck = initialRuleSet.getRule(rule);
+    //
+    // // add / remove ruleToCheck from two sets that we are estimating the quality of
+    // setWithRuleToCheck.add(ruleToCheck);
+    // setWithoutRuleToCheck.remove(ruleToCheck);
+    //
+    // // calculate estimate
+    // estimates[rule] = getExpectedValue(setWithRuleToCheck, errorMargin, objectiveFunction) -
+    // getExpectedValue(setWithoutRuleToCheck, errorMargin, objectiveFunction);
+    // }
+    //
+    // //System.out.println("SLS: Finding biased rules");
+    // for (int rule = 0; rule < initialRuleSet.getModelSize(); rule++)
+    // {
+    // if (!A.contains(rule) &&
+    // estimates[rule] > 2 * errorMargin)
+    // {
+    // // add rule to biased set
+    // A.add(rule);
+    //
+    // // go calculate estimates again
+    // continue startover;
+    // }
+    // }
+    //
+    // System.out.println("SLS: Removing bad rules");
+    // for (int rule : A)
+    // {
+    // if (estimates[rule] < -2*errorMargin)
+    // {
+    // // remove rule from biased set
+    // A.remove(rule);
+    //
+    // // go calculate estimates again
+    // continue startover;
+    // }
+    // }
+    // }// label block
+    //
+    //
+    //
+    // // return a random subset with bias deltaPrime on A
+    // rndSet = randomSampleWithBias(initialRuleSet, A, probabilityPrimeBiased, (ArrayList<Integer>) indices.clone());
+    //
+    // System.out.println("Smooth local search optimization: finished");
+    // return rndSet;
+    // }
 
 
-    //	/**
-    //	 * Randomly sample rules with bias
-    //	 * @param initialRuleSet
-    //	 * @param indicesOfBiasedRules
-    //	 * @param probabilityBiased (1+delta)/2    probabilityNormal = 1- (probabilityBiased)
-    //	 * @param calculateDefaultRuleAndPrototypes Should the method calculate default rule and prototypes?
-    //	 * @return A randomly sampled rule set with bias towards some of the elements
-    //	 */
-    //	ClusRuleSet randomSampleWithBias(ClusRuleSet initialRuleSet, HashSet indicesOfBiasedRules, double probabilityBiased, ArrayList<Integer> indices)
-    //	{
-    //		ClusRuleSet returnSet = new ClusRuleSet(getStatManager());
-    //		double prob;
+    // /**
+    // * Randomly sample rules with bias
+    // * @param initialRuleSet
+    // * @param indicesOfBiasedRules
+    // * @param probabilityBiased (1+delta)/2 probabilityNormal = 1- (probabilityBiased)
+    // * @param calculateDefaultRuleAndPrototypes Should the method calculate default rule and prototypes?
+    // * @return A randomly sampled rule set with bias towards some of the elements
+    // */
+    // ClusRuleSet randomSampleWithBias(ClusRuleSet initialRuleSet, HashSet indicesOfBiasedRules, double
+    // probabilityBiased, ArrayList<Integer> indices)
+    // {
+    // ClusRuleSet returnSet = new ClusRuleSet(getStatManager());
+    // double prob;
     //
-    //		Collections.shuffle(indices, m_randGen); // important to use the same rnd generator as with everything else, in order to get repeatable results
-    //		
-    //		int rule;
-    //		for (int index = 0; index < Math.min(indices.size(), m_maxRulesNb); index++)
-    //		{
-    //			rule = indices.get(index);
-    //			// ask God
-    //			prob = m_randGen.nextDouble();
+    // Collections.shuffle(indices, m_randGen); // important to use the same rnd generator as with everything else, in
+    // order to get repeatable results
     //
-    //			if ((indicesOfBiasedRules.contains(rule) && prob >= (1-probabilityBiased)) ||
-    //					(!indicesOfBiasedRules.contains(rule) && prob >= probabilityBiased))				
-    //			{
-    //				//returnSet.add(initialRuleSet.getRule(rule).cloneRule());
-    //				returnSet.add(initialRuleSet.getRule(rule));
-    //			}
-    //		}
-    //	
-    //		// calculate default rule and prototypes for the sampled set 
-    //		calculateDefaultRuleAndPrototypesForRuleSet(returnSet);
-    //	
-    //				
-    //		return returnSet;		
-    //	}
+    // int rule;
+    // for (int index = 0; index < Math.min(indices.size(), m_maxRulesNb); index++)
+    // {
+    // rule = indices.get(index);
+    // // ask God
+    // prob = m_randGen.nextDouble();
     //
-    //	/**
-    //	 * Randomly sample from rule set without bias
-    //	 * @param initialRuleSet
-    //	 * @return Randomly sampled rule set
-    //	 */
-    //	ClusRuleSet randomSampleWithoutBias(ClusRuleSet rules)
-    //	{
-    //		ClusRuleSet returnSet = new ClusRuleSet(getStatManager());
-    //		for (int rule = 0; rule < rules.getModelSize(); rule++)
-    //		{
-    //			// ask God
-    //			if (m_randGen.nextDouble() >= 0.5)
-    //			{
-    //				//returnSet.add(rules.getRule(rule).cloneRule());
-    //				returnSet.add(rules.getRule(rule));
-    //			}
-    //		}
+    // if ((indicesOfBiasedRules.contains(rule) && prob >= (1-probabilityBiased)) ||
+    // (!indicesOfBiasedRules.contains(rule) && prob >= probabilityBiased))
+    // {
+    // //returnSet.add(initialRuleSet.getRule(rule).cloneRule());
+    // returnSet.add(initialRuleSet.getRule(rule));
+    // }
+    // }
     //
-    //		// calculate default rule and prototypes for the sampled set
-    //		calculateDefaultRuleAndPrototypesForRuleSet(returnSet);
-    //		
-    //		return returnSet;		
-    //	}
-    //	
-    //	/**
-    //	 * Calculate expected value for objectiveFunction given error margin and a rule set
-    //	 * @param rules Rule set to use for estimation calculation
-    //	 * @param errorMargin Treshold that is used as stopping criterion
-    //	 * @param objectiveFunction Objective function to use for value calculation
-    //	 * @return Expected value
-    //	 */
-    //	double getExpectedValue(ClusRuleSet rules, double errorMargin, Function<ClusRuleSet, Double> objectiveFunction)
-    //	{
-    //		double sum = 0, tmp = 0, mean = 0;
-    //		double error = Double.MAX_VALUE;
-    //		int counter = 0;
-    //		ClusRuleSet tmpSet;
-    //		ArrayList<Double> items = new ArrayList<Double>();
-    //		
-    //		// estimate error within errorMargin
-    //		while(error > errorMargin || counter < 2)
-    //		{
-    //			counter++;
-    //			
-    //			// sample random from rules
-    //			tmpSet = randomSampleWithoutBias(rules);
-    //			
-    //			// get objective function value
-    //			tmp = objectiveFunction.apply(tmpSet);
-    //			sum += tmp;
-    //			items.add(tmp);
-    //			
-    //			// calculate mean and SD
-    //			if (counter >= 2)
-    //			{
-    //				mean = sum/counter;
-    //				tmp = 0;
-    //				for (double d : items)
-    //				{
-    //					tmp += Math.pow((mean-d), 2);
-    //				}
-    //				tmp = (1/(counter-1)) * tmp;
-    //				tmp = Math.sqrt(tmp);
-    //						
-    //				error = tmp/Math.sqrt(counter);
-    //			}
-    //		}
-    //		
-    //		return mean;
-    //	}
+    // // calculate default rule and prototypes for the sampled set
+    // calculateDefaultRuleAndPrototypesForRuleSet(returnSet);
+    //
+    //
+    // return returnSet;
+    // }
+    //
+    // /**
+    // * Randomly sample from rule set without bias
+    // * @param initialRuleSet
+    // * @return Randomly sampled rule set
+    // */
+    // ClusRuleSet randomSampleWithoutBias(ClusRuleSet rules)
+    // {
+    // ClusRuleSet returnSet = new ClusRuleSet(getStatManager());
+    // for (int rule = 0; rule < rules.getModelSize(); rule++)
+    // {
+    // // ask God
+    // if (m_randGen.nextDouble() >= 0.5)
+    // {
+    // //returnSet.add(rules.getRule(rule).cloneRule());
+    // returnSet.add(rules.getRule(rule));
+    // }
+    // }
+    //
+    // // calculate default rule and prototypes for the sampled set
+    // calculateDefaultRuleAndPrototypesForRuleSet(returnSet);
+    //
+    // return returnSet;
+    // }
+    //
+    // /**
+    // * Calculate expected value for objectiveFunction given error margin and a rule set
+    // * @param rules Rule set to use for estimation calculation
+    // * @param errorMargin Treshold that is used as stopping criterion
+    // * @param objectiveFunction Objective function to use for value calculation
+    // * @return Expected value
+    // */
+    // double getExpectedValue(ClusRuleSet rules, double errorMargin, Function<ClusRuleSet, Double> objectiveFunction)
+    // {
+    // double sum = 0, tmp = 0, mean = 0;
+    // double error = Double.MAX_VALUE;
+    // int counter = 0;
+    // ClusRuleSet tmpSet;
+    // ArrayList<Double> items = new ArrayList<Double>();
+    //
+    // // estimate error within errorMargin
+    // while(error > errorMargin || counter < 2)
+    // {
+    // counter++;
+    //
+    // // sample random from rules
+    // tmpSet = randomSampleWithoutBias(rules);
+    //
+    // // get objective function value
+    // tmp = objectiveFunction.apply(tmpSet);
+    // sum += tmp;
+    // items.add(tmp);
+    //
+    // // calculate mean and SD
+    // if (counter >= 2)
+    // {
+    // mean = sum/counter;
+    // tmp = 0;
+    // for (double d : items)
+    // {
+    // tmp += Math.pow((mean-d), 2);
+    // }
+    // tmp = (1/(counter-1)) * tmp;
+    // tmp = Math.sqrt(tmp);
+    //
+    // error = tmp/Math.sqrt(counter);
+    // }
+    // }
+    //
+    // return mean;
+    // }
 
     @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException {

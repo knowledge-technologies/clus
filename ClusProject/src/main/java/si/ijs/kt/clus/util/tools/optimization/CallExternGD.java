@@ -7,6 +7,7 @@ import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
 import si.ijs.kt.clus.util.tools.optimization.OptProbl.OptParam;
 
 
@@ -38,14 +39,14 @@ public class CallExternGD {
         // We are ignoring any other base functions than rules here
 
         SettingsRules set = clusStatManager.getSettings().getRules();
-        
+
         int nbTargs = (clusStatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET)).getNbAttributes();
         // Parameter data matrix dimension. Do we give descriptive dims also?
         int nbDescrForDataMatrix = 0;
         int nbRows = optInfo.m_trueValues.length;
 
         // if (rules.m_implicitLinearTerms != null) {
-        if (set.getOptAddLinearTerms() == SettingsRules.OPT_GD_ADD_LIN_YES_SAVE_MEMORY) {
+        if (set.getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory)) {
             nbDescrForDataMatrix = clusStatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE).length;
             nbOfWeights += nbDescrForDataMatrix * nbTargs;
         }
@@ -147,7 +148,7 @@ public class CallExternGD {
         // String settings = "nbOfIterations 10000\nminTVal 0.0\nlinTermsUsed 0\nnbOfTargs 2\nnbTrainData 3\nnbValData
         // 2\nnbOfRules 3";
         String settings = "";
-        if (set.getOptAddLinearTerms() == SettingsRules.OPT_GD_ADD_LIN_YES_SAVE_MEMORY)
+        if (set.getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory))
             settings += "linTermsUsed 1\n";
         settings += "nbOfTargs " + nbTargs + "\nnbTrainData " + nbInstTrain + "\nnbValData " + nbInstVal + "\nnbOfRules " + nbOfRules + "\nnbOfDescrAttr " + nbDescrForDataMatrix;
         settings += "\nnbOfIterations " + set.getOptGDMaxIter() + "\nminTVal " + set.getOptGDGradTreshold();
@@ -160,7 +161,8 @@ public class CallExternGD {
 
         weights[0] = undoNormalization(weights[0], rulePreds, nbTargs, targetAvg, rset, normFactors); // Undo the effect
                                                                                                       // on default rule
-                                                                                                      // System.out.print("Toimii Javakin\n");
+                                                                                                      // System.out.print("Toimii
+                                                                                                      // Javakin\n");
         ArrayList<Double> result = new ArrayList<Double>(nbOfWeights);
         for (int i = 0; i < nbOfWeights; i++) {
             result.add(weights[i]);
@@ -209,7 +211,8 @@ public class CallExternGD {
 //// The last one is so called intercept. Should be added to all predictions
 //// Because of this we add a rule with prediction 1 and always true condition.
 //// Thus the last weight will be for this.
-// if (getSettings().getGeneral().getVerbose() > 0) System.out.println("Adding intercept rule created by binary explicitly to rule set.");
+// if (getSettings().getGeneral().getVerbose() > 0) System.out.println("Adding intercept rule created by binary
+// explicitly to rule set.");
 // ClusRule interceptRule = new ClusRule(m_StatManager);
 // interceptRule.m_TargetStat = getStatManager().createTargetStat();
 // if (!(interceptRule.m_TargetStat instanceof RegressionStat))

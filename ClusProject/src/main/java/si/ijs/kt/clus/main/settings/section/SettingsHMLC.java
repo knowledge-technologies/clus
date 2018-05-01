@@ -6,7 +6,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
@@ -28,40 +28,30 @@ public class SettingsHMLC extends SettingsBase {
 
     // Hierarchical multi-classification now supports both trees and DAGS
     // This was required because Gene Ontology terms are organized in a partial order
-    public final static String[] HIERTYPES = { "Tree", "DAG" };
+    public enum HierarchyType {
+        Tree, DAG
+    };
 
-    public final static int HIERTYPE_TREE = 0;
-    public final static int HIERTYPE_DAG = 1;
+    public enum HierarchyWeight {
+        NoWeight, ExpSumParentWeight, ExpAvgParentWeight, ExpMinParentWeight, ExpMaxParentWeight
+    };
 
-    public final static String[] HIERWEIGHT = { "ExpSumParentWeight", "ExpAvgParentWeight", "ExpMinParentWeight", "ExpMaxParentWeight", "NoWeight" };
+    public enum HierarchyDistance {
+        WeightedEuclidean, Jaccard, NoDistance
+    };
 
-    public final static int HIERWEIGHT_EXP_SUM_PARENT_WEIGHT = 0;
-    public final static int HIERWEIGHT_EXP_AVG_PARENT_WEIGHT = 1;
-    public final static int HIERWEIGHT_EXP_MIN_PARENT_WEIGHT = 2;
-    public final static int HIERWEIGHT_EXP_MAX_PARENT_WEIGHT = 3;
-    public final static int HIERWEIGHT_NO_WEIGHT = 4;
-
-    public final static String[] HIERDIST = { "WeightedEuclidean", "Jaccard", "NoDistance" };
-
-    public final static int HIERDIST_WEIGHTED_EUCLIDEAN = 0;
-    public final static int HIERDIST_JACCARD = 1;
-    public final static int HIERDIST_NO_DIST = 2; // for poolAUPRC case
-
-    public final static String[] HIERMEASURES = { "AverageAUROC", "AverageAUPRC", "WeightedAverageAUPRC", "PooledAUPRC" };
-
-    public final static int HIERMEASURE_AUROC = 0;
-    public final static int HIERMEASURE_AUPRC = 1;
-    public final static int HIERMEASURE_WEIGHTED_AUPRC = 2;
-    public final static int HIERMEASURE_POOLED_AUPRC = 3;
+    public enum HierarchyMeasures {
+        AverageAUROC, AverageAUPRC, WeightedAverageAUPRC, PooledAUPRC, Undefined
+    };
 
     INIFileSection m_SectionHierarchical;
-    protected INIFileNominal m_HierType;
-    protected INIFileNominal m_HierWType;
-    protected INIFileNominal m_HierDistance;
+    protected INIFileEnum<HierarchyType> m_HierType;
+    protected INIFileEnum<HierarchyWeight> m_HierWType;
+    protected INIFileEnum<HierarchyDistance> m_HierDistance;
     protected INIFileDouble m_HierWParam;
     protected INIFileString m_HierSep;
     protected INIFileString m_HierEmptySetIndicator;
-    protected INIFileNominal m_HierOptimizeErrorMeasure;
+    protected INIFileEnum<HierarchyMeasures> m_HierOptimizeErrorMeasure;
     protected INIFileString m_DefinitionFile;
     protected INIFileBool m_HierNoRootPreds;
     protected INIFileBool m_HierSingleLabel;
@@ -107,17 +97,17 @@ public class SettingsHMLC extends SettingsBase {
     }
 
 
-    public int getHierType() {
+    public HierarchyType getHierType() {
         return m_HierType.getValue();
     }
 
 
-    public int getHierDistance() {
+    public HierarchyDistance getHierDistance() {
         return m_HierDistance.getValue();
     }
 
 
-    public int getHierWType() {
+    public HierarchyWeight getHierWType() {
         return m_HierWType.getValue();
     }
 
@@ -167,7 +157,7 @@ public class SettingsHMLC extends SettingsBase {
     }
 
 
-    public int getHierOptimizeErrorMeasure() {
+    public HierarchyMeasures getHierOptimizeErrorMeasure() {
         return m_HierOptimizeErrorMeasure.getValue();
     }
 
@@ -197,13 +187,13 @@ public class SettingsHMLC extends SettingsBase {
     public INIFileSection create() {
 
         m_SectionHierarchical = new INIFileSection("Hierarchical");
-        m_SectionHierarchical.addNode(m_HierType = new INIFileNominal("Type", HIERTYPES, 0));
-        m_SectionHierarchical.addNode(m_HierDistance = new INIFileNominal("Distance", HIERDIST, 0));
-        m_SectionHierarchical.addNode(m_HierWType = new INIFileNominal("WType", HIERWEIGHT, 0));
+        m_SectionHierarchical.addNode(m_HierType = new INIFileEnum<>("Type", HierarchyType.DAG));
+        m_SectionHierarchical.addNode(m_HierDistance = new INIFileEnum<HierarchyDistance>("Distance", HierarchyDistance.WeightedEuclidean));
+        m_SectionHierarchical.addNode(m_HierWType = new INIFileEnum<>("WType", HierarchyWeight.ExpSumParentWeight));
         m_SectionHierarchical.addNode(m_HierWParam = new INIFileDouble("WParam", 0.75));
         m_SectionHierarchical.addNode(m_HierSep = new INIFileString("HSeparator", "."));
         m_SectionHierarchical.addNode(m_HierEmptySetIndicator = new INIFileString("EmptySetIndicator", "n"));
-        m_SectionHierarchical.addNode(m_HierOptimizeErrorMeasure = new INIFileNominal("OptimizeErrorMeasure", HIERMEASURES, HIERMEASURE_POOLED_AUPRC));
+        m_SectionHierarchical.addNode(m_HierOptimizeErrorMeasure = new INIFileEnum<>("OptimizeErrorMeasure", HierarchyMeasures.PooledAUPRC));
         m_SectionHierarchical.addNode(m_DefinitionFile = new INIFileString("DefinitionFile", NONE));
         m_SectionHierarchical.addNode(m_HierNoRootPreds = new INIFileBool("NoRootPredictions", false));
         m_SectionHierarchical.addNode(m_HierPruneInSig = new INIFileDouble("PruneInSig", 0.0));

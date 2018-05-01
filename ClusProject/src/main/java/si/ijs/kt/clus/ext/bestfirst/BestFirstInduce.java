@@ -44,6 +44,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.TreeOptimizeValues;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -99,10 +100,16 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 
 
     public ClusAttrType[] getDescriptiveAttributes() {
-    	ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_BestFirst_getDescriptiveAttributes);// parallelisation problems: static methods + null argument    	
+        ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_BestFirst_getDescriptiveAttributes);// parallelisation
+                                                                                                                             // problems:
+                                                                                                                             // static
+                                                                                                                             // methods
+                                                                                                                             // +
+                                                                                                                             // null
+                                                                                                                             // argument
         ClusSchema schema = getSchema();
         SettingsEnsemble sett = getSettings().getEnsemble();
-        
+
         if (!sett.isEnsembleMode()) {
             return schema.getDescriptiveAttributes();
         }
@@ -112,16 +119,18 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
                     return schema.getDescriptiveAttributes();
                 case RForest:
                     ClusAttrType[] attrsAll = schema.getDescriptiveAttributes();
-                    //ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(), null);
+                    // ClusEnsembleInduce.setRandomSubspaces(attrsAll, schema.getSettings().getNbRandomAttrSelected(),
+                    // null);
                     ClusEnsembleInduce.setRandomSubspaces(ClusEnsembleInduce.selectRandomSubspaces(attrsAll, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandom.RANDOM_SELECTION, null));
                     return ClusEnsembleInduce.getRandomSubspaces();
                 case RSubspaces:
                     return ClusEnsembleInduce.getRandomSubspaces();
                 case BagSubspaces:
                     return ClusEnsembleInduce.getRandomSubspaces();
-                case RFeatSelection: //SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
+                case RFeatSelection: // SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
                     ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
-                    //ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(), null);
+                    // ClusEnsembleInduce.setRandomSubspaces(attrsAll1, schema.getSettings().getNbRandomAttrSelected(),
+                    // null);
                     ClusEnsembleInduce.setRandomSubspaces(ClusEnsembleInduce.selectRandomSubspaces(attrsAll1, schema.getSettings().getEnsemble().getNbRandomAttrSelected(), ClusRandom.RANDOM_SELECTION, null));
                     return ClusEnsembleInduce.getRandomSubspaces();
                 default:
@@ -195,7 +204,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 
     public void makeLeaf(ClusNode node) {
         node.makeLeaf();
-        if (getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_CLUSTERING_STATS)) {
+        if (getSettings().getTree().hasTreeOptimize(TreeOptimizeValues.NoClusteringStats)) {
             node.setClusteringStat(null);
         }
     }
@@ -342,7 +351,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 
         // >>>>> finished the block where we are finding the alternative tests
 
-        if (node != m_Root && getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_INODE_STATS)) {
+        if (node != m_Root && getSettings().getTree().hasTreeOptimize(TreeOptimizeValues.NoInodeStats)) {
             // Don't remove statistics of root node; code below depends on them
             node.setClusteringStat(null);
             node.setTargetStat(null);

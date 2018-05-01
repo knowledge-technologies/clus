@@ -35,6 +35,8 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationLinearTermNormalizeValues;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
@@ -146,7 +148,7 @@ public class ClusRuleLinearTerm extends ClusRule {
 
     /** Returns implicit linear terms if this is set in the settings file. */
     static protected ImplicitLinearTerms returnImplicitLinearTermsIfNeeded(RowData data) {
-        if (data.getSchema().getSettings().getRules().getOptAddLinearTerms() != SettingsRules.OPT_GD_ADD_LIN_YES_SAVE_MEMORY)
+        if (!data.getSchema().getSettings().getRules().getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory))
             return null;
 
         double[][] values = new double[2][];
@@ -193,7 +195,8 @@ public class ClusRuleLinearTerm extends ClusRule {
 
         m_descriptiveDimForLinearTerm = iDescriptDim;
         m_targetDimForLinearTerm = iTargetDim;
-        m_scaleLinearTerm = statManager.getSettings().getRules().isOptNormalizeLinearTerms(); // may be changed false later
+        m_scaleLinearTerm = statManager.getSettings().getRules().isOptNormalizeLinearTerms(); // may be changed false
+                                                                                              // later
 
         // Change rule attributes
         m_TargetStat = statManager.createTargetStat();
@@ -205,11 +208,11 @@ public class ClusRuleLinearTerm extends ClusRule {
         RegressionStat stat = (RegressionStat) m_TargetStat;
         stat.m_Means = new double[nbTargets];
         stat.m_Means[iTargetDim] = 1; // It does not matter what the value is.
-        //stat.m_NbAttrs = nbTargets;
+        // stat.m_NbAttrs = nbTargets;
         stat.setNbAttributes(nbTargets);
-        stat.resetSumValues(nbTargets);    //stat.m_SumValues = new double[nbTargets];
-        stat.resetSumWeights(nbTargets);   // stat.m_SumWeights = new double[nbTargets];
-        stat.setSumValues(iTargetDim, 1);  //stat.m_SumValues[iTargetDim] = 1;
+        stat.resetSumValues(nbTargets); // stat.m_SumValues = new double[nbTargets];
+        stat.resetSumWeights(nbTargets); // stat.m_SumWeights = new double[nbTargets];
+        stat.setSumValues(iTargetDim, 1); // stat.m_SumValues[iTargetDim] = 1;
         stat.setSumWeights(iTargetDim, 1); // stat.m_SumWeights[iTargetDim] = 1;
     }
 
@@ -231,19 +234,21 @@ public class ClusRuleLinearTerm extends ClusRule {
             // Mark all the target values as NaN. Otherwise causes problems in optimization.
             for (int i = 0; i < stat.getNbAttributes(); i++) {
                 stat.m_Means[i] = Double.NaN;
-                stat.setSumValues(i, Double.NaN);  // stat.m_SumValues[i] = Double.NaN;
-                stat.setSumWeights(i, 1);  // stat.m_SumWeights[i] = 1;
+                stat.setSumValues(i, Double.NaN); // stat.m_SumValues[i] = Double.NaN;
+                stat.setSumWeights(i, 1); // stat.m_SumWeights[i] = 1;
             }
         }
         else {
             // If defined prediction, clear predictions (do not leave NaNs)
             for (int i = 0; i < stat.getNbAttributes(); i++) {
                 stat.m_Means[i] = 0;
-                stat.setSumValues(i, stat.m_Means[i]);  // stat.m_SumValues[i] = stat.m_Means[i];
+                stat.setSumValues(i, stat.m_Means[i]); // stat.m_SumValues[i] = stat.m_Means[i];
                 stat.setSumWeights(i, 1); // stat.m_SumWeights[i] = 1;
             }
             stat.m_Means[m_targetDimForLinearTerm] = pred;
-            stat.setSumValues(m_targetDimForLinearTerm, stat.m_Means[m_targetDimForLinearTerm]);  // stat.m_SumValues[m_targetDimForLinearTerm] = stat.m_Means[m_targetDimForLinearTerm];
+            stat.setSumValues(m_targetDimForLinearTerm, stat.m_Means[m_targetDimForLinearTerm]); // stat.m_SumValues[m_targetDimForLinearTerm]
+                                                                                                 // =
+                                                                                                 // stat.m_Means[m_targetDimForLinearTerm];
         }
 
         return m_TargetStat;
@@ -258,7 +263,7 @@ public class ClusRuleLinearTerm extends ClusRule {
         double descrValue = (C_statManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))[iDescrDim].getNumeric(tuple);
 
         if (Double.isNaN(descrValue) || Double.isInfinite(descrValue)) {
-            if (sett.getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_CONVERT) {
+            if (sett.getRules().getOptNormalizeLinearTerms().equals(OptimizationLinearTermNormalizeValues.YesAndConvert)) {
                 descrValue = getOffSetValue(iDescrDim);
             }
             else {
@@ -286,12 +291,9 @@ public class ClusRuleLinearTerm extends ClusRule {
     /** Does the term cover the given tuple */
     @Override
     public boolean covers(DataTuple tuple) {
-        if (getSettings().getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_CONVERT) { return true; // Always
-                                                                                                             // covers,
-                                                                                                             // otherwise
-                                                                                                             // problems
-                                                                                                             // with
-                                                                                                             // converting.
+        if (getSettings().getRules().getOptNormalizeLinearTerms().equals(OptimizationLinearTermNormalizeValues.YesAndConvert)) {
+            /** Always covers, otherwise problems with converting. */
+            return true;
         }
 
         double value = (C_statManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))[m_descriptiveDimForLinearTerm].getNumeric(tuple);
@@ -307,12 +309,12 @@ public class ClusRuleLinearTerm extends ClusRule {
             wrt.println("The prediction is truncated on the interval [" + C_minValues[m_descriptiveDimForLinearTerm] + "," + C_maxValues[m_descriptiveDimForLinearTerm] + "].");
         }
 
-        if (getSettings().getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_CONVERT) {
+        if (getSettings().getRules().getOptNormalizeLinearTerms().equals(OptimizationLinearTermNormalizeValues.YesAndConvert)) {
             // wrt.println("Linear term prediction was scaled and shifted by (x-average)/(2*standard deviation) during
             // normalization.");
             wrt.println("Linear term prediction was scaled and shifted by (x-average)*(standard deviation of target)/(standard deviation of descriptive) during normalization.");
         }
-        else if (getSettings().getRules().getOptNormalizeLinearTerms() == SettingsRules.OPT_LIN_TERM_NORM_YES) {
+        else if (getSettings().getRules().getOptNormalizeLinearTerms().equals(OptimizationLinearTermNormalizeValues.YesAndConvert)) {
             // wrt.println("Linear term prediction is scaled and shifted by (x-average)/(2*standard deviation)");
             wrt.println("Linear term prediction is scaled and shifted by (x-average)*(standard deviation of target)/(standard deviation of descriptive)");
         }

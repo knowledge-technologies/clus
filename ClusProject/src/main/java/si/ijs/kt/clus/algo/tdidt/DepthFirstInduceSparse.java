@@ -17,6 +17,7 @@ import si.ijs.kt.clus.data.type.primitive.SparseNumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.TreeOptimizeValues;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.util.ClusException;
@@ -81,8 +82,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 
     @Override
     public void induce(ClusNode node, RowData data, ClusRandomNonstatic rnd) throws Exception {
-        if (getSettings().getEnsemble().isEnsembleMode() && ((getSettings().getEnsemble().getEnsembleMethod() == EnsembleMethod.RForest)
-                || (getSettings().getEnsemble().getEnsembleMethod() == EnsembleMethod.RFeatSelection))) {
+        if (getSettings().getEnsemble().isEnsembleMode() && ((getSettings().getEnsemble().getEnsembleMethod() == EnsembleMethod.RForest) || (getSettings().getEnsemble().getEnsembleMethod() == EnsembleMethod.RFeatSelection))) {
             induceRandomForest(node, data, rnd);
         }
         else {
@@ -96,14 +96,16 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
                     if (((SparseNumericAttrType) at).getExampleWeight() >= getSettings().getModel().getMinimalWeight()) {
                         attrList.add(at);
 
-                        // Object[] exampleArray = ((SparseNumericAttrType) at).getExamples().toArray(); // tuples with non-zero value for this attribute
+                        // Object[] exampleArray = ((SparseNumericAttrType) at).getExamples().toArray(); // tuples with
+                        // non-zero value for this attribute
                         // RowData exampleData = new RowData(exampleArray, exampleArray.length);
 
                         // exampleData.sortSparse((SparseNumericAttrType) at, m_FindBestTest.getSortHelper());
 
-                        // ArrayList<SparseDataTuple> exampleList = new ArrayList<SparseDataTuple>(); // tuples, sorted in descending order by at.value
+                        // ArrayList<SparseDataTuple> exampleList = new ArrayList<SparseDataTuple>(); // tuples, sorted
+                        // in descending order by at.value
                         // for (int j = 0; j < exampleData.getNbRows(); j++) {
-                        //     exampleList.add((SparseDataTuple) exampleData.getTuple(j));
+                        // exampleList.add((SparseDataTuple) exampleData.getTuple(j));
                         // }
                         // ((SparseNumericAttrType) at).setExamples(exampleList);
                         // examplelistList.add(exampleList);
@@ -116,13 +118,15 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             }
             Object[] attrArray = attrList.toArray();
             // Object[] examplelistArray = examplelistList.toArray();
-            induce(node, data, attrArray, rnd);//, examplelistArray);
+            induce(node, data, attrArray, rnd);// , examplelistArray);
         }
     }
 
 
-    public void induce(ClusNode node, RowData data, Object[] attrs, ClusRandomNonstatic rnd) throws Exception { // , Object[] examplelists
-        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
+    public void induce(ClusNode node, RowData data, Object[] attrs, ClusRandomNonstatic rnd) throws Exception { // ,
+                                                                                                                // Object[]
+                                                                                                                // examplelists
+        if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
             System.out.println("Depth " + node.getLevel() + ": inducing new node: " + attrs.length + " attributes, " + data.getNbRows() + " examples");
         }
         // System.out.println("INDUCE SPARSE with " + attrs.length + " attributes and " + data.getNbRows() + "
@@ -140,10 +144,10 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
                 m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
             }
             // else if (examplelist == null) {
-            //    m_FindBestTest.findNumeric((NumericAttrType) at, data, null);
+            // m_FindBestTest.findNumeric((NumericAttrType) at, data, null);
             // }
             else {
-                m_FindBestTest.findNumeric((NumericAttrType) at, data, rnd);//examplelist);
+                m_FindBestTest.findNumeric((NumericAttrType) at, data, rnd);// examplelist);
             }
         }
 
@@ -164,7 +168,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             if (getSettings().getTree().showAlternativeSplits()) {
                 filterAlternativeSplits(node, data, subsets);
             }
-            if (node != m_Root && getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_INODE_STATS)) {
+            if (node != m_Root && getSettings().getTree().hasTreeOptimize(TreeOptimizeValues.NoInodeStats)) {
                 // Don't remove statistics of root node; code below depends on them
                 node.setClusteringStat(null);
                 node.setTargetStat(null);
@@ -180,9 +184,10 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
                 for (int i = 0; i < attrs.length; i++) {
                     ClusAttrType at = (ClusAttrType) attrs[i];
                     if (at.isSparse()) {
-                        // ArrayList<SparseDataTuple> newExampleList = ((SparseNumericAttrType) at).pruneExampleList(subsets[j]); // TODO: inefficient? (quadratic time of pruneExampleList?)
+                        // ArrayList<SparseDataTuple> newExampleList = ((SparseNumericAttrType)
+                        // at).pruneExampleList(subsets[j]); // TODO: inefficient? (quadratic time of pruneExampleList?)
                         // double exampleWeight = getExampleWeight(newExampleList);
-                        double exampleWeight = getExampleWeight(subsets[j],(SparseNumericAttrType) at);
+                        double exampleWeight = getExampleWeight(subsets[j], (SparseNumericAttrType) at);
                         if (exampleWeight >= getSettings().getModel().getMinimalWeight()) {
                             attrList.add(at);
                             // examplelistList.add(newExampleList);
@@ -195,16 +200,17 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
                 }
                 Object[] attrArray = attrList.toArray();
                 // Object[] exampleListArray = examplelistList.toArray();
-                induce(child, subsets[j], attrArray, rnd);//exampleListArray);
+                induce(child, subsets[j], attrArray, rnd);// exampleListArray);
             }
         }
         else {
             makeLeaf(node);
         }
-        if(getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS){
+        if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
             System.out.println("Depth " + node.getLevel() + ": node finished.");
         }
     }
+
 
     @Deprecated
     public double getExampleWeight(ArrayList examples) {
@@ -215,12 +221,13 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
         }
         return weight;
     }
-    
-    public double getExampleWeight(RowData subset, SparseNumericAttrType attr){
+
+
+    public double getExampleWeight(RowData subset, SparseNumericAttrType attr) {
         double weight = 0.0;
-        for(int i = 0; i < subset.getNbRows(); i++){
+        for (int i = 0; i < subset.getNbRows(); i++) {
             SparseDataTuple tup = (SparseDataTuple) subset.getTuple(i);
-            if(Math.abs(attr.getNumeric(tup)) > MathUtil.C1E_9){
+            if (Math.abs(attr.getNumeric(tup)) > MathUtil.C1E_9) {
                 weight += tup.getWeight();
             }
         }
@@ -291,7 +298,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             if (getSettings().getTree().showAlternativeSplits()) {
                 filterAlternativeSplits(node, data, subsets);
             }
-            if (node != m_Root && getSettings().getTree().hasTreeOptimize(SettingsTree.TREE_OPTIMIZE_NO_INODE_STATS)) {
+            if (node != m_Root && getSettings().getTree().hasTreeOptimize(TreeOptimizeValues.NoInodeStats)) {
                 // Don't remove statistics of root node; code below depends on them
                 node.setClusteringStat(null);
                 node.setTargetStat(null);

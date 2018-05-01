@@ -29,6 +29,7 @@ import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.heuristic.rules.ClusRuleHeuristicDispersion;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny;
+import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny.PhylogenySequence;
 import si.ijs.kt.clus.model.test.SubsetTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
@@ -110,7 +111,7 @@ public class SubsetSplit extends NominalSplit {
             // showTest(type, isin, -1, bheur, m_MStat, m_CStat);
             pos_freq = CStat.getTotalWeight() / m_MStat.getTotalWeight();
         }
-        else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence() == SettingsPhylogeny.PHYLOGENY_SEQUENCE_DNA)) {
+        else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence().equals(PhylogenySequence.DNA))) {
             // for phylogenetic trees with DNA sequences, we use an optimization method: tests like pos10={A,t} are
             // based on the results for tests pos10=A and pos10=T
             // we do not do this for protein sequences, since there the alphabet is much larger, which would complicate
@@ -155,7 +156,8 @@ public class SubsetSplit extends NominalSplit {
                                                                                     // both singletons were valid AND
                                                                                     // you want to reuse their
                                                                                     // computations
-                                                                                    // System.out.println("mheur: " + mheur);
+                                                                                    // System.out.println("mheur: " +
+                                                                                    // mheur);
                             if (mheur > bheur) {
                                 bheur = mheur;
                                 isin = new boolean[nbvalues];
@@ -325,18 +327,21 @@ public class SubsetSplit extends NominalSplit {
             // <--- ClusStatistic CStat = node.m_TestStat[0];
             bheur = node.calcHeuristic(m_MStat, m_PStat); // <--- bheur = node.calcHeuristic(m_MStat, CStat);
             showTest(type, isin, -1, bheur, m_MStat, m_PStat); // <--- showTest(type, isin, -1, bheur, m_MStat, CStat);
-            pos_freq = m_PStat.getTotalWeight() / m_MStat.getTotalWeight(); // <--- CStat.m_SumWeight / m_MStat.m_SumWeight;
+            pos_freq = m_PStat.getTotalWeight() / m_MStat.getTotalWeight(); // <--- CStat.m_SumWeight /
+                                                                            // m_MStat.m_SumWeight;
 
             boolean acc_test = node.m_IsAcceptable && (m_MStat.getTotalWeight() >= 4.0) && (m_PStat.getTotalWeight() >= 2.0) && ((m_MStat.getTotalWeight() - m_PStat.getTotalWeight()) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
             // <---
-            // boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0)             &&             (CStat.m_SumWeight              >=             2.0)             &&              ((m_MStat.m_SumWeight              -              CStat.m_SumWeight)               >=              2.0)              &&              (pos_freq              >              minAllowedFrequency)              &&              (pos_freq              <              1.0              -             minAllowedFrequency);
+            // boolean acc_test = node.m_IsAcceptable && (m_MStat.m_SumWeight >= 4.0) && (CStat.m_SumWeight >= 2.0) &&
+            // ((m_MStat.m_SumWeight - CStat.m_SumWeight) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0
+            // - minAllowedFrequency);
 
             if (acc_test) {// select only meaningful splits
                 found_test = true;
             }
 
         }
-        else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence() == SettingsPhylogeny.PHYLOGENY_SEQUENCE_DNA)) {
+        else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence().equals(PhylogenySequence.DNA))) {
             System.err.println("Extra-Tree split selection not implemented for Phylogentic trees.");
             throw new ClusException("Error while searching for a random split in: " + getClass().getName());
         }
@@ -344,7 +349,7 @@ public class SubsetSplit extends NominalSplit {
             int count = 0; // allow for nbTries opportunities to select a valid random test... otherwise assign worst
                            // split score
             int nbTries = 10;
-            //    boolean select = true;
+            // boolean select = true;
             while (!found_test && count < nbTries) { // && select) {
                 count++;
                 // random selection of a subset of classes
@@ -356,10 +361,10 @@ public class SubsetSplit extends NominalSplit {
                 }
 
                 card = sum;
-                
-                //if (!((sum == 0) || (sum == nbvalues))) {
+
+                // if (!((sum == 0) || (sum == nbvalues))) {
                 if (sum == 0 || sum == nbvalues) {
-                    //card = sum;
+                    // card = sum;
                     // select = false;
                 }
                 else {
@@ -377,7 +382,8 @@ public class SubsetSplit extends NominalSplit {
 
                     // acc_test = acc_test && node.getHeuristic().stopCriterion(node.getTotStat(), m_PStat, m_MStat);
 
-                    // if (((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) > 0) && (m_PStat.m_SumWeight > 0)){//select
+                    // if (((node.m_TotStat.m_NbExamples - m_PStat.m_SumWeight) > 0) && (m_PStat.m_SumWeight >
+                    // 0)){//select
                     // only meaningful splits
                     // found_test = true;
                     // }

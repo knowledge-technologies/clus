@@ -3,8 +3,8 @@ package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -18,9 +18,10 @@ public class SettingsGeneral extends SettingsBase {
      ***********************************************************************/
 
     INIFileInt m_Verbose;// TODO: migrate to Log4J
-    INIFileNominal m_Compatibility;
+    INIFileEnum<Compatibility> m_Compatibility;
+
     INIFileString m_RandomSeed;
-    INIFileNominal m_ResourceInfoLoaded;
+    INIFileEnum<ResourceInfoLoad> m_ResourceInfoLoaded;
 
 
     public SettingsGeneral(int position) {
@@ -28,7 +29,7 @@ public class SettingsGeneral extends SettingsBase {
     }
 
 
-    public int getCompatibility() {
+    public Compatibility getCompatibility() {
         return m_Compatibility.getValue();
     }
 
@@ -56,12 +57,12 @@ public class SettingsGeneral extends SettingsBase {
     }
 
 
-    public int getResourceInfoLoadedValue() {
+    public ResourceInfoLoad getResourceInfoLoadedValue() {
         return m_ResourceInfoLoaded.getValue();
     }
 
 
-    public INIFileNominal getResourceInfoLoaded() {
+    public INIFileEnum<ResourceInfoLoad> getResourceInfoLoaded() {
         return m_ResourceInfoLoaded;
     }
 
@@ -69,30 +70,43 @@ public class SettingsGeneral extends SettingsBase {
      * Section: General - Compatibility mode *
      ***********************************************************************/
 
-    private final String[] COMPATIBILITY = { "CMB05", "MLJ08", "Latest" };
+    public enum Compatibility {
+        CMB05(0), MLJ08(1), Latest(2);
 
-    public final static int COMPATIBILITY_CMB05 = 0;
-    public final static int COMPATIBILITY_MLJ08 = 1;
-    public final static int COMPATIBILITY_LATEST = 2;
+        private int compatibilityLevel = -1;
+
+
+        Compatibility(int c) {
+            compatibilityLevel = c;
+        }
+
+
+        public int getCompatibilityLevel() {
+            return compatibilityLevel;
+        }
+    };
 
     /***********************************************************************
      * Section: General - ResourceInfo loaded *
      ***********************************************************************/
 
-    private final String[] RESOURCE_INFO_LOAD = { "Yes", "No", "Test" };
+    public enum ResourceInfoLoad {Yes, No, Test};
+    /*private final String[] RESOURCE_INFO_LOAD = { "Yes", "No", "Test" };
 
     public final static int RESOURCE_INFO_LOAD_YES = 0;
     public final static int RESOURCE_INFO_LOAD_NO = 1;
     public final static int RESOURCE_INFO_LOAD_TEST = 2;
-
+*/
 
     @Override
     public INIFileSection create() {
         INIFileSection settings = new INIFileSection("General");
         settings.addNode(m_Verbose = new INIFileInt("Verbose", 1));
-        settings.addNode(m_Compatibility = new INIFileNominal("Compatibility", COMPATIBILITY, COMPATIBILITY_LATEST));
+        settings.addNode(m_Compatibility = new INIFileEnum<>("Compatibility", Compatibility.Latest));
+
         settings.addNode(m_RandomSeed = new INIFileString("RandomSeed", "0"));
-        settings.addNode(m_ResourceInfoLoaded = new INIFileNominal("ResourceInfoLoaded", RESOURCE_INFO_LOAD, 1));
+        //settings.addNode(m_ResourceInfoLoaded = new INIFileNominal("ResourceInfoLoaded", RESOURCE_INFO_LOAD, 1));
+        settings.addNode(m_ResourceInfoLoaded = new INIFileEnum<>("ResourceInfoLoaded", ResourceInfoLoad.No));
 
         return settings;
     }

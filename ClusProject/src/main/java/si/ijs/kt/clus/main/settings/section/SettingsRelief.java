@@ -34,12 +34,15 @@ public class SettingsRelief extends SettingsBase {
     private INIFileBool m_ReliefShouldHaveNeighbourWeighting;
     private INIFileDouble m_ReliefWeightingSigma;
     private INIFileNominalOrIntOrVector m_ChosenInstances;
-    public static int[] DUMMY_INSTANCES = new int[] {-1};
-    
-	// If new types are introduced use the same names as in SettingsMLC class
-    public enum MultilabelDistance {HammingLoss, MLAccuracy, MLFOne, SubsetAccuracy};
-	private INIFileEnum<MultilabelDistance> m_MultilabelDistance;	
-    
+    public static int[] DUMMY_INSTANCES = new int[] { -1 };
+
+    // If new types are introduced use the same names as in SettingsMLC class
+    public enum MultilabelDistance {
+        HammingLoss, MLAccuracy, MLFOne, SubsetAccuracy
+    };
+
+    private INIFileEnum<MultilabelDistance> m_MultilabelDistance;
+
 
     public void setSectionReliefEnabled(boolean value) {
         m_SectionRelief.setEnabled(value);
@@ -125,27 +128,15 @@ public class SettingsRelief extends SettingsBase {
         return m_ReliefWeightingSigma.getValue();
     }
 
-    
+
     public int[] getChosenIntances() {
         return m_ChosenInstances.getIntVector();
     }
-    
-//    public void turnOffSaveNeighbours() {
-//    	m_ReliefSaveNeighboursToFile.setValue(false);
-//    }
 
 
     public MultilabelDistance getMultilabelDistance() {
-        return m_MultilabelDistance.getChosenOption();
+        return m_MultilabelDistance.getValue();
     }
-
-    // public boolean isNullFile() {
-    // return StringUtils.unCaseCompare(m_NeighboursFile.getValue(), NONE);
-    // }
-
-    // public String getNeighboursFile() {
-    // return m_NeighboursFile.getValue();
-    // }
 
 
     @Override
@@ -164,7 +155,7 @@ public class SettingsRelief extends SettingsBase {
                                                                                                     // suggestions
         m_SectionRelief.addNode(m_ChosenInstances = new INIFileNominalOrIntOrVector("ChosenInstances", NONELIST));
         m_ChosenInstances.setIntVector(DUMMY_INSTANCES);
-        m_SectionRelief.addNode(m_MultilabelDistance = new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.class, MultilabelDistance.HammingLoss));
+        m_SectionRelief.addNode(m_MultilabelDistance = new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.HammingLoss));
 
         m_SectionRelief.setEnabled(false);
 

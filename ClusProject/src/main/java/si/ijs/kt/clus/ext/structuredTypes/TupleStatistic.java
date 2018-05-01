@@ -33,6 +33,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.distance.complex.TupleDistance;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesPrototypeComplexity;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
@@ -53,7 +54,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     protected double m_AvgDistances;
 
 
-    public TupleStatistic(Settings sett, TupleAttrType attr, ClusDistance dist, int efflvl) {
+    public TupleStatistic(Settings sett, TupleAttrType attr, ClusDistance dist, TimeSeriesPrototypeComplexity efflvl) {
         super(sett, dist, efflvl);
         m_Attr = attr;
     }
@@ -80,9 +81,9 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     public void copy(ClusStatistic other) {
         TupleStatistic or = (TupleStatistic) other;
         super.copy(or);
-        //m_Value = or.m_Value;
-        //m_AvgDistances = or.m_AvgDistances;
-        //m_AvgSqDistances = or.m_AvgSqDistances;
+        // m_Value = or.m_Value;
+        // m_AvgDistances = or.m_AvgDistances;
+        // m_AvgSqDistances = or.m_AvgSqDistances;
         m_TupleStack.clear();
         m_TupleStack.addAll(or.m_TupleStack);
         // m_RepresentativeMean = or.m_RepresentativeMean;
@@ -141,7 +142,8 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
 
     /**
      * Currently only used to compute the default dispersion within rule heuristics.
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      */
     @Override
     public double getDispersion(ClusAttributeWeights scale, RowData data) throws ClusException {
@@ -233,7 +235,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
      */
     @Override
     public String getString(StatisticPrintInfo info) {
-    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("Mean: ");
         buf.append(m_RepresentativeMean.toString());

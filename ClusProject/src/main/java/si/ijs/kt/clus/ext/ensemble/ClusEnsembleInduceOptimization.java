@@ -10,6 +10,7 @@ import si.ijs.kt.clus.data.rows.TupleIterator;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingFunctionScope;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusException;
@@ -73,59 +74,62 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
         return m_Settings;
     }
 
-    //    public ClusEnsembleInduceOptimization(TupleIterator train, TupleIterator test) throws IOException, ClusException {
-    //        ArrayList<Integer> tuple_hash = new ArrayList<Integer>();
-    //        if (train != null) {
-    //            train.init();
-    //            DataTuple train_tuple = train.readTuple();
-    //            while (train_tuple != null) {
-    //                tuple_hash.add(train_tuple.hashCode());
-    //                train_tuple = train.readTuple();
-    //            }
-    //            train.init();
-    //        }
-    //        
-    //        if (test != null) {
-    //            test.init();// restart the iterator
-    //            DataTuple test_tuple = test.readTuple();
-    //            while (test_tuple != null) {
-    //                tuple_hash.add(test_tuple.hashCode());
-    //                test_tuple = test.readTuple();
-    //            }
-    //            test.init();// restart the iterator
-    //        }
-    //        int nb_tuples = tuple_hash.size();
-    //        // m_HashCodeTuple = new int[nb_tuples];
-    //        for (int k = 0; k < nb_tuples; k++)
-    //            m_HashCodeTuple[k] = tuple_hash.get(k);
-    //    }
+    // public ClusEnsembleInduceOptimization(TupleIterator train, TupleIterator test) throws IOException, ClusException
+    // {
+    // ArrayList<Integer> tuple_hash = new ArrayList<Integer>();
+    // if (train != null) {
+    // train.init();
+    // DataTuple train_tuple = train.readTuple();
+    // while (train_tuple != null) {
+    // tuple_hash.add(train_tuple.hashCode());
+    // train_tuple = train.readTuple();
+    // }
+    // train.init();
+    // }
+    //
+    // if (test != null) {
+    // test.init();// restart the iterator
+    // DataTuple test_tuple = test.readTuple();
+    // while (test_tuple != null) {
+    // tuple_hash.add(test_tuple.hashCode());
+    // test_tuple = test.readTuple();
+    // }
+    // test.init();// restart the iterator
+    // }
+    // int nb_tuples = tuple_hash.size();
+    // // m_HashCodeTuple = new int[nb_tuples];
+    // for (int k = 0; k < nb_tuples; k++)
+    // m_HashCodeTuple[k] = tuple_hash.get(k);
+    // }
 
 
     public int locateTuple(DataTuple tuple) {
-        //        int position = -1;
-        //        boolean found = false;
-        //        int i = 0;
-        //        // search for the tuple
-        //        while (!found && i < m_HashCodeTuple.length) {
-        //            if (m_HashCodeTuple[i] == tuple.hashCode()) {
-        //                position = i;
-        //                found = true;
-        //            }
-        //            i++;
-        //        }
-        //        return position;
+        // int position = -1;
+        // boolean found = false;
+        // int i = 0;
+        // // search for the tuple
+        // while (!found && i < m_HashCodeTuple.length) {
+        // if (m_HashCodeTuple[i] == tuple.hashCode()) {
+        // position = i;
+        // found = true;
+        // }
+        // i++;
+        // }
+        // return position;
         return m_TuplePositions.get(tuple);
     }
 
 
     public abstract void initPredictions(ClusStatistic stat, ClusEnsembleROSInfo ensembleROSInfo);
 
-    
+
     public abstract void updatePredictionsForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException, InterruptedException;
-    //@Deprecated
-    //public abstract void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException;
-    //@Deprecated
-    //public abstract void addModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test, int nb_models) throws IOException, ClusException;
+    // @Deprecated
+    // public abstract void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test)
+    // throws IOException, ClusException;
+    // @Deprecated
+    // public abstract void addModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test, int
+    // nb_models) throws IOException, ClusException;
 
 
     /**
@@ -143,8 +147,8 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
         int plength = avg_predictions.length;
         double[] result = new double[plength];
         for (int i = 0; i < plength; i++) {
-        	// result[i] = avg_predictions[i] + (predictions[i] - avg_predictions[i]) / nb_models;
-        	result[i] = computeNextAverage(avg_predictions[i], predictions[i], nb_models);
+            // result[i] = avg_predictions[i] + (predictions[i] - avg_predictions[i]) / nb_models;
+            result[i] = computeNextAverage(avg_predictions[i], predictions[i], nb_models);
         }
         return result;
     }
@@ -154,16 +158,18 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
         // the current sums are stored in sum_predictions
         double[][] result = new double[sum_predictions.length][];
 
-        if (getSettings().getEnsemble().isEnsembleROSEnabled() && getSettings().getEnsemble().getEnsembleROSScope() == SettingsEnsemble.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING) {
-            int[] enabled = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(nb_models - 1)); // get enabled targets for the model
+        if (getSettings().getEnsemble().isEnsembleROSEnabled() && getSettings().getEnsemble().getEnsembleROSScope().equals(EnsembleROSVotingFunctionScope.SubspaceAveraging)) {
+            /* get enabled targets for the model */
+            int[] enabled = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(nb_models - 1));
 
             for (int i = 0; i < sum_predictions.length; i++) {
                 if (enabled[i] == 1) {
                     result[i] = new double[sum_predictions[i].length];
                     // if target is enables, then update results[i][j]
                     for (int j = 0; j < sum_predictions[i].length; j++) {
-                        // result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) / m_EnsembleROSInfo.getCoverageOpt(i);
-                    	result[i][j] = computeNextAverage(sum_predictions[i][j], predictions[i][j], m_EnsembleROSInfo.getCoverageOpt(i));
+                        // result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) /
+                        // m_EnsembleROSInfo.getCoverageOpt(i);
+                        result[i][j] = computeNextAverage(sum_predictions[i][j], predictions[i][j], m_EnsembleROSInfo.getCoverageOpt(i));
                     }
                 }
                 else { // target not enabled for this model; retain what we have until now
@@ -176,24 +182,27 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
                 result[i] = new double[sum_predictions[i].length];
                 for (int j = 0; j < sum_predictions[i].length; j++) {
                     // result[i][j] = sum_predictions[i][j] + (predictions[i][j] - sum_predictions[i][j]) / nb_models;
-                	result[i][j] = computeNextAverage(sum_predictions[i][j], predictions[i][j], nb_models);
+                    result[i][j] = computeNextAverage(sum_predictions[i][j], predictions[i][j], nb_models);
                 }
             }
         }
 
         return result;
     }
-    
+
+
     /**
-     * Computes the average of {@code nbValues} values, given the average {@code currentAverage} of {@code nbValues - 1} values
+     * Computes the average of {@code nbValues} values, given the average {@code currentAverage} of {@code nbValues - 1}
+     * values
      * and the next value.
+     * 
      * @param currentAverege
      * @param nextValue
      * @param nbValues
      * @return
      */
     private static double computeNextAverage(double currentAverege, double nextValue, double nbValues) {
-    	return  nextValue / nbValues + currentAverege * (nbValues - 1) / nbValues; 	
+        return nextValue / nbValues + currentAverege * (nbValues - 1) / nbValues;
     }
 
 
@@ -267,50 +276,53 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
     }
 
 
-    public abstract int getPredictionLength(int tuple); //{/ i.e., get number of targets
-    //        if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
-    //            return ClusEnsembleInduceOptRegHMLC.getPredictionLength(tuple);
-    //        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
-    //            return ClusEnsembleInduceOptClassification.getPredictionLength(tuple);
-    //        return -1;
-    //    }
+    public abstract int getPredictionLength(int tuple); // {/ i.e., get number of targets
+    // if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() ==
+    // ClusStatManager.MODE_REGRESSION)
+    // return ClusEnsembleInduceOptRegHMLC.getPredictionLength(tuple);
+    // if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
+    // return ClusEnsembleInduceOptClassification.getPredictionLength(tuple);
+    // return -1;
+    // }
 
-    //    public double getPredictionValue(int tuple, int attribute) {
-    //        if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
-    //            return ClusEnsembleInduceOptRegHMLC.getPredictionValue(tuple, attribute);
-    //        return -1;
-    //    }
+    // public double getPredictionValue(int tuple, int attribute) {
+    // if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() ==
+    // ClusStatManager.MODE_REGRESSION)
+    // return ClusEnsembleInduceOptRegHMLC.getPredictionValue(tuple, attribute);
+    // return -1;
+    // }
 
 
-    //    public double[] getPredictionValueClassification(int tuple, int attribute) {
-    //        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
-    //            return ClusEnsembleInduceOptClassification.getPredictionValueClassification(tuple, attribute);
-    //        return null;
-    //    }
+    // public double[] getPredictionValueClassification(int tuple, int attribute) {
+    // if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
+    // return ClusEnsembleInduceOptClassification.getPredictionValueClassification(tuple, attribute);
+    // return null;
+    // }
 
     public abstract void roundPredictions(); // {
-    //        System.out.println("Rounding up predictions!");
-    //        if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
-    //            ClusEnsembleInduceOptClassification.roundPredictions();
-    //        else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION)
-    //            ClusEnsembleInduceOptRegHMLC.roundPredictions();
-    //        else {
-    //            System.err.println("Illegal call of the method roundPredictions from class ClusEnsembleInduceOptimization!");
-    //            System.err.println("Execution proceeds without rounding up of the predictions.");
-    //        }
-    //    }
+    // System.out.println("Rounding up predictions!");
+    // if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
+    // ClusEnsembleInduceOptClassification.roundPredictions();
+    // else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() ==
+    // ClusStatManager.MODE_REGRESSION)
+    // ClusEnsembleInduceOptRegHMLC.roundPredictions();
+    // else {
+    // System.err.println("Illegal call of the method roundPredictions from class ClusEnsembleInduceOptimization!");
+    // System.err.println("Execution proceeds without rounding up of the predictions.");
+    // }
+    // }
 
-    //    protected int getNumberOfUpdates(){
-    //		m_NbUpdatesLock.readingLock();
-    //    	int ans = m_NbUpdates;
-    //    	m_NbUpdatesLock.readingUnlock();
-    //    	return ans;
-    //    }
-    //    
-    //    protected void increaseNumberOfUpdatesByOne(){
-    //		m_NbUpdatesLock.writingLock();
-    //    	m_NbUpdates++;
-    //    	m_NbUpdatesLock.writingUnlock();
-    //    }
+    // protected int getNumberOfUpdates(){
+    // m_NbUpdatesLock.readingLock();
+    // int ans = m_NbUpdates;
+    // m_NbUpdatesLock.readingUnlock();
+    // return ans;
+    // }
+    //
+    // protected void increaseNumberOfUpdatesByOne(){
+    // m_NbUpdatesLock.writingLock();
+    // m_NbUpdates++;
+    // m_NbUpdatesLock.writingUnlock();
+    // }
 
 }

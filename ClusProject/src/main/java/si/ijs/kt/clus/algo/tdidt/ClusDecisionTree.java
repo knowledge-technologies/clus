@@ -36,6 +36,7 @@ import si.ijs.kt.clus.ext.ilevelc.ILevelCInduce;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.pruning.PruneTree;
@@ -158,7 +159,7 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
      */
     @Override
     public void postProcess(ClusRun cr) throws ClusException, IOException, InterruptedException {
-        if (getSettings().getTree().rulesFromTree() != SettingsOutput.CONVERT_RULES_NONE) {
+        if (!getSettings().getTree().rulesFromTree().equals(ConvertRules.No)) {
             ClusModelInfo model = cr.getModelInfoFallback(ClusModel.PRUNED, ClusModel.ORIGINAL);
             convertToRules(cr, model);
         }

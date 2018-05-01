@@ -41,6 +41,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyWeight;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.math.SingleStat;
@@ -343,7 +344,7 @@ public class ClassHierarchy implements Serializable {
 
     public final void calcWeights() {
         HierNodeWeights ws = new HierNodeWeights();
-        int wtype = getSettings().getHMLC().getHierWType();
+        HierarchyWeight wtype = getSettings().getHMLC().getHierWType();
         double widec = getSettings().getHMLC().getHierWParam();
         ws.initExponentialDepthWeights(this, wtype, widec);
         m_Weights = ws.getWeights();

@@ -42,6 +42,9 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationLossFunction;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationNormalization;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.format.ClusFormat;
@@ -222,7 +225,7 @@ public class OptProbl {
     public OptProbl(ClusStatManager stat_mgr, OptParam optInfo) {
         m_StatMgr = stat_mgr;
 
-        m_saveMemoryLinears = getSettings().getRules().getOptAddLinearTerms() == SettingsRules.OPT_GD_ADD_LIN_YES_SAVE_MEMORY;
+        m_saveMemoryLinears = getSettings().getRules().getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory);
 
         if (m_saveMemoryLinears) {
             int nbOfTargetAtts = m_StatMgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET).length;
@@ -260,7 +263,7 @@ public class OptProbl {
                 // double[] means = computeMeans(varIsNonZero, valuesFor0Variance);
                 // m_TargetNormFactor = computeOptNormFactors(means, varIsNonZero, valuesFor0Variance);
                 m_TargetNormFactor = initNormFactors(getNbOfTargets(), getSettings());
-                if (getSettings().getRules().getOptNormalization() != SettingsRules.OPT_NORMALIZATION_ONLY_SCALING)
+                if (!getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling))
                     m_TargetAvg = initMeans(getNbOfTargets());
             }
         }
@@ -497,7 +500,7 @@ public class OptProbl {
         // For classification the default is 0-1 loss
         if (isClassifTask()) {
             // Only one sensible loss type available for classification and it is not the default.
-            if (getSettings().getRules().getOptDELossFunction() != SettingsRules.OPT_LOSS_FUNCTIONS_01ERROR) {
+            if (!getSettings().getRules().getOptDELossFunction().equals(OptimizationLossFunction.ZeroOneError)) {
                 try {
                     throw new Exception("DE optimization task is for classification, but the chosen loss " + "is mainly for regression. Use OptDELossFunction = 01Error to correct this.");
                 }
@@ -639,23 +642,25 @@ public class OptProbl {
 
         double loss = 0;
         switch (getSettings().getRules().getOptDELossFunction()) {
-            case SettingsRules.OPT_LOSS_FUNCTIONS_01ERROR:
+            case ZeroOneError:
                 if (iTarget != -1)
                     System.err.println("Loss over single target implemented only for squared loss!");
                 loss = loss01(getTrueValues(), prediction);
                 break;
-            case SettingsRules.OPT_LOSS_FUNCTIONS_RRMSE:
+
+            case RRMSE:
                 if (iTarget != -1)
                     System.err.println("Loss over single target implemented only for squared loss!");
                 loss = lossRRMSE(getTrueValues(), prediction);
                 break;
-            case SettingsRules.OPT_LOSS_FUNCTIONS_HUBER:
+
+            case Huber:
                 if (iTarget != -1)
                     System.err.println("Loss over single target implemented only for squared loss!");
                 loss = lossHuber(getTrueValues(), prediction);
                 break;
-            // Default case
-            case SettingsRules.OPT_LOSS_FUNCTIONS_SQUARED:
+
+            case Squared:
             default:
                 loss = lossSquared(prediction, iTarget);
                 break;
@@ -1031,7 +1036,7 @@ public class OptProbl {
     static protected double[] initNormFactors(int nbTargs, Settings sett) {
         double[] scaleFactor = new double[nbTargs];
         for (int iTarget = 0; iTarget < nbTargs; iTarget++) {
-            if (sett.getRules().getOptNormalization() == SettingsRules.OPT_NORMALIZATION_YES_VARIANCE)
+            if (sett.getRules().getOptNormalization().equals(OptimizationNormalization.YesVariance))
                 scaleFactor[iTarget] = Math.pow(RuleNormalization.getTargStdDev(iTarget), 4); // Math.pow(variance,2.0);
             else // std dev
                 scaleFactor[iTarget] = 4 * Math.pow(RuleNormalization.getTargStdDev(iTarget), 2); // 4*variance;
@@ -1093,7 +1098,7 @@ public class OptProbl {
     protected void preparePredictionsForNormalization() {
 
         // Preparations are needed only if some normalization with average shifting is used.
-        if (!getSettings().getRules().isOptNormalization() || getSettings().getRules().getOptNormalization() == SettingsRules.OPT_NORMALIZATION_ONLY_SCALING)
+        if (!getSettings().getRules().isOptNormalization() || getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling))
             return;
 
         // Change only the first rule, this changes the overall average of predictions
@@ -1133,7 +1138,7 @@ public class OptProbl {
     /** Changes rule set to undo the changes done to predictions */
     protected void changeRuleSetToUndoNormNormalization(ClusRuleSet rset) {
         // These are needed only if some normalization with average shifting is needed.
-        if (!getSettings().getRules().isOptNormalization() || getSettings().getRules().getOptNormalization() == SettingsRules.OPT_NORMALIZATION_ONLY_SCALING)
+        if (!getSettings().getRules().isOptNormalization() || getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling))
             return;
 
         double[] newPred = new double[getNbOfTargets()];
@@ -1147,7 +1152,7 @@ public class OptProbl {
 
 
     private String printPred(int ruleIndex, int exampleIndex) {
-    	ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
         String print = "[";
         for (int iTarg = 0; iTarg < getNbOfTargets(); iTarg++) {
             double pred = getPredictionsWhenCovered(ruleIndex, exampleIndex, iTarg);
@@ -1194,7 +1199,7 @@ public class OptProbl {
 
     /** Print true values to output file. */
     protected void printTrueValuesToFile(PrintWriter wrt) {
-    	ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
         for (int iTrueVal = 0; iTrueVal < getNbOfInstances(); iTrueVal++) {
 
             wrt.print("[");

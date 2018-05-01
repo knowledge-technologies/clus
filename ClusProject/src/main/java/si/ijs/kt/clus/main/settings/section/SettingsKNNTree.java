@@ -23,10 +23,15 @@ public class SettingsKNNTree extends SettingsBase {
      ***********************************************************************/
 
     INIFileSection m_SectionKNNT;
+
+    @SuppressWarnings("unused")
     private INIFileInt kNNT_k;
+    @SuppressWarnings("unused")
     private INIFileString kNNT_vectDist;
+    @SuppressWarnings("unused")
     private INIFileBool kNNT_distWeighted;
     private INIFileBool kNNT_normalized;
+    @SuppressWarnings("unused")
     private INIFileBool kNNT_attrWeighted;
 
 
@@ -42,14 +47,6 @@ public class SettingsKNNTree extends SettingsBase {
 
     @Override
     public INIFileSection create() {
-
-        // m_SectionKNN = new INIFileSection("kNN");
-        // m_SectionKNN.addNode(m_kNN_k = new INIFileString("k", "1,3"));
-        // m_SectionKNN.addNode(m_kNNmethod = new INIFileNominal("SearchMethod", kNN_METHODS, 0));
-        // m_SectionKNN.addNode(m_kNNdistance = new INIFileNominal("Distance", kNN_DISTANCES, 0));
-        // m_SectionKNN.addNode(m_kNNdistanceWeight = new INIFileNominal("DistanceWeighting", kNN_DIST_WEIGHTS, 0));
-        // m_SectionKNN.addNode(m_kNNattrWeight = new INIFileString("attributeWeighting","none"));
-
         m_SectionKNNT = new INIFileSection("kNNTree");
         m_SectionKNNT.addNode(kNNT_k = new INIFileInt("k", 3));
         m_SectionKNNT.addNode(kNNT_vectDist = new INIFileString("VectorDistance", "Euclidian"));

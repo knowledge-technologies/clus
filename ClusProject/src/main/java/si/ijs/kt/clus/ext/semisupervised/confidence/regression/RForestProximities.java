@@ -1,3 +1,4 @@
+
 package si.ijs.kt.clus.ext.semisupervised.confidence.regression;
 
 import java.util.HashMap;
@@ -14,8 +15,12 @@ import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.semisupervised.confidence.PredictionConfidence;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLAggregation;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLNormalization;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.util.ClusException;
+
 
 /**
  * Class which determines reliability score of an unlabeled example e_u as
@@ -34,9 +39,11 @@ public class RForestProximities extends PredictionConfidence {
     int m_origLabeledMax;
     boolean proximitiesInitialized = false;
 
-    public RForestProximities(ClusStatManager statManager, int normalizationType, int aggregationType) {
+
+    public RForestProximities(ClusStatManager statManager, SSLNormalization normalizationType, SSLAggregation aggregationType) {
         super(statManager, normalizationType, aggregationType);
     }
+
 
     /**
      * Calculates expected error (i.e., reliability score) of an unlabeled
@@ -46,13 +53,13 @@ public class RForestProximities extends PredictionConfidence {
      *
      * @param model
      * @return
-     * @throws ClusException 
-     * @throws InterruptedException 
+     * @throws ClusException
+     * @throws InterruptedException
      */
     private double[] calculateExpectedError(ClusModel model) throws ClusException, InterruptedException {
 
         HashMap<Integer, Double> proximities = ((ClusForest) model).getProximities();
-        //double sumProximities = 0;
+        // double sumProximities = 0;
         double[] expectedOOBE = new double[getNbTargetAttributes()];
         ClusErrorList errListOOB;
         ClusError error;
@@ -63,16 +70,15 @@ public class RForestProximities extends PredictionConfidence {
             if (proximities.containsKey(tupleLabeled.getIndex())) {
                 if (((ClusForest) model).containsOOBForTuple(tupleLabeled)) {
 
-
                     errListOOB = new ClusErrorList();
 
                     switch (m_StatManager.getMode()) {
-                        //Pooled AUPRC (more is better)
+                        // Pooled AUPRC (more is better)
                         case ClusStatManager.MODE_HIERARCHICAL:
-                            error = new HierErrorMeasures(errListOOB, m_StatManager.getHier(), m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(), m_StatManager.getSettings().getGeneral().getCompatibility(), SettingsHMLC.HIERMEASURE_POOLED_AUPRC, m_StatManager.getSettings().getOutput().isWriteCurves(), m_StatManager.getSettings().getOutput().isGzipOutput());
+                            error = new HierErrorMeasures(errListOOB, m_StatManager.getHier(), m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(), m_StatManager.getSettings().getGeneral().getCompatibility(), HierarchyMeasures.PooledAUPRC, m_StatManager.getSettings().getOutput().isWriteCurves(), m_StatManager.getSettings().getOutput().isGzipOutput());
                             break;
 
-                        //RMSE (less is better)
+                        // RMSE (less is better)
                         case ClusStatManager.MODE_REGRESSION:
                             error = new RMSError(errListOOB, m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
                             break;
@@ -86,7 +92,7 @@ public class RForestProximities extends PredictionConfidence {
 
                     errListOOB.addError(error);
                     errListOOB.addExample(tupleLabeled, ((ClusForest) model).predictWeightedOOB(tupleLabeled));
-                    
+
                     for (int k = 0; k < getNbTargetAttributes(); k++) {
                         expectedOOBE[k] += proximities.get(tupleLabeled.getIndex()) * error.getModelErrorComponent(k);
                     }
@@ -97,12 +103,14 @@ public class RForestProximities extends PredictionConfidence {
         return expectedOOBE;
     }
 
+
     @Override
     public double[] calculatePerTargetScores(ClusModel model, DataTuple tuple) throws ClusException, InterruptedException {
         ((ClusForest) model).predictWeightedStandardAndGetProximities(tuple);
 
         return calculateExpectedError(model);
     }
+
 
     @Override
     public double[] calculatePerTargetOOBScores(ClusForest model, DataTuple tuple) throws ClusException, InterruptedException {
@@ -111,11 +119,13 @@ public class RForestProximities extends PredictionConfidence {
         return calculateExpectedError(model);
     }
 
+
     @Override
     public void calculateConfidenceScores(ClusModel model, RowData unlabeledData) throws ClusException, InterruptedException {
 
-        //initialize proximities
-        if (!proximitiesInitialized) { //avoid initializing proximities twice for the same mode (e.g., if calculateOOBConfidenceScores was called before this)
+        // initialize proximities
+        if (!proximitiesInitialized) { // avoid initializing proximities twice for the same mode (e.g., if
+                                       // calculateOOBConfidenceScores was called before this)
             for (int j = 0; j < m_origLabeledMax; j++) {
                 ((ClusForest) model).initializeProximities(m_trainingSet.getTuple(j));
             }
@@ -126,10 +136,12 @@ public class RForestProximities extends PredictionConfidence {
         proximitiesInitialized = false;
     }
 
+
     @Override
     public void calculateOOBConfidenceScores(ClusForest model, RowData data) throws ClusException, InterruptedException {
-        //initialize proximities
-        if (!proximitiesInitialized) { //avoid initializing proximities twice for the same mode (e.g., if calculateOOBConfidenceScores was called before this)
+        // initialize proximities
+        if (!proximitiesInitialized) { // avoid initializing proximities twice for the same mode (e.g., if
+                                       // calculateOOBConfidenceScores was called before this)
             for (int j = 0; j < m_origLabeledMax; j++) {
                 model.initializeProximities(m_trainingSet.getTuple(j));
             }
@@ -139,6 +151,7 @@ public class RForestProximities extends PredictionConfidence {
 
         super.calculateOOBConfidenceScores(model, data);
     }
+
 
     public void setTrainingSet(RowData trainingSet, int origLabeledMax) {
         m_trainingSet = trainingSet;

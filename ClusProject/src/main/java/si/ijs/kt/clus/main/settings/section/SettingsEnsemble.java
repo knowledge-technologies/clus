@@ -9,7 +9,6 @@ import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
@@ -30,43 +29,29 @@ public class SettingsEnsemble extends SettingsBase {
      * Section: Ensemble methods *
      ***********************************************************************/
 
-//    private final String[] ENSEMBLE_METHOD = { "Bagging", "RForest", "RSubspaces", "BagSubspaces", "Boosting", "RFeatSelection", "Pert", "ExtraTrees" };
-//    public final static int ENSEMBLE_METHOD_BAGGING = 0;
-//    public final static int ENSEMBLE_METHOD_RFOREST = 1;
-//    public final static int ENSEMBLE_METHOD_RSUBSPACES = 2;
-//    /** Random subspaces */
-//    public final static int ENSEMBLE_METHOD_BAGSUBSPACES = 3;
-//    /** Bagging of subspaces */
-//    public final static int ENSEMBLE_METHOD_BOOSTING = 4;
-//    public final static int ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP = 5;
-//    public final static int ENSEMBLE_METHOD_PERT = 6;
-//    public final static int ENSEMBLE_METHOD_EXTRA_TREES = 7;
-    public enum EnsembleMethod {Bagging, RForest, RSubspaces, BagSubspaces, Boosting, RFeatSelection, Pert, ExtraTrees};
+    public enum EnsembleMethod {
+        Bagging, RForest, RSubspaces, BagSubspaces, Boosting, RFeatSelection, Pert, ExtraTrees
+    };
 
-    private final String[] VOTING_TYPE = { "Majority", "ProbabilityDistribution" };
-    public final static int VOTING_TYPE_MAJORITY = 0;
-    public final static int VOTING_TYPE_PROBAB_DISTR = 1;
+    public enum VotingType {
+        Majority, ProbabilityDistribution
+    };
 
-//    private final String[] RANKING_TYPE = { "None", "RForest", "GENIE3", "SYMBOLIC" };
-//    public final static int RANKING_TYPE_NONE = 0;
-//    public final static int RANKING_TYPE_RFOREST = 1;
-//    public final static int RANKING_TYPE_GENIE3 = 2;
-//    public final static int RANKING_TYPE_SYMBOLIC = 3;
-    public enum EnsembleRanking {None, RForest, Genie3, Symbolic};
+    public enum EnsembleRanking {
+        None, RForest, Genie3, Symbolic
+    };
 
-    private final String[] ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE = { "None", "TotalAveraging", "SubspaceAveraging", "SMARTERWAY" };
-    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE = 0; /* IF THIS IS SELECTED, ROS IS NOT ACTIVATED */
-    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_TOTAL_AVERAGING = 1;
-    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SUBSET_AVERAGING = 2;
-    public final static int ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_SMARTERWAY = 3; /* TBD */
+    public enum EnsembleROSVotingFunctionScope {
+        None, TotalAveraging, SubspaceAveraging, SmarterWay /* TBD */
+    };
 
     private INIFileSection m_SectionEnsembles;
     private INIFileNominalOrIntOrVector m_NbBags;
     /** Used ensemble method */
-//    private INIFileNominal m_EnsembleMethod;
+    // private INIFileNominal m_EnsembleMethod;
     private INIFileEnum<EnsembleMethod> m_EnsembleMethod;
     /** Voting type, for regression mean is always used, the options are for classification */
-    private INIFileNominal m_ClassificationVoteType;
+    private INIFileEnum<VotingType> m_ClassificationVoteType;
     /**
      * Size of the feature set used during tree induction. Used for random forests, random
      * subspaces and bagging of subspaces. If left to default 0, floor(log_2 #DescAttr) + 1 is used.
@@ -77,7 +62,8 @@ public class SettingsEnsemble extends SettingsBase {
     private INIFileString m_RandomTargetAttrSelected;
 
     /** Used for ROS (Random Output Selections) */
-    private INIFileNominal m_EnsembleROSScope;
+    // private INIFileNominal m_EnsembleROSScope;
+    private INIFileEnum<EnsembleROSVotingFunctionScope> m_EnsembleROSScope;
 
     private int m_SubsetSize;
     private INIFileBool m_PrintAllModels;
@@ -90,7 +76,7 @@ public class SettingsEnsemble extends SettingsBase {
     /** Estimate error with time and memory optimization */
     private INIFileBool m_EnsembleOOBestimate;
     // protected INIFileBool m_FeatureRanking;
-//    private INIFileNominal m_FeatureRanking;
+    // private INIFileNominal m_FeatureRanking;
     private INIFileEnum<EnsembleRanking> m_FeatureRanking;
     private INIFileNominalOrDoubleOrVector m_SymbolicWeight;
     private INIFileBool m_SortFeaturesByRelevance;
@@ -142,7 +128,7 @@ public class SettingsEnsemble extends SettingsBase {
 
 
     public EnsembleMethod getEnsembleMethod() {
-        return m_EnsembleMethod.getChosenOption();
+        return m_EnsembleMethod.getValue();
     }
 
 
@@ -151,33 +137,28 @@ public class SettingsEnsemble extends SettingsBase {
     }
 
 
-//    public void setEnsembleMethod(int value) {
-//        m_EnsembleMethod.setSingleValue(value);
-//    }
-
-
-    public int getEnsembleROSScope() {
+    public EnsembleROSVotingFunctionScope getEnsembleROSScope() {
         return m_EnsembleROSScope.getValue();
     }
 
 
-    public void setEnsembleROSScope(int value) {
-        m_EnsembleROSScope.setSingleValue(value);
+    public void setEnsembleROSScope(EnsembleROSVotingFunctionScope value) {
+        m_EnsembleROSScope.setValue(value);
     }
 
 
     public boolean isEnsembleROSEnabled() {
-        return (getEnsembleROSScope() != ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE) && isEnsembleMode();
+        return !getEnsembleROSScope().equals(EnsembleROSVotingFunctionScope.None) && isEnsembleMode();
     }
 
 
     public EnsembleRanking getRankingMethod() {
-        return m_FeatureRanking.getChosenOption();
+        return m_FeatureRanking.getValue();
     }
 
 
     public String getRankingMethodName() {
-        return m_FeatureRanking.getChosenOption().toString();
+        return m_FeatureRanking.getValue().toString();
     }
 
 
@@ -192,7 +173,7 @@ public class SettingsEnsemble extends SettingsBase {
 
 
     public boolean shouldPerformRanking() {
-        return m_FeatureRanking.getChosenOption() != EnsembleRanking.None;
+        return m_FeatureRanking.getValue() != EnsembleRanking.None;
     }
 
 
@@ -305,10 +286,6 @@ public class SettingsEnsemble extends SettingsBase {
 
         int fsize = calculateNbRandomAttrSelected(schema, 1);
 
-        // if (getNbRandomAttrSelected() == 0)
-        // fsize = (int) (Math.log(schema.getNbDescriptiveAttributes())/Math.log(2) + 1);
-        // else fsize = getNbRandomAttrSelected();
-
         setNbRandomAttrSelected(fsize);
     }
 
@@ -409,9 +386,10 @@ public class SettingsEnsemble extends SettingsBase {
     }
 
 
-    public int getClassificationVoteType() {
+    public VotingType getClassificationVoteType() {
         return m_ClassificationVoteType.getValue();
     }
+
 
     public String getEnsembleMethodName() {
         return getEnsembleMethod().toString();
@@ -422,18 +400,19 @@ public class SettingsEnsemble extends SettingsBase {
     public INIFileSection create() {
         m_SectionEnsembles = new INIFileSection("Ensemble");
         m_SectionEnsembles.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
-        m_SectionEnsembles.addNode(m_EnsembleMethod = new INIFileEnum<EnsembleMethod>("EnsembleMethod", EnsembleMethod.class, EnsembleMethod.Bagging));
-        m_SectionEnsembles.addNode(m_ClassificationVoteType = new INIFileNominal("VotingType", VOTING_TYPE, VOTING_TYPE_PROBAB_DISTR));
+        m_SectionEnsembles.addNode(m_EnsembleMethod = new INIFileEnum<>("EnsembleMethod", EnsembleMethod.Bagging));
+        m_SectionEnsembles.addNode(m_ClassificationVoteType = new INIFileEnum<>("VotingType", VotingType.ProbabilityDistribution));
+
         m_SectionEnsembles.addNode(m_RandomAttrSelected = new INIFileString("SelectRandomSubspaces", "0"));
         m_SectionEnsembles.addNode(m_RandomTargetAttrSelected = new INIFileString("SelectRandomTargetSubspaces", "SQRT"));
-        m_SectionEnsembles.addNode(m_EnsembleROSScope = new INIFileNominal("RandomOutputSelection", ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE, ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_NONE));
+        m_SectionEnsembles.addNode(m_EnsembleROSScope = new INIFileEnum<>("RandomOutputSelection", EnsembleROSVotingFunctionScope.None));
         m_SectionEnsembles.addNode(m_PrintAllModels = new INIFileBool("PrintAllModels", false));
         m_SectionEnsembles.addNode(m_PrintAllModelFiles = new INIFileBool("PrintAllModelFiles", false));
         m_SectionEnsembles.addNode(m_PrintAllModelInfo = new INIFileBool("PrintAllModelInfo", false));
         m_SectionEnsembles.addNode(m_PrintPaths = new INIFileBool("PrintPaths", false));
         m_SectionEnsembles.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
         m_SectionEnsembles.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
-        m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileEnum<EnsembleRanking>("FeatureRanking", EnsembleRanking.class, EnsembleRanking.None));
+        m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileEnum<>("FeatureRanking", EnsembleRanking.None));
         m_SectionEnsembles.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
         m_SectionEnsembles.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
         m_SymbolicWeight.setDouble(0.5);

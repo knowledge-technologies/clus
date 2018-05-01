@@ -7,6 +7,8 @@ import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.semisupervised.Helper;
 import si.ijs.kt.clus.ext.semisupervised.confidence.PredictionConfidence;
 import si.ijs.kt.clus.main.ClusStatManager;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLAggregation;
+import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLNormalization;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -29,7 +31,7 @@ public class ClassesProbabilities extends PredictionConfidence {
      *        \in {"average", "minimum"}
      * @throws ClusException
      */
-    public ClassesProbabilities(ClusStatManager statManager, int normalizationType, int aggregationType) throws ClusException {
+    public ClassesProbabilities(ClusStatManager statManager, SSLNormalization normalizationType, SSLAggregation aggregationType) throws ClusException {
         super(statManager, normalizationType, aggregationType);
     }
 
@@ -52,7 +54,7 @@ public class ClassesProbabilities extends PredictionConfidence {
         double[] confidence = new double[classCounts.length];
 
         for (int j = 0; j < classCounts.length; j++) {
-            //confidence is equal to the probability of majority class
+            // confidence is equal to the probability of majority class
             confidence[j] = Helper.max(classCounts[j]) / Helper.sum(classCounts[j]);
         }
 

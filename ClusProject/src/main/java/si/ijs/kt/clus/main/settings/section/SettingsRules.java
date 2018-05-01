@@ -1,10 +1,13 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import java.util.Arrays;
+
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
@@ -43,190 +46,213 @@ public class SettingsRules extends SettingsBase {
         m_PrintAllRules.setValue(value);
     }
 
-    private final String[] COVERING_METHODS = { "Standard", "WeightedMultiplicative", "WeightedAdditive", "WeightedError", "Union", "BeamRuleDefSet", "RandomRuleSet", "StandardBootstrap", "HeurOnly", "RulesFromTree", "SampledRuleSet" };
+    public enum CoveringMethod {
+        /** Standard covering: ordered rules (decision list) */
+        Standard,
 
-    // Standard covering: ordered rules (decision list)
-    public final static int COVERING_METHOD_STANDARD = 0;
+        /** 'Weighted' coverings: unordered rules */
+        WeightedMultiplicative, WeightedAdditive, WeightedError,
 
-    // 'Weighted' coverings: unordered rules
-    public final static int COVERING_METHOD_WEIGHTED_MULTIPLICATIVE = 1;
-    public final static int COVERING_METHOD_WEIGHTED_ADDITIVE = 2;
-    public final static int COVERING_METHOD_WEIGHTED_ERROR = 3;
+        /** In multi-label classification: predicted set of classes is union of predictions of individual rules */
+        Union,
 
-    public final static int COVERING_METHOD_UNION = 4; // In multi-label classification: predicted set of classes is
-                                                       // union of predictions of individual rules
+        /**
+         * Evaluates rules in the context of complete rule set, builds default
+         * rule first, checks all rules in the beam: unordered rules
+         * FIXME Obsolete - should be deleted!
+         */
+        BeamRuleDefSet,
 
-    // Evaluates rules in the context of complete rule set: unordered rules
-    // public final static int COVERING_METHOD_RULE_SET = 5;
+        /**
+         * Evaluates rules in the context of complete rule set, separate rules
+         * are constructed randomly: unordered rules.
+         * This is set only if the amount of RandomRules is greater than 0.
+         */
+        RandomRuleSet,
 
-    // Evaluates rules in the context of complete rule set, checks all rules
-    // in the beam: unordered rules
-    // public final static int COVERING_METHOD_BEAM_RULE_SET = 6;
+        /** Repeated standard covering on bootstraped data */
+        StandardBootstrap,
 
-    /**
-     * Evaluates rules in the context of complete rule set, builds default
-     * rule first, checks all rules in the beam: unordered rules
-     * FIXME Obsolete - should be deleted!
-     */
-    public final static int COVERING_METHOD_BEAM_RULE_DEF_SET = 5;
+        /** No covering, only heuristic */
+        HeurOnly,
 
-    /**
-     * Evaluates rules in the context of complete rule set, separate rules
-     * are constructed randomly: unordered rules.
-     * This is set only if the amount of RandomRules is greater than 0.
-     */
-    public final static int COVERING_METHOD_RANDOM_RULE_SET = 6;
+        /** No covering, rules transcribed from tree */
+        RulesFromTree,
 
-    /**
-     * Repeated standard covering on bootstraped data
-     */
-    public final static int COVERING_METHOD_STANDARD_BOOTSTRAP = 7;
+        /** No covering, rules created with PCT enemble, converted to rules and then sampled */
+        SampledRuleSet
+    }
 
-    /**
-     * No covering, only heuristic
-     */
-    public final static int COVERING_METHOD_HEURISTIC_ONLY = 8;
+    public enum RulePredictionMethod {
 
-    /**
-     * No covering, rules transcribed from tree
-     */
-    public final static int COVERING_METHOD_RULES_FROM_TREE = 9;
+        DecisionList,
 
-    /**
-     * No covering, rules created with PCT enemble, converted to rules and then sampled
-     */
-    public final static int COVERING_METHOD_SAMPLED_RULE_SET = 10;
+        /** Each rule's prediction has a weight proportional to its coverage on the total learning set */
+        TotCoverageWeighted,
 
-    private final String[] RULE_PREDICTION_METHODS = { "DecisionList", "TotCoverageWeighted", "CoverageWeighted", "AccuracyWeighted", "AccCovWeighted", "EquallyWeighted", "Optimized", "Union", "GDOptimized", "GDOptimizedBinary" };
+        /**
+         * Each rule's prediction has a weight proportional to its coverage on the current learning set
+         * i.e., learning set on which the rule was learned
+         */
+        CoverageWeighted,
 
-    public final static int RULE_PREDICTION_METHOD_DECISION_LIST = 0;
+        /**
+         * Each rule's prediction has a weight proportional to its accuracy on the total learning set
+         * TODO Not yet implemented.
+         */
+        AccuracyWeighted,
 
-    /**
-     * Each rule's prediction has a weight proportional to its coverage on the total learning set
-     */
-    public final static int RULE_PREDICTION_METHOD_TOT_COVERAGE_WEIGHTED = 1;
+        /**
+         * Each rule's prediction has a weight proportional a product of to its accuracy on
+         * the total learning set and its coverage
+         */
+        AccCovWeighted,
 
-    /**
-     * Each rule's prediction has a weight proportional to its coverage on the current learning set
-     * i.e., learning set on which the rule was learned
-     */
-    public final static int RULE_PREDICTION_METHOD_COVERAGE_WEIGHTED = 2;
+        /** Not yet implemented */
+        EquallyWeighted,
 
-    /**
-     * Each rule's prediction has a weight proportional to its accuracy on the total learning set
-     * TODO Not yet implemented.
-     */
-    public final static int RULE_PREDICTION_METHOD_ACCURACY_WEIGHTED = 3;
+        /** Differential evolution optimization of rule weights */
+        Optimized,
 
-    /**
-     * Each rule's prediction has a weight proportional a product of to its accuracy on
-     * the total learning set and its coverage
-     */
-    public final static int RULE_PREDICTION_METHOD_ACC_COV_WEIGHTED = 4;
-    // TODO Not yet implemented.
-    public final static int RULE_PREDICTION_METHOD_EQUALLY_WEIGHTED = 5;
-    /** Differential evolution optimization of rule weights */
-    public final static int RULE_PREDICTION_METHOD_OPTIMIZED = 6;
-    public final static int RULE_PREDICTION_METHOD_UNION = 7;
-    /** Gradient descent optimization of rule weights */
-    public final static int RULE_PREDICTION_METHOD_GD_OPTIMIZED = 8;
-    /** Use external binary file for gradient descent optimization of rule weights */
-    public final static int RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY = 9;
+        /** */
+        Union,
 
-    private final String[] RULE_ADDING_METHODS = { "Always", "IfBetter", "IfBetterBeam" };
-    // Always adds a rule to the rule set
-    public final static int RULE_ADDING_METHOD_ALWAYS = 0;
-    // Only adds a rule to the rule set if it improves the rule set performance
-    public final static int RULE_ADDING_METHOD_IF_BETTER = 1;
-    // Only adds a rule to the rule set if it improves the rule set performance.
-    // If not, it checks other rules in the beam
-    public final static int RULE_ADDING_METHOD_IF_BETTER_BEAM = 2;
+        /** Gradient descent optimization of rule weights */
+        GDOptimized,
+
+        /** Use external binary file for gradient descent optimization of rule weights */
+        GDOptimizedBinary
+    }
+
+    public enum RuleAddingMethod {
+        /** Always adds a rule to the rule set */
+        Always,
+
+        /** Only adds a rule to the rule set if it improves the rule set performance */
+        IfBetter,
+
+        /**
+         * Only adds a rule to the rule set if it improves the rule set performance.
+         * If not, it checks other rules in the beam
+         */
+        IfBetterBeam
+    };
 
     private boolean IS_RULE_SIG_TESTING = false;
 
+    /** How the initial rules are generated when using SampledRuleSet covering method */
+    public enum InitialRuleGeneratingMethod {
+        RandomForest("Random forest"), OptionTree("Option tree");
+
+        private String name = "";
+
+
+        InitialRuleGeneratingMethod(String name) {
+            this.name = name;
+        }
+
+
+        @Override
+        public String toString() {
+            return this.name;
+        }
+    };
+
     /**
-     * How the initial rules are generated when using SampledRuleSet covering method
+     * WEIGHT OPTIMIZATION
+     * Differential evolution algorithm
      */
-    public final static String[] INITIAL_RULE_GENERATING_METHODS = { "RandomForest", "OptionTree" };
-    public final static int INITIAL_RULE_GENERATING_METHOD_RANDOM_FOREST = 0;
-    public final static int INITIAL_RULE_GENERATING_METHOD_OPTION_TREE = 1;
+    public enum OptimizationLossFunction {
+        /** Optimization Loss function type. Default for regression: Square of differences. */
+        Squared,
 
-    // ***************** WEIGHT OPTIMIZATION
+        /** Optimization Loss function type. 0/1 error for classification. Zenko 2007, p. 26 */
+        ZeroOneError,
 
-    // Differential evolution algorithm
-    /** Possible loss functions for evolutionary algorithm optimization */
-    private final String[] OPT_LOSS_FUNCTIONS = { "Squared", "01Error", "RRMSE", "Huber" };
+        /** Optimization Loss function type. Relative root mean squared error */
+        RRMSE,
 
-    /** Optimization Loss function type. Default for regression: Square of differences. */
-    public final static int OPT_LOSS_FUNCTIONS_SQUARED = 0;
-    /** Optimization Loss function type. 0/1 error for classification. Zenko 2007, p. 26 */
-    public final static int OPT_LOSS_FUNCTIONS_01ERROR = 1;
-    /** Optimization Loss function type. Relative root mean squared error */
-    public final static int OPT_LOSS_FUNCTIONS_RRMSE = 2;
-    /**
-     * Optimization Loss function type. Huber 1962 error. Like squared but robust for outliers. Friedman&Popescu 2005,
-     * p. 7
-     */
-    public final static int OPT_LOSS_FUNCTIONS_HUBER = 3;
+        /**
+         * Optimization Loss function type. Huber 1962 error. Like squared but robust for outliers. Friedman&Popescu
+         * 2005, p. 7
+         */
+        Huber
+    };
 
     /** GD optimization. Possible values for combining gradient targets to single gradient value. */
-    private final String[] OPT_GD_MT_COMBINE_GRADIENTS = { "Avg", "Max", "MaxLoss", "MaxLossFast" };
-    /** GD optimization, combining of targets - combine by taking average. */
-    public final static int OPT_GD_MT_GRADIENT_AVG = 0;
-    /** GD optimization, combining of targets - combine by taking max gradient. */
-    public final static int OPT_GD_MT_GRADIENT_MAX_GRADIENT = 1;
-    /** GD optimization, combining of targets - combine by taking the gradient of target with maximal loss. */
-    public final static int OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE = 2;
-    /**
-     * GD optimization, combining of targets - combine by taking the gradient of target with maximal LINEAR loss.
-     * I.e. if the real loss is something else, we still use linear loss. NOT IMPLEMENTED!
-     * In fact was not any faster AND max loss is worse than avg.
-     */
-    public final static int OPT_GD_MT_GRADIENT_MAX_LOSS_VALUE_FAST = 3;
+    public enum OptimizationGDMTCombineGradient {
+        /** GD optimization, combining of targets - combine by taking average. */
+        Avg,
+
+        /** GD optimization, combining of targets - combine by taking max gradient. */
+        Max,
+
+        /** GD optimization, combining of targets - combine by taking the gradient of target with maximal loss. */
+        MaxLoss,
+
+        /**
+         * GD optimization, combining of targets - combine by taking the gradient of target with maximal LINEAR loss.
+         * I.e. if the real loss is something else, we still use linear loss. NOT IMPLEMENTED!
+         * In fact was not any faster AND max loss is worse than avg.
+         */
+        MaxLossFast
+    };
 
     /** For external GD binary, do we use GD or brute force method */
-    private final String[] GD_EXTERNAL_METHOD_VALUES = { "update", "brute" };
-    public final static int GD_EXTERNAL_METHOD_GD = 0;
-    public final static int GD_EXTERNAL_METHOD_BRUTE = 1;
+    public enum GDExternalMethodValues {
+        Update, Brute
+    };
 
-    private final String[] OPT_LINEAR_TERM_NORM_VALUES = { "No", "Yes", "YesAndConvert" };
-    /** Do not normalize linear terms at all */
-    public final static int OPT_LIN_TERM_NORM_NO = 0;
-    /**
-     * Normalize linear terms for optimization and leave the
-     * normalization to the resulting rule ensemble. DEFAULT.
-     */
-    public final static int OPT_LIN_TERM_NORM_YES = 1;
-    /**
-     * Normalize linear terms for optimization, but after optimization
-     * convert the linear terms to plain terms without normalization without changing the resulting
-     * prediction.
-     */
-    public final static int OPT_LIN_TERM_NORM_CONVERT = 2;
+    public enum OptimizationLinearTermNormalizeValues {
+        /** Do not normalize linear terms at all */
+        No,
 
-    private final String[] OPT_GD_ADD_LINEAR_TERMS = { "No", "Yes", "YesSaveMemory" };
-    /** Do not add linear terms. DEFAULT */
-    public final static int OPT_GD_ADD_LIN_NO = 0;
-    /** Add linear terms explicitly. May cause huge memory usage if lots of targets and descriptive attrs. */
-    public final static int OPT_GD_ADD_LIN_YES = 1;
-    /** Use linear terms in optimization, but add them explicitly after optimization (if weight is zero). */
-    public final static int OPT_GD_ADD_LIN_YES_SAVE_MEMORY = 2;
+        /**
+         * Normalize linear terms for optimization and leave the
+         * normalization to the resulting rule ensemble. DEFAULT.
+         */
+        Yes,
 
-    public final static String[] OPT_NORMALIZATION = { "No", "Yes", "OnlyScaling", "YesVariance" };
-    /** Do not normalize */
-    public final static int OPT_NORMALIZATION_NO = 0;
-    /** Normalize during optimization with 2*std dev and shifting with average. Default. */
-    public final static int OPT_NORMALIZATION_YES = 1;
-    /** Normalize during optimization with 2*std dev. Default. */
-    public final static int OPT_NORMALIZATION_ONLY_SCALING = 2;
-    /** Normalize during optimization with variance. */
-    public final static int OPT_NORMALIZATION_YES_VARIANCE = 3;
+        /**
+         * Normalize linear terms for optimization, but after optimization
+         * convert the linear terms to plain terms without normalization without changing the resulting
+         * prediction.
+         */
+        YesAndConvert
+    };
 
+    public enum OptimizationGDAddLinearTerms {
+        /** Do not add linear terms. DEFAULT */
+        No,
+
+        /** Add linear terms explicitly. May cause huge memory usage if lots of targets and descriptive attrs. */
+        Yes,
+
+        /** Use linear terms in optimization, but add them explicitly after optimization (if weight is zero). */
+        YesSaveMemory
+    };
+
+    
+    public enum OptimizationNormalization {
+        /** Do not normalize */  
+        No,
+        
+        /** Normalize during optimization with 2*std dev and shifting with average. Default. */    
+        Yes,
+        
+        /** Normalize during optimization with 2*std dev. Default. */    
+        OnlyScaling,
+        
+        /** Normalize during optimization with variance. */    
+        YesVariance
+    };
+    
+    
     // Settings in the settings file.
-    private INIFileNominal m_CoveringMethod;
-    private INIFileNominal m_PredictionMethod;
-    private INIFileNominal m_RuleAddingMethod;
-    private INIFileNominal m_InitialRuleGeneratingMethod;
+    private INIFileEnum<CoveringMethod> m_CoveringMethod;
+    private INIFileEnum<RulePredictionMethod> m_PredictionMethod;
+    private INIFileEnum<RuleAddingMethod> m_RuleAddingMethod;
+    private INIFileEnum<InitialRuleGeneratingMethod> m_InitialRuleGeneratingMethod;
     private INIFileDouble m_CoveringWeight;
     private INIFileDouble m_InstCoveringWeightThreshold;
     private INIFileInt m_MaxRulesNb;
@@ -278,7 +304,7 @@ public class SettingsRules extends SettingsBase {
     /** If this flag is set, weights higher than m_OptRuleWeightThreshold will get value 1, others will be set to 0 */
     protected INIFileBool m_OptRuleWeightBinarization;
     /** DE The loss function. The default is squared loss. */
-    private INIFileNominal m_OptLossFunction;
+    private INIFileEnum<OptimizationLossFunction> m_OptLossFunction;
     /** Optimization For Huber 1962 loss function an alpha value for outliers has to be given. */
     private INIFileDouble m_OptHuberAlpha;
     /**
@@ -288,13 +314,13 @@ public class SettingsRules extends SettingsBase {
      */
     private INIFileBool m_OptDefaultShiftPred;
     /** Do we add the descriptive attributes as linear terms to rule set. Default No. */
-    private INIFileNominal m_OptAddLinearTerms;
+    private INIFileEnum<OptimizationGDAddLinearTerms> m_OptAddLinearTerms;
     /**
      * If linear terms are added, are they scaled so that each variable has similar effect.
      * The normalization is done via statistical factors of DESCRIPTIVE ATTRIBUTES.
      * You get similar effect by normalizing the data. Default Yes.
      */
-    private INIFileNominal m_OptNormalizeLinearTerms;
+    private INIFileEnum<OptimizationLinearTermNormalizeValues> m_OptNormalizeLinearTerms;
     /**
      * If linear terms are added, are truncated so that they do not predict values greater or lower
      * than found in the training set. Default Yes.
@@ -319,7 +345,7 @@ public class SettingsRules extends SettingsBase {
      * Alternatively YesVariance normalizes with variance.
      */
     // protected INIFileBool m_OptNormalization;
-    private INIFileNominal m_OptNormalization;
+    private INIFileEnum<OptimizationNormalization> m_OptNormalization;
 
     // Gradient descent optimization
     /** GD Maximum amount of iterations */
@@ -352,9 +378,9 @@ public class SettingsRules extends SettingsBase {
      */
     private INIFileStringOrInt m_OptGDNbOfStepSizeReduce;
     /** GD External binary, do we use GD or brute force method */
-    private INIFileNominal m_OptGDExternalMethod;
+    private INIFileEnum<GDExternalMethodValues> m_OptGDExternalMethod;
     /** GD How to combine multiple targets to single gradient value for step taking */
-    private INIFileNominal m_OptGDMTGradientCombine;
+    private INIFileEnum<OptimizationGDMTCombineGradient> m_OptGDMTGradientCombine;
     /** GD How many different parameter combinations we try for T. Values between [m_OptGDGradTreshold,1] */
     private INIFileInt m_OptGDNbOfTParameterTry;
     /**
@@ -400,38 +426,44 @@ public class SettingsRules extends SettingsBase {
     }
 
 
-    public int getCoveringMethod() {
+    public CoveringMethod getCoveringMethod() {
         return m_CoveringMethod.getValue();
     }
 
 
-    public void setCoveringMethod(int method) {
-        m_CoveringMethod.setSingleValue(method);
+    public void setCoveringMethod(CoveringMethod method) {
+        m_CoveringMethod.setValue(method);
     }
 
 
-    public int getRulePredictionMethod() {
+    public RulePredictionMethod getRulePredictionMethod() {
         return m_PredictionMethod.getValue();
     }
 
 
     public boolean isRulePredictionOptimized() {
-        return (getRulePredictionMethod() == RULE_PREDICTION_METHOD_OPTIMIZED || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED || getRulePredictionMethod() == RULE_PREDICTION_METHOD_GD_OPTIMIZED_BINARY);
+        return Arrays.asList(
+                /**/
+                RulePredictionMethod.Optimized,
+                /**/
+                RulePredictionMethod.GDOptimized,
+                /**/
+                RulePredictionMethod.GDOptimizedBinary).contains(getRulePredictionMethod());
     }
 
 
-    public void setRulePredictionMethod(int method) {
-        m_PredictionMethod.setSingleValue(method);
+    public void setRulePredictionMethod(RulePredictionMethod method) {
+        m_PredictionMethod.setValue(method);
     }
 
 
-    public int getRuleAddingMethod() {
+    public RuleAddingMethod getRuleAddingMethod() {
         return m_RuleAddingMethod.getValue();
     }
 
 
-    public void setRuleAddingMethod(int method) {
-        m_RuleAddingMethod.setSingleValue(method);
+    public void setRuleAddingMethod(RuleAddingMethod method) {
+        m_RuleAddingMethod.setValue(method);
     }
 
 
@@ -455,13 +487,13 @@ public class SettingsRules extends SettingsBase {
     }
 
 
-    public int getInitialRuleGeneratingMethod() {
+    public InitialRuleGeneratingMethod getInitialRuleGeneratingMethod() {
         return m_InitialRuleGeneratingMethod.getValue();
     }
 
 
-    public void setInitialRuleGeneratingMethod(int method) {
-        m_InitialRuleGeneratingMethod.setSingleValue(method);
+    public void setInitialRuleGeneratingMethod(InitialRuleGeneratingMethod method) {
+        m_InitialRuleGeneratingMethod.setValue(method);
     }
 
 
@@ -516,12 +548,15 @@ public class SettingsRules extends SettingsBase {
 
 
     public boolean isWeightedCovering() {
-        if (m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ADDITIVE || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_MULTIPLICATIVE || m_CoveringMethod.getValue() == COVERING_METHOD_WEIGHTED_ERROR) {
-            return true;
-        }
-        else {
-            return false;
-        }
+        CoveringMethod val = m_CoveringMethod.getValue();
+
+        return (Arrays.asList(
+                /**/
+                CoveringMethod.WeightedAdditive,
+                /**/
+                CoveringMethod.WeightedMultiplicative,
+                /**/
+                CoveringMethod.WeightedError).contains(m_CoveringMethod.getValue()));
     }
 
 
@@ -541,8 +576,8 @@ public class SettingsRules extends SettingsBase {
 
     private boolean m_ruleInduceParamsDisabled = false;
     private double m_origHeurRuleDistPar = 0;
-    private int m_origRulePredictionMethod = 0;
-    private int m_origCoveringMethod = 0;
+    private RulePredictionMethod m_origRulePredictionMethod = RulePredictionMethod.DecisionList;
+    private CoveringMethod m_origCoveringMethod = CoveringMethod.Standard;
 
 
     public boolean getRuleInduceParamsDisabled() {
@@ -561,8 +596,8 @@ public class SettingsRules extends SettingsBase {
             m_origCoveringMethod = getCoveringMethod();
 
             setHeurRuleDistPar(0.0);
-            setRulePredictionMethod(RULE_PREDICTION_METHOD_DECISION_LIST);
-            setCoveringMethod(COVERING_METHOD_RULES_FROM_TREE);
+            setRulePredictionMethod(RulePredictionMethod.DecisionList);
+            setCoveringMethod(CoveringMethod.RulesFromTree);
             m_ruleInduceParamsDisabled = true; // Mark that these are disabled
         }
     }
@@ -662,24 +697,24 @@ public class SettingsRules extends SettingsBase {
 
     /** Do we add linear terms to rule set */
     public boolean isOptAddLinearTerms() {
-        return (m_OptAddLinearTerms.getValue() != OPT_GD_ADD_LIN_NO);
+        return (!m_OptAddLinearTerms.getValue().equals(OptimizationGDAddLinearTerms.No));
     }
 
 
     /** How we add linear terms to rule set. Use memory saving? */
-    public int getOptAddLinearTerms() {
+    public OptimizationGDAddLinearTerms getOptAddLinearTerms() {
         return m_OptAddLinearTerms.getValue();
     }
 
 
     /** Do we scale linear terms so that the attributes have similar effect */
     public boolean isOptNormalizeLinearTerms() {
-        return (m_OptNormalizeLinearTerms.getValue() != OPT_LIN_TERM_NORM_NO);
+        return (!m_OptNormalizeLinearTerms.getValue().equals(OptimizationLinearTermNormalizeValues.No));
     }
 
 
     /** What kind of normalization are we using */
-    public int getOptNormalizeLinearTerms() {
+    public OptimizationLinearTermNormalizeValues getOptNormalizeLinearTerms() {
         return m_OptNormalizeLinearTerms.getValue();
     }
 
@@ -709,18 +744,18 @@ public class SettingsRules extends SettingsBase {
 
     /** Do we normalize the predictions and true values internally for optimization. */
     public boolean isOptNormalization() {
-        return m_OptNormalization.getValue() != OPT_NORMALIZATION_NO;
+        return !m_OptNormalization.getValue().equals(OptimizationNormalization.No);
     }
 
 
     /** How we normalize the predictions and true values internally for optimization. */
-    public int getOptNormalization() {
+    public OptimizationNormalization getOptNormalization() {
         return m_OptNormalization.getValue();
     }
 
 
     /** Type of Loss function for DE optimization */
-    public int getOptDELossFunction() {
+    public OptimizationLossFunction getOptDELossFunction() {
         return m_OptLossFunction.getValue();
     }
 
@@ -759,7 +794,7 @@ public class SettingsRules extends SettingsBase {
 
 
     /** GD The used loss function */
-    public int getOptGDLossFunction() {
+    public OptimizationLossFunction getOptGDLossFunction() {
         return m_OptLossFunction.getValue();
     }
 
@@ -837,13 +872,13 @@ public class SettingsRules extends SettingsBase {
 
 
     /** What method we use for external GD optimization algorithm */
-    public int getOptGDExternalMethod() {
+    public GDExternalMethodValues getOptGDExternalMethod() {
         return m_OptGDExternalMethod.getValue();
     }
 
 
     /** GD How to combine multiple targets to single gradient value for step taking */
-    public int getOptGDMTGradientCombine() {
+    public OptimizationGDMTCombineGradient getOptGDMTGradientCombine() {
         return m_OptGDMTGradientCombine.getValue();
     }
 
@@ -900,9 +935,9 @@ public class SettingsRules extends SettingsBase {
     @Override
     public INIFileSection create() {
         m_SectionRules = new INIFileSection("Rules");
-        m_SectionRules.addNode(m_CoveringMethod = new INIFileNominal("CoveringMethod", COVERING_METHODS, COVERING_METHOD_STANDARD));
-        m_SectionRules.addNode(m_PredictionMethod = new INIFileNominal("PredictionMethod", RULE_PREDICTION_METHODS, RULE_PREDICTION_METHOD_DECISION_LIST));
-        m_SectionRules.addNode(m_RuleAddingMethod = new INIFileNominal("RuleAddingMethod", RULE_ADDING_METHODS, RULE_ADDING_METHOD_ALWAYS));
+        m_SectionRules.addNode(m_CoveringMethod = new INIFileEnum<>("CoveringMethod", CoveringMethod.Standard));
+        m_SectionRules.addNode(m_PredictionMethod = new INIFileEnum<>("PredictionMethod", RulePredictionMethod.DecisionList));
+        m_SectionRules.addNode(m_RuleAddingMethod = new INIFileEnum<>("RuleAddingMethod", RuleAddingMethod.Always));
         m_SectionRules.addNode(m_CoveringWeight = new INIFileDouble("CoveringWeight", 0.1));
         m_SectionRules.addNode(m_InstCoveringWeightThreshold = new INIFileDouble("InstCoveringWeightThreshold", 0.1));
         m_SectionRules.addNode(m_MaxRulesNb = new INIFileInt("MaxRulesNb", 1000));
@@ -910,7 +945,7 @@ public class SettingsRules extends SettingsBase {
         m_SectionRules.addNode(m_HeurCoveragePar = new INIFileDouble("HeurCoveragePar", 1.0));
         m_SectionRules.addNode(m_HeurRuleDistPar = new INIFileDouble("HeurRuleDistPar", 0.0));
         m_SectionRules.addNode(m_HeurPrototypeDistPar = new INIFileDouble("HeurPrototypeDistPar", 0.0));
-        m_SectionRules.addNode(m_InitialRuleGeneratingMethod = new INIFileNominal("InitialRuleGeneratingMethod", INITIAL_RULE_GENERATING_METHODS, INITIAL_RULE_GENERATING_METHOD_RANDOM_FOREST));
+        m_SectionRules.addNode(m_InitialRuleGeneratingMethod = new INIFileEnum<>("InitialRuleGeneratingMethod", InitialRuleGeneratingMethod.RandomForest));
         m_SectionRules.addNode(m_RuleSignificanceLevel = new INIFileDouble("RuleSignificanceLevel", 0.05));
         m_SectionRules.addNode(m_RuleNbSigAtts = new INIFileInt("RuleNbSigAtts", 0));
         m_SectionRules.addNode(m_ComputeDispersion = new INIFileBool("ComputeDispersion", false));
@@ -935,15 +970,15 @@ public class SettingsRules extends SettingsBase {
         m_SectionRules.addNode(m_OptNbZeroesPar = new INIFileDouble("OptNbZeroesPar", 0.0));
         m_SectionRules.addNode(m_OptRuleWeightThreshold = new INIFileDouble("OptRuleWeightThreshold", 0.1));
         m_SectionRules.addNode(m_OptRuleWeightBinarization = new INIFileBool("OptRuleWeightBinarization", false));
-        m_SectionRules.addNode(m_OptLossFunction = new INIFileNominal("OptDELossFunction", OPT_LOSS_FUNCTIONS, OPT_LOSS_FUNCTIONS_SQUARED));
+        m_SectionRules.addNode(m_OptLossFunction = new INIFileEnum<>("OptDELossFunction", OptimizationLossFunction.Squared));
         m_SectionRules.addNode(m_OptDefaultShiftPred = new INIFileBool("OptDefaultShiftPred", true));
-        m_SectionRules.addNode(m_OptAddLinearTerms = new INIFileNominal("OptAddLinearTerms", OPT_GD_ADD_LINEAR_TERMS, OPT_GD_ADD_LIN_NO));
-        m_SectionRules.addNode(m_OptNormalizeLinearTerms = new INIFileNominal("OptNormalizeLinearTerms", OPT_LINEAR_TERM_NORM_VALUES, OPT_LIN_TERM_NORM_YES));
+        m_SectionRules.addNode(m_OptAddLinearTerms = new INIFileEnum<>("OptAddLinearTerms", OptimizationGDAddLinearTerms.No));
+        m_SectionRules.addNode(m_OptNormalizeLinearTerms = new INIFileEnum<>("OptNormalizeLinearTerms", OptimizationLinearTermNormalizeValues.Yes));
         m_SectionRules.addNode(m_OptLinearTermsTruncate = new INIFileBool("OptLinearTermsTruncate", true));
         m_SectionRules.addNode(m_OptOmitRulePredictions = new INIFileBool("OptOmitRulePredictions", true));
         m_SectionRules.addNode(m_OptWeightGenerality = new INIFileBool("OptWeightGenerality", false));
         // m_SectionRules.addNode(m_OptNormalization = new INIFileBool("OptNormalization", true));
-        m_SectionRules.addNode(m_OptNormalization = new INIFileNominal("OptNormalization", OPT_NORMALIZATION, OPT_NORMALIZATION_YES));
+        m_SectionRules.addNode(m_OptNormalization = new INIFileEnum<>("OptNormalization", OptimizationNormalization.Yes));
         m_SectionRules.addNode(m_OptHuberAlpha = new INIFileDouble("OptHuberAlpha", 0.9));
         m_SectionRules.addNode(m_OptGDMaxIter = new INIFileInt("OptGDMaxIter", 1000));
         // m_SectionRules.addNode(m_OptGDLossFunction = new INIFileNominal("OptGDLossFunction", GD_LOSS_FUNCTIONS, 0));
@@ -954,8 +989,8 @@ public class SettingsRules extends SettingsBase {
         m_SectionRules.addNode(m_OptGDEarlyStopAmount = new INIFileDouble("OptGDEarlyStopAmount", 0.0));
         m_SectionRules.addNode(m_OptGDEarlyStopTreshold = new INIFileDouble("OptGDEarlyStopTreshold", 1.1));
         m_SectionRules.addNode(m_OptGDNbOfStepSizeReduce = new INIFileStringOrInt("OptGDNbOfStepSizeReduce", INFINITY_STRING));
-        m_SectionRules.addNode(m_OptGDExternalMethod = new INIFileNominal("OptGDExternalMethod", GD_EXTERNAL_METHOD_VALUES, GD_EXTERNAL_METHOD_GD));
-        m_SectionRules.addNode(m_OptGDMTGradientCombine = new INIFileNominal("OptGDMTGradientCombine", OPT_GD_MT_COMBINE_GRADIENTS, OPT_GD_MT_GRADIENT_AVG));
+        m_SectionRules.addNode(m_OptGDExternalMethod = new INIFileEnum<>("OptGDExternalMethod", GDExternalMethodValues.Update));
+        m_SectionRules.addNode(m_OptGDMTGradientCombine = new INIFileEnum<>("OptGDMTGradientCombine", OptimizationGDMTCombineGradient.Avg));
         m_SectionRules.addNode(m_OptGDNbOfTParameterTry = new INIFileInt("OptGDNbOfTParameterTry", 1));
         m_SectionRules.addNode(m_OptGDEarlyTTryStop = new INIFileBool("OptGDEarlyTTryStop", true));
 
