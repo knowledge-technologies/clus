@@ -10,8 +10,8 @@ import si.ijs.kt.clus.main.settings.Settings;
 public class INIFileEnum<T extends Enum<T>> extends INIFileEntry {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-    T m_ChosenOption;
-    Class<T> m_EnumType;
+    private T m_ChosenOption;
+    private Class<T> m_EnumType;
 
 
     @SuppressWarnings("unchecked")

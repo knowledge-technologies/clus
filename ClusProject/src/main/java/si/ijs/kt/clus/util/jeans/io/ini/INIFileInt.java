@@ -24,12 +24,13 @@ package si.ijs.kt.clus.util.jeans.io.ini;
 
 import java.util.HashMap;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.jeans.io.range.ValueCheck;
 
 
 public class INIFileInt extends INIFileEntry {
 
-    public final static long serialVersionUID = 1;
+    public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected int m_Value;
     protected ValueCheck m_Check;
