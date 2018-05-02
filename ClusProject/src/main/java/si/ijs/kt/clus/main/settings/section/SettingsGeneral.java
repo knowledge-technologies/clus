@@ -18,7 +18,6 @@ public class SettingsGeneral extends SettingsBase {
      ***********************************************************************/
 
     INIFileInt m_Verbose;// TODO: migrate to Log4J
-    INIFileEnum<Compatibility> m_Compatibility;
 
     INIFileString m_RandomSeed;
     INIFileEnum<ResourceInfoLoad> m_ResourceInfoLoaded;
@@ -26,11 +25,6 @@ public class SettingsGeneral extends SettingsBase {
 
     public SettingsGeneral(int position) {
         super(position);
-    }
-
-
-    public Compatibility getCompatibility() {
-        return m_Compatibility.getValue();
     }
 
 
@@ -47,7 +41,6 @@ public class SettingsGeneral extends SettingsBase {
 
 
     public boolean hasRandomSeed() {
-        // System.out.println(m_RandomSeed.getValue());
         return !StringUtils.unCaseCompare(m_RandomSeed.getValue(), NONE);
     }
 
@@ -67,45 +60,16 @@ public class SettingsGeneral extends SettingsBase {
     }
 
     /***********************************************************************
-     * Section: General - Compatibility mode *
-     ***********************************************************************/
-
-    public enum Compatibility {
-        CMB05(0), MLJ08(1), Latest(2);
-
-        private int compatibilityLevel = -1;
-
-
-        Compatibility(int c) {
-            compatibilityLevel = c;
-        }
-
-
-        public int getCompatibilityLevel() {
-            return compatibilityLevel;
-        }
-    };
-
-    /***********************************************************************
      * Section: General - ResourceInfo loaded *
      ***********************************************************************/
 
     public enum ResourceInfoLoad {Yes, No, Test};
-    /*private final String[] RESOURCE_INFO_LOAD = { "Yes", "No", "Test" };
-
-    public final static int RESOURCE_INFO_LOAD_YES = 0;
-    public final static int RESOURCE_INFO_LOAD_NO = 1;
-    public final static int RESOURCE_INFO_LOAD_TEST = 2;
-*/
 
     @Override
     public INIFileSection create() {
         INIFileSection settings = new INIFileSection("General");
         settings.addNode(m_Verbose = new INIFileInt("Verbose", 1));
-        settings.addNode(m_Compatibility = new INIFileEnum<>("Compatibility", Compatibility.Latest));
-
         settings.addNode(m_RandomSeed = new INIFileString("RandomSeed", "0"));
-        //settings.addNode(m_ResourceInfoLoaded = new INIFileNominal("ResourceInfoLoaded", RESOURCE_INFO_LOAD, 1));
         settings.addNode(m_ResourceInfoLoaded = new INIFileEnum<>("ResourceInfoLoaded", ResourceInfoLoad.No));
 
         return settings;

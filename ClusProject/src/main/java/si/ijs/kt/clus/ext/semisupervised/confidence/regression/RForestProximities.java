@@ -74,7 +74,7 @@ public class RForestProximities extends PredictionConfidence {
                     switch (m_StatManager.getMode()) {
                         // Pooled AUPRC (more is better)
                         case ClusStatManager.MODE_HIERARCHICAL:
-                            error = new HierErrorMeasures(errListOOB, m_StatManager.getHier(), m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(), m_StatManager.getSettings().getGeneral().getCompatibility(), HierarchyMeasures.PooledAUPRC, m_StatManager.getSettings().getOutput().isWriteCurves(), m_StatManager.getSettings().getOutput().isGzipOutput());
+                            error = new HierErrorMeasures(errListOOB, m_StatManager.getHier(), m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(), HierarchyMeasures.PooledAUPRC, m_StatManager.getSettings().getOutput().isWriteCurves(), m_StatManager.getSettings().getOutput().isGzipOutput());
                             break;
 
                         // RMSE (less is better)

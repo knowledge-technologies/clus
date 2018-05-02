@@ -148,7 +148,6 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
             error = new HierErrorMeasures(ErrorList,
                     m_StatManager.getHier(),
                     m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(),
-                    getSettings().getGeneral().getCompatibility(),
                     HierarchyMeasures.PooledAUPRC,
                     m_StatManager.getSettings().getOutput().isWriteCurves(),
                     getSettings().getOutput().isGzipOutput());
@@ -214,7 +213,6 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
             error = new HierErrorMeasures(OOBErrorList,
                     m_StatManager.getHier(),
                     m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(),
-                    getSettings().getGeneral().getCompatibility(),
                     HierarchyMeasures.PooledAUPRC,
                     m_StatManager.getSettings().getOutput().isWriteCurves(),
                     getSettings().getOutput().isGzipOutput());

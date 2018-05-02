@@ -484,7 +484,6 @@ public class GISHeuristic extends ClusHeuristic {
                     System.out.println("POS: " + pstat.getDebugString());
                     System.out.println("-> (" + ss_tot + ", " + ss_pos + ", " + ss_neg + ") " + value);
                 }
-                //if (value < 1e-6) return Double.NEGATIVE_INFINITY;// NOTE: This is here for compatibility reasons only
             }
         }
         return value;
@@ -537,7 +536,6 @@ public class GISHeuristic extends ClusHeuristic {
                 WHTDStatistic[] pstat = (WHTDStatistic[]) c_pstat;
                 // Compute |S|Var[S]
                 double ss_tot = tstat.getSVarS(m_ClusteringWeights);
-                //if (value < 1e-6) return Double.NEGATIVE_INFINITY;// NOTE: This is here for compatibility reasons only
             }
         }
         return value;

@@ -152,10 +152,10 @@ public class ClusForest implements ClusModel, Serializable {
 
             case ClusStatManager.MODE_HIERARCHICAL:
                 if (statmgr.getSettings().getHMLC().getHierSingleLabel()) {
-                    m_Stat = new HierSingleLabelStat(statmgr.getSettings(), statmgr.getHier(), statmgr.getCompatibility());
+                    m_Stat = new HierSingleLabelStat(statmgr.getSettings(), statmgr.getHier());
                 }
                 else {
-                    m_Stat = new WHTDStatistic(statmgr.getSettings(), statmgr.getHier(), statmgr.getCompatibility());
+                    m_Stat = new WHTDStatistic(statmgr.getSettings(), statmgr.getHier());
                 }
                 break;
 
