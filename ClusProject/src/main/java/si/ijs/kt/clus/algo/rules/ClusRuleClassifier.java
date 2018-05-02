@@ -34,11 +34,10 @@ import si.ijs.kt.clus.algo.ClusInductionAlgorithmType;
 import si.ijs.kt.clus.algo.rules.probabilistic.ClusRuleProbabilisticRuleSetInduce;
 import si.ijs.kt.clus.algo.tdidt.ClusDecisionTree;
 import si.ijs.kt.clus.data.ClusSchema;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -60,8 +59,8 @@ public class ClusRuleClassifier extends ClusInductionAlgorithmType {
         // instead of only the training set part. This is how trees are using it also.
         // Both default rule creation and rule omitting need the information also
         if (sett.getRules().isRulePredictionOptimized()) {
-            NumericAttrType[] descrNumTypes = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
-            NumericAttrType[] tarNumTypes = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            NumericAttrType[] descrNumTypes = schema.getNumericAttrUse(AttributeUseType.Descriptive);
+            NumericAttrType[] tarNumTypes = schema.getNumericAttrUse(AttributeUseType.Target);
             RuleNormalization.initialize(Clus.calcStdDevsForTheSet(getClus().getData(), descrNumTypes), Clus.calcStdDevsForTheSet(getClus().getData(), tarNumTypes));
         }
 

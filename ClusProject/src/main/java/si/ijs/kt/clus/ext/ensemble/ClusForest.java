@@ -43,13 +43,12 @@ import si.ijs.kt.clus.algo.rules.ClusRulesFromTree;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.ext.hierarchical.HierClassTresholdPruner;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingFunctionScope;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
 import si.ijs.kt.clus.model.ClusModel;
@@ -136,19 +135,19 @@ public class ClusForest implements ClusModel, Serializable {
         switch (mode) {
             case ClusStatManager.MODE_CLASSIFY:
                 if (statmgr.getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
-                    m_Stat = new ClassificationStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), statmgr.getSettings().getMLC().getMultiLabelThreshold());
+                    m_Stat = new ClassificationStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(AttributeUseType.Target), statmgr.getSettings().getMLC().getMultiLabelThreshold());
                 }
                 else {
-                    m_Stat = new ClassificationStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                    m_Stat = new ClassificationStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(AttributeUseType.Target));
                 }
                 break;
 
             case ClusStatManager.MODE_REGRESSION:
-                m_Stat = new RegressionStat(statmgr.getSettings(), statmgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                m_Stat = new RegressionStat(statmgr.getSettings(), statmgr.getSchema().getNumericAttrUse(AttributeUseType.Target));
                 break;
 
             case ClusStatManager.MODE_CLASSIFY_AND_REGRESSION:
-                m_Stat = statmgr.getStatistic(ClusAttrType.ATTR_USE_TARGET); //FIXME: Probably all statistics could be initialized like this? i.e., there is no need for checking mode?
+                m_Stat = statmgr.getStatistic(AttributeUseType.Target); //FIXME: Probably all statistics could be initialized like this? i.e., there is no need for checking mode?
                 break;
 
             case ClusStatManager.MODE_HIERARCHICAL:
@@ -161,7 +160,7 @@ public class ClusForest implements ClusModel, Serializable {
                 break;
 
             case ClusStatManager.MODE_PHYLO:
-                m_Stat = new GeneticDistanceStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                m_Stat = new GeneticDistanceStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(AttributeUseType.Target));
                 break;
 
             default:

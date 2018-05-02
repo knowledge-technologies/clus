@@ -5,7 +5,7 @@ import java.util.HashMap;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.error.Accuracy;
 import si.ijs.kt.clus.error.RMSError;
 import si.ijs.kt.clus.error.common.ClusError;
@@ -14,7 +14,6 @@ import si.ijs.kt.clus.error.hmlc.HierErrorMeasures;
 import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.semisupervised.confidence.PredictionConfidence;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLAggregation;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLNormalization;
@@ -80,14 +79,14 @@ public class RForestProximities extends PredictionConfidence {
 
                         // RMSE (less is better)
                         case ClusStatManager.MODE_REGRESSION:
-                            error = new RMSError(errListOOB, m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                            error = new RMSError(errListOOB, m_StatManager.getSchema().getNumericAttrUse(AttributeUseType.Target));
                             break;
 
                         case ClusStatManager.MODE_CLASSIFY:
-                            error = new Accuracy(errListOOB, m_StatManager.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                            error = new Accuracy(errListOOB, m_StatManager.getSchema().getNominalAttrUse(AttributeUseType.Target));
                             break;
                         default:
-                            error = new RMSError(errListOOB, m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                            error = new RMSError(errListOOB, m_StatManager.getSchema().getNumericAttrUse(AttributeUseType.Target));
                     }
 
                     errListOOB.addError(error);

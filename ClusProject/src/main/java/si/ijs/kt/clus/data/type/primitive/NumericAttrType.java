@@ -50,9 +50,6 @@ public class NumericAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static int THIS_TYPE = NUMERIC_ATR_TYPE;
-    private final static String THIS_TYPE_NAME = "Numeric";
-
     public final static double MISSING = Double.POSITIVE_INFINITY;
 
     protected boolean m_Sparse;
@@ -96,20 +93,20 @@ public class NumericAttrType extends ClusAttrType {
 
 
     @Override
-    public int getTypeIndex() {
-        return THIS_TYPE;
+    public AttributeType getAttributeType() {
+        return AttributeType.Numeric;
     }
 
 
     @Override
     public String getTypeName() {
-        return THIS_TYPE_NAME;
+        return getAttributeType().getName();
     }
 
 
     @Override
-    public int getValueType() {
-        return VALUE_TYPE_DOUBLE;
+    public ValueType getValueType() {
+        return ValueType.Double;
     }
 
 
@@ -132,7 +129,7 @@ public class NumericAttrType extends ClusAttrType {
     public String getString(DataTuple tuple) {
         double val = this.getNumeric(tuple);
         // FIXME - SOON - STATUS_KEY attribute :-)
-        if (getStatus() == STATUS_KEY) {
+        if (getStatus().equals(Status.Key)) {
             return String.valueOf((int) val);
         }
         else {

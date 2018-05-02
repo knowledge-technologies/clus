@@ -49,8 +49,6 @@ public class NominalAttrType extends ClusAttrType {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static String[] BINARY_NAMES = { "1", "0" };
-    public final static int THIS_TYPE = NOMINAL_ATR_TYPE;
-    public final static String THIS_TYPE_NAME = "Nominal";
     private NominalStatistic m_StatNominal;
 
     /**
@@ -146,20 +144,20 @@ public class NominalAttrType extends ClusAttrType {
 
 
     @Override
-    public int getTypeIndex() {
-        return THIS_TYPE;
+    public AttributeType getAttributeType() {
+        return AttributeType.Nominal;
     }
 
 
     @Override
     public String getTypeName() {
-        return THIS_TYPE_NAME;
+        return getAttributeType().getName();
     }
 
 
     @Override
-    public int getValueType() {
-        return VALUE_TYPE_INT;
+    public ValueType getValueType() {
+        return ValueType.Int;
     }
 
 

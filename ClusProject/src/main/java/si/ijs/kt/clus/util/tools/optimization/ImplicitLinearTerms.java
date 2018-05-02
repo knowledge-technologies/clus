@@ -29,7 +29,7 @@ package si.ijs.kt.clus.util.tools.optimization;
 import si.ijs.kt.clus.algo.rules.ClusRuleLinearTerm;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 
@@ -75,8 +75,8 @@ public class ImplicitLinearTerms {
         // m_minValues = values[1];
 
         if (getSettings().getGeneral().getVerbose() > 0) {
-            int nbTargets = (m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET)).getNbAttributes();
-            int nbDescrAttr = statMgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE).length;
+            int nbTargets = (m_StatManager.getStatistic(AttributeUseType.Target)).getNbAttributes();
+            int nbDescrAttr = statMgr.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
 
             System.out.println("\tIn optimization using implicitly the predictions of " + nbDescrAttr + " linear terms for each target, total " + nbDescrAttr * nbTargets + " terms.");
         }
@@ -135,7 +135,7 @@ public class ImplicitLinearTerms {
         int iDescriptiveAttr = (int) Math.floor((double) iLinTerm / nbOfTargets);
 
         // double value = (m_linearTermPredictions.getSchema().
-        // getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))[iDescriptiveAttr].getNumeric(instance);
+        // getNumericAttrUse(AttributeUseType.Descriptive))[iDescriptiveAttr].getNumeric(instance);
 
         double pred = ClusRuleLinearTerm.attributeToLinTermPrediction(getSettings(), instance, iDescriptiveAttr, iLinTermTargetAttr, nbOfTargets, true); // Always
                                                                                                                                                          // scale

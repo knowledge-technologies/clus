@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 
 import si.ijs.kt.clus.BaseTestCase;
 import si.ijs.kt.clus.TestHelper;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.util.ClusException;
 
@@ -116,7 +116,7 @@ public class RowDataTest extends BaseTestCase {
 
     for (int i = 0; i < settingsFiles.length; i++) {
       RowData data = TestHelper.getRowData(settingsFiles[i]);
-      NumericAttrType[] attrs = data.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+      NumericAttrType[] attrs = data.m_Schema.getNumericAttrUse(AttributeUseType.Descriptive);
       for (int repeat = 0; repeat < 4; repeat++) {
         for (int attr = 0; attr < attrs.length; attr++) {
           NumericAttrType at = (NumericAttrType) data.m_Schema.getAttrType(attr);

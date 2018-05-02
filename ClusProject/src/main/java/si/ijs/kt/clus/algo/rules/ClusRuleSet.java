@@ -42,13 +42,13 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationNormalization;
@@ -492,7 +492,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
         }
 
         double defaultWeight = getRule(0).getOptWeight();
-        ClusStatistic tar_stat = m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        ClusStatistic tar_stat = m_StatManager.getStatistic(AttributeUseType.Target);
         // What is to be added to default pred
         double[] addToDefaultPred = new double[tar_stat.getNbAttributes()];
 
@@ -633,8 +633,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
             wrt.println();
             wrt.println("Covered examples:");
             ArrayList data = rule.getData();
-            ClusAttrType[] attrs = schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
-            ClusAttrType[] key = schema.getAllAttrUse(ClusAttrType.ATTR_USE_KEY);
+            ClusAttrType[] attrs = schema.getAllAttrUse(AttributeUseType.Target);
+            ClusAttrType[] key = schema.getAllAttrUse(AttributeUseType.Key);
             for (int k = 0; k < data.size(); k++) {
                 DataTuple tuple = (DataTuple) data.get(k);
                 wrt.print(String.valueOf(k + 1) + ": ");
@@ -808,7 +808,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      */
     // TODO: finish
     public double computeErrorScore(RowData data) throws ClusException {
-        ClusStatistic tar_stat = m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        ClusStatistic tar_stat = m_StatManager.getStatistic(AttributeUseType.Target);
         // Average error rate over all target attributes
         if (tar_stat instanceof ClassificationStat) {
             double result = 0;
@@ -819,7 +819,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
                 DataTuple tuple = data.getTuple(i);
                 int[] predictions = predictWeighted(tuple).getNominalPred();
                 int true_value;
-                NominalAttrType[] targetAttrs = data.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+                NominalAttrType[] targetAttrs = data.getSchema().getNominalAttrUse(AttributeUseType.Target);
                 for (int j = 0; j < nb_tar; j++) {
                     true_value = targetAttrs[j].getNominal(tuple);
                     if (predictions[j] == true_value) {
@@ -839,7 +839,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
             int nb_rows = data.getNbRows();
             int nb_tar = tar_stat.getNbNumericAttributes();
             double[] sum_sqr_err = new double[nb_tar];
-            NumericAttrType[] targetAttrs = data.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            NumericAttrType[] targetAttrs = data.getSchema().getNumericAttrUse(AttributeUseType.Target);
             for (int i = 0; i < nb_rows; i++) {
                 DataTuple tuple = data.getTuple(i);
                 double[] predictions = ((RegressionStat) predictWeighted(tuple)).getNumericPred();
@@ -1021,7 +1021,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
             // after creating default rule, before adding linear terms or weighting generality
             omitRulePredictions();
             // (ClusRuleLinearTerm.calcStdDevsForTheSet(data,
-            // m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)))[1]);
+            // m_StatManager.getSchema().getNumericAttrUse(AttributeUseType.Target)))[1]);
         }
 
         if (getSettings().getRules().isOptWeightGenerality()) {
@@ -1045,7 +1045,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
         }
 
         // Generate optimization input
-        ClusStatistic tar_stat = m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        ClusStatistic tar_stat = m_StatManager.getStatistic(AttributeUseType.Target);
         int nb_target = tar_stat.getNbAttributes();
         int nb_baseFunctions = getModelSize();
         int nb_rows = data.getNbRows();
@@ -1059,11 +1059,11 @@ public class ClusRuleSet implements ClusModel, Serializable {
         ClusAttrType[] trueValuesTemp = new ClusAttrType[nb_target];
         if (isClassification) {
             // NominalAttrType[]
-            trueValuesTemp = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            trueValuesTemp = schema.getNominalAttrUse(AttributeUseType.Target);
         }
         else { // regression
                // NumericAttrType[]
-            trueValuesTemp = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            trueValuesTemp = schema.getNumericAttrUse(AttributeUseType.Target);
         }
 
         /**
@@ -1514,7 +1514,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
         // Change the default rule to the overall mean of data set - may be slightly different and this
         // causes problems later
-        int nbOfTargetAtts = m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET).getNbAttributes();
+        int nbOfTargetAtts = m_StatManager.getStatistic(AttributeUseType.Target).getNbAttributes();
         double[] newPred = new double[nbOfTargetAtts];
         for (int i = 0; i < nbOfTargetAtts; i++) {
             newPred[i] = RuleNormalization.getTargMean(i);
@@ -1547,11 +1547,11 @@ public class ClusRuleSet implements ClusModel, Serializable {
         if (getSettings().getGeneral().getVerbose() > 0)
             System.out.println("Adding linear terms as rules.");
 
-        int nbTargets = (m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET)).getNbAttributes();
-        int nbDescrAttr = m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE).length;
-        // (m_StatManager.getStatistic(ClusAttrType.ATTR_USE_DESCRIPTIVE)).getNbAttributes();
+        int nbTargets = (m_StatManager.getStatistic(AttributeUseType.Target)).getNbAttributes();
+        int nbDescrAttr = m_StatManager.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
+        // (m_StatManager.getStatistic(AttributeUseType.Descriptive)).getNbAttributes();
 
-        // NumericAttrType[] numTypes = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+        // NumericAttrType[] numTypes = schema.getNumericAttrUse(AttributeUseType.Descriptive);
 
         for (int iDescriptDim = 0; iDescriptDim < nbDescrAttr; iDescriptDim++) {
             for (int iTargetDim = 0; iTargetDim < nbTargets; iTargetDim++) {
@@ -1587,7 +1587,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
     public void addImplicitLinearTermsExplicitly(ArrayList<Double> weights, int indFirstLinTerm) {
 
         double threshold = getSettings().getRules().getOptRuleWeightThreshold();
-        int nbOfTargetAtts = m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET).getNbAttributes();
+        int nbOfTargetAtts = m_StatManager.getStatistic(AttributeUseType.Target).getNbAttributes();
 
         int addedTerms = 0;
         // Add the linear terms that are useful enough

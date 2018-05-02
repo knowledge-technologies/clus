@@ -69,7 +69,7 @@ public class DeAlg extends OptAlg {
         m_Pop = new DePop(stat_mgr, m_DeProbl);
         // m_StatMgr = stat_mgr;
         // m_Probl = new OptimProbl(stat_mgr, parameters);
-        // ClusStatistic tar_stat = m_StatMgr.getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        // ClusStatistic tar_stat = m_StatMgr.getStatistic(AttributeUseType.Target);
     }
 
 

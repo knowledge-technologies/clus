@@ -36,8 +36,6 @@ import si.ijs.kt.clus.ext.optiontree.ClusSplitNode;
 import si.ijs.kt.clus.ext.optiontree.MyNode;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.section.SettingsOutput;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;

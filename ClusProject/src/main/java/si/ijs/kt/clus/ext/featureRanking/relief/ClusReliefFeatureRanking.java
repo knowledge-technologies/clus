@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
@@ -35,7 +36,6 @@ import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief.MultilabelDistance;
-import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesDistanceMeasure;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
@@ -273,9 +273,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         setReliefDescription(m_NbNeighbours, m_NbIterations);
 
         // Initialise descriptive and target attributes if necessary
-        int attrType;
+        AttributeUseType attrType;
         for (int space : SPACE_TYPES) {
-            attrType = space == DESCRIPTIVE_SPACE ? ClusAttrType.ATTR_USE_DESCRIPTIVE : ClusAttrType.ATTR_USE_TARGET;
+            attrType = space == DESCRIPTIVE_SPACE ? AttributeUseType.Descriptive : AttributeUseType.Target;
             if (m_DescriptiveTargetAttr[space] == null)
                 m_DescriptiveTargetAttr[space] = m_Data.m_Schema.getAllAttrUse(attrType);
         }
@@ -312,7 +312,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         double value;
         String attrName;
         for (int space : SPACE_TYPES) {
-            attrType = space == DESCRIPTIVE_SPACE ? ClusAttrType.ATTR_USE_DESCRIPTIVE : ClusAttrType.ATTR_USE_TARGET;
+            attrType = space == DESCRIPTIVE_SPACE ? AttributeUseType.Descriptive : AttributeUseType.Target;
             for (NumericAttrType numAttr : m_Data.m_Schema.getNumericAttrUse(attrType)) {
                 attrName = numAttr.getName();
                 m_numMins.put(attrName, Double.POSITIVE_INFINITY);

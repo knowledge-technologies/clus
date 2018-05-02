@@ -37,6 +37,7 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
 import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
@@ -45,9 +46,8 @@ import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
 import si.ijs.kt.clus.heuristic.GISHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyDistance;
-import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral.Compatibility;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyDistance;
 import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
@@ -68,7 +68,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     protected Compatibility m_Compatibility;
     // Hackishe Porzion des Codes fuer die pooled AUPRC: all other parts of the code that serve this purpose will be
     // simply denoted by poolAUPRC case
-    protected HierarchyDistance m_Distance;
+    protected HierarchyDistance m_Distance = HierarchyDistance.NoDistance;
     protected double[] m_P;
 
     // Thresholds used in making predictions in multi-label classification
@@ -341,12 +341,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
         if (m_SumWeight == 0.0) { // if there are no examples with known value for attribute i
             switch (getSettings().getTree().getMissingTargetAttrHandling()) {
-                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
-                    return m_Training.getMean(i);
-                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                case ParentNode:
                     return m_ParentStat.getMean(i);
-                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_NONE:
+                    
+                case Zero:
                     return 0;
+
+                case DefaultModel:
                 default:
                     return m_Training.getMean(i);
             }
@@ -1384,7 +1385,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     @Override
     public double calcItotalD(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        ClusAttrType xt = schema.getAllAttrUse(AttributeUseType.GIS)[0];
         double num, den;
         double avgik = 0;
         double W = 0.0;
@@ -1487,7 +1488,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     @Override
     public double calcPDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        ClusAttrType xt = schema.getAllAttrUse(AttributeUseType.GIS)[0];
         double avgik = 0;
         double upsum = 0.0;
         double downsum = 0.0;
@@ -1574,7 +1575,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     @Override
     public double calcGtotalD(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        ClusAttrType xt = schema.getAllAttrUse(AttributeUseType.GIS)[0];
         double num, den;
         double avgik = 0;
         double W = 0.0;
@@ -1690,7 +1691,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     @Override
     public double calcEquvalentIDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        ClusAttrType xt = schema.getAllAttrUse(AttributeUseType.GIS)[0];
         int M = 0;
         int N = 0;
         int NR = m_data.getNbRows();
@@ -2009,7 +2010,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     @Override
     public double calcEquvalentPDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        ClusAttrType xt = schema.getAllAttrUse(AttributeUseType.GIS)[0];
         int M = 0;
         int N = 0;
         int NR = m_data.getNbRows();
@@ -2267,7 +2268,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     @Override
     public double calcEquvalentGDistance(Integer[] permutation) throws ClusException {
         ClusSchema schema = m_data.getSchema();
-        ClusAttrType xt = schema.getAllAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
+        ClusAttrType xt = schema.getAllAttrUse(AttributeUseType.GIS)[0];
         int M = 0;
         int N = 0;
         int NR = m_data.getNbRows();
@@ -2666,7 +2667,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             NumericAttrType type = getAttribute(i);
             double actual_zo = actual[i] ? 1.0 : 0.0;
             double dist = actual_zo - m_Means[i];
-            WHTDStatistic tstat = (WHTDStatistic) statmanager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING);
+            WHTDStatistic tstat = (WHTDStatistic) statmanager.getTrainSetStat(AttributeUseType.Clustering);
             if (tstat.getVariance(i) != 0)
                 dist = dist / Math.pow(tstat.getVariance(i), 0.5);
             sum += Math.abs(dist) * weights.getWeight(type);
@@ -3071,12 +3072,11 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     public double getWeightLabeled() {
         if (m_SumWeight == 0.0) {
             switch (getSettings().getTree().getMissingClusteringAttrHandling()) {
-                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
-                    return m_Training.getWeightLabeled();
-                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT:
+                case EstimateFromParentNode:
                     return m_ParentStat.getWeightLabeled();
-                case SettingsTree.MISSING_ATTRIBUTE_HANDLING_NONE:
+                case Ignore:
                     return 0;
+                case EstimateFromTrainingSet:
                 default:
                     return m_Training.getWeightLabeled();
             }

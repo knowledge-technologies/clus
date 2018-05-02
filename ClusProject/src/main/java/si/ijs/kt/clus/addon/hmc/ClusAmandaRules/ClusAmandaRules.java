@@ -42,6 +42,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
@@ -100,7 +101,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
     public ClusRuleSet loadRules(String file) throws IOException, ClusException {
         ClusRuleSet set = new ClusRuleSet(m_Clus.getStatManager());
 
-        ClusStatistic default_stat = m_Clus.getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
+        ClusStatistic default_stat = m_Clus.getStatManager().createStatistic(AttributeUseType.Target);
         default_stat.calcMean();
         set.setTargetStat(default_stat);
 
@@ -171,7 +172,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
 
 
     void addClass(ClusRule rule, String classstr) throws IOException, ClusException {
-        WHTDStatistic stat = (WHTDStatistic) m_Clus.getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
+        WHTDStatistic stat = (WHTDStatistic) m_Clus.getStatManager().createStatistic(AttributeUseType.Target);
         stat.calcMean();
         ClassHierarchy hier = stat.getHier();
         ClassesTuple tuple = new ClassesTuple(classstr, hier.getType().getTable());
@@ -185,7 +186,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
         RowData prune = (RowData) cr.getPruneSet();
         if (prune == null)
             return;
-        WHTDStatistic stat = (WHTDStatistic) m_Clus.getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
+        WHTDStatistic stat = (WHTDStatistic) m_Clus.getStatManager().createStatistic(AttributeUseType.Target);
         WHTDStatistic global = (WHTDStatistic) stat.cloneStat();
         prune.calcTotalStat(global);
         global.calcMean();

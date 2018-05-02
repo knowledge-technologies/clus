@@ -30,7 +30,7 @@ import java.io.IOException;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
@@ -52,11 +52,11 @@ public class ClusRulesForAttrs {
         ClusRuleSet res = new ClusRuleSet(mgr);
         RowData train = (RowData) cr.getTrainingSet();
         RowData valid = (RowData) cr.getPruneSet();
-        WHTDStatistic global_valid = (WHTDStatistic) mgr.createStatistic(ClusAttrType.ATTR_USE_TARGET);
+        WHTDStatistic global_valid = (WHTDStatistic) mgr.createStatistic(AttributeUseType.Target);
         valid.calcTotalStatBitVector(global_valid);
         global_valid.calcMean();
         ClusSchema schema = train.getSchema();
-        NominalAttrType[] descr = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+        NominalAttrType[] descr = schema.getNominalAttrUse(AttributeUseType.Descriptive);
         for (int i = 0; i < descr.length; i++) {
             NominalAttrType attr = descr[i];
             for (int j = 0; j < attr.getNbValues(); j++) {
@@ -64,9 +64,9 @@ public class ClusRulesForAttrs {
                 isin[j] = true;
                 ClusRule rule = new ClusRule(mgr);
                 rule.addTest(new SubsetTest(attr, 1, isin, 0.0));
-                WHTDStatistic stat = (WHTDStatistic) mgr.createStatistic(ClusAttrType.ATTR_USE_TARGET);
+                WHTDStatistic stat = (WHTDStatistic) mgr.createStatistic(AttributeUseType.Target);
                 rule.computeCoverStat(train, stat);
-                WHTDStatistic valid_stat = (WHTDStatistic) mgr.createStatistic(ClusAttrType.ATTR_USE_TARGET);
+                WHTDStatistic valid_stat = (WHTDStatistic) mgr.createStatistic(AttributeUseType.Target);
                 rule.computeCoverStat(valid, valid_stat);
                 valid_stat.calcMean();
                 stat.setValidationStat(valid_stat);

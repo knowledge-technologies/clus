@@ -33,7 +33,7 @@ import si.ijs.kt.clus.algo.tdidt.ClusDecisionTree;
 import si.ijs.kt.clus.data.ClusData;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.Accuracy;
@@ -110,8 +110,8 @@ public class CDTTuneFTest extends ClusDecisionTree {
             parent.addError(new HierErrorMeasures(parent, mgr.getHier(), null, getSettings().getGeneral().getCompatibility(), optimize, false, getSettings().getOutput().isGzipOutput()));
             return parent;
         }
-        NumericAttrType[] num = mgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-        NominalAttrType[] nom = mgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        NumericAttrType[] num = mgr.getSchema().getNumericAttrUse(AttributeUseType.Target);
+        NominalAttrType[] nom = mgr.getSchema().getNominalAttrUse(AttributeUseType.Target);
         if (nom.length != 0) {
             parent.addError(new Accuracy(parent, nom));
         }

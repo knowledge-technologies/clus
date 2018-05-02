@@ -29,6 +29,8 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.SparseDataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.Accuracy;
@@ -64,9 +66,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
-import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
-import si.ijs.kt.clus.main.settings.section.SettingsMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsMLC.MultiLabelMeasures;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.OOBSelection;
@@ -153,12 +153,12 @@ public class ClusFeatureRanking {
             if (!type.isDisabled()) {
                 // double[] info = new double[3];
                 double[] info = new double[2 + nbRankings];
-                if (type.getTypeIndex() == 0) {
+                if (type.getAttributeType().equals(AttributeType.Nominal)) {
                     nom++;
                     info[0] = 0; // type
                     info[1] = nom; // order in nominal attributes
                 }
-                if (type.getTypeIndex() == 1) {
+                if (type.getAttributeType().equals(AttributeType.Numeric)) {
                     num++;
                     info[0] = 1; // type
                     info[1] = num; // order in numeric attributes
@@ -236,17 +236,17 @@ public class ClusFeatureRanking {
         JsonArray attributesDescriptive = new JsonArray();
         JsonObject task = new JsonObject();
 
-        for (ClusAttrType a : schema.getAllAttrUse(ClusAttrType.ATTR_USE_ALL))
+        for (ClusAttrType a : schema.getAllAttrUse(AttributeUseType.All))
             attributes.add(a.getAttributeJSON());
-        for (ClusAttrType a : schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET))
+        for (ClusAttrType a : schema.getAllAttrUse(AttributeUseType.Target))
             attributesTarget.add(new JsonPrimitive(a.getName()));
-        for (ClusAttrType a : schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING))
+        for (ClusAttrType a : schema.getAllAttrUse(AttributeUseType.Clustering))
             attributesClustering.add(new JsonPrimitive(a.getName()));
-        for (ClusAttrType a : schema.getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
+        for (ClusAttrType a : schema.getAllAttrUse(AttributeUseType.Descriptive))
             attributesDescriptive.add(new JsonPrimitive(a.getName()));
 
-        String taskTypeString = (schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET).length > 1) ? "MT " : "ST ";
-        // taskTypeString += (m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET)[0].getTypeName()) ? "MT" : "ST";
+        String taskTypeString = (schema.getAllAttrUse(AttributeUseType.Target).length > 1) ? "MT " : "ST ";
+        // taskTypeString += (m_Schema.getAllAttrUse(AttributeUseType.Target)[0].getTypeName()) ? "MT" : "ST";
         if (cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION) {
             taskTypeString += "Regression";
         }
@@ -477,8 +477,8 @@ public class ClusFeatureRanking {
     public ClusErrorList computeErrorList(ClusSchema schema, ClusStatManager mgr) {
         Settings sett = mgr.getSettings();
         ClusErrorList error = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-        NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.Target);
+        NominalAttrType[] nom = schema.getNominalAttrUse(AttributeUseType.Target);
         if (mgr.getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (sett.getMLC().getSectionMultiLabel().isEnabled()) {
                 List<MultiLabelMeasures> measures = sett.getMLC().getMultiLabelRankingMeasures();

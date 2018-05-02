@@ -38,6 +38,7 @@ import si.ijs.kt.clus.data.ClusData;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
@@ -186,7 +187,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
             temp = getTuple(i);
             ClusSchema schema = temp.getSchema();
             for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
-                ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)[j];
+                ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Descriptive)[j];
                 double tmpvalue = type.getNumeric(temp);
                 if (tmpvalue > max[j]) {
                     max[j] = tmpvalue;
@@ -198,7 +199,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
                 stddev[j] += tmpvalue * tmpvalue;
             }
             for (int j = nda; j < nda + nta; j++) {
-                ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[j - nda];
+                ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Target)[j - nda];
                 double tmpvalue = type.getNumeric(temp);
                 if (tmpvalue > max[j]) {
                     max[j] = tmpvalue;
@@ -248,7 +249,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
                                                   // (descriptive =
                                                   // 24, disabled = 4, target = 5)
             for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
-                ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)[j];
+                ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Descriptive)[j];
                 double tmpvalue = type.getNumeric(temp);
                 if (tmpvalue > max[j]) {
                     max[j] = tmpvalue;
@@ -306,7 +307,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
             temp = getTuple(i);
             ClusSchema schema = temp.getSchema();
             for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
-                ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)[j];
+                ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Descriptive)[j];
                 double tmpvalue = type.getNumeric(temp);
                 if (tmpvalue != Double.POSITIVE_INFINITY) {
                     if (tmpvalue > max[j]) {
@@ -323,7 +324,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
                 }
             }
             for (int j = nda; j < nda + nta; j++) {
-                ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[j - nda];
+                ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Target)[j - nda];
                 double tmpvalue = type.getNumeric(temp);
                 if (tmpvalue != Double.POSITIVE_INFINITY) {
                     if (tmpvalue > max[j]) {
@@ -364,12 +365,12 @@ public class RowData extends ClusData implements MSortable, Serializable {
 
         ClusSchema schema = temp.getSchema();
         for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
-            ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)[j];
+            ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Descriptive)[j];
             namesArray.add(type.getName());
 
         }
         for (int j = nda; j < nda + nta; j++) {
-            ClusAttrType type = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)[j - nda];
+            ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Target)[j - nda];
             namesArray.add(type.getName());
         }
 
@@ -647,7 +648,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 
 
     public DataTuple findTupleByKey(String key_value) {
-        ClusAttrType[] key = getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_KEY);
+        ClusAttrType[] key = getSchema().getAllAttrUse(AttributeUseType.Key);
         if (key.length > 0) {
             ClusAttrType key_attr = key[0];
             for (int i = 0; i < getNbRows(); i++) {

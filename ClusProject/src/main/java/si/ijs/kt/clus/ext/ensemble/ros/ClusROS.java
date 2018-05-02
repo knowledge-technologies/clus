@@ -6,6 +6,7 @@ import java.util.Arrays;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
@@ -35,10 +36,10 @@ public class ClusROS {
 
         // find indices of target and clustering attributes
         int[] targetIDs = new int[schema.getNbTargetAttributes()];
-        int[] clusteringIDs = new int[schema.getNbAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING)];
+        int[] clusteringIDs = new int[schema.getNbAllAttrUse(AttributeUseType.Clustering)];
 
         ClusAttrType[] targets = schema.getTargetAttributes();
-        ClusAttrType[] clustering = schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
+        ClusAttrType[] clustering = schema.getAllAttrUse(AttributeUseType.Clustering);
 
         for (int t = 0; t < targetIDs.length; t++)
             targetIDs[t] = targets[t].getIndex();

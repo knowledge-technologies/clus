@@ -57,7 +57,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
-import si.ijs.kt.clus.main.settings.section.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.Heuristic;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
@@ -124,8 +124,8 @@ public class ClusExhaustiveSearch extends ClusInductionAlgorithmType {
         System.out.println("ClusExhaustiveSearch : The Max Error is " + m_MaxError);
         m_BeamPostPruning = sett.getBeamSearch().isBeamPostPrune();
         m_Heuristic = (ClusBeamHeuristic) smanager.getHeuristic();
-        int attr_heur = sett.getBeamSearch().getBeamAttrHeuristic();
-        if (attr_heur != SettingsTree.HEURISTIC_DEFAULT) {
+        Heuristic attr_heur = sett.getBeamSearch().getBeamAttrHeuristic();
+        if (!attr_heur.equals(Heuristic.Default)) {
             m_AttrHeuristic = smanager.createHeuristic(attr_heur);
             m_Heuristic.setAttrHeuristic(m_AttrHeuristic);
         }

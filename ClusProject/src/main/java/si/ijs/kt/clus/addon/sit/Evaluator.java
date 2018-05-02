@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.MSError;
@@ -30,7 +30,7 @@ public final class Evaluator {
         RowData[] temp = folds.get(0);
         ClusSchema schema = temp[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.All);
         PearsonCorrelation error = new PearsonCorrelation(parent, num);
         parent.addError(error);
         for (int f = 0; f < folds.size(); f++) {
@@ -57,7 +57,7 @@ public final class Evaluator {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.All);
         PearsonCorrelation error = new PearsonCorrelation(parent, num);
         parent.addError(error);
         for (int t = 0; t < data[0].getNbRows(); t++) {
@@ -76,7 +76,7 @@ public final class Evaluator {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.All);
         MSError error = new MSError(parent, num);
         parent.addError(error);
         for (int t = 0; t < data[0].getNbRows(); t++) {
@@ -96,7 +96,7 @@ public final class Evaluator {
 
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.All);
         MSError error = new MSError(parent, num);
         parent.addError(error);
         for (int t = 0; t < data[0].getNbRows(); t++) {
@@ -114,7 +114,7 @@ public final class Evaluator {
         RowData[] temp = folds.get(0);
         ClusSchema schema = temp[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.All);
         MSError error = new MSError(parent, num);
         parent.addError(error);
         for (int f = 0; f < folds.size(); f++) {
@@ -140,7 +140,7 @@ public final class Evaluator {
         RowData[] temp = folds.get(0);
         ClusSchema schema = temp[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NominalAttrType[] nom = schema.getNominalAttrUse(AttributeUseType.All);
         MisclassificationError error = new MisclassificationError(parent, nom);
         parent.addError(error);
         for (int f = 0; f < folds.size(); f++) {
@@ -166,7 +166,7 @@ public final class Evaluator {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NominalAttrType[] nom = schema.getNominalAttrUse(AttributeUseType.All);
         MisclassificationError error = new MisclassificationError(parent, nom);
         parent.addError(error);
         for (int t = 0; t < data[0].getNbRows(); t++) {
@@ -185,7 +185,7 @@ public final class Evaluator {
         RowData[] temp = folds.get(0);
         ClusSchema schema = temp[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.All);
         RelativeError error = new RelativeError(parent, num);
         parent.addError(error);
         for (int f = 0; f < folds.size(); f++) {
@@ -211,7 +211,7 @@ public final class Evaluator {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.All);
         RelativeError error = new RelativeError(parent, num);
         parent.addError(error);
         for (int t = 0; t < data[0].getNbRows(); t++) {
@@ -230,7 +230,7 @@ public final class Evaluator {
         if (errorIdx == -1) { return 0; }
         ClusSchema schema = data[0].getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.All);
         RMSError error = new RMSError(parent, num);
         parent.addError(error);
         for (int t = 0; t < data[0].getNbRows(); t++) {

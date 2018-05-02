@@ -24,7 +24,7 @@ package si.ijs.kt.clus.heuristic.rules;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -82,7 +82,7 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
         // Normalized version of 'value = def_value -value + offset'
         // System.out.println(", combined disp. value: "+value);
         // Coverage part
-        double train_sum_w = m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING).getTotalWeight();
+        double train_sum_w = m_StatManager.getTrainSetStat(AttributeUseType.Clustering).getTotalWeight();
         double cov_par = m_StatManager.getSettings().getRules().getHeurCoveragePar();
         value *= Math.pow(n_pos / train_sum_w, cov_par);
         // System.out.println(" cov: "+n_pos+"/"+train_sum_w+", final value: "+value); //+" -> -"+value);

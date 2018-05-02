@@ -37,7 +37,6 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
-import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.model.test.NominalTest;
 import si.ijs.kt.clus.model.test.NumericTest;
 import si.ijs.kt.clus.model.test.SubsetTest;
@@ -358,11 +357,11 @@ public class ClusTreeReader {
 
 
     public void readTest(ClusAttrType attr, ClusNode node, MStringTokenizer tokens) throws IOException {
-        switch (attr.getTypeIndex()) {
-            case NumericAttrType.THIS_TYPE:
+        switch (attr.getAttributeType()) {
+            case Numeric:
                 readNumericTest(attr, node, tokens);
                 break;
-            case NominalAttrType.THIS_TYPE:
+            case Nominal:
                 readNominalTest(attr, node, tokens);
                 break;
             default:

@@ -26,6 +26,7 @@ import java.util.HashMap;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 
 public class ClusUtil {
@@ -127,7 +128,7 @@ public class ClusUtil {
 	
 	public static HashMap<String, Integer> getDiscriptiveAttributesIndices(ClusStatManager statmgr){
 		HashMap<String, Integer> indices = new HashMap<String, Integer>();
-		ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(ClusAttrType.ATTR_USE_DESCRIPTIVE, ClusAttrType.THIS_TYPE));
+		ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(AttributeUseType.Descriptive, null));
         if (statmgr.getSettings().getOutput().isOutputPythonModel()) {
             for (int ii = 0; ii < cat.length - 1; ii++){
                 indices.put(cat[ii].getName(), ii);

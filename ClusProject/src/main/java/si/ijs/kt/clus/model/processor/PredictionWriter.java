@@ -31,6 +31,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.io.ARFFFile;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.Status;
 import si.ijs.kt.clus.data.type.primitive.StringAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
@@ -197,14 +198,14 @@ public class PredictionWriter extends ClusModelProcessor {
         m_OutSchema.setSettings(schema.getSettings());
         for (int i = 0; i < nb; i++) {
             ClusAttrType at = schema.getAttrType(i);
-            if (at.getStatus() == ClusAttrType.STATUS_KEY) {
+            if (at.getStatus().equals(Status.Key)) {
                 m_Attrs.addElement(at);
                 m_OutSchema.addAttrType(at.cloneType());
             }
         }
         for (int i = 0; i < nb; i++) {
             ClusAttrType at = schema.getAttrType(i);
-            if (at.getStatus() == ClusAttrType.STATUS_TARGET) {
+            if (at.getStatus().equals(Status.Target)) {
                 m_Attrs.addElement(at);
                 at.updatePredictWriterSchema(m_OutSchema);
             }

@@ -263,7 +263,7 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //			
 //			// create error to evaluate the target attributes predictions in the rule sets
 //			ClusErrorList error = new ClusErrorList();
-//			error.addError(new RMSError(error, getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET)));
+//			error.addError(new RMSError(error, getSchema().getNumericAttrUse(AttributeUseType.Target)));
 //
 //			// only interested in the test error but using TRAIN structure so that we dont have to implement setTestSet(ClusData data) later in the evaluation
 //			ruleset.setError(error, ClusModel.TRAIN);
@@ -464,8 +464,8 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //			
 //			tmpRuleSet.m_Comment = new String(" (on entire training set)");
 //			
-//			uncoveredDataStatistic = statManager.getTrainSetStat(ClusAttrType.ATTR_USE_TARGET).cloneStat();
-//			uncoveredDataStatistic.copy(statManager.getTrainSetStat(ClusAttrType.ATTR_USE_TARGET));
+//			uncoveredDataStatistic = statManager.getTrainSetStat(AttributeUseType.Target).cloneStat();
+//			uncoveredDataStatistic.copy(statManager.getTrainSetStat(AttributeUseType.Target));
 //			uncoveredDataStatistic.calcMean();
 //			
 //			if (getSettings().getVerbose() > 1)

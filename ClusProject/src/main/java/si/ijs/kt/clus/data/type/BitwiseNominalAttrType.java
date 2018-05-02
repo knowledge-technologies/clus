@@ -47,8 +47,8 @@ public class BitwiseNominalAttrType extends NominalAttrType {
 
 
     @Override
-    public int getValueType() {
-        return VALUE_TYPE_BITWISEINT;
+    public ValueType getValueType() {
+        return ValueType.BitwiseInt;
     }
 
 

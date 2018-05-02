@@ -15,7 +15,7 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.ext.optiontree.DepthFirstInduceWithOptions;
@@ -24,9 +24,8 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
-import si.ijs.kt.clus.main.settings.section.SettingsRules.InitialRuleGeneratingMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.InitialRuleGeneratingMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -317,8 +316,8 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         // the default rule
         ClusStatistic defaultRule = createTotalTargetStat(uncoveredData);
 
-        defaultRule = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET).cloneStat();
-        defaultRule.copy(getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET));
+        defaultRule = getStatManager().getTrainSetStat(AttributeUseType.Target).cloneStat();
+        defaultRule.copy(getStatManager().getTrainSetStat(AttributeUseType.Target));
         defaultRule.calcMean();
         ruleSet.setTargetStat(defaultRule);
 
@@ -684,8 +683,8 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
     // // the default rule
     // ClusStatistic defaultRule = createTotalTargetStat(uncoveredData);
     //
-    // defaultRule = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET).cloneStat();
-    // defaultRule.copy(getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET));
+    // defaultRule = getStatManager().getTrainSetStat(AttributeUseType.Target).cloneStat();
+    // defaultRule.copy(getStatManager().getTrainSetStat(AttributeUseType.Target));
     // defaultRule.calcMean();
     // ruleSet.setTargetStat(defaultRule);
     //

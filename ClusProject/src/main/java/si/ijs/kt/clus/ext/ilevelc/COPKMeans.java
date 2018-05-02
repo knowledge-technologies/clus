@@ -31,7 +31,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.attweights.ClusNormalizedAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
@@ -80,7 +80,7 @@ public class COPKMeans {
         RowData new_data = new RowData(schema, comps.length);
         NominalAttrType classtype = (NominalAttrType) schema.getAttrType(schema.getNbAttributes() - 1);
         ClusStatManager mgr = getStatManager();
-        RegressionStat stat = (RegressionStat) mgr.getStatistic(ClusAttrType.ATTR_USE_CLUSTERING);
+        RegressionStat stat = (RegressionStat) mgr.getStatistic(AttributeUseType.Clustering);
         for (int i = 0; i < comps.length; i++) {
             ArrayList crcomp = comps[i];
             /* compute average of component */

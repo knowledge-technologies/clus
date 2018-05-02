@@ -5,7 +5,7 @@ import java.util.Random;
 
 import si.ijs.kt.clus.algo.ClusInductionAlgorithmType;
 import si.ijs.kt.clus.data.ClusData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.Accuracy;
@@ -52,8 +52,8 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             parent.addError(new HierClassWiseAccuracy(parent, mgr.getHier()));
             return parent;
         }
-        NumericAttrType[] num = mgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-        NominalAttrType[] nom = mgr.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        NumericAttrType[] num = mgr.getSchema().getNumericAttrUse(AttributeUseType.Target);
+        NominalAttrType[] nom = mgr.getSchema().getNominalAttrUse(AttributeUseType.Target);
         if (nom.length != 0) {
             parent.addError(new Accuracy(parent, nom));
         }

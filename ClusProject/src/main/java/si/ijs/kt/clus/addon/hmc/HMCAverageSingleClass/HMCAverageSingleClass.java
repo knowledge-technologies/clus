@@ -36,7 +36,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.io.ARFFFile;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.data.type.primitive.StringAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
@@ -194,7 +194,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                 String file = cargs.getOptionValue("loadPredictions");
                 RowData rw = ARFFFile.readArff(file);
                 ClusSchema schema = rw.getSchema();
-                NumericAttrType[] na = schema.getNumericAttrUse(0); // 0 = alle attributen
+                NumericAttrType[] na = schema.getNumericAttrUse(AttributeUseType.All);
 
                 // make mapping between classes
                 int[] mapping_classes = new int[schema.getNbAttributes()];
@@ -354,7 +354,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
 
 
     public WHTDStatistic createTargetStat() {
-        return (WHTDStatistic) m_Clus.getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
+        return (WHTDStatistic) m_Clus.getStatManager().createStatistic(AttributeUseType.Target);
     }
 
 
@@ -494,7 +494,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
 
     public void computeStats() throws ClusException, IOException, InterruptedException {
         ClusRun cr = m_Clus.partitionData();
-        RegressionStat stat = (RegressionStat) getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
+        RegressionStat stat = (RegressionStat) getStatManager().createStatistic(AttributeUseType.Target);
         RowData train = (RowData) cr.getTrainingSet();
         RowData valid = (RowData) cr.getPruneSet();
         RowData test = cr.getTestSet();

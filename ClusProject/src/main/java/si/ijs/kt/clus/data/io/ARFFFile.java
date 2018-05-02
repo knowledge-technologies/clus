@@ -34,6 +34,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.BitwiseNominalAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.Status;
 import si.ijs.kt.clus.data.type.complex.SetAttrType;
 import si.ijs.kt.clus.data.type.complex.TupleAttrType;
 import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
@@ -159,7 +160,7 @@ public class ARFFFile {
         else if (uptype.equals("KEY")) {
             StringAttrType key = new StringAttrType(aname);
             schema.addAttrType(key);
-            key.setStatus(ClusAttrType.STATUS_KEY);
+            key.setStatus(Status.Key);
         }
         else if (uptype.equals("TIMESERIES")) {
             TimeSeriesAttrType tsat = new TimeSeriesAttrType(aname);

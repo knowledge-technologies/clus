@@ -9,6 +9,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.io.ARFFFile;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.Status;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStatBase;
@@ -73,7 +74,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
         int nb = schema.getNbAttributes();
         for (int i = 0; i < nb; i++) {
             ClusAttrType at = schema.getAttrType(i);
-            if (at.getStatus() == ClusAttrType.STATUS_TARGET) {
+            if (at.getStatus().equals(Status.Target)) {
                 m_Writer.print("@ATTRIBUTE ");
                 m_Writer.print(StringUtils.printStr(at.getName() + "-pred", 65));
                 at.writeARFFType(m_Writer);
@@ -83,7 +84,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
 
         for (int j = 0; j < nb; j++) {
             ClusAttrType at = schema.getAttrType(j);
-            if (at.getStatus() == ClusAttrType.STATUS_TARGET) {
+            if (at.getStatus().equals(Status.Target)) {
                 m_Writer.print("@ATTRIBUTE ");
                 m_Writer.print(StringUtils.printStr(at.getName() + "-stdev", 65));
                 at.writeARFFType(m_Writer);
@@ -103,7 +104,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
         m_EnsPredSchema.setSettings(schema.getSettings());
         for (int i = 0; i < nb; i++) {
             ClusAttrType at = schema.getAttrType(i);
-            if (at.getStatus() == ClusAttrType.STATUS_KEY) {
+            if (at.getStatus().equals(Status.Key)) {
                 m_Attrs.addElement(at);
                 m_AttributeNames.add(at.getName());
                 m_EnsPredSchema.addAttrType(at.cloneType());
@@ -111,7 +112,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
         }
         for (int j = 0; j < nb; j++) {
             ClusAttrType at = schema.getAttrType(j);
-            if (at.getStatus() == ClusAttrType.STATUS_TARGET) {
+            if (at.getStatus().equals(Status.Target)) {
                 m_Attrs.addElement(at);
                 m_AttributeNames.add(at.getName());
                 m_EnsPredSchema.addAttrType(at.cloneType());

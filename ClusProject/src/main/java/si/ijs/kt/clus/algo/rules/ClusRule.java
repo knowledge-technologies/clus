@@ -33,6 +33,7 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
@@ -41,7 +42,6 @@ import si.ijs.kt.clus.ext.ilevelc.ILevelConstraint;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
@@ -290,7 +290,7 @@ public class ClusRule implements ClusModel, Serializable {
         boolean correctCoverage = false;
 
         if (m_TargetStat instanceof ClassificationStat) {
-            targetAttributes = m_StatManager.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            targetAttributes = m_StatManager.getSchema().getNominalAttrUse(AttributeUseType.Target);
 
             for (int i = 0; i < nbRows; i++) {
                 tuple = data.getTuple(i);
@@ -300,7 +300,7 @@ public class ClusRule implements ClusModel, Serializable {
 
                     int[] predictions = predictWeighted(tuple).getNominalPred();
                     int true_value;
-                    NominalAttrType[] targetAttrs = data.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+                    NominalAttrType[] targetAttrs = data.getSchema().getNominalAttrUse(AttributeUseType.Target);
                     for (int j = 0; j < targetAttributes.length; j++) {
                         true_value = targetAttrs[j].getNominal(tuple);
                         if (predictions[j] == true_value) {
@@ -311,7 +311,7 @@ public class ClusRule implements ClusModel, Serializable {
             }
         }
         else if (m_TargetStat instanceof RegressionStat) {
-            targetAttributes = m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            targetAttributes = m_StatManager.getSchema().getNumericAttrUse(AttributeUseType.Target);
 
             for (int i = 0; i < nbRows; i++) {
                 tuple = data.getTuple(i);
@@ -412,7 +412,7 @@ public class ClusRule implements ClusModel, Serializable {
                 // if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
                 if (m_TargetStat instanceof ClassificationStat) {
                     int[] predictions = predictWeighted(tuple).getNominalPred();
-                    NominalAttrType[] targetAttrs = data.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+                    NominalAttrType[] targetAttrs = data.getSchema().getNominalAttrUse(AttributeUseType.Target);
                     if (predictions.length > 1) { // Multiple target
                         double prop_true = 0;
                         for (int j = 0; j < predictions.length; j++) {
@@ -447,7 +447,7 @@ public class ClusRule implements ClusModel, Serializable {
                 }
                 else if (m_TargetStat instanceof RegressionStat) {
                     double[] predictions = predictWeighted(tuple).getNumericPred();
-                    NumericAttrType[] targetAttrs = data.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+                    NumericAttrType[] targetAttrs = data.getSchema().getNumericAttrUse(AttributeUseType.Target);
                     if (predictions.length > 1) { // Multiple target
                         double[] true_values = new double[predictions.length];
                         ClusStatistic stat = m_StatManager.getTrainSetStat();
@@ -873,7 +873,7 @@ public class ClusRule implements ClusModel, Serializable {
         int nb_tar = m_TargetStat.getNbAttributes();
         if (m_TargetStat instanceof ClassificationStat) {
             int[] true_counts = new int[nb_tar];
-            NominalAttrType[] targetAttrs = m_StatManager.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            NominalAttrType[] targetAttrs = m_StatManager.getSchema().getNominalAttrUse(AttributeUseType.Target);
             for (int i = 0; i < nb_rows; i++) {
                 DataTuple tuple = (DataTuple) m_Data.get(i);
                 int[] prediction = predictWeighted(tuple).getNominalPred();
@@ -907,7 +907,7 @@ public class ClusRule implements ClusModel, Serializable {
             double norm = getSettings().getRules().getVarBasedDispNormWeight(); // For RRMSE this * std dev is the
                                                                                 // normalization
             ClusStatistic stat = m_StatManager.getTrainSetStat();
-            NumericAttrType[] targetAttrs = m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            NumericAttrType[] targetAttrs = m_StatManager.getSchema().getNumericAttrUse(AttributeUseType.Target);
             int[] target_idx = new int[nb_tar];
             double[] variance = new double[nb_tar];
             double[] diff = new double[nb_tar];
@@ -971,7 +971,7 @@ public class ClusRule implements ClusModel, Serializable {
      *        0 for train set, 1 for test set
      */
     public void computeDispersion(int mode) {
-        CombStat combStat = (CombStat) m_StatManager.createStatistic(ClusAttrType.ATTR_USE_ALL);
+        CombStat combStat = (CombStat) m_StatManager.createStatistic(AttributeUseType.All);
         for (int i = 0; i < m_Data.size(); i++) {
             combStat.updateWeighted((DataTuple) m_Data.get(i), 0); // second parameter does nothing!
         }

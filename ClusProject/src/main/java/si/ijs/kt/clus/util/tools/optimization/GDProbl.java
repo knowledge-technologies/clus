@@ -33,7 +33,6 @@ import java.util.LinkedList;
 import java.util.ListIterator;
 
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDMTCombineGradient;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;

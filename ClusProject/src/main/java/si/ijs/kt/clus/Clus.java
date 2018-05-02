@@ -63,7 +63,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.DiskTupleIterator;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.TupleIterator;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
@@ -98,8 +98,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsGeneral.ResourceInfoLoad;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
 import si.ijs.kt.clus.main.settings.section.SettingsHMTR.HierarchyTypesHMTR;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLMethod;
-import si.ijs.kt.clus.main.settings.section.SettingsSSL;
-import si.ijs.kt.clus.main.settings.section.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.Heuristic;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
@@ -571,7 +570,7 @@ public class Clus implements CMDLineArgsProvider {
 
     public final void initializeAttributeWeights(ClusData data) throws IOException, ClusException {
         ClusStatManager mgr = getInduce().getStatManager();
-        ClusStatistic allStat = mgr.createStatistic(ClusAttrType.ATTR_USE_ALL);
+        ClusStatistic allStat = mgr.createStatistic(AttributeUseType.All);
         ClusStatistic[] stats = new ClusStatistic[1];
         stats[0] = allStat;
         /*
@@ -712,13 +711,13 @@ public class Clus implements CMDLineArgsProvider {
             if (m_Sett.getOutput().isWriteTestSetPredictions()) {
                 ClusModelInfo allmi = cr.getAllModelsMI();
                 String ts_name = m_Sett.getGeneric().getAppNameWithSuffix() + ".test.pred.arff";
-                allmi.addModelProcessor(ClusModelInfo.TEST_ERR, new PredictionWriter(ts_name, m_Sett, getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET)));
+                allmi.addModelProcessor(ClusModelInfo.TEST_ERR, new PredictionWriter(ts_name, m_Sett, getStatManager().createStatistic(AttributeUseType.Target)));
             }
         }
         if (m_Sett.getOutput().isWriteTrainSetPredictions()) {
             ClusModelInfo allmi = cr.getAllModelsMI();
             String tr_name = m_Sett.getGeneric().getAppNameWithSuffix() + ".train." + idx + ".pred.arff";
-            allmi.addModelProcessor(ClusModelInfo.TRAIN_ERR, new PredictionWriter(tr_name, m_Sett, getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET)));
+            allmi.addModelProcessor(ClusModelInfo.TRAIN_ERR, new PredictionWriter(tr_name, m_Sett, getStatManager().createStatistic(AttributeUseType.Target)));
         }
         if (m_Sett.getOutput().isWriteModelIDPredictions()) {
             ClusModelInfo mi = cr.addModelInfo(ClusModel.ORIGINAL);
@@ -795,9 +794,9 @@ public class Clus implements CMDLineArgsProvider {
         ClusSchema schema = data.getSchema();
         /* create error measure */
         ClusErrorList error = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-        NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
-        TimeSeriesAttrType[] ts = schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.Target);
+        NominalAttrType[] nom = schema.getNominalAttrUse(AttributeUseType.Target);
+        TimeSeriesAttrType[] ts = schema.getTimeSeriesAttrUse(AttributeUseType.Target);
         if (nom.length != 0) {
             error.addError(new Accuracy(error, nom));
         }
@@ -1123,7 +1122,7 @@ public class Clus implements CMDLineArgsProvider {
      */
     public static final RowData returnNormalizedData(RowData data) {
 
-        NumericAttrType[] numTypes = data.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] numTypes = data.getSchema().getNumericAttrUse(AttributeUseType.All);
         double[][] meanAndStdDev = calcStdDevsForTheSet(data, numTypes);
 
         // Variance and mean for numeric types.
@@ -1237,9 +1236,9 @@ public class Clus implements CMDLineArgsProvider {
      */
     public final void normalizeDataAndWriteToFile() throws IOException, ClusException {
         RowData data = m_Data;
-        CombStat cmb = (CombStat) getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_ALL);
+        CombStat cmb = (CombStat) getStatManager().getTrainSetStat(AttributeUseType.All);
         RegressionStat rstat = cmb.getRegressionStat();
-        NumericAttrType[] numtypes = getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
+        NumericAttrType[] numtypes = getSchema().getNumericAttrUse(AttributeUseType.All);
         int tcnt = 0;
         for (int j = 0; j < numtypes.length; j++) {
             NumericAttrType type = numtypes[j];
@@ -1477,7 +1476,7 @@ public class Clus implements CMDLineArgsProvider {
             fold = fold - 1;
             FileUtil.mkdir("folds");
             ClusOutput output = new ClusOutput(m_Schema, m_Sett);
-            ClusStatistic target = getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
+            ClusStatistic target = getStatManager().createStatistic(AttributeUseType.Target);
             String pw_fname = "folds/" + m_Sett.getGeneric().getAppName() + ".test.pred." + fold;
             PredictionWriter wrt = new PredictionWriter(pw_fname, m_Sett, target);
             wrt.globalInitialize(m_Schema);
@@ -1567,7 +1566,7 @@ public class Clus implements CMDLineArgsProvider {
         }
         PredictionWriter testPredWriter = null;
         if (getSettings().getOutput().isWriteTestSetPredictions()) {
-            ClusStatistic target = getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
+            ClusStatistic target = getStatManager().createStatistic(AttributeUseType.Target);
             testPredWriter = new PredictionWriter(m_Sett.getGeneric().getAppName() + ".test.pred.arff", m_Sett, target);
             testPredWriter.globalInitialize(m_Schema);
         }
@@ -1605,7 +1604,7 @@ public class Clus implements CMDLineArgsProvider {
     public final void baggingRun(ClusInductionAlgorithmType clss) throws Exception {
         ClusOutput output = new ClusOutput(m_Sett.getGeneric().getAppName() + ".bag", m_Schema, m_Sett);
         output.writeHeader();
-        ClusStatistic target = getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
+        ClusStatistic target = getStatManager().createStatistic(AttributeUseType.Target);
         PredictionWriter wrt = new PredictionWriter(m_Sett.getGeneric().getAppName() + ".test.pred.arff", m_Sett, target);
         wrt.globalInitialize(m_Schema);
         int nbsets = m_Sett.getExperimental().getBaggingSets();
@@ -1645,7 +1644,7 @@ public class Clus implements CMDLineArgsProvider {
 
         @Override
         public void initSchema(ClusSchema schema) throws ClusException, IOException {
-            if (getSettings().getTree().getHeuristic() == SettingsTree.HEURISTIC_SSPD) {
+            if (getSettings().getTree().getHeuristic().equals(Heuristic.SSPD)) {
                 schema.addAttrType(new IntegerAttrType("SSPD"));
             }
             schema.setTarget(new IntervalCollection(m_Sett.getAttribute().getTarget()));
@@ -1678,8 +1677,8 @@ public class Clus implements CMDLineArgsProvider {
         System.out.print(StringUtils.printStr(ClusFormat.TWO_AFTER_DOT.format(perc) + "%", 10));
         System.out.print(StringUtils.printInt(m_Schema.getNbNominalDescriptiveAttributes(), 9));
         System.out.print(StringUtils.printInt(m_Schema.getNbNumericDescriptiveAttributes(), 9));
-        System.out.print(StringUtils.printInt(m_Schema.getNbAllAttrUse(ClusAttrType.ATTR_USE_TARGET), 9));
-        NominalAttrType[] tarnom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        System.out.print(StringUtils.printInt(m_Schema.getNbAllAttrUse(AttributeUseType.Target), 9));
+        NominalAttrType[] tarnom = m_Schema.getNominalAttrUse(AttributeUseType.Target);
         if (tarnom != null && tarnom.length >= 1) {
             if (tarnom.length == 1)
                 System.out.println(tarnom[0].getNbValues());
@@ -1694,7 +1693,7 @@ public class Clus implements CMDLineArgsProvider {
         if (getStatManager().hasClusteringStat()) {
             ClusStatistic[] stats = new ClusStatistic[2];
             stats[0] = getStatManager().createClusteringStat();
-            stats[1] = getStatManager().createStatistic(ClusAttrType.ATTR_USE_ALL);
+            stats[1] = getStatManager().createStatistic(AttributeUseType.All);
             m_Data.calcTotalStats(stats);
             if (!m_Sett.getData().isNullTestFile()) {
                 System.out.println("Loading: " + m_Sett.getData().getTestFile());
@@ -1775,8 +1774,8 @@ public class Clus implements CMDLineArgsProvider {
         double b = clus.getSettings().getTree().getBandwidth();
         String ts_name = sett.getGeneric().getAppNameWithSuffix() + ".test.pred.arff";
         try {
-            // NumericAttrType[] t = clus.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-            NominalAttrType[] t = clus.m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            // NumericAttrType[] t = clus.m_Schema.getNumericAttrUse(AttributeUseType.Target);
+            NominalAttrType[] t = clus.m_Schema.getNominalAttrUse(AttributeUseType.Target);
             // System.out.println(t.length); // matejp commented this out
             if (t.length == 1) {
                 PredictionAnalyzer.calculateI(ts_name, ts_size, b);

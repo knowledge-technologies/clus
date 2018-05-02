@@ -27,7 +27,7 @@
 package si.ijs.kt.clus.heuristic.rules;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -56,7 +56,7 @@ public class ClusRuleHeuristicError extends ClusHeuristic {
         if (n_pos - SettingsTree.MINIMAL_WEIGHT < 1e-6) { return Double.NEGATIVE_INFINITY; }
         double pos_error = c_pstat.getError(m_ClusteringWeights);
         // Prefer rules that cover more examples
-        double global_sum_w = m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING).getTotalWeight();
+        double global_sum_w = m_StatManager.getTrainSetStat(AttributeUseType.Clustering).getTotalWeight();
         double heur_par = getSettings().getRules().getHeurCoveragePar();
         pos_error *= (1 + heur_par * global_sum_w / c_pstat.getTotalWeight());
 

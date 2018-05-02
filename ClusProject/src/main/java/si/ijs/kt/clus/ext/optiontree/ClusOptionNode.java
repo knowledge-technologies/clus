@@ -32,7 +32,7 @@ import com.google.gson.JsonObject;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.Global;
@@ -113,11 +113,11 @@ public class ClusOptionNode extends MyNode {
 
         switch (m_StatManager.getMode()) {
             case ClusStatManager.MODE_CLASSIFY:
-                outStat = new ClassificationStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                outStat = new ClassificationStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNominalAttrUse(AttributeUseType.Target));
                 break;
 
             case ClusStatManager.MODE_REGRESSION:
-                outStat = new RegressionStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                outStat = new RegressionStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNumericAttrUse(AttributeUseType.Target));
                 break;
 
             case ClusStatManager.MODE_HIERARCHICAL:
@@ -130,7 +130,7 @@ public class ClusOptionNode extends MyNode {
                 break;
 
             case ClusStatManager.MODE_PHYLO:
-                outStat = new GeneticDistanceStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                outStat = new GeneticDistanceStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNominalAttrUse(AttributeUseType.Target));
                 break;
 
             default:

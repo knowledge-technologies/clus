@@ -53,7 +53,7 @@ public class EuclideanDistanceFaster extends SearchDistance {
         // @todo: use this Euclidean distance only where all attributes are numerical
         return t1.euclDistance(t2);
         // double dist = 0;
-        // for( ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
+        // for( ClusAttrType attr : t1.getSchema().getAllAttrUse(AttributeUseType.Descriptive))
         // dist += Math.pow(this.calcDistanceOnAttr(t1, t2, attr),2);
         // return dist;
     }

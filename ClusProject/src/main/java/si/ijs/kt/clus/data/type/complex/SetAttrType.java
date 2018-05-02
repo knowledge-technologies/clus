@@ -39,9 +39,6 @@ public class SetAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static int THIS_TYPE = SET_ATR_TYPE;
-    public final static String THIS_TYPE_NAME = "Set";
-
     private String typeDefinition;
     private int numberOfPossibleValues;
 
@@ -84,20 +81,20 @@ public class SetAttrType extends ClusAttrType {
 
 
     @Override
-    public int getTypeIndex() {
-        return THIS_TYPE;
+    public AttributeType getAttributeType() {
+        return AttributeType.Set;
     }
 
 
     @Override
-    public int getValueType() {
-        return VALUE_TYPE_OBJECT;
+    public ValueType getValueType() {
+        return ValueType.Object;
     }
 
 
     @Override
     public String getTypeName() {
-        return THIS_TYPE_NAME;
+        return getAttributeType().getName();
     }
 
 

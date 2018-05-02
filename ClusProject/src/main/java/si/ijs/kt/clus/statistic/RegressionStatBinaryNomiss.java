@@ -27,7 +27,6 @@ import java.util.Arrays;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
@@ -213,19 +212,18 @@ public class RegressionStatBinaryNomiss extends RegressionStatBase implements Co
     /** The case where are examples have missing value for the i-th attribute, i.e., variance can not be calculated, so it is estimated */
 	public double getEstimatedSVarS(ClusAttributeWeights scale) {
 		switch (getSettings().getTree().getMissingClusteringAttrHandling()) {
-		case SettingsTree.MISSING_ATTRIBUTE_HANDLING_TRAINING:
-			if (m_Training == null)
-				return Double.NaN;
-			return m_Training.getSVarS(scale);
-		case SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT:
+		case EstimateFromParentNode:
 			if (m_ParentStat == null)
 				return Double.NaN; // the case if for attribute i all examples
 									// gave missing values (if there is no
 									// parent stat, it means we reached the root
 									// node)
 			return m_ParentStat.getSVarS(scale);
-		case SettingsTree.MISSING_ATTRIBUTE_HANDLING_NONE:
+
+		case Ignore:
 			return Double.NaN;
+		
+		case EstimateFromTrainingSet:
 		default:
 			if (m_Training == null)
 				return Double.NaN;

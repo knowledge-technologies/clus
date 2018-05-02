@@ -30,11 +30,10 @@ import java.io.PrintWriter;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationLinearTermNormalizeValues;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -75,7 +74,7 @@ public class ClusRuleLinearTerm extends ClusRule {
         C_statManager = statMgr;
 
         // Compute first the maximum and minimum for the training data
-        double[][] linearTermsMinAndMaxes = calcMinAndMaxForTheSet(data, C_statManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE));
+        double[][] linearTermsMinAndMaxes = calcMinAndMaxForTheSet(data, C_statManager.getSchema().getNumericAttrUse(AttributeUseType.Descriptive));
         C_minValues = linearTermsMinAndMaxes[0];
         C_maxValues = linearTermsMinAndMaxes[1];
 
@@ -87,7 +86,7 @@ public class ClusRuleLinearTerm extends ClusRule {
         // // If scaling is used, we now compute the scaling that linear terms are going to use
         // // After optimization this scaling may be moved to the weight.
         // double[][] meansAndStdDevs = calcStdDevsForTheSet(data,
-        // C_statManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE));
+        // C_statManager.getSchema().getNumericAttrUse(AttributeUseType.Descriptive));
         //
         // C_offSetValues = meansAndStdDevs[0];
         // C_stdDevValues = meansAndStdDevs[1];
@@ -95,7 +94,7 @@ public class ClusRuleLinearTerm extends ClusRule {
         // // We also scale the values according to target std values.
         // // Mean could also be used, but it can be handled with the first rule anyway.
         // double[][] targetMeansAndStdDevs = calcStdDevsForTheSet(data,
-        // C_statManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+        // C_statManager.getSchema().getNumericAttrUse(AttributeUseType.Target));
         // C_targetStdDevs = targetMeansAndStdDevs[1];
         // }
     }
@@ -201,7 +200,7 @@ public class ClusRuleLinearTerm extends ClusRule {
         // Change rule attributes
         m_TargetStat = statManager.createTargetStat();
 
-        int nbTargets = statManager.getStatistic(ClusAttrType.ATTR_USE_TARGET).getNbAttributes();
+        int nbTargets = statManager.getStatistic(AttributeUseType.Target).getNbAttributes();
         if (!(m_TargetStat instanceof RegressionStat))
             System.err.println("Error: Using linear terms is implemented for regression only.");
 
@@ -226,7 +225,7 @@ public class ClusRuleLinearTerm extends ClusRule {
         RegressionStat stat = ((RegressionStat) m_TargetStat);
 
         // double value = (C_statManager.getSchema().
-        // getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))[m_descriptiveDimForLinearTerm].getNumeric(tuple);
+        // getNumericAttrUse(AttributeUseType.Descriptive))[m_descriptiveDimForLinearTerm].getNumeric(tuple);
 
         double pred = attributeToLinTermPrediction(getSettings(), tuple, m_descriptiveDimForLinearTerm, m_targetDimForLinearTerm, stat.getNbAttributes(), m_scaleLinearTerm);
 
@@ -260,7 +259,7 @@ public class ClusRuleLinearTerm extends ClusRule {
      * I.e. makes all the needed transformations for the descriptive attribute value.
      */
     public static double attributeToLinTermPrediction(Settings sett, DataTuple tuple, int iDescrDim, int iTarDim, int nbOfTargets, boolean scaleLinearTerm) {
-        double descrValue = (C_statManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))[iDescrDim].getNumeric(tuple);
+        double descrValue = (C_statManager.getSchema().getNumericAttrUse(AttributeUseType.Descriptive))[iDescrDim].getNumeric(tuple);
 
         if (Double.isNaN(descrValue) || Double.isInfinite(descrValue)) {
             if (sett.getRules().getOptNormalizeLinearTerms().equals(OptimizationLinearTermNormalizeValues.YesAndConvert)) {
@@ -296,7 +295,7 @@ public class ClusRuleLinearTerm extends ClusRule {
             return true;
         }
 
-        double value = (C_statManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))[m_descriptiveDimForLinearTerm].getNumeric(tuple);
+        double value = (C_statManager.getSchema().getNumericAttrUse(AttributeUseType.Descriptive))[m_descriptiveDimForLinearTerm].getNumeric(tuple);
         return !Double.isNaN(value) && !Double.isInfinite(value);
     }
 

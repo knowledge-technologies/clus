@@ -32,7 +32,7 @@ package si.ijs.kt.clus.error;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
@@ -59,7 +59,7 @@ public class CorrelationMatrixComputer {
 
     public void computeNum(RowData data) {
         ClusSchema schema = data.getSchema();
-        NumericAttrType[] attrs = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        NumericAttrType[] attrs = schema.getNumericAttrUse(AttributeUseType.Target);
         int nb_num = attrs.length;
         m_MatrixPC = new PearsonCorrelation[nb_num][nb_num];
         NumericAttrType[] crtype = new NumericAttrType[1];
@@ -88,7 +88,7 @@ public class CorrelationMatrixComputer {
 
     public void computeNom(RowData data) {
         ClusSchema schema = data.getSchema();
-        NominalAttrType[] attrs = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        NominalAttrType[] attrs = schema.getNominalAttrUse(AttributeUseType.Target);
         int nb_nom = attrs.length;
         m_MatrixNC = new NominalCorrelation[nb_nom][nb_nom];
         // NominalAttrType[] crtype = new NominalAttrType[1];

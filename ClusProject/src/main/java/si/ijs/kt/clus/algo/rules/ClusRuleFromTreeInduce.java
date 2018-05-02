@@ -9,7 +9,7 @@ import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.main.ClusRun;
@@ -116,8 +116,8 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
             if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("All training examples covered - default rule on entire training set!");
             ruleSet.m_Comment = new String(" (on entire training set)");
-            left_over = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET).cloneStat();
-            left_over.copy(getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET));
+            left_over = getStatManager().getTrainSetStat(AttributeUseType.Target).cloneStat();
+            left_over.copy(getStatManager().getTrainSetStat(AttributeUseType.Target));
             left_over.calcMean();
             // left_over.setSumWeight(0);
             System.err.println(left_over.toString());

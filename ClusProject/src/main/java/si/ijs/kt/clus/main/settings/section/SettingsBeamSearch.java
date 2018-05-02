@@ -3,10 +3,11 @@ package si.ijs.kt.clus.main.settings.section;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.Heuristic;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominal;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -35,7 +36,7 @@ public class SettingsBeamSearch extends SettingsBase {
     protected INIFileInt m_BeamWidth;
     protected INIFileInt m_BeamBestN;
     protected INIFileInt m_TreeMaxSize;
-    protected INIFileNominal m_BeamAttrHeuristic;
+    protected INIFileEnum<Heuristic> m_BeamAttrHeuristic;
     protected INIFileBool m_FastBS;
     protected INIFileBool m_BeamPostPrune;
     protected INIFileBool m_BMRemoveEqualHeur;
@@ -95,7 +96,7 @@ public class SettingsBeamSearch extends SettingsBase {
     }
 
 
-    public int getBeamAttrHeuristic() {
+    public Heuristic getBeamAttrHeuristic() {
         return m_BeamAttrHeuristic.getValue();
     }
 
@@ -128,7 +129,7 @@ public class SettingsBeamSearch extends SettingsBase {
         m_SectionBeam.addNode(m_BeamWidth = new INIFileInt("BeamWidth", 10));
         m_SectionBeam.addNode(m_BeamBestN = new INIFileInt("BeamBestN", 5));
         m_SectionBeam.addNode(m_TreeMaxSize = new INIFileInt("MaxSize", -1));
-        m_SectionBeam.addNode(m_BeamAttrHeuristic = new INIFileNominal("AttributeHeuristic", SettingsTree.HEURISTICS, SettingsTree.HEURISTIC_DEFAULT));
+        m_SectionBeam.addNode(m_BeamAttrHeuristic = new INIFileEnum<>("AttributeHeuristic", Heuristic.Default));
         m_SectionBeam.addNode(m_FastBS = new INIFileBool("FastSearch", true));
         m_SectionBeam.addNode(m_BeamPostPrune = new INIFileBool("PostPrune", false));
         m_SectionBeam.addNode(m_BMRemoveEqualHeur = new INIFileBool("RemoveEqualHeur", false));

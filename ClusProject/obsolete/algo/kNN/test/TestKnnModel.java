@@ -191,28 +191,28 @@ public class TestKnnModel implements ClusModel, Serializable {
 
         // save prediction template
         // @todo : should all this be repalced with:
-        // statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        // statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
         if (m_ClusRun.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (cr.getStatManager().getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
-                m_StatTemplate = new ClassificationStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMLC().getMultiLabelThreshold());
+                m_StatTemplate = new ClassificationStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target), cr.getStatManager().getSettings().getMLC().getMultiLabelThreshold());
             }
             else {
-                m_StatTemplate = new ClassificationStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                m_StatTemplate = new ClassificationStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target));
             }
         }
         else if (cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION)
-            m_StatTemplate = new RegressionStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+            m_StatTemplate = new RegressionStat(cr.getStatManager().getSettings(), m_ClusRun.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(AttributeUseType.Target));
         else if (cr.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES) {
             // TimeSeriesAttrType attr =
-            // this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET)[0];
+            // this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(AttributeUseType.Target)[0];
             // statTemplate = new TimeSeriesStat(attxr, new DTWTimeSeriesDist(attr), 0 );
             System.out.println("-------------");
-            m_StatTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
+            m_StatTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
             System.out.println(m_StatTemplate.getDistanceName());
             System.out.println("----------------");
         }
         else if (cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            m_StatTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
+            m_StatTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
             System.out.println("----------------------");
             System.out.println(m_StatTemplate.getDistanceName());
             System.out.println(m_StatTemplate.getClass());

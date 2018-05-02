@@ -38,6 +38,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -659,7 +660,7 @@ public class ClassHierarchy implements Serializable {
             wrt.println(wis[i]);
         }
         wrt.close();
-        ClusAttrType[] keys = schema.getAllAttrUse(ClusAttrType.ATTR_USE_KEY);
+        ClusAttrType[] keys = schema.getAllAttrUse(AttributeUseType.Key);
         int sidx = getType().getArrayIndex();
         wrt = new PrintWriter(new FileWriter(name + ".targets"));
         for (int i = 0; i < data.getNbRows(); i++) {

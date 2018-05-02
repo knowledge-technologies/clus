@@ -33,6 +33,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.RowDataSortHelper;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusRun;
@@ -551,7 +552,7 @@ public class ILevelCInduce extends DepthFirstInduce {
     public ArrayList createConstraints(RowData data, int nbRows) {
         ArrayList constr = new ArrayList();
         ClusAttrType type = getSchema().getAttrType(getSchema().getNbAttributes() - 1);
-        if (type.getTypeIndex() == NominalAttrType.THIS_TYPE) {
+        if (type.getAttributeType().equals(AttributeType.Nominal)) {
             NominalAttrType cls = (NominalAttrType) type;
             m_MaxNbClasses = cls.getNbValues();
             int nbConstraints = getSettings().getILevelC().getILevelCNbRandomConstraints();

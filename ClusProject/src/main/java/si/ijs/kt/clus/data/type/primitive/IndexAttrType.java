@@ -37,8 +37,6 @@ public class IndexAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static int THIS_TYPE = INDEX_ATR_TYPE;
-    public final static String THIS_TYPE_NAME = "Index";
 
     protected int m_CrValue;
 
@@ -73,20 +71,20 @@ public class IndexAttrType extends ClusAttrType {
 
 
     @Override
-    public int getTypeIndex() {
-        return THIS_TYPE;
+    public AttributeType getAttributeType() {
+        return AttributeType.Index;
     }
 
 
     @Override
     public String getTypeName() {
-        return THIS_TYPE_NAME;
+        return getAttributeType().getName();
     }
 
 
     @Override
-    public int getValueType() {
-        return VALUE_TYPE_DOUBLE;
+    public ValueType getValueType() {
+        return ValueType.Double;
     }
 
 

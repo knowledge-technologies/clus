@@ -98,14 +98,14 @@ public class oTestKnnModel implements ClusModel, Serializable {
         // save prediction template
         if (cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY) {
             if (cr.getStatManager().getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
-                statTemplate = new ClassificationStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET), cr.getStatManager().getSettings().getMLC().getMultiLabelThreshold());
+                statTemplate = new ClassificationStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target), cr.getStatManager().getSettings().getMLC().getMultiLabelThreshold());
             }
             else {
-                statTemplate = new ClassificationStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                statTemplate = new ClassificationStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target));
             }
         }
         else if (cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION)
-            statTemplate = new RegressionStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+            statTemplate = new RegressionStat(cr.getStatManager().getSettings(), cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(AttributeUseType.Target));
     }
 
 

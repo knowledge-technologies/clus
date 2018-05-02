@@ -28,7 +28,6 @@ import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.heuristic.rules.ClusRuleHeuristicDispersion;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny;
 import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny.PhylogenySequence;
 import si.ijs.kt.clus.model.test.SubsetTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;

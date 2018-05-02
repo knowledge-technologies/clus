@@ -57,8 +57,8 @@ public class SparseNumericAttrType extends NumericAttrType {
 
 
     @Override
-    public int getValueType() {
-        return VALUE_TYPE_NONE;
+    public ValueType getValueType() {
+        return ValueType.None;
     }
 
 

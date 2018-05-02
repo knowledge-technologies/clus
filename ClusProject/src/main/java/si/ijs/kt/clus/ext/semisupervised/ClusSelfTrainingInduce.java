@@ -15,7 +15,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataPreprocs;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.error.Accuracy;
 import si.ijs.kt.clus.error.RMSError;
 import si.ijs.kt.clus.error.common.ClusError;
@@ -333,11 +333,11 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     }
 
                     if (m_Mode == ClusStatManager.MODE_REGRESSION) {
-                        error = new RMSError(errListOOB, this.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                        error = new RMSError(errListOOB, this.getSchema().getNumericAttrUse(AttributeUseType.Target));
                     }
 
                     if (m_Mode == ClusStatManager.MODE_CLASSIFY) {
-                        error = new Accuracy(errListOOB, this.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+                        error = new Accuracy(errListOOB, this.getSchema().getNominalAttrUse(AttributeUseType.Target));
                     }
 
                     errListOOB.addError(error);

@@ -34,7 +34,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
@@ -610,7 +610,7 @@ public class CombStat extends ClusStatistic {
         int att = -1;
         String att_name;
         String att_name2;
-        ClusStatistic targetStat = m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        ClusStatistic targetStat = m_StatManager.getStatistic(AttributeUseType.Target);
         if (targetStat instanceof ClassificationStat) {
             for (int i = 0; i < targetStat.getNbNominalAttributes(); i++) {
                 att_name = ((ClassificationStat) targetStat).getAttribute(i).getName();

@@ -66,7 +66,7 @@ public class KDNode {
         // m_Level = level;
         // try{
         // ClusAttrType[] tmp =
-        // m_Tree.getRun().getDataSet(ClusRun.TRAINSET).m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+        // m_Tree.getRun().getDataSet(ClusRun.TRAINSET).m_Schema.getAllAttrUse(AttributeUseType.Descriptive);
         // m_Attr = tmp[m_Level % tmp.length];
         // }catch( Exception e){ e.printStackTrace(); }
     }

@@ -50,9 +50,6 @@ public class ClassesAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static int THIS_TYPE = CLASSES_ATR_TYPE;
-    public final static String THIS_TYPE_NAME = "Classes";
-
     protected transient String[] m_Labels;
     protected transient StringTable m_Table = new StringTable();
     protected ClassHierarchy m_Hier;
@@ -103,20 +100,20 @@ public class ClassesAttrType extends ClusAttrType {
 
 
     @Override
-    public int getTypeIndex() {
-        return THIS_TYPE;
+    public AttributeType getAttributeType() {
+        return AttributeType.Classes;
     }
 
 
     @Override
     public String getTypeName() {
-        return THIS_TYPE_NAME;
+        return getAttributeType().getName();
     }
 
 
     @Override
-    public int getValueType() {
-        return VALUE_TYPE_OBJECT;
+    public ValueType getValueType() {
+        return ValueType.Object;
     }
 
 

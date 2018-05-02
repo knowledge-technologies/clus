@@ -26,7 +26,7 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.ClusSumError;
@@ -80,8 +80,8 @@ public class CartPruning extends PruneTree {
     public ClusErrorList createErrorMeasure(RowData data, ClusAttributeWeights weights) {
         ClusSchema schema = data.getSchema();
         ClusErrorList parent = new ClusErrorList();
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
-        NominalAttrType[] nom = schema.getNominalAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.Clustering);
+        NominalAttrType[] nom = schema.getNominalAttrUse(AttributeUseType.Clustering);
         if (nom.length != 0 && num.length != 0) {
             MSError numErr = new MSError(parent, num, weights);
             MSNominalError nomErr = new MSNominalError(parent, nom, weights);

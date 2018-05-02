@@ -34,7 +34,10 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.SpatialMatrixType;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.SpatialMeasure;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.FTest;
 
@@ -139,8 +142,8 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
             for (int j = 0; j < N; j++) {
                 DataTuple exi = data.getTuple(i);
                 DataTuple exj = data.getTuple(j);
-                ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
-                ClusAttrType yt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1];
+                ClusAttrType xt = schema.getNumericAttrUse(AttributeUseType.GIS)[0];
+                ClusAttrType yt = schema.getNumericAttrUse(AttributeUseType.GIS)[1];
                 double xi = xt.getNumeric(exi);
                 double yi = yt.getNumeric(exi);
                 double xj = xt.getNumeric(exj);
@@ -174,8 +177,8 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
 
                 DataTuple exi = data.getTuple(i); //example i
                 DataTuple exj = data.getTuple(j); //example j               
-                ClusAttrType xti = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[0];
-                ClusAttrType yti = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_GIS)[1];
+                ClusAttrType xti = schema.getNumericAttrUse(AttributeUseType.GIS)[0];
+                ClusAttrType yti = schema.getNumericAttrUse(AttributeUseType.GIS)[1];
                 double xii = xti.getNumeric(exi);
                 double yii = yti.getNumeric(exi);
                 double xji = xti.getNumeric(exj);
@@ -187,15 +190,15 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
                     d = Math.sqrt((xii - xji) * (xii - xji) + (yii - yji) * (yii - yji));
                 /*
                  * distance over descriptive and all atributes
-                 * NumericAttrType[] arr = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+                 * NumericAttrType[] arr = schema.getNumericAttrUse(AttributeUseType.Descriptive);
                  * int countA=arr.length; double dd=0;double d=0;
                  * double xi[] = new double[countA];double xj[] = new double[countA];
                  * for (int ii = 0; ii < countA; ii++) {
-                 * ClusAttrType xt = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)[ii];
+                 * ClusAttrType xt = schema.getNumericAttrUse(AttributeUseType.Descriptive)[ii];
                  * xi[ii] = xt.getNumeric(exi); xj[ii] = xt.getNumeric(exj);
                  * dd += (xi[ii]-xj[ii])*(xi[ii]-xj[ii]); //euc over all atrb}
                  */
-                int spatialMatrix = schema.getSettings().getTree().getSpatialMatrix();
+                SpatialMatrixType spatialMatrix = schema.getSettings().getTree().getSpatialMatrix();
                 if (d >= b)
                     w[i][j] = 0;
                 else {
@@ -203,15 +206,15 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
                         w[i][j] = 1;
                     else {
                         switch (spatialMatrix) {
-                            case 0:
+                            case Binary:
                                 w[i][j] = 1; //0;   break;  //binary 
-                            case 1:
+                            case Euclidean:
                                 w[i][j] = 1 - d / b;
                                 break; //euclidian
-                            case 2:
+                            case Modified:
                                 w[i][j] = (1 - (d * d) / (b * b)) * (1 - (d * d) / (b * b));
                                 break; //modified
-                            case 3:
+                            case Gaussian:
                                 w[i][j] = Math.exp(-(d * d) / (b * b));
                                 break; //gausian
                             default:
@@ -275,7 +278,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
             double b = bandwidth * maxdist;
             if (maxOnMinDistLine != Double.POSITIVE_INFINITY && b < maxOnMinDistLine)
                 b = maxOnMinDistLine;
-            int spatialMatrix = schema.getSettings().getTree().getSpatialMatrix();
+            SpatialMatrixType spatialMatrix = schema.getSettings().getTree().getSpatialMatrix();
             for (Map.Entry<String, Double> entry : m_distancesN.entrySet()) {
                 String i = entry.getKey();
                 double d = entry.getValue();
@@ -286,16 +289,16 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
                         w = 1;
                     else {
                         switch (spatialMatrix) {
-                            case 0:
+                            case Binary:
                                 w = 0;
                                 break; //binary 
-                            case 1:
+                            case Euclidean:
                                 w = 1 - d / b;
                                 break; //euclidian
-                            case 2:
+                            case Modified:
                                 w = (1 - (d * d) / (b * b)) * (1 - (d * d) / (b * b));
                                 break; //modified
-                            case 3:
+                            case Gaussian:
                                 w = Math.exp(-(d * d) / (b * b));
                                 break; //gausian
                             default:
@@ -317,15 +320,15 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
                 String ii = st.nextToken();
                 String jj = st.nextToken();
                 double d = Double.parseDouble(st.nextToken());
-                int spatialMatrix = schema.getSettings().getTree().getSpatialMatrix();
+                SpatialMatrixType spatialMatrix = schema.getSettings().getTree().getSpatialMatrix();
                 switch (spatialMatrix) {
-                    case 0:
+                    case Binary:
                         if (d == 1)
                             w = 1;
                         else
                             w = 0;
                         break; //binary 
-                    case 1:
+                    case Euclidean:
                         if (d == 1)
                             w = 0.01;
                         else
@@ -352,116 +355,96 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
 
         double ss_pos = 0; //pstat.calcItotal();             
         ClusSchema schema = m_Data.getSchema();
-        int SpatialMeasure = schema.getSettings().getTree().getSpatialMeasure();
-        if (!m_WarningGiven && SpatialMeasure != 0) {
+        SpatialMeasure sm = schema.getSettings().getTree().getSpatialMeasure();
+        if (!m_WarningGiven && !sm.equals(SpatialMeasure.GlobalMoran)) {
             m_WarningGiven = true;
             System.err.println("Warning: your spatial measure was not tested. Be careful.");
         }
-        switch (SpatialMeasure) {
-            case 0:
+        switch (sm) {
+            case GlobalMoran:
                 ss_pos = pstat.calcItotal(permutation);
                 break; //"Global Moran"
-            case 1:
+            case GlobalGeary:
                 ss_pos = pstat.calcGtotal(permutation);
                 break; //"Global Geary"
-            case 2:
+            case GlobalGetis:
                 ss_pos = pstat.calcGetisTotal(permutation);
                 break;//"Global Getis"
-            case 3:
+            case LocalMoran:
                 ss_pos = pstat.calcLISAtotal(permutation);
                 break; //"Local Moran"
-            case 4:
+            case LocalGeary:
                 ss_pos = pstat.calcGLocalTotal(permutation);
                 break; //"Local Geary"
-            case 5:
+            case LocalGetis:
                 ss_pos = pstat.calcLocalGetisTotal(permutation);
                 break;//"Local Getis"
-            case 6:
+            case StandardizedGetis:
                 ss_pos = pstat.calcGETIStotal(permutation);
                 break;//Local Standardized Getis
-            case 7:
+            case EquvalentI:
                 ss_pos = pstat.calcEquvalentItotal(permutation);
                 break;//EquvalentI 
-            case 8:
+            case IwithNeighbours:
                 ss_pos = pstat.calcIwithNeighbourstotal(permutation);
                 break; //Global Moran with neigh
-            case 9:
+            case EquvalentIwithNeighbours:
                 ss_pos = pstat.calcEquvalentIwithNeighbourstotal(permutation);
                 break; // EquvalentI Global Moran with neigh
-            case 10:
+            case GlobalMoranDistance:
                 ss_pos = pstat.calcItotalD(permutation);
                 break; //"Global Moran with a separate distance file"
-            case 11:
+            case GlobalGearyDistance:
                 ss_pos = pstat.calcGtotalD(permutation);
                 break; //"Global Geary with a separate distance file"
-            case 12:
+            case CI:
                 ss_pos = pstat.calcCItotal(permutation);
                 break; // Connectivity Index (CI) for Graph Data
-            case 13:
+            case MultiVariateMoranI:
                 ss_pos = pstat.calcMutivariateItotal(permutation);
                 break; //Cross Moran (Wartenberg, 1985)
-            case 14:
+            case CwithNeighbours:
                 ss_pos = pstat.calcCwithNeighbourstotal(permutation);
                 break; //Global Geary with neigh
-            case 15:
+            case Lee:
                 ss_pos = pstat.calcBivariateLee(permutation);
                 break; //Bivariate Lee's measure: integration of Moran&Pearson coef. (Lee, 2001)
-            case 16:
+            case MultiIwithNeighbours:
                 ss_pos = pstat.calcMultiIwithNeighbours(permutation);
                 break; //Cross Moran (Wartenberg, 1985) with neigh
-            case 17:
+            case CIwithNeighbours:
                 ss_pos = pstat.calcCIwithNeighbours(permutation);
                 break; // Connectivity Index (CI) for Graph Data with neigh
-            case 18:
+            case LeewithNeighbours:
                 ss_pos = pstat.calcLeewithNeighbours(permutation);
                 break; //Bivariate Lee's measure with neigh
-            case 19:
+            case Pearson:
                 ss_pos = pstat.calcPtotal(permutation);
                 break; //Global Moran without weights i.e Pearson c. coef.
-            case 20:
+            case CIDistance:
                 ss_pos = pstat.calcCItotalD(permutation);
                 break; // Connectivity Index (CI) for Graph Data with a separate distance file
-            case 21:
+            case DH:
                 ss_pos = pstat.calcDHtotalD(permutation);
                 break; // Dyadicity and Heterophilicity for Graph Data with a separate distance file
-            case 22:
+            case EquvalentIDistance:
                 ss_pos = pstat.calcEquvalentIDistance(permutation);
                 break; // EquvalentI with a separate distance file
-            case 23:
+            case PearsonDistance:
                 ss_pos = pstat.calcPDistance(permutation);
                 break; //Pearson c. coef. with a separate distance file
-            case 24:
+            case EquvalentG:
                 ss_pos = pstat.calcEquvalentGtotal(permutation);
                 break; //EquvalentG, (Global Geary)
-            case 25:
+            case EquvalentGDistance:
                 ss_pos = pstat.calcEquvalentGDistance(permutation);
                 break; //EquvalentGDistance, EquvalentG with a separate distance file
-
-            default:
-                SpatialMeasure = 0;
-                break;
+            case EquvalentPDistance:
+            	ss_pos = pstat.calcEquvalentPDistance(permutation);
+            	break;
         }
 
         return ss_pos;
-        /*
-         * Adds Ftest on calcI. We need t_stat!!!
-         * if (Settings.FTEST_LEVEL == 0) return ss_pos;
-         * int n_2 = (int)Math.floor(t_stat.getTotalWeight() - 2.0 + 0.5);
-         * if (n_2 <= 0) {
-         * return 0;
-         * } else {
-         * if (FTest.ftest(Settings.FTEST_LEVEL, t_stat.getTotalWeight(), ss_pos, n_2)) {
-         * return (t_stat.getTotalWeight() - ss_pos);
-         * } else {
-         * return 0;
-         * }
-         * }
-         */
-        /*
-         * }
-         * catch(Exception e){e.printStackTrace();}
-         * return 0.0;
-         */
     }
 
     // end daniela

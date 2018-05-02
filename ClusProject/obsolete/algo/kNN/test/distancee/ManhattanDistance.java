@@ -36,7 +36,7 @@ public class ManhattanDistance extends SearchDistance {
 
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
-        for (ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
+        for (ClusAttrType attr : t1.getSchema().getAllAttrUse(AttributeUseType.Descriptive))
             dist += calcDistanceOnAttr(t1, t2, attr);
         return dist;
     }

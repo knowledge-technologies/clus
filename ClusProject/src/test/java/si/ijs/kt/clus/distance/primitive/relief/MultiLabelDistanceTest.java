@@ -14,6 +14,7 @@ import si.ijs.kt.clus.TestHelper;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.ext.featureRanking.Fimp;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief;
 import si.ijs.kt.clus.util.tuple.Triple;
@@ -25,7 +26,7 @@ public class MultiLabelDistanceTest extends BaseTestCase {
     double precision = 1E-12;
     String sFile = m_DataFolder + "/mlcDistanceData/mlcDistance.s";
     RowData data = TestHelper.getRowData(sFile);
-    ClusAttrType[] attrs = data.m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
+    ClusAttrType[] attrs = data.m_Schema.getAllAttrUse(AttributeUseType.Target);
     double[] labelProbabilities =
         loadLabelProbabilities(m_DataFolder + "/mlcDistanceData/mlcDistance.prob");
 

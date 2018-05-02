@@ -37,6 +37,7 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
@@ -46,7 +47,6 @@ import si.ijs.kt.clus.heuristic.rules.ClusRuleHeuristicDispersion;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationLinearTermNormalizeValues;
@@ -320,8 +320,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         else {
             System.out.println("All training examples covered - default rule on entire training set!");
             rset.m_Comment = new String(" (on entire training set)");
-            left_over = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET).cloneStat();
-            left_over.copy(getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET));
+            left_over = getStatManager().getTrainSetStat(AttributeUseType.Target).cloneStat();
+            left_over.copy(getStatManager().getTrainSetStat(AttributeUseType.Target));
             left_over.calcMean();
             // left_over.setSumWeight(0);
             System.err.println(left_over.toString());
@@ -383,8 +383,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         else {
             System.out.println("All training examples covered - default rule on entire training set!");
             rset.m_Comment = new String(" (on entire training set)");
-            left_over = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET).cloneStat();
-            left_over.copy(getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_TARGET));
+            left_over = getStatManager().getTrainSetStat(AttributeUseType.Target).cloneStat();
+            left_over.copy(getStatManager().getTrainSetStat(AttributeUseType.Target));
             left_over.calcMean();
             // left_over.setSumWeight(0);
             System.err.println(left_over.toString());
@@ -1243,7 +1243,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         // Set the defaults for heuristic
         RowData trainData = (RowData) cr.getTrainingSet();
         getStatManager().getHeuristic().setTrainData(trainData);
-        ClusStatistic trainStat = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING);
+        ClusStatistic trainStat = getStatManager().getTrainSetStat(AttributeUseType.Clustering);
         double value = trainStat.getDispersion(getStatManager().getClusteringWeights(), trainData);
         getStatManager().getHeuristic().setTrainDataHeurValue(value);
         // Induce the model

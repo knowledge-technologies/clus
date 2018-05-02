@@ -37,9 +37,6 @@ public class StringAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static int THIS_TYPE = STRING_ATR_TYPE;
-    public final static String THIS_TYPE_NAME = "String";
-
 
     public StringAttrType(String name) {
         super(name);
@@ -55,20 +52,20 @@ public class StringAttrType extends ClusAttrType {
 
 
     @Override
-    public int getTypeIndex() {
-        return THIS_TYPE;
+    public AttributeType getAttributeType() {
+        return AttributeType.String;
     }
 
 
     @Override
     public String getTypeName() {
-        return THIS_TYPE_NAME;
+        return getAttributeType().getName();
     }
 
 
     @Override
-    public int getValueType() {
-        return VALUE_TYPE_OBJECT;
+    public ValueType getValueType() {
+        return ValueType.Object;
     }
 
 

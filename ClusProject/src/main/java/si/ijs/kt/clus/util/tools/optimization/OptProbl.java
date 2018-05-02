@@ -38,10 +38,9 @@ import java.util.Random;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.algo.rules.RuleNormalization;
 import si.ijs.kt.clus.data.rows.DataTuple;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationLossFunction;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationNormalization;
@@ -228,8 +227,8 @@ public class OptProbl {
         m_saveMemoryLinears = getSettings().getRules().getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory);
 
         if (m_saveMemoryLinears) {
-            int nbOfTargetAtts = m_StatMgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET).length;
-            int nbOfDescrAtts = m_StatMgr.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE).length;
+            int nbOfTargetAtts = m_StatMgr.getSchema().getNumericAttrUse(AttributeUseType.Target).length;
+            int nbOfDescrAtts = m_StatMgr.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
             m_NumVar = (optInfo.m_baseFuncPredictions).length + (optInfo.m_rulePredictions).length + nbOfTargetAtts * nbOfDescrAtts;
         }
         else
@@ -902,7 +901,7 @@ public class OptProbl {
 
 
     final protected ClusStatistic getTargetStat() {
-        return m_StatMgr.getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        return m_StatMgr.getStatistic(AttributeUseType.Target);
     }
 
 

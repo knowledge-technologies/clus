@@ -11,6 +11,8 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
+import si.ijs.kt.clus.data.type.ClusAttrType.Status;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusRun;
@@ -79,8 +81,8 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
         double bestError = 0;
         //ClusRun myClusRun = new ClusRun(cr);
 
-        NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-        NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        NumericAttrType[] num = m_Schema.getNumericAttrUse(AttributeUseType.Target);
+        NominalAttrType[] nom = m_Schema.getNominalAttrUse(AttributeUseType.Target);
         if (nom.length != 0) {
 			// FIXME: IMPORTANT!!! Tomaz, this is dangerous, also in classification we maybe want to
 			// optimize lowerisBetter=true (e.g., Hamming loss), this needs to be made modular, i.e.,
@@ -92,7 +94,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
             bestError = Double.MAX_VALUE;
         }
 
-        ClusAttrType[] clustering = m_Schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
+        ClusAttrType[] clustering = m_Schema.getAllAttrUse(AttributeUseType.Clustering);
         
         double bestWeight = 0;
         
@@ -124,7 +126,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 	                }
 	
 	                // Initialize normalization weights
-	                foldRun.getStatManager().initNormalizationWeights(foldRun.getStatManager().createStatistic(ClusAttrType.ATTR_USE_ALL), foldRun.getTrainingSet());
+	                foldRun.getStatManager().initNormalizationWeights(foldRun.getStatManager().createStatistic(AttributeUseType.All), foldRun.getTrainingSet());
 	
 					// FIXME: not sure if for w=1, i.e., supervised learning, we
 					// need to change Clustering=Target? If it stays as
@@ -192,7 +194,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
         //learn the model with the best parameters
         //put the best weights into ClusRun 
         // myClusRun.setClusteringWeights(clusteringWeights);
-        cr.getStatManager().initNormalizationWeights(cr.getStatManager().createStatistic(ClusAttrType.ATTR_USE_ALL), cr.getTrainingSet());
+        cr.getStatManager().initNormalizationWeights(cr.getStatManager().createStatistic(AttributeUseType.All), cr.getTrainingSet());
         
         //now repeat the exercise from the above, but with the best parameter 
         //and re-initialize weights with normalization weights for the whole training set
@@ -220,7 +222,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 			for (int i = 0; i < nbClustering; i++) {
 				attrType = clustering[i];
 				
-				if(attrType.getStatus() == ClusAttrType.STATUS_TARGET){ //Hierarchy
+				if(attrType.getStatus().equals(Status.Target)){ //Hierarchy
 					sslweight = weight * ( nbClustering / nbTarget);
 					clusteringWeights.setWeight(i, 0); //dummy attribute, represents hierarchy
 					for(int j = 1; j <= nbHierClasses; j++) {
@@ -236,7 +238,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 	        //update w parameter values
 	        for (int i = 0; i < nbClustering; i++) {
 	            attrType = clustering[i];
-	            sslweight = attrType.getStatus() == ClusAttrType.STATUS_TARGET ? weight * ( nbClustering / nbTarget) : (1-weight) * (nbClustering / nbOther);
+	            sslweight = attrType.getStatus().equals(Status.Target) ? weight * ( nbClustering / nbTarget) : (1-weight) * (nbClustering / nbOther);
 	            clusteringWeights.setWeight(attrType, sslweight);
 	        }	
 	    }	

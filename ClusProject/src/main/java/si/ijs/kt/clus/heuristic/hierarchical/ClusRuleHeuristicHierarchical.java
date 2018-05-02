@@ -2,7 +2,7 @@
 package si.ijs.kt.clus.heuristic.hierarchical;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -39,7 +39,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
 
         // WHTDStatistic tstat = (WHTDStatistic) m_StatManager.getTrainSetStat(); // Geeft classcastexception (is
         // blijkbaar een CombStat)
-        // WHTDStatistic tstat = (WHTDStatistic) m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET); // (is altijd
+        // WHTDStatistic tstat = (WHTDStatistic) m_StatManager.getStatistic(AttributeUseType.Target); // (is altijd
         // 0...)
 
         // WHTDStatistic tstat = (WHTDStatistic) m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING);
@@ -52,7 +52,7 @@ public class ClusRuleHeuristicHierarchical extends ClusHeuristic {
         // System.out.println("Difference made by rule: " + totalValue + " - " + ruleValue);
 
         // Coverage(r) part
-        double train_sum_w = m_StatManager.getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING).getTotalWeight();
+        double train_sum_w = m_StatManager.getTrainSetStat(AttributeUseType.Clustering).getTotalWeight();
         double coverage = (n_pos / train_sum_w);
         double cov_par = m_StatManager.getSettings().getRules().getHeurCoveragePar();
         coverage = Math.pow(coverage, cov_par);

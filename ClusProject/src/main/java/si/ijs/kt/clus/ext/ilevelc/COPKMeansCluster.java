@@ -26,7 +26,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -45,7 +45,7 @@ public class COPKMeansCluster implements Serializable {
     public COPKMeansCluster(DataTuple tuple, ClusStatManager mgr) {
         m_Mgr = mgr;
         m_Data.add(tuple);
-        m_Center = (ILevelCStatistic) mgr.getStatistic(ClusAttrType.ATTR_USE_CLUSTERING).cloneStat();
+        m_Center = (ILevelCStatistic) mgr.getStatistic(AttributeUseType.Clustering).cloneStat();
         updateCenter();
     }
 

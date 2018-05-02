@@ -35,6 +35,7 @@ import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicCompatibility;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.MissingClusteringAttributeHandlingType;
 import si.ijs.kt.clus.model.test.InverseNumericTest;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.NumericTest;
@@ -543,7 +544,7 @@ public class CurrentBestTestAndHeuristic {
 
 
     public final double calcHeuristic(ClusStatistic tot, ClusStatistic pos) throws ClusException {
-        if (m_Sett.getTree().getMissingClusteringAttrHandling() == SettingsTree.MISSING_ATTRIBUTE_HANDLING_PARENT) {
+        if (m_Sett.getTree().getMissingClusteringAttrHandling().equals(MissingClusteringAttributeHandlingType.EstimateFromParentNode )) {
             tot.setParentStat(m_TotStat.getParentStat());
             pos.setParentStat(m_PosStat.getParentStat());
         }

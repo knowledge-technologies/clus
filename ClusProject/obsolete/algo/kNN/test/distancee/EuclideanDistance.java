@@ -50,7 +50,7 @@ public class EuclideanDistance extends SearchDistance {
      */
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
-        for (ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE))
+        for (ClusAttrType attr : t1.getSchema().getAllAttrUse(AttributeUseType.Descriptive))
             dist += Math.pow(this.calcDistanceOnAttr(t1, t2, attr), 2);
         return dist;
     }

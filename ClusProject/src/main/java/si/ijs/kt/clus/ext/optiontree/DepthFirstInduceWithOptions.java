@@ -35,7 +35,6 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
-import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.main.settings.section.SettingsTree.TreeOptimizeValues;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;

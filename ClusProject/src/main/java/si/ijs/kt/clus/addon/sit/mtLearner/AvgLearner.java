@@ -5,7 +5,7 @@ import si.ijs.kt.clus.addon.sit.TargetSet;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 
 
@@ -29,8 +29,8 @@ public class AvgLearner extends MTLearnerImpl {
     @Override
     protected RowData[] LearnModel(TargetSet targets, RowData train, RowData test) {
         ClusSchema schema = m_Data.getSchema();
-        // schema.getNbNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-        NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        // schema.getNbNumericAttrUse(AttributeUseType.Target);
+        NumericAttrType[] num = schema.getNumericAttrUse(AttributeUseType.Target);
 
         DataTuple result = new DataTuple(schema);// the results have the same schema, non-targets may be null
 

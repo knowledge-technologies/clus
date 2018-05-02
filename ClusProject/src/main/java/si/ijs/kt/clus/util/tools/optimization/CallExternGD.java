@@ -4,7 +4,7 @@ package si.ijs.kt.clus.util.tools.optimization;
 import java.util.ArrayList;
 
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
@@ -40,14 +40,14 @@ public class CallExternGD {
 
         SettingsRules set = clusStatManager.getSettings().getRules();
 
-        int nbTargs = (clusStatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET)).getNbAttributes();
+        int nbTargs = (clusStatManager.getStatistic(AttributeUseType.Target)).getNbAttributes();
         // Parameter data matrix dimension. Do we give descriptive dims also?
         int nbDescrForDataMatrix = 0;
         int nbRows = optInfo.m_trueValues.length;
 
         // if (rules.m_implicitLinearTerms != null) {
         if (set.getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory)) {
-            nbDescrForDataMatrix = clusStatManager.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE).length;
+            nbDescrForDataMatrix = clusStatManager.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
             nbOfWeights += nbDescrForDataMatrix * nbTargs;
         }
 

@@ -5,6 +5,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 
 
 public class CriterionBasedSelection {
@@ -19,7 +20,7 @@ public class CriterionBasedSelection {
 
 
     public static final void clearMissingFlagTargetAttrs(ClusSchema schema) {
-        ClusAttrType[] targets = schema.getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        ClusAttrType[] targets = schema.getAllAttrUse(AttributeUseType.Target);
         for (int i = 0; i < targets.length; i++) {
             targets[i].setNbMissing(0);
         }
@@ -28,7 +29,7 @@ public class CriterionBasedSelection {
 
     public static final RowData removeMissingTarget(RowData data) {
         int nbrows = data.getNbRows();
-        ClusAttrType[] targets = data.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_TARGET);
+        ClusAttrType[] targets = data.getSchema().getAllAttrUse(AttributeUseType.Target);
         BitMapSelection sel = new BitMapSelection(nbrows);
         for (int i = 0; i < nbrows; i++) {
             DataTuple tuple = data.getTuple(i);

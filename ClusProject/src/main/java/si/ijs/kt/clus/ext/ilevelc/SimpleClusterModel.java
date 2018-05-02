@@ -26,7 +26,7 @@ import java.io.PrintWriter;
 
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.DataTuple;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -51,7 +51,7 @@ public class SimpleClusterModel extends ClusNode {
     public ClusStatistic predictWeighted(DataTuple tuple) {
         int idx = tuple.getIndex();
         int cl = m_Assign[idx];
-        ILevelCStatistic stat = (ILevelCStatistic) m_Manager.getStatistic(ClusAttrType.ATTR_USE_CLUSTERING).cloneStat();
+        ILevelCStatistic stat = (ILevelCStatistic) m_Manager.getStatistic(AttributeUseType.Clustering).cloneStat();
         stat.setClusterID(cl);
         stat.calcMean();
         return stat;

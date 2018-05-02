@@ -44,6 +44,8 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.MemoryTupleIterator;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
@@ -56,7 +58,6 @@ import si.ijs.kt.clus.heuristic.rules.ClusRuleHeuristicDispersion;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.RuleAddingMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
@@ -492,7 +493,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
     /*
      * try {
      * // Generate pathseeker input
-     * ClusStatistic tar_stat = rset.m_StatManager.getStatistic(ClusAttrType.ATTR_USE_TARGET);
+     * ClusStatistic tar_stat = rset.m_StatManager.getStatistic(AttributeUseType.Target);
      * int nb_tar = tar_stat.getNbNominalAttributes();
      * boolean classification = false;
      * if (rset.m_TargetStat instanceof ClassificationStat) {
@@ -746,7 +747,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             String fname = getSettings().getILevelC().getILevelCFile();
             m_Constraints = ILevelConstraint.loadConstraints(fname, points);
             ClusAttrType type = getSchema().getAttrType(getSchema().getNbAttributes() - 1);
-            if (type.getTypeIndex() == NominalAttrType.THIS_TYPE) {
+            if (type.getAttributeType().equals(AttributeType.Nominal)) {
                 NominalAttrType cls = (NominalAttrType) type;
                 m_MaxNbClasses = cls.getNbValues();
             }
@@ -762,7 +763,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         // end import
         m_Scale = (ClusNormalizedAttributeWeights) getStatManager().getClusteringWeights();
         m_Data = data;
-        ClusStatistic allStat = getStatManager().createStatistic(ClusAttrType.ATTR_USE_CLUSTERING);
+        ClusStatistic allStat = getStatManager().createStatistic(AttributeUseType.Descriptive);
         data.calcTotalStat(allStat);
         m_Global_Var = allStat.getSVarS(m_Scale);
         System.out.println("Global Variance: " + m_Global_Var);
@@ -1201,7 +1202,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
     public ArrayList<ILevelConstraint> createConstraints(RowData data, int nbRows) {
         ArrayList<ILevelConstraint> constr = new ArrayList<ILevelConstraint>();
         ClusAttrType type = getSchema().getAttrType(getSchema().getNbAttributes() - 1);
-        if (type.getTypeIndex() == NominalAttrType.THIS_TYPE) {
+        if (type.getAttributeType().equals(AttributeType.Nominal)) {
             NominalAttrType cls = (NominalAttrType) type;
             m_MaxNbClasses = cls.getNbValues();
             int nbConstraints = getSettings().getILevelC().getILevelCNbRandomConstraints();

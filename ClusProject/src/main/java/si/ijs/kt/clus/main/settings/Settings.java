@@ -27,6 +27,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
@@ -43,7 +44,6 @@ import si.ijs.kt.clus.main.settings.section.SettingsExhaustiveSearch;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral.ResourceInfoLoad;
-import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneric;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsHMTR;
@@ -58,10 +58,13 @@ import si.ijs.kt.clus.main.settings.section.SettingsOutput;
 import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
+import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsSIT;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.Heuristic;
+import si.ijs.kt.clus.main.settings.section.SettingsTree.PruningMethod;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFile;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNode;
 import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
@@ -327,7 +330,7 @@ public class Settings implements Serializable {
 
 
     public void updateTarget(ClusSchema schema) {
-        if (m_SettTree.checkHeuristic("SSPD")) {
+        if (m_SettTree.getHeuristic().equals(Heuristic.SSPD)) {
             schema.addAttrType(new IntegerAttrType("SSPD"));
             int nb = schema.getNbAttributes();
             m_SettAttribute.setTarget(String.valueOf(nb));
@@ -397,13 +400,14 @@ public class Settings implements Serializable {
 
 
     public void updateDisabledSettings() {
-        int pruning = m_SettTree.getPruningMethod();
-        int heur = m_SettTree.getHeuristic();
+    	PruningMethod pruning = m_SettTree.getPruningMethod();
+        Heuristic heur = m_SettTree.getHeuristic();
 
-        m_SettTree.setM5PruningMultEnabled(pruning == SettingsTree.PRUNING_METHOD_M5 || pruning == SettingsTree.PRUNING_METHOD_M5_MULTI);
-        m_SettTree.set1SERuleEnabled(pruning == SettingsTree.PRUNING_METHOD_GAROFALAKIS_VSB);
-        m_SettTree.setFTestEnabled(heur == SettingsTree.HEURISTIC_SSPD || heur == SettingsTree.HEURISTIC_VARIANCE_REDUCTION);
-
+        m_SettTree.setM5PruningMultEnabled(pruning.equals(PruningMethod.M5) || pruning.equals(PruningMethod.M5Multi));
+        m_SettTree.set1SERuleEnabled(pruning.equals(PruningMethod.GarofalakisVSB));
+        
+        m_SettTree.setFTestEnabled(Arrays.asList(Heuristic.SSPD, Heuristic.VarianceReduction).contains(heur));
+        
         m_SettData.setPruneSetMaxEnabled(!m_SettData.isPruneSetString(SettingsBase.NONE));
 
         if (ResourceInfo.isLibLoaded()) {

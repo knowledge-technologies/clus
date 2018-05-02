@@ -49,6 +49,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.distance.primitive.ChebyshevDistance;
@@ -59,7 +60,6 @@ import si.ijs.kt.clus.ext.timeseries.TimeSeriesStat;
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.Distance;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.DistanceWeights;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.SearchMethod;
@@ -268,31 +268,31 @@ public class KnnModel implements ClusModel, Serializable {
 
         // save prediction template
         // @todo : should all this be repalced with:
-        statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
 
         // if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
         // if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
         // statTemplate = new
-        // ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET),
+        // ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target),
         // cr.getStatManager().getSettings().getMultiLabelTrheshold());
         // } else{
         // statTemplate = new
-        // ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+        // ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target));
         // }
         // }
         // else if( cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION )
         // statTemplate = new
-        // RegressionStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+        // RegressionStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(AttributeUseType.Target));
         // else if( cr.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES ){
         // // TimeSeriesAttrType attr =
-        // this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(ClusAttrType.ATTR_USE_TARGET)[0];
+        // this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(AttributeUseType.Target)[0];
         // // statTemplate = new TimeSeriesStat(attxr, new DTWTimeSeriesDist(attr), 0 );
         // System.out.println("-------------");
-        // statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        // statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
         // System.out.println(statTemplate.getDistanceName());
         // System.out.println("----------------");
         // }else if( cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL ){
-        // statTemplate = cr.getStatManager().getStatistic(ClusAttrType.ATTR_USE_TARGET);
+        // statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
         // System.out.println("----------------------");
         // System.out.println(statTemplate.getDistanceName());
         // System.out.println(statTemplate.getClass());

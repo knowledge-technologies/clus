@@ -50,6 +50,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.TupleIterator;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.error.common.ComponentError;
 import si.ijs.kt.clus.ext.ensemble.callable.InduceExtraTreeCallable;
@@ -70,13 +71,11 @@ import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingFu
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
-import si.ijs.kt.clus.main.settings.section.SettingsMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsMLC.MultiLabelMeasures;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
-import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
@@ -245,12 +244,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * @param mgr
      */
     public void setNbFeatureRankings(ClusEnsembleFeatureRanking franking, ClusSchema schema, ClusStatManager mgr, int nbTrees) {
-        ClusStatistic clusteringStat = mgr.getStatistic(ClusAttrType.ATTR_USE_CLUSTERING);
+        ClusStatistic clusteringStat = mgr.getStatistic(AttributeUseType.Clustering);
         // Settings sett = schema.getSettings();
         SettingsEnsemble sett = schema.getSettings().getEnsemble();
 
         int nbRankings = 0;
-        ClusAttrType[] clusteringAttrs = schema.getAllAttrUse(ClusAttrType.ATTR_USE_CLUSTERING);
+        ClusAttrType[] clusteringAttrs = schema.getAllAttrUse(AttributeUseType.Clustering);
 
         if (clusteringAttrs.length < 2 && sett.shouldPerformRankingPerTarget()) {
             System.err.println("Situation:");

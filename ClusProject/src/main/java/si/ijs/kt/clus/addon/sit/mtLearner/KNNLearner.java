@@ -16,6 +16,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 
 
@@ -34,7 +35,7 @@ public class KNNLearner extends MTLearnerImpl {
          * System.out.println(test.getNbRows());
          */
 
-        NumericAttrType[] descriptive = test.m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+        NumericAttrType[] descriptive = test.m_Schema.getNumericAttrUse(AttributeUseType.Descriptive);
         int nrFeatures = descriptive.length;
         int nrTargets = targets.size();
 
@@ -142,7 +143,7 @@ public class KNNLearner extends MTLearnerImpl {
 
     private void writeCSV(String fname, TargetSet targets, RowData data) {
         ClusSchema schema = m_Data.getSchema();
-        NumericAttrType[] descriptive = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+        NumericAttrType[] descriptive = schema.getNumericAttrUse(AttributeUseType.Descriptive);
 
         PrintWriter p = null;
         try {

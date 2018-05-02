@@ -11,6 +11,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.Status;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
@@ -49,7 +50,7 @@ public class ClusLearner extends MTLearnerImpl {
             while (targetIterator.hasNext()) {
                 ClusAttrType attr = (ClusAttrType) targetIterator.next();
                 ClusAttrType clusAttr = schema.getAttrType(attr.getIndex());
-                clusAttr.setStatus(ClusAttrType.STATUS_TARGET);
+                clusAttr.setStatus(Status.Target);
                 clusAttr.setClustering(true);
             }
 

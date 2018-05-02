@@ -25,6 +25,7 @@ package si.ijs.kt.clus.distance.primitive;
 import si.ijs.kt.clus.algo.kNN.distance.attributeWeighting.NoWeighting;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.main.settings.Settings;
 
@@ -64,7 +65,7 @@ public class EuclideanDistance extends ClusDistance {
     @Override
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
-        for (ClusAttrType attr : t1.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE)) {
+        for (ClusAttrType attr : t1.getSchema().getAllAttrUse(AttributeUseType.Descriptive)) {
             dist += Math.pow(m_Search.calcDistanceOnAttr(t1, t2, attr), 2) * m_AttrWeighting.getWeight(attr);
         }
         return Math.sqrt(dist);

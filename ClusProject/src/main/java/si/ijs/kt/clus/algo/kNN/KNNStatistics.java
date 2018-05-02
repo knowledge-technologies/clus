@@ -28,6 +28,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 
@@ -63,10 +64,10 @@ public class KNNStatistics {
 
         for (int i = 0; i < attrs.length; i++){
 
-            if (attrs[i].getTypeIndex() == NominalAttrType.THIS_TYPE){
+            if (attrs[i].getAttributeType().equals(AttributeType.Nominal)){
                 calcNominalMeasures(data,(NominalAttrType) attrs[i]);
             }
-            else if (attrs[i].getTypeIndex() == NumericAttrType.THIS_TYPE){
+            else if (attrs[i].getAttributeType().equals(AttributeType.Numeric)){
                 calcNumericMeasures(data,(NumericAttrType) attrs[i]);
             }
         }
@@ -240,10 +241,10 @@ public class KNNStatistics {
         ClusAttrType[] attrs = schema.getDescriptiveAttributes();
 
         for (int i = 0; i < attrs.length; i++){
-            if (attrs[i].getTypeIndex() == NominalAttrType.THIS_TYPE){
+            if (attrs[i].getAttributeType().equals(AttributeType.Nominal)){
                 System.out.print(attrs[i].getNominal(t)+",");
             }
-            else if (attrs[i].getTypeIndex() == NumericAttrType.THIS_TYPE){
+            else if (attrs[i].getAttributeType().equals(AttributeType.Numeric)){
                 System.out.print(attrs[i].getNumeric(t)+",");
             }
         }

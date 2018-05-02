@@ -7,7 +7,7 @@ import si.ijs.kt.clus.algo.ClusInductionAlgorithm;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.Accuracy;
@@ -19,7 +19,6 @@ import si.ijs.kt.clus.ext.ensemble.ClusForest;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.RandomSelection;
@@ -139,11 +138,11 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
         ClusErrorList ErrorList = new ClusErrorList();
 
         //       if (ClusStatManager.getMode() == ClusStatManager.MODE_REGRESSION) {
-        //           error = new RMSError(ErrorList, this.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+        //           error = new RMSError(ErrorList, this.getSchema().getNumericAttrUse(AttributeUseType.Target));
         //       }
         //
         //       if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
-        //           error = new Accuracy(ErrorList, this.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+        //           error = new Accuracy(ErrorList, this.getSchema().getNominalAttrUse(AttributeUseType.Target));
         //       }
         if (getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             error = new HierErrorMeasures(ErrorList,
@@ -156,8 +155,8 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
         }
         else {
             //Jurica - this does not work for HMC, because HMc is not num or nom
-            NumericAttrType[] num = m_Schema.getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET);
-            NominalAttrType[] nom = m_Schema.getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET);
+            NumericAttrType[] num = m_Schema.getNumericAttrUse(AttributeUseType.Target);
+            NominalAttrType[] nom = m_Schema.getNominalAttrUse(AttributeUseType.Target);
             if (nom.length != 0) {
                 error = new Accuracy(ErrorList, nom);
             }
@@ -208,7 +207,7 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
         ClusError error = null;
         ClusErrorList OOBErrorList = new ClusErrorList();
 
-        if (!getSettings().getEnsemble().shouldEstimateOOB()) { return new Accuracy(OOBErrorList, this.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET)); }
+        if (!getSettings().getEnsemble().shouldEstimateOOB()) { return new Accuracy(OOBErrorList, this.getSchema().getNominalAttrUse(AttributeUseType.Target)); }
 
         //Pooled AUPRC (more is better)
         if (getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
@@ -223,11 +222,11 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
 
         //RMSE (less is better)
         if (getStatManager().getMode() == ClusStatManager.MODE_REGRESSION) {
-            error = new RMSError(OOBErrorList, this.getSchema().getNumericAttrUse(ClusAttrType.ATTR_USE_TARGET));
+            error = new RMSError(OOBErrorList, this.getSchema().getNumericAttrUse(AttributeUseType.Target));
         }
 
         if (getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY) {
-            error = new Accuracy(OOBErrorList, this.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_TARGET));
+            error = new Accuracy(OOBErrorList, this.getSchema().getNominalAttrUse(AttributeUseType.Target));
         }
 
         OOBErrorList.addError(error);

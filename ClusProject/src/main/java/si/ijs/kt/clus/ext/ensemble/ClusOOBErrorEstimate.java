@@ -15,8 +15,6 @@ import si.ijs.kt.clus.main.ClusOutput;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
-import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.VotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLUnlabeledCriteria;
 import si.ijs.kt.clus.model.ClusModel;
@@ -103,7 +101,7 @@ public class ClusOOBErrorEstimate {
 
         // this is the part for writing the predictions from the OOB estimate
         // should new option in .s file be introduced???
-        // ClusStatistic target = getStatManager().createStatistic(ClusAttrType.ATTR_USE_TARGET);
+        // ClusStatistic target = getStatManager().createStatistic(AttributeUseType.Target);
         // PredictionWriter wrt = new PredictionWriter(sett.getAppName() + addname + ".oob.pred", sett, target);
         // wrt.globalInitialize(schema);
         // ClusModelInfo allmi = cr.getAllModelsMI();

@@ -165,10 +165,10 @@ public class ColData extends ClusData {
         for (int j = 0; j < nb; j++) {
             ClusAttrType at = schema.getAttrType(j);
             switch (at.getStatus()) {
-                case ClusAttrType.STATUS_DISABLED:
+                case Disabled:
                     view.addAttribute(new DummySerializable());
                     break;
-                case ClusAttrType.STATUS_TARGET:
+                case Target:
                     view.addAttribute(at.createTargetAttr(m_Target));
                     break;
                 default:
