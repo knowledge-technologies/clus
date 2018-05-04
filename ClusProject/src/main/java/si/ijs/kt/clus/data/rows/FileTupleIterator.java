@@ -27,7 +27,7 @@ import java.io.IOException;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.data.io.ClusView;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class FileTupleIterator extends TupleIterator {

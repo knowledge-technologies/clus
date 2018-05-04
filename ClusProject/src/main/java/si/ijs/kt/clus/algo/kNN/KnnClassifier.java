@@ -36,7 +36,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.DistanceWeights;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
@@ -46,8 +46,10 @@ import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
  */
 public class KnnClassifier extends ClusInductionAlgorithmType {
 
+    // DO NOT CHANGE THE NAME!!!
     public static String DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS = "Default 1-nn model with " + DistanceWeights.Constant.toString() + " weights";
-    private final String modelNameTemplate ="Original {0} -nn model with {1} weighting"; 
+    private final String modelNameTemplate = "Original %s -nn model with %s weighting";
+
 
     public KnnClassifier(Clus clus) {
         super(clus);
@@ -91,7 +93,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             }
 
             // base model
-            String model_name = DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS; // DO NOT CHANGE THE NAME!!!
+            String model_name = DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS;
             KnnModel model = new KnnModel(cr, 1, DistanceWeights.Constant, maxK);
             ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL, model_name);
             model_info.setModel(model);
@@ -109,9 +111,9 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
                     if (k == 1 && w.equals(DistanceWeights.Constant))
                         continue; // same as default model
                     KnnModel tmpmodel = new KnnModel(cr, k, w, model);
-                     
+
                     model_name = String.format(modelNameTemplate, k, w.toString()); // DO NOT CHANGE THE NAME!!!
-                    
+
                     ClusModelInfo tmpmodel_info = cr.addModelInfo(modelCnt++, model_name);
                     tmpmodel_info.setModel(tmpmodel);
                     tmpmodel_info.setName(model_name);

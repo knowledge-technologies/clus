@@ -58,7 +58,7 @@ import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.selection.BaggingSelection;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.tools.optimization.CallExternGD;
 import si.ijs.kt.clus.util.tools.optimization.GDAlg;
 import si.ijs.kt.clus.util.tools.optimization.OptAlg;

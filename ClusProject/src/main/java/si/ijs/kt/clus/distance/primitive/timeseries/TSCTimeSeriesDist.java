@@ -25,7 +25,7 @@ package si.ijs.kt.clus.distance.primitive.timeseries;
 import si.ijs.kt.clus.data.type.primitive.TimeSeriesAttrType;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class TSCTimeSeriesDist extends TimeSeriesDist {

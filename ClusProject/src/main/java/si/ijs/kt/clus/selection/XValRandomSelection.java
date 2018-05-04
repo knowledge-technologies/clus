@@ -24,8 +24,8 @@ package si.ijs.kt.clus.selection;
 
 import java.util.Random;
 
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.MyIntArray;
 
 

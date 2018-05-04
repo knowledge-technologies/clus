@@ -40,7 +40,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.ClusModel;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 
 

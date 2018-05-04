@@ -40,7 +40,7 @@ import si.ijs.kt.clus.model.test.InverseNumericTest;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.NumericTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class CurrentBestTestAndHeuristic {
@@ -140,8 +140,8 @@ public class CurrentBestTestAndHeuristic {
         m_BestTest.setUnknownFreq(m_UnknownFreq);
         m_BestTest.setHeuristicValue(m_BestHeur);
         // daniela
-        m_BestTest.setIValue(m_BestI);
-        m_BestTest.setIValue(m_BestC);
+        //m_BestTest.setIValue(m_BestI);
+        //m_BestTest.setIValue(m_BestC);
         // daniela end
         return m_BestTest;
     }

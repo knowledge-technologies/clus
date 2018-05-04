@@ -28,7 +28,7 @@ import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
 import si.ijs.kt.clus.data.type.primitive.IndexAttrType;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class XValDataSelection extends XValMainSelection {

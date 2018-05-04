@@ -28,7 +28,7 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.heuristic.EncodingCost;
 import si.ijs.kt.clus.model.test.NodeTest;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class EncodingCostPruning extends PruneTree {

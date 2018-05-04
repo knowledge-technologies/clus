@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.util.jeans.resource;
+package si.ijs.kt.clus.util;
 
 public class ResourceInfo {
 

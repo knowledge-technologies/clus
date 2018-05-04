@@ -20,7 +20,7 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.util;
+package si.ijs.kt.clus.util.exception;
 
 import si.ijs.kt.clus.main.settings.Settings;
 

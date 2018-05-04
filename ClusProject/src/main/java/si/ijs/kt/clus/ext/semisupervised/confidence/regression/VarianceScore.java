@@ -14,7 +14,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLNormalization;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**

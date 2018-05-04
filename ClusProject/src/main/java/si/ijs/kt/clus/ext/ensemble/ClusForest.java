@@ -49,7 +49,6 @@ import si.ijs.kt.clus.ext.hierarchical.HierClassTresholdPruner;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingFunctionScope;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -62,8 +61,8 @@ import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.RegressionStatBase;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusUtil;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 
@@ -354,15 +353,16 @@ public class ClusForest implements ClusModel, Serializable {
 
     @Override
     public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException, InterruptedException {
-        if (!ClusEnsembleInduce.m_EnsembleROSScope.equals(EnsembleROSVotingFunctionScope.None)) {
-            switch (ClusEnsembleInduce.m_EnsembleROSScope) {
+        if (getSettings().getEnsemble().isEnsembleROSEnabled()) {
+            switch (getSettings().getEnsemble().getEnsembleROSVotingType()) {
                 case SubspaceAveraging: // only use subspaces for prediction averaging
                     return ClusEnsembleInduce.isOptimized() ? predictWeightedStandardSubspaceAveragingOpt(tuple) : predictWeightedStandardSubspaceAveraging(tuple);
 
                 case SmarterWay:
                     throw new RuntimeException("NOT YET IMPLEMENTED!");
 
-                default: // case Settings.ENSEMBLE_ROS_VOTING_FUNCTION_SCOPE_TOTAL_AVERAGING: // just use all predictions
+                case TotalAveraging:
+                default:
                     return ClusEnsembleInduce.isOptimized() ? predictWeightedOpt(tuple) : predictWeightedStandard(tuple);
             }
         }

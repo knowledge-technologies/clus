@@ -50,7 +50,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.XValDataSelection;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.jeans.util.IntervalCollection;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;

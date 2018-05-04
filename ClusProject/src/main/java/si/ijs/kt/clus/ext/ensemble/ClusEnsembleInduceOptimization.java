@@ -9,10 +9,10 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.TupleIterator;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingFunctionScope;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public abstract class ClusEnsembleInduceOptimization implements Serializable {
@@ -157,7 +157,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
         // the current sums are stored in sum_predictions
         double[][] result = new double[sum_predictions.length][];
 
-        if (getSettings().getEnsemble().isEnsembleROSEnabled() && getSettings().getEnsemble().getEnsembleROSScope().equals(EnsembleROSVotingFunctionScope.SubspaceAveraging)) {
+        if (getSettings().getEnsemble().isEnsembleROSEnabled() && getSettings().getEnsemble().getEnsembleROSVotingType().equals(EnsembleROSVotingType.SubspaceAveraging)) {
             /* get enabled targets for the model */
             int[] enabled = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(nb_models - 1));
 

@@ -58,7 +58,7 @@ import si.ijs.kt.clus.model.test.NumericTest;
 import si.ijs.kt.clus.model.test.SubsetTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MStreamTokenizer;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;

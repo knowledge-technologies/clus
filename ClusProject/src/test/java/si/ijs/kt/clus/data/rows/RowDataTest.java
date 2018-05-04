@@ -15,7 +15,7 @@ import si.ijs.kt.clus.BaseTestCase;
 import si.ijs.kt.clus.TestHelper;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 public class RowDataTest extends BaseTestCase {
 

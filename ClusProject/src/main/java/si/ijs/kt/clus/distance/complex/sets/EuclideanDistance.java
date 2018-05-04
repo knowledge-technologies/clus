@@ -8,7 +8,7 @@ import si.ijs.kt.clus.distance.primitive.timeseries.TimeSeriesDist;
 import si.ijs.kt.clus.ext.structuredTypes.Set;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class EuclideanDistance extends SetDistance {

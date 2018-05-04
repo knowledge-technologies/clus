@@ -25,7 +25,7 @@ package si.ijs.kt.clus.util.jeans.tree;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 

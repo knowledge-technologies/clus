@@ -13,8 +13,8 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.ComponentStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
 	public ClusEnsembleFeatureRanking(Settings sett){

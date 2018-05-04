@@ -39,7 +39,7 @@ import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 

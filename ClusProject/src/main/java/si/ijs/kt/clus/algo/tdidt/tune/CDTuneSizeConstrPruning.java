@@ -56,7 +56,7 @@ import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
 import si.ijs.kt.clus.util.jeans.math.SingleStatList;
 

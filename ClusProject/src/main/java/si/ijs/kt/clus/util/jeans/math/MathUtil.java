@@ -34,23 +34,23 @@ public class MathUtil {
     public final static double M_LN2 = Math.log(2);
 
 
-    public static double interpolate(double x, ArrayList fct) {
+    public static double interpolate(double x, ArrayList<double[]> fct) {
         int len = fct.size();
         if (len == 0) {
             return Double.NaN;
         }
         else if (len == 1) {
             // function is a constant
-            double[] pt = (double[]) fct.get(0);
+            double[] pt = fct.get(0);
             return pt[1];
         }
         else {
-            double[] pt0 = (double[]) fct.get(0);
+            double[] pt0 = fct.get(0);
             if (x < pt0[0]) {
                 // extrapolate left
                 return pt0[1];
             }
-            double[] ptn = (double[]) fct.get(len - 1);
+            double[] ptn = fct.get(len - 1);
             if (x > ptn[0]) {
                 // extrapolate right
                 return ptn[1];
@@ -59,7 +59,7 @@ public class MathUtil {
             int count = 0;
             double sum = 0.0;
             for (int i = 0; i < len; i++) {
-                double[] pt1 = (double[]) fct.get(i);
+                double[] pt1 = fct.get(i);
                 if (x == pt1[0]) {
                     sum += pt1[1];
                     count++;
@@ -68,8 +68,8 @@ public class MathUtil {
             if (count > 0) { return sum / count; }
             // not equal to given x-value -> base case
             for (int i = 0; i < len - 1; i++) {
-                double[] pt1 = (double[]) fct.get(i);
-                double[] pt2 = (double[]) fct.get(i + 1);
+                double[] pt1 = fct.get(i);
+                double[] pt2 = fct.get(i + 1);
                 if (x >= pt1[0] && x < pt2[0]) {
                     double y1 = pt1[1];
                     double y2 = pt2[1];
@@ -87,12 +87,9 @@ public class MathUtil {
 
 
     protected void blackBoxTestInterpolate() {
-        ArrayList fct = new ArrayList();
+        ArrayList<double[]> fct = new ArrayList<>();
         for (int i = 0; i < blackBoxTestInterpolateX.length; i++) {
-            double[] pt = new double[2];
-            pt[0] = blackBoxTestInterpolateX[i];
-            pt[1] = blackBoxTestInterpolateY[i];
-            fct.add(pt);
+            fct.add(new double[] { blackBoxTestInterpolateX[i], blackBoxTestInterpolateY[i] });
         }
         System.out.println("Interpolate x = 0   -> y = 3.5: " + MathUtil.interpolate(0, fct));
         System.out.println("Interpolate x = 4   -> y = 3.5: " + MathUtil.interpolate(4, fct));
@@ -102,15 +99,17 @@ public class MathUtil {
         System.out.println("Interpolate x = 10  -> y = 1.5: " + MathUtil.interpolate(10, fct));
     }
 
+
     /**
      * Computes the symmetric difference between the two lists.
+     * 
      * @param elements1
      * @param elements2
      * @return
      */
-    public static <T> HashSet<T> symmetricDifference(ArrayList<T> elements1, ArrayList<T> elements2){
-    	HashSet<T> symmetricDifference = new HashSet<T>();
-    	// add elements1
+    public static <T> HashSet<T> symmetricDifference(ArrayList<T> elements1, ArrayList<T> elements2) {
+        HashSet<T> symmetricDifference = new HashSet<T>();
+        // add elements1
         for (T elt : elements1) {
             symmetricDifference.add(elt);
         }
@@ -125,22 +124,9 @@ public class MathUtil {
         }
         return symmetricDifference;
     }
-    
-    /**
-     * Computes the geometric sum {@code 1 + q + ... + q^lastPower}.
-     * 
-     * @param q
-     * @param lastPower
-     * @return
-     */
-    private double geometricSum(double q, double lastPower) {
-        return (1 - Math.pow(q, lastPower + 1)) / (1 - q);
-    }
-    
 
     public static void main(String[] arg) {
         MathUtil mu = new MathUtil();
         mu.blackBoxTestInterpolate();
     }
-
 }

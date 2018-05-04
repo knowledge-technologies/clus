@@ -15,7 +15,7 @@ import si.ijs.kt.clus.error.PearsonCorrelation;
 import si.ijs.kt.clus.error.RMSError;
 import si.ijs.kt.clus.error.RelativeError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**

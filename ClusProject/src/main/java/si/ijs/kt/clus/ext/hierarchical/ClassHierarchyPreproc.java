@@ -28,7 +28,7 @@ import java.util.Arrays;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.TuplePreproc;
 import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class ClassHierarchyPreproc implements TuplePreproc {

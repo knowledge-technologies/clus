@@ -32,7 +32,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.processor.ClusModelProcessor;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class ClusCalcRuleErrorProc extends ClusModelProcessor {

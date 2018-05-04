@@ -10,7 +10,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.SparseDataTuple;
 import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class SparseNumericAttrType extends NumericAttrType {

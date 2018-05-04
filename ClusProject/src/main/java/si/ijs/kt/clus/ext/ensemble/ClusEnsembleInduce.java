@@ -67,7 +67,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingFunctionScope;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
@@ -84,11 +84,11 @@ import si.ijs.kt.clus.selection.BaggingSelectionSemiSupervised;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.ComponentStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
+import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.cloner.Cloner;
-import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.tools.optimization.GDProbl;
 
 
@@ -112,11 +112,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     static int m_NbMaxBags;
 
     // members for ROS ensembles (target subspacing)
-    static EnsembleROSVotingFunctionScope m_EnsembleROSScope;
-    ClusEnsembleROSInfo m_EnsembleROSInfo = null;
+    static EnsembleROSVotingType m_EnsembleROSVotingType;
+    private ClusEnsembleROSInfo m_EnsembleROSInfo = null;
 
     // Out-Of-Bag Error Estimate
-    ClusOOBErrorEstimate m_OOBEstimation;
+    private ClusOOBErrorEstimate m_OOBEstimation;
 
     // Feature Ranking via Random Forests OR via Genie3 etc.
     boolean m_FeatRank;
@@ -161,8 +161,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         SettingsEnsemble sett = settMain.getEnsemble();
 
-        m_OptMode = (sett.shouldOptimizeEnsemble() && ((m_Mode == ClusStatManager.MODE_HIERARCHICAL) || (m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode == ClusStatManager.MODE_CLASSIFY)));
-        m_EnsembleROSScope = sett.getEnsembleROSScope();
+        m_OptMode = (sett.shouldOptimizeEnsemble() && (Arrays.asList(ClusStatManager.MODE_HIERARCHICAL, ClusStatManager.MODE_REGRESSION, ClusStatManager.MODE_CLASSIFY).contains(m_Mode)));
+
+        m_EnsembleROSVotingType = sett.getEnsembleROSVotingType();
 
         // m_OptMode = (Settings.shouldOptimizeEnsemble() && !Settings.IS_XVAL && ((m_Mode ==
         // ClusStatManager.MODE_HIERARCHICAL)||(m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode ==

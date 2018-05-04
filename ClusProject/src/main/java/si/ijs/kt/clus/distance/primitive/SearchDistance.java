@@ -28,7 +28,7 @@ import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**
@@ -82,7 +82,7 @@ public class SearchDistance extends ClusDistance {
      * @param t1
      * @param t2
      * @return
-     * @throws ClusException 
+     * @throws ClusException
      */
     @Override
     public double calcDistance(DataTuple t1, DataTuple t2) throws ClusException {

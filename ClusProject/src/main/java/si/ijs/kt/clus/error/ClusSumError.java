@@ -9,7 +9,7 @@ import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class ClusSumError extends ClusError {

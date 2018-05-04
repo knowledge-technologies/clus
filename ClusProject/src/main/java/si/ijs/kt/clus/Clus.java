@@ -119,15 +119,15 @@ import si.ijs.kt.clus.selection.XValSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.DebugFile;
+import si.ijs.kt.clus.util.ResourceInfo;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
 import si.ijs.kt.clus.util.jeans.io.ObjectLoadStream;
 import si.ijs.kt.clus.util.jeans.io.ObjectSaveStream;
-import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 import si.ijs.kt.clus.util.jeans.util.IntervalCollection;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -487,22 +487,22 @@ public class Clus implements CMDLineArgsProvider {
     // TreeFrame.start(mgr, lok);
     // }
 
-    public final void postprocModel(ClusModel model, TupleIterator iter, ModelProcessorCollection coll) throws IOException, ClusException {
-        iter.init();
-        ClusSchema mschema = iter.getSchema();
-        if (iter.shouldAttach()) {
-            System.out.println("Effect of should_attach not implemented in postprocModel");
-        }
-        coll.initialize(model, mschema);
-        DataTuple tuple = iter.readTuple();
-        while (tuple != null) {
-            model.applyModelProcessors(tuple, coll);
-            coll.modelDone();
-            tuple = iter.readTuple();
-        }
-        iter.close();
-        coll.terminate(model);
-    }
+//    public final void postprocModel(ClusModel model, TupleIterator iter, ModelProcessorCollection coll) throws IOException, ClusException {
+//        iter.init();
+//        ClusSchema mschema = iter.getSchema();
+//        if (iter.shouldAttach()) {
+//            System.out.println("Effect of should_attach not implemented in postprocModel");
+//        }
+//        coll.initialize(model, mschema);
+//        DataTuple tuple = iter.readTuple();
+//        while (tuple != null) {
+//            model.applyModelProcessors(tuple, coll);
+//            coll.modelDone();
+//            tuple = iter.readTuple();
+//        }
+//        iter.close();
+//        coll.terminate(model);
+//    }
 
 
     public final int getNbRows() {

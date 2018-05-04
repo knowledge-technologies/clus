@@ -37,8 +37,8 @@ import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesPrototy
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusUtil;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 

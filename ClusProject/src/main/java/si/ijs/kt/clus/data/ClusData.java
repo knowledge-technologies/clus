@@ -27,8 +27,8 @@ import si.ijs.kt.clus.data.rows.DataPreprocs;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.selection.ClusSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public abstract class ClusData {

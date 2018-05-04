@@ -22,7 +22,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLAggregation;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLConfidenceMeasure;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLNormalization;
 import si.ijs.kt.clus.model.ClusModel;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public abstract class PredictionConfidence {

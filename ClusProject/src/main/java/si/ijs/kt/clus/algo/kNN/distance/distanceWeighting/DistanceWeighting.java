@@ -26,7 +26,7 @@ import java.util.LinkedList;
 
 import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
 import si.ijs.kt.clus.data.rows.DataTuple;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**

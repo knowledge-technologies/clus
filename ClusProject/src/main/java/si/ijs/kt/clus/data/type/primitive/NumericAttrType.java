@@ -40,7 +40,7 @@ import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRNode;
 import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**

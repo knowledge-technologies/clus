@@ -44,7 +44,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.data.type.primitive.StringAttrType;
 import si.ijs.kt.clus.data.type.primitive.TimeSeriesAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MStreamTokenizer;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
@@ -240,201 +240,201 @@ public class ARFFFile {
     }
 
 
-    // Exports data to CN2 format. Can be deleted ...
-    public static void writeCN2Data(String fname, RowData data) throws IOException, ClusException {
-        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname)));
-        ClusSchema schema = data.getSchema();
-        wrt.println("**EXAMPLE FILE**\n");
-        for (int j = 0; j < data.getNbRows(); j++) {
-            DataTuple tuple = data.getTuple(j);
-            int aidx = 0;
-            for (int i = 0; i < schema.getNbAttributes(); i++) {
-                ClusAttrType type = schema.getAttrType(i);
-                if (!type.isDisabled()) {
-                    if (aidx != 0)
-                        wrt.print("\t");
-                    if (type instanceof NominalAttrType) {
-                        String label = type.getString(tuple);
-                        label = label.replace("^2", "two");
-                        label = label.replace("<", "le");
-                        label = label.replace(">", "gt");
-                        label = label.replace("-", "_");
-                        label = label.replace("&", "");
-                        if (!label.equals("?")) {
-                            wrt.print("_" + label);
-                        }
-                        else {
-                            wrt.print(label);
-                        }
-                    }
-                    else {
-                        wrt.print(type.getString(tuple));
-                    }
-                    aidx++;
-                }
-            }
-            wrt.println(";");
-        }
-        wrt.close();
-    }
+//    // Exports data to CN2 format. Can be deleted ...
+//    public static void writeCN2Data(String fname, RowData data) throws IOException, ClusException {
+//        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname)));
+//        ClusSchema schema = data.getSchema();
+//        wrt.println("**EXAMPLE FILE**\n");
+//        for (int j = 0; j < data.getNbRows(); j++) {
+//            DataTuple tuple = data.getTuple(j);
+//            int aidx = 0;
+//            for (int i = 0; i < schema.getNbAttributes(); i++) {
+//                ClusAttrType type = schema.getAttrType(i);
+//                if (!type.isDisabled()) {
+//                    if (aidx != 0)
+//                        wrt.print("\t");
+//                    if (type instanceof NominalAttrType) {
+//                        String label = type.getString(tuple);
+//                        label = label.replace("^2", "two");
+//                        label = label.replace("<", "le");
+//                        label = label.replace(">", "gt");
+//                        label = label.replace("-", "_");
+//                        label = label.replace("&", "");
+//                        if (!label.equals("?")) {
+//                            wrt.print("_" + label);
+//                        }
+//                        else {
+//                            wrt.print(label);
+//                        }
+//                    }
+//                    else {
+//                        wrt.print(type.getString(tuple));
+//                    }
+//                    aidx++;
+//                }
+//            }
+//            wrt.println(";");
+//        }
+//        wrt.close();
+//    }
+//
+//
+//    // Exports data to FRS format. Can be deleted ...
+//    public static void writeFRSData(String fname, RowData data, boolean train) throws IOException, ClusException {
+//        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname)));
+//        ClusSchema schema = data.getSchema();
+//        // Learning/testing examples
+//        for (int j = 0; j < data.getNbRows(); j++) {
+//            DataTuple tuple = data.getTuple(j);
+//            int aidx = 0;
+//            if (train) {
+//                wrt.print("lrn(lr(");
+//            }
+//            else {
+//                wrt.print("tst(lr(");
+//            }
+//            for (int i = (schema.getNbAttributes() - 1); i >= 0; i--) {
+//                ClusAttrType type = schema.getAttrType(i);
+//                if (!type.isDisabled()) {
+//                    if (aidx != 0)
+//                        wrt.print(",");
+//                    if (type instanceof NominalAttrType) {
+//                        String label = type.getString(tuple);
+//                        label = label.replace("^2", "two");
+//                        label = label.replace("<", "le");
+//                        label = label.replace(">", "gt");
+//                        label = label.replace("-", "");
+//                        label = label.replace("_", "");
+//                        label = label.replace("&", "");
+//                        label = label.replace(".", "");
+//                        wrt.print("a" + label);
+//                    }
+//                    else {
+//                        wrt.print(type.getString(tuple));
+//                    }
+//                    aidx++;
+//                }
+//            }
+//            wrt.println(")).");
+//        }
+//        wrt.close();
+//    }
+//
+//
+//    // Exports data to FRS format. Can be deleted ...
+//    public static void writeFRSHead(String fname, RowData data, boolean train) throws IOException, ClusException {
+//        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname)));
+//        ClusSchema schema = data.getSchema();
+//        // Head
+//        wrt.println(":-dynamictype/2,type/3,variable/2,target/1,lrn/1,tst/1.\n");
+//        // Types
+//        wrt.println("type(real,continuous,0.1).");
+//        for (int i = (schema.getNbAttributes() - 1); i >= 0; i--) {
+//            ClusAttrType type = schema.getAttrType(i);
+//            if ((!type.isDisabled()) && (type instanceof NominalAttrType)) {
+//                String[] labels = ((NominalAttrType) type).getValues();
+//                wrt.print("type(type_");
+//                wrt.print(type.getName());
+//                wrt.print(",discrete,[");
+//                for (int j = 0; j < labels.length; j++) {
+//                    String label = new String(labels[j]);
+//                    label = label.replace("^2", "two");
+//                    label = label.replace("<", "le");
+//                    label = label.replace(">", "gt");
+//                    label = label.replace("-", "");
+//                    label = label.replace("_", "");
+//                    label = label.replace("&", "");
+//                    label = label.replace(".", "");
+//                    wrt.print("a" + label);
+//                    if (j < (labels.length - 1)) {
+//                        wrt.print(",");
+//                    }
+//                }
+//                wrt.print("]).\n");
+//            }
+//        }
+//        wrt.println("");
+//        // Variables
+//        for (int i = (schema.getNbAttributes() - 1); i >= 0; i--) {
+//            ClusAttrType type = schema.getAttrType(i);
+//            if (!type.isDisabled()) {
+//                if (type instanceof NominalAttrType) {
+//                    wrt.print("variable('A");
+//                    wrt.print(type.getName());
+//                    wrt.print("',type_");
+//                    wrt.print(type.getName());
+//                    wrt.print(").\n");
+//                }
+//                else {
+//                    wrt.print("variable('A");
+//                    wrt.print(type.getName());
+//                    wrt.print("',real).\n");
+//                }
+//            }
+//        }
+//        // Target
+//        wrt.print("\ntarget(lr(");
+//        for (int i = (schema.getNbAttributes() - 1); i >= 0; i--) {
+//            ClusAttrType type = schema.getAttrType(i);
+//            if (!type.isDisabled()) {
+//                wrt.print("'A");
+//                wrt.print(type.getName());
+//                wrt.print("'");
+//            }
+//            if (i > 0) {
+//                wrt.print(",");
+//            }
+//        }
+//        wrt.print(")).\n\n");
+//        wrt.close();
+//    }
 
 
-    // Exports data to FRS format. Can be deleted ...
-    public static void writeFRSData(String fname, RowData data, boolean train) throws IOException, ClusException {
-        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname)));
-        ClusSchema schema = data.getSchema();
-        // Learning/testing examples
-        for (int j = 0; j < data.getNbRows(); j++) {
-            DataTuple tuple = data.getTuple(j);
-            int aidx = 0;
-            if (train) {
-                wrt.print("lrn(lr(");
-            }
-            else {
-                wrt.print("tst(lr(");
-            }
-            for (int i = (schema.getNbAttributes() - 1); i >= 0; i--) {
-                ClusAttrType type = schema.getAttrType(i);
-                if (!type.isDisabled()) {
-                    if (aidx != 0)
-                        wrt.print(",");
-                    if (type instanceof NominalAttrType) {
-                        String label = type.getString(tuple);
-                        label = label.replace("^2", "two");
-                        label = label.replace("<", "le");
-                        label = label.replace(">", "gt");
-                        label = label.replace("-", "");
-                        label = label.replace("_", "");
-                        label = label.replace("&", "");
-                        label = label.replace(".", "");
-                        wrt.print("a" + label);
-                    }
-                    else {
-                        wrt.print(type.getString(tuple));
-                    }
-                    aidx++;
-                }
-            }
-            wrt.println(")).");
-        }
-        wrt.close();
-    }
-
-
-    // Exports data to FRS format. Can be deleted ...
-    public static void writeFRSHead(String fname, RowData data, boolean train) throws IOException, ClusException {
-        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname)));
-        ClusSchema schema = data.getSchema();
-        // Head
-        wrt.println(":-dynamictype/2,type/3,variable/2,target/1,lrn/1,tst/1.\n");
-        // Types
-        wrt.println("type(real,continuous,0.1).");
-        for (int i = (schema.getNbAttributes() - 1); i >= 0; i--) {
-            ClusAttrType type = schema.getAttrType(i);
-            if ((!type.isDisabled()) && (type instanceof NominalAttrType)) {
-                String[] labels = ((NominalAttrType) type).getValues();
-                wrt.print("type(type_");
-                wrt.print(type.getName());
-                wrt.print(",discrete,[");
-                for (int j = 0; j < labels.length; j++) {
-                    String label = new String(labels[j]);
-                    label = label.replace("^2", "two");
-                    label = label.replace("<", "le");
-                    label = label.replace(">", "gt");
-                    label = label.replace("-", "");
-                    label = label.replace("_", "");
-                    label = label.replace("&", "");
-                    label = label.replace(".", "");
-                    wrt.print("a" + label);
-                    if (j < (labels.length - 1)) {
-                        wrt.print(",");
-                    }
-                }
-                wrt.print("]).\n");
-            }
-        }
-        wrt.println("");
-        // Variables
-        for (int i = (schema.getNbAttributes() - 1); i >= 0; i--) {
-            ClusAttrType type = schema.getAttrType(i);
-            if (!type.isDisabled()) {
-                if (type instanceof NominalAttrType) {
-                    wrt.print("variable('A");
-                    wrt.print(type.getName());
-                    wrt.print("',type_");
-                    wrt.print(type.getName());
-                    wrt.print(").\n");
-                }
-                else {
-                    wrt.print("variable('A");
-                    wrt.print(type.getName());
-                    wrt.print("',real).\n");
-                }
-            }
-        }
-        // Target
-        wrt.print("\ntarget(lr(");
-        for (int i = (schema.getNbAttributes() - 1); i >= 0; i--) {
-            ClusAttrType type = schema.getAttrType(i);
-            if (!type.isDisabled()) {
-                wrt.print("'A");
-                wrt.print(type.getName());
-                wrt.print("'");
-            }
-            if (i > 0) {
-                wrt.print(",");
-            }
-        }
-        wrt.print(")).\n\n");
-        wrt.close();
-    }
-
-
-    // Exports data to R format. Can be deleted ...
-    public static void writeRData(String fname, RowData data) throws IOException, ClusException {
-        double NUMBER_INF = 9E36;
-        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname)));
-        ClusSchema schema = data.getSchema();
-        int nbAttr = schema.getNbAttributes();
-        // // First print the header - names for attributes
-        // for (int iColumn = 0; iColumn < nbAttr; iColumn++)
-        // {
-        // wrt.print(schema.getAttrType(iColumn).getName() + "\t");
-        // }
-        // wrt.print("\n"); // line feed
-        // Learning/testing examples
-        for (int jRow = 0; jRow < data.getNbRows(); jRow++) {
-            DataTuple tuple = data.getTuple(jRow);
-            for (int iAttr = 0; iAttr < nbAttr; iAttr++) {
-                ClusAttrType attrType = schema.getAttrType(iAttr);
-
-                if (attrType instanceof NumericAttrType) {
-                    if (attrType.isMissing(tuple)) {
-                        if (!Double.isNaN(attrType.getNumeric(tuple)) && !Double.isInfinite(attrType.getNumeric(tuple))) {// Value
-                                                                                                                          // not
-                                                                                                                          // given
-                            throw new ClusException("ERROR, isMissing works wrong");
-                        }
-                        wrt.print(NUMBER_INF);
-                    }
-                    else // ok number
-                        wrt.print(attrType.getNumeric(tuple));
-
-                }
-                else { // Assuming nominaltype
-                    if (attrType.isMissing(tuple)) {
-                        wrt.print(NUMBER_INF);
-                    }
-                    else {
-                        wrt.print(attrType.getNominal(tuple));
-                    }
-                }
-                wrt.print("\t");
-            }
-            wrt.print("\n"); // line feed
-        }
-        wrt.close();
-    }
+//    // Exports data to R format. Can be deleted ...
+//    public static void writeRData(String fname, RowData data) throws IOException, ClusException {
+//        double NUMBER_INF = 9E36;
+//        PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname)));
+//        ClusSchema schema = data.getSchema();
+//        int nbAttr = schema.getNbAttributes();
+//        // // First print the header - names for attributes
+//        // for (int iColumn = 0; iColumn < nbAttr; iColumn++)
+//        // {
+//        // wrt.print(schema.getAttrType(iColumn).getName() + "\t");
+//        // }
+//        // wrt.print("\n"); // line feed
+//        // Learning/testing examples
+//        for (int jRow = 0; jRow < data.getNbRows(); jRow++) {
+//            DataTuple tuple = data.getTuple(jRow);
+//            for (int iAttr = 0; iAttr < nbAttr; iAttr++) {
+//                ClusAttrType attrType = schema.getAttrType(iAttr);
+//
+//                if (attrType instanceof NumericAttrType) {
+//                    if (attrType.isMissing(tuple)) {
+//                        if (!Double.isNaN(attrType.getNumeric(tuple)) && !Double.isInfinite(attrType.getNumeric(tuple))) {// Value
+//                                                                                                                          // not
+//                                                                                                                          // given
+//                            throw new ClusException("ERROR, isMissing works wrong");
+//                        }
+//                        wrt.print(NUMBER_INF);
+//                    }
+//                    else // ok number
+//                        wrt.print(attrType.getNumeric(tuple));
+//
+//                }
+//                else { // Assuming nominaltype
+//                    if (attrType.isMissing(tuple)) {
+//                        wrt.print(NUMBER_INF);
+//                    }
+//                    else {
+//                        wrt.print(attrType.getNominal(tuple));
+//                    }
+//                }
+//                wrt.print("\t");
+//            }
+//            wrt.print("\n"); // line feed
+//        }
+//        wrt.close();
+//    }
 
 
     public static void writeRDataNominalLabels(String fname, RowData data) throws IOException, ClusException {

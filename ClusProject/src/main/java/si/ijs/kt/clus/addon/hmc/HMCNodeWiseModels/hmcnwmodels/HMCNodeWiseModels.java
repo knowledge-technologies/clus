@@ -51,7 +51,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.StringTable;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgsProvider;

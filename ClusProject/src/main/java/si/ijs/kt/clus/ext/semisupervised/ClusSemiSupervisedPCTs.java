@@ -24,7 +24,7 @@ import si.ijs.kt.clus.selection.RandomSelection;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
     

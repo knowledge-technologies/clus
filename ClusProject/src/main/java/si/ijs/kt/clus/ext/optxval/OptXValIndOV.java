@@ -37,8 +37,8 @@ import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.SoftTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
-import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
+import si.ijs.kt.clus.util.ResourceInfo;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.list.MyListIter;
 import si.ijs.kt.clus.util.tools.debug.Debug;
 

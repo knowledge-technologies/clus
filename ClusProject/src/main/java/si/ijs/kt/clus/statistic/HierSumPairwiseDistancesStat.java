@@ -7,7 +7,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class HierSumPairwiseDistancesStat extends WHTDStatistic {

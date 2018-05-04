@@ -13,7 +13,7 @@ import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.SaveLoadNeighbo
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 public class OracleBruteForce extends BruteForce {
 	

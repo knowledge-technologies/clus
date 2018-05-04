@@ -29,7 +29,7 @@ import si.ijs.kt.clus.data.ClusSchemaInitializer;
 import si.ijs.kt.clus.data.io.ARFFFile;
 import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 public class DiskTupleIterator extends FileTupleIterator {
 

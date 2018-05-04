@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.ClusData;
 import si.ijs.kt.clus.data.ClusSchema;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public abstract class TupleIterator {

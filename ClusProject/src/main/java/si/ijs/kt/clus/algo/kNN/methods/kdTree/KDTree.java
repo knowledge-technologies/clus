@@ -34,7 +34,7 @@ import si.ijs.kt.clus.distance.primitive.SearchDistance;
 import si.ijs.kt.clus.main.ClusModelInfoList;
 // import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.ClusRun;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**

@@ -32,7 +32,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsPhylogeny.PhylogenySequence;
 import si.ijs.kt.clus.model.test.SubsetTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class SubsetSplit extends NominalSplit {

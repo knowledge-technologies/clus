@@ -44,7 +44,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyWeight;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.SingleStat;
 import si.ijs.kt.clus.util.jeans.tree.CompleteTreeIterator;
 import si.ijs.kt.clus.util.jeans.util.array.StringTable;

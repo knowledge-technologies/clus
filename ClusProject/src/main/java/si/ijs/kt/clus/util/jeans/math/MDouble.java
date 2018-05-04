@@ -91,7 +91,7 @@ public class MDouble extends MNumber {
     public MNumber convertTo(MNumber other) {
         if (other instanceof MDouble)
             return this;
-        return new MComplex(this, MLong.ZERO);
+        return null;
     }
 
 
