@@ -21,7 +21,7 @@ public class SettingsMLC extends SettingsBase {
 
 
     public SettingsMLC(int position, SettingsHMLC settHMLC, SettingsRelief settRelief) {
-        super(position);
+        super(position, "Multilabel");
 
         m_SettHMLC = settHMLC;
         m_SettRelief = settRelief;
@@ -31,7 +31,6 @@ public class SettingsMLC extends SettingsBase {
      * Section: Multi-label classification *
      ***********************************************************************/
 
-    INIFileSection m_SectionMultiLabel;
     protected INIFileNominalOrDoubleOrVector m_MultiLabelThreshold;
     protected INIFileEnum<MultiLabelThresholdOptimization> m_MultiLabelOptimizeThreshold;
     protected INIFileEnumList<MultiLabelMeasures> m_MultiLabelRankingMeasure;
@@ -59,12 +58,12 @@ public class SettingsMLC extends SettingsBase {
 
 
     public void setSectionMultiLabelEnabled(boolean enable) {
-        m_SectionMultiLabel.setEnabled(enable);
+        m_Section.setEnabled(enable);
     }
 
 
     public INIFileSection getSectionMultiLabel() {
-        return m_SectionMultiLabel;
+        return m_Section;
     }
 
 
@@ -108,7 +107,7 @@ public class SettingsMLC extends SettingsBase {
         else if (shouldRunThresholdOptimization()) {
             return true;
         }
-        else if (m_SectionMultiLabel.isEnabled()) {
+        else if (m_Section.isEnabled()) {
             return true;
         }
         else {
@@ -131,14 +130,11 @@ public class SettingsMLC extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-
-        m_SectionMultiLabel = new INIFileSection("MultiLabel");
-        m_SectionMultiLabel.addNode(m_MultiLabelThreshold = new INIFileNominalOrDoubleOrVector("MLCThreshold", NONELIST));
+    public void create() {
+        m_Section.addNode(m_MultiLabelThreshold = new INIFileNominalOrDoubleOrVector("MLCThreshold", NONELIST));
         m_MultiLabelThreshold.setDouble(0.5);
-        m_SectionMultiLabel.addNode(m_MultiLabelOptimizeThreshold = new INIFileEnum<>("OptimizeThresholds", MultiLabelThresholdOptimization.No));
-        m_SectionMultiLabel.addNode(m_MultiLabelRankingMeasure = new INIFileEnumList<>("MultiLabelRankingMeasure", MultiLabelMeasures.HammingLoss));
 
-        return m_SectionMultiLabel;
+        m_Section.addNode(m_MultiLabelOptimizeThreshold = new INIFileEnum<>("OptimizeThresholds", MultiLabelThresholdOptimization.No));
+        m_Section.addNode(m_MultiLabelRankingMeasure = new INIFileEnumList<>("MultiLabelRankingMeasure", MultiLabelMeasures.HammingLoss));
     }
 }

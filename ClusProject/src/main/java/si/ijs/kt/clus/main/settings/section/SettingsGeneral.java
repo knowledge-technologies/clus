@@ -5,7 +5,6 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
@@ -24,7 +23,7 @@ public class SettingsGeneral extends SettingsBase {
 
 
     public SettingsGeneral(int position) {
-        super(position);
+        super(position, "General");
     }
 
 
@@ -63,15 +62,15 @@ public class SettingsGeneral extends SettingsBase {
      * Section: General - ResourceInfo loaded *
      ***********************************************************************/
 
-    public enum ResourceInfoLoad {Yes, No, Test};
+    public enum ResourceInfoLoad {
+        Yes, No, Test
+    };
+
 
     @Override
-    public INIFileSection create() {
-        INIFileSection settings = new INIFileSection("General");
-        settings.addNode(m_Verbose = new INIFileInt("Verbose", 1));
-        settings.addNode(m_RandomSeed = new INIFileString("RandomSeed", "0"));
-        settings.addNode(m_ResourceInfoLoaded = new INIFileEnum<>("ResourceInfoLoaded", ResourceInfoLoad.No));
-
-        return settings;
+    public void create() {
+        m_Section.addNode(m_Verbose = new INIFileInt("Verbose", 1));
+        m_Section.addNode(m_RandomSeed = new INIFileString("RandomSeed", "0"));
+        m_Section.addNode(m_ResourceInfoLoaded = new INIFileEnum<>("ResourceInfoLoaded", ResourceInfoLoad.No));
     }
 }

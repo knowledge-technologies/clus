@@ -8,7 +8,6 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
@@ -19,7 +18,7 @@ public class SettingsHMLC extends SettingsBase {
 
 
     public SettingsHMLC(int position) {
-        super(position);
+        super(position, "Hierarchical");
     }
 
     /***********************************************************************
@@ -44,7 +43,6 @@ public class SettingsHMLC extends SettingsBase {
         AverageAUROC, AverageAUPRC, WeightedAverageAUPRC, PooledAUPRC, Undefined
     };
 
-    INIFileSection m_SectionHierarchical;
     protected INIFileEnum<HierarchyType> m_HierType;
     protected INIFileEnum<HierarchyWeight> m_HierWType;
     protected INIFileEnum<HierarchyDistance> m_HierDistance;
@@ -83,12 +81,12 @@ public class SettingsHMLC extends SettingsBase {
 
 
     public void setSectionHierarchicalEnabled(boolean enable) {
-        m_SectionHierarchical.setEnabled(enable);
+        m_Section.setEnabled(enable);
     }
 
 
     public boolean isSectionHierarchicalEnabled() {
-        return m_SectionHierarchical.isEnabled();
+        return m_Section.isEnabled();
     }
 
 
@@ -184,30 +182,29 @@ public class SettingsHMLC extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-
-        m_SectionHierarchical = new INIFileSection("Hierarchical");
-        m_SectionHierarchical.addNode(m_HierType = new INIFileEnum<>("Type", HierarchyType.DAG));
-        m_SectionHierarchical.addNode(m_HierDistance = new INIFileEnum<HierarchyDistance>("Distance", HierarchyDistance.WeightedEuclidean));
-        m_SectionHierarchical.addNode(m_HierWType = new INIFileEnum<>("WType", HierarchyWeight.ExpSumParentWeight));
-        m_SectionHierarchical.addNode(m_HierWParam = new INIFileDouble("WParam", 0.75));
-        m_SectionHierarchical.addNode(m_HierSep = new INIFileString("HSeparator", "."));
-        m_SectionHierarchical.addNode(m_HierEmptySetIndicator = new INIFileString("EmptySetIndicator", "n"));
-        m_SectionHierarchical.addNode(m_HierOptimizeErrorMeasure = new INIFileEnum<>("OptimizeErrorMeasure", HierarchyMeasures.PooledAUPRC));
-        m_SectionHierarchical.addNode(m_DefinitionFile = new INIFileString("DefinitionFile", NONE));
-        m_SectionHierarchical.addNode(m_HierNoRootPreds = new INIFileBool("NoRootPredictions", false));
-        m_SectionHierarchical.addNode(m_HierPruneInSig = new INIFileDouble("PruneInSig", 0.0));
-        m_SectionHierarchical.addNode(m_HierUseBonferroni = new INIFileBool("Bonferroni", false));
-        m_SectionHierarchical.addNode(m_HierSingleLabel = new INIFileBool("SingleLabel", false));
-        m_SectionHierarchical.addNode(m_CalErr = new INIFileBool("CalculateErrors", true));
-        m_SectionHierarchical.addNode(m_HierClassThreshold = new INIFileNominalOrDoubleOrVector("ClassificationThreshold", NONELIST));
+    public void create() {
+        m_Section.addNode(m_HierType = new INIFileEnum<>("Type", HierarchyType.DAG));
+        m_Section.addNode(m_HierDistance = new INIFileEnum<HierarchyDistance>("Distance", HierarchyDistance.WeightedEuclidean));
+        m_Section.addNode(m_HierWType = new INIFileEnum<>("WType", HierarchyWeight.ExpSumParentWeight));
+        m_Section.addNode(m_HierWParam = new INIFileDouble("WParam", 0.75));
+        m_Section.addNode(m_HierSep = new INIFileString("HSeparator", "."));
+        m_Section.addNode(m_HierEmptySetIndicator = new INIFileString("EmptySetIndicator", "n"));
+        m_Section.addNode(m_HierOptimizeErrorMeasure = new INIFileEnum<>("OptimizeErrorMeasure", HierarchyMeasures.PooledAUPRC));
+        m_Section.addNode(m_DefinitionFile = new INIFileString("DefinitionFile", NONE));
+        m_Section.addNode(m_HierNoRootPreds = new INIFileBool("NoRootPredictions", false));
+        m_Section.addNode(m_HierPruneInSig = new INIFileDouble("PruneInSig", 0.0));
+        m_Section.addNode(m_HierUseBonferroni = new INIFileBool("Bonferroni", false));
+        m_Section.addNode(m_HierSingleLabel = new INIFileBool("SingleLabel", false));
+        m_Section.addNode(m_CalErr = new INIFileBool("CalculateErrors", true));
+        
+        m_Section.addNode(m_HierClassThreshold = new INIFileNominalOrDoubleOrVector("ClassificationThreshold", NONELIST));
         m_HierClassThreshold.setNominal(0);
-        m_SectionHierarchical.addNode(m_RecallValues = new INIFileNominalOrDoubleOrVector("RecallValues", NONELIST));
+        
+        m_Section.addNode(m_RecallValues = new INIFileNominalOrDoubleOrVector("RecallValues", NONELIST));
         m_RecallValues.setNominal(0);
-        m_SectionHierarchical.addNode(m_HierEvalClasses = new INIFileString("EvalClasses", NONE));
-        m_SectionHierarchical.addNode(m_HierUseMEstimate = new INIFileBool("MEstimate", false));
-        m_SectionHierarchical.setEnabled(false);
-
-        return m_SectionHierarchical;
+        
+        m_Section.addNode(m_HierEvalClasses = new INIFileString("EvalClasses", NONE));
+        m_Section.addNode(m_HierUseMEstimate = new INIFileBool("MEstimate", false));
+        m_Section.setEnabled(false);
     }
 }

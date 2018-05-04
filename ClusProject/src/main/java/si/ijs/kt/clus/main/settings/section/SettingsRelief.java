@@ -8,7 +8,6 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 
@@ -18,14 +17,12 @@ public class SettingsRelief extends SettingsBase {
 
 
     public SettingsRelief(int position) {
-        super(position);
+        super(position, "Relief");
     }
 
     /***********************************************************************
      * Section: Relief *
      ***********************************************************************/
-
-    private INIFileSection m_SectionRelief;
 
     public static final int RELIEF_NEIGHBOUR_DEFAULT = 10;
     public static final int RELIEF_ITERATIONS_DEFAULT = -1;
@@ -45,12 +42,12 @@ public class SettingsRelief extends SettingsBase {
 
 
     public void setSectionReliefEnabled(boolean value) {
-        m_SectionRelief.setEnabled(value);
+        m_Section.setEnabled(value);
     }
 
 
     public boolean isRelief() {
-        return m_SectionRelief.isEnabled();
+        return m_Section.isEnabled();
     }
 
 
@@ -140,25 +137,23 @@ public class SettingsRelief extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-
-        m_SectionRelief = new INIFileSection("Relief");
-
-        m_SectionRelief.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("Neighbours", NONELIST));
+    public void create() {
+        m_Section.addNode(m_ReliefNbNeighbours = new INIFileNominalOrIntOrVector("Neighbours", NONELIST));
         m_ReliefNbNeighbours.setInt(RELIEF_NEIGHBOUR_DEFAULT);
-        m_SectionRelief.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("Iterations", NONELIST));
+
+        m_Section.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("Iterations", NONELIST));
         m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);
-        m_SectionRelief.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("WeightNeighbours", false));
-        m_SectionRelief.addNode(m_ReliefWeightingSigma = new INIFileDouble("WeightingSigma", 0.5)); // following Weka,
-                                                                                                    // the authors do
-                                                                                                    // not give any
-                                                                                                    // suggestions
-        m_SectionRelief.addNode(m_ChosenInstances = new INIFileNominalOrIntOrVector("ChosenInstances", NONELIST));
+
+        m_Section.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("WeightNeighbours", false));
+
+        /* following Weka, the authors do not give any suggestions */
+        m_Section.addNode(m_ReliefWeightingSigma = new INIFileDouble("WeightingSigma", 0.5));
+        
+        m_Section.addNode(m_ChosenInstances = new INIFileNominalOrIntOrVector("ChosenInstances", NONELIST));
         m_ChosenInstances.setIntVector(DUMMY_INSTANCES);
-        m_SectionRelief.addNode(m_MultilabelDistance = new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.HammingLoss));
+        
+        m_Section.addNode(m_MultilabelDistance = new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.HammingLoss));
 
-        m_SectionRelief.setEnabled(false);
-
-        return m_SectionRelief;
+        m_Section.setEnabled(false);
     }
 }

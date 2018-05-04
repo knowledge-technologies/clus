@@ -12,7 +12,6 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 
@@ -25,7 +24,7 @@ public class SettingsHMTR extends SettingsBase {
 
 
     public SettingsHMTR(int position, SettingsAttribute settAttribute, SettingsGeneral settGeneral) {
-        super(position);
+        super(position, "HMTR");
 
         m_SettAttribute = settAttribute;
         m_SettGeneral = settGeneral;
@@ -49,7 +48,6 @@ public class SettingsHMTR extends SettingsBase {
         SUM, AVG, MEDIAN, MIN, MAX, AND, OR, COUNT, VAR, STDEV, ZERO, ONE
     };
 
-    private INIFileSection m_SectionHMTR;
     protected static INIFileEnum<HierarchyTypesHMTR> m_HMTRType;
     private INIFileEnum<HierarchyDistanceHMTR> m_HMTRDistance;
     private INIFileEnum<HierarchyAggregationsHMTR> m_HMTRAggregation;
@@ -74,12 +72,12 @@ public class SettingsHMTR extends SettingsBase {
 
 
     public void setSectionHMTREnabled(boolean enable) {
-        m_SectionHMTR.setEnabled(enable);
+        m_Section.setEnabled(enable);
     }
 
 
     public boolean isSectionHMTREnabled() {
-        return m_SectionHMTR.isEnabled();
+        return m_Section.isEnabled();
     }
 
 
@@ -114,17 +112,14 @@ public class SettingsHMTR extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
+    public void create() {
+        m_Section.addNode(m_HMTRType = new INIFileEnum<>("Type", HierarchyTypesHMTR.Disabled));
+        m_Section.addNode(m_HMTRDistance = new INIFileEnum<>("Distance", HierarchyDistanceHMTR.WeightedEuclidean));
+        m_Section.addNode(m_HMTRAggregation = new INIFileEnum<>("Aggregation", HierarchyAggregationsHMTR.SUM));
+        m_Section.addNode(m_HMTRHierarchyString = new INIFileString("Hierarchy"));
+        m_Section.addNode(m_HMTRHierarchyWeight = new INIFileDouble("Weight"));
 
-        m_SectionHMTR = new INIFileSection("HMTR");
-        m_SectionHMTR.addNode(m_HMTRType = new INIFileEnum<>("Type", HierarchyTypesHMTR.Disabled));
-        m_SectionHMTR.addNode(m_HMTRDistance = new INIFileEnum<>("Distance", HierarchyDistanceHMTR.WeightedEuclidean));
-        m_SectionHMTR.addNode(m_HMTRAggregation = new INIFileEnum<>("Aggregation", HierarchyAggregationsHMTR.SUM));
-        m_SectionHMTR.addNode(m_HMTRHierarchyString = new INIFileString("Hierarchy"));
-        m_SectionHMTR.addNode(m_HMTRHierarchyWeight = new INIFileDouble("Weight"));
-        m_SectionHMTR.setEnabled(false);
-
-        return m_SectionHMTR;
+        m_Section.setEnabled(false);
     }
 
 

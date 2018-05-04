@@ -4,7 +4,6 @@ package si.ijs.kt.clus.main.settings.section;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 
@@ -14,13 +13,12 @@ public class SettingsSIT extends SettingsBase {
 
 
     public SettingsSIT(int position) {
-        super(position);
+        super(position, "SIT");
     }
 
     /***********************************************************************
      * Section: Selective inductive transfer *
      ***********************************************************************/
-    protected INIFileSection m_SectionSIT;
     protected INIFileString m_MainTarget;
     protected INIFileString m_Search;
     protected INIFileString m_Learner;
@@ -65,20 +63,18 @@ public class SettingsSIT extends SettingsBase {
 
 
     public void setSectionSITEnabled(boolean enable) {
-        m_SectionSIT.setEnabled(enable);
+        m_Section.setEnabled(enable);
     }
 
 
     @Override
-    public INIFileSection create() {
-        m_SectionSIT = new INIFileSection("SIT");
-        m_SectionSIT.addNode(m_MainTarget = new INIFileString("Main_target", DEFAULT));
-        m_SectionSIT.addNode(m_Recursive = new INIFileBool("Recursive", false));
-        m_SectionSIT.addNode(m_Search = new INIFileString("Search", "OneTarget"));
-        m_SectionSIT.addNode(m_Learner = new INIFileString("Learner", "ClusLearner"));
-        m_SectionSIT.addNode(m_Error = new INIFileString("Error", "MSE"));
-        m_SectionSIT.setEnabled(false);
+    public void create() {
+        m_Section.addNode(m_MainTarget = new INIFileString("Main_target", DEFAULT));
+        m_Section.addNode(m_Recursive = new INIFileBool("Recursive", false));
+        m_Section.addNode(m_Search = new INIFileString("Search", "OneTarget"));
+        m_Section.addNode(m_Learner = new INIFileString("Learner", "ClusLearner"));
+        m_Section.addNode(m_Error = new INIFileString("Error", "MSE"));
 
-        return m_SectionSIT;
+        m_Section.setEnabled(false);
     }
 }

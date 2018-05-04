@@ -4,7 +4,6 @@ package si.ijs.kt.clus.main.settings.section;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
 public class SettingsTimeSeries extends SettingsBase {
@@ -13,7 +12,7 @@ public class SettingsTimeSeries extends SettingsBase {
 
 
     public SettingsTimeSeries(int position) {
-        super(position);
+        super(position, "TimeSeries");
     }
 
     /***********************************************************************
@@ -28,18 +27,17 @@ public class SettingsTimeSeries extends SettingsBase {
         N2, Log, Linear, NPairs, Test
     };
 
-    private INIFileSection m_SectionTimeSeries;
     private INIFileEnum<TimeSeriesDistanceMeasure> m_TimeSeriesDistance;
     private INIFileEnum<TimeSeriesPrototypeComplexity> m_TimeSeriesHeuristicSampling;
 
 
     public boolean isSectionTimeSeriesEnabled() {
-        return m_SectionTimeSeries.isEnabled();
+        return m_Section.isEnabled();
     }
 
 
     public void setSectionTimeSeriesEnabled(boolean enable) {
-        m_SectionTimeSeries.setEnabled(enable);
+        m_Section.setEnabled(enable);
     }
 
 
@@ -69,13 +67,10 @@ public class SettingsTimeSeries extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-        m_SectionTimeSeries = new INIFileSection("TimeSeries");
-        m_SectionTimeSeries.addNode(m_TimeSeriesDistance = new INIFileEnum<TimeSeriesDistanceMeasure>("DistanceMeasure", TimeSeriesDistanceMeasure.DTW));
-        m_SectionTimeSeries.addNode(m_TimeSeriesHeuristicSampling = new INIFileEnum<>("PrototypeComplexity", TimeSeriesPrototypeComplexity.N2));
+    public void create() {
+        m_Section.addNode(m_TimeSeriesDistance = new INIFileEnum<TimeSeriesDistanceMeasure>("DistanceMeasure", TimeSeriesDistanceMeasure.DTW));
+        m_Section.addNode(m_TimeSeriesHeuristicSampling = new INIFileEnum<>("PrototypeComplexity", TimeSeriesPrototypeComplexity.N2));
 
         setSectionTimeSeriesEnabled(false); // disabled by default
-
-        return m_SectionTimeSeries;
     }
 }

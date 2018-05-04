@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Enumeration;
+import java.util.List;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
@@ -38,7 +39,6 @@ import si.ijs.kt.clus.main.settings.section.SettingsAttribute;
 import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
 import si.ijs.kt.clus.main.settings.section.SettingsConstraints;
 import si.ijs.kt.clus.main.settings.section.SettingsData;
-import si.ijs.kt.clus.main.settings.section.SettingsDistances;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsExhaustiveSearch;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
@@ -65,9 +65,10 @@ import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.main.settings.section.SettingsTree.Heuristic;
 import si.ijs.kt.clus.main.settings.section.SettingsTree.PruningMethod;
+import si.ijs.kt.clus.util.ResourceInfo;
+import si.ijs.kt.clus.util.exception.ClusInvalidSettingsException;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFile;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNode;
-import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
@@ -112,7 +113,6 @@ public class Settings implements Serializable {
     private SettingsTimeSeries m_SettTimeSeries;
     private SettingsPhylogeny m_SettPhylogeny;
     private SettingsRelief m_SettRelief;
-    private SettingsDistances m_SettDistances;
     private SettingsEnsemble m_SettEnsemble;
     private SettingsKNN m_SettKNN;
     private SettingsKNNTree m_SettKNNTree;
@@ -143,7 +143,6 @@ public class Settings implements Serializable {
         m_SettTimeSeries = new SettingsTimeSeries(8);
         m_SettPhylogeny = new SettingsPhylogeny(19);
         m_SettRelief = new SettingsRelief(20);
-        m_SettDistances = new SettingsDistances(4);
         m_SettEnsemble = new SettingsEnsemble(21);
         m_SettKNN = new SettingsKNN(22);
         m_SettKNNTree = new SettingsKNNTree(23);
@@ -156,7 +155,7 @@ public class Settings implements Serializable {
         m_SettSSL = new SettingsSSL(25);
 
         // store all settings classes in m_Sections
-        Collections.addAll(m_Sections, m_SettGeneral, m_SettData, m_SettAttribute, m_SettConstraints, m_SettOutput, m_SettNominal, m_SettModel, m_SettTree, m_SettRules, m_SettMLC, m_SettHMLC, m_SettHMTR, m_SettILevelC, m_SettBeamSearch, m_SettExhaustiveSearch, m_SettTimeSeries, m_SettPhylogeny, m_SettRelief, m_SettDistances, m_SettEnsemble, m_SettKNN, m_SettKNNTree, m_SettOptionTree, m_SettExperimental, m_SettSIT, m_SettSSL);
+        Collections.addAll(m_Sections, m_SettGeneral, m_SettData, m_SettAttribute, m_SettConstraints, m_SettOutput, m_SettNominal, m_SettModel, m_SettTree, m_SettRules, m_SettMLC, m_SettHMLC, m_SettHMTR, m_SettILevelC, m_SettBeamSearch, m_SettExhaustiveSearch, m_SettTimeSeries, m_SettPhylogeny, m_SettRelief, m_SettEnsemble, m_SettKNN, m_SettKNNTree, m_SettOptionTree, m_SettExperimental, m_SettSIT, m_SettSSL);
 
     }
 
@@ -261,11 +260,6 @@ public class Settings implements Serializable {
     }
 
 
-    public SettingsDistances getDistances() {
-        return m_SettDistances;
-    }
-
-
     public SettingsEnsemble getEnsemble() {
         return m_SettEnsemble;
     }
@@ -304,7 +298,7 @@ public class Settings implements Serializable {
     /**
      * This method creates INI sections and stores them in the m_Ini structure
      */
-    public void create() {
+    private void create() {
 
         // sort the sections so that they will be listed correctly in the INI file
         Collections.sort(m_Sections, new Comparator<SettingsBase>() {
@@ -317,12 +311,13 @@ public class Settings implements Serializable {
 
         // create sections and add them to INI structure
         for (SettingsBase sec : m_Sections) {
-            m_Ini.addNode(sec.create());
+            sec.create();
+            m_Ini.addNode(sec.getSection());
         }
     }
 
 
-    public void initNamedValues() {
+    private void initNamedValues() {
         for (SettingsBase sec : m_Sections) {
             sec.initNamedValues();
         }
@@ -351,11 +346,58 @@ public class Settings implements Serializable {
                 System.out.println("No settings file found");
             }
         }
-        if (cargs != null)
+        if (cargs != null) {
             process(cargs);
+        }
 
         m_SettData.updateDataFile(m_SettGeneric.getAppName() + ".arff");
         m_SettHMLC.initHierarchical();
+
+        try {
+            validateSettingsCompatibility();
+        }
+        catch (ClusInvalidSettingsException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    /**
+     * Use this method to implement compatibility of generated settings,
+     * i.e., when a certain combination of settings (within or across sections) results in an invalid configuration.
+     * 
+     * @throws ClusInvalidSettingsException
+     */
+    private void validateSettingsCompatibility() throws ClusInvalidSettingsException {
+        List<String> incompatibilities = new ArrayList<String>();
+        List<String> tmpList = null;
+
+        for (SettingsBase sec : m_Sections) {
+            tmpList = sec.validateSettingsInternal();
+            if (tmpList != null) {
+                incompatibilities.add(sec.getSection().getName());
+                incompatibilities.addAll(tmpList);
+            }
+        }
+
+        tmpList = validateSettingsCombined();
+        if (tmpList != null) {
+            incompatibilities.add("COMBINED INCOMPATIBILITIES");
+            incompatibilities.addAll(tmpList);
+        }
+
+        if (!incompatibilities.isEmpty()) { throw new ClusInvalidSettingsException(incompatibilities); }
+    }
+
+
+    /** Use this method to validate cross-section settings. */
+    private List<String> validateSettingsCombined() {
+        List<String> invalid = null;
+
+        /* kNN */
+        // TODO matejp
+
+        return invalid;
     }
 
 
@@ -400,22 +442,17 @@ public class Settings implements Serializable {
 
 
     public void updateDisabledSettings() {
-    	PruningMethod pruning = m_SettTree.getPruningMethod();
+        PruningMethod pruning = m_SettTree.getPruningMethod();
         Heuristic heur = m_SettTree.getHeuristic();
 
-        m_SettTree.setM5PruningMultEnabled(pruning.equals(PruningMethod.M5) || pruning.equals(PruningMethod.M5Multi));
+        m_SettTree.setM5PruningMultEnabled(Arrays.asList(PruningMethod.M5, PruningMethod.M5Multi).contains(pruning));
         m_SettTree.set1SERuleEnabled(pruning.equals(PruningMethod.GarofalakisVSB));
-        
+
         m_SettTree.setFTestEnabled(Arrays.asList(Heuristic.SSPD, Heuristic.VarianceReduction).contains(heur));
-        
+
         m_SettData.setPruneSetMaxEnabled(!m_SettData.isPruneSetString(SettingsBase.NONE));
 
-        if (ResourceInfo.isLibLoaded()) {
-            m_SettGeneral.getResourceInfoLoaded().setValue(ResourceInfoLoad.Yes);
-        }
-        else {
-            m_SettGeneral.getResourceInfoLoaded().setValue(ResourceInfoLoad.No);
-        }
+        m_SettGeneral.getResourceInfoLoaded().setValue(ResourceInfo.isLibLoaded() ? ResourceInfoLoad.Yes : ResourceInfoLoad.No);
     }
 
 
@@ -426,13 +463,15 @@ public class Settings implements Serializable {
         boolean tempInduceParamNeeded = m_SettRules.getRuleInduceParamsDisabled(); // They were changed in the first
                                                                                    // place
 
-        if (m_SettRules.getCoveringMethod().equals(CoveringMethod.RulesFromTree) && tempInduceParamNeeded)
+        if (m_SettRules.getCoveringMethod().equals(CoveringMethod.RulesFromTree) && tempInduceParamNeeded) {
             m_SettRules.returnRuleInduceParams();
+        }
 
         m_Ini.save(where);
 
-        if (m_SettRules.getCoveringMethod().equals(CoveringMethod.RulesFromTree) && tempInduceParamNeeded)
+        if (m_SettRules.getCoveringMethod().equals(CoveringMethod.RulesFromTree) && tempInduceParamNeeded) {
             m_SettRules.disableRuleInduceParams();
+        }
     }
 
 

@@ -51,6 +51,7 @@ import si.ijs.kt.clus.distance.complex.sets.EuclideanDistance;
 import si.ijs.kt.clus.distance.complex.sets.GSMDistance;
 import si.ijs.kt.clus.distance.complex.sets.HammingLossDistance;
 import si.ijs.kt.clus.distance.complex.sets.JaccardDistance;
+import si.ijs.kt.clus.distance.complex.tuples.SSPDMatrix;
 import si.ijs.kt.clus.distance.hierarchies.HierJaccardDistance;
 import si.ijs.kt.clus.distance.primitive.nominal.NominalDistance;
 import si.ijs.kt.clus.distance.primitive.timeseries.DTWTimeSeriesDist;
@@ -85,7 +86,6 @@ import si.ijs.kt.clus.ext.ilevelc.ILevelCStatistic;
 import si.ijs.kt.clus.ext.semisupervised.Helper;
 import si.ijs.kt.clus.ext.semisupervised.ModifiedGainHeuristic;
 import si.ijs.kt.clus.ext.semisupervised.SemiSupMinLabeledWeightStopCrit;
-import si.ijs.kt.clus.ext.sspd.SSPDMatrix;
 import si.ijs.kt.clus.ext.structuredTypes.SetStatistic;
 import si.ijs.kt.clus.ext.structuredTypes.TupleStatistic;
 import si.ijs.kt.clus.ext.timeseries.TimeSeriesSignificantChangeTesterXVAL;
@@ -146,7 +146,7 @@ import si.ijs.kt.clus.statistic.HierSumPairwiseDistancesStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 
 /**

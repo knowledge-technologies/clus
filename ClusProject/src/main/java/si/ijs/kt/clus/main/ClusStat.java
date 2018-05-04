@@ -22,8 +22,8 @@
 
 package si.ijs.kt.clus.main;
 
+import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
-import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
 
 
 public class ClusStat {

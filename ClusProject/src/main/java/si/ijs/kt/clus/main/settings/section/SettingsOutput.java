@@ -11,7 +11,6 @@ import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnumList;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
 public class SettingsOutput extends SettingsBase {
@@ -60,7 +59,7 @@ public class SettingsOutput extends SettingsBase {
 
 
     public SettingsOutput(int position) {
-        super(position);
+        super(position, "Output");
     }
 
 
@@ -261,43 +260,33 @@ public class SettingsOutput extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-
-        INIFileSection output = new INIFileSection("Output");
-        output.addNode(m_ShowModels = new INIFileEnumList<>("ShowModels", Arrays.asList(ShowModels.Default, ShowModels.Pruned, ShowModels.Others)));
-        output.addNode(m_OutTrainErr = new INIFileBool("TrainErrors", true));
-        output.addNode(m_OutValidErr = new INIFileBool("ValidErrors", true));
-        output.addNode(m_OutTestErr = new INIFileBool("TestErrors", true));
-        output.addNode(m_OutFoldModels = new INIFileBool("AllFoldModels", true));
-        output.addNode(m_OutFoldErr = new INIFileBool("AllFoldErrors", false));
-        output.addNode(m_OutFoldData = new INIFileBool("AllFoldDatasets", false));
-        output.addNode(m_ShowUnknown = new INIFileBool("UnknownFrequency", false));
-        output.addNode(m_ShowBrFreq = new INIFileBool("BranchFrequency", false));
-        output.addNode(m_ShowInfo = new INIFileEnumList<>("ShowInfo", Arrays.asList(ShowInfo.Count)));
-        output.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
-        output.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); // TODO: bug: see issue #51 in the
-                                                                                     // repository
-        output.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
-        output.addNode(m_WritePerBagModelFiles = new INIFileBool("WritePerBagModelFile", true));
-        output.addNode(m_WriteOOBFile = new INIFileBool("WriteOOBFile", false));
-        output.addNode(m_WritePredictions = new INIFileEnumList<>("WritePredictions", Arrays.asList(WritePredictions.None)));
-        output.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));
-
-        // If this option name is to be changed, it must also be changed in testsets/iris-classify.s
-        // output.addNode(m_ModelIDFiles = new INIFileBool("WriteModelIDFiles", false));
-        output.addNode(m_ModelIDFiles = new INIFileBool("ModelIDFiles", false));
-        output.addNode(m_WriteCurves = new INIFileBool("WriteCurves", false));
-
-        output.addNode(m_OutputPythonModel = new INIFileBool("OutputPythonModel", false));
-        output.addNode(m_PythonModelType = new INIFileEnum<>("PythonModelType", PythonModelType.Object));
-
-        output.addNode(m_OutputROSSubspaces = new INIFileBool("OutputROSSubspaces", false));
-        output.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
-        output.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));
-        output.addNode(m_OutputClowdFlowsJSON = new INIFileBool("OutputClowdFlowsJSON", false));
-
-        return output;
-
+    public void create() {
+        m_Section.addNode(m_ShowModels = new INIFileEnumList<>("ShowModels", Arrays.asList(ShowModels.Default, ShowModels.Pruned, ShowModels.Others)));
+        m_Section.addNode(m_OutTrainErr = new INIFileBool("TrainErrors", true));
+        m_Section.addNode(m_OutValidErr = new INIFileBool("ValidErrors", true));
+        m_Section.addNode(m_OutTestErr = new INIFileBool("TestErrors", true));
+        m_Section.addNode(m_OutFoldModels = new INIFileBool("AllFoldModels", true));
+        m_Section.addNode(m_OutFoldErr = new INIFileBool("AllFoldErrors", false));
+        m_Section.addNode(m_OutFoldData = new INIFileBool("AllFoldDatasets", false));
+        m_Section.addNode(m_ShowUnknown = new INIFileBool("UnknownFrequency", false));
+        m_Section.addNode(m_ShowBrFreq = new INIFileBool("BranchFrequency", false));
+        m_Section.addNode(m_ShowInfo = new INIFileEnumList<>("ShowInfo", Arrays.asList(ShowInfo.Count)));
+        m_Section.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
+        m_Section.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); // TODO: bug: see issue #51 in
+                                                                                        // the
+        m_Section.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
+        m_Section.addNode(m_WritePerBagModelFiles = new INIFileBool("WritePerBagModelFile", true));
+        m_Section.addNode(m_WriteOOBFile = new INIFileBool("WriteOOBFile", false));
+        m_Section.addNode(m_WritePredictions = new INIFileEnumList<>("WritePredictions", Arrays.asList(WritePredictions.None)));
+        m_Section.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));
+        m_Section.addNode(m_ModelIDFiles = new INIFileBool("ModelIDFiles", false));
+        m_Section.addNode(m_WriteCurves = new INIFileBool("WriteCurves", false));
+        m_Section.addNode(m_OutputPythonModel = new INIFileBool("OutputPythonModel", false));
+        m_Section.addNode(m_PythonModelType = new INIFileEnum<>("PythonModelType", PythonModelType.Object));
+        m_Section.addNode(m_OutputROSSubspaces = new INIFileBool("OutputROSSubspaces", false));
+        m_Section.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
+        m_Section.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));
+        m_Section.addNode(m_OutputClowdFlowsJSON = new INIFileBool("OutputClowdFlowsJSON", false));
     }
 
 

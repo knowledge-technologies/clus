@@ -5,7 +5,6 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
@@ -16,7 +15,7 @@ public class SettingsAttribute extends SettingsBase {
 
 
     public SettingsAttribute(int position) {
-        super(position);
+        super(position, "Attributes");
     }
 
     /***********************************************************************
@@ -148,21 +147,21 @@ public class SettingsAttribute extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-        INIFileSection attrs = new INIFileSection("Attributes");
-        attrs.addNode(m_Target = new INIFileString("Target", DEFAULT));
-        attrs.addNode(m_Clustering = new INIFileString("Clustering", DEFAULT));
-        attrs.addNode(m_Descriptive = new INIFileString("Descriptive", DEFAULT));
-        attrs.addNode(m_Key = new INIFileString("Key", NONE));
-        attrs.addNode(m_Disabled = new INIFileString("Disable", NONE));
-        attrs.addNode(m_Weights = new INIFileNominalOrDoubleOrVector("Weights", NORMALIZATIONS));
+    public void create() {
+        m_Section.addNode(m_Target = new INIFileString("Target", DEFAULT));
+        m_Section.addNode(m_Clustering = new INIFileString("Clustering", DEFAULT));
+        m_Section.addNode(m_Descriptive = new INIFileString("Descriptive", DEFAULT));
+        m_Section.addNode(m_Key = new INIFileString("Key", NONE));
+        m_Section.addNode(m_Disabled = new INIFileString("Disable", NONE));
+        
+        m_Section.addNode(m_Weights = new INIFileNominalOrDoubleOrVector("Weights", NORMALIZATIONS));
         m_Weights.setNominal(NORMALIZATION_DEFAULT);
-        attrs.addNode(m_ClusteringWeights = new INIFileNominalOrDoubleOrVector("ClusteringWeights", EMPTY));
+        
+        m_Section.addNode(m_ClusteringWeights = new INIFileNominalOrDoubleOrVector("ClusteringWeights", EMPTY));
         m_ClusteringWeights.setDouble(1.0);
         m_ClusteringWeights.setArrayIndexNames(NUM_NOM_TAR_NTAR_WEIGHTS);
-        attrs.addNode(m_ReduceMemoryNominal = new INIFileBool("ReduceMemoryNominalAttrs", false));
-        attrs.addNode(m_GIS = new INIFileString("GIS", NONE));
-
-        return attrs;
+        
+        m_Section.addNode(m_ReduceMemoryNominal = new INIFileBool("ReduceMemoryNominalAttrs", false));
+        m_Section.addNode(m_GIS = new INIFileString("GIS", NONE));
     }
 }

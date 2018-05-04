@@ -5,7 +5,6 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
 public class SettingsExperimental extends SettingsBase {
@@ -14,7 +13,7 @@ public class SettingsExperimental extends SettingsBase {
 
 
     public SettingsExperimental(int position) {
-        super(position);
+        super(position, "Experimental");
     }
 
     /***********************************************************************
@@ -40,13 +39,9 @@ public class SettingsExperimental extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-
-        INIFileSection exper = new INIFileSection("Experimental");
-        exper.addNode(m_SetsData = new INIFileInt("NumberBags", 25));
-        exper.addNode(m_ShowForest = new INIFileBool("XValForest", false));
-        exper.setEnabled(false);
-
-        return exper;
+    public void create() {
+        m_Section.addNode(m_SetsData = new INIFileInt("NumberBags", 25));
+        m_Section.addNode(m_ShowForest = new INIFileBool("XValForest", false));
+        m_Section.setEnabled(false);
     }
 }
