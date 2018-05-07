@@ -1831,6 +1831,7 @@ public class Clus implements CMDLineArgsProvider {
                  */
                 if (cargs.hasOption("relief")) {
                     clus.getSettings().getRelief().setSectionReliefEnabled(true);
+                    clus.getSettings().getKNN().setSectionKNNEnabled(true); // Relief and kNN settings have a non-empty intersection
                     clus.getSettings().getOutput().setOutValidError(false);
                     clus.getSettings().getOutput().setOutTrainError(false);
                     clus.getSettings().getOutput().setOutTestError(false);
