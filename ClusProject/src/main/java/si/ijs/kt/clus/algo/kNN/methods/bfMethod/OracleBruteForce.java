@@ -64,9 +64,9 @@ public class OracleBruteForce extends BruteForce {
 		   ClusReliefFeatureRanking.printMessage("Loading nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
 		   SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(sett.getKNN().getLoadNeighboursFiles(), null);
 		   m_NearestNeighbours = nnLoader.loadNeighboursFromFiles();
-		   SaveLoadNeighbours.assureIsFlatNearestNeighbours(m_NearestNeighbours);		   
+		   SaveLoadNeighbours.assureIsFlatNearestNeighbours(m_NearestNeighbours);
 	   } else {
-		   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
+		   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours", 1, sett.getGeneral().getVerbose());
 		   for(DataTuple tuple : new ArrayOfArraysIterator<>(new DataTuple[][] {m_ChosenInstancesTrain, m_ChosenInstancesTest})) {
 			   NN[] temp = super.returnPureNNs(tuple, k);
 			   NearestNeighbour[] nns = new NearestNeighbour[temp.length];
