@@ -32,7 +32,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.io.ClusTreeReader;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class ClusBeamSyntacticConstraint {

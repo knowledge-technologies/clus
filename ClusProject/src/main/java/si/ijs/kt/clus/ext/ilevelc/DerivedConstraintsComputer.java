@@ -33,10 +33,10 @@ import si.ijs.kt.clus.util.jeans.util.DisjointSetForest;
 public class DerivedConstraintsComputer {
 
     public ArrayList m_Points;
-    public ArrayList m_Constraints;
+    public ArrayList<ILevelConstraint> m_Constraints;
 
 
-    public DerivedConstraintsComputer(ArrayList points, ArrayList constr) {
+    public DerivedConstraintsComputer(ArrayList points, ArrayList<ILevelConstraint> constr) {
         m_Points = points;
         m_Constraints = constr;
     }
@@ -57,7 +57,7 @@ public class DerivedConstraintsComputer {
         DisjointSetForest dsf = new DisjointSetForest(m_Points.size());
         dsf.makeSets(m_Points.size());
         for (int i = 0; i < m_Constraints.size(); i++) {
-            ILevelConstraint ic = (ILevelConstraint) m_Constraints.get(i);
+            ILevelConstraint ic = m_Constraints.get(i);
             int type = ic.getType();
             if (type == ILevelConstraint.ILevelCMustLink) {
                 int t1 = ic.getT1().getIndex();
@@ -82,10 +82,10 @@ public class DerivedConstraintsComputer {
     }
 
 
-    public HashSet createCannotLinkSet(DisjointSetForest dsf) {
-        HashSet set = new HashSet();
+    public HashSet<int[]> createCannotLinkSet(DisjointSetForest dsf) {
+        HashSet<int[]> set = new HashSet<>();
         for (int i = 0; i < m_Constraints.size(); i++) {
-            ILevelConstraint ic = (ILevelConstraint) m_Constraints.get(i);
+            ILevelConstraint ic = m_Constraints.get(i);
             int type = ic.getType();
             if (type == ILevelConstraint.ILevelCCannotLink) {
                 int c1 = dsf.getComponent(ic.getT1().getIndex());
@@ -97,13 +97,13 @@ public class DerivedConstraintsComputer {
     }
 
 
-    public void addTransitiveClosureOfMustLinks(ArrayList[] comps) {
+    public void addTransitiveClosureOfMustLinks(ArrayList<DataTuple>[] comps) {
         for (int i = 0; i < comps.length; i++) {
-            ArrayList compcomps = comps[i];
+            ArrayList<DataTuple> compcomps = comps[i];
             for (int j = 0; j < compcomps.size(); j++) {
-                DataTuple tj = (DataTuple) compcomps.get(j);
+                DataTuple tj = compcomps.get(j);
                 for (int k = j + 1; k < compcomps.size(); k++) {
-                    DataTuple tk = (DataTuple) compcomps.get(k);
+                    DataTuple tk = compcomps.get(k);
                     m_Constraints.add(new ILevelConstraint(tj, tk, ILevelConstraint.ILevelCMustLink));
                 }
             }
@@ -129,10 +129,10 @@ public class DerivedConstraintsComputer {
 
 
     public int[] makeEdge(int i1, int i2) {
-        int[] edge = new int[2];
-        edge[0] = Math.min(i1, i2);
-        edge[1] = Math.max(i1, i2);
-        return edge;
+        return new int[] {
+          Math.min(i1, i2),
+          Math.max(i1, i2)      
+        };
     }
 
 

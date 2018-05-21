@@ -5,7 +5,6 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
 public class SettingsExhaustiveSearch extends SettingsBase {
@@ -14,21 +13,19 @@ public class SettingsExhaustiveSearch extends SettingsBase {
 
 
     public SettingsExhaustiveSearch(int position) {
-        super(position);
+        super(position, "Exhaustive");
     }
 
     /***********************************************************************
      * Section: Exhaustive search *
      ***********************************************************************/
-
-    protected INIFileSection m_SectionExhaustive;
     protected INIFileBool m_Exhaustive;
     protected INIFileInt m_StartTreeCpt;
     protected INIFileInt m_StartItemCpt;
 
 
     public void setSectionExhaustiveEnabled(boolean enable) {
-        m_SectionExhaustive.setEnabled(enable);
+        m_Section.setEnabled(enable);
     }
 
 
@@ -48,13 +45,10 @@ public class SettingsExhaustiveSearch extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-        m_SectionExhaustive = new INIFileSection("Exhaustive");
-        m_SectionExhaustive.addNode(m_Exhaustive = new INIFileBool("Exhaustive", true));
-        m_SectionExhaustive.addNode(m_StartTreeCpt = new INIFileInt("StartTreeCpt", 0));
-        m_SectionExhaustive.addNode(m_StartItemCpt = new INIFileInt("StartItemCpt", 0));
-        m_SectionExhaustive.setEnabled(false);
-
-        return m_SectionExhaustive;
+    public void create() {
+        m_Section.addNode(m_Exhaustive = new INIFileBool("Exhaustive", true));
+        m_Section.addNode(m_StartTreeCpt = new INIFileInt("StartTreeCpt", 0));
+        m_Section.addNode(m_StartItemCpt = new INIFileInt("StartItemCpt", 0));
+        m_Section.setEnabled(false);
     }
 }

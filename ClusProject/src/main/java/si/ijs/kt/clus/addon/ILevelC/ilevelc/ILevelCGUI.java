@@ -53,7 +53,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.ilevelc.DerivedConstraintsComputer;
 import si.ijs.kt.clus.ext.ilevelc.ILevelConstraint;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 
 

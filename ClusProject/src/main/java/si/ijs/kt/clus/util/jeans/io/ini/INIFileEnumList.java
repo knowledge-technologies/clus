@@ -12,8 +12,8 @@ import si.ijs.kt.clus.main.settings.Settings;
 public class INIFileEnumList<T extends Enum<T>> extends INIFileEntry {
 
 	private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-	Class<T> m_EnumType;
-	List<T> m_Values = null;
+	private Class<T> m_EnumType;
+	private List<T> m_Values = null;
 
 	@SuppressWarnings("unchecked")
 	public INIFileEnumList(String name, T defaultValue) {
@@ -32,7 +32,6 @@ public class INIFileEnumList<T extends Enum<T>> extends INIFileEntry {
 			throw new RuntimeException("INIFileEnumList(String, List<T>) --> List<T> is null!");
 		} else {
 			m_EnumType = (Class<T>) values.getClass();
-			// m_EnumType = (Class<T>) values.get(0).getClass();
 			m_Values = values;
 		}
 	}

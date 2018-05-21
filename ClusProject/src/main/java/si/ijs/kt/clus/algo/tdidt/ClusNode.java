@@ -54,9 +54,9 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.UniqueNodeIdentifier;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.jeans.tree.MyNode;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
@@ -831,7 +831,7 @@ public class ClusNode extends MyNode implements ClusModel {
      * @param leafTuples
      *        hash codes of tuples which are in the same leaf where
      *        the tuple ended will be stored in this variable.
-     * @return
+
      * @throws ClusException 
      */
     public ClusStatistic predictWeightedAndGetLeafTuples(DataTuple tuple, List<Integer> leafTuples) throws ClusException {
@@ -1309,7 +1309,7 @@ public class ClusNode extends MyNode implements ClusModel {
         int[][] tabexist = new int[lastmodel + 1][10000]; // table of booleen for each item
         Global.set_treecpt(starttree);
         Global.set_itemsetcpt(startitem);
-        ClusModelInfo m = cr.getModelInfo(0);// cr.getModelInfo(lastmodel);
+        //ClusModelInfo m = cr.getModelInfo(0);// cr.getModelInfo(lastmodel);
 
         if (exhaustive) {
             for (int i = 0; i < cr.getNbModels(); i++) {
@@ -1853,7 +1853,7 @@ public class ClusNode extends MyNode implements ClusModel {
 
 
     @Override
-    public void retrieveStatistics(ArrayList list) {
+    public void retrieveStatistics(ArrayList<ClusStatistic> list) {
         if (m_ClusteringStat != null)
             list.add(m_ClusteringStat);
         if (m_TargetStat != null)

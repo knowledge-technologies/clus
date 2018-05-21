@@ -39,7 +39,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
 import si.ijs.kt.clus.pruning.PruneTree;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class ClusBeamInduce extends ClusInductionAlgorithm {
@@ -127,7 +127,7 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
      * @param arr
      *        - List with the beam
      * @throws ClusException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public void postPruneBeamModels(ClusRun cr, ArrayList arr) throws ClusException, InterruptedException {
         updateAllPredictions(arr);
@@ -140,9 +140,9 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
     }
 
 
-    public void updateAllPredictions(ArrayList arr) throws ClusException {
+    public void updateAllPredictions(ArrayList<ClusBeamModel> arr) throws ClusException {
         for (int i = 0; i < arr.size(); i++) {
-            ClusNode tree = (ClusNode) ((ClusBeamModel) arr.get(i)).getModel();
+            ClusNode tree = (ClusNode)arr.get(i).getModel();
             tree.updateTree();
         }
     }
@@ -161,7 +161,7 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
      * @throws ClusException
      * @throws ClusException
      * @throws IOException
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public void sortModels(ClusRun cr, ArrayList arr) throws ClusException, IOException, InterruptedException {
         // if (cr.getStatManager().getSettings().getBeamTreeMaxSize() <= -1) {

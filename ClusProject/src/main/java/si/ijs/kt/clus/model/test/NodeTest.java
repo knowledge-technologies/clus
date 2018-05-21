@@ -28,12 +28,15 @@ import java.util.HashMap;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 
 
 public abstract class NodeTest implements Serializable {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public final static int UNKNOWN = -1;
 
@@ -46,8 +49,6 @@ public abstract class NodeTest implements Serializable {
     private double m_UnknownFreq;
     public double[] m_BranchFreq;
     private double m_HeuristicValue;
-    private double m_IValue; //daniela
-
 
     public final boolean hasUnknownBranch() {
         return m_UnknownBranch;
@@ -357,13 +358,5 @@ public abstract class NodeTest implements Serializable {
     @Override
     public final String toString() {
         return getString();
-    }
-    
-    /***************************************************************************
-     * Misc
-     ***************************************************************************/
-    //daniela
-    public void setIValue(double value){
-        m_IValue = value;
     }
 }

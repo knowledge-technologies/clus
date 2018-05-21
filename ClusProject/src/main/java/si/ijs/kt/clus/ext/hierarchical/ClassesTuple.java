@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.StringTable;
 
 
@@ -282,7 +282,7 @@ public class ClassesTuple implements Serializable {
 
 
     public void removeLabels(boolean[] removed) {
-        ArrayList left = new ArrayList();
+        ArrayList<ClassesValue> left = new ArrayList<>();
         for (int i = 0; i < getNbClasses(); i++) {
             ClassesValue val = getClass(i);
             if (!removed[val.getIndex()])

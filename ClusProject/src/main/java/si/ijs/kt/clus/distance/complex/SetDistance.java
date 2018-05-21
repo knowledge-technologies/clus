@@ -29,7 +29,7 @@ import si.ijs.kt.clus.ext.structuredTypes.Set;
 import si.ijs.kt.clus.ext.structuredTypes.SetStatistic;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public abstract class SetDistance extends ClusStructuredDistance {

@@ -40,7 +40,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.tools.optimization.GDAlg;
 import si.ijs.kt.clus.util.tools.optimization.OptAlg;
 import si.ijs.kt.clus.util.tools.optimization.OptProbl;

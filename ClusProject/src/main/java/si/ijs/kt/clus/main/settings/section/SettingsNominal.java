@@ -4,7 +4,6 @@ package si.ijs.kt.clus.main.settings.section;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
 public class SettingsNominal extends SettingsBase {
@@ -13,7 +12,7 @@ public class SettingsNominal extends SettingsBase {
 
 
     public SettingsNominal(int position) {
-        super(position);
+        super(position, "Nominal");
     }
 
     /***********************************************************************
@@ -29,9 +28,7 @@ public class SettingsNominal extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-        INIFileSection nominal = new INIFileSection("Nominal");
-        nominal.addNode(m_MEstimate = new INIFileDouble("MEstimate", 1.0));
-        return nominal;
+    public void create() {
+        m_Section.addNode(m_MEstimate = new INIFileDouble("MEstimate", 1.0));
     }
 }

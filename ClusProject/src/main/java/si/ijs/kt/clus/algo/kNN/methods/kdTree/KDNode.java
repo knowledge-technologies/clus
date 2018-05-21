@@ -30,7 +30,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
 import si.ijs.kt.clus.main.ClusModelInfoList;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**
@@ -125,7 +125,7 @@ public class KDNode {
     /**
      * If node is an leaf in tree, function returns true, false otherwise.
      * 
-     * @return
+
      */
     public boolean isLeaf() {
         return m_LeftSubTree == null && m_RightSubTree == null;
@@ -138,7 +138,7 @@ public class KDNode {
      * stores searched tuple statically in KDNode.
      * 
      * @param tuple
-     * @return
+
      * @throws ClusException 
      */
     public void find(DataTuple tuple) throws ClusException {
@@ -199,7 +199,7 @@ public class KDNode {
     /**
      * Returns list of all tuples belonging to this node.
      * 
-     * @return
+
      */
     public LinkedList<DataTuple> getTuples() {
         return m_Tuples;
@@ -209,7 +209,7 @@ public class KDNode {
     /**
      * Returns level on which this node is situated.
      * 
-     * @return
+
      */
     public int getLevel() {
         return m_Level;

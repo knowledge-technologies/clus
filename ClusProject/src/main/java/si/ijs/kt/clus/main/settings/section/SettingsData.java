@@ -5,7 +5,6 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrInt;
@@ -18,7 +17,7 @@ public class SettingsData extends SettingsBase {
 
 
     public SettingsData(int position) {
-        super(position);
+        super(position, "Data");
     }
 
     /***********************************************************************
@@ -156,17 +155,16 @@ public class SettingsData extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-        INIFileSection data = new INIFileSection("Data");
-        data.addNode(m_DataFile = new INIFileString("File", NONE));
-        data.addNode(m_TestSet = new INIFileStringOrDouble("TestSet", NONE));
-        data.addNode(m_PruneSet = new INIFileStringOrDouble("PruneSet", NONE));
-        data.addNode(m_PruneSetMax = new INIFileStringOrInt("PruneSetMax", INFINITY_STRING));
-        data.addNode(m_XValFolds = new INIFileStringOrInt("XVal"));
+    public void create() {
+        m_Section.addNode(m_DataFile = new INIFileString("File", NONE));
+        m_Section.addNode(m_TestSet = new INIFileStringOrDouble("TestSet", NONE));
+        m_Section.addNode(m_PruneSet = new INIFileStringOrDouble("PruneSet", NONE));
+        m_Section.addNode(m_PruneSetMax = new INIFileStringOrInt("PruneSetMax", INFINITY_STRING));
+        
+        m_Section.addNode(m_XValFolds = new INIFileStringOrInt("XVal"));
         m_XValFolds.setIntValue(10);
-        data.addNode(m_RemoveMissingTarget = new INIFileBool("RemoveMissingTarget", false));
-        data.addNode(m_NormalizeData = new INIFileEnum<>("NormalizeData", NormalizeDataValues.None));
-
-        return data;
+        
+        m_Section.addNode(m_RemoveMissingTarget = new INIFileBool("RemoveMissingTarget", false));
+        m_Section.addNode(m_NormalizeData = new INIFileEnum<>("NormalizeData", NormalizeDataValues.None));
     }
 }

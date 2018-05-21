@@ -26,7 +26,7 @@ import java.io.IOException;
 
 import si.ijs.kt.clus.data.ClusData;
 import si.ijs.kt.clus.data.ClusSchema;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class MemoryTupleIterator extends TupleIterator {

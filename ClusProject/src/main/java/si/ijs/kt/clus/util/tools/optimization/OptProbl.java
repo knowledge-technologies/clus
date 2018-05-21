@@ -975,7 +975,7 @@ public class OptProbl {
      * that it does not use member functions.
      * OBSOLETE, does not take into account target avg even if it should!
      * 
-     * @return
+
      */
     final private TrueValues[] getTrueValues() {
         return m_TrueVal;
@@ -1075,7 +1075,7 @@ public class OptProbl {
      * Returns target dimension for linear term with this index.
      * 
      * @param iLinTerm
-     * @return
+
      */
     final protected int getLinTargetDim(int iLinTerm) {
         return (iLinTerm - m_RulePred.length) % getNbOfTargets();
@@ -1086,7 +1086,7 @@ public class OptProbl {
      * Returns descriptive dimension for linear term with this index.
      * 
      * @param iLinTerm
-     * @return
+
      */
     final protected int getLinDescrDim(int iLinTerm) {
         return (int) Math.floor((double) (iLinTerm - m_RulePred.length) / getNbOfTargets());

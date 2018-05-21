@@ -36,9 +36,9 @@ import si.ijs.kt.clus.data.cols.attribute.NominalTarget;
 import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
-import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
+import si.ijs.kt.clus.util.io.ClusSerializable;
 
 
 /**

@@ -8,7 +8,6 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileStringOrDouble;
 
@@ -19,10 +18,9 @@ public class SettingsSSL extends SettingsBase {
 
 
     public SettingsSSL(int position) {
-        super(position);
+        super(position, "SemiSupervised");
     }
 
-    private INIFileSection m_SectionSSL;
     private boolean m_SemiSupervisedMode = false;
 
     private INIFileEnum<SSLMethod> m_SSL_SemiSupervisedMethod;
@@ -227,7 +225,7 @@ public class SettingsSSL extends SettingsBase {
      * Should calibrate HMC threshold so that the difference between label cardinality of labeled examples and predicted
      * unlabeled examples is minimal
      * 
-     * @return
+
      */
     public boolean shouldCalibrateHmcThreshold() {
         return m_CalibrateHmcThreshold.getValue();
@@ -388,36 +386,34 @@ public class SettingsSSL extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
+    public void create() {
+        m_Section.addNode(m_SSL_SemiSupervisedMethod = new INIFileEnum<>("SemiSupervisedMethod", SSLMethod.PCT));
+        m_Section.addNode(m_SSL_StoppingCriteria = new INIFileEnum<>("StoppingCriteria", SSLStoppingCriteria.NoneAdded));
+        m_Section.addNode(m_SSL_UnlabeledCriteria = new INIFileEnum<>("UnlabeledCriteria", SSLUnlabeledCriteria.Threshold));
+        m_Section.addNode(m_SSL_ConfidenceThreshold = new INIFileDouble("ConfidenceThreshold", 0.8));
+        m_Section.addNode(m_SSL_ConfidenceMeasure = new INIFileEnum<SSLConfidenceMeasure>("ConfidenceMeasure", SSLConfidenceMeasure.Variance));
+        m_Section.addNode(m_SSL_Iterations = new INIFileInt("Iterations", 10));
+        m_Section.addNode(m_SSL_K = new INIFileInt("K", 5));
+        m_Section.addNode(m_SSL_UnlabeledData = new INIFileStringOrDouble("UnlabeledData"));
+        m_Section.addNode(m_SSL_PercentageLabeled = new INIFileInt("PercentageLabeled", 5));
+        m_Section.addNode(m_SSL_useWeights = new INIFileBool("UseWeights", false));
+        m_Section.addNode(m_SSL_airbagTrials = new INIFileInt("AirbagTrials", 0));
 
-        m_SectionSSL = new INIFileSection("SemiSupervised");
-        m_SectionSSL.addNode(m_SSL_SemiSupervisedMethod = new INIFileEnum<>("SemiSupervisedMethod", SSLMethod.PCT));
-        m_SectionSSL.addNode(m_SSL_StoppingCriteria = new INIFileEnum<>("StoppingCriteria", SSLStoppingCriteria.NoneAdded));
-        m_SectionSSL.addNode(m_SSL_UnlabeledCriteria = new INIFileEnum<>("UnlabeledCriteria", SSLUnlabeledCriteria.Threshold));
-        m_SectionSSL.addNode(m_SSL_ConfidenceThreshold = new INIFileDouble("ConfidenceThreshold", 0.8));
-        m_SectionSSL.addNode(m_SSL_ConfidenceMeasure = new INIFileEnum<SSLConfidenceMeasure>("ConfidenceMeasure", SSLConfidenceMeasure.Variance));
-        m_SectionSSL.addNode(m_SSL_Iterations = new INIFileInt("Iterations", 10));
-        m_SectionSSL.addNode(m_SSL_K = new INIFileInt("K", 5));
-        m_SectionSSL.addNode(m_SSL_UnlabeledData = new INIFileStringOrDouble("UnlabeledData"));
-        m_SectionSSL.addNode(m_SSL_PercentageLabeled = new INIFileInt("PercentageLabeled", 5));
-        m_SectionSSL.addNode(m_SSL_useWeights = new INIFileBool("UseWeights", false));
-        m_SectionSSL.addNode(m_SSL_airbagTrials = new INIFileInt("AirbagTrials", 0));
-        m_SectionSSL.addNode(m_SSL_ExhaustiveSearchThresholds = new INIFileNominalOrDoubleOrVector("ExhaustiveSearchThresholds", NONELIST));
+        m_Section.addNode(m_SSL_ExhaustiveSearchThresholds = new INIFileNominalOrDoubleOrVector("ExhaustiveSearchThresholds", NONELIST));
         m_SSL_ExhaustiveSearchThresholds.setDoubleArray(new double[] { 0.5, 0.6, 0.7, 0.8, 0.9, 0.99 });
-        m_SectionSSL.addNode(m_SSL_OOBErrorCalculation = new INIFileEnum<>("OOBErrorCalculation", SSLOOBErrorCalculation.LabeledOnly));
-        m_SectionSSL.addNode(m_SSL_normalization = new INIFileEnum<>("Normalization", SSLNormalization.MinMaxNormalization));
-        m_SectionSSL.addNode(m_SSL_aggregation = new INIFileEnum<>("Aggregation", SSLAggregation.Average));
-        m_SectionSSL.addNode(m_CalibrateHmcThreshold = new INIFileBool("CalibrateHmcThreshold", false));
-        // end added section by Jurica
+
+        m_Section.addNode(m_SSL_OOBErrorCalculation = new INIFileEnum<>("OOBErrorCalculation", SSLOOBErrorCalculation.LabeledOnly));
+        m_Section.addNode(m_SSL_normalization = new INIFileEnum<>("Normalization", SSLNormalization.MinMaxNormalization));
+        m_Section.addNode(m_SSL_aggregation = new INIFileEnum<>("Aggregation", SSLAggregation.Average));
+        m_Section.addNode(m_CalibrateHmcThreshold = new INIFileBool("CalibrateHmcThreshold", false));
+
         // added 25/1/2017, Tomaz Stepisnik Perdih (JSI)
-        m_SectionSSL.addNode(m_SSL_PruningWhenTuning = new INIFileBool("PruningWhenTuning", false));
-        m_SectionSSL.addNode(m_SSL_InternalFolds = new INIFileInt("InternalFolds", 5));
-        m_SectionSSL.addNode(m_SSL_WeightScoresFile = new INIFileString("WeightScoresFile", "NO"));
+        m_Section.addNode(m_SSL_PruningWhenTuning = new INIFileBool("PruningWhenTuning", false));
+        m_Section.addNode(m_SSL_InternalFolds = new INIFileInt("InternalFolds", 5));
+        m_Section.addNode(m_SSL_WeightScoresFile = new INIFileString("WeightScoresFile", "NO"));
         INIFileNominalOrDoubleOrVector temp = new INIFileNominalOrDoubleOrVector("PossibleWeights", new String[] {});
         temp.setDoubleArray(new double[] { 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 });
-        m_SectionSSL.addNode(m_SSL_PossibleWeights = temp);
+        m_Section.addNode(m_SSL_PossibleWeights = temp);
         // end added by Tomaz
-
-        return m_SectionSSL;
     }
 }

@@ -31,7 +31,7 @@ import java.util.ArrayList;
 import java.util.StringTokenizer;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class ILevelConstraint implements Serializable {

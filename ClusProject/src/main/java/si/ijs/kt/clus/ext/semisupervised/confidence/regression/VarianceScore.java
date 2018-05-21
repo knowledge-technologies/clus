@@ -14,7 +14,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLNormalization;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**
@@ -60,7 +60,7 @@ public class VarianceScore extends PredictionConfidence {
      * 
      * @param votes
      *        Votes of a ClusForest model
-     * @return
+
      */
     private double[] processVotes(ArrayList votes) {
         switch (m_StatManager.getMode()) {
@@ -116,7 +116,7 @@ public class VarianceScore extends PredictionConfidence {
      * Calculates per target standard deviations of votes of ensemble
      *
      * @param values
-     * @return
+
      */
     private double[] calcStDev(double[][] values) {
         double[] result = new double[values.length];

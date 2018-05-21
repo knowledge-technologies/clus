@@ -23,7 +23,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.RandomSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**
@@ -129,7 +129,7 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
      * @param maxInstanceIndex
      *        only the first maxInstanceIndex will be taken
      *        into account
-     * @return
+
      * @throws ClusException 
      * @throws InterruptedException 
      */
@@ -148,7 +148,6 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
             error = new HierErrorMeasures(ErrorList,
                     m_StatManager.getHier(),
                     m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(),
-                    getSettings().getGeneral().getCompatibility(),
                     HierarchyMeasures.PooledAUPRC,
                     m_StatManager.getSettings().getOutput().isWriteCurves(),
                     getSettings().getOutput().isGzipOutput());
@@ -214,7 +213,6 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
             error = new HierErrorMeasures(OOBErrorList,
                     m_StatManager.getHier(),
                     m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(),
-                    getSettings().getGeneral().getCompatibility(),
                     HierarchyMeasures.PooledAUPRC,
                     m_StatManager.getSettings().getOutput().isWriteCurves(),
                     getSettings().getOutput().isGzipOutput());

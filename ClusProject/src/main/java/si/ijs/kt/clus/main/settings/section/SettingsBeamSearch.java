@@ -8,7 +8,6 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
@@ -19,14 +18,12 @@ public class SettingsBeamSearch extends SettingsBase {
 
 
     public SettingsBeamSearch(int position) {
-        super(position);
+        super(position, "Beam");
     }
 
     /***********************************************************************
      * Section: Beam search *
      ***********************************************************************/
-    INIFileSection m_SectionBeam;
-
     public static int BEAM_WIDTH;
     public static double SIZE_PENALTY;
     public static double BEAM_SIMILARITY;
@@ -47,7 +44,7 @@ public class SettingsBeamSearch extends SettingsBase {
 
 
     public void setSectionBeamEnabled(boolean enable) {
-        m_SectionBeam.setEnabled(enable);
+        m_Section.setEnabled(enable);
     }
 
 
@@ -62,7 +59,7 @@ public class SettingsBeamSearch extends SettingsBase {
 
 
     public boolean isBeamSearchMode() {
-        return m_SectionBeam.isEnabled();
+        return m_Section.isEnabled();
     }
 
 
@@ -122,25 +119,20 @@ public class SettingsBeamSearch extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-
-        m_SectionBeam = new INIFileSection("Beam");
-        m_SectionBeam.addNode(m_SizePenalty = new INIFileDouble("SizePenalty", 0.1));
-        m_SectionBeam.addNode(m_BeamWidth = new INIFileInt("BeamWidth", 10));
-        m_SectionBeam.addNode(m_BeamBestN = new INIFileInt("BeamBestN", 5));
-        m_SectionBeam.addNode(m_TreeMaxSize = new INIFileInt("MaxSize", -1));
-        m_SectionBeam.addNode(m_BeamAttrHeuristic = new INIFileEnum<>("AttributeHeuristic", Heuristic.Default));
-        m_SectionBeam.addNode(m_FastBS = new INIFileBool("FastSearch", true));
-        m_SectionBeam.addNode(m_BeamPostPrune = new INIFileBool("PostPrune", false));
-        m_SectionBeam.addNode(m_BMRemoveEqualHeur = new INIFileBool("RemoveEqualHeur", false));
-        m_SectionBeam.addNode(m_BeamSimilarity = new INIFileDouble("BeamSimilarity", 0.0));
-        m_SectionBeam.addNode(m_BSortTrainParameter = new INIFileBool("BeamSortOnTrainParameteres", false));
-        m_SectionBeam.addNode(m_BeamSyntacticConstrFile = new INIFileString("DistSyntacticConstr", NONE));
-        m_SectionBeam.addNode(m_BeamToForest = new INIFileBool("BeamToForest", false));
-        m_SectionBeam.setEnabled(false);
-
-        return m_SectionBeam;
-
+    public void create() {
+        m_Section.addNode(m_SizePenalty = new INIFileDouble("SizePenalty", 0.1));
+        m_Section.addNode(m_BeamWidth = new INIFileInt("BeamWidth", 10));
+        m_Section.addNode(m_BeamBestN = new INIFileInt("BeamBestN", 5));
+        m_Section.addNode(m_TreeMaxSize = new INIFileInt("MaxSize", -1));
+        m_Section.addNode(m_BeamAttrHeuristic = new INIFileEnum<>("AttributeHeuristic", Heuristic.Default));
+        m_Section.addNode(m_FastBS = new INIFileBool("FastSearch", true));
+        m_Section.addNode(m_BeamPostPrune = new INIFileBool("PostPrune", false));
+        m_Section.addNode(m_BMRemoveEqualHeur = new INIFileBool("RemoveEqualHeur", false));
+        m_Section.addNode(m_BeamSimilarity = new INIFileDouble("BeamSimilarity", 0.0));
+        m_Section.addNode(m_BSortTrainParameter = new INIFileBool("BeamSortOnTrainParameteres", false));
+        m_Section.addNode(m_BeamSyntacticConstrFile = new INIFileString("DistSyntacticConstr", NONE));
+        m_Section.addNode(m_BeamToForest = new INIFileBool("BeamToForest", false));
+        m_Section.setEnabled(false);
     }
 
 

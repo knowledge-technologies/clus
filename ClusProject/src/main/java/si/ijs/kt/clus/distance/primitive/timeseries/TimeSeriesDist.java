@@ -29,7 +29,7 @@ import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.ext.timeseries.TimeSeriesStat;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public abstract class TimeSeriesDist extends ClusDistance {

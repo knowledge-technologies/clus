@@ -57,7 +57,7 @@ import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 import si.ijs.kt.clus.util.jeans.util.array.StringTable;
@@ -255,7 +255,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                      * Leander 25/2/2011 int z = mapping_examples[x];
                      * DataTuple tuple_test = testset.getTuple(z);
                      */
-                    DataTuple tuple_test = testset.getTuple(x);
+                    //DataTuple tuple_test = testset.getTuple(x);
                     // System.out.println("Tuple: "+tuple_test.toString());
                     /*
                      * if (!key.getString(tuple).equals(key.getString(tuple_test))) {

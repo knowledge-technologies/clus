@@ -35,7 +35,7 @@ import si.ijs.kt.clus.error.MSNominalError;
 import si.ijs.kt.clus.error.MisclassificationError;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class CartPruning extends PruneTree {

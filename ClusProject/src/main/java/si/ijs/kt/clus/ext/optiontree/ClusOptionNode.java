@@ -46,7 +46,7 @@ import si.ijs.kt.clus.statistic.HierSingleLabelStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 
@@ -122,10 +122,10 @@ public class ClusOptionNode extends MyNode {
 
             case ClusStatManager.MODE_HIERARCHICAL:
                 if (m_StatManager.getSettings().getHMLC().getHierSingleLabel()) {
-                    outStat = new HierSingleLabelStat(m_StatManager.getSettings(), m_StatManager.getHier(), m_StatManager.getCompatibility());
+                    outStat = new HierSingleLabelStat(m_StatManager.getSettings(), m_StatManager.getHier());
                 }
                 else {
-                    outStat = new WHTDStatistic(m_StatManager.getSettings(), m_StatManager.getHier(), m_StatManager.getCompatibility());
+                    outStat = new WHTDStatistic(m_StatManager.getSettings(), m_StatManager.getHier());
                 }
                 break;
 

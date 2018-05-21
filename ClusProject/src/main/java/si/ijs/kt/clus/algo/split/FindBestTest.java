@@ -33,6 +33,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
+import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce.ParallelTrap;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.heuristic.GISHeuristic;
 import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicCompatibility;
@@ -41,9 +42,9 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.main.settings.section.SettingsTree.SplitPositions;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 public class FindBestTest {
 
@@ -234,7 +235,7 @@ public class FindBestTest {
 		Random rn;
 		if (rnd == null) {
 			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
-			ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
+			ClusEnsembleInduce.giveParallelisationWarning(ParallelTrap.StaticRandom);
 		} else {
 			rn = rnd.getRandom(ClusRandomNonstatic.RANDOM_EXTRATREE);
 		}
@@ -416,7 +417,7 @@ public class FindBestTest {
 		Random rn;
 		if (rnd == null) {
 			rn = ClusRandom.getRandom(ClusRandom.RANDOM_EXTRATREE);
-			ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
+			ClusEnsembleInduce.giveParallelisationWarning(ParallelTrap.StaticRandom);
 		} else {
 			rn = rnd.getRandom(ClusRandomNonstatic.RANDOM_EXTRATREE);
 		}
@@ -651,7 +652,7 @@ public class FindBestTest {
 	 * Double.isFinite(double) in Java8.
 	 * 
 	 * @param value
-	 * @return
+
 	 */
 	private static boolean isFinite(double value) {
 		// Java8: return Double.isFinite(v);

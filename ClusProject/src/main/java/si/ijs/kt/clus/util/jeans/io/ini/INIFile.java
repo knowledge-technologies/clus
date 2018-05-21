@@ -60,7 +60,9 @@ public class INIFile extends INIFileSection {
 
     public void load(String fname, char comment) throws FileNotFoundException, IOException {
         MStreamTokenizer tokens = new MStreamTokenizer(fname);
+
         load(tokens, comment);
+
         tokens.close();
     }
 
@@ -110,7 +112,7 @@ public class INIFile extends INIFileSection {
 
     @Override
     public void save(PrintWriter writer) throws IOException {
-        for (Enumeration e = getNodes(); e.hasMoreElements();) {
+        for (Enumeration<INIFileNode> e = getNodes(); e.hasMoreElements();) {
             INIFileNode section = (INIFileNode) e.nextElement();
             if (section.isEnabled()) {
                 section.save(writer);

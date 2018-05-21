@@ -39,7 +39,7 @@ import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 
 
@@ -57,8 +57,8 @@ public abstract class ClusStatistic implements Serializable {
     public int m_NbExamples;
 
     public static boolean INITIALIZEPARTIALSUM = true;
-    private int splitIndex;
-    private int prevIndex;
+    //private int splitIndex;
+    //private int prevIndex;
 
     protected Settings m_Settings; // this is here to reduce the usage of static references
 
@@ -227,12 +227,12 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public void setSplitIndex(int i) {
-        splitIndex = i;
+        //splitIndex = i;
     }
 
 
     public void setPrevIndex(int i) {
-        prevIndex = i;
+        //prevIndex = i;
     }
 
 

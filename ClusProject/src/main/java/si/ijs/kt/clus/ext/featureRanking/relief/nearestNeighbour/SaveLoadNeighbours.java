@@ -11,20 +11,20 @@ import java.util.HashMap;
 public class SaveLoadNeighbours {
 	/**
 	 * The file, storing the nearest neighbours data:<br>
-	 * START_TARGET1;index<br>
-	 * START_TUPLE1;index<br>
-	 * NB_TARGET_VALUES1;numberOfTargetValues<br>
+	 * START_TARGET;index1<br>
+	 * START_TUPLE;index1<br>
+	 * NB_TARGET_VALUES;numberOfTargetValues1<br>
 	 * NN(2;0.21;0.21)&...&NN(32;0.121;0.51)<br>
 	 * ...<br>
 	 * NN(4;0.31;0.11)&...&NN(112;0.1;0.1)<br>
-	 * END_TUPLE1<br>
-	 * START_TUPLE2;index<br>
+	 * END_TUPLE<br>
+	 * START_TUPLE;index2<br>
 	 * ...<br>
 	 * END_TUPLE2<br>
 	 * ...<br>
-	 * END_TUPLEn<br>
-	 * END_TARGET1<br>
-	 * START_TARGET2;index<br>
+	 * END_TUPLE<br>
+	 * END_TARGET<br>
+	 * START_TARGET;index2<br>
 	 * ...<br>
 	 * where NN-lines are produced by the NearestNeighbour.toFileString() method. Each line corresponds to one target value.
 	 */
@@ -53,7 +53,7 @@ public class SaveLoadNeighbours {
 		PrintWriter writer = new PrintWriter(m_OutputFile, "UTF-8");
 		ArrayList<String> lines = new ArrayList<String>();
 		for(Integer targetInd : nearestNeighbours.keySet()) {
-			System.out.println(targetInd.toString());
+			System.out.println("Saving target index " + targetInd.toString());
 			lines.add(String.format("%s;%d", START_TARGET, targetInd));
 			HashMap<Integer, NearestNeighbour[][]> neighboursTarget = nearestNeighbours.get(targetInd);
 			for(Integer tupleInd : neighboursTarget.keySet()) {
@@ -86,16 +86,18 @@ public class SaveLoadNeighbours {
 	public HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadNeighboursFromFile(String nearestNeighboursFile) throws IOException {
 		System.out.println("Loading from " + nearestNeighboursFile);
 		HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
-		Integer targetInd = -123;
-	    Integer tupleInd = -123;
+		int dummy = -123;
+		Integer targetInd = dummy;
+	    Integer tupleInd = dummy;
 	    NearestNeighbour[][] nnss = new NearestNeighbour[0][0];
-	    int targetValueInd = -123;
+	    int targetValueInd = dummy;
+	    int nbTargetValues = dummy;
 		
 		BufferedReader br = new BufferedReader(new FileReader(nearestNeighboursFile));
 	    String line = br.readLine();	    
 	    while (line != null) {
 	    	if(line.startsWith(START_TARGET)) {
-	    		System.out.print(line);
+	    		System.out.println(line);
 	    		// start processing new target
 	    		targetInd = intAfterSemicolon(line);
 	    		nearestNeighbours.put(targetInd, new HashMap<Integer, NearestNeighbour[][]>());
@@ -104,24 +106,36 @@ public class SaveLoadNeighbours {
 	    		tupleInd = intAfterSemicolon(line);
 	    	} else if(line.startsWith(NB_TARGET_VALUES)) {
 	    		// initialize NearestNeighbours[][] of the appropriate length, set target value index to 0
-	    		int nbTarVal = intAfterSemicolon(line);
-	    		nnss = new NearestNeighbour[nbTarVal][];
+	    		nbTargetValues = intAfterSemicolon(line);
+	    		nnss = new NearestNeighbour[nbTargetValues][];
 	    		targetValueInd = 0;
-	    	} else if(line.startsWith("NN")) {
-	    		// parse nearest neighbours for given target value, increase it 
-	    		String[] nnsString = line.trim().split(NN_SEPARATOR);
+	    	} else if(0 <= targetValueInd) {  // naive condition line.startsWith("NN") does not work when no neighbours could be found for given tuple
+	    		// parse nearest neighbours for given target value, increase it
+	    		String[] nnsString;
+	    		if (line.startsWith("NN")) {
+	    			nnsString = line.trim().split(NN_SEPARATOR);
+	    		} else {
+	    			nnsString = new String[0];
+	    			System.err.println(String.format("No neighbours for %dth tuple, %dth target and its %dth value (all three indices 0-based)", tupleInd, targetInd, targetValueInd));
+	    		}	    		
 	    		NearestNeighbour[] nns = new NearestNeighbour[nnsString.length];
 	    		for(int i = 0; i < nns.length; i++) {
 	    			nns[i] = new NearestNeighbour(nnsString[i]);
 	    		}
 	    		nnss[targetValueInd] = nns;
-	    		targetValueInd++;	    		
+	    		targetValueInd++;		
+	    		if(targetValueInd == nbTargetValues) {
+	    			targetValueInd = dummy;
+	    		}
 	    	} else if(line.startsWith(END_TUPLE)) {
 	    		// save the results for given tuple
 	    		nearestNeighbours.get(targetInd).put(tupleInd, nnss);
+	    		if(targetValueInd != dummy) {
+	    			throw new RuntimeException("Something wrong with parsing file " + nearestNeighboursFile);
+	    		}
+	    		nbTargetValues = dummy;
 	    	} else if(line.startsWith(END_TARGET)) {
 	    		// nothing to do here
-	    		System.out.println();
 	    	}
 	        line = br.readLine();
 	    }
@@ -161,7 +175,7 @@ public class SaveLoadNeighbours {
 	/**
 	 * Parses string of form {@code <description>;<integer>} to int value of the {@code <integer>.}
 	 * @param myString
-	 * @return
+
 	 */
 	private static int intAfterSemicolon(String myString) {
 		return Integer.parseInt(myString.substring(myString.indexOf(";") + 1));	
@@ -169,7 +183,7 @@ public class SaveLoadNeighbours {
 	
 	
 	/**
-	 * Used outside of Relief, when we only need the nearest neighbours of each instance and targets do not have any influence.
+	 * Used outside Relief, when we only need the nearest neighbours of each instance and targets do not have any influence.
 	 * Thus, we check whether the structure<p> {targetIndex: {tupleIndex: [neighbours for the first target value, neighbours for target second value, ...], ...}, ...}
 	 * <p> can be flattened
 	 * to {tupleIndex: neigbours for the first target value, ...}.<p>
@@ -177,7 +191,7 @@ public class SaveLoadNeighbours {
 	 * If any of these conditions are broken, an exception is thrown.
 	 * 
 	 * @param nnss Nearest neighbours in the Relief form.
-	 * @return
+
 	 */
 	public static void assureIsFlatNearestNeighbours(HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nnss){
 		if(nnss.size() != 1) {

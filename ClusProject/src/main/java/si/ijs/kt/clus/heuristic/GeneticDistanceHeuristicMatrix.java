@@ -123,7 +123,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             m_Sequences = new String[m_RootData.getNbRows()][gstat.m_NbTarget];
             for (int i = 0; i < m_RootData.getNbRows(); i++) {
                 DataTuple tuple1 = m_RootData.getTuple(i);
-                int row = tuple1.getIndex();
+                //int row = tuple1.getIndex();
                 String[] str1 = new String[gstat.m_NbTarget];
                 for (int t = 0; t < gstat.m_NbTarget; t++) {
                     int nomvalue1 = gstat.m_Attrs[t].getNominal(tuple1);

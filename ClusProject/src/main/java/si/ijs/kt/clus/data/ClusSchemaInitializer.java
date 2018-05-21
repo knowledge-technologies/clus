@@ -24,7 +24,7 @@ package si.ijs.kt.clus.data;
 
 import java.io.IOException;
 
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public interface ClusSchemaInitializer {

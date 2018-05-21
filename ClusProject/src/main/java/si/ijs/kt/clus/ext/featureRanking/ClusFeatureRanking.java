@@ -71,8 +71,8 @@ import si.ijs.kt.clus.main.settings.section.SettingsMLC.MultiLabelMeasures;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusUtil;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.tuple.Triple;
 
@@ -176,9 +176,6 @@ public class ClusFeatureRanking {
     /**
      * Writes fimp with where the attributes appear in the order that was chosen
      * (as in the dataset or sorted by relevance).
-     * 
-     * @param fname
-     * @throws IOException
      */
     public void writeRanking(String fname) throws IOException {
         File franking = new File(fname + ".fimp");
@@ -210,11 +207,6 @@ public class ClusFeatureRanking {
     /**
      * Produces a fimp table row of the form
      * datasetIndex of the attribute, attribute name, ranks, relevances
-     * 
-     * @param attributeName
-     * @param ranks
-     * @param relevances
-     * @return
      */
     public String fimpTableRow(String attributeName, int[] ranks, double[] relevances) {
         int datasetIndex = (int) Math.round(m_AttributeDatasetIndices.get(attributeName).doubleValue());
@@ -344,8 +336,6 @@ public class ClusFeatureRanking {
     /**
      * Implements the Fisher-Yates algorithm for uniform shuffling.
      * 
-     * @param selection
-     * @param data
      * @param type
      *        0 nominal, 1 numeric
      * @param position
@@ -427,16 +417,11 @@ public class ClusFeatureRanking {
     /**
      * Calculates values of all error measures.
      * 
-     * @param data
-     * @param model
-     * @param cr
      * @return {@code [[listOfResultsForErr1, [sign1]], [listOfResultsForErr2, [sign2]], ...]},<br>
      *         where {@code signI = errorI.shouldBeLow() ? -1.0 : 1.0}, and
      *         {@code listOfResultsForErr} always contains the overall {@code Err} error in the position 0, and possibly
      *         also per target calculations for {@code Err}
      *         in the positions i > 0.
-     * @throws ClusException
-     * @throws InterruptedException
      */
     public double[][][] calcAverageErrors(RowData data, ClusModel model, ClusStatManager mgr) throws ClusException, InterruptedException {
         ClusSchema schema = data.getSchema();
@@ -544,6 +529,8 @@ public class ClusFeatureRanking {
                         case PooledAUPRC:
                             error.addError(new MLpooledAUPRC(error, nom));
                             break;
+                        default:
+                            break;
                     }
                 }
             }
@@ -557,7 +544,7 @@ public class ClusFeatureRanking {
             error.addError(new RMSError(error, num));
         }
         else if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            error.addError(new HierErrorMeasures(error, mgr.getHier(), sett.getHMLC().getRecallValues().getDoubleVector(), sett.getGeneral().getCompatibility(), HierarchyMeasures.PooledAUPRC, false, getSettings().getOutput().isGzipOutput()));
+            error.addError(new HierErrorMeasures(error, mgr.getHier(), sett.getHMLC().getRecallValues().getDoubleVector(), HierarchyMeasures.PooledAUPRC, false, getSettings().getOutput().isGzipOutput()));
         }
         else {
             System.err.println("Feature ranking with Random Forests is supported only for:");

@@ -13,7 +13,7 @@ import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.SaveLoadNeighbo
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 public class OracleBruteForce extends BruteForce {
 	
@@ -64,9 +64,9 @@ public class OracleBruteForce extends BruteForce {
 		   ClusReliefFeatureRanking.printMessage("Loading nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
 		   SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(sett.getKNN().getLoadNeighboursFiles(), null);
 		   m_NearestNeighbours = nnLoader.loadNeighboursFromFiles();
-		   SaveLoadNeighbours.assureIsFlatNearestNeighbours(m_NearestNeighbours);		   
+		   SaveLoadNeighbours.assureIsFlatNearestNeighbours(m_NearestNeighbours);
 	   } else {
-		   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
+		   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours", 1, sett.getGeneral().getVerbose());
 		   for(DataTuple tuple : new ArrayOfArraysIterator<>(new DataTuple[][] {m_ChosenInstancesTrain, m_ChosenInstancesTest})) {
 			   NN[] temp = super.returnPureNNs(tuple, k);
 			   NearestNeighbour[] nns = new NearestNeighbour[temp.length];

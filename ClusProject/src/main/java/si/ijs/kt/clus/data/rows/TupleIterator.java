@@ -27,7 +27,7 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.ClusData;
 import si.ijs.kt.clus.data.ClusSchema;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public abstract class TupleIterator {
@@ -88,7 +88,7 @@ public abstract class TupleIterator {
 
     public ClusData createInMemoryData() throws IOException, ClusException {
         init();
-        ArrayList list = new ArrayList();
+        ArrayList<DataTuple> list = new ArrayList<>();
         DataTuple tuple = readTuple();
         while (tuple != null) {
             list.add(tuple);

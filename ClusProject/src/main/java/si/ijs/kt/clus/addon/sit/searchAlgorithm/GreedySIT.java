@@ -6,7 +6,7 @@ import java.util.Iterator;
 import si.ijs.kt.clus.addon.sit.TargetSet;
 import si.ijs.kt.clus.addon.sit.mtLearner.MTLearner;
 import si.ijs.kt.clus.data.type.ClusAttrType;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class GreedySIT extends SearchAlgorithmImpl {

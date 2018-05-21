@@ -15,18 +15,16 @@ import si.ijs.kt.clus.main.settings.Settings;
  */
 public class ClusHMTRHierarchy  { //implements Serializable {
 
-    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-
     //private boolean m_IsHMTRHierarchyCreated = false;
     private boolean m_IsUsingDump = false;
-    private String m_HierarchyName;
+    //private String m_HierarchyName;
     private List<ClusHMTRNode> m_Nodes;
     private Map<String, Integer> m_NodeDepth;
     private Map<String, Double> m_NodeWeights;
 
 
     public ClusHMTRHierarchy(String hierarchyName) {
-        this.m_HierarchyName = hierarchyName;
+        //this.m_HierarchyName = hierarchyName;
         this.m_Nodes = new ArrayList<ClusHMTRNode>();
     }
 

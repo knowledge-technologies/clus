@@ -51,6 +51,7 @@ import si.ijs.kt.clus.distance.complex.sets.EuclideanDistance;
 import si.ijs.kt.clus.distance.complex.sets.GSMDistance;
 import si.ijs.kt.clus.distance.complex.sets.HammingLossDistance;
 import si.ijs.kt.clus.distance.complex.sets.JaccardDistance;
+import si.ijs.kt.clus.distance.complex.tuples.SSPDMatrix;
 import si.ijs.kt.clus.distance.hierarchies.HierJaccardDistance;
 import si.ijs.kt.clus.distance.primitive.nominal.NominalDistance;
 import si.ijs.kt.clus.distance.primitive.timeseries.DTWTimeSeriesDist;
@@ -85,7 +86,6 @@ import si.ijs.kt.clus.ext.ilevelc.ILevelCStatistic;
 import si.ijs.kt.clus.ext.semisupervised.Helper;
 import si.ijs.kt.clus.ext.semisupervised.ModifiedGainHeuristic;
 import si.ijs.kt.clus.ext.semisupervised.SemiSupMinLabeledWeightStopCrit;
-import si.ijs.kt.clus.ext.sspd.SSPDMatrix;
 import si.ijs.kt.clus.ext.structuredTypes.SetStatistic;
 import si.ijs.kt.clus.ext.structuredTypes.TupleStatistic;
 import si.ijs.kt.clus.ext.timeseries.TimeSeriesSignificantChangeTesterXVAL;
@@ -96,7 +96,6 @@ import si.ijs.kt.clus.heuristic.GainHeuristic;
 import si.ijs.kt.clus.heuristic.GeneticDistanceHeuristicMatrix;
 import si.ijs.kt.clus.heuristic.ReducedErrorHeuristic;
 import si.ijs.kt.clus.heuristic.VarianceReductionHeuristic;
-import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicCompatibility;
 import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicEfficient;
 import si.ijs.kt.clus.heuristic.VarianceReductionHeuristicInclMissingValues;
 import si.ijs.kt.clus.heuristic.hierarchical.ClusRuleHeuristicHierarchical;
@@ -114,7 +113,6 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsAttribute;
 import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
 import si.ijs.kt.clus.main.settings.section.SettingsConstraints;
-import si.ijs.kt.clus.main.settings.section.SettingsGeneral.Compatibility;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyDistance;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
@@ -148,7 +146,7 @@ import si.ijs.kt.clus.statistic.HierSumPairwiseDistancesStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 
 /**
@@ -232,10 +230,6 @@ public class ClusStatManager implements Serializable {
 
 	public Settings getSettings() {
 		return m_Settings;
-	}
-
-	public Compatibility getCompatibility() {
-		return getSettings().getGeneral().getCompatibility();
 	}
 
 	public final ClusSchema getSchema() {
@@ -645,24 +639,19 @@ public class ClusStatManager implements Serializable {
 			if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.NoDistance)) { // poolAUPRC
 																									// induction
 				// setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier,
-				// getCompatibility(),
 				// getSettings().getHMLC().getHierDistance()));
-				clustering = new WHTDStatistic(getSettings(), m_Hier, getCompatibility(),
-						getSettings().getHMLC().getHierDistance());
-				setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility(),
-						getSettings().getHMLC().getHierDistance()));
+				clustering = new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance());
+				setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance()));
 			} else {
 				if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.WeightedEuclidean)) {
 					if (getSettings().getHMLC().getHierSingleLabel()) {
 						// setClusteringStatistic(new HierSingleLabelStat(getSettings(), m_Hier,
-						// getCompatibility()));
-						clustering = new HierSingleLabelStat(getSettings(), m_Hier, getCompatibility());
-						setTargetStatistic(new HierSingleLabelStat(getSettings(), m_Hier, getCompatibility()));
+						clustering = new HierSingleLabelStat(getSettings(), m_Hier);
+						setTargetStatistic(new HierSingleLabelStat(getSettings(), m_Hier));
 					} else {
 						// setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier,
-						// getCompatibility()));
-						clustering = new WHTDStatistic(getSettings(), m_Hier, getCompatibility());
-						setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getCompatibility()));
+						clustering = new WHTDStatistic(getSettings(), m_Hier);
+						setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier));
 					}
 				} else {
 					ClusDistance dist = null;
@@ -672,10 +661,9 @@ public class ClusStatManager implements Serializable {
 
 					// setClusteringStatistic(new HierSumPairwiseDistancesStat(getSettings(),
 					// m_Hier, dist,
-					// getCompatibility()));
-					clustering = new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist, getCompatibility());
+					clustering = new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist);
 					setTargetStatistic(
-							new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist, getCompatibility()));
+							new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist));
 				}
 			}
 			if (getSettings().getHMLC().isHierAndClassAndReg()) {
@@ -808,7 +796,7 @@ public class ClusStatManager implements Serializable {
 			String def = myType;
 			// String innerType = "";
 			int open = 0;
-			int start = 0, end = 0;
+			//int start = 0, end = 0;
 			def = def.replace("SET{", "");
 			def = def.substring(0, def.length() - 1);
 			ClusDistance cd = null;
@@ -826,10 +814,10 @@ public class ClusStatManager implements Serializable {
 
 			for (int i = 0; i < def.length(); i++) {
 				if (def.charAt(i) == '[') {
-					start = i + 1;
+				//	start = i + 1;
 					open++;
 				} else if (def.charAt(i) == ']') {
-					end = i;
+					//end = i;
 					open--;
 				}
 				// FIXME!
@@ -966,13 +954,7 @@ public class ClusStatManager implements Serializable {
 						m_Schema.getNumericAttrUse(AttributeUseType.Clustering), getSettings());
 			} // daniela end
 			else {
-				if (getSettings().getGeneral().getCompatibility().getCompatibilityLevel() <= Compatibility.MLJ08
-						.getCompatibilityLevel()) {
-					m_Heuristic = new VarianceReductionHeuristicCompatibility(createClusteringStat(),
-							getClusteringWeights(), getSettings());
-				} else {
-					m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), null, getSettings());
-				}
+				m_Heuristic = new VarianceReductionHeuristicEfficient(getClusteringWeights(), null, getSettings());
 				getSettings().getTree().setHeuristic(Heuristic.VarianceReduction);
 			}
 
@@ -1170,8 +1152,7 @@ public class ClusStatManager implements Serializable {
 			boolean wrCurves = getSettings().getOutput().isWriteCurves();
 			if (getSettings().getHMLC().isCalError()) {
 				parent.addError(
-						new HierErrorMeasures(parent, m_Hier, recalls, getSettings().getGeneral().getCompatibility(),
-								HierarchyMeasures.Undefined, wrCurves, getSettings().getOutput().isGzipOutput()));
+						new HierErrorMeasures(parent, m_Hier, recalls, HierarchyMeasures.Undefined, wrCurves, getSettings().getOutput().isGzipOutput()));
 				parent.addError(new MlcMeasuresForHmlc(parent, m_Hier));
 			}
 
@@ -1544,10 +1525,10 @@ public class ClusStatManager implements Serializable {
 
 	public void updateStatistics(ClusModel model) throws ClusException {
 		if (m_Hier != null) {
-			ArrayList<WHTDStatistic> stats = new ArrayList<WHTDStatistic>();
+			ArrayList<ClusStatistic> stats = new ArrayList<>();
 			model.retrieveStatistics(stats);
 			for (int i = 0; i < stats.size(); i++) {
-				WHTDStatistic stat = stats.get(i);
+				WHTDStatistic stat = (WHTDStatistic) stats.get(i);
 				stat.setHier(m_Hier);
 			}
 		}

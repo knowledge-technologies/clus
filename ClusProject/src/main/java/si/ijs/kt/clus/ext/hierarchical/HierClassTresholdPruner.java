@@ -30,7 +30,7 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.pruning.PruneTree;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class HierClassTresholdPruner extends PruneTree {

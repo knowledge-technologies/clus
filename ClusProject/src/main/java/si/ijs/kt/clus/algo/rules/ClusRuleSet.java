@@ -61,9 +61,7 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-// import si.ijs.kt.clus.tools.optimization.de.DeAlg;
-// import si.ijs.kt.clus.tools.optimization.de.DeProbl; // Optimization information (data, predictions)
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
@@ -1640,7 +1638,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      * Calculate a BitSet vector of uncovered examples with respect to the input data
      * 
      * @param trainingData
-     * @return
+
      */
     public BitSet getUncovered(int numberOfExamples) {
 

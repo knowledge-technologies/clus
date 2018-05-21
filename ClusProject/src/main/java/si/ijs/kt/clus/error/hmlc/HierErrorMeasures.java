@@ -19,7 +19,6 @@ import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
 import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
 import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsGeneral.Compatibility;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
@@ -35,7 +34,6 @@ public class HierErrorMeasures extends ClusError {
     protected boolean[] m_EvalClass;
     protected BinaryPredictionList[] m_ClassWisePredictions;
     protected ROCAndPRCurve[] m_ROCAndPRCurves;
-    protected Compatibility m_Compatibility;
     protected HierarchyMeasures m_OptimizeMeasure;
     protected boolean m_WriteCurves;
     protected double[] m_RecallValues;
@@ -52,10 +50,9 @@ public class HierErrorMeasures extends ClusError {
     private boolean m_IsGzipOutput;
 
 
-    public HierErrorMeasures(ClusErrorList par, ClassHierarchy hier, double[] recalls, Compatibility comp, HierarchyMeasures optimize, boolean wrCurves, boolean isGzipOutput) {
+    public HierErrorMeasures(ClusErrorList par, ClassHierarchy hier, double[] recalls, HierarchyMeasures optimize, boolean wrCurves, boolean isGzipOutput) {
         super(par, hier.getTotal());
         m_Hier = hier;
-        m_Compatibility = comp;
         m_OptimizeMeasure = optimize;
         m_WriteCurves = wrCurves;
         m_RecallValues = recalls;
@@ -215,12 +212,7 @@ public class HierErrorMeasures extends ClusError {
 
     public void compatibility(ROCAndPRCurve[] curves, ROCAndPRCurve pooled) {
         double[] thr = null;
-        if (m_Compatibility.getCompatibilityLevel() <= Compatibility.MLJ08.getCompatibilityLevel()) {
-            thr = new double[51];
-            for (int i = 0; i <= 50; i++) {
-                thr[i] = (double) 2 * i / 100.0;
-            }
-        }
+
         for (int i = 0; i < curves.length; i++) {
             curves[i].setThresholds(thr);
         }
@@ -391,7 +383,7 @@ public class HierErrorMeasures extends ClusError {
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        return new HierErrorMeasures(par, m_Hier, m_RecallValues, m_Compatibility, m_OptimizeMeasure, m_WriteCurves, m_IsGzipOutput);
+        return new HierErrorMeasures(par, m_Hier, m_RecallValues, m_OptimizeMeasure, m_WriteCurves, m_IsGzipOutput);
     }
 
 

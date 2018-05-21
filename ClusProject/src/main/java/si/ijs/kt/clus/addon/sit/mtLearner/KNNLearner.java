@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.Iterator;
@@ -55,11 +54,11 @@ public class KNNLearner extends MTLearnerImpl {
             // commands = new String[]{"/home/beau/SIT_evaluation/gent/top40/ga_basic_SIT"};
 
             Process child = Runtime.getRuntime().exec(commands);
-            String line;
-            BufferedReader input = new BufferedReader(new InputStreamReader(child.getInputStream()));
-            while ((line = input.readLine()) != null) {
+            //String line;
+            //BufferedReader input = new BufferedReader(new InputStreamReader(child.getInputStream()));
+            //while ((line = input.readLine()) != null) {
                 // System.out.println(line);
-            }
+            //}
 
             child.waitFor();
 

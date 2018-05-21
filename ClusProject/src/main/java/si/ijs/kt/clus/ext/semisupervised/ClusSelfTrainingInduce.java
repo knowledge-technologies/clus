@@ -49,7 +49,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
@@ -259,12 +259,11 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                 defInfo.setModel(m_Model);
 
                 // - just for testing
-                RowData tt = cr.getTestSet();
+                // RowData tt = cr.getTestSet();
 
                 originalError = calculateError(cr.getTestSet()).getModelError();
                 writer = new PrintWriter(cr.getStatManager().getSettings().getGeneric().getAppName() + "_SelfTrainingErrors.csv", "UTF-8");
                 writer.println("Iteration,Threshold,examplesAdded,examplesAddedTotal," + errorType + "SSL," + errorType + "Supervised," + errorType + "OOBLabeled," + errorType + "OOBTrainingSet," + errorType + "TrainingSet");
-                //
             }
 
             // BEGIN - AIRBAG stopping criteria
@@ -329,7 +328,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     ClusError error = null;
 
                     if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
-                        error = new HierErrorMeasures(errListOOB, m_StatManager.getHier(), m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(), getSettings().getGeneral().getCompatibility(), HierarchyMeasures.PooledAUPRC, m_StatManager.getSettings().getOutput().isWriteCurves(), m_StatManager.getSettings().getOutput().isGzipOutput());
+                        error = new HierErrorMeasures(errListOOB, m_StatManager.getHier(), m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(), HierarchyMeasures.PooledAUPRC, m_StatManager.getSettings().getOutput().isWriteCurves(), m_StatManager.getSettings().getOutput().isGzipOutput());
                     }
 
                     if (m_Mode == ClusStatManager.MODE_REGRESSION) {

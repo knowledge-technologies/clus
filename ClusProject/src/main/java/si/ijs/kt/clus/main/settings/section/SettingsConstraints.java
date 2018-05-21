@@ -5,7 +5,6 @@ import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
@@ -14,7 +13,7 @@ public class SettingsConstraints extends SettingsBase {
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     
     public SettingsConstraints(int position) {
-        super(position);
+        super(position,"Constraints");
     }
 
 
@@ -118,18 +117,14 @@ public class SettingsConstraints extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-
-        INIFileSection constr = new INIFileSection("Constraints");
-        constr.addNode(m_SyntacticConstrFile = new INIFileString("Syntactic", NONE));
-        constr.addNode(m_MaxSizeConstr = new INIFileNominalOrIntOrVector("MaxSize", INFINITY));
-        constr.addNode(m_MaxErrorConstr = new INIFileNominalOrDoubleOrVector("MaxError", INFINITY));
-        constr.addNode(m_TreeMaxDepth = new INIFileInt("MaxDepth", -1));
+    public void create() {
+        m_Section.addNode(m_SyntacticConstrFile = new INIFileString("Syntactic", NONE));
+        m_Section.addNode(m_MaxSizeConstr = new INIFileNominalOrIntOrVector("MaxSize", INFINITY));
+        m_Section.addNode(m_MaxErrorConstr = new INIFileNominalOrDoubleOrVector("MaxError", INFINITY));
+        m_Section.addNode(m_TreeMaxDepth = new INIFileInt("MaxDepth", -1));
+        
         m_MaxSizeConstr.setNominal(0);
         m_MaxErrorConstr.setDouble(0);
-        
-        return constr;
-        
     }
 
     @Override

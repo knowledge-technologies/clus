@@ -39,6 +39,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
+import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce.ParallelTrap;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
@@ -47,8 +48,8 @@ import si.ijs.kt.clus.main.settings.section.SettingsTree.TreeOptimizeValues;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class BestFirstInduce extends ClusInductionAlgorithm {
@@ -99,13 +100,9 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 
 
     public ClusAttrType[] getDescriptiveAttributes() {
-        ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_BestFirst_getDescriptiveAttributes);// parallelisation
-                                                                                                                             // problems:
-                                                                                                                             // static
-                                                                                                                             // methods
-                                                                                                                             // +
-                                                                                                                             // null
-                                                                                                                             // argument
+        /** FIXME: parallelisation problems: static methods + null argument */
+        ClusEnsembleInduce.giveParallelisationWarning(ParallelTrap.BestFirst_getDescriptiveAttributes);
+
         ClusSchema schema = getSchema();
         SettingsEnsemble sett = getSettings().getEnsemble();
 
@@ -140,12 +137,11 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 
 
     public void filterAlternativeSplits(ClusNode node, RowData data, RowData[] subsets) {
-        boolean removed = false;
-
         CurrentBestTestAndHeuristic best = m_FindBestTest.getBestTest();
 
         int arity = node.getTest().updateArity();
-        ArrayList v = best.getAlternativeBest(); // alternatives: all tests that result in same heuristic value
+        ArrayList v = best.getAlternativeBest(); // alternatives: all tests that result in same heuristic
+                                                 // value
         for (int k = 0; k < v.size(); k++) {
             NodeTest nt = (NodeTest) v.get(k);
             int altarity = nt.updateArity();
@@ -154,7 +150,6 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
                 v.remove(k);
                 k--;
                 System.out.println("Alternative split with different arity: " + nt.getString());
-                removed = true;
             }
             else {
                 // arity altijd 2 hier
@@ -178,10 +173,13 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
                         if (nbsame == nbsubset0) {
                             same = true;
                             if (l != 0) {
-                                // we have the same subsets, but the opposite split, hence we change the test to
-                                // not(test)
+                                /*
+                                 * we have the same subsets, but the opposite split, hence we change the test to
+                                 * not(test)
+                                 */
                                 String test = v.get(k).toString();
                                 String newtest = "not(" + test + ")";
+
                                 v.set(k, new String(newtest));
                             }
                         }
@@ -191,7 +189,6 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
                     v.remove(k);
                     k--;
                     System.out.println("Alternative split with different ex in subsets: " + nt.getString());
-                    removed = true;
                 }
 
             }
@@ -468,9 +465,9 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
     public ClusNode induceSingleUnpruned(RowData data) throws Exception {
         m_Root = null;
         // Begin of induction process
-        int nbr = 0;
+        // int nbr = 0;
         while (true) {
-            nbr++;
+            // nbr++;
             // Init root node
             m_Root = new ClusNode();
             m_Root.initClusteringStat(m_StatManager, data);

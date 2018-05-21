@@ -9,10 +9,10 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.TupleIterator;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingFunctionScope;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public abstract class ClusEnsembleInduceOptimization implements Serializable {
@@ -139,7 +139,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
      * @param avg_predictions
      * @param predictions
      * @param nb_models
-     * @return
+
      */
     public static double[] incrementPredictions(double[] avg_predictions, double[] predictions, double nb_models) {
         // the current averages are stored in the avg_predictions
@@ -157,7 +157,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
         // the current sums are stored in sum_predictions
         double[][] result = new double[sum_predictions.length][];
 
-        if (getSettings().getEnsemble().isEnsembleROSEnabled() && getSettings().getEnsemble().getEnsembleROSScope().equals(EnsembleROSVotingFunctionScope.SubspaceAveraging)) {
+        if (getSettings().getEnsemble().isEnsembleROSEnabled() && getSettings().getEnsemble().getEnsembleROSVotingType().equals(EnsembleROSVotingType.SubspaceAveraging)) {
             /* get enabled targets for the model */
             int[] enabled = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(nb_models - 1));
 
@@ -198,7 +198,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
      * @param currentAverege
      * @param nextValue
      * @param nbValues
-     * @return
+
      */
     private static double computeNextAverage(double currentAverege, double nextValue, double nbValues) {
         return nextValue / nbValues + currentAverege * (nbValues - 1) / nbValues;
@@ -211,7 +211,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
      * @param sum_predictions
      *        The current sums
      * @param predictions
-     * @return
+
      */
     public static double[][] incrementPredictions(double[][] sum_predictions, double[][] predictions) {
         double[][] result = new double[sum_predictions.length][];
@@ -229,7 +229,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
      * Transform the class counts to majority vote (the one with max votes gets 1)
      * 
      * @param counts
-     * @return
+
      */
     public static double[][] transformToMajority(double[][] counts) {
         int[] maxPerTarget = new int[counts.length];
@@ -256,7 +256,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
      * Transform the class counts to probability distributions.
      * 
      * @param counts
-     * @return
+
      */
     public static double[][] transformToProbabilityDistribution(double[][] counts) {
         double[] sumPerTarget = new double[counts.length];

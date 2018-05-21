@@ -29,7 +29,7 @@ public class MultiLabelDistance {
 	 * may not follow the definition of addExample from the corresponding clus.errors class.
 	 * @param t1
 	 * @param t2
-	 * @return
+
 	 */
 	public double calculateDist(DataTuple t1, DataTuple t2){
 		double dist;
@@ -75,7 +75,7 @@ public class MultiLabelDistance {
 	 * |labels(t1) symmetric labels(t2)| / |labels(t1) union labels(t2)|
 	 * @param t1
 	 * @param t2
-	 * @return
+
 	 */
     private double hamming_loss(DataTuple t1, DataTuple t2) {
     	NominalAttrType attr;
@@ -91,7 +91,7 @@ public class MultiLabelDistance {
      * Computes |labels(t1) intersection labels(t2)| / |labels(t1) union labels(t2)|.
      * @param t1
      * @param t2
-     * @return
+
      */
     private double mlAccuracy(DataTuple t1, DataTuple t2){
     	NominalAttrType attr;
@@ -114,7 +114,7 @@ public class MultiLabelDistance {
      * Computes 2 |labels(t1) intersection labels(t2)| / (|labels(t1)| + |labels(t2)|).
      * @param t1
      * @param t2
-     * @return
+
      */
     private double F1(DataTuple t1, DataTuple t2) {
     	NominalAttrType attr;
@@ -138,7 +138,7 @@ public class MultiLabelDistance {
      * If there are no missing values, either 0 or 1 is returned. 
      * @param t1
      * @param t2
-     * @return
+
      */
     public double subsetAccuracy(DataTuple t1, DataTuple t2) {
     	NominalAttrType attr;

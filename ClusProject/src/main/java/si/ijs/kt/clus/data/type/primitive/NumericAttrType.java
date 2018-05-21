@@ -38,9 +38,9 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRNode;
-import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
+import si.ijs.kt.clus.util.io.ClusSerializable;
 
 
 /**
@@ -61,7 +61,7 @@ public class NumericAttrType extends ClusAttrType {
     }
 
 
-    //new for knn
+    // new for knn
     public void setStatistic(NumericStatistic stat) {
         m_StatNumeric = stat;
     }
@@ -182,6 +182,7 @@ public class NumericAttrType extends ClusAttrType {
         return new MySerializable();
     }
 
+
     @Override
     public void setToMissing(DataTuple tuple) {
         setNumeric(tuple, MISSING);
@@ -239,7 +240,9 @@ public class NumericAttrType extends ClusAttrType {
                 System.err.println("Either error calculating aggregate or certain value is missing");
                 val = MISSING;
             }
-            //if(getSettings().getGeneral().getVerbose() > 0) System.out.println("CALCULATING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+            // if(getSettings().getGeneral().getVerbose() > 0) System.out.println("CALCULATING HMTR AGGREGATE - row:
+            // "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is:
+            // "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
             tuple.setDoubleVal(val, getArrayIndex());
             if (val == MISSING) {
@@ -281,15 +284,17 @@ public class NumericAttrType extends ClusAttrType {
                 val = MISSING;
             }
 
-            ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
+            //ClusAttrType[] targets = tuple.getSchema().getTargetAttributes();
 
-            int ind = m_Index - key - dis - desc;
-            String name = targets[ind].getName();
+            // int ind = m_Index - key - dis - desc;
+            // String name = targets[ind].getName();
 
             if (Double.isNaN(val))
                 throw new IOException("Error reading HMTR aggregate from dump! Aggregation function is: " + getSettings().getHMTR().getHMTRAggregationName());
 
-            // if(getSettings().getGeneral().getVerbose() > 0) System.out.println("READING HMTR AGGREGATE - row: "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is: "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
+            // if(getSettings().getGeneral().getVerbose() > 0) System.out.println("READING HMTR AGGREGATE - row:
+            // "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is:
+            // "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
             tuple.setDoubleVal(val, getArrayIndex());
             if (val == MISSING) {
@@ -321,7 +326,7 @@ public class NumericAttrType extends ClusAttrType {
 
                     for (ClusHMTRNode child : children) {
 
-                        String n = child.getName();
+                        // String n = child.getName();
                         if (child.isAggregate()) {
                             double res = calcHMTR(nodes, child.getName(), tuple);
                             sum += res;

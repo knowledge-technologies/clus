@@ -29,7 +29,7 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
 
 
@@ -153,7 +153,7 @@ public class SequencePruningVSB extends PruneTree {
         }
         if (se1_idx == -1)
             se1_idx = best_idx;
-        ClusError leaf_error = (ClusError) vsb_errors.get(max_idx);
+        //ClusError leaf_error = (ClusError) vsb_errors.get(max_idx);
         /*
          * System.out.println("Best size: "+sizes.get(best_idx)+" 1-SE size: "+sizes.get(se1_idx)+
          * " Best MSE: "+min_error+" SE: "+se+" Leaf MSE: "+leaf_error.getModelError());

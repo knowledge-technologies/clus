@@ -40,11 +40,11 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValSelection;
-import si.ijs.kt.clus.util.ClusException;
-import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
+import si.ijs.kt.clus.util.ResourceInfo;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.MDoubleArray;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
-import si.ijs.kt.clus.util.tools.debug.Debug;
+
 
 // Nothing accesses this class matejp
 @Deprecated
@@ -113,8 +113,8 @@ public class OptXVal {
         addFoldNrs(set, sel);
         OptXValInduce induce = (OptXValInduce) m_Clus.getInduce();
         induce.initialize(sel.getNbFolds());
-        long time;
-        if (Debug.debug == 1) {
+        Long time = null;
+        if (Clus.isDebug()) {
             time = ResourceInfo.getCPUTime();
         }
 
@@ -123,26 +123,26 @@ public class OptXVal {
         while (true) {
             root = induce.optXVal(set);
             nbr++;
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 if ((ResourceInfo.getCPUTime() - time) > 5000.0)
                     break;
             }
 
         }
         ClusSummary summary = m_Clus.getSummary();
-        if (Debug.debug == 1) {
-            if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
+            if (Clus.isDebug()) {
                 summary.setInductionTime((long) ClusStat.addToTotal(ResourceInfo.getCPUTime() - time, nbr));
             }
 
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.addTimes(nbr);
         }
 
         // Output whole tree
-        //MultiScore score = m_Clus.getMultiScore();
+        // MultiScore score = m_Clus.getMultiScore();
         ClusOutput output = new ClusOutput(appname + ".out", schema, sett);
         output.writeHeader();
         ClusNode tree = root.getTree(0);
@@ -155,7 +155,7 @@ public class OptXVal {
         // Output xval trees
         output = new ClusOutput(appname + ".xval", schema, sett);
         output.writeHeader();
-        
+
         if (SettingsExperimental.SHOW_XVAL_FOREST)
             showForest(output.getWriter(), root);
         for (int i = 0; i < sel.getNbFolds(); i++) {

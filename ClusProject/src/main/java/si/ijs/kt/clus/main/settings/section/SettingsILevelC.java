@@ -6,7 +6,6 @@ import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
@@ -17,14 +16,13 @@ public class SettingsILevelC extends SettingsBase {
 
 
     public SettingsILevelC(int position) {
-        super(position);
+        super(position, "ILevelC");
     }
 
     /***********************************************************************
      * Section: Instance level constraints *
      ***********************************************************************/
 
-    protected INIFileSection m_SectionILevelC;
     protected INIFileString m_ILevelCFile;
     protected INIFileDouble m_ILevelCAlpha;
     protected INIFileInt m_ILevelNbRandomConstr;
@@ -33,7 +31,7 @@ public class SettingsILevelC extends SettingsBase {
 
 
     public boolean isSectionILevelCEnabled() {
-        return m_SectionILevelC.isEnabled();
+        return m_Section.isEnabled();
     }
 
 
@@ -68,16 +66,12 @@ public class SettingsILevelC extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-
-        m_SectionILevelC = new INIFileSection("ILevelC");
-        m_SectionILevelC.addNode(m_ILevelCAlpha = new INIFileDouble("Alpha", 0.5));
-        m_SectionILevelC.addNode(m_ILevelCFile = new INIFileString("File", NONE));
-        m_SectionILevelC.addNode(m_ILevelNbRandomConstr = new INIFileInt("NbRandomConstraints", 0));
-        m_SectionILevelC.addNode(m_ILevelCCOPKMeans = new INIFileBool("RunCOPKMeans", false));
-        m_SectionILevelC.addNode(m_ILevelCMPCKMeans = new INIFileBool("RunMPCKMeans", false));
-        m_SectionILevelC.setEnabled(false);
-
-        return m_SectionILevelC;
+    public void create() {
+        m_Section.addNode(m_ILevelCAlpha = new INIFileDouble("Alpha", 0.5));
+        m_Section.addNode(m_ILevelCFile = new INIFileString("File", NONE));
+        m_Section.addNode(m_ILevelNbRandomConstr = new INIFileInt("NbRandomConstraints", 0));
+        m_Section.addNode(m_ILevelCCOPKMeans = new INIFileBool("RunCOPKMeans", false));
+        m_Section.addNode(m_ILevelCMPCKMeans = new INIFileBool("RunMPCKMeans", false));
+        m_Section.setEnabled(false);
     }
 }

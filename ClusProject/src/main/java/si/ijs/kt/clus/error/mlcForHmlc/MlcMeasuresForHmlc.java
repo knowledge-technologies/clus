@@ -16,7 +16,7 @@ import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 

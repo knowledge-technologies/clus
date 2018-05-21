@@ -2,6 +2,10 @@
 package si.ijs.kt.clus.main.settings.section;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -11,7 +15,6 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
@@ -22,7 +25,7 @@ public class SettingsEnsemble extends SettingsBase {
 
 
     public SettingsEnsemble(int position) {
-        super(position);
+        super(position, "Ensemble");
     }
 
     /***********************************************************************
@@ -41,14 +44,35 @@ public class SettingsEnsemble extends SettingsBase {
         None, RForest, Genie3, Symbolic
     };
 
-    public enum EnsembleROSVotingFunctionScope {
-        None, TotalAveraging, SubspaceAveraging, SmarterWay /* TBD */
+    public enum EnsembleROSAlgorithmType {
+
+        /** ROS is disabled */
+        Disabled,
+
+        /** Algorithm generates fixed subspaces before learning and uses them. */
+        FixedSubspaces,
+
+        /** Similar to Random forest algorithm, this option selects a different subset of targets on every split. */
+        DynamicSubspaces
     };
 
-    private INIFileSection m_SectionEnsembles;
+    /** How does ROS make predictions */
+    public enum EnsembleROSVotingType {
+        /** Use all targets for voting. */
+        TotalAveraging,
+
+        /**
+         * Vote only with those targets, that were used for learning. Only makes sense for
+         * <code>EnsembleROSAlgorithmType.FixedSubspaces</code>.
+         */
+        SubspaceAveraging,
+
+        /** TBD */
+        SmarterWay
+    };
+
     private INIFileNominalOrIntOrVector m_NbBags;
     /** Used ensemble method */
-    // private INIFileNominal m_EnsembleMethod;
     private INIFileEnum<EnsembleMethod> m_EnsembleMethod;
     /** Voting type, for regression mean is always used, the options are for classification */
     private INIFileEnum<VotingType> m_ClassificationVoteType;
@@ -62,8 +86,8 @@ public class SettingsEnsemble extends SettingsBase {
     private INIFileString m_RandomTargetAttrSelected;
 
     /** Used for ROS (Random Output Selections) */
-    // private INIFileNominal m_EnsembleROSScope;
-    private INIFileEnum<EnsembleROSVotingFunctionScope> m_EnsembleROSScope;
+    private INIFileEnum<EnsembleROSAlgorithmType> m_EnsembleROSAlgorithmType;
+    private INIFileEnum<EnsembleROSVotingType> m_EnsembleROSVotingType;
 
     private int m_SubsetSize;
     private INIFileBool m_PrintAllModels;
@@ -117,13 +141,13 @@ public class SettingsEnsemble extends SettingsBase {
 
     /** Do we print ensemble settings to output files */
     public boolean isSectionEnsembleEnabled() {
-        return m_SectionEnsembles.isEnabled();
+        return m_Section.isEnabled();
     }
 
 
     /** Do we print ensemble settings to output files */
     public void setSectionEnsembleEnabled(boolean value) {
-        m_SectionEnsembles.setEnabled(value);
+        m_Section.setEnabled(value);
     }
 
 
@@ -137,18 +161,18 @@ public class SettingsEnsemble extends SettingsBase {
     }
 
 
-    public EnsembleROSVotingFunctionScope getEnsembleROSScope() {
-        return m_EnsembleROSScope.getValue();
+    public EnsembleROSAlgorithmType getEnsembleROSAlgorithmType() {
+        return m_EnsembleROSAlgorithmType.getValue();
     }
 
 
-    public void setEnsembleROSScope(EnsembleROSVotingFunctionScope value) {
-        m_EnsembleROSScope.setValue(value);
+    public EnsembleROSVotingType getEnsembleROSVotingType() {
+        return m_EnsembleROSVotingType.getValue();
     }
 
 
     public boolean isEnsembleROSEnabled() {
-        return !getEnsembleROSScope().equals(EnsembleROSVotingFunctionScope.None) && isEnsembleMode();
+        return !getEnsembleROSAlgorithmType().equals(EnsembleROSAlgorithmType.Disabled) && isEnsembleMode();
     }
 
 
@@ -292,7 +316,7 @@ public class SettingsEnsemble extends SettingsBase {
 
     public void setNbRandomAttrSelected(int value) {
         m_SubsetSize = value;
-        m_RandomAttrSelected.setValue(value + "");
+        m_RandomAttrSelected.setValue(Integer.toString(value));
     }
 
 
@@ -397,37 +421,63 @@ public class SettingsEnsemble extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-        m_SectionEnsembles = new INIFileSection("Ensemble");
-        m_SectionEnsembles.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
-        m_SectionEnsembles.addNode(m_EnsembleMethod = new INIFileEnum<>("EnsembleMethod", EnsembleMethod.Bagging));
-        m_SectionEnsembles.addNode(m_ClassificationVoteType = new INIFileEnum<>("VotingType", VotingType.ProbabilityDistribution));
+    public void create() {
 
-        m_SectionEnsembles.addNode(m_RandomAttrSelected = new INIFileString("SelectRandomSubspaces", "0"));
-        m_SectionEnsembles.addNode(m_RandomTargetAttrSelected = new INIFileString("SelectRandomTargetSubspaces", "SQRT"));
-        m_SectionEnsembles.addNode(m_EnsembleROSScope = new INIFileEnum<>("RandomOutputSelection", EnsembleROSVotingFunctionScope.None));
-        m_SectionEnsembles.addNode(m_PrintAllModels = new INIFileBool("PrintAllModels", false));
-        m_SectionEnsembles.addNode(m_PrintAllModelFiles = new INIFileBool("PrintAllModelFiles", false));
-        m_SectionEnsembles.addNode(m_PrintAllModelInfo = new INIFileBool("PrintAllModelInfo", false));
-        m_SectionEnsembles.addNode(m_PrintPaths = new INIFileBool("PrintPaths", false));
-        m_SectionEnsembles.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
-        m_SectionEnsembles.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
-        m_SectionEnsembles.addNode(m_FeatureRanking = new INIFileEnum<>("FeatureRanking", EnsembleRanking.None));
-        m_SectionEnsembles.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
-        m_SectionEnsembles.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
+        m_Section.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
+        m_Section.addNode(m_EnsembleMethod = new INIFileEnum<>("EnsembleMethod", EnsembleMethod.Bagging));
+        m_Section.addNode(m_ClassificationVoteType = new INIFileEnum<>("VotingType", VotingType.ProbabilityDistribution));
+        m_Section.addNode(m_RandomAttrSelected = new INIFileString("SelectRandomSubspaces", "0"));
+        m_Section.addNode(m_RandomTargetAttrSelected = new INIFileString("ROSTargetSubspaceSize", "SQRT"));
+        m_Section.addNode(m_EnsembleROSAlgorithmType = new INIFileEnum<>("ROSAlgorithmType", EnsembleROSAlgorithmType.Disabled));
+        m_Section.addNode(m_EnsembleROSVotingType = new INIFileEnum<>("ROSVotingType", EnsembleROSVotingType.SubspaceAveraging));
+        m_Section.addNode(m_PrintAllModels = new INIFileBool("PrintAllModels", false));
+        m_Section.addNode(m_PrintAllModelFiles = new INIFileBool("PrintAllModelFiles", false));
+        m_Section.addNode(m_PrintAllModelInfo = new INIFileBool("PrintAllModelInfo", false));
+        m_Section.addNode(m_PrintPaths = new INIFileBool("PrintPaths", false));
+        m_Section.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
+        m_Section.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
+        m_Section.addNode(m_FeatureRanking = new INIFileEnum<>("FeatureRanking", EnsembleRanking.None));
+        m_Section.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
+
+        m_Section.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
         m_SymbolicWeight.setDouble(0.5);
-        m_SectionEnsembles.addNode(m_SortFeaturesByRelevance = new INIFileBool("SortRankingByRelevance", true));
-        m_SectionEnsembles.addNode(m_WriteEnsemblePredictions = new INIFileBool("WriteEnsemblePredictions", false));
-        m_SectionEnsembles.addNode(m_EnsembleRandomDepth = new INIFileBool("EnsembleRandomDepth", false));
-        m_SectionEnsembles.addNode(m_BagSelection = new INIFileNominalOrIntOrVector("BagSelection", NONELIST));
+
+        m_Section.addNode(m_SortFeaturesByRelevance = new INIFileBool("SortRankingByRelevance", true));
+        m_Section.addNode(m_WriteEnsemblePredictions = new INIFileBool("WriteEnsemblePredictions", false));
+        m_Section.addNode(m_EnsembleRandomDepth = new INIFileBool("EnsembleRandomDepth", false));
+
+        m_Section.addNode(m_BagSelection = new INIFileNominalOrIntOrVector("BagSelection", NONELIST));
         m_BagSelection.setInt(-1);
-        m_SectionEnsembles.addNode(m_EnsembleBagSize = new INIFileInt("BagSize", 0));
+
+        m_Section.addNode(m_EnsembleBagSize = new INIFileInt("BagSize", 0));
         m_EnsembleBagSize.setValueCheck(new IntRangeCheck(0, Integer.MAX_VALUE));
-        m_SectionEnsembles.addNode(m_NumberOfThreads = new INIFileInt("NumberOfThreads", 1));
+
+        m_Section.addNode(m_NumberOfThreads = new INIFileInt("NumberOfThreads", 1));
         m_NumberOfThreads.setValueCheck(new IntRangeCheck(0, 200));// Runtime.getRuntime().availableProcessors()));
 
-        m_SectionEnsembles.setEnabled(false);
+        m_Section.setEnabled(false);
+    }
 
-        return m_SectionEnsembles;
+
+    @Override
+    public List<String> validateSettingsInternal() {
+        ArrayList<String> incompatible = new ArrayList<String>();
+
+        /* ROS */
+        HashMap<EnsembleROSAlgorithmType, List<EnsembleROSVotingType>> validROSCombinations = new HashMap<>();
+        validROSCombinations.put(EnsembleROSAlgorithmType.FixedSubspaces, Arrays.asList(EnsembleROSVotingType.TotalAveraging, EnsembleROSVotingType.SubspaceAveraging));
+        validROSCombinations.put(EnsembleROSAlgorithmType.DynamicSubspaces, Arrays.asList(EnsembleROSVotingType.TotalAveraging));
+
+        if (
+        /* is ROS is not disabled */ !getEnsembleROSAlgorithmType().equals(EnsembleROSAlgorithmType.Disabled) &&
+        /* combination of ROS algorithm and prediction algorithm is not valid */ (!validROSCombinations.get(getEnsembleROSAlgorithmType()).contains(getEnsembleROSVotingType()))) {
+            incompatible.add(String.format("%s = %s cannot be used with %s = %s",
+                    /* */
+                    m_EnsembleROSAlgorithmType.getName(), getEnsembleROSAlgorithmType(),
+                    /* */
+                    m_EnsembleROSVotingType.getName(), getEnsembleROSVotingType()));
+        }
+
+        return incompatible;
     }
 }

@@ -5,7 +5,6 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.range.DoubleRangeCheck;
 import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
@@ -16,14 +15,13 @@ public class SettingsOptionTree extends SettingsBase {
 
 
     public SettingsOptionTree(int position) {
-        super(position);
+        super(position, "OptionTree");
     }
 
     /***********************************************************************
      * Section: Option tree
      ***********************************************************************/
 
-    protected INIFileSection m_SectionOptionTree;
     protected INIFileDouble m_optionFactor;
     protected INIFileDouble m_optionDecayFactor;
     protected INIFileDouble m_optionEpsilon;
@@ -32,7 +30,7 @@ public class SettingsOptionTree extends SettingsBase {
 
 
     public boolean isSectionOptionEnabled() {
-        return m_SectionOptionTree.isEnabled();
+        return m_Section.isEnabled();
     }
 
 
@@ -57,26 +55,25 @@ public class SettingsOptionTree extends SettingsBase {
 
 
     public void setSectionOptionEnabled(boolean enable) {
-        m_SectionOptionTree.setEnabled(enable);
+        m_Section.setEnabled(enable);
     }
 
 
     @Override
-    public INIFileSection create() {
-        m_SectionOptionTree = new INIFileSection("OptionTree");
-        m_SectionOptionTree.addNode(m_optionDecayFactor = new INIFileDouble("DecayFactor", 0.9));
-        m_SectionOptionTree.addNode(m_optionEpsilon = new INIFileDouble("Epsilon", 0.1));
+    public void create() {
+        m_Section.addNode(m_optionDecayFactor = new INIFileDouble("DecayFactor", 0.9));
+        m_optionDecayFactor.setValueCheck(new DoubleRangeCheck(0.0, 1.0));
+
+        m_Section.addNode(m_optionEpsilon = new INIFileDouble("Epsilon", 0.1));
+        m_optionEpsilon.setValueCheck(new DoubleRangeCheck(0.0, 1.0));
 
         /* Constant by Kohavi Kunz */
-        m_SectionOptionTree.addNode(m_optionMaxNumberOfOptionsPerNode = new INIFileInt("MaxNumberOfOptionsPerNode", 5));
-
-        m_SectionOptionTree.addNode(m_optionMaxDepthOfOptionNode = new INIFileInt("MaxDepthOfOptionNode", 3));
+        m_Section.addNode(m_optionMaxNumberOfOptionsPerNode = new INIFileInt("MaxNumberOfOptionsPerNode", 5));
         m_optionMaxNumberOfOptionsPerNode.setValueCheck(new IntRangeCheck(2, Integer.MAX_VALUE));
-        m_optionMaxDepthOfOptionNode.setValueCheck(new IntRangeCheck(1, Integer.MAX_VALUE));
-        m_optionDecayFactor.setValueCheck(new DoubleRangeCheck(0.0, 1.0));
-        m_optionEpsilon.setValueCheck(new DoubleRangeCheck(0.0, 1.0));
-        m_SectionOptionTree.setEnabled(false);
 
-        return m_SectionOptionTree;
+        m_Section.addNode(m_optionMaxDepthOfOptionNode = new INIFileInt("MaxDepthOfOptionNode", 3));
+        m_optionMaxDepthOfOptionNode.setValueCheck(new IntRangeCheck(1, Integer.MAX_VALUE));
+
+        m_Section.setEnabled(false);
     }
 }

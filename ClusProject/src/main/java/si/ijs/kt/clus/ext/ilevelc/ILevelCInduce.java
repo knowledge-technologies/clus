@@ -41,8 +41,8 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.NumericTest;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class ILevelCInduce extends DepthFirstInduce {
@@ -56,7 +56,7 @@ public class ILevelCInduce extends DepthFirstInduce {
     protected double m_MinLeafWeight;
     protected int m_NbTrain;
     protected double m_GlobalSS;
-    protected ArrayList m_Constraints;
+    protected ArrayList<ILevelConstraint> m_Constraints;
     protected int[][] m_ConstraintsIndex;
     protected ClusNormalizedAttributeWeights m_Scale;
 
@@ -549,8 +549,8 @@ public class ILevelCInduce extends DepthFirstInduce {
     }
 
 
-    public ArrayList createConstraints(RowData data, int nbRows) {
-        ArrayList constr = new ArrayList();
+    public ArrayList<ILevelConstraint> createConstraints(RowData data, int nbRows) {
+        ArrayList<ILevelConstraint> constr = new ArrayList<>();
         ClusAttrType type = getSchema().getAttrType(getSchema().getNbAttributes() - 1);
         if (type.getAttributeType().equals(AttributeType.Nominal)) {
             NominalAttrType cls = (NominalAttrType) type;
@@ -582,7 +582,7 @@ public class ILevelCInduce extends DepthFirstInduce {
         /* add in test data! */
         RowData test = cr.getTestSet();
         if (test != null) {
-            ArrayList allData = new ArrayList();
+            ArrayList<DataTuple> allData = new ArrayList<>();
             data.addTo(allData);
             test.addTo(allData);
             data = new RowData(allData, data.getSchema());
@@ -592,7 +592,7 @@ public class ILevelCInduce extends DepthFirstInduce {
         data.addIndices();
         m_NbTrain = data.getNbRows();
         m_MinLeafWeight = getSettings().getModel().getMinimalWeight();
-        ArrayList points = data.toArrayList();
+        ArrayList<DataTuple> points = data.toArrayList();
         /* load constraints from file */
         if (getSettings().getILevelC().hasILevelCFile()) {
             String fname = getSettings().getILevelC().getILevelCFile();
@@ -607,14 +607,12 @@ public class ILevelCInduce extends DepthFirstInduce {
             COPKMeans km = new COPKMeans(m_MaxNbClasses, getStatManager());
             COPKMeansModel model = null;
             int sumIter = 0;
-            long t1 = System.currentTimeMillis();
             for (int i = 0; i < 100000; i++) {
                 model = (COPKMeansModel) km.induce(data, m_Constraints);
                 sumIter = Math.max(sumIter, model.getIterations());
                 model.setCSets(i + 1);
                 model.setAvgIter(sumIter);
-                long t2 = System.currentTimeMillis();
-                // if (!model.isIllegal() || (t2-t1) > 5*60*1000) return model;
+
                 if (!model.isIllegal())
                     return model;
                 m_Constraints = createConstraints(data, nbTrain);

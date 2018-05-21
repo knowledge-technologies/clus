@@ -32,7 +32,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class ClusBeamModelDistance {
@@ -232,7 +232,7 @@ public class ClusBeamModelDistance {
      * @param beam
      * @param data
      * @param isNum
-     * @return
+
      * @throws ClusException 
      * @throws InterruptedException 
      */

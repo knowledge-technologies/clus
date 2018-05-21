@@ -28,9 +28,9 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
-import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
+import si.ijs.kt.clus.util.ResourceInfo;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.IntervalCollection;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgsProvider;
@@ -294,7 +294,8 @@ public class Sit implements CMDLineArgsProvider {
             folds.add(m_Learner.LearnModel(trgset, f));
         }
 
-        double finalerror = Evaluator.getPearsonCorrelation(folds, errorIdx);
+        //double finalerror = Evaluator.getPearsonCorrelation(folds, errorIdx);
+        Evaluator.getPearsonCorrelation(folds, errorIdx);
 
         // errOut.addFold(0,0,m_Learner.getName(),m_Search.getName(),Integer.toString(mt+1),finalerror,"["+trgset.toString()+"]");
 

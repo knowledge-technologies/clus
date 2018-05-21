@@ -34,7 +34,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 
@@ -100,7 +100,7 @@ public interface ClusModel {
     public void attachModel(HashMap table) throws ClusException;
 
 
-    public void retrieveStatistics(ArrayList list);
+    public void retrieveStatistics(ArrayList<ClusStatistic> list);
 
 
     public ClusModel prune(int prunetype) throws ClusException;

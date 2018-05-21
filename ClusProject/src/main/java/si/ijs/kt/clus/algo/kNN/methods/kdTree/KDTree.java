@@ -34,7 +34,7 @@ import si.ijs.kt.clus.distance.primitive.SearchDistance;
 import si.ijs.kt.clus.main.ClusModelInfoList;
 // import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.ClusRun;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**
@@ -83,7 +83,7 @@ public class KDTree extends SearchAlgorithm {
      * Return nearest k (getK()) tuples to specified tuple.
      * 
      * @param tuple
-     * @return
+
      * @throws ClusException 
      */
     @Override
@@ -98,7 +98,7 @@ public class KDTree extends SearchAlgorithm {
     /**
      * Returns number of neighbors we search.
      * 
-     * @return
+
      */
     public int getK() {
         return m_kNeighbors;

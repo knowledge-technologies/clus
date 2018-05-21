@@ -22,7 +22,7 @@
 
 package si.ijs.kt.clus.data.rows;
 
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public interface TuplePreproc {

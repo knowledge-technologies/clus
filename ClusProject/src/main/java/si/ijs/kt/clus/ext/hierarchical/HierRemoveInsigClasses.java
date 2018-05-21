@@ -32,7 +32,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.pruning.PruneTree;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class HierRemoveInsigClasses extends PruneTree {

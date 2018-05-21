@@ -4,6 +4,7 @@ package si.ijs.kt.clus.main.settings;
 import java.io.Serializable;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
+import java.util.List;
 
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
@@ -26,18 +27,19 @@ public abstract class SettingsBase implements Serializable {
 
     protected int m_Position = 1; // position in the INI file
 
+    protected INIFileSection m_Section;
 
-    public SettingsBase(int position) {
+    public SettingsBase(int position, String name) {
         m_Position = position;
+        
+        m_Section = new INIFileSection(name);
     }
 
 
     /**
      * Method should handle the INIFileSection initialization.
-     * 
-     * @return An initialized INI section.
      */
-    public abstract INIFileSection create();
+    public abstract void create();
 
 
     /**
@@ -52,11 +54,27 @@ public abstract class SettingsBase implements Serializable {
 
 
     /**
+     * This method should be overriden to check for inconsistencies in the section settings.
+     * It is called by <code>si.ijs.kt.clus.main.settings.Settings.validateSettingsCompatibility()</code> method.
+     * If several sections are needed to determine if inconsistencies exist, implement the logic in
+     * <code>si.ijs.kt.clus.main.settings.Settings.validateSettingsCombined()</code>.
+     */
+    public List<String> validateSettingsInternal() {
+        return null;
+    }
+
+
+    /**
      * Returns the position of this section in the INI file
      * 
      * @return Position
      */
     public int getPosition() {
         return m_Position;
+    }
+    
+    /** Returns INI section */
+    public INIFileSection getSection() {
+        return m_Section;
     }
 }

@@ -10,7 +10,6 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileArray;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnumList;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
 
 
@@ -20,15 +19,13 @@ public class SettingsKNN extends SettingsBase {
 
 
     public SettingsKNN(int position) {
-        super(position);
+        super(position, "kNN");
         // TODO Auto-generated constructor stub
     }
 
     /***********************************************************************
      * Section: KNN *
      ***********************************************************************/
-
-    private INIFileSection m_SectionKNN;
     private INIFileEnum<Distance> m_Distance;
     private INIFileNominalOrIntOrVector m_k;
     private INIFileEnum<SearchMethod> m_SearchMethod;
@@ -91,12 +88,12 @@ public class SettingsKNN extends SettingsBase {
 
 
     public void setSectionKNNEnabled(boolean enable) {
-        m_SectionKNN.setEnabled(enable);
+        m_Section.setEnabled(enable);
     }
 
 
     public boolean isKNN() {
-        return m_SectionKNN.isEnabled();
+        return m_Section.isEnabled();
     }
 
 
@@ -179,27 +176,25 @@ public class SettingsKNN extends SettingsBase {
 
 
     @Override
-    public INIFileSection create() {
-        m_SectionKNN = new INIFileSection("kNN");
-        m_SectionKNN.addNode(m_k = new INIFileNominalOrIntOrVector("K", NONELIST));
+    public void create() {
+        m_Section.addNode(m_k = new INIFileNominalOrIntOrVector("K", NONELIST));
         m_k.setIntVector(DEFAULT_K);
 
-        m_SectionKNN.addNode(m_Distance = new INIFileEnum<>("Distance", Distance.Euclidean));
-        m_SectionKNN.addNode(m_SearchMethod = new INIFileEnum<>("SearchMethod", SearchMethod.BruteForce));
-        m_SectionKNN.addNode(m_distanceWeight = new INIFileEnumList<>("DistanceWeighting", DistanceWeights.Constant));
-        m_SectionKNN.addNode(m_attributeWeight = new INIFileString("AttributeWeighting", "none"));
+        m_Section.addNode(m_Distance = new INIFileEnum<>("Distance", Distance.Euclidean));
+        m_Section.addNode(m_SearchMethod = new INIFileEnum<>("SearchMethod", SearchMethod.BruteForce));
+        m_Section.addNode(m_distanceWeight = new INIFileEnumList<>("DistanceWeighting", DistanceWeights.Constant));
+        m_Section.addNode(m_attributeWeight = new INIFileString("AttributeWeighting", "none"));
 
-        m_SectionKNN.addNode(m_ChosenInstancesTrain = new INIFileNominalOrIntOrVector("ChosenInstancesTrain", NONELIST));
+        m_Section.addNode(m_ChosenInstancesTrain = new INIFileNominalOrIntOrVector("ChosenInstancesTrain", NONELIST));
         m_ChosenInstancesTrain.setIntVector(DUMMY_INSTANCES);
-        m_SectionKNN.addNode(m_ChosenInstancesTest = new INIFileNominalOrIntOrVector("ChosenInstancesTest", NONELIST));
+
+        m_Section.addNode(m_ChosenInstancesTest = new INIFileNominalOrIntOrVector("ChosenInstancesTest", NONELIST));
         m_ChosenInstancesTest.setIntVector(DUMMY_INSTANCES);
-        m_SectionKNN.addNode(m_LoadNeighboursFiles = new INIFileArray("LoadNeighboursFiles", EMPTY_STRING_ARRAY));
-        m_SectionKNN.addNode(m_SaveNeighboursFile = new INIFileString("SaveNeighboursFile", EMPTY_STRING));
 
-        m_SectionKNN.setEnabled(false);
+        m_Section.addNode(m_LoadNeighboursFiles = new INIFileArray("LoadNeighboursFiles", EMPTY_STRING_ARRAY));
+        m_Section.addNode(m_SaveNeighboursFile = new INIFileString("SaveNeighboursFile", EMPTY_STRING));
 
-        return m_SectionKNN;
-
+        m_Section.setEnabled(false);
     }
 
 

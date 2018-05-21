@@ -6,7 +6,7 @@ import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.distance.complex.TupleDistance;
 import si.ijs.kt.clus.ext.structuredTypes.Tuple;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class EuclideanDistance extends TupleDistance {

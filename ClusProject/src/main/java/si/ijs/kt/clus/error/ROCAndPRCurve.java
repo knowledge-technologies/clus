@@ -57,8 +57,8 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
 
     public void computeCurves() {
         // Create new curves
-        m_ROC = new ArrayList<double[]>();
-        m_PR = new ArrayList<double[]>();
+        m_ROC = new ArrayList<>();
+        m_PR = new ArrayList<>();
         m_AreaPR = 0.0;
         m_AreaROC = 0.5;
         if (m_Values.getNbPos() != 0) {

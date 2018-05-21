@@ -39,8 +39,8 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 public class FindBestTests {
 

@@ -60,7 +60,7 @@ public class EuclideanDistance extends ClusDistance {
      *        The first tuple
      * @param t2
      *        The second tuple
-     * @return
+
      */
     @Override
     public double calcDistance(DataTuple t1, DataTuple t2) {

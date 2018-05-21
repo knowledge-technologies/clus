@@ -28,7 +28,7 @@ import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 /**
@@ -55,9 +55,6 @@ public class SearchDistance extends ClusDistance {
 
     /**
      * Minimal and maximal values of numeric attributes are converted to normalization weights.
-     * 
-     * @param min_values
-     * @param max_values
      */
     public void setNormalizationWeights(double[] min_values, double[] max_values) {
         m_MinValues = new double[min_values.length];
@@ -78,11 +75,6 @@ public class SearchDistance extends ClusDistance {
     /**
      * A wrapper method that returns distance between two tuples based on
      * given (constructor) distance (ClusDistance).
-     * 
-     * @param t1
-     * @param t2
-     * @return
-     * @throws ClusException 
      */
     @Override
     public double calcDistance(DataTuple t1, DataTuple t2) throws ClusException {
@@ -107,7 +99,7 @@ public class SearchDistance extends ClusDistance {
      * @param t1
      * @param t2
      * @param attr
-     * @return
+
      */
     public double calcDistanceOnAttr(DataTuple t1, DataTuple t2, ClusAttrType attr) {
         if (attr instanceof NumericAttrType) {
@@ -145,10 +137,6 @@ public class SearchDistance extends ClusDistance {
      * Returns value for a given tuple and attribute. Nominal values (1..k) are
      * casted to double and returned, numeric values are simply returned.
      * Method provides unified access to value - this is actually needed only by KD tree.
-     * 
-     * @param t1
-     * @param attr
-     * @return
      */
     public double getValue(DataTuple t1, ClusAttrType attr) {
         throw new RuntimeException("We do not trust SearchDistance.getValue method yet.");

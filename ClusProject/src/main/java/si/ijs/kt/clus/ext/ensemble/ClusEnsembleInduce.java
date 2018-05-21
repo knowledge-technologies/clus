@@ -42,7 +42,6 @@ import java.util.concurrent.TimeUnit;
 
 import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.algo.ClusInductionAlgorithm;
-import si.ijs.kt.clus.algo.tdidt.ClusDecisionTree;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.algo.tdidt.DepthFirstInduce;
 import si.ijs.kt.clus.algo.tdidt.DepthFirstInduceSparse;
@@ -67,7 +66,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingFunctionScope;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
@@ -84,11 +83,11 @@ import si.ijs.kt.clus.selection.BaggingSelectionSemiSupervised;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.ComponentStatistic;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
+import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.cloner.Cloner;
-import si.ijs.kt.clus.util.jeans.resource.ResourceInfo;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.tools.optimization.GDProbl;
 
 
@@ -112,11 +111,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     static int m_NbMaxBags;
 
     // members for ROS ensembles (target subspacing)
-    static EnsembleROSVotingFunctionScope m_EnsembleROSScope;
-    ClusEnsembleROSInfo m_EnsembleROSInfo = null;
+    static EnsembleROSVotingType m_EnsembleROSVotingType;
+    private ClusEnsembleROSInfo m_EnsembleROSInfo = null;
 
     // Out-Of-Bag Error Estimate
-    ClusOOBErrorEstimate m_OOBEstimation;
+    private ClusOOBErrorEstimate m_OOBEstimation;
 
     // Feature Ranking via Random Forests OR via Genie3 etc.
     boolean m_FeatRank;
@@ -132,11 +131,24 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      */
     // static protected Random m_randTreeDepth = new Random(0);
 
-    public static final int m_PARALLEL_TRAP_BestFirst_getDescriptiveAttributes = 0;
-    public static final int m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes = 1;
-    public static final int m_PARALLEL_TRAP_staticRandom = 2;
-    public static final int m_PARALLEL_TRAP_optimization = 3;
-    private static boolean[] m_WarningsGiven = new boolean[4];
+    public enum ParallelTrap {
+        BestFirst_getDescriptiveAttributes("clus.ext.bestfirst.BestFirstInduce.getDescriptiveAttributes() has been called. This may not work in parallel setting."), DepthFirst_getDescriptiveAttributes("clus.algo.tdidt.DepthFirstInduce.getDescriptiveAttributes(ClusRandomNonstatic) has been called. This may not work in parallel setting."), StaticRandom("Static random has been called. This may not work in parallel setting."), Optimization("Memory usage optimization is on. You have reached a place where there might be some unexpected behaviour in parallel setting because of that.");
+
+        private String m_Message = "";
+
+
+        ParallelTrap(String msg) {
+            m_Message = msg;
+        }
+
+
+        @Override
+        public String toString() {
+            return m_Message;
+        }
+    };
+
+    private static ArrayList<ParallelTrap> m_WarningsGiven = new ArrayList<>();
 
 
     public ClusEnsembleInduce(ClusSchema schema, Settings sett, Clus clus) throws ClusException, IOException {
@@ -161,8 +173,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         SettingsEnsemble sett = settMain.getEnsemble();
 
-        m_OptMode = (sett.shouldOptimizeEnsemble() && ((m_Mode == ClusStatManager.MODE_HIERARCHICAL) || (m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode == ClusStatManager.MODE_CLASSIFY)));
-        m_EnsembleROSScope = sett.getEnsembleROSScope();
+        m_OptMode = (sett.shouldOptimizeEnsemble() && (Arrays.asList(ClusStatManager.MODE_HIERARCHICAL, ClusStatManager.MODE_REGRESSION, ClusStatManager.MODE_CLASSIFY).contains(m_Mode)));
+
+        m_EnsembleROSVotingType = sett.getEnsembleROSVotingType();
 
         // m_OptMode = (Settings.shouldOptimizeEnsemble() && !Settings.IS_XVAL && ((m_Mode ==
         // ClusStatManager.MODE_HIERARCHICAL)||(m_Mode == ClusStatManager.MODE_REGRESSION) || (m_Mode ==
@@ -500,7 +513,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     // this ensemble method builds random forests (i.e. chooses the best test from a subset of attributes at each node),
     // but does not construct bootstrap replicates of the dataset
     public void induceRForestNoBootstrap(ClusRun cr) throws Exception {
-        long summ_time = 0; // = ResourceInfo.getTime();
+        //long summ_time = 0; // = ResourceInfo.getTime();
 
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
         TupleIterator test_iterator = m_OptMode ? cr.getTestIter() : null; // = test set iterator
@@ -511,7 +524,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             seeds[i] = bagSeedGenerator.nextInt();
         }
         for (int i = 1; i <= m_NbMaxBags; i++) {
-            long one_bag_time = ResourceInfo.getTime();
+            //long one_bag_time = ResourceInfo.getTime();
             if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Bag: " + i);
 
@@ -529,7 +542,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             crSingle.getStatManager().initClusteringWeights();
 
             ClusModel model = ind.induceSingleUnpruned(crSingle, rnd);
-            summ_time += ResourceInfo.getTime() - one_bag_time;
+            //summ_time += ResourceInfo.getTime() - one_bag_time;
 
             // m_OForest.updateCounts((ClusNode) model);
             if (m_OptMode) {
@@ -577,7 +590,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             seeds[i] = bagSeedGenerator.nextInt();
         }
         for (int i = 1; i <= m_NbMaxBags; i++) {
-            long one_bag_time = ResourceInfo.getTime();
+            //long one_bag_time = ResourceInfo.getTime();
             if (getSettings().getGeneral().getVerbose() > 0)
                 System.out.println("Bag: " + i);
 
@@ -967,7 +980,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             //
             if (m_OptMode && (i != m_NbMaxBags)) {
                 if (m_NbThreads > 1) {
-                    giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_optimization);
+                    giveParallelisationWarning(ParallelTrap.Optimization);
                 }
                 // crSingle.setTestSet(cr.getTestIter());
                 // crSingle.setTrainingSet(cr.getTrainingSet());
@@ -1127,7 +1140,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             else {
                 // m_OForest.addModelToForest(model);
                 addModelToForests(model, i);
-                ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
+                //ClusModel defmod = ClusDecisionTree.induceDefault(crSingle);
                 // m_DForest.addModelToForest(defmod);
             }
 
@@ -1306,7 +1319,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         // Valid only when test set is supplied
         if (m_OptMode && (i != m_NbMaxBags) && checkToOutEnsemble(i)) {
             if (m_NbThreads > 1) {
-                giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_optimization);
+                giveParallelisationWarning(ParallelTrap.Optimization);
             }
             // crSingle.setInductionTime(one_bag_time);
             // postProcessForest(crSingle);
@@ -1484,11 +1497,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         m_RandomSubspaces = attrs;
     }
 
-    // public static void setRandomSubspaces(ClusAttrType[] attrs, int select, ClusRandomNonstatic rnd) {
-    // m_RandomSubspaces = ClusEnsembleInduce.selectRandomSubspaces(attrs, select, ClusRandomNonstatic.RANDOM_SELECTION,
-    // rnd);
-    // }
-
 
     /**
      * Memory optimization
@@ -1503,30 +1511,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public synchronized static void giveParallelisationWarning(int reason) {
-        if (!m_WarningsGiven[reason]) {
-            String message;
-            switch (reason) {
-                case ClusEnsembleInduce.m_PARALLEL_TRAP_BestFirst_getDescriptiveAttributes:
-                    message = "clus.ext.bestfirst.BestFirstInduce.getDescriptiveAttributes() has been called. This may not work in parallel setting.";
-                    break;
-                case ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes:
-                    message = "clus.algo.tdidt.DepthFirstInduce.getDescriptiveAttributes(ClusRandomNonstatic) has been called. This may not work in parallel setting.";
-                    break;
-                case ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom:
-                    message = "Static random has been called. This may not work in parallel setting.";
-                    break;
-                case ClusEnsembleInduce.m_PARALLEL_TRAP_optimization:
-                    message = "Memory usage optimization is on. You have reached a place where there might be some unexpected behaviour in parallel setting because of that.";
-                    break;
-                default:
-                    throw new RuntimeException("Wrong reason for giveParallelisationWarning: " + reason);
-            }
-            System.err.println("Warning:");
-            System.err.println(message);
-            System.err.println("There will be no additional warnings for this.");
-            m_WarningsGiven[reason] = true;
-
+    public synchronized static void giveParallelisationWarning(ParallelTrap reason) {
+        if (!m_WarningsGiven.contains(reason)) {
+            System.err.println("Warning:" + System.lineSeparator() + reason + System.lineSeparator() + "There will be no additional warnings for this.");
+            m_WarningsGiven.add(reason);
         }
     }
 
@@ -1658,7 +1646,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * 
      * @param cr
      * @param treeIndex
-     * @return
+
      */
     public static String getTemporaryPythonTreeFileName(ClusRun cr, int treeIndex) {
         return cr.getStatManager().getSettings().getGeneric().getFileAbsolute(String.format("temp_tree%d.py", treeIndex));

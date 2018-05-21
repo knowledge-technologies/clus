@@ -52,8 +52,8 @@ import si.ijs.kt.clus.selection.ClusSelection;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
-import si.ijs.kt.clus.util.ClusException;
 import si.ijs.kt.clus.util.ClusRandom;
+import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
@@ -107,7 +107,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
         ClusErrorList parent = new ClusErrorList();
         if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             HierarchyMeasures optimize = getSettings().getHMLC().getHierOptimizeErrorMeasure();
-            parent.addError(new HierErrorMeasures(parent, mgr.getHier(), null, getSettings().getGeneral().getCompatibility(), optimize, false, getSettings().getOutput().isGzipOutput()));
+            parent.addError(new HierErrorMeasures(parent, mgr.getHier(), null, optimize, false, getSettings().getOutput().isGzipOutput()));
             return parent;
         }
         NumericAttrType[] num = mgr.getSchema().getNumericAttrUse(AttributeUseType.Target);

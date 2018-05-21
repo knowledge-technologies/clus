@@ -40,7 +40,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
-import si.ijs.kt.clus.util.ClusException;
+import si.ijs.kt.clus.util.exception.ClusException;
 
 
 public class TimeSeriesSignificantChangeTesterXVAL extends ClusError {
@@ -153,13 +153,13 @@ public class TimeSeriesSignificantChangeTesterXVAL extends ClusError {
 
     public void printArray(ArrayList arr, StringBuffer res) {
         res.append("[");
-        double sum = 0;
+        //double sum = 0;
         for (int i = 0; i < arr.size(); i++) {
             double v = ((Double) arr.get(i)).doubleValue();
             if (i != 0)
                 res.append(",");
             res.append(String.valueOf(v));
-            sum += v;
+          //  sum += v;
         }
         res.append("]");
     }
