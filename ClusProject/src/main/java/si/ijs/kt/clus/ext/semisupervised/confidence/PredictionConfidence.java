@@ -158,7 +158,7 @@ public abstract class PredictionConfidence {
      *
      * @param model
      * @param tuple
-     * @return
+
      * @throws ClusException
      * @throws InterruptedException
      */
@@ -171,7 +171,7 @@ public abstract class PredictionConfidence {
      *
      * @param model
      * @param tuple
-     * @return
+
      * @throws ClusException
      * @throws InterruptedException
      */
@@ -197,7 +197,7 @@ public abstract class PredictionConfidence {
      * Return the number of instances for which the confidence score is !=
      * Double.NaN
      *
-     * @return
+
      */
     public int getCounter() {
         return m_counter;

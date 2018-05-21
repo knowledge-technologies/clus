@@ -3051,7 +3051,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     /**
      * Get weight of labeled examples, if there are
      * 
-     * @return
+
      */
     public double getWeightLabeled() {
         if (m_SumWeight == 0.0) {

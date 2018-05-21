@@ -348,7 +348,7 @@ public class ClusBeam {
      * check if the same tree is already in the beam
      * 
      * @param model
-     * @return
+
      */
     public boolean modelAlreadyIn(ClusBeamModel model) {
         ArrayList arr = toArray();

@@ -66,7 +66,7 @@ public class SettingsRelief extends SettingsBase {
      * 
      * @param nbInstances
      *        The number of instances in the training set.
-     * @return
+
      */
     public int[] getReliefNbIterationsValue(int nbInstances) {
         double[] values;

@@ -567,9 +567,6 @@ public class ClusForest implements ClusModel, Serializable {
 
     /**
      * The same as predict weighted OOB, but also calculates random forest proximities
-     * 
-     * @throws ClusException
-     * @throws InterruptedException
      */
     public ClusStatistic predictWeightedOOBAndGetProximities(DataTuple tuple) throws ClusException, InterruptedException {
         m_Proximities = new HashMap<Integer, Double>();
@@ -621,8 +618,6 @@ public class ClusForest implements ClusModel, Serializable {
      * After initialization call
      * predictWeightedStandardAndGetProximities(DataTuple t) to calculate
      * proximities to the tuples initialized with this function.
-     *
-     * @param data
      */
     public void initializeProximities(DataTuple t) {
         for (int j = 0; j < m_Forest.size(); j++) {
@@ -638,10 +633,7 @@ public class ClusForest implements ClusModel, Serializable {
 
 
     /**
-     * used for ROS ensembles
-     * 
-     * @throws ClusException
-     * @throws InterruptedException
+     * Used for ROS ensembles
      */
     public ClusStatistic predictWeightedStandardSubspaceAveraging(DataTuple tuple) throws ClusException, InterruptedException {
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
@@ -655,9 +647,7 @@ public class ClusForest implements ClusModel, Serializable {
 
 
     /**
-     * used for OPTIMIZED ROS ensembles
-     * 
-     * @throws ClusException
+     * Used for OPTIMIZED ROS ensembles
      */
     public ClusStatistic predictWeightedStandardSubspaceAveragingOpt(DataTuple tuple) throws ClusException {
         // when ensembles are optimized, the running average takes into account the subspaces, so predictWeightedOpt()
@@ -733,7 +723,6 @@ public class ClusForest implements ClusModel, Serializable {
 
     /**
      * Adds an ensemble predictor to python models file.
-     * 
      */
     public void writePythonEnsembleFile(PrintWriter wrtr, String treeFile, PythonModelType pyModelType) {
         wrtr.println(String.format("def ensemble_%d(xs):", m_NbModels));
@@ -930,7 +919,7 @@ public class ClusForest implements ClusModel, Serializable {
     /**
      * @param idx
      *        The index of the decision tree. Thus this is NOT the type enumeration introduced in ClusModel.
-     * @return
+
      */
     public ClusModel getModel(int idx) {
         return m_Forest.get(idx);

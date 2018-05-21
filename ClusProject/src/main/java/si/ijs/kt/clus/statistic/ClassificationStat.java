@@ -764,7 +764,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
      * 
      * @param i
      *        index of an attribute
-     * @return
+
      */
     public double getEsimatedGini(int i) {
         switch (getSettings().getTree().getMissingClusteringAttrHandling()) {
@@ -1476,7 +1476,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
      * 
      * @param i
      *        index of a target
-     * @return
+
      */
     public double[] getProbabilityPrediction(int i) {
         double[] result = new double[m_ClassCounts[i].length];

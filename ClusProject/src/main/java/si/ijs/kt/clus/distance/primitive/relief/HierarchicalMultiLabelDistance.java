@@ -199,7 +199,7 @@ public class HierarchicalMultiLabelDistance {
      * @param hier The hierarchy
      * @param presentClasses true at that components that correspond to terms that are present in the data
      * @param finalClasses true at that components that correspond to the deepest term for some example in the data
-     * @return
+
      */
     private double upperBoundTree(ClassHierarchy hier, boolean[] presentClasses, boolean[] finalClasses){
     	computeDepthsOfTerms(hier);
@@ -216,7 +216,7 @@ public class HierarchicalMultiLabelDistance {
      * @param hier
      * @param presentClasses
      * @param finalClasses
-     * @return
+
      */
     private double upperBoundDAG(ClassHierarchy hier, boolean[] presentClasses, boolean[] finalClasses){
     	ArrayList<Integer> finalClassesOnly = new ArrayList<Integer>();
@@ -244,7 +244,7 @@ public class HierarchicalMultiLabelDistance {
      * @param root The current root of the hierarchy.
      * @param presentClasses see upperBound
      * @param finalClasses see upperBound
-     * @return
+
      */
     private ArrayList<ClassTerm> findDistantTerms(ClassHierarchy hier, ClassTerm root, boolean[] presentClasses, boolean[] finalClasses){
     	ArrayList<ClassTerm> extremeTerms = new ArrayList<ClassTerm>();
@@ -353,7 +353,7 @@ public class HierarchicalMultiLabelDistance {
     /**
      * Finds the most specific label among the ones given in ClassesTuple. 
      * @param tp
-     * @return
+
      */
     private static int mostSpecificTermIndex(ClassesTuple tp){
     	int ind = 0;

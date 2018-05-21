@@ -1638,7 +1638,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      * Calculate a BitSet vector of uncovered examples with respect to the input data
      * 
      * @param trainingData
-     * @return
+
      */
     public BitSet getUncovered(int numberOfExamples) {
 

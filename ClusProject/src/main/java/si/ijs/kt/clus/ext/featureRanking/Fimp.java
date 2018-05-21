@@ -77,7 +77,7 @@ public class Fimp {
 	 * resulting array must not contain commas.
 	 * 
 	 * @param strArray
-	 * @return
+
 	 */
 	public static String[] decomposeArrayStr(String strArray) {
 		return strArray.substring(1, strArray.length() - 1).split(",");
@@ -87,7 +87,7 @@ public class Fimp {
 	 * Converts, e.g., "[1, 2, 3]" to [1, 2, 3].
 	 * 
 	 * @param strArray
-	 * @return
+
 	 */
 	public static int[] getArrayOfInts(String strArray) {
 		String[] decomposed = decomposeArrayStr(strArray);
@@ -102,7 +102,7 @@ public class Fimp {
 	 * Converts, e.g., "[1.1, 2.1, 3.2]" to [1.1, 2.1, 3.2].
 	 * 
 	 * @param strArray
-	 * @return
+
 	 */
 	public static double[] getArrayOfDoubles(String strArray) {
 		String[] decomposed = decomposeArrayStr(strArray);

@@ -332,7 +332,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * Create objective function with respect to initial rule set
      * 
      * @param initialRuleSet
-     * @return
+
      */
     Function<ClusRuleSet, Double> getObjectiveFunction(ClusRuleSet initialRuleSet, final ClusRuleProbabilisticRuleSetInduceWeights weights) {
         int tmpMaxGlobalRuleCardinality = 0;

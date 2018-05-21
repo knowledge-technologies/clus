@@ -46,7 +46,7 @@ public class OptSmoothLocalSearch {
      * @param initialRuleSet
      * @param delta
      * @param deltaPrime
-     * @return
+
      */
 
     public ClusRuleSet SmoothLocalSearch(ClusRuleSet initialRuleSet, double delta, double deltaPrime, Function<ClusRuleSet, Double> objectiveFunction) {

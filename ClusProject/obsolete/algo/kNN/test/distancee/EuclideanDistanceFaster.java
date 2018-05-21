@@ -47,7 +47,7 @@ public class EuclideanDistanceFaster extends SearchDistance {
      * 
      * @param t1
      * @param t2
-     * @return
+
      */
     public double calcDistance(DataTuple t1, DataTuple t2) {
         // @todo: use this Euclidean distance only where all attributes are numerical
@@ -65,7 +65,7 @@ public class EuclideanDistanceFaster extends SearchDistance {
      * @param t1
      * @param t2
      * @param attr
-     * @return
+
      */
     public double calcDistanceOnAttr(DataTuple t1, DataTuple t2, ClusAttrType attr) {
         if (attr instanceof NumericAttrType) {

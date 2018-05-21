@@ -46,7 +46,7 @@ public class EuclideanDistance extends SearchDistance {
      * 
      * @param t1
      * @param t2
-     * @return
+     * 
      */
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
@@ -62,7 +62,7 @@ public class EuclideanDistance extends SearchDistance {
      * @param t1
      * @param t2
      * @param attr
-     * @return
+     * 
      */
     public double calcDistanceOnAttr(DataTuple t1, DataTuple t2, ClusAttrType attr) {
         if (attr instanceof NumericAttrType) {

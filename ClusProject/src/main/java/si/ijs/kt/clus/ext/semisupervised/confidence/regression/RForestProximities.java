@@ -51,7 +51,7 @@ public class RForestProximities extends PredictionConfidence {
      * out-of-bag error of labeled example e_u
      *
      * @param model
-     * @return
+
      * @throws ClusException
      * @throws InterruptedException
      */

@@ -16,7 +16,7 @@ public class Helper {
      * Calculates average of an array of values
      *
      * @param values
-     * @return
+
      */
     public static double average(double[] values) {
         double avg = 0;
@@ -44,7 +44,7 @@ public class Helper {
      * Calculates minimum of an array of values
      *
      * @param values
-     * @return
+
      */
     public static double min(double[] values) {
         double min = Double.MAX_VALUE;
@@ -61,7 +61,7 @@ public class Helper {
      * Calculates sum of an array of values
      *
      * @param values
-     * @return
+
      */
     public static double sum(double[] values) {
         double sum = 0;
@@ -76,7 +76,7 @@ public class Helper {
      * Calculates maximum of an array of values
      *
      * @param values
-     * @return
+
      */
     public static double max(double[] values) {
         double max = Double.MIN_VALUE;
@@ -93,7 +93,7 @@ public class Helper {
      * Return the values of an array in a comma separated string
      *
      * @param array
-     * @return
+
      */
     public static String arrayToString(double[] array) {
         String ret = "";
@@ -113,7 +113,7 @@ public class Helper {
      *
      * @param array
      * @param sep separator
-     * @return
+
      */
     public static String arrayToString(double[] array, String sep) {
         String ret = "";
@@ -133,7 +133,7 @@ public class Helper {
      *
      * @param array
      * @param sep separator
-     * @return
+
      */
     public static String arrayToString(String[] array, String sep) {
         String ret = "";
@@ -153,7 +153,7 @@ public class Helper {
      *
      * @param array
      * @param sep separator
-     * @return
+
      */
     public static String arrayToString(IndiceValuePair[] array, String sep) {
         String ret = "";
@@ -173,7 +173,7 @@ public class Helper {
      * returns Double.NaN, when stdDev should be 0
      *
      * @param values
-     * @return
+
      */
     public static double stDevOpt(double[] a) {
         double avg = 0;
@@ -191,7 +191,7 @@ public class Helper {
      * Return array containing just the second values of the DoublePairs array
      *
      * @param dpArrray
-     * @return
+
      */
     public static double[] getArrayOfSecond(DoublesPair[] dpArrray) {
         double[] temp = new double[dpArrray.length];
@@ -245,7 +245,7 @@ public class Helper {
      * corrected sample standard deviation
      *
      * @param data
-     * @return
+
      */
     public static double getStdDev(double[] data) {
         return Math.sqrt(getVariance(data));

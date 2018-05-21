@@ -794,7 +794,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
      * Only used in efficient XVal code
      * TODO Could be a bug: changeWeight -> multiplyWeight
      * 
-     * @return
+
      */
     public final RowData getFoldData2(int fold) {
         int idx = 0;
@@ -876,7 +876,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
      * Returns the number of unlabeled examples (example is considered unlabeled
      * if all of its target attributes are missing)
      * 
-     * @return
+
      */
     public final int getNbUnlabeled() {
         int nbUnlabeled = 0;

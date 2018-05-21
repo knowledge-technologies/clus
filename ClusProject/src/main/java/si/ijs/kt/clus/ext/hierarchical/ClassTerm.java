@@ -424,7 +424,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable<ClassTerm
     /**
      * Getter for m_Depth.
      * 
-     * @return
+
      */
     public double getDepth() {
         return m_Depth;
@@ -436,7 +436,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable<ClassTerm
      * 
      * @param includeTerm
      *        tells whether to add to the ancestors also the term on which the method is used
-     * @return
+
      */
     public ArrayList<ClassTerm> getAllAncestors(boolean includeTerm) {
         ArrayList<ClassTerm> ancestors = new ArrayList<ClassTerm>();

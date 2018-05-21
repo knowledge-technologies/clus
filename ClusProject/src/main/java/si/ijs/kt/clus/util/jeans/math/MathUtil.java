@@ -105,7 +105,7 @@ public class MathUtil {
      * 
      * @param elements1
      * @param elements2
-     * @return
+
      */
     public static <T> HashSet<T> symmetricDifference(ArrayList<T> elements1, ArrayList<T> elements2) {
         HashSet<T> symmetricDifference = new HashSet<T>();

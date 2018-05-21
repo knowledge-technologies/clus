@@ -29,114 +29,123 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 
+
 public class ClusUtil {
 
-	public final static double MICRO = 1e-6;
-	public final static double NANO = 1e-9;
-	public final static double PICO = 1e-12;
-	public static final double NaN = Double.NaN;
+    public final static double MICRO = 1e-6;
+    public final static double NANO = 1e-9;
+    public final static double PICO = 1e-12;
+    public static final double NaN = Double.NaN;
 
-	public static boolean grOrEq(double a, double b) {
-		/* a > b - MICRO */
-		return (b - a < MICRO);
-	}
 
-	public static boolean smOrEq(double a, double b) {
-		return (a - b < MICRO);
-	}
+    public static boolean grOrEq(double a, double b) {
+        /* a > b - MICRO */
+        return (b - a < MICRO);
+    }
 
-	public static boolean eq(double a, double b) {
-		// return (a - b < MICRO) && (b - a < MICRO);
-		return eq(a, b, MICRO);
-	}
 
-	public static boolean eq(double a, double b, double allowedDifference) {
-		return Math.abs(a - b) < allowedDifference;
-	}
+    public static boolean smOrEq(double a, double b) {
+        return (a - b < MICRO);
+    }
 
-	public static double roundToSignificantFigures(double num, int n) {
-		if (num == 0) {
-			return 0;
-		}
 
-		final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
-		final int power = n - (int) d;
+    public static boolean eq(double a, double b) {
+        // return (a - b < MICRO) && (b - a < MICRO);
+        return eq(a, b, MICRO);
+    }
 
-		final double magnitude = Math.pow(10, power);
-		final long shifted = Math.round(num * magnitude);
-		return shifted / magnitude;
-	}
 
-	public static void main(String[] arg) {
-		double d1 = -1.23456789;
-		double d2 = -0.0;
-		double d3 = -1234567.89;
-		double d4 = -1.234E-12;
-		double d5 = 2.23E-13;
-		double d6 = 0.0000000012345;
-		int n = 3;
-		System.out.println(roundToSignificantFigures(d1, n));
-		System.out.println(roundToSignificantFigures(d2, n));
-		System.out.println(roundToSignificantFigures(d3, n));
-		System.out.println(roundToSignificantFigures(d4, n));
-		System.out.println(roundToSignificantFigures(d5, n));
-		System.out.println(roundToSignificantFigures(d6, n));
-		
-		String[] tests = new String[] {"dsa", "sdaaa/dsa", "a/a/a/dsa", "s\\c\\dsa"};
-		for (String test : tests) {
-			System.out.println(fileName(test));
-		}
-	}
+    public static boolean eq(double a, double b, double allowedDifference) {
+        return Math.abs(a - b) < allowedDifference;
+    }
 
-	public static double roundDouble(double value, int afterDecimalPoint) {
-		double mask = Math.pow(10.0, afterDecimalPoint);
 
-		return (Math.round(value * mask)) / mask;
-	}
+    public static double roundToSignificantFigures(double num, int n) {
+        if (num == 0) { return 0; }
 
-	public static boolean isNaN(double d) {
-		return Double.isNaN(d);
-	}
+        final double d = Math.ceil(Math.log10(num < 0 ? -num : num));
+        final int power = n - (int) d;
 
-	public static boolean isZero(double d) {
-		return d == 0.0F;
-	}
+        final double magnitude = Math.pow(10, power);
+        final long shifted = Math.round(num * magnitude);
+        return shifted / magnitude;
+    }
 
-	public static boolean isNaNOrZero(double d) {
-		return isNaN(d) || isZero(d);
-	}
 
-	public static boolean isAnyNaNOrZero(double[] numbers) {
-		for (double d : numbers) {
-			if (isNaNOrZero(d))
-				return true;
-		}
-		return false;
-	}
-	
-	/**
-	 * From "a/b/c/d" or "a\\b\\c\\d" or "d" extracts d.
-	 * @param pathToFile
-	 * @return
-	 */
-	public static String fileName(String pathToFile) {
-		String answer = pathToFile.replace("\\", "/");
-		int i = answer.lastIndexOf("/") + 1;		
-		return answer.substring(i);		
-	}
-	
-	
-	public static HashMap<String, Integer> getDiscriptiveAttributesIndices(ClusStatManager statmgr){
-		HashMap<String, Integer> indices = new HashMap<String, Integer>();
-		ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(AttributeUseType.Descriptive, null));
+    public static void main(String[] arg) {
+        double d1 = -1.23456789;
+        double d2 = -0.0;
+        double d3 = -1234567.89;
+        double d4 = -1.234E-12;
+        double d5 = 2.23E-13;
+        double d6 = 0.0000000012345;
+        int n = 3;
+        System.out.println(roundToSignificantFigures(d1, n));
+        System.out.println(roundToSignificantFigures(d2, n));
+        System.out.println(roundToSignificantFigures(d3, n));
+        System.out.println(roundToSignificantFigures(d4, n));
+        System.out.println(roundToSignificantFigures(d5, n));
+        System.out.println(roundToSignificantFigures(d6, n));
+
+        String[] tests = new String[] { "dsa", "sdaaa/dsa", "a/a/a/dsa", "s\\c\\dsa" };
+        for (String test : tests) {
+            System.out.println(fileName(test));
+        }
+    }
+
+
+    public static double roundDouble(double value, int afterDecimalPoint) {
+        double mask = Math.pow(10.0, afterDecimalPoint);
+
+        return (Math.round(value * mask)) / mask;
+    }
+
+
+    public static boolean isNaN(double d) {
+        return Double.isNaN(d);
+    }
+
+
+    public static boolean isZero(double d) {
+        return d == 0.0F;
+    }
+
+
+    public static boolean isNaNOrZero(double d) {
+        return isNaN(d) || isZero(d);
+    }
+
+
+    public static boolean isAnyNaNOrZero(double[] numbers) {
+        for (double d : numbers) {
+            if (isNaNOrZero(d))
+                return true;
+        }
+        return false;
+    }
+
+
+    /**
+     * From "a/b/c/d" or "a\\b\\c\\d" or "d" extracts d.
+     */
+    public static String fileName(String pathToFile) {
+        String answer = pathToFile.replace("\\", "/");
+        int i = answer.lastIndexOf("/") + 1;
+        return answer.substring(i);
+    }
+
+
+    public static HashMap<String, Integer> getDiscriptiveAttributesIndices(ClusStatManager statmgr) {
+        HashMap<String, Integer> indices = new HashMap<String, Integer>();
+        ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(AttributeUseType.Descriptive, null));
         if (statmgr.getSettings().getOutput().isOutputPythonModel()) {
-            for (int ii = 0; ii < cat.length - 1; ii++){
+            for (int ii = 0; ii < cat.length - 1; ii++) {
                 indices.put(cat[ii].getName(), ii);
             }
             int ii = cat.length - 1;
             indices.put(cat[ii].getName(), ii);
         }
         return indices;
-	}
+    }
 
 }

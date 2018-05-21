@@ -864,7 +864,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param run
      *        The information about this run. Parameters etc.
-     * @return
+
      * @throws ClusException
      * @throws IOException
      * @throws InterruptedException
@@ -1156,7 +1156,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param data
      * @param rn
-     * @return
+
      * @throws ClusException
      */
     private ClusRule generateOneRandomRule(RowData data, Random rn) throws ClusException {

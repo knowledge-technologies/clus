@@ -399,7 +399,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
      * @param n_tot
      *        Total number of examples with non-missing values for all
      *        attributes
-     * @return
+
      */
     public boolean shouldEstimate(double k_tot, double n_tot) {
         // Condition for the old variance equation

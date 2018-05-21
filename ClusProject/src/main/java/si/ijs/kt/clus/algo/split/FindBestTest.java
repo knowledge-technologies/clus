@@ -652,7 +652,7 @@ public class FindBestTest {
 	 * Double.isFinite(double) in Java8.
 	 * 
 	 * @param value
-	 * @return
+
 	 */
 	private static boolean isFinite(double value) {
 		// Java8: return Double.isFinite(v);

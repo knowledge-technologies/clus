@@ -1646,7 +1646,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * 
      * @param cr
      * @param treeIndex
-     * @return
+
      */
     public static String getTemporaryPythonTreeFileName(ClusRun cr, int treeIndex) {
         return cr.getStatManager().getSettings().getGeneric().getFileAbsolute(String.format("temp_tree%d.py", treeIndex));

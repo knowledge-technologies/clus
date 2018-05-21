@@ -51,7 +51,7 @@ public abstract class AttributeWeighting implements Serializable {
      * this method.
      * 
      * @param attr
-     * @return
+
      */
     public abstract double getWeight(ClusAttrType attr);
 

@@ -831,7 +831,7 @@ public class ClusNode extends MyNode implements ClusModel {
      * @param leafTuples
      *        hash codes of tuples which are in the same leaf where
      *        the tuple ended will be stored in this variable.
-     * @return
+
      * @throws ClusException 
      */
     public ClusStatistic predictWeightedAndGetLeafTuples(DataTuple tuple, List<Integer> leafTuples) throws ClusException {

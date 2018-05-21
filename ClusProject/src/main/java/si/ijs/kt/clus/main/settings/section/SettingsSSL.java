@@ -225,7 +225,7 @@ public class SettingsSSL extends SettingsBase {
      * Should calibrate HMC threshold so that the difference between label cardinality of labeled examples and predicted
      * unlabeled examples is minimal
      * 
-     * @return
+
      */
     public boolean shouldCalibrateHmcThreshold() {
         return m_CalibrateHmcThreshold.getValue();

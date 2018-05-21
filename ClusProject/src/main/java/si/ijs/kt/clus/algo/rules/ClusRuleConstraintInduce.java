@@ -641,7 +641,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
      * 
      * @param data
      * @param rn
-     * @return
+
      * @throws ClusException
      */
     private ClusRule generateOneRandomRule(RowData data, Random rn) throws ClusException {
