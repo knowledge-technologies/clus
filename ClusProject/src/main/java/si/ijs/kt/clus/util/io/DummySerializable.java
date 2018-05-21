@@ -20,21 +20,23 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.util.tools.debug;
+package si.ijs.kt.clus.util.io;
 
-public class Debug {
+import java.io.IOException;
 
-    public final static int debug = 0;
+import si.ijs.kt.clus.data.io.ClusReader;
+import si.ijs.kt.clus.data.rows.DataTuple;
 
-    public final static boolean HIER_DEBUG = false;
 
-    public final static boolean HIER_JANS_PAPER = false;
+public class DummySerializable extends ClusSerializable {
 
-    public final static boolean HEURISTIC_DEBUG = false;
+    public boolean read(ClusReader data, int row) throws IOException {
+        return data.skipTillComma();
+    }
 
-    public final static boolean MAKE_ID_FILES = false;
 
-    public final static boolean MAKE_PRED_FILES = false;
-
-    public final static boolean HIER_ERROR_DEBUG = true;
+    @Override
+    public boolean read(ClusReader data, DataTuple tuple) throws IOException {
+        return data.skipTillComma();
+    }
 }

@@ -44,7 +44,6 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.data.type.primitive.SparseNumericAttrType;
 import si.ijs.kt.clus.data.type.primitive.TimeSeriesAttrType;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
-import si.ijs.kt.clus.io.DummySerializable;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.XValDataSelection;
@@ -52,6 +51,7 @@ import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
+import si.ijs.kt.clus.util.io.DummySerializable;
 import si.ijs.kt.clus.util.jeans.util.IntervalCollection;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 

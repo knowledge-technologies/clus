@@ -272,11 +272,11 @@ public class GenerateData {
             for (int j = 0; j < attr.size(); j++) {
                 ClassTerm at = (ClassTerm) attr.elementAt(j);
                 if (include[at.getIndex()]) {
-                    int nb_match = 0;
+                    //int nb_match = 0;
                     for (int k = 0; k < at.getNbChildren(); k++) {
                         ClassTerm child = (ClassTerm) at.getChild(k);
                         if (include[child.getIndex()]) {
-                            nb_match++;
+                      //      nb_match++;
                             buf.append('1');
                         }
                         else {

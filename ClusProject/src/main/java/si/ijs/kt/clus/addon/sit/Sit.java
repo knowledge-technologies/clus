@@ -294,7 +294,8 @@ public class Sit implements CMDLineArgsProvider {
             folds.add(m_Learner.LearnModel(trgset, f));
         }
 
-        double finalerror = Evaluator.getPearsonCorrelation(folds, errorIdx);
+        //double finalerror = Evaluator.getPearsonCorrelation(folds, errorIdx);
+        Evaluator.getPearsonCorrelation(folds, errorIdx);
 
         // errOut.addFold(0,0,m_Learner.getName(),m_Search.getName(),Integer.toString(mt+1),finalerror,"["+trgset.toString()+"]");
 

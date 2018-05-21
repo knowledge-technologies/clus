@@ -82,9 +82,9 @@ public class ClusForest implements ClusModel, Serializable {
     private int m_NbNodes = 0;
     /** The sum of leaves over the trees in the forest */
     private int m_NbLeaves = 0;
-    ClusEnsembleROSInfo m_TargetSubspaceInfo = null; // ROS ensembles (info about target subspacing)
+    private ClusEnsembleROSInfo m_TargetSubspaceInfo = null; // ROS ensembles (info about target subspaces)
 
-    //added 13/1/2014 by Jurica Levatic
+    // added 13/1/2014 by Jurica Levatic
     /** Individual votes of trees in ensemble, used for calculation of confidence of predictions in self-training */
     ArrayList<ClusStatistic> m_Votes;
     /**
@@ -103,19 +103,19 @@ public class ClusForest implements ClusModel, Serializable {
 
     ClusStatistic m_Stat;
     boolean m_PrintModels;
-//    String m_AttributeList;
-    
+    // String m_AttributeList;
+
     String m_AppName;
 
     private ClusEnsembleInduceOptimization m_Optimization;
 
     protected Settings m_Settings;
     protected ClusStatManager m_StatManager;
-    
-    private static String m_PythonFileTreePattern = "_trees";
-    private String m_PythonFileEnsemblePattern = "_ensemble_%dtrees";
 
-	private HashMap<String, Integer> m_DescriptiveIndex;
+    private static String m_PythonFileTreePattern = "_trees";
+    // private String m_PythonFileEnsemblePattern = "_ensemble_%dtrees";
+
+    private HashMap<String, Integer> m_DescriptiveIndex;
 
 
     public ClusForest(ClusStatManager statmgr) {
@@ -146,7 +146,9 @@ public class ClusForest implements ClusModel, Serializable {
                 break;
 
             case ClusStatManager.MODE_CLASSIFY_AND_REGRESSION:
-                m_Stat = statmgr.getStatistic(AttributeUseType.Target); //FIXME: Probably all statistics could be initialized like this? i.e., there is no need for checking mode?
+                m_Stat = statmgr.getStatistic(AttributeUseType.Target); // FIXME: Probably all statistics could be
+                                                                        // initialized like this? i.e., there is no need
+                                                                        // for checking mode?
                 break;
 
             case ClusStatManager.MODE_HIERARCHICAL:
@@ -168,15 +170,17 @@ public class ClusForest implements ClusModel, Serializable {
         }
 
         m_AppName = statmgr.getSettings().getGeneric().getFileAbsolute(statmgr.getSettings().getGeneric().getAppName());
-//        m_AttributeList = "";
+        // m_AttributeList = "";
         m_DescriptiveIndex = ClusUtil.getDiscriptiveAttributesIndices(statmgr);
         m_Optimization = opt;
 
     }
 
+
     public HashMap<String, Integer> getDescriptiveIndices() {
-    	return m_DescriptiveIndex;
+        return m_DescriptiveIndex;
     }
+
 
     private Settings getSettings() {
         return m_Settings;
@@ -223,8 +227,9 @@ public class ClusForest implements ClusModel, Serializable {
         // TODO Auto-generated method stub
         return 0;
     }
-    
-    public int getDescriptiveIndex(String name){
+
+
+    public int getDescriptiveIndex(String name) {
         return m_DescriptiveIndex.get(name);
     }
 
@@ -279,7 +284,7 @@ public class ClusForest implements ClusModel, Serializable {
         int models = 1;
         int nodes = model.getNbNodes();
         int leaves = model.getNbLeaves();
-        //updateCounts(models, nodes, leaves);
+        // updateCounts(models, nodes, leaves);
         return new int[] { models, nodes, leaves };
     }
 
@@ -293,7 +298,7 @@ public class ClusForest implements ClusModel, Serializable {
      *        number of nodes in the tree
      * @param nbLeaves
      *        number of leaves in the tree
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public void updateCounts(int nbModels, int nbNodes, int nbLeaves) throws InterruptedException {
         increaseNbModels(nbModels);
@@ -314,13 +319,13 @@ public class ClusForest implements ClusModel, Serializable {
 
     @Override
     public String getModelInfo() throws InterruptedException {
-        //        int sumOfLeaves = 0;
-        //        for (int i = 0; i < getNbModels(); i++)
-        //            sumOfLeaves += ((ClusNode) getModel(i)).getNbLeaves();
+        // int sumOfLeaves = 0;
+        // for (int i = 0; i < getNbModels(); i++)
+        // sumOfLeaves += ((ClusNode) getModel(i)).getNbLeaves();
         //
-        //        int sumOfNodes = 0;
-        //        for (int i = 0; i < getNbModels(); i++)
-        //            sumOfNodes += ((ClusNode) getModel(i)).getNbNodes();
+        // int sumOfNodes = 0;
+        // for (int i = 0; i < getNbModels(); i++)
+        // sumOfNodes += ((ClusNode) getModel(i)).getNbNodes();
 
         String targetSubspaces = "";
         if (m_TargetSubspaceInfo != null) {
@@ -395,7 +400,7 @@ public class ClusForest implements ClusModel, Serializable {
         }
 
         m_Stat.reset();
-        //remember votes
+        // remember votes
         m_Votes = votes;
         m_Stat.vote(votes);
         ClusEnsemblePredictionWriter.setVotes(votes);
@@ -403,7 +408,7 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    //added 13/1/2014 by Jurica Levatic
+    // added 13/1/2014 by Jurica Levatic
     /*
      * Returns individual votes of base methods in ensemble for the latest prediction made
      */
@@ -417,7 +422,7 @@ public class ClusForest implements ClusModel, Serializable {
      *
      * @param tuple
      * @return ArrayList containing votes or null if tuple was not OOB for any of the models
-     * @throws InterruptedException 
+     * @throws InterruptedException
      */
     public ArrayList getOOBVotes(DataTuple tuple) throws InterruptedException {
         if (ClusOOBErrorEstimate.containsPredictionForTuple(tuple)) { return ClusOOBErrorEstimate.getVotesForTuple(tuple); }
@@ -456,9 +461,9 @@ public class ClusForest implements ClusModel, Serializable {
         for (int j = 0; j < predictions.length; j++)
             ((RegressionStatBase) m_Stat).m_Means[j] = predictions[j];
         if (ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_HIERARCHICAL)
-            m_Stat = m_Stat;
+            m_Stat = (WHTDStatistic) m_Stat;
         else
-            m_Stat = m_Stat;
+            m_Stat = (RegressionStat) m_Stat;
         m_Stat.computePrediction();
         return m_Stat;
     }
@@ -508,7 +513,9 @@ public class ClusForest implements ClusModel, Serializable {
             }
             m_Stat.computePrediction();
             for (int k = 0; k < m_Stat.getNbAttributes(); k++) {
-                ((ClassificationStat) m_Stat).m_SumWeights[k] = 1.0;// the m_SumWeights variable is not used in mode optimize m_Stat.setTrainingStat(ClusEnsembleInduceOptClassification.getTrainingStat());
+                ((ClassificationStat) m_Stat).m_SumWeights[k] = 1.0;// the m_SumWeights variable is not used in mode
+                                                                    // optimize
+                                                                    // m_Stat.setTrainingStat(ClusEnsembleInduceOptClassification.getTrainingStat());
             }
             return m_Stat;
         }
@@ -519,7 +526,8 @@ public class ClusForest implements ClusModel, Serializable {
 
     /**
      * The same as predict weighted standard, but also calculates random forest proximities
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      */
     public ClusStatistic predictWeightedStandardAndGetProximities(DataTuple tuple) throws ClusException {
         m_Proximities = new HashMap<Integer, Double>();
@@ -528,14 +536,15 @@ public class ClusForest implements ClusModel, Serializable {
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
         List<Integer> leafTuples;
         Integer tupleIndex = null;
-        double incrementValue = 1.0 / m_Forest.size(); //proximitiy is incremented in each step for this value, ensures proximities in [0,1]
+        double incrementValue = 1.0 / m_Forest.size(); // proximitiy is incremented in each step for this value, ensures
+                                                       // proximities in [0,1]
 
         for (int i = 0; i < m_Forest.size(); i++) {
             model = (ClusNode) m_Forest.get(i);
             leafTuples = new LinkedList<Integer>();
             votes.add(model.predictWeightedAndGetLeafTuples(tuple, leafTuples));
 
-            //calculate proximities
+            // calculate proximities
             for (int j = 0; j < leafTuples.size(); j++) {
                 tupleIndex = leafTuples.get(j);
                 if (m_Proximities.containsKey(tupleIndex)) {
@@ -546,7 +555,7 @@ public class ClusForest implements ClusModel, Serializable {
                 }
             }
         }
-        //remember votes
+        // remember votes
         m_Stat.reset();
         m_Votes = votes;
 
@@ -558,8 +567,9 @@ public class ClusForest implements ClusModel, Serializable {
 
     /**
      * The same as predict weighted OOB, but also calculates random forest proximities
-     * @throws ClusException 
-     * @throws InterruptedException 
+     * 
+     * @throws ClusException
+     * @throws InterruptedException
      */
     public ClusStatistic predictWeightedOOBAndGetProximities(DataTuple tuple) throws ClusException, InterruptedException {
         m_Proximities = new HashMap<Integer, Double>();
@@ -567,17 +577,20 @@ public class ClusForest implements ClusModel, Serializable {
         ClusNode model;
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
         List<Integer> leafTuples;
-        double incrementValue = 1.0 / m_Forest.size(); //proximitiy is incremented in each step for this value, ensures proximities in [0,1]
+        double incrementValue = 1.0 / m_Forest.size(); // proximitiy is incremented in each step for this value, ensures
+                                                       // proximities in [0,1]
         Integer tupleIndex;
 
         for (int i = 0; i < m_Forest.size(); i++) {
             model = (ClusNode) m_Forest.get(i);
 
-            if (ClusOOBErrorEstimate.isOOBForTree(tuple, i + 1)) { //get proximities only from trees where example was OOB, models are enumerated starting from 1, so we add 1               
+            if (ClusOOBErrorEstimate.isOOBForTree(tuple, i + 1)) { // get proximities only from trees where example was
+                                                                   // OOB, models are enumerated starting from 1, so we
+                                                                   // add 1
                 leafTuples = new LinkedList<Integer>();
                 votes.add(model.predictWeightedAndGetLeafTuples(tuple, leafTuples));
 
-                //calculate proximities
+                // calculate proximities
                 for (int j = 0; j < leafTuples.size(); j++) {
                     tupleIndex = leafTuples.get(j);
                     if (m_Proximities.containsKey(tupleIndex)) {
@@ -590,7 +603,7 @@ public class ClusForest implements ClusModel, Serializable {
             }
         }
 
-        //remember votes
+        // remember votes
         m_Stat.reset();
         m_Votes = votes;
 
@@ -624,9 +637,12 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    /** used for ROS ensembles 
-     * @throws ClusException 
-     * @throws InterruptedException */
+    /**
+     * used for ROS ensembles
+     * 
+     * @throws ClusException
+     * @throws InterruptedException
+     */
     public ClusStatistic predictWeightedStandardSubspaceAveraging(DataTuple tuple) throws ClusException, InterruptedException {
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
         for (int i = 0; i < m_Forest.size(); i++) {
@@ -638,10 +654,14 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    /** used for OPTIMIZED ROS ensembles 
-     * @throws ClusException */
+    /**
+     * used for OPTIMIZED ROS ensembles
+     * 
+     * @throws ClusException
+     */
     public ClusStatistic predictWeightedStandardSubspaceAveragingOpt(DataTuple tuple) throws ClusException {
-        // when ensembles are optimized, the running average takes into account the subspaces, so predictWeightedOpt() should return correct results
+        // when ensembles are optimized, the running average takes into account the subspaces, so predictWeightedOpt()
+        // should return correct results
 
         return predictWeightedOpt(tuple);
     }
@@ -698,17 +718,18 @@ public class ClusForest implements ClusModel, Serializable {
         }
     }
 
-    
+
     @Override
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
         printForestToPython(PythonModelType.Function);
     }
-    
+
+
     @Override
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict, String modelIdentifier) {
-    	printModelToPythonScript(wrt, dict);
+        printModelToPythonScript(wrt, dict);
     }
-    
+
 
     /**
      * Adds an ensemble predictor to python models file.
@@ -716,70 +737,50 @@ public class ClusForest implements ClusModel, Serializable {
      */
     public void writePythonEnsembleFile(PrintWriter wrtr, String treeFile, PythonModelType pyModelType) {
         wrtr.println(String.format("def ensemble_%d(xs):", m_NbModels));
-		wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_NbModels));
-		wrtr.println("\tfor i in range(len(base_predictions)):");
-		wrtr.println(String.format("\t\ttree = eval(\"%s.tree_{}\".format(i + 1))", treeFile));
-		switch (pyModelType) {
-		case Function:
-			wrtr.println("\t\tbase_predictions[i] = tree(xs)");
-			break;
-		case Object:
-			wrtr.println("\t\tbase_predictions[i] = tree.predict(xs)");
-			break;
-		default:
-			throw new RuntimeException("This will never happen:)");
-		}
-		wrtr.println("\treturn aggregate(base_predictions)");
-		wrtr.println();
-		wrtr.println();
+        wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_NbModels));
+        wrtr.println("\tfor i in range(len(base_predictions)):");
+        wrtr.println(String.format("\t\ttree = eval(\"%s.tree_{}\".format(i + 1))", treeFile));
+        switch (pyModelType) {
+            case Function:
+                wrtr.println("\t\tbase_predictions[i] = tree(xs)");
+                break;
+            case Object:
+                wrtr.println("\t\tbase_predictions[i] = tree.predict(xs)");
+                break;
+            default:
+                throw new RuntimeException("This will never happen:)");
+        }
+        wrtr.println("\treturn aggregate(base_predictions)");
+        wrtr.println();
+        wrtr.println();
     }
-    
+
+
     public static String getTreeFile(String appName) {
-    	return ClusUtil.fileName(appName) + m_PythonFileTreePattern;
+        return ClusUtil.fileName(appName) + m_PythonFileTreePattern;
     }
-    
-       
+
+
     public static void writePythonAggregation(PrintWriter wrtr, String treeFile, int mode) {
-    	wrtr.println(String.format("import %s", treeFile));
+        wrtr.println(String.format("import %s", treeFile));
         wrtr.print("\n\n"); // two empty lines
-    	String aggregation;
-        switch(mode) {
-        	case ClusStatManager.MODE_CLASSIFY:
-        		aggregation = 
-            	   "def aggregate(predictions):\n" + 
-            		"    n = len(predictions)\n" + 
-            		"    m = len(predictions[0])\n" + 
-            		"    counts = [{} for _ in range(m)]\n" + 
-            		"    for i in range(n):\n" + 
-            		"        for j in range(m):\n" + 
-            		"            pred = predictions[i][j]\n" + 
-            		"            if pred not in counts[j]:\n" + 
-            		"                counts[j][pred] = 0\n" + 
-            		"            counts[j][pred] += 1\n" + 
-            		"    return [max(counts[j], key=lambda pred: counts[j][pred]) for j in range(m)]";
-        	   break;
-        	case ClusStatManager.MODE_REGRESSION:
-        		aggregation =
-        			"def aggregate(predictions):\n" + 
-        			"    n = len(predictions)\n" + 
-        			"    m = len(predictions[0])\n" + 
-        			"    sums = [0 for _ in range(m)]\n" + 
-        			"    for i in range(n):\n" + 
-        			"        for j in range(m):\n" + 
-        			"            sums[j] += predictions[i][j]\n" + 
-        			"    return [sums[j] / n for j in range(m)]";
-        		break;
-        	default:
-        		System.err.println("Unsupported mode, you will have to write your own aggregation function.");
-        		aggregation =
-        			"def aggregate(predictions):\n" +
-        			"    return None";
+        String aggregation;
+        switch (mode) {
+            case ClusStatManager.MODE_CLASSIFY:
+                aggregation = "def aggregate(predictions):\n" + "    n = len(predictions)\n" + "    m = len(predictions[0])\n" + "    counts = [{} for _ in range(m)]\n" + "    for i in range(n):\n" + "        for j in range(m):\n" + "            pred = predictions[i][j]\n" + "            if pred not in counts[j]:\n" + "                counts[j][pred] = 0\n" + "            counts[j][pred] += 1\n" + "    return [max(counts[j], key=lambda pred: counts[j][pred]) for j in range(m)]";
+                break;
+            case ClusStatManager.MODE_REGRESSION:
+                aggregation = "def aggregate(predictions):\n" + "    n = len(predictions)\n" + "    m = len(predictions[0])\n" + "    sums = [0 for _ in range(m)]\n" + "    for i in range(n):\n" + "        for j in range(m):\n" + "            sums[j] += predictions[i][j]\n" + "    return [sums[j] / n for j in range(m)]";
+                break;
+            default:
+                System.err.println("Unsupported mode, you will have to write your own aggregation function.");
+                aggregation = "def aggregate(predictions):\n" + "    return None";
         }
         wrtr.println(aggregation);
         wrtr.println();
         wrtr.println();
     }
-    
+
 
     @Override
     public JsonObject getModelJSON() {
@@ -797,14 +798,17 @@ public class ClusForest implements ClusModel, Serializable {
     public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
         return null;
     }
-    
+
+
     public static String pythonTreeFunctionDefinition(int treeIndex) {
-    	return "def tree_" + treeIndex + "(xs):";
+        return "def tree_" + treeIndex + "(xs):";
     }
-    
+
+
     private String getPythonForestTreesFileName() {
-    	return m_AppName + m_PythonFileTreePattern + ".py";
+        return m_AppName + m_PythonFileTreePattern + ".py";
     }
+
 
     /**
      * Prints the trees of the forest into a python file.
@@ -816,7 +820,7 @@ public class ClusForest implements ClusModel, Serializable {
             wrtr.println("# Python code of the trees in the ensemble");
             wrtr.println();
             if (type == PythonModelType.Object) {
-            	wrtr.println("from tree_as_object import *\n\n");
+                wrtr.println("from tree_as_object import *\n\n");
             }
             for (int i = 0; i < m_Forest.size(); i++) {
                 ClusModel model = m_Forest.get(i);
@@ -828,62 +832,66 @@ public class ClusForest implements ClusModel, Serializable {
         catch (IOException e) {
             System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");
             e.printStackTrace();
-        } catch (InterruptedException e) {
-			e.printStackTrace();
-		}
+        }
+        catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
-    
-    
+
+
     public void printOneTree(PrintWriter wrtr, ClusNode tree, int treeIndex, PythonModelType type) {
-    	wrtr.println("# Model " + treeIndex);
-    	switch(type) {
-    	case Function:
-    		wrtr.println(pythonTreeFunctionDefinition(treeIndex));
-            tree.printModelToPythonScript(wrtr, m_DescriptiveIndex);
-            break;
-    	case Object:
-    		tree.printModelToPythonScript(wrtr, m_DescriptiveIndex, Integer.toString(treeIndex));
-    		break;
-    	default:
-    		throw new RuntimeException("Wrong PythonModelType: " + type);
-    	}        
+        wrtr.println("# Model " + treeIndex);
+        switch (type) {
+            case Function:
+                wrtr.println(pythonTreeFunctionDefinition(treeIndex));
+                tree.printModelToPythonScript(wrtr, m_DescriptiveIndex);
+                break;
+            case Object:
+                tree.printModelToPythonScript(wrtr, m_DescriptiveIndex, Integer.toString(treeIndex));
+                break;
+            default:
+                throw new RuntimeException("Wrong PythonModelType: " + type);
+        }
     }
-    
-    
+
+
     /**
      * Used when optimization of ensembles is ON. Reads the temporary files and joins them into one file,
      * so that the output is the same as in the case of {@link #printForestToPython()}.
+     * 
      * @param cr
      */
     public void joinPythonForestInOneFile(ClusRun cr) {
-    	File pyscript = new File(getPythonForestTreesFileName());
+        File pyscript = new File(getPythonForestTreesFileName());
         PrintWriter wrtr;
-		try {
-			wrtr = new PrintWriter(new FileOutputStream(pyscript));
-			wrtr.println("# Python code of the trees in the ensemble");
-		    wrtr.println(); 
-		    if (cr.getStatManager().getSettings().getOutput().getPythonModelType() == PythonModelType.Object) {
-            	wrtr.println("from tree_as_object import *\n\n");
+        try {
+            wrtr = new PrintWriter(new FileOutputStream(pyscript));
+            wrtr.println("# Python code of the trees in the ensemble");
+            wrtr.println();
+            if (cr.getStatManager().getSettings().getOutput().getPythonModelType() == PythonModelType.Object) {
+                wrtr.println("from tree_as_object import *\n\n");
             }
-		    for(int i = 1; i <= m_NbModels; i++) {
-		    	String inputFile = ClusEnsembleInduce.getTemporaryPythonTreeFileName(cr, i);
-		    	String treeString = new String(Files.readAllBytes(Paths.get(inputFile)), StandardCharsets.UTF_8);
-		    	wrtr.print(treeString);
-		    	// delete temporary file
-		    	File temp = new File(inputFile);
-		    	if(! temp.delete()) {
-		    		System.err.println("Warning: the file " + temp + " was not deleted.");
-		    	}
-		    }
-		    wrtr.close();
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+            for (int i = 1; i <= m_NbModels; i++) {
+                String inputFile = ClusEnsembleInduce.getTemporaryPythonTreeFileName(cr, i);
+                String treeString = new String(Files.readAllBytes(Paths.get(inputFile)), StandardCharsets.UTF_8);
+                wrtr.print(treeString);
+                // delete temporary file
+                File temp = new File(inputFile);
+                if (!temp.delete()) {
+                    System.err.println("Warning: the file " + temp + " was not deleted.");
+                }
+            }
+            wrtr.close();
+        }
+        catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
-    
-    
+
+
     @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean ex) {
         // TODO Auto-generated method stub
@@ -1019,7 +1027,7 @@ public class ClusForest implements ClusModel, Serializable {
      *        Add only unique rules to rule set. Do NOT use this if you want to count something
      *        on the original forest.
      * @return rule set.
-     * @throws InterruptedException 
+     * @throws InterruptedException
      * @throws ClusException
      * @throws IOException
      */

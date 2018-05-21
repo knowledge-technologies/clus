@@ -49,7 +49,7 @@ import clus.main.settings.Settings;
 import clus.model.ClusModel;
 import clus.statistic.ClusStatistic;
 import clus.util.ClusException;
-import clus.util.tools.debug.Debug;
+import clus.util.tools.Clus.DEBUG;
 
 
 public abstract class OOTInduce extends ClusInductionAlgorithm {
@@ -79,7 +79,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
         int nbvalues = at.getNbValues();
         int statsize = nbvalues + at.intHasMissing();
         reset(statsize);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
@@ -89,7 +89,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
         for (int i = 0; i < nb_rows; i++) {
             DataTuple tuple = data.getTuple(i);
             int value = at.getNominal(tuple);
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaTest();
             }
 
@@ -99,7 +99,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
                 if (count != 0)
                     m_TestStat[j][value].updateWeighted(tuple, count * tuple.getWeight());
             }
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaStat();
             }
 
@@ -108,7 +108,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
         int nb = grp.getNbFolds();
         for (int i = 0; i < nb; i++) {
             m_Split.findSplit(m_Selector[i], at);
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaHeur();
             }
 
@@ -121,16 +121,16 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
         DataTuple tuple;
         RowData data = grp.getData();
         int idx = at.getArrayIndex();
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             long t0 = ResourceInfo.getCPUTime();
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
         data.sort(at);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSort();
         }
 
@@ -149,7 +149,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
          */
         copyTotal(grp);
         // }
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaStat();
         }
 
@@ -169,12 +169,12 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
                     int count = tuple.m_Folds[cr_fold];
                     if (count != 0) {
                         if (m_PrevCl[j] == -1 && value != m_PrevVl[j] && m_PrevVl[j] != Double.NaN) {
-                            if (Debug.debug == 1) {
+                            if (Clus.isDebug()) {
                                 ClusStat.deltaTest();
                             }
 
                             m_Selector[j].updateNumeric(value, m_PosStat[cr_fold], at);
-                            if (Debug.debug == 1) {
+                            if (Clus.isDebug()) {
                                 ClusStat.deltaHeur();
                             }
 
@@ -185,12 +185,12 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
                                 m_PrevCl[j] = -1;
                         }
                         m_PrevVl[j] = value;
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             ClusStat.deltaTest();
                         }
 
                         m_PosStat[cr_fold].updateWeighted(tuple, tuple.getWeight() * count);
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             ClusStat.deltaStat();
                         }
 
@@ -207,23 +207,23 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
                     int count = tuple.m_Folds[cr_fold];
                     if (count != 0) {
                         if (value != m_PrevVl[j] && m_PrevVl[j] != Double.NaN) {
-                            if (Debug.debug == 1) {
+                            if (Clus.isDebug()) {
                                 ClusStat.deltaTest();
                             }
 
                             m_Selector[j].updateNumeric(value, m_PosStat[cr_fold], at);
-                            if (Debug.debug == 1) {
+                            if (Clus.isDebug()) {
                                 ClusStat.deltaHeur();
                             }
 
                         }
                         m_PrevVl[j] = value;
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             ClusStat.deltaTest();
                         }
 
                         m_PosStat[cr_fold].updateWeighted(tuple, tuple.getWeight() * count);
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             ClusStat.deltaStat();
                         }
 
@@ -346,7 +346,7 @@ public abstract class OOTInduce extends ClusInductionAlgorithm {
 
     public final OptXValNode ootInduce(RowData data) {
         // Create root node
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.initTime();
         }
 

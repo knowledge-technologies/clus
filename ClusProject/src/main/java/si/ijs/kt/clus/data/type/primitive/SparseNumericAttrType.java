@@ -8,9 +8,9 @@ import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.SparseDataTuple;
-import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.exception.ClusException;
+import si.ijs.kt.clus.util.io.ClusSerializable;
 
 
 public class SparseNumericAttrType extends NumericAttrType {
@@ -90,8 +90,8 @@ public class SparseNumericAttrType extends NumericAttrType {
 
     @Deprecated
     public ArrayList<SparseDataTuple> pruneExampleList(RowData data) {
-        ArrayList<SparseDataTuple> dataList = data.toArrayList();
-        ArrayList<SparseDataTuple> newExamples = new ArrayList<SparseDataTuple>();
+        ArrayList<DataTuple> dataList = data.toArrayList();
+        ArrayList<SparseDataTuple> newExamples = new ArrayList<>();
         for (int i = 0; i < m_Examples.size(); i++) {
             if (dataList.contains(m_Examples.get(i))) {
                 newExamples.add(m_Examples.get(i));

@@ -26,9 +26,13 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.cols.attribute.ClusAttribute;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.main.settings.Settings;
 
 
 public abstract class SoftTest extends NodeTest {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
 
     public abstract int softPredictNb(DataTuple tuple, int branch);
 

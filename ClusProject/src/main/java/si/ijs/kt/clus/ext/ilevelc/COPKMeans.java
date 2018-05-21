@@ -47,7 +47,7 @@ public class COPKMeans {
     protected RowData m_Data;
     protected RowData m_OrigData;
     protected ClusStatManager m_Mgr;
-    protected ArrayList m_Constraints;
+    protected ArrayList<ILevelConstraint> m_Constraints;
     protected int[][] m_ConstraintsIndex;
     protected COPKMeansCluster[] m_Clusters;
     protected ClusNormalizedAttributeWeights m_Scale;
@@ -70,12 +70,12 @@ public class COPKMeans {
         /* create initial clusters */
         m_Clusters = new COPKMeansCluster[m_K];
         /* perform ML optimization */
-        ArrayList points = data.toArrayList();
+        ArrayList<DataTuple> points = data.toArrayList();
         DerivedConstraintsComputer comp = new DerivedConstraintsComputer(points, constr);
         comp.indexPoints();
         DisjointSetForest dsf = comp.createDSFWithMustLinks();
         ArrayList[] comps = comp.assignPointsToComponents(dsf);
-        HashSet set = comp.createCannotLinkSet(dsf);
+        HashSet<int[]> set = comp.createCannotLinkSet(dsf);
         ClusSchema schema = data.getSchema();
         RowData new_data = new RowData(schema, comps.length);
         NominalAttrType classtype = (NominalAttrType) schema.getAttrType(schema.getNbAttributes() - 1);
@@ -107,10 +107,10 @@ public class COPKMeans {
         new_data.addIndices();
         /* create new cannot-links */
         m_Data = new_data;
-        m_Constraints = new ArrayList();
-        Iterator edges = set.iterator();
+        m_Constraints = new ArrayList<>();
+        Iterator<int[]> edges = set.iterator();
         while (edges.hasNext()) {
-            int[] edge = (int[]) edges.next();
+            int[] edge = edges.next();
             DataTuple tj = new_data.getTuple(edge[0]);
             DataTuple tk = new_data.getTuple(edge[1]);
             m_Constraints.add(new ILevelConstraint(tj, tk, ILevelConstraint.ILevelCCannotLink));
@@ -121,9 +121,9 @@ public class COPKMeans {
         int nb_has = 0;
         while (nb_has < m_K) {
             /* find candidate CL constraints */
-            ArrayList poss_constr = new ArrayList();
+            ArrayList<ILevelConstraint> poss_constr = new ArrayList<>();
             for (int i = 0; i < m_Constraints.size(); i++) {
-                ILevelConstraint ilc = (ILevelConstraint) m_Constraints.get(i);
+                ILevelConstraint ilc = m_Constraints.get(i);
                 int t1i = ilc.getT1().getIndex();
                 int t2i = ilc.getT2().getIndex();
                 int extra_pts = 0;
@@ -138,7 +138,7 @@ public class COPKMeans {
             if (poss_constr.size() > 0) {
                 /* select random candidate CL constraint */
                 int ci = ClusRandom.nextInt(ClusRandom.RANDOM_ALGO_INTERNAL, poss_constr.size());
-                ILevelConstraint ilc = (ILevelConstraint) poss_constr.get(ci);
+                ILevelConstraint ilc = poss_constr.get(ci);
                 int t1i = ilc.getT1().getIndex();
                 int t2i = ilc.getT2().getIndex();
                 if (!used_tuples[t1i]) {
@@ -151,7 +151,7 @@ public class COPKMeans {
                 }
             }
             else {
-                ArrayList poss_pts = new ArrayList();
+                ArrayList<DataTuple> poss_pts = new ArrayList<>();
                 for (int i = 0; i < used_tuples.length; i++) {
                     if (!used_tuples[i]) {
                         poss_pts.add(new_data.getTuple(i));
@@ -159,7 +159,7 @@ public class COPKMeans {
                 }
                 if (poss_pts.size() > 0) {
                     int pi = ClusRandom.nextInt(ClusRandom.RANDOM_ALGO_INTERNAL, poss_pts.size());
-                    DataTuple sel_pt = (DataTuple) poss_pts.get(pi);
+                    DataTuple sel_pt = poss_pts.get(pi);
                     used_tuples[sel_pt.getIndex()] = true;
                     m_Clusters[nb_has++] = new COPKMeansCluster(sel_pt, mgr);
                 }

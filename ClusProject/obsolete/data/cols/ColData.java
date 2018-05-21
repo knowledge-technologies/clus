@@ -32,12 +32,12 @@ import si.ijs.kt.clus.data.io.ClusView;
 import si.ijs.kt.clus.data.rows.DataPreprocs;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
-import si.ijs.kt.clus.io.DummySerializable;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.selection.ClusSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.exception.ClusException;
+import si.ijs.kt.clus.util.io.DummySerializable;
 
 
 public class ColData extends ClusData {

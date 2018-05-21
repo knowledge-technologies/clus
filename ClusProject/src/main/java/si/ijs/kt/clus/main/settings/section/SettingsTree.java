@@ -65,6 +65,7 @@ public class SettingsTree extends SettingsBase {
     /** Do we transform leaves or all nodes of tree to rules */
     private INIFileEnum<ConvertRules> m_RulesFromTree;
     private INIFileEnumList<TreeOptimizeValues> m_TreeOptimize;
+
     // daniela
     private INIFileEnum<SpatialMatrixType> m_SpatialMatrix;
     private INIFileEnum<SpatialMeasure> m_SpatialMeasure;
@@ -73,8 +74,9 @@ public class SettingsTree extends SettingsBase {
     private INIFileDouble m_NeighCount;
     private INIFileDouble m_SpatialAlpha;
     // end daniela
-    private INIFileInt m_TreeSplitSampling; // Amount of datapoints to include for calculating split heuristic.
-                                            // Datapoints will be selected randomly.
+
+    /** Amount of datapoints to include for calculating split heuristic. Datapoints will be selected randomly. */
+    private INIFileInt m_TreeSplitSampling;
 
     private INIFileEnum<SplitPositions> m_SplitPosition;
 

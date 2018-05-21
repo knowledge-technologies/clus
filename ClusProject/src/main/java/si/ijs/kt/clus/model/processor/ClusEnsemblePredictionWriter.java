@@ -147,6 +147,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
     }
 
 
+    @SuppressWarnings("unused")
     private String getPrediction(ClusStatistic distr) {
         String result = "";
         double[] pred = distr.getNumericPred();

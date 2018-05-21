@@ -259,12 +259,11 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                 defInfo.setModel(m_Model);
 
                 // - just for testing
-                RowData tt = cr.getTestSet();
+                // RowData tt = cr.getTestSet();
 
                 originalError = calculateError(cr.getTestSet()).getModelError();
                 writer = new PrintWriter(cr.getStatManager().getSettings().getGeneric().getAppName() + "_SelfTrainingErrors.csv", "UTF-8");
                 writer.println("Iteration,Threshold,examplesAdded,examplesAddedTotal," + errorType + "SSL," + errorType + "Supervised," + errorType + "OOBLabeled," + errorType + "OOBTrainingSet," + errorType + "TrainingSet");
-                //
             }
 
             // BEGIN - AIRBAG stopping criteria

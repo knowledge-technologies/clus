@@ -246,8 +246,9 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     public void findBestSupportTasks(ClusData trset, ClusData pruneset) throws Exception {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
-        int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
-                                                                    //// target 1
+        int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target.
+                                                                             //// Index! 0 =
+        //// target 1
 
         // only non-interrupted ranges work for now, eg NOT "1-10,12-15"
         IntervalCollection targets = new IntervalCollection(getSettings().getAttribute().getTarget());
@@ -293,7 +294,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                                                                                        // attribute in this range,
                                                                                        // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
-        boolean recursive = settings.getRecursive();
+        // boolean recursive = settings.getRecursive();
 
         // estimate ST-error
         // set all weights to 0, except the main_target
@@ -346,8 +347,9 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     public void superSit(ClusData trset, ClusData pruneset) throws Exception {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
-        int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
-                                                                    //// target 1
+        int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target.
+                                                                             //// Index! 0 =
+        //// target 1
 
         // only non-interrupted ranges work for now, eg NOT "1-10,12-15"
         IntervalCollection targets = new IntervalCollection(settings.getAttribute().getTarget());
@@ -356,7 +358,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                                                                                        // attribute in this range,
                                                                                        // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
-        boolean recursive = settings.getSIT().getRecursive();
+        // boolean recursive = settings.getSIT().getRecursive();
 
         // estimate ST-error
         // set all weights to 0, except the main_target
@@ -409,8 +411,9 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
     public void sweepSit(ClusData trset, ClusData pruneset) throws Exception {
         ClusStatManager mgr = getStatManager();
         Settings settings = mgr.getSettings();
-        int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target. Index! 0 =
-                                                                    //// target 1
+        int main_target = new Integer(settings.getSIT().getMainTarget()) - 1;//// we try to optimize for this target.
+                                                                             //// Index! 0 =
+        //// target 1
 
         // only non-interrupted ranges work for now, eg NOT "1-10,12-15"
         IntervalCollection targets = new IntervalCollection(settings.getAttribute().getTarget());
@@ -419,7 +422,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                                                                                        // attribute in this range,
                                                                                        // should be equal to "targets"
         int emc = main_target - support_range[0];// error model component of the main target
-        boolean recursive = settings.getSIT().getRecursive();
+        // boolean recursive = settings.getSIT().getRecursive();
 
         // estimate ST-error
         // set all weights to 0, except the main_target
@@ -516,8 +519,10 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         int support_range[] = { targets.getMinIndex() - 1, targets.getMaxIndex() - 1 };// try finding optimal support
                                                                                        // attribute in this range,
                                                                                        // should be equal to "targets"
-                                                                                       // int emc = main_target - support_range[0];//error model component of the main target
-        boolean recursive = settings.getSIT().getRecursive();
+                                                                                       // int emc = main_target -
+                                                                                       // support_range[0];//error model
+                                                                                       // component of the main target
+        // boolean recursive = settings.getSIT().getRecursive();
 
         resetWeights();
         double[] weights = mgr.getClusteringWeights().m_Weights;// .clone();
@@ -545,16 +550,14 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             errOutput.writeOutput(cr, false, false, weights);
         }
 
-        ClusError err = doParamXVal(cr.getTrainingSet(), cr.getPruneSet());
-        double best_err = err.getModelErrorComponent(0);
+        // ClusError err = doParamXVal(cr.getTrainingSet(), cr.getPruneSet());
+        doParamXVal(cr.getTrainingSet(), cr.getPruneSet());
+        // double best_err = err.getModelErrorComponent(0);
     }
 
 
     @Override
     public void induceAll(ClusRun cr) throws Exception {
-        ClusStatManager mgr = getStatManager();
-        Settings settings = mgr.getSettings();
-
         long start_time = ResourceInfo.getTime();
 
         long done_time = ResourceInfo.getTime();

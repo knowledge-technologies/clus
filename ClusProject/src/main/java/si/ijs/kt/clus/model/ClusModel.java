@@ -100,7 +100,7 @@ public interface ClusModel {
     public void attachModel(HashMap table) throws ClusException;
 
 
-    public void retrieveStatistics(ArrayList list);
+    public void retrieveStatistics(ArrayList<ClusStatistic> list);
 
 
     public ClusModel prune(int prunetype) throws ClusException;

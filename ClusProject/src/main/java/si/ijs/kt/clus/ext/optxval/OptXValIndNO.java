@@ -24,6 +24,7 @@ package si.ijs.kt.clus.ext.optxval;
 
 import java.io.IOException;
 
+import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
@@ -33,7 +34,6 @@ import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.list.MyListIter;
-import si.ijs.kt.clus.util.tools.debug.Debug;
 
 
 public class OptXValIndNO extends OptXValInduce {
@@ -83,12 +83,12 @@ public class OptXValIndNO extends OptXValInduce {
 
 
     public final void xvalInduce(OptXValNode node, OptXValGroup mgrp) throws Exception {
-        long t0;
-        if (Debug.debug == 1) {
+        Long t0 = null;
+        if (Clus.isDebug()) {
             t0 = ResourceInfo.getCPUTime();
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.updateMaxMemory();
         }
 
@@ -107,12 +107,12 @@ public class OptXValIndNO extends OptXValInduce {
         }
         // Init test selectors
         initTestSelectors(mgrp);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
         findBestTest(mgrp);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaTest();
         }
 
@@ -120,11 +120,11 @@ public class OptXValIndNO extends OptXValInduce {
         // Make new groups
         MyListIter ngrps = new MyListIter();
         int nb_groups = mkNewGroups(mgrp, ngrps);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             node.m_Time = ResourceInfo.getCPUTime() - t0;
         }
 
@@ -139,8 +139,8 @@ public class OptXValIndNO extends OptXValInduce {
                 int arity = split.init(grp.getFolds(), test);
                 node.setChild(split, idx++);
                 RowData gdata = grp.getData();
-                long t01;
-                if (Debug.debug == 1) {
+                Long t01 = null;
+                if (Clus.isDebug()) {
                     t01 = ResourceInfo.getCPUTime();
                 }
 
@@ -151,16 +151,16 @@ public class OptXValIndNO extends OptXValInduce {
                     cgrp.setData(gdata.apply(test, i));
                     cgrp.create(m_StatManager, m_NbFolds);
                     cgrp.calcTotalStats();
-                    if (Debug.debug == 1) {
+                    if (Clus.isDebug()) {
                         node.m_Time += ResourceInfo.getCPUTime() - t01;
                     }
 
-                    if (Debug.debug == 1) {
+                    if (Clus.isDebug()) {
                         ClusStat.deltaSplit();
                     }
 
                     xvalInduce(child, cgrp);
-                    if (Debug.debug == 1) {
+                    if (Clus.isDebug()) {
                         t01 = ResourceInfo.getCPUTime();
                     }
 

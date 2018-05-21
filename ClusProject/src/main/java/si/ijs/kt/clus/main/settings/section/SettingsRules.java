@@ -545,8 +545,6 @@ public class SettingsRules extends SettingsBase {
 
 
     public boolean isWeightedCovering() {
-        CoveringMethod val = m_CoveringMethod.getValue();
-
         return (Arrays.asList(
                 /**/
                 CoveringMethod.WeightedAdditive,

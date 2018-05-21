@@ -24,6 +24,7 @@ package si.ijs.kt.clus.ext.optxval;
 
 import java.io.IOException;
 
+import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.algo.ClusInductionAlgorithm;
 import si.ijs.kt.clus.algo.split.CurrentBestTestAndHeuristic;
 import si.ijs.kt.clus.algo.split.NArySplit;
@@ -47,7 +48,6 @@ import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.exception.ClusException;
-import si.ijs.kt.clus.util.tools.debug.Debug;
 
 
 public abstract class OptXValInduce extends ClusInductionAlgorithm {
@@ -75,7 +75,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
         int nbvalues = at.getNbValues();
         int statsize = nbvalues + at.intHasMissing();
         reset(statsize);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
@@ -85,18 +85,18 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
         for (int i = 0; i < nb_rows; i++) {
             DataTuple tuple = data.getTuple(i);
             int value = at.getNominal(tuple);
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaTest();
             }
 
             m_TestStat[tuple.m_Index][value].updateWeighted(tuple, i);
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaStat();
             }
 
         }
         sumStats(statsize);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaStat();
         }
 
@@ -111,12 +111,12 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
                     cr_stat[j].subtractFromOther(zero_stat[j]);
                 }
             }
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaStat();
             }
 
             m_Split.findSplit(m_Selector[i], at);
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaHeur();
             }
 
@@ -129,12 +129,12 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
         DataTuple tuple;
         RowData data = grp.getData();
         int idx = at.getArrayIndex();
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
         data.sort(at);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSort();
         }
 
@@ -152,7 +152,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
         else {
             copyTotal(grp);
         }
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaStat();
         }
 
@@ -176,7 +176,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
                     if (foldnr != cr_fold) {
                         if (m_PrevCl[j] == -1 && value != m_PrevVl[j] && !Double.isNaN(m_PrevVl[j])) {
                             if (no_sum_calc) {
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
@@ -184,35 +184,35 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
                                 for (int k = 1; k <= m_NbFolds; k++)
                                     sum.add(m_PosStat[k]);
                                 no_sum_calc = false;
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaStat();
                                 }
 
                             }
                             if (cr_fold != 0) {
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
                                 m_Scratch.copy(sum);
                                 m_Scratch.subtractFromThis(m_PosStat[cr_fold]);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaStat();
                                 }
 
                                 m_Selector[j].updateNumeric(value, m_Scratch, at);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaHeur();
                                 }
 
                             }
                             else {
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
                                 m_Selector[j].updateNumeric(value, sum, at);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaHeur();
                                 }
 
@@ -226,12 +226,12 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
                         m_PrevVl[j] = value;
                     }
                 }
-                if (Debug.debug == 1) {
+                if (Clus.isDebug()) {
                     ClusStat.deltaTest();
                 }
 
                 m_PosStat[foldnr].updateWeighted(tuple, i);
-                if (Debug.debug == 1) {
+                if (Clus.isDebug()) {
                     ClusStat.deltaStat();
                 }
 
@@ -248,7 +248,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
                     if (foldnr != cr_fold) {
                         if (value != m_PrevVl[j] && !Double.isNaN(m_PrevVl[j])) {
                             if (no_sum_calc) {
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
@@ -256,35 +256,35 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
                                 for (int k = 1; k <= m_NbFolds; k++)
                                     sum.add(m_PosStat[k]);
                                 no_sum_calc = false;
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaStat();
                                 }
 
                             }
                             if (cr_fold != 0) {
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
                                 m_Scratch.copy(sum);
                                 m_Scratch.subtractFromThis(m_PosStat[cr_fold]);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaStat();
                                 }
 
                                 m_Selector[j].updateNumeric(value, m_Scratch, at);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaHeur();
                                 }
 
                             }
                             else {
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
                                 m_Selector[j].updateNumeric(value, sum, at);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaHeur();
                                 }
 
@@ -293,12 +293,12 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
                         m_PrevVl[j] = value;
                     }
                 }
-                if (Debug.debug == 1) {
+                if (Clus.isDebug()) {
                     ClusStat.deltaTest();
                 }
 
                 m_PosStat[foldnr].updateWeighted(tuple, i);
-                if (Debug.debug == 1) {
+                if (Clus.isDebug()) {
                     ClusStat.deltaStat();
                 }
 
@@ -447,7 +447,7 @@ public abstract class OptXValInduce extends ClusInductionAlgorithm {
 
     public final OptXValNode optXVal(RowData data) throws Exception {
         // Create root node
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.initTime();
         }
 

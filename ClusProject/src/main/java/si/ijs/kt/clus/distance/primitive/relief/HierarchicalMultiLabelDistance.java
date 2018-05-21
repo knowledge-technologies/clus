@@ -399,24 +399,24 @@ public class HierarchicalMultiLabelDistance {
         return maxW;
     }
     
-    @Deprecated
-    /**
-     * Finds the maximal depth of the subtree with a given root. Works also for DAGs.
-     * 
-     * @param root
-     *        The root of the subtree/subDAG.
-     * @return
-     */
-    private double maxDepthSubtree(ClassTerm root) {
-        if (root.getNbChildren() == 0) {
-            return root.getDepth();
-        }
-        else {
-            double maxDepth = 0.0;
-            for (int child = 0; child < root.getNbChildren(); child++) {
-                maxDepth = Math.max(maxDepth, maxDepthSubtree((ClassTerm) root.getChild(child)));
-            }
-            return maxDepth;
-        }
-    }
+//    @Deprecated
+//    /**
+//     * Finds the maximal depth of the subtree with a given root. Works also for DAGs.
+//     * 
+//     * @param root
+//     *        The root of the subtree/subDAG.
+//     * @return
+//     */
+//    private double maxDepthSubtree(ClassTerm root) {
+//        if (root.getNbChildren() == 0) {
+//            return root.getDepth();
+//        }
+//        else {
+//            double maxDepth = 0.0;
+//            for (int child = 0; child < root.getNbChildren(); child++) {
+//                maxDepth = Math.max(maxDepth, maxDepthSubtree((ClassTerm) root.getChild(child)));
+//            }
+//            return maxDepth;
+//        }
+//    }
 }

@@ -22,9 +22,7 @@
 
 package si.ijs.kt.clus.addon.hmc.HMCNodeWiseModels.hmcnwmodels;
 
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
@@ -104,24 +102,24 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
     }
 
 
-    private void readFtests(String filename) {
-        System.out.println("filename: " + filename);
-        try {
-            BufferedReader in = new BufferedReader(new FileReader(filename));
-            String s;
-            s = in.readLine();
-            String[] parts;
-            m_Mappings = new Hashtable();
-            while (s != null) {
-                parts = s.split("\t");
-                m_Mappings.put(parts[0], parts[1]);
-                s = in.readLine();
-            }
-        }
-        catch (java.io.IOException e) {
-            e.printStackTrace();
-        }
-    }
+//    private void readFtests(String filename) {
+//        System.out.println("filename: " + filename);
+//        try {
+//            BufferedReader in = new BufferedReader(new FileReader(filename));
+//            String s;
+//            s = in.readLine();
+//            String[] parts;
+//            m_Mappings = new Hashtable();
+//            while (s != null) {
+//                parts = s.split("\t");
+//                m_Mappings.put(parts[0], parts[1]);
+//                s = in.readLine();
+//            }
+//        }
+//        catch (java.io.IOException e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 
     public RowData getNodeData(RowData train, int nodeid) {
@@ -284,7 +282,6 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
 
 
     public void doRun() throws Exception {
-        Settings sett = m_Clus.getSettings();
         ClusRun cr = m_Clus.partitionData();
         RowData train = (RowData) cr.getTrainingSet();
         RowData valid = (RowData) cr.getPruneSet();

@@ -796,7 +796,7 @@ public class ClusStatManager implements Serializable {
 			String def = myType;
 			// String innerType = "";
 			int open = 0;
-			int start = 0, end = 0;
+			//int start = 0, end = 0;
 			def = def.replace("SET{", "");
 			def = def.substring(0, def.length() - 1);
 			ClusDistance cd = null;
@@ -814,10 +814,10 @@ public class ClusStatManager implements Serializable {
 
 			for (int i = 0; i < def.length(); i++) {
 				if (def.charAt(i) == '[') {
-					start = i + 1;
+				//	start = i + 1;
 					open++;
 				} else if (def.charAt(i) == ']') {
-					end = i;
+					//end = i;
 					open--;
 				}
 				// FIXME!
@@ -1525,10 +1525,10 @@ public class ClusStatManager implements Serializable {
 
 	public void updateStatistics(ClusModel model) throws ClusException {
 		if (m_Hier != null) {
-			ArrayList<WHTDStatistic> stats = new ArrayList<WHTDStatistic>();
+			ArrayList<ClusStatistic> stats = new ArrayList<>();
 			model.retrieveStatistics(stats);
 			for (int i = 0; i < stats.size(); i++) {
-				WHTDStatistic stat = stats.get(i);
+				WHTDStatistic stat = (WHTDStatistic) stats.get(i);
 				stat.setHier(m_Hier);
 			}
 		}

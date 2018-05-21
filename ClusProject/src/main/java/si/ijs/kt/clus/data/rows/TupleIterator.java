@@ -88,7 +88,7 @@ public abstract class TupleIterator {
 
     public ClusData createInMemoryData() throws IOException, ClusException {
         init();
-        ArrayList list = new ArrayList();
+        ArrayList<DataTuple> list = new ArrayList<>();
         DataTuple tuple = readTuple();
         while (tuple != null) {
             list.add(tuple);

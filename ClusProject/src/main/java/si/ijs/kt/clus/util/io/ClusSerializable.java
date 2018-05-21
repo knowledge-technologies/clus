@@ -20,23 +20,31 @@
  * Contact information: <http://www.cs.kuleuven.be/~dtai/clus/>. *
  *************************************************************************/
 
-package si.ijs.kt.clus.io;
+package si.ijs.kt.clus.util.io;
 
 import java.io.IOException;
 
+import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.data.rows.DataTuple;
+import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 
 
-public class DummySerializable extends ClusSerializable {
+public abstract class ClusSerializable {
 
-    public boolean read(ClusReader data, int row) throws IOException {
-        return data.skipTillComma();
+    public void term(ClusSchema schema) {
     }
 
 
-    @Override
     public boolean read(ClusReader data, DataTuple tuple) throws IOException {
-        return data.skipTillComma();
+        throw new IOException("Attribute does not support tuple wise reading");
+    }
+    
+    public boolean calculateHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy) throws IOException {
+        throw new IOException("Attribute does not support tuple wise reading");
+    }
+
+    public boolean readHMTRAttribute(ClusReader data, DataTuple tuple, ClusSchema schema, ClusHMTRHierarchy hmtrHierarchy, String line) throws IOException {
+        throw new IOException("Attribute does not support tuple wise reading");
     }
 }

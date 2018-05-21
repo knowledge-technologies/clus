@@ -37,13 +37,13 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.jeans.util.compound.IndexedItem;
 
 
-public class ClassTerm extends IndexedItem implements Node, Comparable {
+public class ClassTerm extends IndexedItem implements Node, Comparable<ClassTerm> {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected String m_ID;
-    protected HashMap m_Hash = new HashMap();
-    protected ArrayList m_SubTerms = new ArrayList();
+    protected HashMap<String, ClassTerm> m_Hash = new HashMap<>();
+    protected ArrayList<ClassTerm> m_SubTerms = new ArrayList<>();
     protected ArrayList<ClassTerm> m_Parents = new ArrayList<ClassTerm>();
     /** Minimal depth of the parents */
     protected int m_MinDepth = Integer.MAX_VALUE;
@@ -79,7 +79,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
     public ClassTerm getParent(int i) {
         return m_Parents.get(i);
     }
-    
+
 
     public boolean isNumeric() {
         for (int i = 0; i < m_ID.length(); i++) {
@@ -87,27 +87,6 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
                 return false;
         }
         return true;
-    }
-
-
-    @Override
-    public int compareTo(Object o) {
-        ClassTerm other = (ClassTerm) o;
-        String s1 = getID();
-        String s2 = other.getID();
-        if (s1.equals(s2)) {
-            return 0;
-        }
-        else {
-            if (isNumeric() && other.isNumeric()) {
-                int i1 = Integer.parseInt(s1);
-                int i2 = Integer.parseInt(s2);
-                return i1 > i2 ? 1 : -1;
-            }
-            else {
-                return s1.compareTo(s2);
-            }
-        }
     }
 
 
@@ -214,7 +193,7 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
 
     public String getKeysVector() {
         StringBuffer buf = new StringBuffer();
-        ArrayList keys = new ArrayList(m_Hash.keySet());
+        ArrayList<String> keys = new ArrayList<>(m_Hash.keySet());
         for (int i = 0; i < keys.size(); i++) {
             if (i != 0)
                 buf.append(", ");
@@ -316,9 +295,10 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
 
     @Override
     public void addChild(Node node) {
-        String id = ((ClassTerm) node).getID();
-        m_Hash.put(id, node);
-        m_SubTerms.add(node);
+        ClassTerm t = (ClassTerm) node;
+        String id = t.getID();
+        m_Hash.put(id, t);
+        m_SubTerms.add(t);
     }
 
 
@@ -449,33 +429,58 @@ public class ClassTerm extends IndexedItem implements Node, Comparable {
     public double getDepth() {
         return m_Depth;
     }
-    
+
+
     /**
      * Returns all non-root parents of the given term.
-     * @param includeTerm tells whether to add to the ancestors also the term on which the method is used
+     * 
+     * @param includeTerm
+     *        tells whether to add to the ancestors also the term on which the method is used
      * @return
      */
-    public ArrayList<ClassTerm> getAllAncestors(boolean includeTerm){
-    	ArrayList<ClassTerm> ancestors = new ArrayList<ClassTerm>();
-    	if(includeTerm){
-    		ancestors.add(this);
-    	}
-    	HashSet<Integer> visited = new HashSet<Integer>();
-    	Stack<ClassTerm> toVisit = new Stack<ClassTerm>();
-    	toVisit.push(this);
-    	while(!toVisit.isEmpty()){
-    		ClassTerm term = toVisit.pop();
-    		for(int parentInd = 0; parentInd < term.getNbParents(); parentInd++){
-    			ClassTerm parent = term.getParent(parentInd);
-    			int hierParentInd = parent.getIndex();
-    			if(!(parent.atTopLevel() || visited.contains(hierParentInd))){ // if not artificial root and not visited ... add it
-    				ancestors.add(parent);
-    				toVisit.push(parent);
-    				visited.add(hierParentInd);
-    				
-    			}
-    		}
-    	}    	
-    	return ancestors;    	
+    public ArrayList<ClassTerm> getAllAncestors(boolean includeTerm) {
+        ArrayList<ClassTerm> ancestors = new ArrayList<ClassTerm>();
+        if (includeTerm) {
+            ancestors.add(this);
+        }
+        HashSet<Integer> visited = new HashSet<Integer>();
+        Stack<ClassTerm> toVisit = new Stack<ClassTerm>();
+        toVisit.push(this);
+        while (!toVisit.isEmpty()) {
+            ClassTerm term = toVisit.pop();
+            for (int parentInd = 0; parentInd < term.getNbParents(); parentInd++) {
+                ClassTerm parent = term.getParent(parentInd);
+                int hierParentInd = parent.getIndex();
+                if (!(parent.atTopLevel() || visited.contains(hierParentInd))) { // if not artificial root and not
+                                                                                 // visited ... add it
+                    ancestors.add(parent);
+                    toVisit.push(parent);
+                    visited.add(hierParentInd);
+
+                }
+            }
+        }
+        return ancestors;
+    }
+
+
+    @Override
+    public int compareTo(ClassTerm o) {
+        ClassTerm other = (ClassTerm) o;
+        String s1 = getID();
+        String s2 = other.getID();
+        if (s1.equals(s2)) {
+            return 0;
+        }
+        else {
+            if (isNumeric() && other.isNumeric()) {
+                int i1 = Integer.parseInt(s1);
+                int i2 = Integer.parseInt(s2);
+                return i1 > i2 ? 1 : -1;
+            }
+            else {
+                return s1.compareTo(s2);
+            }
+        }
     }
 }

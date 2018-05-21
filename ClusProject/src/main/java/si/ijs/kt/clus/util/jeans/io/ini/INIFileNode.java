@@ -26,8 +26,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
 
+import si.ijs.kt.clus.main.settings.Settings;
+
 
 public abstract class INIFileNode implements Serializable {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     protected String m_hName;
     protected INIFileNode m_hParent;

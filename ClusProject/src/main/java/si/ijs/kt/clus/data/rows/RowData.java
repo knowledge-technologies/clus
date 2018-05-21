@@ -42,6 +42,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
+import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce.ParallelTrap;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.test.ClusRuleConstraintInduceTest;
 import si.ijs.kt.clus.model.test.NodeTest;
@@ -283,13 +284,16 @@ public class RowData extends ClusData implements MSortable, Serializable {
         JsonObject summary = new JsonObject();
 
         double[] avg, min, max, stddev;
+
+        // this try-catch is super ugly.
+        DataTuple temp = null;
         try {
-            DataTuple temp = getTuple(0);
+            temp = getTuple(0);
         }
         catch (ArrayIndexOutOfBoundsException e) {
             return summary;
         }
-        DataTuple temp = getTuple(0);
+
         int nda = temp.getSchema().getNbNumericDescriptiveAttributes();
         int nta = temp.getSchema().getNbNumericTargetAttributes();
         avg = new double[nda + nta];
@@ -384,8 +388,8 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    public ArrayList toArrayList() {
-        ArrayList array = new ArrayList();
+    public ArrayList<DataTuple> toArrayList() {
+        ArrayList<DataTuple> array = new ArrayList<>();
         addTo(array);
         return array;
     }
@@ -1306,7 +1310,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         // sample with replacement
         int i;
         if (rnd == null) {
-            ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
+            ClusEnsembleInduce.giveParallelisationWarning(ParallelTrap.StaticRandom);
             for (int size = 0; size < N; size++) {
                 i = ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE, nbRows);
                 res.add(getTuple(i));
