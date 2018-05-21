@@ -469,7 +469,7 @@ public class SettingsEnsemble extends SettingsBase {
         validROSCombinations.put(EnsembleROSAlgorithmType.DynamicSubspaces, Arrays.asList(EnsembleROSVotingType.TotalAveraging));
 
         if (
-        /* is ROS is not disabled */ getEnsembleROSAlgorithmType().equals(EnsembleROSAlgorithmType.Disabled) &&
+        /* is ROS is not disabled */ !getEnsembleROSAlgorithmType().equals(EnsembleROSAlgorithmType.Disabled) &&
         /* combination of ROS algorithm and prediction algorithm is not valid */ (!validROSCombinations.get(getEnsembleROSAlgorithmType()).contains(getEnsembleROSVotingType()))) {
             incompatible.add(String.format("%s = %s cannot be used with %s = %s",
                     /* */
