@@ -132,7 +132,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
         int N = data.getNbRows();
         double maxdist = 0;
         double d = 0;
-        double W = 0;
+        //double W = 0;
         double minDistLine = Double.POSITIVE_INFINITY;
         double maxOnMinDistLine = 0;
         double[][] w = new double[N][N];
@@ -171,7 +171,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
             for (int j = 0; j < N; j++) {
                 if (i > j) {
                     w[i][j] = w[j][i];
-                    W += w[i][j];
+                   // W += w[i][j];
                     continue;
                 }
 
@@ -221,7 +221,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
                                 w[i][j] = 0;
                                 break;
                         }
-                        W += w[i][j]; //System.out.println(i+"\t"+j+"\t"+exi+"\t"+exj+"\t"+(long)(i*N+j)+"\t"+w[i][j]);
+                        //W += w[i][j]; //System.out.println(i+"\t"+j+"\t"+exi+"\t"+exj+"\t"+(long)(i*N+j)+"\t"+w[i][j]);
                     }
                     m_distances.put((long) (i * N + j), w[i][j]); //write to hasp map only, not in file
                     //pw.println(i+"#"+j+" "+d);
@@ -239,7 +239,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
         m_distancesS.clear();
         m_distancesN.clear();
         ClusSchema schema = data.getSchema();
-        int N = data.getNbRows();
+        //int N = data.getNbRows();
         double maxdist = 0;
         double minDistLine = Double.POSITIVE_INFINITY;
         double maxOnMinDistLine = 0;

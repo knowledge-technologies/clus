@@ -77,7 +77,7 @@ public class ClusErrorOutput extends ClusOutput {
         m_Writer.print(cr.getIndexString() + ",");
         // m_Writer.println("@attribute Algo string");
         IntervalCollection targets = new IntervalCollection(m_Sett.getAttribute().getTarget());
-        int nrTargets = targets.getMinIndex() - targets.getMaxIndex() + 1;
+        //int nrTargets = targets.getMinIndex() - targets.getMaxIndex() + 1;
         // m_Writer.println("@attribute PruningMethod string");
         m_Writer.print(m_Sett.getTree().getPruningMethodName() + ",");
         // m_Writer.println("@attribute Targets string");

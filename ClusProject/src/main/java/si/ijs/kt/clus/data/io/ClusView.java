@@ -35,9 +35,9 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
-import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.exception.ClusException;
+import si.ijs.kt.clus.util.io.ClusSerializable;
 
 
 public class ClusView {
@@ -162,48 +162,31 @@ public class ClusView {
 
         if (file.exists()) {
 
-            FileInputStream inputStream = new FileInputStream(file);
-            Scanner sc = new Scanner(inputStream, "UTF-8");
+            try (FileInputStream inputStream = new FileInputStream(file); Scanner sc = new Scanner(inputStream, "UTF-8")) {
 
-            if (sc.hasNextLine())
-                agg = sc.nextLine();
-            if (sc.hasNextLine())
-                hier = sc.nextLine();
-            if (sc.hasNextLine())
-                sc.nextLine();
+                if (sc.hasNextLine())
+                    agg = sc.nextLine();
+                if (sc.hasNextLine())
+                    hier = sc.nextLine();
+                if (sc.hasNextLine())
+                    sc.nextLine();
 
-            String aggFromS = settings.getHMTR().getHMTRAggregationName();
-            String hierFromS = settings.getHMTR().getHMTRHierarchyString();
+                String aggFromS = settings.getHMTR().getHMTRAggregationName();
+                String hierFromS = settings.getHMTR().getHMTRHierarchyString();
 
-            if (agg.equals(aggFromS) && hier.equals(hierFromS)) {
-                incorrectDump = false;
+                if (agg.equals(aggFromS) && hier.equals(hierFromS)) {
+                    incorrectDump = false;
 
-                schema.getSettings().getHMTR().setHMTRUsingDump(true);
-                // ClassHMTRHierarchy.setIsUsingDump(true);
+                    schema.getSettings().getHMTR().setHMTRUsingDump(true);
+                    // ClassHMTRHierarchy.setIsUsingDump(true);
 
-                if (sc.hasNextLine()) {
-                    line = sc.nextLine();
-                }
-                else {
-                    throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
-                }
-
-                if (line.equals("") || line.equals(" ") || line.equals("\t")) {
                     if (sc.hasNextLine()) {
                         line = sc.nextLine();
                     }
                     else {
                         throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
                     }
-                }
 
-                DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
-
-                while (tuple != null) {
-                    items.add(tuple);
-                    if (sc.hasNextLine()) {
-                        line = sc.nextLine();
-                    }
                     if (line.equals("") || line.equals(" ") || line.equals("\t")) {
                         if (sc.hasNextLine()) {
                             line = sc.nextLine();
@@ -212,16 +195,30 @@ public class ClusView {
                             throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
                         }
                     }
-                    tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
 
+                    DataTuple tuple = readDataHMTRTupleFirst(reader, schema, hmtrHierarchy, line);
+
+                    while (tuple != null) {
+                        items.add(tuple);
+                        if (sc.hasNextLine()) {
+                            line = sc.nextLine();
+                        }
+                        if (line.equals("") || line.equals(" ") || line.equals("\t")) {
+                            if (sc.hasNextLine()) {
+                                line = sc.nextLine();
+                            }
+                            else {
+                                throw new IOException("Dump has different number of rows! Try deleting the dump file: " + file.getAbsolutePath());
+                            }
+                        }
+                        tuple = readDataHMTRTupleNext(reader, schema, hmtrHierarchy, line);
+
+                    }
                 }
-            }
 
-            if (inputStream != null) {
-                inputStream.close();
-            }
-            if (sc != null) {
-                sc.close();
+                if (inputStream != null) {
+                    inputStream.close();
+                }
             }
         }
 

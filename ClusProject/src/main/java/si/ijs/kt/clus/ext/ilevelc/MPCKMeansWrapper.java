@@ -137,18 +137,19 @@ public class MPCKMeansWrapper {
             proc.waitFor();
             writeStream(proc.getInputStream());
             writeStream(proc.getErrorStream());
-            LineNumberReader rdr = new LineNumberReader(new InputStreamReader(new FileInputStream(outf)));
-            while ((line = rdr.readLine()) != null) {
-                line = line.trim();
-                if (!line.equals("")) {
-                    String[] arr = line.split("\t");
-                    if (arr.length != 2) { throw new ClusException("MPCKMeans error in output"); }
-                    int idx = Integer.parseInt(arr[0]);
-                    int cl = Integer.parseInt(arr[1]);
-                    assign[idx] = cl;
+            try (LineNumberReader rdr = new LineNumberReader(new InputStreamReader(new FileInputStream(outf)))) {
+                while ((line = rdr.readLine()) != null) {
+                    line = line.trim();
+                    if (!line.equals("")) {
+                        String[] arr = line.split("\t");
+                        if (arr.length != 2) { throw new ClusException("MPCKMeans error in output"); }
+                        int idx = Integer.parseInt(arr[0]);
+                        int cl = Integer.parseInt(arr[1]);
+                        assign[idx] = cl;
+                    }
                 }
             }
-            rdr.close();
+
             System.out.println("--------the file" + cons + "is not deleted !!!");
             // Make sure files don't exist
             // FileUtil.delete(datf);

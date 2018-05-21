@@ -46,7 +46,7 @@ import clus.selection.BaggingSelection;
 import clus.selection.XValMainSelection;
 import clus.selection.XValSelection;
 import clus.util.ClusException;
-import clus.util.tools.debug.Debug;
+import clus.util.tools.Clus.DEBUG;
 
 
 @Deprecated
@@ -117,7 +117,7 @@ public class OOTInd {
         induce.SHOULD_OPTIMIZE = true;
         // Doinduce
         long time;
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             time = ResourceInfo.getCPUTime();
         }
 
@@ -126,21 +126,21 @@ public class OOTInd {
         while (true) {
             root = induce.ootInduce(set);
             nbr++;
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 if ((ResourceInfo.getCPUTime() - time) > 5000.0)
                     break;
             }
 
         }
         ClusSummary summary = m_Clus.getSummary();
-        if (Debug.debug == 1) {
-            if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
+            if (Clus.isDebug()) {
                 summary.setInductionTime((long) ClusStat.addToTotal(ResourceInfo.getCPUTime() - time, nbr));
             }
 
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.addTimes(nbr);
         }
 
@@ -174,7 +174,7 @@ public class OOTInd {
         OOTInduce induce = (OOTInduce) m_Clus.getInduce();
         induce.initialize(sel.getNbFolds() + 1);
         long time;
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             time = ResourceInfo.getCPUTime();
         }
 
@@ -183,21 +183,21 @@ public class OOTInd {
         while (true) {
             root = induce.ootInduce(set);
             nbr++;
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 if ((ResourceInfo.getCPUTime() - time) > 5000.0)
                     break;
             }
 
         }
         ClusSummary summary = m_Clus.getSummary();
-        if (Debug.debug == 1) {
-            if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
+            if (Clus.isDebug()) {
                 summary.setInductionTime((long) ClusStat.addToTotal(ResourceInfo.getCPUTime() - time, nbr));
             }
 
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.addTimes(nbr);
         }
 

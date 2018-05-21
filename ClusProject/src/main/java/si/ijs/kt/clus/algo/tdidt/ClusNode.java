@@ -831,7 +831,7 @@ public class ClusNode extends MyNode implements ClusModel {
      * @param leafTuples
      *        hash codes of tuples which are in the same leaf where
      *        the tuple ended will be stored in this variable.
-     * @return
+
      * @throws ClusException 
      */
     public ClusStatistic predictWeightedAndGetLeafTuples(DataTuple tuple, List<Integer> leafTuples) throws ClusException {
@@ -1309,7 +1309,7 @@ public class ClusNode extends MyNode implements ClusModel {
         int[][] tabexist = new int[lastmodel + 1][10000]; // table of booleen for each item
         Global.set_treecpt(starttree);
         Global.set_itemsetcpt(startitem);
-        ClusModelInfo m = cr.getModelInfo(0);// cr.getModelInfo(lastmodel);
+        //ClusModelInfo m = cr.getModelInfo(0);// cr.getModelInfo(lastmodel);
 
         if (exhaustive) {
             for (int i = 0; i < cr.getNbModels(); i++) {
@@ -1853,7 +1853,7 @@ public class ClusNode extends MyNode implements ClusModel {
 
 
     @Override
-    public void retrieveStatistics(ArrayList list) {
+    public void retrieveStatistics(ArrayList<ClusStatistic> list) {
         if (m_ClusteringStat != null)
             list.add(m_ClusteringStat);
         if (m_TargetStat != null)

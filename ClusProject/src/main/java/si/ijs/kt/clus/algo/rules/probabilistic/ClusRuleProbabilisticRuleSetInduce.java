@@ -332,7 +332,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * Create objective function with respect to initial rule set
      * 
      * @param initialRuleSet
-     * @return
+
      */
     Function<ClusRuleSet, Double> getObjectiveFunction(ClusRuleSet initialRuleSet, final ClusRuleProbabilisticRuleSetInduceWeights weights) {
         int tmpMaxGlobalRuleCardinality = 0;
@@ -442,16 +442,19 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
             @Override
             public Double apply(ClusRuleSet t) {
-                double sum = (weights.isEnabledObjectiveAccuracy() ? weights.WEIGHT_OBJECTIVE_ACCURACY * objectiveAccuracy.apply(t) : 0) + (weights.isEnabledObjectiveSize() ? weights.WEIGHT_OBJECTIVE_SIZE * objectiveRuleSetSize.apply(t) : 0)
-                // + (weights.isEnabledObjectiveCardinality() ? weights.WEIGHT_OBJECTIVE_CARDINALITY *
-                // objectiveCardinality.apply(t) : 0)
-                // + (weights.isEnabledObjectiveOverlap() ? weights.WEIGHT_OBJECTIVE_OVERLAP *
-                // objectiveRuleOverlap.apply(t) : 0)
-                // + (weights.isEnabledObjectiveCorrectCover() ? weights.WEIGHT_OBJECTIVE_CORRECT_COVER *
-                // objectiveCorrectCover.apply(t) : 0)
-                // + (weights.isEnabledObjectiveIncorrectCover() ? weights.WEIGHT_OBJECTIVE_INCORRECT_COVER *
-                // objectiveIncorrectCover.apply(t) : 0)
-                ;
+                double sum =
+                        /* */
+                        (weights.isEnabledObjectiveAccuracy() ? weights.WEIGHT_OBJECTIVE_ACCURACY * objectiveAccuracy.apply(t) : 0) +
+                /* */
+                (weights.isEnabledObjectiveSize() ? weights.WEIGHT_OBJECTIVE_SIZE * objectiveRuleSetSize.apply(t) : 0) +
+                /* */
+                (weights.isEnabledObjectiveCardinality() ? weights.WEIGHT_OBJECTIVE_CARDINALITY * objectiveCardinality.apply(t) : 0) +
+                /* */
+                (weights.isEnabledObjectiveOverlap() ? weights.WEIGHT_OBJECTIVE_OVERLAP * objectiveRuleOverlap.apply(t) : 0) +
+                /* */
+                (weights.isEnabledObjectiveCorrectCover() ? weights.WEIGHT_OBJECTIVE_CORRECT_COVER * objectiveCorrectCover.apply(t) : 0) +
+                /* */
+                (weights.isEnabledObjectiveIncorrectCover() ? weights.WEIGHT_OBJECTIVE_INCORRECT_COVER * objectiveIncorrectCover.apply(t) : 0);
 
                 // System.out.println(sum);
 
@@ -640,7 +643,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         // Get the option tree and transform it to rules
         int numberOfUniqueRules = 0;
         // Take the root node of the tree
-        MyNode treeRootNode = optionModel.getParent();
+        //MyNode treeRootNode = optionModel.getParent();
 
         // Transform the tree into rules and add them to current rule set
         numberOfUniqueRules += ruleSet.addRuleSet(treeTransform.constructOptionRules(optionModel, getStatManager()));

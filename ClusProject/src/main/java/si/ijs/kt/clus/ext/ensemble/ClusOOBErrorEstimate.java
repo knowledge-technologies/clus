@@ -320,7 +320,7 @@ public class ClusOOBErrorEstimate {
      * specified number
      *
      * @param treeNumber
-     * @return
+
      * @throws InterruptedException
      */
     public static boolean isOOBForTree(DataTuple tuple, int treeNumber) throws InterruptedException {

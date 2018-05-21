@@ -66,7 +66,7 @@ public abstract class SearchAlgorithm {
      *        number of neighbors to return.
      * @param tuple
      *        sample to be classified
-     * @return
+
      * @throws ClusException 
      */
     public abstract LinkedList<DataTuple> returnNNs(DataTuple tuple, int k) throws ClusException;
@@ -75,7 +75,7 @@ public abstract class SearchAlgorithm {
     /**
      * Check if DEBUG mode is on.
      * 
-     * @return
+
      */
     public boolean isDEBUG() {
         return m_Debug;
@@ -95,7 +95,7 @@ public abstract class SearchAlgorithm {
     /**
      * Returns distance used in search algorithm.
      * 
-     * @return
+
      */
     public SearchDistance getDistance() {
         return m_SearchDistance;

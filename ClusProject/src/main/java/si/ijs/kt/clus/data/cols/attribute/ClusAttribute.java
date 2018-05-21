@@ -24,9 +24,9 @@ package si.ijs.kt.clus.data.cols.attribute;
 
 import si.ijs.kt.clus.data.cols.ColTarget;
 import si.ijs.kt.clus.data.type.ClusAttrType;
-import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.selection.ClusSelection;
+import si.ijs.kt.clus.util.io.ClusSerializable;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
 

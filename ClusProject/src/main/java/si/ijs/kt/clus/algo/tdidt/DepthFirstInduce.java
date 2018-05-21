@@ -38,6 +38,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
+import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce.ParallelTrap;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -163,16 +164,16 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 			case RSubspaces:
 				selected = ClusEnsembleInduce.getRandomSubspaces();
 				ClusEnsembleInduce.giveParallelisationWarning(
-						ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
+						ParallelTrap.DepthFirst_getDescriptiveAttributes);
 				break;
 			case BagSubspaces:
 				ClusEnsembleInduce.giveParallelisationWarning(
-						ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
+				        ParallelTrap.DepthFirst_getDescriptiveAttributes);
 				selected = ClusEnsembleInduce.getRandomSubspaces();
 				break;
 			case RFeatSelection: // SettingsEnsemble.ENSEMBLE_METHOD_RFOREST_NO_BOOTSTRAP:
 				ClusEnsembleInduce.giveParallelisationWarning(
-						ClusEnsembleInduce.m_PARALLEL_TRAP_DepthFirst_getDescriptiveAttributes);
+				        ParallelTrap.DepthFirst_getDescriptiveAttributes);
 				ClusAttrType[] attrsAll1 = schema.getDescriptiveAttributes();
 				selected = ClusEnsembleInduce.selectRandomSubspaces(attrsAll1,
 						schema.getSettings().getEnsemble().getNbRandomAttrSelected(),
@@ -293,7 +294,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 		if (rnd == null) {
 			// rnd may be null due to some calls of induce that do not support
 			// parallelisation yet
-			ClusEnsembleInduce.giveParallelisationWarning(ClusEnsembleInduce.m_PARALLEL_TRAP_staticRandom);
+			ClusEnsembleInduce.giveParallelisationWarning(ParallelTrap.StaticRandom);
 		}
 
 		// System.out.println("nonsparse induce");

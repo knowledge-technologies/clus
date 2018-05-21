@@ -60,7 +60,7 @@ public class VarianceScore extends PredictionConfidence {
      * 
      * @param votes
      *        Votes of a ClusForest model
-     * @return
+
      */
     private double[] processVotes(ArrayList votes) {
         switch (m_StatManager.getMode()) {
@@ -116,7 +116,7 @@ public class VarianceScore extends PredictionConfidence {
      * Calculates per target standard deviations of votes of ensemble
      *
      * @param values
-     * @return
+
      */
     private double[] calcStDev(double[][] values) {
         double[] result = new double[values.length];

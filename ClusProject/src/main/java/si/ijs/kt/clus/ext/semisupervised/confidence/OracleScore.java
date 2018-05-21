@@ -37,7 +37,7 @@ public class OracleScore extends PredictionConfidence {
      * @param model
      * @param tuple
      *        Tuple is assumed to have true labels
-     * @return
+
      * @throws ClusException
      * @throws InterruptedException
      */

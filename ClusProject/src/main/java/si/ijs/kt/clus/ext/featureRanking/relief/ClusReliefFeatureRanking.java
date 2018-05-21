@@ -401,7 +401,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      *        If non-negative, then this is the index of the target and we are looking for a index of a per-target
      *        ranking.
      *        If -1, then we are looking for the index of the overall ranking.
-     * @return
+
      */
     private int rankingIndex(int iterationsIndex, int neighboursIndex, int targetIndex) {
         int perTargetShift = (targetIndex + 1) * m_NbIterations.length * m_NbNeighbours.length;
@@ -525,7 +525,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param tuple
      * @param nearestNeighbours
      * @param targetIndex
-     * @return
+
      * @throws ClusException
      */
     private int updateDistanceStatistics(RowData data, DataTuple tuple, NearestNeighbour[][] nearestNeighbours, int targetIndex) throws ClusException {
@@ -915,7 +915,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @param t1
      * @param t2
      * @param attr
-     * @return
+
      */
     public double computeHierarchicalDist1D(DataTuple t1, DataTuple t2, ClassesAttrType attr) {
         return m_HierarMLCDist.calculateDist(t1, t2, attr);
@@ -1057,7 +1057,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * target in the {@link #m_DescriptiveTargetAttr}[{@link #TARGET_SPACE}]
      * 
      * @param targetIndex
-     * @return
+
      */
     private int getTrueTargetIndex(int targetIndex) {
         if (m_IsStandardClassification[0]) {
@@ -1076,7 +1076,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * <li>the standard classification case ({@code >= 0}) - at least 0 such indices.</li>
      * </ul>
      * 
-     * @return
+
      */
     private ArrayList<Integer> computeTargetIndicesThatNeedNeigbhours() {
         ArrayList<Integer> answer = new ArrayList<Integer>();
@@ -1181,7 +1181,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * 
      * @param targetIndex
      * @param tuple
-     * @return
+
      */
     private boolean shouldUseTuple(int targetIndex, DataTuple tuple) {
         int trueIndex = getTrueTargetIndex(targetIndex);

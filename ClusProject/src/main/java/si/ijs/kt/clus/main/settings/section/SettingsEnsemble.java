@@ -45,6 +45,7 @@ public class SettingsEnsemble extends SettingsBase {
     };
 
     public enum EnsembleROSAlgorithmType {
+
         /** ROS is disabled */
         Disabled,
 
@@ -72,7 +73,6 @@ public class SettingsEnsemble extends SettingsBase {
 
     private INIFileNominalOrIntOrVector m_NbBags;
     /** Used ensemble method */
-    // private INIFileNominal m_EnsembleMethod;
     private INIFileEnum<EnsembleMethod> m_EnsembleMethod;
     /** Voting type, for regression mean is always used, the options are for classification */
     private INIFileEnum<VotingType> m_ClassificationVoteType;
@@ -316,7 +316,7 @@ public class SettingsEnsemble extends SettingsBase {
 
     public void setNbRandomAttrSelected(int value) {
         m_SubsetSize = value;
-        m_RandomAttrSelected.setValue(value + "");
+        m_RandomAttrSelected.setValue(Integer.toString(value));
     }
 
 
@@ -461,7 +461,6 @@ public class SettingsEnsemble extends SettingsBase {
 
     @Override
     public List<String> validateSettingsInternal() {
-
         ArrayList<String> incompatible = new ArrayList<String>();
 
         /* ROS */
@@ -469,7 +468,9 @@ public class SettingsEnsemble extends SettingsBase {
         validROSCombinations.put(EnsembleROSAlgorithmType.FixedSubspaces, Arrays.asList(EnsembleROSVotingType.TotalAveraging, EnsembleROSVotingType.SubspaceAveraging));
         validROSCombinations.put(EnsembleROSAlgorithmType.DynamicSubspaces, Arrays.asList(EnsembleROSVotingType.TotalAveraging));
 
-        if (!validROSCombinations.get(getEnsembleROSAlgorithmType()).contains(getEnsembleROSVotingType())) {
+        if (
+        /* is ROS is not disabled */ getEnsembleROSAlgorithmType().equals(EnsembleROSAlgorithmType.Disabled) &&
+        /* combination of ROS algorithm and prediction algorithm is not valid */ (!validROSCombinations.get(getEnsembleROSAlgorithmType()).contains(getEnsembleROSVotingType()))) {
             incompatible.add(String.format("%s = %s cannot be used with %s = %s",
                     /* */
                     m_EnsembleROSAlgorithmType.getName(), getEnsembleROSAlgorithmType(),

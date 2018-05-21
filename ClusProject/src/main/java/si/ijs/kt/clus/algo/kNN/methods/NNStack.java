@@ -79,7 +79,7 @@ public class NNStack {
     /**
      * Returns distance of farthest nearest neighbor.
      * 
-     * @return
+
      */
     public double getWorstNearestDistance() {
         return (m_NearestNeighbors[m_NbNeighbors - 1] == null) ? Double.MAX_VALUE : m_NearestNeighbors[m_NbNeighbors - 1].getDistance();
@@ -98,7 +98,7 @@ public class NNStack {
     /**
      * Returns k nearest neighbors among those added to stack.
      * 
-     * @return
+
      */
     public LinkedList<DataTuple> returnStack() {
         LinkedList<DataTuple> nns = new LinkedList<DataTuple>();

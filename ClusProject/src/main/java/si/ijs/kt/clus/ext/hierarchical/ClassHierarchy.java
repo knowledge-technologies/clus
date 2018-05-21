@@ -576,18 +576,20 @@ public class ClassHierarchy implements Serializable {
 
     public void loadDAG(String fname) throws IOException, ClusException {
         String line = null;
-        LineNumberReader rdr = new LineNumberReader(new FileReader(fname));
-        while ((line = rdr.readLine()) != null) {
-            line = line.trim();
-            if (!line.equals("")) {
-                String[] rel = line.split("\\s*\\,\\s*");
-                if (rel.length != 2) { throw new ClusException("Illegal line '" + line + "' in DAG definition file: '" + fname + "'"); }
-                String parent = rel[0];
-                String child = rel[1];
-                addParentChildTuple(parent, child);
+
+        try (LineNumberReader rdr = new LineNumberReader(new FileReader(fname))) {
+            while ((line = rdr.readLine()) != null) {
+                line = line.trim();
+                if (!line.equals("")) {
+                    String[] rel = line.split("\\s*\\,\\s*");
+                    if (rel.length != 2) { throw new ClusException("Illegal line '" + line + "' in DAG definition file: '" + fname + "'"); }
+                    String parent = rel[0];
+                    String child = rel[1];
+                    addParentChildTuple(parent, child);
+                }
             }
         }
-        rdr.close();
+
         addChildrenToRoot();
     }
 

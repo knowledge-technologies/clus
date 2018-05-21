@@ -864,7 +864,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param run
      *        The information about this run. Parameters etc.
-     * @return
+
      * @throws ClusException
      * @throws IOException
      * @throws InterruptedException
@@ -955,7 +955,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * @throws IOException
      */
     public ClusRuleSet optimizeRuleSet(ClusRuleSet rset, RowData data) throws ClusException, IOException {
-        String fname = getSettings().getData().getDataFile();
+        //String fname = getSettings().getData().getDataFile();
         // PrintWriter wrt_pred = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname+".r-pred")));
         PrintWriter wrt_pred = null;
 
@@ -1156,7 +1156,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param data
      * @param rn
-     * @return
+
      * @throws ClusException
      */
     private ClusRule generateOneRandomRule(RowData data, Random rn) throws ClusException {

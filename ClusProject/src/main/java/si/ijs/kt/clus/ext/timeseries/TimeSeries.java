@@ -232,7 +232,7 @@ public class TimeSeries implements Serializable {
      * @author matejp
      * @param ts1
      * @param ts2
-     * @return
+
      */
     public static boolean areEqual(TimeSeries ts1, TimeSeries ts2) {
     	if(ts1 == null) {

@@ -298,7 +298,7 @@ public class SettingsOutput extends SettingsBase {
     /**
      * If set to Yes, the output files will be GZiped (including .out and .pred.arff files)
      * 
-     * @return
+
      */
     public boolean isGzipOutput() {
         return m_GzipOutput.getValue();

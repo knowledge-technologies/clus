@@ -24,9 +24,12 @@ package si.ijs.kt.clus.util.jeans.math.matrix;
 
 import java.io.Serializable;
 
+import si.ijs.kt.clus.main.settings.Settings;
+
 
 public class MSymMatrix extends MMatrix implements Serializable {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     protected int m_Size;
     protected double m_Data[][];
 

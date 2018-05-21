@@ -46,7 +46,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 public class ImplicitLinearTerms {
 
     /** Data for implicit linear term predictions */
-    private RowData m_linearTermPredictions = null;
+    //private RowData m_linearTermPredictions = null;
     private ClusStatManager m_StatManager = null;
 
 
@@ -65,7 +65,7 @@ public class ImplicitLinearTerms {
      */
     public ImplicitLinearTerms(RowData data, ClusStatManager statMgr) {
         // , double[][] values) {
-        m_linearTermPredictions = data;
+        //m_linearTermPredictions = data;
         m_StatManager = statMgr;
 
         // m_offSetValues = values[0];
@@ -84,7 +84,7 @@ public class ImplicitLinearTerms {
 
 
     public void DeleteImplicitLinearTerms() {
-        m_linearTermPredictions = null;
+        //m_linearTermPredictions = null;
         m_StatManager = null;
         // m_maxValues = null;
         // m_minValues = null;

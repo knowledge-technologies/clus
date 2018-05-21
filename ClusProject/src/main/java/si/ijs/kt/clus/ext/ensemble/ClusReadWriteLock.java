@@ -24,9 +24,12 @@ package si.ijs.kt.clus.ext.ensemble;
 
 import java.io.Serializable;
 
+import si.ijs.kt.clus.main.settings.Settings;
+
 
 public class ClusReadWriteLock implements Serializable {
 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     private int m_NbReaders = 0;
     private int m_NbWriters = 0;
     private int m_NbWriteRequests = 0;

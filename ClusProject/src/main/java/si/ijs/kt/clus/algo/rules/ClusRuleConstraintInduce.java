@@ -59,7 +59,6 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.CoveringMethod;
-import si.ijs.kt.clus.main.settings.section.SettingsRules.RuleAddingMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -422,7 +421,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 
     public ClusModel induce(ClusRun run) throws ClusException, IOException, InterruptedException {
         CoveringMethod method = getSettings().getRules().getCoveringMethod();
-        RuleAddingMethod add_method = getSettings().getRules().getRuleAddingMethod();
+        //RuleAddingMethod add_method = getSettings().getRules().getRuleAddingMethod();
         RowData data = (RowData) run.getTrainingSet();
         ClusStatistic stat = createTotalClusteringStat(data);
         m_FindBestTest.initSelectorAndSplit(stat);
@@ -642,7 +641,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
      * 
      * @param data
      * @param rn
-     * @return
+
      * @throws ClusException
      */
     private ClusRule generateOneRandomRule(RowData data, Random rn) throws ClusException {
@@ -784,21 +783,21 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
     }
 
 
-    private void createExtraConstraints(ArrayList<ILevelConstraint> constraints, ArrayList points) {
-        DerivedConstraintsComputer comp = new DerivedConstraintsComputer(points, m_Constraints);
-        comp.compute();
-    }
+//    private void createExtraConstraints(ArrayList<ILevelConstraint> constraints, ArrayList points) {
+//        DerivedConstraintsComputer comp = new DerivedConstraintsComputer(points, m_Constraints);
+//        comp.compute();
+//    }
 
 
-    /*
-     * each rule represents a cluster
-     */
-    private void labelRulesSimple(ClusRuleSet crs) {
-        for (int i = 0; i < crs.getModelSize(); i++) {
-            ClusRule rule = crs.getRule(i);
-            ((ILevelCStatistic) rule.getTargetStat()).setClusterID(i);
-        }
-    }
+//    /*
+//     * each rule represents a cluster
+//     */
+//    private void labelRulesSimple(ClusRuleSet crs) {
+//        for (int i = 0; i < crs.getModelSize(); i++) {
+//            ClusRule rule = crs.getRule(i);
+//            ((ILevelCStatistic) rule.getTargetStat()).setClusterID(i);
+//        }
+//    }
 
 
     /*
@@ -1132,10 +1131,10 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             }
             // update clusters
             ArrayList<ClusRule> r = clusters.get(best_I);
-            int size_i = r.size();
-            int size_j = clusters.get(best_J).size();
+            //int size_i = r.size();
+            //int size_j = clusters.get(best_J).size();
             clusters.get(best_J).addAll(r);
-            int size = clusters.get(best_J).size();
+            //int size = clusters.get(best_J).size();
             clusters.remove(best_I);
         }
         // assign labels
@@ -1350,7 +1349,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
                     m_BestTest = new ClusRuleConstraintInduceTest(at, splitpoint, false);
                     m_BestConstraints = (ArrayList<ILevelConstraint>) ML.clone();
                     m_BestConstraints.addAll((ArrayList<ILevelConstraint>) CL.clone());
-                    Iterator<ILevelConstraint> ilcon = m_BestConstraints.iterator();
+                    //Iterator<ILevelConstraint> ilcon = m_BestConstraints.iterator();
                 }
             }
             prev = value;

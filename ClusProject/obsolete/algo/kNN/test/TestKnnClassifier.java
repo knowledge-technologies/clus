@@ -91,7 +91,7 @@ public class TestKnnClassifier extends ClusInductionAlgorithmType {
      * Induced default model - prediction to majority class.
      * 
      * @param cr
-     * @return
+
      */
     public static ClusModel induceDefaultModel(ClusRun cr) {
         ClusNode node = new ClusNode();

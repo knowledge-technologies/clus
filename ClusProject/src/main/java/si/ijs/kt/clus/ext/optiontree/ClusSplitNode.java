@@ -169,7 +169,7 @@ public class ClusSplitNode extends MyNode {
         int [][] tabexist = new int[lastmodel+1][10000]; //table of boolean for each item
         Global.set_treecpt(starttree);
         Global.set_itemsetcpt(startitem);
-        ClusModelInfo m = cr.getModelInfo(0);//cr.getModelInfo(lastmodel);
+        //ClusModelInfo m = cr.getModelInfo(0);//cr.getModelInfo(lastmodel);
 
         if(exhaustive){
             for (int i = 0; i < cr.getNbModels(); i++) {

@@ -94,11 +94,6 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
     /**
      * An iterative version of {@link calculateGENIE3importance}, which does not update feature importances in place.
      * Rather, it returns the partial importances for all attributes. These are combined later.
-     * 
-     * @param root
-     * @param weights
-     * @return
-     * @throws InterruptedException
      */
     public HashMap<String, double[][]> calculateGENIE3importanceIteratively(ClusNode root, ClusStatManager statManager) {
 //        if (m_FimpTableHeader == null) {
@@ -159,11 +154,8 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
      * <p>
      * for all weights in {@code weights}.
      * 
-     * @param node
-     * @param weights
      * @param depth
      *        Depth of {@code node}, root's depth is 0
-     * @throws InterruptedException
      */
     @Deprecated
     public void calculateSYMBOLICimportance(ClusNode node, double[] weights, double depth) throws InterruptedException {
@@ -187,11 +179,6 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
     /**
      * An iterative version of {@link calculateSYMBOLICimportance}, which does not update feature importances in place.
      * Rather, it returns the partial importances for all attributes. These are combined later.
-     * 
-     * @param root
-     * @param weights
-     * @return
-     * @throws InterruptedException
      */
     public synchronized HashMap<String, double[][]> calculateSYMBOLICimportanceIteratively(ClusNode root, double[] weights) throws InterruptedException {
 //        if (m_FimpTableHeader == null) {

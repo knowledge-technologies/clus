@@ -38,7 +38,7 @@ import clus.main.settings.Settings;
 import clus.model.test.NodeTest;
 import clus.model.test.SoftTest;
 import clus.util.ClusException;
-import clus.util.tools.debug.Debug;
+import clus.util.tools.Clus.DEBUG;
 
 
 public class OOTIndOV extends OOTInduce {
@@ -114,11 +114,11 @@ public class OOTIndOV extends OOTInduce {
 
     public final void xvalInduce(OptXValNode node, OptXValGroup mgrp) {
         long t0;
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             t0 = ResourceInfo.getCPUTime();
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.updateMaxMemory();
         }
 
@@ -132,7 +132,7 @@ public class OOTIndOV extends OOTInduce {
             ClusNode onode = new ClusNode();
             onode.m_ClusteringStat = mgrp.getTotStat(fold);
             node.setNode(fold, onode);
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaSplit();
             }
 
@@ -145,12 +145,12 @@ public class OOTIndOV extends OOTInduce {
         }
         // Init test selectors
         initTestSelectors(mgrp);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
         findBestTest(mgrp);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaTest();
         }
 
@@ -158,11 +158,11 @@ public class OOTIndOV extends OOTInduce {
         // Make new groups
         MyListIter ngrps = new MyListIter();
         int nb_groups = mkNewGroups(mgrp, ngrps);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             node.m_Time = ResourceInfo.getCPUTime() - t0;
         }
 
@@ -179,7 +179,7 @@ public class OOTIndOV extends OOTInduce {
                 RowData gdata = grp.getData();
                 if (grp.m_IsSoft) {
                     long t01;
-                    if (Debug.debug == 1) {
+                    if (Clus.isDebug()) {
                         t01 = ResourceInfo.getCPUTime();
                     }
 
@@ -193,16 +193,16 @@ public class OOTIndOV extends OOTInduce {
                             cgrp.setData(gdata.apply(test, i));
                         cgrp.create2(m_StatManager, m_NbFolds);
                         cgrp.calcTotalStats2();
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             node.m_Time += ResourceInfo.getCPUTime() - t01;
                         }
 
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             ClusStat.deltaSplit();
                         }
 
                         xvalInduce(child, cgrp);
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             t01 = ResourceInfo.getCPUTime();
                         }
 
@@ -210,7 +210,7 @@ public class OOTIndOV extends OOTInduce {
                 }
                 else {
                     long t01;
-                    if (Debug.debug == 1) {
+                    if (Clus.isDebug()) {
                         t01 = ResourceInfo.getCPUTime();
                     }
 
@@ -221,16 +221,16 @@ public class OOTIndOV extends OOTInduce {
                         cgrp.setData(gdata.apply(test, i));
                         cgrp.create2(m_StatManager, m_NbFolds);
                         cgrp.calcTotalStats2();
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             node.m_Time += ResourceInfo.getCPUTime() - t01;
                         }
 
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             ClusStat.deltaSplit();
                         }
 
                         xvalInduce(child, cgrp);
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             t01 = ResourceInfo.getCPUTime();
                         }
 

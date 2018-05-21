@@ -603,7 +603,7 @@ public class CombStat extends ClusStatistic {
     /**
      * Checks weather values of a target attribute are significantly different
      * 
-     * @return
+
      */
     public boolean targetSignDifferent() {
         boolean res = false;

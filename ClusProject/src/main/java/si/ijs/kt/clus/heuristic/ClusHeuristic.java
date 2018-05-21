@@ -77,7 +77,7 @@ public abstract class ClusHeuristic {
      * @param pstat
      * @param missing
      * @param ss_tot
-     * @return
+
      * @throws ClusException 
      */
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot) throws ClusException {

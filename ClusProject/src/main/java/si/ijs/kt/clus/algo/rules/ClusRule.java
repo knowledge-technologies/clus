@@ -353,6 +353,7 @@ public class ClusRule implements ClusModel, Serializable {
      * Removes examples that have been covered by enough rules, i.e., rules that have weights below
      * the threshold.
      */
+    @SuppressWarnings("unused")
     public RowData removeCoveredEnough(RowData data) {
         double threshold = getSettings().getRules().getInstCoveringWeightThreshold();
         // if (!getSettings().isCompHeurRuleDist()) { // TODO: check if this is ok!
@@ -376,7 +377,7 @@ public class ClusRule implements ClusModel, Serializable {
             return res;
         }
         else { // Don't remove, just set the weights to zero.
-            // TODO: Check if this causes any problems
+               // TODO: Check if this causes any problems
             for (int i = 0; i < data.getNbRows(); i++) {
                 DataTuple tuple = data.getTuple(i);
                 if (tuple.m_Weight < threshold) {
@@ -407,9 +408,9 @@ public class ClusRule implements ClusModel, Serializable {
                 new_weight = old_weight * cov_w_par;
             }
             else { // COVERING_METHOD_WEIGHTED_ERROR
-                // DONE: weighted by a proportion of incorrectly classified target attributes.
-                // TODO: weighted by a distance to a prototype of examples covered by this rule.
-                // if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
+                   // DONE: weighted by a proportion of incorrectly classified target attributes.
+                   // TODO: weighted by a distance to a prototype of examples covered by this rule.
+                   // if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
                 if (m_TargetStat instanceof ClassificationStat) {
                     int[] predictions = predictWeighted(tuple).getNominalPred();
                     NominalAttrType[] targetAttrs = data.getSchema().getNominalAttrUse(AttributeUseType.Target);

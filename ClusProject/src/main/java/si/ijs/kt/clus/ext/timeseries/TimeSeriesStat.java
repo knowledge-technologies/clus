@@ -193,7 +193,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     /**
      * @author matejp
      *         Computes the medoid of the time series instances. Copied from the body of {@link #calcMean()}.
-     * @return
+
      * @throws ClusException
      */
     private TimeSeries calcMedoidTS() throws ClusException {
@@ -221,7 +221,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
      *         Computes the mean of time series. Copied from the body of {@link #calcMean()}. If not all time series are
      *         of equal length,
      *         returns null.
-     * @return
+
      */
     private TimeSeries calcMeanTS() {
         TimeSeries mean = new TimeSeries("[]");
@@ -471,7 +471,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
      * For debugging purposes. Do not change the body, since matejp would like to be able to put a breakpoint in the
      * return false; line.
      * 
-     * @return
+
      */
     public boolean checkInvariant() {
         if (!ClusUtil.eq(stackWeight(), m_SumWeight, ClusUtil.MICRO)) {

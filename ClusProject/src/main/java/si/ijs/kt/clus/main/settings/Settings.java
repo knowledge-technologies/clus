@@ -374,7 +374,7 @@ public class Settings implements Serializable {
 
         for (SettingsBase sec : m_Sections) {
             tmpList = sec.validateSettingsInternal();
-            if (tmpList != null) {
+            if (tmpList != null && !tmpList.isEmpty()) {
                 incompatibilities.add(sec.getSection().getName());
                 incompatibilities.addAll(tmpList);
             }

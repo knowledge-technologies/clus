@@ -282,7 +282,7 @@ public class ClassesTuple implements Serializable {
 
 
     public void removeLabels(boolean[] removed) {
-        ArrayList left = new ArrayList();
+        ArrayList<ClassesValue> left = new ArrayList<>();
         for (int i = 0; i < getNbClasses(); i++) {
             ClassesValue val = getClass(i);
             if (!removed[val.getIndex()])

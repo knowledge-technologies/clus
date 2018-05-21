@@ -34,6 +34,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.EnumSet;
 
 import org.apache.commons.lang.NotImplementedException;
 
@@ -133,12 +134,20 @@ import si.ijs.kt.clus.util.jeans.util.IntervalCollection;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgsProvider;
-import si.ijs.kt.clus.util.tools.debug.Debug;
 
 
 // import si.ijs.kt.clus.weka.*;
 
 public class Clus implements CMDLineArgsProvider {
+
+    // debug flags - should be refactored
+    public static final boolean HIER_DEBUG = false;
+
+    public enum DebugType {
+        None, General, Hierarchy
+    };
+
+    static EnumSet<DebugType> Debugging = EnumSet.of(DebugType.None);
 
     public final static boolean m_UseHier = true;
 
@@ -475,7 +484,6 @@ public class Clus implements CMDLineArgsProvider {
         clss.induceAll(cr);
     }
 
-
     // public final void showTree(String fname) throws ClusException, IOException, ClassNotFoundException {
     // TreeFrame.showTree(getSettings().getGeneric().getFileAbsolute(fname));
     // }
@@ -487,22 +495,23 @@ public class Clus implements CMDLineArgsProvider {
     // TreeFrame.start(mgr, lok);
     // }
 
-//    public final void postprocModel(ClusModel model, TupleIterator iter, ModelProcessorCollection coll) throws IOException, ClusException {
-//        iter.init();
-//        ClusSchema mschema = iter.getSchema();
-//        if (iter.shouldAttach()) {
-//            System.out.println("Effect of should_attach not implemented in postprocModel");
-//        }
-//        coll.initialize(model, mschema);
-//        DataTuple tuple = iter.readTuple();
-//        while (tuple != null) {
-//            model.applyModelProcessors(tuple, coll);
-//            coll.modelDone();
-//            tuple = iter.readTuple();
-//        }
-//        iter.close();
-//        coll.terminate(model);
-//    }
+    // public final void postprocModel(ClusModel model, TupleIterator iter, ModelProcessorCollection coll) throws
+    // IOException, ClusException {
+    // iter.init();
+    // ClusSchema mschema = iter.getSchema();
+    // if (iter.shouldAttach()) {
+    // System.out.println("Effect of should_attach not implemented in postprocModel");
+    // }
+    // coll.initialize(model, mschema);
+    // DataTuple tuple = iter.readTuple();
+    // while (tuple != null) {
+    // model.applyModelProcessors(tuple, coll);
+    // coll.modelDone();
+    // tuple = iter.readTuple();
+    // }
+    // iter.close();
+    // coll.terminate(model);
+    // }
 
 
     public final int getNbRows() {
@@ -596,7 +605,7 @@ public class Clus implements CMDLineArgsProvider {
             data.preprocess(i, pps);
             pps.done(i);
         }
-        if (Debug.HIER_DEBUG) {
+        if (Clus.HIER_DEBUG) {
             HierMatrixOutput.writeExamples((RowData) data, m_Induce.getStatManager().getHier());
         }
     }
@@ -1982,7 +1991,10 @@ public class Clus implements CMDLineArgsProvider {
                     clus.singleRun(clss);
                 }
             }
-            if (Debug.debug == 1)
+            if (Clus.isDebug()) {
+                ClusStat.show();
+            }
+            if (Clus.isDebug())
                 ClusStat.show();
             DebugFile.close();
             if (!sett.getAttribute().isNullGIS()) {
@@ -2029,5 +2041,39 @@ public class Clus implements CMDLineArgsProvider {
             e.printStackTrace();
             System.exit(-100);
         }
+    }
+
+
+    /**
+     * Checks if global debugging flags are set for the input flag.
+     * The method returns false if global debugging flags contain DebugType.None.
+     * 
+     * @param flag
+     *        This flag will be checked.
+     */
+    public static boolean isDebug(DebugType flag) {
+
+        if (Debugging.contains(DebugType.None))
+            return false;
+
+        return Debugging.contains(flag);
+    }
+
+    /**
+     * A convenience method. Checks for general debugging status.
+     */
+    public static boolean isDebug() {
+        return isDebug(DebugType.General);
+    }
+
+    /**
+     * This sets global debugging flags.
+     * 
+     * @param flags
+     *        Use EnumSet.of(<your debug types>) to set the desired debugging flags
+     */
+
+    public static void setDebug(EnumSet<DebugType> flags) {
+        Debugging = flags;
     }
 }

@@ -152,7 +152,7 @@ public class RowDataTest extends BaseTestCase {
    * attribute can be omitted.
    *
    * @param solFile
-   * @return
+
    * @throws IOException
    */
   private Integer[][] loadSmartSortSolution(String solFile) throws IOException {
@@ -180,7 +180,7 @@ public class RowDataTest extends BaseTestCase {
    * Converts a line in the solution file for {@code smartSortTest} to the {@code Integer[]}.
    *
    * @param line
-   * @return
+
    */
   private Integer[] parseSmartSortSolutionLine(String line) {
     if (line.length() == 2) { // {}

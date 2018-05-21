@@ -73,7 +73,7 @@ public class VPTree extends SearchAlgorithm {
      * 
      * @param list
      *        list of all points in space.
-     * @return
+
      * @throws ClusException 
      */
     private VPNode recursiveBuild(LinkedList<VPItem> list) throws ClusException {
@@ -134,7 +134,7 @@ public class VPTree extends SearchAlgorithm {
      * 
      * @param list
      *        candidates for vantage points - elements in space
-     * @return
+
      */
     private VPItem selectVPItem(LinkedList<VPItem> list) {
         int sampleSize = (int) Math.max(Math.min(list.size(), 3), 0.1 * list.size());
@@ -168,7 +168,7 @@ public class VPTree extends SearchAlgorithm {
      * 
      * @param list
      *        elements in space
-     * @return
+
      */
     private double getMedian(LinkedList<VPItem> list) {
         double median = 0;

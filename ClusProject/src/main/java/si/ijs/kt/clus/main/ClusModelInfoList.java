@@ -52,7 +52,7 @@ public abstract class ClusModelInfoList implements Serializable {
   /**
    * @param i Usually ClusModel model type (Default, Original, Pruned). However, can also be
    *     something else. For example for ClusForest this is the index of decision tree.
-   * @return
+
    */
   public ClusModelInfo getModelInfo(int i) {
     if (i >= m_Models.size()) return null;
@@ -63,7 +63,7 @@ public abstract class ClusModelInfoList implements Serializable {
    * @param i Usually ClusModel model type (Default, Original, Pruned).
    * @param j If model "i" does not exist, return model "j". Typical use:
    *     getModelInfoFallback(ClusModel.PRUNED, ClusModel.ORIGINAL);
-   * @return
+
    */
   public ClusModelInfo getModelInfoFallback(int i, int j) {
     ClusModelInfo info = getModelInfo(i);
@@ -78,7 +78,7 @@ public abstract class ClusModelInfoList implements Serializable {
   /**
    * @param i Usually ClusModel model type (Default, Original, Pruned). However, can also be
    *     something else. For example for ClusForest this is the index of decision tree.
-   * @return
+
    */
   public void setModelInfo(int i, ClusModelInfo info) {
     m_Models.set(i, info);
@@ -87,7 +87,7 @@ public abstract class ClusModelInfoList implements Serializable {
   /**
    * @param i Usually ClusModel model type (Default, Original, Pruned). However, can also be
    *     something else. For example for ClusForest this is the index of decision tree.
-   * @return
+
    */
   public ClusModel getModel(int i) {
     return getModelInfo(i).getModel();
@@ -96,7 +96,7 @@ public abstract class ClusModelInfoList implements Serializable {
   /**
    * @param i Usually ClusModel model type (Default, Original, Pruned). However, can also be
    *     something else. For example for ClusForest this is the index of decision tree.
-   * @return
+
    */
   public String getModelName(int i) {
     return getModelInfo(i).getName();
@@ -133,7 +133,7 @@ public abstract class ClusModelInfoList implements Serializable {
    *
    * @param i
    * @param name Name of the kNN model.
-   * @return
+
    * @throws ClusException
    */
   public ClusModelInfo initModelInfo(int i, String name) throws ClusException {
@@ -173,7 +173,7 @@ public abstract class ClusModelInfoList implements Serializable {
    *
    * @param i
    * @param model_name The name of the model
-   * @return
+
    * @throws ClusException
    */
   public ClusModelInfo addModelInfo(int i, String model_name) throws ClusException {

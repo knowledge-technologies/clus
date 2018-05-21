@@ -38,7 +38,7 @@ public class COPKMeansCluster implements Serializable {
 
     protected int m_Index;
     protected ClusStatManager m_Mgr;
-    protected ArrayList m_Data = new ArrayList();
+    protected ArrayList<DataTuple> m_Data = new ArrayList<>();
     protected ILevelCStatistic m_Center;
 
 

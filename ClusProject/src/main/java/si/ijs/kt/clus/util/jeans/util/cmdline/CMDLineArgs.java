@@ -28,7 +28,7 @@ import java.util.Hashtable;
 public class CMDLineArgs {
 
     protected CMDLineArgsProvider $prov;
-    protected Hashtable $optargs = new Hashtable();
+    protected Hashtable<String, Object> $optargs = new Hashtable<>();
     protected String[] $mainargs;
     protected boolean $ok;
     protected int m_NbMainArgs;

@@ -232,7 +232,7 @@ public class ClusBeamModelDistance {
      * @param beam
      * @param data
      * @param isNum
-     * @return
+
      * @throws ClusException 
      * @throws InterruptedException 
      */

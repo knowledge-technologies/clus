@@ -358,7 +358,7 @@ public class GDProbl extends OptProbl {
      *        Base learner index
      * @param iLatter
      *        Base learner index. NOTE: iLatter >= iPrevious
-     * @return
+
      */
     // private double[] computeCovFor2Preds(int iFirstRule, int iSecondRule) {
     private double computeCovFor2Preds(int iPrevious, int iLatter) {
@@ -420,7 +420,7 @@ public class GDProbl extends OptProbl {
      * @param iPrevious
      * @param iLatter
      *        Rule index. NOTE: iLatter >= iPrevious
-     * @return
+
      */
     private double computeCovFor2Lin(int iPrevious, int iLatter) {
         int nbOfInstances = getNbOfInstances();
@@ -458,7 +458,7 @@ public class GDProbl extends OptProbl {
      *        Rule index.
      * @param iLinear
      *        Linear term index. NOTE: iLinear >= iRule
-     * @return
+
      */
     private double computeCovForRuleAndLin(int iRule, int iLinear) {
         int nbOfTargets = getNbOfTargets();
@@ -492,7 +492,7 @@ public class GDProbl extends OptProbl {
      * @param iPrevious
      * @param iLatter
      *        Rule index. NOTE: iLatter >= iPrevious
-     * @return
+
      */
     private double computeCovFor2Rules(int iPrevious, int iLatter) {
         BitSet prev = (BitSet) (getRuleCovers(iPrevious).clone());

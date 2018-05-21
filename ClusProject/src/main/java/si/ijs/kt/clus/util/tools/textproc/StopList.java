@@ -30,7 +30,7 @@ import java.util.Hashtable;
 import si.ijs.kt.clus.main.settings.Settings;
 
 
-public class StopList extends Hashtable {
+public class StopList extends Hashtable<String, String> {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
@@ -42,14 +42,14 @@ public class StopList extends Hashtable {
 
     public StopList(String filename) throws IOException {
         String dummy = "";
-        LineNumberReader reader = new LineNumberReader(new FileReader(filename));
-        while (true) {
-            String word = reader.readLine();
-            if (word == null)
-                break;
-            put(word, dummy);
+        try (LineNumberReader reader = new LineNumberReader(new FileReader(filename))) {
+            while (true) {
+                String word = reader.readLine();
+                if (word == null)
+                    break;
+                put(word, dummy);
+            }
         }
-        reader.close();
     }
 
 

@@ -83,7 +83,7 @@ public class KDTree extends SearchAlgorithm {
      * Return nearest k (getK()) tuples to specified tuple.
      * 
      * @param tuple
-     * @return
+
      * @throws ClusException 
      */
     @Override
@@ -98,7 +98,7 @@ public class KDTree extends SearchAlgorithm {
     /**
      * Returns number of neighbors we search.
      * 
-     * @return
+
      */
     public int getK() {
         return m_kNeighbors;

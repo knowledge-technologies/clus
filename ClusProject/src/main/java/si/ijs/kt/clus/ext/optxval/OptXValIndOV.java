@@ -24,6 +24,7 @@ package si.ijs.kt.clus.ext.optxval;
 
 import java.io.IOException;
 
+import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
@@ -40,9 +41,9 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.list.MyListIter;
-import si.ijs.kt.clus.util.tools.debug.Debug;
 
-// only non-referenced classes access this one  
+
+// only non-referenced classes access this one
 @Deprecated
 public class OptXValIndOV extends OptXValInduce {
 
@@ -67,7 +68,7 @@ public class OptXValIndOV extends OptXValInduce {
         int statsize = nbvalues + at.intHasMissing();
         reset(statsize);
         resetExtra(statsize);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
@@ -77,7 +78,7 @@ public class OptXValIndOV extends OptXValInduce {
         for (int i = 0; i < nb_rows; i++) {
             DataTuple tuple = data.getTuple(i);
             int value = at.getNominal(tuple);
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaTest();
             }
 
@@ -87,13 +88,13 @@ public class OptXValIndOV extends OptXValInduce {
             else {
                 updateExtra(tuple, m_TestExtraStat[value], i);
             }
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaStat();
             }
 
         }
         sumStats(statsize);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaStat();
         }
 
@@ -111,12 +112,12 @@ public class OptXValIndOV extends OptXValInduce {
             for (int j = 0; j < statsize; j++) {
                 cr_stat[j].add(m_TestExtraStat[j][foldnr]);
             }
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaStat();
             }
 
             m_Split.findSplit(m_Selector[i], at);
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaHeur();
             }
 
@@ -138,12 +139,12 @@ public class OptXValIndOV extends OptXValInduce {
         DataTuple tuple;
         RowData data = grp.getData();
         int idx = at.getArrayIndex();
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
         data.sort(at);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSort();
         }
 
@@ -165,7 +166,7 @@ public class OptXValIndOV extends OptXValInduce {
          */
         copyTotal(grp);
         /* } */
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaStat();
         }
 
@@ -189,7 +190,7 @@ public class OptXValIndOV extends OptXValInduce {
                         if (foldnr != cr_fold) {
                             if (m_PrevCl[j] == -1 && value != m_PrevVl[j] && m_PrevVl[j] != Double.NaN) {
                                 if (no_sum_calc) {
-                                    if (Debug.debug == 1) {
+                                    if (Clus.isDebug()) {
                                         ClusStat.deltaTest();
                                     }
 
@@ -197,12 +198,12 @@ public class OptXValIndOV extends OptXValInduce {
                                     for (int k = 1; k <= m_NbFolds; k++)
                                         sum.add(m_PosStat[k]);
                                     no_sum_calc = false;
-                                    if (Debug.debug == 1) {
+                                    if (Clus.isDebug()) {
                                         ClusStat.deltaStat();
                                     }
 
                                 }
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
@@ -210,12 +211,12 @@ public class OptXValIndOV extends OptXValInduce {
                                 m_Scratch.add(extra[cr_fold]);
                                 if (cr_fold != 0)
                                     m_Scratch.subtractFromThis(m_PosStat[cr_fold]);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaStat();
                                 }
 
                                 m_Selector[j].updateNumeric(value, m_Scratch, at);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaHeur();
                                 }
 
@@ -228,12 +229,12 @@ public class OptXValIndOV extends OptXValInduce {
                             m_PrevVl[j] = value;
                         }
                     }
-                    if (Debug.debug == 1) {
+                    if (Clus.isDebug()) {
                         ClusStat.deltaTest();
                     }
 
                     m_PosStat[foldnr].updateWeighted(tuple, i);
-                    if (Debug.debug == 1) {
+                    if (Clus.isDebug()) {
                         ClusStat.deltaStat();
                     }
 
@@ -247,7 +248,7 @@ public class OptXValIndOV extends OptXValInduce {
                             int cr_fold = efolds[ei];
                             if (m_PrevCl[fi] == -1 && value != m_PrevVl[fi] && m_PrevVl[fi] != Double.NaN) {
                                 if (no_sum_calc) {
-                                    if (Debug.debug == 1) {
+                                    if (Clus.isDebug()) {
                                         ClusStat.deltaTest();
                                     }
 
@@ -255,12 +256,12 @@ public class OptXValIndOV extends OptXValInduce {
                                     for (int k = 1; k <= m_NbFolds; k++)
                                         sum.add(m_PosStat[k]);
                                     no_sum_calc = false;
-                                    if (Debug.debug == 1) {
+                                    if (Clus.isDebug()) {
                                         ClusStat.deltaStat();
                                     }
 
                                 }
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
@@ -268,12 +269,12 @@ public class OptXValIndOV extends OptXValInduce {
                                 m_Scratch.add(extra[cr_fold]);
                                 if (cr_fold != 0)
                                     m_Scratch.subtractFromThis(m_PosStat[cr_fold]);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaStat();
                                 }
 
                                 m_Selector[fi].updateNumeric(value, m_Scratch, at);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaHeur();
                                 }
 
@@ -284,12 +285,12 @@ public class OptXValIndOV extends OptXValInduce {
                                     m_PrevCl[fi] = -1;
                             }
                             m_PrevVl[fi] = value;
-                            if (Debug.debug == 1) {
+                            if (Clus.isDebug()) {
                                 ClusStat.deltaTest();
                             }
 
                             extra[cr_fold].updateWeighted(tuple, i);
-                            if (Debug.debug == 1) {
+                            if (Clus.isDebug()) {
                                 ClusStat.deltaStat();
                             }
 
@@ -318,7 +319,7 @@ public class OptXValIndOV extends OptXValInduce {
                         if (foldnr != cr_fold) {
                             if (value != m_PrevVl[j] && m_PrevVl[j] != Double.NaN) {
                                 if (no_sum_calc) {
-                                    if (Debug.debug == 1) {
+                                    if (Clus.isDebug()) {
                                         ClusStat.deltaTest();
                                     }
 
@@ -326,12 +327,12 @@ public class OptXValIndOV extends OptXValInduce {
                                     for (int k = 1; k <= m_NbFolds; k++)
                                         sum.add(m_PosStat[k]);
                                     no_sum_calc = false;
-                                    if (Debug.debug == 1) {
+                                    if (Clus.isDebug()) {
                                         ClusStat.deltaStat();
                                     }
 
                                 }
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
@@ -339,12 +340,12 @@ public class OptXValIndOV extends OptXValInduce {
                                 m_Scratch.add(extra[cr_fold]);
                                 if (cr_fold != 0)
                                     m_Scratch.subtractFromThis(m_PosStat[cr_fold]);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaStat();
                                 }
 
                                 m_Selector[j].updateNumeric(value, m_Scratch, at);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaHeur();
                                 }
 
@@ -352,12 +353,12 @@ public class OptXValIndOV extends OptXValInduce {
                             m_PrevVl[j] = value;
                         }
                     }
-                    if (Debug.debug == 1) {
+                    if (Clus.isDebug()) {
                         ClusStat.deltaTest();
                     }
 
                     m_PosStat[foldnr].updateWeighted(tuple, i);
-                    if (Debug.debug == 1) {
+                    if (Clus.isDebug()) {
                         ClusStat.deltaStat();
                     }
 
@@ -371,7 +372,7 @@ public class OptXValIndOV extends OptXValInduce {
                             int cr_fold = efolds[ei];
                             if (value != m_PrevVl[fi] && m_PrevVl[fi] != Double.NaN) {
                                 if (no_sum_calc) {
-                                    if (Debug.debug == 1) {
+                                    if (Clus.isDebug()) {
                                         ClusStat.deltaTest();
                                     }
 
@@ -379,12 +380,12 @@ public class OptXValIndOV extends OptXValInduce {
                                     for (int k = 1; k <= m_NbFolds; k++)
                                         sum.add(m_PosStat[k]);
                                     no_sum_calc = false;
-                                    if (Debug.debug == 1) {
+                                    if (Clus.isDebug()) {
                                         ClusStat.deltaStat();
                                     }
 
                                 }
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaTest();
                                 }
 
@@ -392,23 +393,23 @@ public class OptXValIndOV extends OptXValInduce {
                                 m_Scratch.add(extra[cr_fold]);
                                 if (cr_fold != 0)
                                     m_Scratch.subtractFromThis(m_PosStat[cr_fold]);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaStat();
                                 }
 
                                 m_Selector[fi].updateNumeric(value, m_Scratch, at);
-                                if (Debug.debug == 1) {
+                                if (Clus.isDebug()) {
                                     ClusStat.deltaHeur();
                                 }
 
                             }
                             m_PrevVl[fi] = value;
-                            if (Debug.debug == 1) {
+                            if (Clus.isDebug()) {
                                 ClusStat.deltaTest();
                             }
 
                             extra[cr_fold].updateWeighted(tuple, i);
-                            if (Debug.debug == 1) {
+                            if (Clus.isDebug()) {
                                 ClusStat.deltaStat();
                             }
 
@@ -510,12 +511,12 @@ public class OptXValIndOV extends OptXValInduce {
 
 
     public final void xvalInduce(OptXValNode node, OptXValGroup mgrp) throws Exception {
-        long t0;
-        if (Debug.debug == 1) {
+        Long t0 = null;
+        if (Clus.isDebug()) {
             t0 = ResourceInfo.getCPUTime();
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.updateMaxMemory();
         }
 
@@ -529,7 +530,7 @@ public class OptXValIndOV extends OptXValInduce {
             ClusNode onode = new ClusNode();
             onode.m_ClusteringStat = mgrp.getTotStat(fold);
             node.setNode(fold, onode);
-            if (Debug.debug == 1) {
+            if (Clus.isDebug()) {
                 ClusStat.deltaSplit();
             }
 
@@ -538,7 +539,7 @@ public class OptXValIndOV extends OptXValInduce {
         }
         // Init test selectors
         initTestSelectors(mgrp);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
@@ -546,7 +547,7 @@ public class OptXValIndOV extends OptXValInduce {
             findBestTestOV(mgrp);
         else
             findBestTest(mgrp);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaTest();
         }
 
@@ -554,11 +555,11 @@ public class OptXValIndOV extends OptXValInduce {
         // Make new groups
         MyListIter ngrps = new MyListIter();
         int nb_groups = mkNewGroups(mgrp, ngrps);
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             ClusStat.deltaSplit();
         }
 
-        if (Debug.debug == 1) {
+        if (Clus.isDebug()) {
             node.m_Time = ResourceInfo.getCPUTime() - t0;
         }
 
@@ -574,8 +575,8 @@ public class OptXValIndOV extends OptXValInduce {
                 node.setChild(split, idx++);
                 RowData gdata = grp.getData();
                 if (grp.m_IsSoft) {
-                    long t01;
-                    if (Debug.debug == 1) {
+                    Long t01 = null;
+                    if (Clus.isDebug()) {
                         t01 = ResourceInfo.getCPUTime();
                     }
 
@@ -592,24 +593,24 @@ public class OptXValIndOV extends OptXValInduce {
                             cgrp.calcTotalStats(m_TestExtraStat[0]);
                         else
                             cgrp.calcTotalStats();
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             node.m_Time += ResourceInfo.getCPUTime() - t01;
                         }
 
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             ClusStat.deltaSplit();
                         }
 
                         xvalInduce(child, cgrp);
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             t01 = ResourceInfo.getCPUTime();
                         }
 
                     }
                 }
                 else {
-                    long t01;
-                    if (Debug.debug == 1) {
+                    Long t01 = null;
+                    if (Clus.isDebug()) {
                         t01 = ResourceInfo.getCPUTime();
                     }
 
@@ -620,16 +621,16 @@ public class OptXValIndOV extends OptXValInduce {
                         cgrp.setData(gdata.apply(test, i));
                         cgrp.create(m_StatManager, m_NbFolds);
                         cgrp.calcTotalStats();
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             node.m_Time += ResourceInfo.getCPUTime() - t01;
                         }
 
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             ClusStat.deltaSplit();
                         }
 
                         xvalInduce(child, cgrp);
-                        if (Debug.debug == 1) {
+                        if (Clus.isDebug()) {
                             t01 = ResourceInfo.getCPUTime();
                         }
 

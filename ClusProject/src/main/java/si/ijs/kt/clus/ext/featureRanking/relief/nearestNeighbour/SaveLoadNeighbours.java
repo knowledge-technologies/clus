@@ -175,7 +175,7 @@ public class SaveLoadNeighbours {
 	/**
 	 * Parses string of form {@code <description>;<integer>} to int value of the {@code <integer>.}
 	 * @param myString
-	 * @return
+
 	 */
 	private static int intAfterSemicolon(String myString) {
 		return Integer.parseInt(myString.substring(myString.indexOf(";") + 1));	
@@ -191,7 +191,7 @@ public class SaveLoadNeighbours {
 	 * If any of these conditions are broken, an exception is thrown.
 	 * 
 	 * @param nnss Nearest neighbours in the Relief form.
-	 * @return
+
 	 */
 	public static void assureIsFlatNearestNeighbours(HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nnss){
 		if(nnss.size() != 1) {

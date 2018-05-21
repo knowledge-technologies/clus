@@ -76,7 +76,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     // protected TDistribution m_Distribution;
     protected int m_OrigSize;
     protected double m_RelErrAcc = 0.01;
-    protected ArrayList m_Graph;
+    protected ArrayList<SingleStatList> m_Graph;
     protected int m_Optimal, m_MaxSize;
     protected ClusAttributeWeights m_TargetWeights;
     protected boolean m_Relative;
@@ -200,12 +200,12 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     }
 
 
-    public SingleStatList addPoint(ArrayList points, int size, ClusRun[] runs, SizeConstraintPruning[] pruners, int model, ClusSummary summ) throws ClusException, IOException {
+    public SingleStatList addPoint(ArrayList<SingleStatList> points, int size, ClusRun[] runs, SizeConstraintPruning[] pruners, int model, ClusSummary summ) throws ClusException, IOException {
         int pos = 0;
-        while (pos < points.size() && ((SingleStatList) points.get(pos)).getX() < size) {
+        while (pos < points.size() && points.get(pos).getX() < size) {
             pos++;
         }
-        if (pos < points.size() && ((SingleStatList) points.get(pos)).getX() == size) { return null; }
+        if (pos < points.size() && points.get(pos).getX() == size) { return null; }
         SingleStatList point = computeTreeError(runs, pruners, model, summ, size);
         point.setX(size);
         points.add(pos, point);
@@ -213,11 +213,11 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     }
 
 
-    public double getRange(ArrayList graph) {
+    public double getRange(ArrayList<SingleStatList> graph) {
         double min = Double.POSITIVE_INFINITY;
         double max = Double.NEGATIVE_INFINITY;
         for (int i = 0; i < graph.size(); i++) {
-            SingleStatList elem = (SingleStatList) graph.get(i);
+            SingleStatList elem = graph.get(i);
             if (elem.getY() < min)
                 min = elem.getY();
             if (elem.getY() > max)
@@ -227,14 +227,14 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     }
 
 
-    public void refineGraph(ArrayList graph, ClusRun[] runs, SizeConstraintPruning[] pruners, int model, ClusSummary summ) throws ClusException, IOException {
+    public void refineGraph(ArrayList<SingleStatList> graph, ClusRun[] runs, SizeConstraintPruning[] pruners, int model, ClusSummary summ) throws ClusException, IOException {
         int prevsize = -1;
         while (true) {
             boolean not_found = true;
             // double max_diff = getRange(graph);
             for (int i = 0; i < graph.size() - 2 && not_found; i++) {
-                SingleStatList e1 = (SingleStatList) graph.get(i);
-                SingleStatList e2 = (SingleStatList) graph.get(i + 1);
+                SingleStatList e1 = graph.get(i);
+                SingleStatList e2 = graph.get(i + 1);
                 if (Math.abs(e1.getY() - e2.getY()) > m_RelErrAcc) {
                     int s1 = (int) e1.getX();
                     int s2 = (int) e2.getX();
@@ -275,11 +275,11 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
      * }
      */
 
-    public int findOptimalSize(ArrayList graph, boolean shouldBeLow) {
+    public int findOptimalSize(ArrayList<SingleStatList> graph, boolean shouldBeLow) {
         double best_value = shouldBeLow ? Double.POSITIVE_INFINITY : Double.NEGATIVE_INFINITY;
         int best_index = -1;
         for (int i = 0; i < graph.size(); i++) {
-            SingleStatList elem = (SingleStatList) graph.get(i);
+            SingleStatList elem = graph.get(i);
             if (shouldBeLow) {
                 if (elem.getY() < best_value) {
                     best_value = elem.getY();
@@ -374,7 +374,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
             computeTestStatistics(runs, model, error);
         }
         // Compute errors of default models
-        ArrayList graph = new ArrayList();
+        ArrayList<SingleStatList> graph = new ArrayList<SingleStatList>();
         setRelativeMeasure(false, 0.0);
         SingleStatList point = computeTreeError(runs, pruners, model, summ, 1);
         setRelativeMeasure(true, point.getY());
@@ -434,7 +434,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     }
 
 
-    public void setFinalResult(ArrayList graph, int optimal, int maxsize) {
+    public void setFinalResult(ArrayList<SingleStatList> graph, int optimal, int maxsize) {
         m_Graph = graph;
         m_Optimal = optimal;
         m_MaxSize = maxsize;

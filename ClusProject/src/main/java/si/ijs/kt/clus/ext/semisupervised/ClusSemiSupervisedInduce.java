@@ -129,7 +129,7 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
      * @param maxInstanceIndex
      *        only the first maxInstanceIndex will be taken
      *        into account
-     * @return
+
      * @throws ClusException 
      * @throws InterruptedException 
      */

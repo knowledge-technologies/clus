@@ -64,13 +64,13 @@ public class SubsetSplit extends NominalSplit {
 
 
     public void showTest(NominalAttrType type, boolean[] isin, int add, double mheur, ClusStatistic tot, ClusStatistic pos) throws ClusException {
-        int count = 0;
+        //int count = 0;
         // System.out.print(type.getName()+ " in {");
         for (int i = 0; i < type.getNbValues(); i++) {
             if (isin[i] || i == add) {
                 // if (count != 0) System.out.print(",");
                 // System.out.print(type.getValue(i));
-                count++;
+                //count++;
             }
         }
         tot.calcMean();
@@ -86,7 +86,7 @@ public class SubsetSplit extends NominalSplit {
         double unk_freq = 0.0;
         int nbvalues = type.getNbValues();
         boolean isin[] = new boolean[nbvalues];
-        boolean acceptable = true; // can only be changed for phylogenetic trees
+        //boolean acceptable = true; // can only be changed for phylogenetic trees
         // If has missing values?
         if (type.hasMissing()) {
             ClusStatistic unknown = node.m_TestStat[nbvalues];

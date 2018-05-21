@@ -38,11 +38,11 @@ import si.ijs.kt.clus.ext.hierarchical.ClassHierarchyPreproc;
 import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
 import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
 import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
-import si.ijs.kt.clus.io.ClusSerializable;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyType;
 import si.ijs.kt.clus.util.exception.ClusException;
+import si.ijs.kt.clus.util.io.ClusSerializable;
 import si.ijs.kt.clus.util.jeans.util.array.StringTable;
 
 

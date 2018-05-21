@@ -255,7 +255,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                      * Leander 25/2/2011 int z = mapping_examples[x];
                      * DataTuple tuple_test = testset.getTuple(z);
                      */
-                    DataTuple tuple_test = testset.getTuple(x);
+                    //DataTuple tuple_test = testset.getTuple(x);
                     // System.out.println("Tuple: "+tuple_test.toString());
                     /*
                      * if (!key.getString(tuple).equals(key.getString(tuple_test))) {

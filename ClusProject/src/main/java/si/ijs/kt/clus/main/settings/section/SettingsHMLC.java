@@ -73,7 +73,7 @@ public class SettingsHMLC extends SettingsBase {
     /**
      * Do Clustering attributes contain Hierarchy as well as numeric or nominal attributes?
      * 
-     * @return
+
      */
     public boolean isHierAndClassAndReg() {
         return isHierAndClassAndReg;

@@ -5,10 +5,14 @@ import java.util.Iterator;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.jeans.util.IntervalCollection;
 
 
 public class TargetSet extends java.util.TreeSet {
+
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+
 
     public TargetSet(ClusAttrType MainTarget) {
         super();

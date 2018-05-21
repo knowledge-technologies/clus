@@ -33,22 +33,22 @@ public class ReliefInduce extends ClusInductionAlgorithm {
 
     @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException, ExecutionException {
-    	int[] nbNeighbours = cr.getStatManager().getSettings().getRelief().getReliefNbNeighboursValue();
-    	int[] nbIterations = cr.getStatManager().getSettings().getRelief().getReliefNbIterationsValue(cr.getTrainingSet().getNbRows());
-    	boolean shouldWeight = cr.getStatManager().getSettings().getRelief().getReliefWeightNeighbours();
-    	double sigma = cr.getStatManager().getSettings().getRelief().getReliefWeightingSigma();
-    	int randomSeed = cr.getStatManager().getSettings().getGeneral().getRandomSeed();
-    	
+        int[] nbNeighbours = cr.getStatManager().getSettings().getRelief().getReliefNbNeighboursValue();
+        int[] nbIterations = cr.getStatManager().getSettings().getRelief().getReliefNbIterationsValue(cr.getTrainingSet().getNbRows());
+        boolean shouldWeight = cr.getStatManager().getSettings().getRelief().getReliefWeightNeighbours();
+        double sigma = cr.getStatManager().getSettings().getRelief().getReliefWeightingSigma();
+        int randomSeed = cr.getStatManager().getSettings().getGeneral().getRandomSeed();
+
         ReliefModel reliefModel = new ReliefModel(nbNeighbours, nbIterations, shouldWeight, sigma, (RowData) cr.getTrainingSet());
 
         m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getData(), reliefModel.getNbNeighbours(), reliefModel.getNbIterations(), reliefModel.getWeightNeighbours(), reliefModel.getSigma(), randomSeed, getSettings());
         m_FeatureRanking.initializeAttributes(cr.getStatManager().getSchema().getDescriptiveAttributes(), m_FeatureRanking.getNbFeatureRankings());
         m_FeatureRanking.computeReliefImportance(reliefModel.getData());
-        
-        String fimpNameAppendix = getSettings().getMLC().getSectionMultiLabel().isEnabled() ?
-                m_FeatureRanking.getMultilabelDistance() : "";
+
+        // String fimpNameAppendix = getSettings().getMLC().getSectionMultiLabel().isEnabled() ?
+        // m_FeatureRanking.getMultilabelDistance() : "";
         m_FeatureRanking.createFimp(cr, 0);
-        
+
         return reliefModel;
     }
 
