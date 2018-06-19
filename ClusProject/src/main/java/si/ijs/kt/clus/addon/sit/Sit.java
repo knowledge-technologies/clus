@@ -275,7 +275,7 @@ public class Sit implements CMDLineArgsProvider {
             errOut.writeHeader();
         }
         catch (IOException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
 

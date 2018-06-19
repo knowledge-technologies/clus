@@ -164,7 +164,7 @@ public class AveragePrecision extends ClusNominalError {
             throw new Exception("AveragePrecision.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
     }

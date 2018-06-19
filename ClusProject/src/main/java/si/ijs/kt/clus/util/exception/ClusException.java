@@ -35,6 +35,11 @@ public class ClusException extends Exception {
     }
 
 
+    public ClusException(String msg, Object... params) {
+        super(String.format(msg, params));
+    }
+
+
     @Override
     public String toString() {
         return getMessage();

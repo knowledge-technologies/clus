@@ -40,7 +40,7 @@ public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
 
     public ClusEnsembleClassifier(Clus clus) {
         super(clus);
-        // TODO Auto-generated constructor stub
+        
     }
 
 
@@ -57,14 +57,13 @@ public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
 
     @Override
     public ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException {
-        // TODO Auto-generated method stub
+        
         return null;
     }
 
 
     @Override
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
-        // TODO Auto-generated method stub
     }
 
 
@@ -76,7 +75,7 @@ public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
 
     @Override
     public void postProcess(ClusRun cr) throws ClusException, IOException {
-        // TODO Auto-generated method stub
+        
         
     }
 

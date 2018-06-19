@@ -133,7 +133,7 @@ public class ClassesAttrType extends ClusAttrType {
             setValue(t, new ClassesTuple(ClassesValue.EMPTY_SET_INDICATOR, null));
         }
         catch (ClusException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
     }

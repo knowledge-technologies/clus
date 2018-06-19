@@ -50,7 +50,6 @@ import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeamModel;
-import si.ijs.kt.clus.ext.ilevelc.DerivedConstraintsComputer;
 import si.ijs.kt.clus.ext.ilevelc.ILevelCStatistic;
 import si.ijs.kt.clus.ext.ilevelc.ILevelConstraint;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
@@ -1227,7 +1226,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 
 
     public void findNominal(NominalAttrType type, RowData data, ArrayList<ILevelConstraint> constraints) {
-        // TODO Auto-generated method stub
+        
 
     }
 

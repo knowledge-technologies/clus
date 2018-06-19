@@ -24,18 +24,17 @@ package si.ijs.kt.clus.main;
 
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 
@@ -56,6 +55,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -213,7 +213,7 @@ public class ClusOutput {
             if (mi != null) {
                 ClusModel model = models.get(i);
                 // A model info without an actual model is possible
-                // E.g., to report error measures in HMCAverageSingleClass
+                // E.g., to report error measures in HMCAverageSingleClass8
                 if (model != null) {
                     m_Writer.print("     " + mi.getName() + ": ");
                     String info_str = model.getModelInfo();
@@ -381,7 +381,7 @@ public class ClusOutput {
                 pythonNames.put(ClusModel.ORIGINAL, "original");
                 pythonNames.put(ClusModel.PRUNED, "pruned");
                 String defPattern = "def %s(xs):";
-                HashMap<String, Integer> descrIndices = ClusUtil.getDiscriptiveAttributesIndices(cr.getStatManager());
+                HashMap<String, Integer> descrIndices = ClusUtil.getDescriptiveAttributesIndices(cr.getStatManager());
                 for (int i = 0; i < cr.getNbModels(); i++) {
                     ClusModel root = models.get(i);
                     if (pythonNames.containsKey(i)) {
@@ -532,19 +532,15 @@ public class ClusOutput {
         Model model = null;
 
         try {
-            String file = "pom.xml";
-            if ((new File(file)).exists()) {
-                model = reader.read(new FileReader(file));
-            }
-            else {
-                InputStreamReader isr = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + file));
+            try (InputStreamReader isr = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/pom.xml"))) {
                 model = reader.read(isr);
-                isr.close();
             }
+
             return model.getVersion();
         }
         catch (Exception ex) {
-            throw new RuntimeException("Unable to get CLUS version");
+            ClusLogger.info("Unable to get CLUS version, using vDEVELOPMENT.");
+            return "DEVELOPMENT";
         }
     }
 
@@ -552,7 +548,7 @@ public class ClusOutput {
     public static void printHeader() {
         System.out.println("Clus v" + getClusVersion() + " - Software for Predictive Clustering");
         System.out.println();
-        System.out.println("Copyright (C) 2007 - 2018");
+        System.out.println(String.format("Copyright (C) 2007 - %s", Calendar.getInstance().get(Calendar.YEAR)));
         System.out.println("   Katholieke Universiteit Leuven, Leuven, Belgium");
         System.out.println("   Jozef Stefan Institute, Ljubljana, Slovenia");
         System.out.println();
@@ -574,23 +570,17 @@ public class ClusOutput {
 
     public static void printGPL() {
         try {
-            String file = "CLUS_LICENSE.txt";
-            String contents = "";
-            if ((new File(file)).exists()) {
-                byte[] b = Files.readAllBytes(Paths.get(file));
-                contents = new String(b, Charset.defaultCharset());
-            }
-            else {
-                InputStreamReader br = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + file));
 
-                char[] buffer = new char[4096];
-                StringBuilder sb = new StringBuilder();
-                for (int len; (len = br.read(buffer)) > 0;)
+            char[] buffer = new char[4096];
+            StringBuilder sb = new StringBuilder();
+
+            try (InputStreamReader br = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/CLUS_LICENSE.txt"))) {
+                for (int len; (len = br.read(buffer)) > 0;) {
                     sb.append(buffer, 0, len);
-                contents = sb.toString();
-                br.close();
+                }
             }
-            System.out.println(contents);
+
+            System.out.println(sb.toString());
         }
         catch (Exception ex) {
             throw new RuntimeException("Unable to get LICENSE information.");

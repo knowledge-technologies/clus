@@ -833,7 +833,7 @@ public class ClusStatManager implements Serializable {
 				return new NominalDistance();
 			}
 		}
-		// TODO Auto-generated method stub
+		
 		return null;
 	}
 

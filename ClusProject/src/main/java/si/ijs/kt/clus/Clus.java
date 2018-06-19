@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 
@@ -120,6 +121,7 @@ import si.ijs.kt.clus.selection.XValSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.DebugFile;
 import si.ijs.kt.clus.util.ResourceInfo;
@@ -269,6 +271,9 @@ public class Clus implements CMDLineArgsProvider {
 
         // TODO: does this really need to be here? martinb
         m_Schema.setHMTRHierarchy(m_HMTRHierarchy);
+
+        // validate settings
+        m_Sett.validateSettings(m_Schema);
 
         m_Induce.initialize();
         initializeAttributeWeights(m_Data);
@@ -473,13 +478,10 @@ public class Clus implements CMDLineArgsProvider {
      * @throws Exception
      */
     public final void induce(ClusRun cr, ClusInductionAlgorithmType clss) throws Exception {
-        if (getSettings().getGeneral().getVerbose() > 0) {
-            System.out.println("Time: " + (new SimpleDateFormat("dd. MM. yyyy HH:mm:ss")).format(Calendar.getInstance().getTime()));
-            System.out.println("Run: " + cr.getIndexString());
-            System.out.println("Verbose: " + getSettings().getGeneral().getVerbose());
-            clss.printInfo();
-            System.out.println();
-        }
+        ClusLogger.info("Time: " + (new SimpleDateFormat("dd. MM. yyyy HH:mm:ss")).format(Calendar.getInstance().getTime()));
+        ClusLogger.info("Run: " + cr.getIndexString());
+        clss.printInfo();
+        ClusLogger.info("");
 
         clss.induceAll(cr);
     }
@@ -1517,6 +1519,8 @@ public class Clus implements CMDLineArgsProvider {
             cr.getAllModelsMI().addModelProcessor(ClusModelInfo.TEST_ERR, wrt);
 
             if (m_Sett.getOutput().isOutFoldData()) {
+                ClusLogger.info("Writing train and test ARFF files for fold " + fold);
+
                 ARFFFile.writeArff(m_Sett.getGeneric().getAppName() + "-test-" + fold + ".arff", cr.getTestSet());
                 ARFFFile.writeArff(m_Sett.getGeneric().getAppName() + "-train-" + fold + ".arff", (RowData) cr.getTrainingSet());
             }
@@ -1539,6 +1543,10 @@ public class Clus implements CMDLineArgsProvider {
         // (RowData)cr.getTrainingSet());
         // System.err.println("CHANGING DATA TO R FORMAT, REMOVE THIS CODE");
 
+        if (m_Sett.getGeneral().isDoNotInduce()) {
+            ClusLogger.info("Skipping model induction");
+            return cr;
+        }
         // Induce tree
         induce(cr, clss);
         if (m_Sett.getRules().isRuleWiseErrors()) {
@@ -1966,7 +1974,11 @@ public class Clus implements CMDLineArgsProvider {
                 else if (cargs.hasOption("fold")) {
                     clus.isxval = true;
                     clus.initialize(cargs, clss);
-                    clus.oneFoldRun(clss, cargs.getOptionInteger("fold"));
+                    
+                    List<Integer> f = cargs.getOptionList("fold");
+                    for(int i : f) {
+                        clus.oneFoldRun(clss, i);
+                    }
                 }
                 else if (cargs.hasOption("bag")) {
                     clus.isxval = true;
@@ -1999,6 +2011,8 @@ public class Clus implements CMDLineArgsProvider {
             if (!sett.getAttribute().isNullGIS()) {
                 tryAnalyzePredictions(clus, sett);
             }
+            
+            ClusLogger.info("Done.");
         }
         catch (ClusException e) {
             System.err.println("Error: " + e);
@@ -2058,12 +2072,14 @@ public class Clus implements CMDLineArgsProvider {
         return Debugging.contains(flag);
     }
 
+
     /**
      * A convenience method. Checks for general debugging status.
      */
     public static boolean isDebug() {
         return isDebug(DebugType.General);
     }
+
 
     /**
      * This sets global debugging flags.

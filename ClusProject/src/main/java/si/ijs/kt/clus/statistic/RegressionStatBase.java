@@ -34,7 +34,8 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
-import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.format.ClusFormat;
@@ -63,8 +64,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
     public RegressionStatBase(Settings sett, NumericAttrType[] attrs, boolean onlymean) {
         super(sett);
-        
-        
+
         m_Attrs = attrs;
         m_NbAttrs = attrs.length;
         if (onlymean) {
@@ -198,8 +198,8 @@ public abstract class RegressionStatBase extends ClusStatistic {
         double t = Math.abs(local_mean - global_mean) / Math.sqrt(local_var / local_n + global_var / global_n);
         double degreesOfFreedom = 0;
         degreesOfFreedom = df(local_var, global_var, local_n, global_n);
-        //DistributionFactory distributionFactory = DistributionFactory.newInstance();
-        //TDistribution tDistribution = distributionFactory.createTDistribution(degreesOfFreedom);
+        // DistributionFactory distributionFactory = DistributionFactory.newInstance();
+        // TDistribution tDistribution = distributionFactory.createTDistribution(degreesOfFreedom);
         TDistribution tDistribution = new TDistribution(degreesOfFreedom);
         return 1.0 - tDistribution.cumulativeProbability(-t, t);
     }
@@ -289,22 +289,24 @@ public abstract class RegressionStatBase extends ClusStatistic {
         return sum / getNbAttributes();
     }
 
+
     /*
-   	 * Compute squared distance between each of the tuple's target attributes and this statistic's mean.
-   	 **/
-   	public double[] getPointwiseSquaredDistance(DataTuple tuple, ClusAttributeWeights weights) {
-                   double[] distances = new double[getNbAttributes()];
-   		for (int i = 0; i < getNbAttributes(); i++) {
-   			NumericAttrType type = getAttribute(i);
-   			distances[i] = type.getNumeric(tuple) - m_Means[i];
-                           distances[i]*=distances[i];
-   		}
-   		return distances;
-   	}
+     * Compute squared distance between each of the tuple's target attributes and this statistic's mean.
+     **/
+    public double[] getPointwiseSquaredDistance(DataTuple tuple, ClusAttributeWeights weights) {
+        double[] distances = new double[getNbAttributes()];
+        for (int i = 0; i < getNbAttributes(); i++) {
+            NumericAttrType type = getAttribute(i);
+            distances[i] = type.getNumeric(tuple) - m_Means[i];
+            distances[i] *= distances[i];
+        }
+        return distances;
+    }
+
 
     @Override
     public String getArrayOfStatistic() {
-    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -331,7 +333,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
     @Override
     public String getDebugString() {
-    	ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < m_NbAttrs; i++) {
@@ -353,7 +355,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
     @Override
     public void printDistribution(PrintWriter wrt) throws IOException {
-    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         for (int i = 0; i < m_Attrs.length; i++) {
             wrt.print(StringUtils.printStr(m_Attrs[i].getName(), 35));
             wrt.print(" [");
@@ -416,19 +418,18 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
 
     @Override
-    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
+    public void vote(ArrayList<ClusStatistic> votes, ClusROSForestInfo ROSForestInfo) {
         reset();
         m_Means = new double[m_NbAttrs];
-        double[] coverage = targetSubspaceInfo.getCoverage();
+        double[] coverage = ROSForestInfo.getCoverage();
 
         for (int j = 0; j < votes.size(); j++) {
             RegressionStatBase vote = (RegressionStatBase) votes.get(j);
-            int[] enabled = targetSubspaceInfo.getOnlyTargets(targetSubspaceInfo.getModelSubspace(j));
 
-            for (int i = 0; i < m_NbAttrs; i++) {
-                if (enabled[i] == 1) {
-                    m_Means[i] += vote.m_Means[i] / coverage[i];
-                }
+            ClusROSModelInfo info = ROSForestInfo.getROSModelInfo(j);
+
+            for (Integer i : info.getTargets()) {
+                m_Means[i] += vote.m_Means[i] / coverage[i];
             }
         }
     }

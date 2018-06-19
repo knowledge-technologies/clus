@@ -18,7 +18,6 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 
 
 	<properties>
-		<!-- <project.build.sourceEncoding>Cp1250</project.build.sourceEncoding> -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 		<project.mainclass>si.ijs.kt.clus.Clus</project.mainclass>
 
@@ -48,6 +47,9 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 		<gson.version>2.8.1</gson.version>
 		<junit.version>5.0.0</junit.version>
 		<guava-primitives.version>r03</guava-primitives.version>
+
+		<log4j-core.version>2.11.0</log4j-core.version>
+		<xerces.version>2.11.0</xerces.version>
 	</properties>
 
 	<dependencies>
@@ -87,6 +89,17 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 			<artifactId>maven-model</artifactId>
 			<version>${maven-model.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<version>${log4j-core.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>xerces</groupId>
+			<artifactId>xercesImpl</artifactId>
+			<version>${xerces.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -96,19 +109,16 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 			<resource>
 				<directory>${project.basedir}/</directory>
 				<includes>
-					<include>CLUS_LICENSE.txt</include>
+					<include>pom.xml</include>
 				</includes>
+			</resource>
+			<resource>
+				<directory>${project.basedir}/resources/system</directory>
 			</resource>
 			<resource>
 				<directory>${project.basedir}/resources/python_models/</directory>
 				<includes>
 					<include>tree_as_object.py</include>
-				</includes>
-			</resource>
-			<resource>
-				<directory>${project.basedir}/</directory>
-				<includes>
-					<include>pom.xml</include>
 				</includes>
 			</resource>
 		</resources>
@@ -228,7 +238,7 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 									<exclude>jmock:*</exclude>
 									<exclude>*:xml-apis</exclude>
 									<exclude>org.apache.maven:lib:tests</exclude>
-									<exclude>log4j:log4j:jar:</exclude>
+									<!-- <exclude>log4j:log4j:jar:</exclude> -->
 								</excludes>
 							</artifactSet>
 						</configuration>
@@ -285,9 +295,6 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 				${antrun.plugin.version}
 				</version>
 			</plugin>
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-javadoc-plugin</artifactId> 
-				<version>${javadoc.report.plugin}</version> </plugin> -->
 		</plugins>
 	</reporting>
-
 </project>

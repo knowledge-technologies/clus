@@ -237,7 +237,7 @@ public abstract class MyNode implements Node, Serializable, ClusModel {
 
     public void printTreeInDatabase(PrintWriter writer, String[] tabitem,
             int[] tabexist, int cpt, String typetree) {
-        // TODO Auto-generated method stub
+        
         
     }
     

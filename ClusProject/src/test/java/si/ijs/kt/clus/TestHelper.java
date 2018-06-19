@@ -34,7 +34,7 @@ public class TestHelper {
 
       data = clus.getData();
     } catch (Exception e) {
-      // TODO Auto-generated catch block
+      
       e.printStackTrace();
     } finally {
       clus = null;

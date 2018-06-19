@@ -268,6 +268,7 @@ public class SettingsOutput extends SettingsBase {
         m_Section.addNode(m_OutFoldModels = new INIFileBool("AllFoldModels", true));
         m_Section.addNode(m_OutFoldErr = new INIFileBool("AllFoldErrors", false));
         m_Section.addNode(m_OutFoldData = new INIFileBool("AllFoldDatasets", false));
+       
         m_Section.addNode(m_ShowUnknown = new INIFileBool("UnknownFrequency", false));
         m_Section.addNode(m_ShowBrFreq = new INIFileBool("BranchFrequency", false));
         m_Section.addNode(m_ShowInfo = new INIFileEnumList<>("ShowInfo", Arrays.asList(ShowInfo.Count)));

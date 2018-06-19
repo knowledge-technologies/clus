@@ -145,7 +145,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
 
     @Override
     public void postProcess(ClusRun cr) throws ClusException, IOException {
-        // TODO Auto-generated method stub
+        
 
     }
 }

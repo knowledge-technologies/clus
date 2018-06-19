@@ -34,12 +34,14 @@ import java.util.Enumeration;
 import java.util.List;
 
 import si.ijs.kt.clus.data.ClusSchema;
+import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
 import si.ijs.kt.clus.main.settings.section.SettingsAttribute;
 import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
 import si.ijs.kt.clus.main.settings.section.SettingsConstraints;
 import si.ijs.kt.clus.main.settings.section.SettingsData;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsExhaustiveSearch;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
@@ -353,11 +355,16 @@ public class Settings implements Serializable {
         m_SettData.updateDataFile(m_SettGeneric.getAppName() + ".arff");
         m_SettHMLC.initHierarchical();
 
+    }
+
+
+    public void validateSettings(ClusSchema schema) {
         try {
-            validateSettingsCompatibility();
+            validateSettingsCompatibility(schema);
         }
         catch (ClusInvalidSettingsException e) {
             e.printStackTrace();
+            System.exit(1);
         }
     }
 
@@ -368,20 +375,20 @@ public class Settings implements Serializable {
      * 
      * @throws ClusInvalidSettingsException
      */
-    private void validateSettingsCompatibility() throws ClusInvalidSettingsException {
+    private void validateSettingsCompatibility(ClusSchema schema) throws ClusInvalidSettingsException {
         List<String> incompatibilities = new ArrayList<String>();
         List<String> tmpList = null;
 
         for (SettingsBase sec : m_Sections) {
             tmpList = sec.validateSettingsInternal();
             if (tmpList != null && !tmpList.isEmpty()) {
-                incompatibilities.add(sec.getSection().getName());
+                incompatibilities.add("Section: " + sec.getSection().getName());
                 incompatibilities.addAll(tmpList);
             }
         }
 
-        tmpList = validateSettingsCombined();
-        if (tmpList != null) {
+        tmpList = validateSettingsCombined(schema);
+        if (tmpList != null && !tmpList.isEmpty()) {
             incompatibilities.add("COMBINED INCOMPATIBILITIES");
             incompatibilities.addAll(tmpList);
         }
@@ -391,11 +398,33 @@ public class Settings implements Serializable {
 
 
     /** Use this method to validate cross-section settings. */
-    private List<String> validateSettingsCombined() {
-        List<String> invalid = null;
+    private List<String> validateSettingsCombined(ClusSchema schema) {
+        List<String> invalid = new ArrayList<>();
 
         /* kNN */
         // TODO matejp
+
+        /* if ROS is enabled */
+        if (getEnsemble().isEnsembleMode() && getEnsemble().isEnsembleROSEnabled()) {
+
+            /* Check if the selected ensemble method is compatible with ROS. */
+            if (!Arrays.asList(EnsembleMethod.Bagging, EnsembleMethod.RForest, EnsembleMethod.ExtraTrees).contains(getEnsemble().getEnsembleMethod())) {
+                invalid.add("ROS: Extension is not implemented for the selected ensemble method!");
+            }
+
+            /*
+             * Check if the set of clustering attributes are same as target attributes.
+             * Heuristics calculate variance on the clustering attributes, not target attributes.
+             * However, the voting procedure uses target attributes, so we have to make sure the clustering and target
+             * attributes are the same.
+             */
+            List<ClusAttrType> targets = Arrays.asList(schema.getTargetAttributes());
+            List<ClusAttrType> clustering = Arrays.asList(schema.getClusteringAttributes());
+
+            if (!clustering.containsAll(targets) || !targets.containsAll(clustering)) {
+                invalid.add("ROS: target and clustering attributes should be the same.");
+            }
+        }
 
         return invalid;
     }

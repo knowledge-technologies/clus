@@ -21,7 +21,7 @@ public class ErrorOutput {
             m_Writer = m_Sett.getGeneric().getFileAbsoluteWriter(m_Sett.getGeneric().getAppName() + ".err");
         }
         catch (FileNotFoundException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
     }

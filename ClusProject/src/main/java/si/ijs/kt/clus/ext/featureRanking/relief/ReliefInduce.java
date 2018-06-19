@@ -22,7 +22,7 @@ public class ReliefInduce extends ClusInductionAlgorithm {
 
     public ReliefInduce(ClusInductionAlgorithm other) {
         super(other);
-        // TODO Auto-generated constructor stub
+        
     }
 
 
