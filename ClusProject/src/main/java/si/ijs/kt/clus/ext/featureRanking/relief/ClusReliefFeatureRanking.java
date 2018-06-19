@@ -874,8 +874,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         double v1 = attr.getNumeric(t1);
         double v2 = attr.getNumeric(t2);
         double t;
-        if (t1.hasNumMissing(attr.getArrayIndex())) {
-            if (t2.hasNumMissing(attr.getArrayIndex())) {
+        if (isMissing(v1)) {      // t1.hasNumMissing(attr.getArrayIndex())
+            if (isMissing(v2)) {  // t2.hasNumMissing(attr.getArrayIndex())
                 t = BOTH_MISSING_DIST;
             }
             else {
@@ -884,7 +884,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             }
         }
         else {
-            if (t2.hasNumMissing(attr.getArrayIndex())) {
+            if (isMissing(v2)) {
                 t = (v1 - m_numMins.get(attr.getName())) / normalizationFactor;
                 t = Math.max(t, 1.0 - t);
             }
@@ -961,7 +961,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
 
     /**
-     * Computes a random permutation with FisherYates algorithm.
+     * Computes a random permutation with Fisher-Yates algorithm.
      * 
      * @param examples
      *        The number of examples that we will place in a random order. *
@@ -1175,5 +1175,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     
     public String getMultilabelDistance(){
         return m_MLCDist.distanceName();
+    }
+    
+    private static boolean isMissing(double val) {
+    	return val == Double.POSITIVE_INFINITY;
     }
 }
