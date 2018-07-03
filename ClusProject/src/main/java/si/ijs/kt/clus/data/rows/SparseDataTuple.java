@@ -25,6 +25,7 @@ package si.ijs.kt.clus.data.rows;
 import java.io.PrintWriter;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Set;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
@@ -71,15 +72,19 @@ public class SparseDataTuple extends DataTuple {
     }
 
 
-    public Object[] getAttributeIndices() {
-        return m_Map.keySet().toArray();
+    public Integer[] getAttributeIndices() {
+        return m_Map.keySet().toArray(new Integer[0]);
+    }
+    
+    public Set<Integer> getAttributeIndicesSet() {
+        return m_Map.keySet();
     }
 
 
     public void addExampleToAttributes() {
-        Object[] indices = getAttributeIndices();
+        Integer[] indices = getAttributeIndices();
         for (int i = 0; i < indices.length; i++) {
-            int index = ((Integer) indices[i]).intValue();
+            int index = indices[i].intValue();
             SparseNumericAttrType attr = (SparseNumericAttrType) getSchema().getAttrType(index);
             attr.addExample(this);
         }
@@ -157,5 +162,10 @@ public class SparseDataTuple extends DataTuple {
             }
         }
         wrt.println("}");
+    }
+    
+    @Override
+    public boolean isSparse() {
+    	return true;
     }
 }

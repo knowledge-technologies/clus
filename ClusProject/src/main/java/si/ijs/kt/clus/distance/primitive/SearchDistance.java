@@ -32,7 +32,7 @@ import si.ijs.kt.clus.util.ClusException;
 
 
 /**
- * @author Mitja Pugelj
+ * @author Mitja Pugelj, Matej Petkovic
  */
 public class SearchDistance extends ClusDistance {
 
@@ -68,7 +68,7 @@ public class SearchDistance extends ClusDistance {
                 m_NormalizationWeights[i] = 1.0 / (max_values[i] - min_values[i]);
             }
             else {
-                m_NormalizationWeights[i] = 3.14159; // does not matter, which value, if there is only one different
+                m_NormalizationWeights[i] = 3.14159; // does not matter which value, if there is only one different
                                                      // value
             }
         }

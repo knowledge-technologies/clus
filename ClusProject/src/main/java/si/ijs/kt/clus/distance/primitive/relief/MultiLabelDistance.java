@@ -72,7 +72,7 @@ public class MultiLabelDistance {
 
 	/**
 	 * Computes the Hamming loss distance between the label sets of data tuples t1 and t2, i.e.
-	 * |labels(t1) symmetric labels(t2)| / |labels(t1) union labels(t2)|
+	 * |labels(t1) symmetric labels(t2)| / number of labels.
 	 * @param t1
 	 * @param t2
 	 * @return

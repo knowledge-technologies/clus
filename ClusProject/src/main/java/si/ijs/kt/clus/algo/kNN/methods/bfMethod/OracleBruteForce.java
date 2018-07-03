@@ -67,7 +67,12 @@ public class OracleBruteForce extends BruteForce {
 		   SaveLoadNeighbours.assureIsFlatNearestNeighbours(m_NearestNeighbours);
 	   } else {
 		   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours", 1, sett.getGeneral().getVerbose());
+		   int counter = 0;
 		   for(DataTuple tuple : new ArrayOfArraysIterator<>(new DataTuple[][] {m_ChosenInstancesTrain, m_ChosenInstancesTest})) {
+			   counter++;
+			   if (counter % 10 == 0) {
+				   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours for instance " + counter, 1, sett.getGeneral().getVerbose());
+			   }
 			   NN[] temp = super.returnPureNNs(tuple, k);
 			   NearestNeighbour[] nns = new NearestNeighbour[temp.length];
 			   for(int n = 0; n < nns.length; n++) {

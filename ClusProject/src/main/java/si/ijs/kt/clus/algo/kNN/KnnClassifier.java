@@ -30,6 +30,8 @@ import si.ijs.kt.clus.algo.ClusInductionAlgorithmType;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN;
@@ -81,18 +83,37 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             int[] ks = getSettings().getKNN().getKNNk(); //.split(",");
             int[] distWeight = getSettings().getKNN().getKNNDistanceWeight(); //.split(",");
             int[] weights = new int[distWeight.length];
-            int i = 0;
-            for (int s : distWeight) {
-            	weights[i] = s;
-                i++;
+            for(int i = 0; i < distWeight.length; i++) {
+            	weights[i] = distWeight[i];
             }
+            
+            RowData trainData = cr.getDataSet(ClusModelInfoList.TRAINSET);
+            boolean isSparse = trainData.getTuple(0).isSparse(); // assuming all tuples in TRAIN and TEST are in the same form
+            
             int maxK = 1;
+            // TODO: fix this as in the case of [Relief] Iterations etc.
             for(int k: ks) {
+            	if (k > trainData.getNbRows()) {
+            		System.err.println(String.format("Impossible to find k = %d neighbours (training data size: %d)", k, trainData.getNbRows()));
+            		System.err.println("Ignoring this value ...");
+            		continue;
+            	}
+            	else if(k == trainData.getNbRows()){
+            		System.err.println(String.format("Warning: the number of neighbours k = %d equals the training data size. This will cause an exception if training error will be computed.", k));
+            	}
             	maxK = Math.max(maxK, k);
             }
             // base model
             String model_name = "Default 1-nn model with no weighting"; // DO NOT CHANGE THE NAME!!!
-            KnnModel model = new KnnModel(cr, 1, SettingsKNN.DISTANCE_WEIGHTING_CONSTANT, maxK);
+            
+            
+            ClusAttrType[] necessaryDescriptiveAttributes;
+            if (isSparse) {
+            	necessaryDescriptiveAttributes = trainData.getSchema().getNominalAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+            } else {
+            	necessaryDescriptiveAttributes = trainData.getSchema().getAllAttrUse(ClusAttrType.ATTR_USE_DESCRIPTIVE);
+            }
+            KnnModel model = new KnnModel(cr, 1, SettingsKNN.DISTANCE_WEIGHTING_CONSTANT, maxK, isSparse, necessaryDescriptiveAttributes);
             ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL, model_name);
             model_info.setModel(model);
             model_info.setName(model_name);
@@ -105,19 +126,17 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             int modelCnt = 2;
 
             for (int k : ks) {
-                i = -1;
-                for (int w : weights) {
-                    i++;
-                    if (k == 1 && w == SettingsKNN.DISTANCE_WEIGHTING_CONSTANT)
+            	for (int i = 0; i < weights.length; i++) {
+            		int w = weights[i];
+            		if (k == 1 && w == SettingsKNN.DISTANCE_WEIGHTING_CONSTANT)
                         continue; // same as default model
                     KnnModel tmpmodel = new KnnModel(cr, k, w, model);
-                    model_name = "Original " + k + "-nn model with " + SettingsKNN.DISTANCE_WEIGHTS[weights[i]] + " weighting";// DO NOT CHANGE THE NAME!!!
+                    model_name = "Original " + k + "-nn model with " + SettingsKNN.DISTANCE_WEIGHTS[w] + " weighting";// DO NOT CHANGE THE NAME!!!
                     ClusModelInfo tmpmodel_info = cr.addModelInfo(modelCnt++, model_name);
                     tmpmodel_info.setModel(tmpmodel);
                     tmpmodel_info.setName(model_name);
-                }
+            	}
             }
-
             return model;
         }
     }
