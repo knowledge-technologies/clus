@@ -54,7 +54,7 @@ public class BitwiseNominalAttrType extends NominalAttrType {
 
     @Override
     public int getNominal(DataTuple tuple) {
-        return (tuple.m_Ints[m_ArrayIndex] >> m_BitPosition) & m_BitMask;
+        return (tuple.getIntVal(m_ArrayIndex) >> m_BitPosition) & m_BitMask;
     }
 
 

@@ -71,14 +71,14 @@ public class StringAttrType extends ClusAttrType {
 
     @Override
     public String getString(DataTuple tuple) {
-        return (String) tuple.m_Objects[m_ArrayIndex];
+        return (String) tuple.getObjVal(m_ArrayIndex);
     }
 
 
     @Override
     public int compareValue(DataTuple t1, DataTuple t2) {
-        String s1 = (String) t1.m_Objects[m_ArrayIndex];
-        String s2 = (String) t2.m_Objects[m_ArrayIndex];
+        String s1 = (String) t1.getObjVal(m_ArrayIndex);
+        String s2 = (String) t2.getObjVal(m_ArrayIndex);
         return s1.equals(s2) ? 0 : 1;
     }
 

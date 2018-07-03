@@ -140,7 +140,7 @@ public class NumericAttrType extends ClusAttrType {
 
     @Override
     public boolean isMissing(DataTuple tuple) {
-        return tuple.m_Doubles[m_ArrayIndex] == MISSING;
+        return tuple.getDoubleVal(m_ArrayIndex) == MISSING;
     }
 
 
@@ -157,8 +157,8 @@ public class NumericAttrType extends ClusAttrType {
 
     @Override
     public int compareValue(DataTuple t1, DataTuple t2) {
-        double v1 = t1.m_Doubles[m_ArrayIndex];
-        double v2 = t2.m_Doubles[m_ArrayIndex];
+        double v1 = t1.getDoubleVal(m_ArrayIndex);
+        double v2 = t2.getDoubleVal(m_ArrayIndex);
         if (v1 == v2)
             return 0;
         return v1 > v2 ? 1 : -1;

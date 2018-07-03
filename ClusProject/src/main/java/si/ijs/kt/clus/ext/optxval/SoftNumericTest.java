@@ -103,7 +103,7 @@ public class SoftNumericTest extends SoftTest {
 
     @Override
     public int softPredictNb2(DataTuple tuple, int branch) {
-        double value = tuple.m_Doubles[m_Type.getArrayIndex()];
+        double value = tuple.getDoubleVal(m_Type.getArrayIndex());
         if (branch == ClusNode.YES) {
             if (value > m_Bounds[0])
                 return 1;
@@ -143,7 +143,7 @@ public class SoftNumericTest extends SoftTest {
 
     @Override
     public int softPredictNb(DataTuple tuple, int branch) {
-        double value = tuple.m_Doubles[m_Type.getArrayIndex()];
+        double value = tuple.getDoubleVal(m_Type.getArrayIndex());
         if (branch == ClusNode.YES) {
             if (value > m_Bounds[0])
                 return 1;
@@ -199,7 +199,7 @@ public class SoftNumericTest extends SoftTest {
 
     @Override
     public int softPredict(RowData res, DataTuple tuple, int idx, int branch) {
-        double value = tuple.m_Doubles[m_Type.getArrayIndex()];
+        double value = tuple.getDoubleVal(m_Type.getArrayIndex());
         if (branch == ClusNode.YES) {
             if (value <= m_Bounds[m_Bounds.length - 1])
                 return idx;
@@ -244,7 +244,7 @@ public class SoftNumericTest extends SoftTest {
 
     @Override
     public int softPredict2(RowData res, DataTuple tuple, int idx, int branch) {
-        double value = tuple.m_Doubles[m_Type.getArrayIndex()];
+        double value = tuple.getDoubleVal(m_Type.getArrayIndex());
         if (branch == ClusNode.YES) {
             if (value <= m_Bounds[m_Bounds.length - 1])
                 return idx;

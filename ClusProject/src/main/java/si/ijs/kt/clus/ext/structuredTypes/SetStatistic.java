@@ -129,7 +129,7 @@ public class SetStatistic extends SumPairwiseDistancesStat {
     public void updateWeighted(DataTuple tuple, int idx) {
         super.updateWeighted(tuple, idx);
 
-        Set newSet = new Set((Set) tuple.m_Objects[this.getAttribute().getIndex()]);
+        Set newSet = new Set((Set) tuple.getObjVal(this.getAttribute().getIndex()));
         newSet.setSetWeight(tuple.getWeight());
         m_SetStack.add(newSet);
 

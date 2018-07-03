@@ -24,6 +24,7 @@ package si.ijs.kt.clus.data.rows;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.Arrays;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
@@ -40,17 +41,18 @@ public class DataTuple implements Serializable {
     /**
      * Nominal attributes of the tuple.
      */
-    public int[] m_Ints;
+    protected int[] m_Ints;
+    public static final int DUMMY_INT = -123;
 
     /**
      * Numeric attributes of the tuple.
      */
-    public double[] m_Doubles;
+    protected double[] m_Doubles;
 
     /**
      * Structured attributes of the tuple.
      */
-    public Object[] m_Objects;
+    protected Object[] m_Objects;
 
     /**
      * Weight of the tuple.
@@ -93,6 +95,7 @@ public class DataTuple implements Serializable {
         int nb_int = schema.getNbInts();
         if (nb_int > 0) {
             m_Ints = new int[nb_int];
+            Arrays.fill(m_Ints, DUMMY_INT);  // to ensure that all attribute values are specified in the sparse case
         }
         int nb_double = schema.getNbDoubles();
         if (nb_double > 0) {
@@ -105,11 +108,6 @@ public class DataTuple implements Serializable {
         // Initialize weight
         m_Weight = 1.0;
         m_Schema = schema;
-    }
-
-
-    public final ClusSchema getSchema() {
-        return m_Schema;
     }
 
 
@@ -266,6 +264,21 @@ public class DataTuple implements Serializable {
         return m_Doubles[idx] == Double.POSITIVE_INFINITY;
     }
 
+    public final int[] getInts() {
+    	return m_Ints;
+    }
+    
+    public final double[] getDoubles() {
+    	return m_Doubles;
+    }
+    
+    public final Object[] getObjects() {
+    	return m_Objects;
+    }
+
+    public final ClusSchema getSchema() {
+        return m_Schema;
+    }
 
     public final double getDoubleVal(int idx) {
         return m_Doubles[idx];

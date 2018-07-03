@@ -89,6 +89,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         this(data.m_Data, data.getNbRows());
         m_Schema = data.m_Schema;
         setIndices();
+        checkData();
     }
 
 
@@ -97,6 +98,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         System.arraycopy(data, 0, m_Data, 0, size);
         setNbRows(size);
         setIndices();
+        checkData();
     }
 
 
@@ -104,6 +106,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         m_Schema = schema;
         setFromList(list);
         setIndices();
+        checkData();
     }
 
 
@@ -850,15 +853,28 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    public final boolean checkData() {
-        for (int i = 0; i < m_NbRows; i++) {
-            DataTuple tuple = m_Data[i];
-            if (tuple.m_Index == -1 && tuple.m_Folds == null)
-                return false;
-            if (tuple.m_Index != -1 && tuple.m_Folds != null)
-                return false;
+    public void checkData() {
+    	// check whether all dense or all sparse 
+    	boolean[] denseAndSparse = new boolean[2];
+    	int indDense = 0;
+    	int indSparse = 1;
+        for (DataTuple tuple : m_Data) {
+            int ind = tuple.isSparse() ? indSparse : indDense;
+            denseAndSparse[ind] = true;
+            if (denseAndSparse[1 - ind]) {
+            	throw new RuntimeException("Dense and Sparse tuples present in the data.");
+            }
         }
-        return true;
+        // check whether all nominal values were specified for sparse data
+        if (denseAndSparse[indSparse]) {
+        	for (DataTuple tuple : m_Data) {
+        		for (int val : tuple.getInts()) {
+        			if (val == DataTuple.DUMMY_INT) {
+        				throw new RuntimeException("Not all nominal attributes specified in sparse data.");
+        			}
+        		}
+        	}
+        }
     }
 
 

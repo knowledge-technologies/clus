@@ -217,7 +217,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
         if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
             for (int i = 0; i < m_TrainingSet.getNbRows(); i++) {
                 DataTuple t = m_TrainingSet.getTuple(i);
-                labelCardinalityTrainHMC += ((ClassesTuple) t.m_Objects[0]).getNbClasses();
+                labelCardinalityTrainHMC += ((ClassesTuple) t.getObjVal(0)).getNbClasses();
             }
             labelCardinalityTrainHMC /= m_TrainingSet.getNbRows();
         }

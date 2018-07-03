@@ -164,13 +164,13 @@ public class ClassesAttrType extends ClusAttrType {
 
     @Override
     public String getString(DataTuple tuple) {
-        ClassesTuple ct = (ClassesTuple) tuple.m_Objects[m_ArrayIndex];
+        ClassesTuple ct = (ClassesTuple) tuple.getObjVal(m_ArrayIndex);
         return ct.toStringData(m_Hier);
     }
 
 
     public String getVectorString(DataTuple tuple) {
-        ClassesTuple ct = (ClassesTuple) tuple.m_Objects[m_ArrayIndex];
+        ClassesTuple ct = (ClassesTuple) tuple.getObjVal(m_ArrayIndex);
         boolean[] vec = ct.getVectorBooleanNodeAndAncestors(m_Hier);
         StringBuffer buf = new StringBuffer();
         for (int i = 0; i < vec.length; i++) {

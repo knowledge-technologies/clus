@@ -70,14 +70,14 @@ public class IntegerAttrType extends ClusAttrType {
 
     @Override
     public String getString(DataTuple tuple) {
-        return String.valueOf(tuple.m_Ints[m_ArrayIndex]);
+        return String.valueOf(tuple.getIntVal(m_ArrayIndex));
     }
 
 
     @Override
     public int compareValue(DataTuple t1, DataTuple t2) {
-        int s1 = t1.m_Ints[m_ArrayIndex];
-        int s2 = t2.m_Ints[m_ArrayIndex];
+        int s1 = t1.getIntVal(m_ArrayIndex);
+        int s2 = t2.getIntVal(m_ArrayIndex);
         return s1 == s2 ? 0 : 1;
     }
 

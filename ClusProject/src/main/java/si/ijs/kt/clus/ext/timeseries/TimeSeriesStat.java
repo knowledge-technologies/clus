@@ -135,7 +135,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
     @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         super.updateWeighted(tuple, idx);
-        TimeSeries newTimeSeries = new TimeSeries((TimeSeries) tuple.m_Objects[m_Attr.getArrayIndex()]); // new
+        TimeSeries newTimeSeries = new TimeSeries((TimeSeries) tuple.getObjVal(m_Attr.getArrayIndex())); // new
                                                                                                          // TimeSeries((TimeSeries)
                                                                                                          // tuple.m_Objects[0]);
         newTimeSeries.setTSWeight(tuple.getWeight());

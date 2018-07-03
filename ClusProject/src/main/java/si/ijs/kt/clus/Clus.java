@@ -224,7 +224,6 @@ public class Clus implements CMDLineArgsProvider {
         else {
             m_Data = view.readData(reader, m_Schema);
         }
-
         reader.close();
         if (m_Sett.getGeneral().getVerbose() > 0)
             System.out.println("Found " + m_Data.getNbRows() + " rows");
@@ -1146,8 +1145,8 @@ public class Clus implements CMDLineArgsProvider {
         // Make the alterations
         for (int iRow = 0; iRow < data.getNbRows(); iRow++) {
             DataTuple tuple = data.getTuple(iRow).deepCloneTuple();
-
-            for (int jNumAttrib = 0; jNumAttrib < tuple.m_Doubles.length; jNumAttrib++) {
+            int doublesLen = tuple.getDoubles().length;
+            for (int jNumAttrib = 0; jNumAttrib < doublesLen; jNumAttrib++) {
                 NumericAttrType type = numTypes[jNumAttrib];
 
                 double value = type.getNumeric(tuple);

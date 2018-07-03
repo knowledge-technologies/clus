@@ -122,7 +122,7 @@ public class TupleStatistic extends SumPairwiseDistancesStat {
     @Override
     public void updateWeighted(DataTuple tuple, int idx) {
         super.updateWeighted(tuple, idx);
-        Tuple newTuple = new Tuple((Tuple) tuple.m_Objects[this.getAttribute().getArrayIndex()]);
+        Tuple newTuple = new Tuple((Tuple) tuple.getObjVal(this.getAttribute().getArrayIndex()));
         newTuple.setTSWeight(tuple.getWeight());
         m_TupleStack.add(newTuple);
     }
