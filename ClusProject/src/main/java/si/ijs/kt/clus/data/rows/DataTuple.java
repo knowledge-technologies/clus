@@ -265,15 +265,15 @@ public class DataTuple implements Serializable {
     }
 
     public final int[] getInts() {
-    	return m_Ints;
+    	return m_Ints == null ? new int[0] : m_Ints;
     }
     
     public final double[] getDoubles() {
-    	return m_Doubles;
+    	return m_Doubles == null ? new double[0] : m_Doubles;
     }
     
     public final Object[] getObjects() {
-    	return m_Objects;
+    	return m_Objects == null ? new Object[0] : m_Objects;
     }
 
     public final ClusSchema getSchema() {

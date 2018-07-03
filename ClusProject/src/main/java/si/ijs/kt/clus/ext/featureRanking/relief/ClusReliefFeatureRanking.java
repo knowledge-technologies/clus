@@ -5,7 +5,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -14,6 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.data.rows.SparseDataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
@@ -87,7 +90,11 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
     /** {array of descriptive attributes, array of target attributes} */
     private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][];
-
+    
+    /** An analog of {@link m_DescriptiveTargetAttr}: indices of the attributes which are used in distance computations:
+     * if data tuples are sparse, the two elements of this list may be shorted than the elements of {@link m_DescriptiveTargetAttr} */
+    private int[][] m_DistanceDescriptiveTargetAttr = new int[2][];
+    
     /** number of descriptive attributes */
     private int m_NbDescriptiveAttrs;
 
@@ -105,6 +112,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
     /** number of examples in the data */
     private int m_NbExamples;
+    
+    /** Are the data tuples sparse or dense */
+    private boolean m_IsSparse;
 
     /** distance in the case of missing values */
     public static double BOTH_MISSING_DIST = 1.0;
@@ -280,7 +290,26 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 m_DescriptiveTargetAttr[space] = m_Data.m_Schema.getAllAttrUse(attrType);
         }
         m_NbDescriptiveAttrs = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE].length;
-        m_NbTargetAttrs = m_DescriptiveTargetAttr[1].length;
+        m_NbTargetAttrs = m_DescriptiveTargetAttr[TARGET_SPACE].length;
+        // efficient distance computation for sparse tuples
+        int nbNonNumericDescriptive = m_NbDescriptiveAttrs - m_Data.getSchema().getNbNumericAttrUse(AttributeUseType.Descriptive);
+        int nbNonNumericTarget = m_NbTargetAttrs - m_Data.getSchema().getNbNumericAttrUse(AttributeUseType.Target);
+        m_DistanceDescriptiveTargetAttr[DESCRIPTIVE_SPACE] = new int[nbNonNumericDescriptive];
+        m_DistanceDescriptiveTargetAttr[TARGET_SPACE] = new int[nbNonNumericTarget];
+        for (int space : SPACE_TYPES) {
+        	int place = 0;
+        	for (int i = 0; i < m_DescriptiveTargetAttr[space].length; i++) {
+        		if (!m_DescriptiveTargetAttr[space][i].isNumeric()) {
+        			m_DistanceDescriptiveTargetAttr[space][place] = i;
+        			place++;
+        		}
+        	}
+        	if (place != m_DistanceDescriptiveTargetAttr[space].length) {
+        		throw new RuntimeException("Something fishy with the number of nonumeric attributes.");
+        	}
+        }
+        m_IsSparse = m_Data.isSparse();
+        // number of rankings        
         m_PerformPerTargetRanking = m_Data.m_Schema.getSettings().getEnsemble().shouldPerformRankingPerTarget();
         if (m_PerformPerTargetRanking && m_NbTargetAttrs == 1) {
             System.err.println("Situation:");
@@ -292,10 +321,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         }
         m_NbGeneralisedTargetAttrs = 1 + (m_PerformPerTargetRanking ? m_NbTargetAttrs : 0);
         setNbFeatureRankings();
-
+        // types of rankings
         m_IsStandardClassification = computeStandardClassification();
         m_NbTargetValues = nbTargetValues();
-
         // check for multilabelness
         m_IsMLC = getSettings().getMLC().getSectionMultiLabel().isEnabled();
         int upperBound = m_IsMLC ? 1 + m_NbTargetAttrs : m_NbGeneralisedTargetAttrs;
@@ -305,7 +333,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 m_TargetProbabilities[targetIndex + 1] = nominalClassCounts(targetIndex);
             }
         }
-
         // compute min and max of numeric attributes
         m_numMins = new HashMap<String, Double>();
         m_numMaxs = new HashMap<String, Double>();
@@ -355,10 +382,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_SumDistAttr = new double[m_NbGeneralisedTargetAttrs][m_NbNeighbours.length][m_NbDescriptiveAttrs];
         m_SumDistTarget = new double[m_NbGeneralisedTargetAttrs][m_NbNeighbours.length];
         m_SumDistAttrTarget = new double[m_NbGeneralisedTargetAttrs][m_NbNeighbours.length][m_NbDescriptiveAttrs];
-
         // nearest neighbours
         m_NearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
-
         // number of threads
         m_NbThreads = m_Data.getSchema().getSettings().getEnsemble().getNumberOfThreads();
     }
@@ -788,6 +813,36 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 dist += computeDistance1D(t1, t2, attr);
             }
             return dist / dimensions;
+        }
+
+    }
+    
+    public double computeDistanceOptimized(DataTuple t1, DataTuple t2, int space) throws ClusException {
+        double dist = 0.0;
+        if (m_IsMLC && space == TARGET_SPACE) {
+            return m_MLCDist.calculateDist(t1, t2);
+        }
+        else {
+        	int dimensionsFull = space == DESCRIPTIVE_SPACE ? m_NbDescriptiveAttrs : m_NbTargetAttrs;
+        	// necessary types: all (dense) or non-numeric (sparse)
+            int dimensions = m_DistanceDescriptiveTargetAttr[space].length;
+            ClusAttrType attr;
+            for (int attrInd = 0; attrInd < dimensions; attrInd++) {
+                attr = m_DescriptiveTargetAttr[space][m_DistanceDescriptiveTargetAttr[space][attrInd]];
+                dist += computeDistance1D(t1, t2, attr);
+            }
+            // if sparse, non-zero numeric attributes must be added
+            if (m_IsSparse) {
+            	Set<Integer> inds1 = ((SparseDataTuple) t1).getAttributeIndicesSet();
+            	Set<Integer> inds2 = ((SparseDataTuple) t2).getAttributeIndicesSet();
+            	HashSet<Integer> inds = new HashSet<>(inds1);
+            	inds.addAll(inds2);
+            	for(int ind : inds) {
+            		attr = t1.getSchema().getAttrType(ind);
+            		dist += computeDistance1D(t1, t2, attr); // computeNumeric1D may be in the future wrong to use:)
+            	}
+            }            
+            return dist / dimensionsFull;
         }
 
     }

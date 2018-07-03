@@ -876,6 +876,16 @@ public class RowData extends ClusData implements MSortable, Serializable {
         	}
         }
     }
+    
+    
+    public final boolean isSparse() {
+    	// This works since checkData assures that all data tuples are of the same type
+    	if (m_Data.length > 0) {
+    		return m_Data[0].isSparse();
+    	} else {
+    		throw new RuntimeException("The dataset is empty, thus sparse and dense at the same time.");
+    	}
+    }
 
 
     public final DataTuple getTuple(int i) {
