@@ -78,7 +78,7 @@ public class HierarchicalMultiLabelDistance {
      * @param attr
      *        The attribute, which the hierarchy belongs to.
      */
-    private void computeDepthsOfTerms(ClassHierarchy hier) {
+    private static void computeDepthsOfTerms(ClassHierarchy hier) {
         ArrayList<ClassTerm> toProcess = new ArrayList<ClassTerm>();
         HashMap<ClassTerm, Integer> numberOfProcessedParents = new HashMap<ClassTerm, Integer>();
         for (int i = 0; i < hier.getTotal(); i++) {
@@ -122,7 +122,7 @@ public class HierarchicalMultiLabelDistance {
      * @param data
      * @return answer[class index] = true iff at least one example belongs to class.
      */
-    private boolean[][] getPresentTerms(ClassHierarchy hier, RowData data){
+    private static boolean[][] getPresentTerms(ClassHierarchy hier, RowData data){
     	int hierarchySize = hier.getTotal();
     	boolean[] present = new boolean[hierarchySize];
     	boolean[] finalClasses = new boolean[hierarchySize];

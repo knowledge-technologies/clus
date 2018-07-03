@@ -2,7 +2,7 @@
 
 As you may know, Clus+ supports Python output in some cases. Currently, the Python-models come in two different formats:
 
-- as function: Every tree is written as a if-else function, something like
+- as function: Every tree is written as an if-else function, something like
 
 ```
 def tree(xs):
@@ -29,18 +29,18 @@ tree = Tree(root=node)
 ```
 This also supports missing values.
 
-Option that controls the Python-output type is `[Output] PythonOutputType` and can be set to `Function` or `Object`.
+Option that controls the Python-output type is `[Output] PythonModelType` and can be set to `Function` or `Object`.
 
 # Directory description
 
-This directory contains some usefull scripts that will make the use of Clus-created Python-models easier.
+This directory contains some useful scripts that will make the use of Clus-created Python-models easier.
 Below, we give a brief description of the files:
 
-- `create_predictions.py`: One you have a random forest or bagging or Extra-trees-ensemble model, you can use this script for making predictions.
+- `create_predictions.py`: Once you have a random forest or bagging or Extra-trees-ensemble model, you can use this script for making predictions.
    See the documentation there and the commented out example for more details.
 - `lower_indentation.py`: Used in the case when the trees are deep and represented as if-else functions. This script rewrites the code, so that
    it defines some subtrees as new functions (and applies this recursively).
    In that way, the depth of the trees (hence the file size) can be substantially reduced.
 - `tree_as_object.py`: Defines the classes that are necessary for the trees given as Python-object to work. This is copied to your experiment
-  direcory if the optins `[Output]: PythonModelType = Object` is used.
-- `trees_as_object_test.py`: Some basic tets for the upper file.
+  directory if the option `[Output]: PythonModelType = Object` is used.
+- `trees_as_object_test.py`: Some basic tests for the upper file.

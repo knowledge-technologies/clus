@@ -31,8 +31,12 @@ import si.ijs.kt.clus.algo.ClusInductionAlgorithmType;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
+import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.DistanceWeights;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -84,17 +88,26 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
         @Override
         public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException {
 
+
             int[] ks = getSettings().getKNN().getKNNk(); // .split(",");
             List<DistanceWeights> distWeight = getSettings().getKNN().getKNNDistanceWeights(); // .split(",");
 
+            RowData trainData = cr.getDataSet(ClusModelInfoList.TRAINSET);
+            boolean isSparse = trainData.getTuple(0).isSparse(); // assuming all tuples in TRAIN and TEST are in the same form
+
             int maxK = 1;
             for (int k : ks) {
-                maxK = Math.max(maxK, k);
+            	maxK = Math.max(maxK, k);
             }
-
+            ClusAttrType[] necessaryDescriptiveAttributes;
+            if (isSparse) {
+            	necessaryDescriptiveAttributes = trainData.getSchema().getNominalAttrUse(AttributeUseType.Descriptive);
+            } else {
+            	necessaryDescriptiveAttributes = trainData.getSchema().getAllAttrUse(AttributeUseType.Descriptive);
+            }
             // base model
-            String model_name = DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS;
-            KnnModel model = new KnnModel(cr, 1, DistanceWeights.Constant, maxK);
+            String model_name = DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS;            
+            KnnModel model = new KnnModel(cr, 1, DistanceWeights.Constant, maxK, isSparse, necessaryDescriptiveAttributes);
             ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL, model_name);
             model_info.setModel(model);
             model_info.setName(model_name);
@@ -105,21 +118,17 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             defModelInfo.setName("Default");
 
             int modelCnt = 2;
-
             for (int k : ks) {
                 for (DistanceWeights w : distWeight) {
                     if (k == 1 && w.equals(DistanceWeights.Constant))
                         continue; // same as default model
                     KnnModel tmpmodel = new KnnModel(cr, k, w, model);
-
                     model_name = String.format(modelNameTemplate, k, w.toString()); // DO NOT CHANGE THE NAME!!!
-
                     ClusModelInfo tmpmodel_info = cr.addModelInfo(modelCnt++, model_name);
                     tmpmodel_info.setModel(tmpmodel);
                     tmpmodel_info.setName(model_name);
-                }
+            	}
             }
-
             return model;
         }
     }

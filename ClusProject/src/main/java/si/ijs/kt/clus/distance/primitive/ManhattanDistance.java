@@ -22,7 +22,11 @@
 
 package si.ijs.kt.clus.distance.primitive;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import si.ijs.kt.clus.data.rows.DataTuple;
+import si.ijs.kt.clus.data.rows.SparseDataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.distance.ClusDistance;
@@ -30,7 +34,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 
 
 /**
- * @author Mitja Pugelj
+ * @author Mitja Pugelj, Matej Petkovic
  */
 
 public class ManhattanDistance extends ClusDistance {
@@ -39,16 +43,36 @@ public class ManhattanDistance extends ClusDistance {
     private SearchDistance m_Search;
 
 
-    public ManhattanDistance(SearchDistance search) {
+    public ManhattanDistance(SearchDistance search, boolean isSparse, ClusAttrType[] necessaryDescriptiveAttributes) {
         m_Search = search;
+        m_IsSparse = isSparse;
+        m_Attributes = necessaryDescriptiveAttributes;
     }
 
 
     @Override
     public double calcDistance(DataTuple t1, DataTuple t2) {
         double dist = 0;
-        for (ClusAttrType attr : t1.getSchema().getAllAttrUse(AttributeUseType.Descriptive))
-            dist += m_Search.calcDistanceOnAttr(t1, t2, attr) * m_AttrWeighting.getWeight(attr);
+        if (m_IsSparse) {
+        	// nominal
+        	for(ClusAttrType attr : m_Attributes) {
+        		dist += Math.pow(m_Search.calcDistanceOnAttr(t1, t2, attr), 2) * m_AttrWeighting.getWeight(attr);
+        	}
+        	// non-zero numeric
+        	Set<Integer> inds1 = ((SparseDataTuple) t1).getAttributeIndicesSet();
+        	Set<Integer> inds2 = ((SparseDataTuple) t2).getAttributeIndicesSet();
+        	HashSet<Integer> inds = new HashSet<>(inds1);
+        	inds.addAll(inds2);
+        	ClusAttrType attr; 
+        	for(int ind : inds) {
+        		attr = t1.getSchema().getAttrType(ind);
+        		dist += m_Search.calcDistanceOnAttr(t1, t2, attr) * m_AttrWeighting.getWeight(attr);
+        	}
+        } else {
+        	for (ClusAttrType attr : t1.getSchema().getAllAttrUse(AttributeUseType.Descriptive)) {
+        		dist += m_Search.calcDistanceOnAttr(t1, t2, attr) * m_AttrWeighting.getWeight(attr);
+        	}
+        }
         return dist;
     }
 

@@ -105,8 +105,8 @@ public class KnnModel implements ClusModel, Serializable {
 
 
     // Default constructor.
-    @SuppressWarnings("unused")
-    public KnnModel(ClusRun cr, int k, DistanceWeights weighting, int maxK) throws ClusException, IOException, InterruptedException {
+   	@SuppressWarnings("unused")
+    public KnnModel(ClusRun cr, int k, DistanceWeights weighting, int maxK, boolean isSparse, ClusAttrType[] necessaryDescriptiveAttributes) throws ClusException, IOException, InterruptedException {
         this.cr = cr;
         this.m_K = k;
         this.m_MaxK = Math.max(Math.max(this.m_K, this.m_MaxK), maxK);
@@ -144,7 +144,7 @@ public class KnnModel implements ClusModel, Serializable {
                 attrWe = new UserDefinedWeighting(we);
             }
             catch (Exception e) {
-                throw new ClusException("Error at reading attributeWeighting value. User defined entry detected, but value cannot be red..");
+                throw new ClusException("Error at reading attributeWeighting value. User defined entry detected, but value cannot be read.");
             }
 
         }
@@ -169,19 +169,18 @@ public class KnnModel implements ClusModel, Serializable {
         SearchDistance searchDistance = new SearchDistance();
         ClusDistance distance;
 
-        switch (dist) {
-            case Euclidean:
-                distance = new EuclideanDistance(searchDistance);
-                break;
-            case Chebyshev:
-                distance = new ChebyshevDistance(searchDistance);
-                break;
-            case Manhattan:
-                distance = new ManhattanDistance(searchDistance);
-                break;
-            default:
-                throw new RuntimeException("Wrong distance.");
-
+        switch(dist) {
+	        case Euclidean:
+	        	distance = new EuclideanDistance(searchDistance, isSparse, necessaryDescriptiveAttributes);
+	        	break;
+	        case Chebyshev:
+	        	distance = new ChebyshevDistance(searchDistance, isSparse, necessaryDescriptiveAttributes);
+	        	break;
+	        case Manhattan:
+	        	distance = new ManhattanDistance(searchDistance, isSparse, necessaryDescriptiveAttributes);
+	        	break;
+        	default:
+        		throw new RuntimeException("Wrong distance.");
         }
 
         // initialize min values of numeric attributes: needed for normalization in the distance computation

@@ -142,18 +142,14 @@ public class SettingsRelief extends SettingsBase {
         m_ReliefNbNeighbours.setInt(RELIEF_NEIGHBOUR_DEFAULT);
 
         m_Section.addNode(m_ReliefNbIterations = new INIFileNominalOrDoubleOrVector("Iterations", NONELIST));
-        m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);
-
+//        m_ReliefNbIterations.setNominal(RELIEF_ITERATIONS_DEFAULT);
+		m_ReliefNbIterations.setDouble(RELIEF_ITERATIONS_DEFAULT);
         m_Section.addNode(m_ReliefShouldHaveNeighbourWeighting = new INIFileBool("WeightNeighbours", false));
-
         /* following Weka, the authors do not give any suggestions */
         m_Section.addNode(m_ReliefWeightingSigma = new INIFileDouble("WeightingSigma", 0.5));
-        
         m_Section.addNode(m_ChosenInstances = new INIFileNominalOrIntOrVector("ChosenInstances", NONELIST));
         m_ChosenInstances.setIntVector(DUMMY_INSTANCES);
-        
         m_Section.addNode(m_MultilabelDistance = new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.HammingLoss));
-
         m_Section.setEnabled(false);
     }
 }
