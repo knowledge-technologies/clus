@@ -14,7 +14,7 @@ import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
 /**
- * Relative root mean squared error. If the number of targets is grater than 1, the average over RRMSEs over the targets
+ * Relative root mean squared error. If the number of targets is greater than 1, the average over RRMSEs over the targets
  * is additionally computed.
  * The error value is made relative by dividing it by the error of the default model which predicts the average target
  * values on the given

@@ -423,4 +423,9 @@ public class DataTuple implements Serializable {
         }
         return buf.toString();
     }
+    
+    
+    public boolean isSparse() {
+    	return false;
+    }
 }
