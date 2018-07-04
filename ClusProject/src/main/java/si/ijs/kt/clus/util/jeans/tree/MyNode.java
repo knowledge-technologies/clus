@@ -260,30 +260,30 @@ public class MyNode implements Node, Serializable {
         }
     }
 
-
-    public final int getNbNodes() {
-        int count = 1;
-        int nb = getNbChildren();
-        for (int i = 0; i < nb; i++) {
-            MyNode node = (MyNode) getChild(i);
-            count += node.getNbNodes();
-        }
-        return count;
-    }
-
-
-    public final int getNbLeaves() {
-        int nb = getNbChildren();
-        if (nb == 0) {
-            return 1;
-        }
-        else {
-            int count = 0;
-            for (int i = 0; i < nb; i++) {
-                MyNode node = (MyNode) getChild(i);
-                count += node.getNbLeaves();
-            }
-            return count;
-        }
-    }
+//
+//    public final int getNbNodes() {
+//        int count = 1;
+//        int nb = getNbChildren();
+//        for (int i = 0; i < nb; i++) {
+//            MyNode node = (MyNode) getChild(i);
+//            count += node.getNbNodes();
+//        }
+//        return count;
+//    }
+//
+//
+//    public final int getNbLeaves() {
+//        int nb = getNbChildren();
+//        if (nb == 0) {
+//            return 1;
+//        }
+//        else {
+//            int count = 0;
+//            for (int i = 0; i < nb; i++) {
+//                MyNode node = (MyNode) getChild(i);
+//                count += node.getNbLeaves();
+//            }
+//            return count;
+//        }
+//    }
 }

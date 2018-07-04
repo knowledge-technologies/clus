@@ -1528,15 +1528,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * @throws InterruptedException
      */
     private void updateCounts(ClusNode model, int treeNumber) throws InterruptedException {
-
-        // models, nodes, leaves };
-
-        int[] additionalModelsNodesLeaves = ClusForest.countNodesLeaves(model); // m_OForest.updateCounts((ClusNode)
-                                                                                // model);
-
+        // models, nodes, leaves, depth;
+        int[] additionalModelsNodesLeavesDepth = ClusForest.countNodesLeaves(model);
         for (int ii = m_OForests.length - 1; ii >= 0; ii--) {
             if (getNbTrees(ii) >= treeNumber) {
-                m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1], additionalModelsNodesLeaves[2]);
+                m_OForests[ii].updateCounts(additionalModelsNodesLeavesDepth[0], additionalModelsNodesLeavesDepth[1], additionalModelsNodesLeavesDepth[2], additionalModelsNodesLeavesDepth[3]);
             }
             else {
                 break;

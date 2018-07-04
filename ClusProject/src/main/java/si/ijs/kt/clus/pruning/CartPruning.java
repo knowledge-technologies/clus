@@ -242,7 +242,7 @@ public class CartPruning extends PruneTree {
             cart.lambda_min = Double.POSITIVE_INFINITY;
         }
         else {
-            cart.delta_u1 = node.getNbLeaves() - 1;
+            cart.delta_u1 = node.computeNodesLeavesDepth()[1]- 1;
             double leaf_err = m_ErrorMeasure.computeLeafError(node.getClusteringStat());
             double tree_err = m_ErrorMeasure.computeTreeErrorClusteringAbsolute(node);
             cart.delta_u2 = tree_err - leaf_err;

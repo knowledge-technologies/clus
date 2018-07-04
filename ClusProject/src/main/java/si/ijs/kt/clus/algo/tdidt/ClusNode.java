@@ -62,6 +62,7 @@ import si.ijs.kt.clus.util.jeans.tree.MyNode;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.jeans.util.compound.IntObject;
+import si.ijs.kt.clus.util.tuple.Pair;
 
 
 public class ClusNode extends MyNode implements ClusModel {
@@ -341,7 +342,11 @@ public class ClusNode extends MyNode implements ClusModel {
 
     @Override
     public String getModelInfo() {
-        return "Nodes = " + getNbNodes() + " (Leaves: " + getNbLeaves() + ")";
+    	int[] nodesLeavesDepth = computeNodesLeavesDepth();
+    	int n = nodesLeavesDepth[0];
+    	int l = nodesLeavesDepth[1];
+    	int d = nodesLeavesDepth[2];
+        return String.format("Nodes = %d; Leaves = %d; Depth = %d", n, l, d);
     }
 
 
@@ -1892,5 +1897,33 @@ public class ClusNode extends MyNode implements ClusModel {
         // recompute statistics
         reInitTargetStat(data);
         reInitClusteringStat(data);
+    }
+    
+    public final int[] computeNodesLeavesDepth() {
+    	int nodes = 0, leaves = 0, depth = 0;
+    	Stack<Pair<ClusNode, Integer>> stack= new Stack<>();
+    	stack.add(new Pair<ClusNode, Integer>(this, 1));
+    	Pair<ClusNode, Integer> currentPair;
+    	ClusNode currentNode;
+    	int currentDepth;
+    	while (!stack.isEmpty()) {
+    		currentPair = stack.pop();
+    		currentNode = currentPair.getFirst();
+    		currentDepth = currentPair.getSecond();
+    		depth = Math.max(depth, currentDepth);
+    		nodes++;
+    		if (!currentNode.hasBestTest()) {
+    			leaves++;
+    		} else {
+    			for (ClusNode child : currentNode.getChildren()) {
+    				stack.push(new Pair<ClusNode, Integer>(child, currentDepth + 1));
+    			}
+    		}
+    	}
+        return new int[] {nodes, leaves, depth};
+    }
+    
+    public int getNbNodes() {
+    	return computeNodesLeavesDepth()[0];
     }
 }

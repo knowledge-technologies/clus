@@ -82,6 +82,9 @@ public class ClusForest implements ClusModel, Serializable {
     private int m_NbNodes = 0;
     /** The sum of leaves over the trees in the forest */
     private int m_NbLeaves = 0;
+    /** The sum of depths over the trees in the forest */
+    private int m_SumDepths;
+    
     private ClusEnsembleROSInfo m_TargetSubspaceInfo = null; // ROS ensembles (info about target subspaces)
 
     // added 13/1/2014 by Jurica Levatic
@@ -100,6 +103,7 @@ public class ClusForest implements ClusModel, Serializable {
     private ClusReadWriteLock m_NbModelsLock = new ClusReadWriteLock();
     private ClusReadWriteLock m_NbNodesLock = new ClusReadWriteLock();
     private ClusReadWriteLock m_NbLeavesLock = new ClusReadWriteLock();
+    private ClusReadWriteLock m_SumDepthsLock = new ClusReadWriteLock();
 
     ClusStatistic m_Stat;
     boolean m_PrintModels;
@@ -278,14 +282,30 @@ public class ClusForest implements ClusModel, Serializable {
         m_NbLeaves += n;
         m_NbLeavesLock.writingUnlock();
     }
+    
+    private double getAverageDepth() throws InterruptedException {
+    	m_SumDepthsLock.readingLock();
+    	double sumDepths = m_SumDepths;
+    	m_SumDepthsLock.readingUnlock();
+    	double models = getNbModels();
+    	return sumDepths / models;
+    }
+    
+    private void updateDepth(int depth) throws InterruptedException {
+    	m_SumDepthsLock.writingLock();
+    	m_SumDepths += depth;
+    	m_SumDepthsLock.writingUnlock();
+    }
 
 
     public static int[] countNodesLeaves(ClusNode model) {
         int models = 1;
-        int nodes = model.getNbNodes();
-        int leaves = model.getNbLeaves();
+        int[] nodesLeavesDepth = model.computeNodesLeavesDepth();
+        int nodes = nodesLeavesDepth[0];
+        int leaves = nodesLeavesDepth[1];
+        int depth = nodesLeavesDepth[2];
         // updateCounts(models, nodes, leaves);
-        return new int[] { models, nodes, leaves };
+        return new int[] {models, nodes, leaves, depth};
     }
 
 
@@ -300,10 +320,11 @@ public class ClusForest implements ClusModel, Serializable {
      *        number of leaves in the tree
      * @throws InterruptedException
      */
-    public void updateCounts(int nbModels, int nbNodes, int nbLeaves) throws InterruptedException {
+    public void updateCounts(int nbModels, int nbNodes, int nbLeaves, int depth) throws InterruptedException {
         increaseNbModels(nbModels);
         increaseNbNodes(nbNodes);
         increaseNbLeaves(nbLeaves);
+        updateDepth(depth);
     }
 
 
@@ -334,7 +355,7 @@ public class ClusForest implements ClusModel, Serializable {
             targetSubspaces = indent + m_TargetSubspaceInfo.getAverageNumberOfTargetsUsedInfo() + indent + m_TargetSubspaceInfo.getCoverageInfo() + indent + m_TargetSubspaceInfo.getCoverageNormalizedInfo();
         }
 
-        String result = String.format("FOREST with %d models (Total nodes: %d and leaves: %d)%s", getNbModels(), getNbNodes(), getNbLeaves(), targetSubspaces);
+        String result = String.format("FOREST with %d models (Total nodes: %d; leaves: %d; average tree depth: %.1f)%s", getNbModels(), getNbNodes(), getNbLeaves(), getAverageDepth(), targetSubspaces);
 
         if (getSettings().getEnsemble().isPrintEnsembleModelInfo()) {
             for (int i = 0; i < getNbModels(); i++) {
@@ -980,7 +1001,7 @@ public class ClusForest implements ClusModel, Serializable {
         stat.setThreshold(threshold);
         clone.setStat(stat);
         // some additional work has to be done in the case of optimization
-        clone.updateCounts(m_NbModels, m_NbNodes, m_NbLeaves);
+        clone.updateCounts(m_NbModels, m_NbNodes, m_NbLeaves, m_SumDepths);
         clone.setOptimization(m_Optimization);
         return clone;
     }
