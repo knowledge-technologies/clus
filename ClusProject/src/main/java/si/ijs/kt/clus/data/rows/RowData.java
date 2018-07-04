@@ -168,66 +168,66 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    @Deprecated
-    public String getSummaryDT(String prefix) {
-        StringBuffer sb = new StringBuffer();
-        double[] avg, min, max, stddev;
-        DataTuple temp = getTuple(0);
-        int nda = temp.getSchema().getNbNumericDescriptiveAttributes();
-        int nta = temp.getSchema().getNbNumericTargetAttributes();
-        avg = new double[nda + nta];
-        min = new double[nda + nta];
-        max = new double[nda + nta];
-        stddev = new double[nda + nta];
-        Arrays.fill(avg, 0);
-        Arrays.fill(stddev, 0);
-        Arrays.fill(min, Double.MAX_VALUE);
-        Arrays.fill(max, Double.MIN_VALUE);
-        int nbrows = getNbRows();
-        for (int i = 0; i < nbrows; i++) {
-            temp = getTuple(i);
-            ClusSchema schema = temp.getSchema();
-            for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
-                ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Descriptive)[j];
-                double tmpvalue = type.getNumeric(temp);
-                if (tmpvalue > max[j]) {
-                    max[j] = tmpvalue;
-                }
-                if (tmpvalue < min[j]) {
-                    min[j] = tmpvalue;
-                }
-                avg[j] += tmpvalue;
-                stddev[j] += tmpvalue * tmpvalue;
-            }
-            for (int j = nda; j < nda + nta; j++) {
-                ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Target)[j - nda];
-                double tmpvalue = type.getNumeric(temp);
-                if (tmpvalue > max[j]) {
-                    max[j] = tmpvalue;
-                }
-                if (tmpvalue < min[j]) {
-                    min[j] = tmpvalue;
-                }
-                avg[j] += tmpvalue;
-                stddev[j] += tmpvalue * tmpvalue;
-            }
-        }
-        for (int i = 0; i < nda + nta; i++) {
-            avg[i] /= nbrows;
-            stddev[i] = (stddev[i] - nbrows * avg[i] * avg[i]) / nbrows;
-            stddev[i] = Math.sqrt(stddev[i]);
-            min[i] = Math.round(min[i] * 100) / 100.0;
-            max[i] = Math.round(max[i] * 100) / 100.0;
-            avg[i] = Math.round(avg[i] * 100) / 100.0;
-            stddev[i] = Math.round(stddev[i] * 100) / 100.0;
-        }
-
-        sb.append(prefix + "Min: " + Arrays.toString(min) + "\n");
-        sb.append(prefix + "Max: " + Arrays.toString(max) + "\n");
-        sb.append(prefix + "Avg: " + Arrays.toString(avg) + "\n");
-        sb.append(prefix + "StdDev: " + Arrays.toString(stddev) + "\n");
-        return sb.toString();
-    }
+//    @Deprecated
+//    public String getSummaryDT(String prefix) {
+//        StringBuffer sb = new StringBuffer();
+//        double[] avg, min, max, stddev;
+//        DataTuple temp = getTuple(0);
+//        int nda = temp.getSchema().getNbNumericDescriptiveAttributes();
+//        int nta = temp.getSchema().getNbNumericTargetAttributes();
+//        avg = new double[nda + nta];
+//        min = new double[nda + nta];
+//        max = new double[nda + nta];
+//        stddev = new double[nda + nta];
+//        Arrays.fill(avg, 0);
+//        Arrays.fill(stddev, 0);
+//        Arrays.fill(min, Double.MAX_VALUE);
+//        Arrays.fill(max, Double.MIN_VALUE);
+//        int nbrows = getNbRows();
+//        for (int i = 0; i < nbrows; i++) {
+//            temp = getTuple(i);
+//            ClusSchema schema = temp.getSchema();
+//            for (int j = 0; j < schema.getNbNumericDescriptiveAttributes(); j++) {
+//                ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Descriptive)[j];
+//                double tmpvalue = type.getNumeric(temp);
+//                if (tmpvalue > max[j]) {
+//                    max[j] = tmpvalue;
+//                }
+//                if (tmpvalue < min[j]) {
+//                    min[j] = tmpvalue;
+//                }
+//                avg[j] += tmpvalue;
+//                stddev[j] += tmpvalue * tmpvalue;
+//            }
+//            for (int j = nda; j < nda + nta; j++) {
+//                ClusAttrType type = schema.getNumericAttrUse(AttributeUseType.Target)[j - nda];
+//                double tmpvalue = type.getNumeric(temp);
+//                if (tmpvalue > max[j]) {
+//                    max[j] = tmpvalue;
+//                }
+//                if (tmpvalue < min[j]) {
+//                    min[j] = tmpvalue;
+//                }
+//                avg[j] += tmpvalue;
+//                stddev[j] += tmpvalue * tmpvalue;
+//            }
+//        }
+//        for (int i = 0; i < nda + nta; i++) {
+//            avg[i] /= nbrows;
+//            stddev[i] = (stddev[i] - nbrows * avg[i] * avg[i]) / nbrows;
+//            stddev[i] = Math.sqrt(stddev[i]);
+//            min[i] = Math.round(min[i] * 100) / 100.0;
+//            max[i] = Math.round(max[i] * 100) / 100.0;
+//            avg[i] = Math.round(avg[i] * 100) / 100.0;
+//            stddev[i] = Math.round(stddev[i] * 100) / 100.0;
+//        }
+//
+//        sb.append(prefix + "Min: " + Arrays.toString(min) + "\n");
+//        sb.append(prefix + "Max: " + Arrays.toString(max) + "\n");
+//        sb.append(prefix + "Avg: " + Arrays.toString(avg) + "\n");
+//        sb.append(prefix + "StdDev: " + Arrays.toString(stddev) + "\n");
+//        return sb.toString();
+//    }
 
 
     public String getSummary(String prefix) {

@@ -99,7 +99,6 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 			<artifactId>xercesImpl</artifactId>
 			<version>${xerces.version}</version>
 		</dependency>
-
 	</dependencies>
 
 	<build>

@@ -65,6 +65,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.DiskTupleIterator;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.TupleIterator;
+import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
@@ -226,8 +227,8 @@ public class Clus implements CMDLineArgsProvider {
         else {
             m_Data = view.readData(reader, m_Schema);
         }
-
         reader.close();
+
         if (m_Sett.getGeneral().getVerbose() > 0)
             System.out.println("Found " + m_Data.getNbRows() + " rows");
 
@@ -1974,9 +1975,9 @@ public class Clus implements CMDLineArgsProvider {
                 else if (cargs.hasOption("fold")) {
                     clus.isxval = true;
                     clus.initialize(cargs, clss);
-                    
+
                     List<Integer> f = cargs.getOptionList("fold");
-                    for(int i : f) {
+                    for (int i : f) {
                         clus.oneFoldRun(clss, i);
                     }
                 }
@@ -2011,7 +2012,7 @@ public class Clus implements CMDLineArgsProvider {
             if (!sett.getAttribute().isNullGIS()) {
                 tryAnalyzePredictions(clus, sett);
             }
-            
+
             ClusLogger.info("Done.");
         }
         catch (ClusException e) {
