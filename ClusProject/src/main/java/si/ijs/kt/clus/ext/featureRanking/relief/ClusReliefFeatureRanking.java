@@ -872,19 +872,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     }
 
 
-    /**
-     * Distance between tuples in the subspace {@code space}.
-     * 
-     * @param t1
-     *        The first tuple
-     * @param t2
-     *        The second tuple
-     * @param space
-     *        0 or 1; if 0, subspace is descriptive space and target space otherwise.
-     * @return Distance between {@code t1} and {@code t2} in the given subspace.
-     * @throws ClusException
-     */
-    public double computeDistance(DataTuple t1, DataTuple t2, int space) throws ClusException {
+    @Deprecated
+    private double computeDistanceOld(DataTuple t1, DataTuple t2, int space) throws ClusException {
         double dist = 0.0;
         if (m_IsMLC && space == TARGET_SPACE) {
             return m_MLCDist.calculateDist(t1, t2);
@@ -901,7 +890,19 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
     }
     
-    public double computeDistanceOptimized(DataTuple t1, DataTuple t2, int space) throws ClusException {
+    /**
+     * Distance between tuples in the subspace {@code space}.
+     * 
+     * @param t1
+     *        The first tuple
+     * @param t2
+     *        The second tuple
+     * @param space
+     *        0 or 1; if 0, subspace is descriptive space and target space otherwise.
+     * @return Distance between {@code t1} and {@code t2} in the given subspace.
+     * @throws ClusException
+     */
+    private double computeDistance(DataTuple t1, DataTuple t2, int space) throws ClusException {
         double dist = 0.0;
         if (m_IsMLC && space == TARGET_SPACE) {
             return m_MLCDist.calculateDist(t1, t2);
@@ -923,7 +924,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             	inds.addAll(inds2);
             	for(int ind : inds) {
             		attr = t1.getSchema().getAttrType(ind);
-            		dist += computeDistance1D(t1, t2, attr); // computeNumeric1D may be in the future wrong to use:)
+            		dist += computeDistance1D(t1, t2, attr); // computeNumeric1D may be not general enough in the future:)
             	}
             }            
             return dist / dimensionsFull;
