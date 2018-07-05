@@ -96,8 +96,8 @@ public class ReliefModel implements ClusModel {
     @Override
     public String getModelInfo() {
     	String first = "Relief feature ranking method with the weights computed in all combinations of";
-    	String second = String.format("numbers of neighbours: %s", Arrays.toString(m_NbNeighbours));
-    	String third = String.format("numbers of iterations: %s", Arrays.toString(m_NbIterations));
+    	String second = String.format("numbers of neighbours: %s", Arrays.toString(m_NbNeighbours)).replace(",", ";");
+    	String third = String.format("numbers of iterations: %s", Arrays.toString(m_NbIterations)).replace(",", ";");
         return String.join(" ", new String[]{first, second, third});
     }
 

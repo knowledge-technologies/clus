@@ -113,7 +113,6 @@ public class RowDataTest extends BaseTestCase {
           }
         };
     //@formatter:on
-
     for (int i = 0; i < settingsFiles.length; i++) {
       RowData data = TestHelper.getRowData(settingsFiles[i]);
       NumericAttrType[] attrs = data.m_Schema.getNumericAttrUse(AttributeUseType.Descriptive);

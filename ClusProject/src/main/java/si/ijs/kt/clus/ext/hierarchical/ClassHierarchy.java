@@ -177,7 +177,7 @@ public class ClassHierarchy implements Serializable {
             ClassTerm term = getTermAt(i);
             term.setIndex(i);
         }
-        System.out.println("Hierarchy initialized: " + getTotal() + " nodes");
+        // matejp: commented this out: System.out.println("Hierarchy initialized: " + getTotal() + " nodes");
         // after this, the hierarchy must not change anymore
         setLocked(true);
     }

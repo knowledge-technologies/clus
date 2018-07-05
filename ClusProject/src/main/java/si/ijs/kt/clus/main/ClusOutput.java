@@ -521,8 +521,9 @@ public class ClusOutput {
 
 
     public void close() {
-        if (m_Fname != null)
-            System.out.println("Output written to: " + m_Fname);
+        if (m_Fname != null && getSettings().getGeneral().getVerbose() >= 1) {
+        	System.out.println("Output written to: " + m_Fname);
+        }
         m_Writer.close();
     }
 

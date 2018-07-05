@@ -485,7 +485,9 @@ public class ClusStatManager implements Serializable {
 		int nb_types = 0;
 		int nb_nom = m_Schema.getNbNominalAttrUse(AttributeUseType.Clustering);
 		int nb_num = m_Schema.getNbNumericAttrUse(AttributeUseType.Clustering);
-		System.out.println("Clustering attributes check ==> #nominal: " + nb_nom + " #numeric: " + nb_num);
+		if(getSettings().getGeneral().getVerbose() >= 1) {
+			System.out.println("Clustering attributes check ==> #nominal: " + nb_nom + " #numeric: " + nb_num);
+		}
 
 		if (m_Schema.hasAttributeType(AttributeUseType.Target, AttributeType.Classes)) {
 			m_Mode = MODE_HIERARCHICAL;
@@ -1540,7 +1542,9 @@ public class ClusStatManager implements Serializable {
 			ClusAttrType type = m_Schema.getAttrType(i);
 			if (!type.isDisabled() && type instanceof ClassesAttrType) {
 				ClassesAttrType cltype = (ClassesAttrType) type;
-				System.out.println("Classes type: " + type.getName());
+				if (getSettings().getGeneral().getVerbose() >= 1) {
+					System.out.println("Classes type: " + type.getName());
+				}
 				m_Hier = cltype.getHier();
 				// idx++;
 			}

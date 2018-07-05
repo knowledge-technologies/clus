@@ -1,6 +1,6 @@
 [General]
 ResourceInfoLoaded = No
-Verbose = 1
+Verbose = 0
 RandomSeed = 0
 
 [Data]

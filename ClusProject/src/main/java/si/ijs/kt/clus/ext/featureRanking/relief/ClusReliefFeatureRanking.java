@@ -489,8 +489,10 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         }
 
         if (insufficientNbNeighbours > 0) {
-            System.err.println("Maximal number of neighbours: " + m_MaxNbNeighbours);
-            System.err.println("Number of cases when we could not find that many neighbours: " + insufficientNbNeighbours);
+        	int ver = getSettings().getGeneral().getVerbose();
+        	String message1 = "Maximal number of neighbours: " + m_MaxNbNeighbours;
+        	String message2 = "Number of cases when we could not find that many neighbours: " + insufficientNbNeighbours;
+        	printMessage(message1 + "\n" + message2, 1, ver);
         }
     }
 

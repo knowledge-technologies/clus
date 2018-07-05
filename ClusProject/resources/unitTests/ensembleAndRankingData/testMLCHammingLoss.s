@@ -1,6 +1,6 @@
 [General]
 ResourceInfoLoaded = No
-Verbose = 1
+Verbose = 0
 RandomSeed = 1234
 
 [Data]
@@ -21,3 +21,4 @@ Neighbours = [3,1]
 Iterations = [-1,5]
 WeightNeighbours = Yes
 WeightingSigma = 0.5
+MultilabelDistance = HammingLoss

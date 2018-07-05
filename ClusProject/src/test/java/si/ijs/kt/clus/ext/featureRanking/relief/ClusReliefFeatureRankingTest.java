@@ -51,7 +51,7 @@ public class ClusReliefFeatureRankingTest extends BaseTestCase {
   public void computeReliefImportance() throws IOException {
     System.out.println("Testing ...");
     String format = m_Subfolder + "/test%s.%s";
-    String[] tasks = new String[] {"Mixed", "MLCHammingLoss", "MTR", "TreeHMLC"};
+    String[] tasks = new String[] {"Mixed", "MLCHammingLoss", "MTR", "TreeHMLC", "DagHMLC-RealWorld", "TreeHMLC-RealWorld", "MLC-RealWorld", "MTR-RealWorld", "testSTC-RealWorld"};
     ArrayList<Pair<String, String>> settingsFimps = new ArrayList<Pair<String, String>>();
     for (String task : tasks) {
       settingsFimps.add(
@@ -59,11 +59,11 @@ public class ClusReliefFeatureRankingTest extends BaseTestCase {
               String.format(format, task, "s"), String.format(format, task, "fimpTruth")));
     }
 
-    String[] args = new String[] {"-relief", ""};
+    String[] args = new String[] {"-silent", "-relief", ""};
     for (Pair<String, String> pair : settingsFimps) {
       String sFile = pair.getFirst();
       String fimpFile = pair.getSecond();
-      args[1] = sFile;
+      args[2] = sFile;
       Clus.main(args);
       Fimp fimpComputed = new Fimp(sFile.replace(".s", ".fimp"));
       Fimp fimpTruth = new Fimp(fimpFile);

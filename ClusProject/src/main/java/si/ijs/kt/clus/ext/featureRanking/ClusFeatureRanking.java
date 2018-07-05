@@ -200,7 +200,9 @@ public class ClusFeatureRanking {
         }
         wrtr.flush();
         wrtr.close();
-        System.out.println(String.format("Feature importances written to: %s.fimp", fname));
+        if (getSettings().getGeneral().getVerbose() >= 1) {
+        	System.out.println(String.format("Feature importances written to: %s.fimp", fname));
+        }
     }
 
 
@@ -646,7 +648,9 @@ public class ClusFeatureRanking {
             m_Order = FimpOrdering.AS_IN_DATASET;
         }
         if (m_Order == FimpOrdering.BY_RELEVANCE && getNbFeatureRankings() > 1) {
-            System.err.println("More than one feature ranking will be output. The attributes will appear as in ARFF\nand will not be sorted by relevance, although SortRankingByRelevance = Yes.");
+        	if(getSettings().getGeneral().getVerbose() >= 1) {
+        		System.err.println("More than one feature ranking will be output. The attributes will appear as in ARFF\nand will not be sorted by relevance, although SortRankingByRelevance = Yes.");
+        	}
             m_Order = FimpOrdering.AS_IN_DATASET;
         }
         computeFinalScores();

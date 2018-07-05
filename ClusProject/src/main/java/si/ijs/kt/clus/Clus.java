@@ -1802,11 +1802,13 @@ public class Clus implements CMDLineArgsProvider {
 
     public static void main(String[] args) {
         try {
-            ClusOutput.printHeader();
             Clus clus = new Clus();
             Settings sett = clus.getSettings();
             CMDLineArgs cargs = new CMDLineArgs(clus);
             cargs.process(args);
+            if(!cargs.hasOption("silent")) {
+            	ClusOutput.printHeader();
+            }
             if (cargs.hasOption("copying")) {
                 ClusOutput.printGPL();
                 System.exit(0);
