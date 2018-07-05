@@ -51,7 +51,7 @@ public class ClusReliefFeatureRankingTest extends BaseTestCase {
   public void computeReliefImportance() throws IOException {
     System.out.println("Testing ...");
     String format = m_Subfolder + "/test%s.%s";
-    String[] tasks = new String[] {"Mixed", "MLCHammingLoss", "MTR", "TreeHMLC", "DagHMLC-RealWorld", "TreeHMLC-RealWorld", "MLC-RealWorld", "MTR-RealWorld", "testSTC-RealWorld"};
+    String[] tasks = new String[] {"Mixed", "MLCHammingLoss", "MTR", "TreeHMLC", "DagHMLC-RealWorld", "TreeHMLC-RealWorld", "MLC-RealWorld", "MTR-RealWorld", "STC-RealWorld"};
     ArrayList<Pair<String, String>> settingsFimps = new ArrayList<Pair<String, String>>();
     for (String task : tasks) {
       settingsFimps.add(

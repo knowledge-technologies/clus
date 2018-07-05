@@ -680,7 +680,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         return targetProbabilities;
     }
 
-
+    @Deprecated
     /**
      * Computes the nearest neighbours of example with index {@code tupleInd} in the dataset.
      * 
@@ -717,17 +717,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                     if (whereToPlaceNeigh[targetValue] < m_MaxNbNeighbours) {
                         neighbours[targetValue][whereToPlaceNeigh[targetValue]] = i;
                         whereToPlaceNeigh[targetValue]++;
-                        if (whereToPlaceNeigh[targetValue] == m_MaxNbNeighbours) { // the list of neighbours has just
-                                                                                   // become full ---> sort it
-                            for (int ind1 = 0; ind1 < m_MaxNbNeighbours; ind1++) { // O(NbNeighbours^2) ...
-                                for (int ind2 = ind1 + 1; ind2 < m_MaxNbNeighbours; ind2++) {
-                                    if (distances[neighbours[targetValue][ind1]] < distances[neighbours[targetValue][ind2]]) {
-                                        int temp = neighbours[targetValue][ind1];
-                                        neighbours[targetValue][ind1] = neighbours[targetValue][ind2];
-                                        neighbours[targetValue][ind2] = temp;
-                                    }
-                                }
-                            }
+                        if (whereToPlaceNeigh[targetValue] == m_MaxNbNeighbours) {
+                        	// the list of neighbours has just become full ---> sort it: O(NbNeighbours^2) ...
+                        	bruteForceSort(neighbours[targetValue], m_MaxNbNeighbours, distances);
                             isSorted[targetValue] = true;
                         }
                     }
@@ -755,38 +747,128 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         for (int value = 0; value < nbTargetValues; value++) {
             nearestNeighbours[value] = new NearestNeighbour[whereToPlaceNeigh[value]];
             if (!isSorted[value]) {
-                for (int ind1 = 0; ind1 < whereToPlaceNeigh[value]; ind1++) {
-                    for (int ind2 = ind1 + 1; ind2 < whereToPlaceNeigh[value]; ind2++) {
-                        if (distances[neighbours[value][ind1]] < distances[neighbours[value][ind2]]) {
-                            int temp = neighbours[value][ind1];
-                            neighbours[value][ind1] = neighbours[value][ind2];
-                            neighbours[value][ind2] = temp;
-                        }
-                    }
-                }
+            	bruteForceSort(neighbours[value], whereToPlaceNeigh[value], distances);
             }
 
             for (int i = 0; i < whereToPlaceNeigh[value]; i++) {
                 int datasetIndex = neighbours[value][i];
                 double descriptiveSpaceDist = distances[neighbours[value][i]];
-                // double targetSpaceDist = 0.0;
-                // boolean isPerTarget = targetIndex >= 0;
-                // if (isPerTarget) {
-                // targetSpaceDist = calculateDistance1D(tuple, m_Data.getTuple(datasetIndex),
-                // m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]);
-                // }
-                // else {
-                // targetSpaceDist = calculateDistance(tuple, m_Data.getTuple(datasetIndex), TARGET_SPACE);
-                // }
-                nearestNeighbours[value][whereToPlaceNeigh[value] - i - 1] = new NearestNeighbour(datasetIndex, descriptiveSpaceDist); // new
-                                                                                                                                       // NearestNeighbour(datasetIndex,
-                                                                                                                                       // descriptiveSpaceDist,
-                                                                                                                                       // targetSpaceDist);
+                nearestNeighbours[value][whereToPlaceNeigh[value] - i - 1] = new NearestNeighbour(datasetIndex, descriptiveSpaceDist);
             }
         }
         int currentCount = updateNeighCount();
         printProgressParallel(currentCount, m_NeighCounterBound);
         return nearestNeighbours;
+    }
+    
+    public HashMap<Integer, NearestNeighbour[][]> findNearestNeighbours(int tupleInd, ArrayList<Integer> necessaryTargetIndices) throws ClusException, InterruptedException {
+    	int currentCount;
+        DataTuple tuple = m_Data.getTuple(tupleInd);
+        double[] distances = new double[m_NbExamples]; // distances[i] = distance(tuple, data.getTuple(i))
+        for (int i = 0; i < m_NbExamples; i++) {
+            distances[i] = computeDistance(tuple, m_Data.getTuple(i), DESCRIPTIVE_SPACE);
+        }
+        // helping thingies
+        HashMap<Integer, int[][]> neighbourss = new HashMap<>();  // current candidates
+        int[][] neighbours;
+        HashMap<Integer, int[]> whereToPlaceNeighs = new HashMap<>();
+        int[] whereToPlaceNeigh;
+        int nbTargetValues;
+        int trueIndex;
+        HashMap<Integer, boolean[]> isSorteds = new HashMap<>();	// isSorteds[targetIndex][targetValue]: tells whether the neighbours
+    																// for the targetValue-th value of the targetIndex-th target are sorted
+        boolean[] isSorted;
+        int targetValue;
+        boolean sortingNeeded;
+        boolean isStdClassification;
+        // initialize structures
+        for(int targetIndex : necessaryTargetIndices) {
+        	nbTargetValues = m_NbTargetValues[targetIndex + 1];
+        	neighbourss.put(targetIndex, new int[nbTargetValues][m_MaxNbNeighbours]);
+        	whereToPlaceNeighs.put(targetIndex, new int[nbTargetValues]);
+        	isSorteds.put(targetIndex, new boolean[nbTargetValues]);
+        }
+        
+        for (int targetIndex : necessaryTargetIndices) {
+	        isStdClassification = m_IsStandardClassification[targetIndex + 1];
+	        nbTargetValues = m_NbTargetValues[targetIndex + 1];
+	        trueIndex = getTrueTargetIndex(targetIndex); 					// -1 ---> 0 in the case of STC
+	        neighbours = neighbourss.get(targetIndex); 					//new int[nbTargetValues][m_MaxNbNeighbours];
+	        whereToPlaceNeigh = whereToPlaceNeighs.get(targetIndex); 	// new int[nbTargetValues];
+	        isSorted = isSorteds.get(targetIndex);						// new boolean[nbTargetValues];
+	        for (int i = 0; i < m_NbExamples; i++) {
+	            sortingNeeded = false;
+	            if (i != tupleInd) {
+	                targetValue = isStdClassification ? m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex].getNominal(m_Data.getTuple(i)) : 0;
+	                if (targetValue < nbTargetValues) { // non-missing
+	                    if (whereToPlaceNeigh[targetValue] < m_MaxNbNeighbours) {
+	                        neighbours[targetValue][whereToPlaceNeigh[targetValue]] = i;
+	                        whereToPlaceNeigh[targetValue]++;
+	                        if (whereToPlaceNeigh[targetValue] == m_MaxNbNeighbours) {
+	                        	bruteForceSort(neighbours[targetValue], m_MaxNbNeighbours, distances);
+	                            isSorted[targetValue] = true;
+	                        }
+	                    }
+	                    else {
+	                        sortingNeeded = true;
+	                    }
+	                }
+	                else {
+	                    // nothing to do here
+	                }
+	                if (sortingNeeded) {
+	                    if (distances[i] >= distances[neighbours[targetValue][0]]) {
+	                        continue;
+	                    }
+	                    int j; // here the branch prediction should kick-in
+	                    for (j = 1; j < m_MaxNbNeighbours && distances[i] < distances[neighbours[targetValue][j]]; j++) {
+	                        neighbours[targetValue][j - 1] = neighbours[targetValue][j];
+	                    }
+	                    neighbours[targetValue][j - 1] = i;
+	                    isSorted[targetValue] = true;
+	                }
+	            }
+	        }
+	        currentCount = updateNeighCount();
+	        printProgressParallel(currentCount, m_NeighCounterBound);
+        }
+        // create NearestNeighbour objects
+        HashMap<Integer, NearestNeighbour[][]> nearestNeighbourss = new HashMap<>(); // = new NearestNeighbour[nbTargetValues][];
+        NearestNeighbour[][] nearestNeighbours;
+        for (int targetIndex : necessaryTargetIndices) {
+        	nbTargetValues = m_NbTargetValues[targetIndex + 1];
+        	nearestNeighbours = new NearestNeighbour[nbTargetValues][];
+        	nearestNeighbourss.put(targetIndex, nearestNeighbours); 
+        	whereToPlaceNeigh = whereToPlaceNeighs.get(targetIndex);
+        	isSorted = isSorteds.get(targetIndex);
+        	neighbours = neighbourss.get(targetIndex);
+            for (int value = 0; value < nbTargetValues; value++) {
+                nearestNeighbours[value] = new NearestNeighbour[whereToPlaceNeigh[value]];
+                if (!isSorted[value]) {
+                	bruteForceSort(neighbours[value], whereToPlaceNeigh[value], distances);
+                }
+
+                for (int i = 0; i < whereToPlaceNeigh[value]; i++) {
+                    int datasetIndex = neighbours[value][i];
+                    double descriptiveSpaceDist = distances[neighbours[value][i]];
+                    nearestNeighbours[value][whereToPlaceNeigh[value] - i - 1] = new NearestNeighbour(datasetIndex, descriptiveSpaceDist);
+                }
+            }
+        }
+        return nearestNeighbourss;
+    }
+    
+    
+    private static void bruteForceSort(int[] neighs, int upperBound, double[] distances) {
+    	 for (int ind1 = 0; ind1 < upperBound; ind1++) {
+             for (int ind2 = ind1 + 1; ind2 < upperBound; ind2++) {
+                 if (distances[neighs[ind1]] < distances[neighs[ind2]]) {
+                     int temp = neighs[ind1];
+                     neighs[ind1] = neighs[ind2];
+                     neighs[ind2] = temp;
+                 }
+             }
+         }    	
     }
 
 
@@ -1175,23 +1257,29 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             m_NeighPercents = 0;
 
             ExecutorService executor = Executors.newFixedThreadPool(m_NbThreads);
-            ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>> results = new ArrayList<Future<Triple<Integer, Integer, NearestNeighbour[][]>>>();
+            ArrayList<Future<Triple<ArrayList<Integer>, Integer, HashMap<Integer, NearestNeighbour[][]>>>> results = new ArrayList<Future<Triple<ArrayList<Integer>, Integer, HashMap<Integer, NearestNeighbour[][]>>>>();
             for (Integer targetIndex : necessaryTargetIndices) {
-                m_NearestNeighbours.put(targetIndex, new HashMap<Integer, NearestNeighbour[][]>());
-                for (int tupleIndex : randomPermutation) {
-                    DataTuple tuple = m_Data.getTuple(tupleIndex);
-                    if (shouldUseTuple(targetIndex, tuple)) {
-                        FindNeighboursCallable task = new FindNeighboursCallable(this, tupleIndex, targetIndex);
-                        Future<Triple<Integer, Integer, NearestNeighbour[][]>> result = executor.submit(task);
-                        results.add(result);
-                    }
-                }
+            	m_NearestNeighbours.put(targetIndex, new HashMap<Integer, NearestNeighbour[][]>());
+            }
+            for (int tupleIndex : randomPermutation) {
+            	DataTuple tuple = m_Data.getTuple(tupleIndex);
+            	ArrayList<Integer> appropriateTargets = new ArrayList<>();
+            	for(Integer targetIndex : necessaryTargetIndices) {
+            		if (shouldUseTuple(targetIndex, tuple)) {
+            			appropriateTargets.add(targetIndex);
+            		}
+            	}            	
+        		FindNeighboursCallable task = new FindNeighboursCallable(this, tupleIndex, appropriateTargets);
+        		Future<Triple<ArrayList<Integer>, Integer, HashMap<Integer, NearestNeighbour[][]>>> result = executor.submit(task);
+        		results.add(result);
             }
             executor.shutdown();
             executor.awaitTermination(Integer.MAX_VALUE, TimeUnit.SECONDS);
-            for (Future<Triple<Integer, Integer, NearestNeighbour[][]>> futureTriple : results) {
-                Triple<Integer, Integer, NearestNeighbour[][]> triple = futureTriple.get();
-                m_NearestNeighbours.get(triple.getFirst()).put(triple.getSecond(), triple.getThird());
+            for (Future<Triple<ArrayList<Integer>, Integer, HashMap<Integer, NearestNeighbour[][]>>> futureTriple : results) {
+            	Triple<ArrayList<Integer>, Integer, HashMap<Integer, NearestNeighbour[][]>> triple = futureTriple.get();
+            	for(Integer targetIndex : triple.getFirst()) {
+            		m_NearestNeighbours.get(targetIndex).put(triple.getSecond(), triple.getThird().get(targetIndex));
+            	}
             }
         }
 
