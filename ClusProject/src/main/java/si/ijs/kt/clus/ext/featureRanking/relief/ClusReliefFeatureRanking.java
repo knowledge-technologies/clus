@@ -292,14 +292,18 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         m_NbDescriptiveAttrs = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE].length;
         m_NbTargetAttrs = m_DescriptiveTargetAttr[TARGET_SPACE].length;
         // efficient distance computation for sparse tuples
-        int nbNonNumericDescriptive = m_NbDescriptiveAttrs - m_Data.getSchema().getNbNumericAttrUse(AttributeUseType.Descriptive);
-        int nbNonNumericTarget = m_NbTargetAttrs - m_Data.getSchema().getNbNumericAttrUse(AttributeUseType.Target);
+        int nbNonNumericDescriptive = m_NbDescriptiveAttrs;  // if not sparse, the variables names are misleading:
+        int nbNonNumericTarget = m_NbTargetAttrs;            // these are simply the numbers of desc./targ. attributes ...
+        if (m_IsSparse) {
+        	nbNonNumericDescriptive -= m_Data.getSchema().getNbNumericAttrUse(AttributeUseType.Descriptive);
+        	nbNonNumericTarget -= m_Data.getSchema().getNbNumericAttrUse(AttributeUseType.Target);
+        }
         m_DistanceDescriptiveTargetAttr[DESCRIPTIVE_SPACE] = new int[nbNonNumericDescriptive];
         m_DistanceDescriptiveTargetAttr[TARGET_SPACE] = new int[nbNonNumericTarget];
         for (int space : SPACE_TYPES) {
         	int place = 0;
         	for (int i = 0; i < m_DescriptiveTargetAttr[space].length; i++) {
-        		if (!m_DescriptiveTargetAttr[space][i].isNumeric()) {
+        		if (!m_IsSparse || !m_DescriptiveTargetAttr[space][i].isNumeric()) {
         			m_DistanceDescriptiveTargetAttr[space][place] = i;
         			place++;
         		}
@@ -873,6 +877,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
 
     @Deprecated
+    @SuppressWarnings("unused")
     private double computeDistanceOld(DataTuple t1, DataTuple t2, int space) throws ClusException {
         double dist = 0.0;
         if (m_IsMLC && space == TARGET_SPACE) {
@@ -926,10 +931,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             		attr = t1.getSchema().getAttrType(ind);
             		dist += computeDistance1D(t1, t2, attr); // computeNumeric1D may be not general enough in the future:)
             	}
-            }            
+            }
             return dist / dimensionsFull;
         }
-
     }
 
 
