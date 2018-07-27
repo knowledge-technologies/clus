@@ -77,7 +77,7 @@ public class ClusForest implements ClusModel, Serializable {
     /** A list of decision trees in the forest (or empty if memory optimisation is used). */
     ArrayList<ClusModel> m_Forest;
     /** Number of threes in the forest, may not be equal to {@code m_Forest.size()} because of memory optimisation. */
-    private int m_NbModels = 0;
+    private ArrayList<Integer> m_TreeIndices = new ArrayList<>();
     /** The sum of nodes over the trees in the forest */
     private int m_NbNodes = 0;
     /** The sum of leaves over the trees in the forest */
@@ -240,15 +240,15 @@ public class ClusForest implements ClusModel, Serializable {
 
     public int getNbModels() throws InterruptedException {
         m_NbModelsLock.readingLock();
-        int ans = m_NbModels;
+        int ans = m_TreeIndices.size();
         m_NbModelsLock.readingUnlock();
         return ans;
     }
 
 
-    private void increaseNbModels(int n) throws InterruptedException {
+    private void addTreeIndices(ArrayList<Integer> indices) throws InterruptedException {
         m_NbModelsLock.writingLock();
-        m_NbModels += n;
+        m_TreeIndices.addAll(indices);
         m_NbModelsLock.writingUnlock();
 
     }
@@ -299,13 +299,11 @@ public class ClusForest implements ClusModel, Serializable {
 
 
     public static int[] countNodesLeaves(ClusNode model) {
-        int models = 1;
         int[] nodesLeavesDepth = model.computeNodesLeavesDepth();
         int nodes = nodesLeavesDepth[0];
         int leaves = nodesLeavesDepth[1];
         int depth = nodesLeavesDepth[2];
-        // updateCounts(models, nodes, leaves);
-        return new int[] {models, nodes, leaves, depth};
+        return new int[] {nodes, leaves, depth};
     }
 
 
@@ -320,8 +318,8 @@ public class ClusForest implements ClusModel, Serializable {
      *        number of leaves in the tree
      * @throws InterruptedException
      */
-    public void updateCounts(int nbModels, int nbNodes, int nbLeaves, int depth) throws InterruptedException {
-        increaseNbModels(nbModels);
+    public void updateCounts(ArrayList<Integer> nbModels, int nbNodes, int nbLeaves, int depth) throws InterruptedException {
+        addTreeIndices(nbModels);
         increaseNbNodes(nbNodes);
         increaseNbLeaves(nbLeaves);
         updateDepth(depth);
@@ -744,10 +742,14 @@ public class ClusForest implements ClusModel, Serializable {
 
     /**
      * Adds an ensemble predictor to python models file.
+     * <p>
+     * Warning: The range in the for loop is wrong when the number of trees induced
+     * is smaller than the number of iterations specified, but in this case,
+     * is not expected that this scripts will be directly used anyway.
      */
     public void writePythonEnsembleFile(PrintWriter wrtr, String treeFile, PythonModelType pyModelType) {
-        wrtr.println(String.format("def ensemble_%d(xs):", m_NbModels));
-        wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_NbModels));
+        wrtr.println(String.format("def ensemble_%d(xs):", m_TreeIndices.size()));
+        wrtr.println(String.format("\tbase_predictions = [None for _ in range(%d)]", m_TreeIndices.size()));
         wrtr.println("\tfor i in range(len(base_predictions)):");
         wrtr.println(String.format("\t\ttree = eval(\"%s.tree_{}\".format(i + 1))", treeFile));
         switch (pyModelType) {
@@ -834,7 +836,7 @@ public class ClusForest implements ClusModel, Serializable {
             }
             for (int i = 0; i < m_Forest.size(); i++) {
                 ClusModel model = m_Forest.get(i);
-                printOneTree(wrtr, (ClusNode) model, i + 1, type);
+                printOneTree(wrtr, (ClusNode) model, m_TreeIndices.get(i), type);
             }
             wrtr.close();
             System.out.println(String.format("Python trees for the model %s written to: ", getModelInfo()) + pyscript.getPath());
@@ -881,7 +883,7 @@ public class ClusForest implements ClusModel, Serializable {
             if (cr.getStatManager().getSettings().getOutput().getPythonModelType() == PythonModelType.Object) {
                 wrtr.println("from tree_as_object import *\n\n");
             }
-            for (int i = 1; i <= m_NbModels; i++) {
+            for (int i : m_TreeIndices) {
                 String inputFile = ClusEnsembleInduce.getTemporaryPythonTreeFileName(cr, i);
                 String treeString = new String(Files.readAllBytes(Paths.get(inputFile)), StandardCharsets.UTF_8);
                 wrtr.print(treeString);
@@ -1001,7 +1003,7 @@ public class ClusForest implements ClusModel, Serializable {
         stat.setThreshold(threshold);
         clone.setStat(stat);
         // some additional work has to be done in the case of optimization
-        clone.updateCounts(m_NbModels, m_NbNodes, m_NbLeaves, m_SumDepths);
+        clone.updateCounts(m_TreeIndices, m_NbNodes, m_NbLeaves, m_SumDepths);
         clone.setOptimization(m_Optimization);
         return clone;
     }
@@ -1069,5 +1071,4 @@ public class ClusForest implements ClusModel, Serializable {
         ClusModelInfo rules_info = cr.addModelInfo("Rules-" + cr.getModelInfo(ClusModel.ORIGINAL).getName());
         rules_info.setModel(ruleSet);
     }
-
 }
