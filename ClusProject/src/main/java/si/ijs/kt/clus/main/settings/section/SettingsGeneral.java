@@ -22,6 +22,7 @@ public class SettingsGeneral extends SettingsBase {
     INIFileString m_RandomSeed;
     INIFileEnum<ResourceInfoLoad> m_ResourceInfoLoaded;
     INIFileBool m_DoNotInduce; // when running "Clus.jar -fold <n>", we can either induce a model with fold data or not.
+    INIFileString m_LoggingProperties; // for logging properties
 
 
     public SettingsGeneral(int position) {
@@ -59,10 +60,15 @@ public class SettingsGeneral extends SettingsBase {
     public INIFileEnum<ResourceInfoLoad> getResourceInfoLoaded() {
         return m_ResourceInfoLoaded;
     }
-    
-    public boolean isDoNotInduce()
-    {
+
+
+    public boolean isDoNotInduce() {
         return m_DoNotInduce.getValue();
+    }
+
+
+    public String getLoggingProperties() {
+        return m_LoggingProperties.getStringValue();
     }
 
     /***********************************************************************
@@ -81,5 +87,6 @@ public class SettingsGeneral extends SettingsBase {
         m_Section.addNode(m_ResourceInfoLoaded = new INIFileEnum<>("ResourceInfoLoaded", ResourceInfoLoad.No));
         m_Section.addNode(m_DoNotInduce = new INIFileBool("DoNotInduce", false)); // this is useful when using -fold <n>
                                                                                   // command-line switch
+        m_Section.addNode(m_LoggingProperties = new INIFileString("LoggingProperties", "logging.properties"));
     }
 }

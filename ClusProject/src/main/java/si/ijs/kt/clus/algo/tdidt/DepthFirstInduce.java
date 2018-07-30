@@ -474,7 +474,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             makeLeaf(node);
         }
 
-        ClusLogger.trace("Depth " + node.getLevel() + ": node finished.");
+        ClusLogger.fine("Depth " + node.getLevel() + ": node finished.");
     }
 
 
@@ -609,7 +609,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
-        if (getSettings().getEnsemble().getNumberOfThreads() != -1) {
+        if (getSettings().getEnsemble().isEnsembleMode() && getSettings().getEnsemble().getNumberOfThreads() != -1) {
             ClusLogger.info(String.format("Potential WARNING:\n" + "It seems that you are trying to build an ensemble in parallel.\n If this is not the case, ignore this message. Otherwise: The chosen number of threads (%d) is not equal to 1, and the method\ninduceSingleUnpruned(ClusRun cr) is not appropriate for parallelism (the results might not be reproducible).\nThe method induceSingleUnpruned(RowData data, ClusRandomNonstatic rnd) should be used instead.", getSettings().getEnsemble().getNumberOfThreads()));
         }
         return induceSingleUnpruned((RowData) cr.getTrainingSet(), null);

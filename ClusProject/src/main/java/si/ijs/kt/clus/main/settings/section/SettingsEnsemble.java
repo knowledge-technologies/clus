@@ -272,8 +272,8 @@ public class SettingsEnsemble extends SettingsBase {
         }
 
         if (value.contains("-")) {
-            ClusLogger.error("The number of subspaces can't be negative.");
-            ClusLogger.error("\t Setting this value to default (log2).");
+            ClusLogger.severe("The number of subspaces can't be negative.");
+            ClusLogger.severe("\t Setting this value to default (log2).");
             value = "0";
         }
 
@@ -294,8 +294,8 @@ public class SettingsEnsemble extends SettingsBase {
             try {
                 int val = Integer.parseInt(value);
                 if (val > ubound) {
-                    ClusLogger.error("The size of the subset can't be larger than the number of " + s + " attributes.");
-                    ClusLogger.error("\t Setting this value to the number of attributes, i.e., to bagging.");
+                    ClusLogger.severe("The size of the subset can't be larger than the number of " + s + " attributes.");
+                    ClusLogger.severe("\t Setting this value to the number of attributes, i.e., to bagging.");
                     val = ubound;
                 }
                 fsize = val;
@@ -304,20 +304,20 @@ public class SettingsEnsemble extends SettingsBase {
                 try {
                     double val = Double.parseDouble(value);
                     if (val > 1.0) {
-                        ClusLogger.error("The fraction of the features used can't be larger than 1.");
-                        ClusLogger.error("\t Setting this value to 1, i.e., to bagging.");
+                        ClusLogger.severe("The fraction of the features used can't be larger than 1.");
+                        ClusLogger.severe("\t Setting this value to 1, i.e., to bagging.");
                         val = 1.0;
                     }
                     fsize = (int) Math.ceil(val * ubound); // upper bound on the fraction number;
                 }
                 catch (Exception e2) {
-                    ClusLogger.error("Error while setting the feature subset size!");
-                    ClusLogger.error("The set of possible values include:");
-                    ClusLogger.error("\t 0 or LOG for taking the log2,");
-                    ClusLogger.error("\t SQRT for taking the sqrt,");
-                    ClusLogger.error("\t RANDOM for taking a random subset of targets (works only in ensemble mode for target subspacing).");
-                    ClusLogger.error("\t integer for taking the absolute number of attributes,");
-                    ClusLogger.error("\t double (0,1) for taking the fraction values.");
+                    ClusLogger.severe("Error while setting the feature subset size!");
+                    ClusLogger.severe("The set of possible values include:");
+                    ClusLogger.severe("\t 0 or LOG for taking the log2,");
+                    ClusLogger.severe("\t SQRT for taking the sqrt,");
+                    ClusLogger.severe("\t RANDOM for taking a random subset of targets (works only in ensemble mode for target subspacing).");
+                    ClusLogger.severe("\t integer for taking the absolute number of attributes,");
+                    ClusLogger.severe("\t double (0,1) for taking the fraction values.");
                     System.exit(-1);
                 }
             }

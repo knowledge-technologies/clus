@@ -539,7 +539,6 @@ public class ClusOutput {
             return model.getVersion();
         }
         catch (Exception ex) {
-            ClusLogger.info("Unable to get CLUS version, using vDEVELOPMENT.");
             return "DEVELOPMENT";
         }
     }

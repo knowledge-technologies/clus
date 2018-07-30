@@ -139,8 +139,6 @@ import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgsProvider;
 
 
-// import si.ijs.kt.clus.weka.*;
-
 public class Clus implements CMDLineArgsProvider {
 
     // debug flags - should be refactored
@@ -1813,10 +1811,12 @@ public class Clus implements CMDLineArgsProvider {
     public static void main(String[] args) {
         try {
             ClusOutput.printHeader();
+            
             Clus clus = new Clus();
             Settings sett = clus.getSettings();
             CMDLineArgs cargs = new CMDLineArgs(clus);
             cargs.process(args);
+            
             if (cargs.hasOption("copying")) {
                 ClusOutput.printGPL();
                 System.exit(0);
@@ -1827,11 +1827,15 @@ public class Clus implements CMDLineArgsProvider {
                 System.out.println("Expected main argument");
                 System.exit(0);
             }
+            
+            
             if (cargs.allOK()) {
                 sett.getGeneric().setDate(new Date());
                 sett.getGeneric().setAppName(cargs.getMainArg(0));
 
                 clus.initSettings(cargs);
+
+                ClusLogger.initialize(sett.getGeneral()); // initialization of logging.
 
                 ClusInductionAlgorithmType clss = null;
 
@@ -1986,13 +1990,6 @@ public class Clus implements CMDLineArgsProvider {
                     clus.initialize(cargs, clss);
                     clus.baggingRun(clss);
                 }
-                // else if (cargs.hasOption("show")) {
-                // // clus.showModel(clus.getAppName());
-                // clus.showTree(clus.getAppName());
-                // }
-                // else if (cargs.hasOption("gui")) {
-                // clus.gui(cargs.getMainArg(0));
-                // }
                 else if (cargs.hasOption("tseries")) {
                     clus.getSettings().getTimeSeries().setSectionTimeSeriesEnabled(true);
                     clus.initialize(cargs, clss);
