@@ -135,13 +135,15 @@ public class ClusUtil {
     }
 
 
-    public static HashMap<String, Integer> getDiscriptiveAttributesIndices(ClusStatManager statmgr) {
+    public static HashMap<String, Integer> getDescriptiveAttributesIndices(ClusStatManager statmgr) {
         HashMap<String, Integer> indices = new HashMap<String, Integer>();
-        ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(AttributeUseType.Descriptive, null));
         if (statmgr.getSettings().getOutput().isOutputPythonModel()) {
+            ClusAttrType[] cat = ClusSchema.vectorToAttrArray(statmgr.getSchema().collectAttributes(AttributeUseType.Descriptive, null));
+
             for (int ii = 0; ii < cat.length - 1; ii++) {
                 indices.put(cat[ii].getName(), ii);
             }
+
             int ii = cat.length - 1;
             indices.put(cat[ii].getName(), ii);
         }

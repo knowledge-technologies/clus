@@ -1,11 +1,14 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.WritePredictions;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
@@ -261,23 +264,27 @@ public class SettingsOutput extends SettingsBase {
 
     @Override
     public void create() {
-        m_Section.addNode(m_ShowModels = new INIFileEnumList<>("ShowModels", Arrays.asList(ShowModels.Default, ShowModels.Pruned, ShowModels.Others)));
+        m_Section.addNode(m_ShowModels = new INIFileEnumList<>("ShowModels", Arrays.asList(ShowModels.Default, ShowModels.Pruned, ShowModels.Others), ShowModels.class));
         m_Section.addNode(m_OutTrainErr = new INIFileBool("TrainErrors", true));
         m_Section.addNode(m_OutValidErr = new INIFileBool("ValidErrors", true));
         m_Section.addNode(m_OutTestErr = new INIFileBool("TestErrors", true));
         m_Section.addNode(m_OutFoldModels = new INIFileBool("AllFoldModels", true));
         m_Section.addNode(m_OutFoldErr = new INIFileBool("AllFoldErrors", false));
         m_Section.addNode(m_OutFoldData = new INIFileBool("AllFoldDatasets", false));
+       
         m_Section.addNode(m_ShowUnknown = new INIFileBool("UnknownFrequency", false));
         m_Section.addNode(m_ShowBrFreq = new INIFileBool("BranchFrequency", false));
-        m_Section.addNode(m_ShowInfo = new INIFileEnumList<>("ShowInfo", Arrays.asList(ShowInfo.Count)));
+        m_Section.addNode(m_ShowInfo = new INIFileEnumList<>("ShowInfo", Arrays.asList(ShowInfo.Count), ShowInfo.class));
         m_Section.addNode(m_PrintModelAndExamples = new INIFileBool("PrintModelAndExamples", false));
         m_Section.addNode(m_WriteErrorFile = new INIFileBool("WriteErrorFile", false)); // TODO: bug: see issue #51 in
                                                                                         // the
         m_Section.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
         m_Section.addNode(m_WritePerBagModelFiles = new INIFileBool("WritePerBagModelFile", true));
         m_Section.addNode(m_WriteOOBFile = new INIFileBool("WriteOOBFile", false));
-        m_Section.addNode(m_WritePredictions = new INIFileEnumList<>("WritePredictions", Arrays.asList(WritePredictions.None)));
+        m_Section.addNode(m_WritePredictions = new INIFileEnumList<>("WritePredictions", Arrays.asList(WritePredictions.None), WritePredictions.class));
+        //m_Section.addNode(m_WritePredictions = new INIFileEnumList<>("WritePredictions", WritePredictions.None));
+        
+        
         m_Section.addNode(m_GzipOutput = new INIFileBool("GzipOutput", false));
         m_Section.addNode(m_ModelIDFiles = new INIFileBool("ModelIDFiles", false));
         m_Section.addNode(m_WriteCurves = new INIFileBool("WriteCurves", false));

@@ -36,7 +36,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
-import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -57,8 +57,6 @@ public abstract class ClusStatistic implements Serializable {
     public int m_NbExamples;
 
     public static boolean INITIALIZEPARTIALSUM = true;
-    //private int splitIndex;
-    //private int prevIndex;
 
     protected Settings m_Settings; // this is here to reduce the usage of static references
 
@@ -133,11 +131,14 @@ public abstract class ClusStatistic implements Serializable {
     public abstract ClusStatistic getParentStat();
 
 
-    public void optimizePreCalc(RowData data) throws ClusException { // only clus.statistic.SumPairwiseDistancesStat actually has its own implementation of the method
+    public void optimizePreCalc(RowData data) throws ClusException { // only clus.statistic.SumPairwiseDistancesStat
+                                                                     // actually has its own implementation of the
+                                                                     // method
     }
 
 
-    public void showRootInfo() { // only clus.ext.hierarchical.WHTDStatistic actually has its own implementation of the method
+    public void showRootInfo() { // only clus.ext.hierarchical.WHTDStatistic actually has its own implementation of the
+                                 // method
     }
 
 
@@ -227,12 +228,12 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public void setSplitIndex(int i) {
-        //splitIndex = i;
+        // splitIndex = i;
     }
 
 
     public void setPrevIndex(int i) {
-        //prevIndex = i;
+        // prevIndex = i;
     }
 
 
@@ -466,7 +467,7 @@ public abstract class ClusStatistic implements Serializable {
     public abstract void vote(ArrayList<ClusStatistic> votes);
 
 
-    public abstract void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo);
+    public abstract void vote(ArrayList<ClusStatistic> votes, ClusROSForestInfo ROSForestInfo);
 
 
     public ClusStatistic normalizedCopy() {
@@ -504,7 +505,7 @@ public abstract class ClusStatistic implements Serializable {
     }
 
 
-    //daniela
+    // daniela
     public double calcItotal(Integer[] permutation) throws ClusException {
         throw new NotImplementedException();
     }
@@ -638,5 +639,5 @@ public abstract class ClusStatistic implements Serializable {
     public double calcDHtotalD(Integer[] permutation) {
         throw new NotImplementedException();
     }
-    //end daniela
+    // end daniela
 }

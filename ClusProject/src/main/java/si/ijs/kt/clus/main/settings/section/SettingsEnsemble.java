@@ -10,6 +10,7 @@ import java.util.List;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
@@ -56,16 +57,28 @@ public class SettingsEnsemble extends SettingsBase {
         DynamicSubspaces
     };
 
-    /** How does ROS make predictions */
+    /** How ROS ensemble make predictions */
     public enum EnsembleROSVotingType {
         /** Use all targets for voting. */
         TotalAveraging,
 
         /**
-         * Vote only with those targets, that were used for learning. Only makes sense for
-         * <code>EnsembleROSAlgorithmType.FixedSubspaces</code>.
+         * Vote only with those targets, that were used for learning, i.e., votes of individual ensemble members
+         * contribute to the overall prediction only with those target predictions, that have been used for learning the
+         * individual ensemble members.
+         * 
+         * When used with {@code EnsembleROSAlgorithmType.FixedSubspaces},
+         * When used with {@code EnsembleROSAlgorithmType.DynamicSubspaces},
          */
         SubspaceAveraging,
+
+        /**
+         * Vote only with ...TBD
+         */
+        MaxDepthSubspaceAveraging,
+
+        /** */
+        MinDepthSubspaceAveraging,
 
         /** TBD */
         SmarterWay
@@ -237,13 +250,17 @@ public class SettingsEnsemble extends SettingsBase {
         return m_BagSelection;
     }
 
+    public enum RandomAttributeTypeSelection {
+        Descriptive, Clustering
+    };
 
-    public int calculateNbRandomAttrSelected(ClusSchema schema, int type) {
+
+    public int calculateNbRandomAttrSelected(ClusSchema schema, RandomAttributeTypeSelection type) {
         String value, s;
         int fsize = -1;
         int ubound;
 
-        if (type == 1) { // for descriptive subspacing
+        if (type.equals(RandomAttributeTypeSelection.Descriptive)) { // for descriptive subspacing
             value = getNbRandomAttrString();
             ubound = schema.getNbDescriptiveAttributes();
             s = "descriptive";
@@ -255,8 +272,8 @@ public class SettingsEnsemble extends SettingsBase {
         }
 
         if (value.contains("-")) {
-            System.err.println("The number of subspaces can't be negative.");
-            System.err.println("\t Setting this value to default (log2).");
+            ClusLogger.severe("The number of subspaces can't be negative.");
+            ClusLogger.severe("\t Setting this value to default (log2).");
             value = "0";
         }
 
@@ -269,12 +286,16 @@ public class SettingsEnsemble extends SettingsBase {
         else if (value.equalsIgnoreCase("RANDOM")) { // sample independently at random
             fsize = -1; // dummy value
         }
+        else if (value.equalsIgnoreCase("RANDOMPERTREE")) {// sample independently at random but fix the number of
+                                                           // randomly selected attributes for each tree
+            fsize = -2; // dummy value
+        }
         else {
             try {
                 int val = Integer.parseInt(value);
                 if (val > ubound) {
-                    System.err.println("The size of the subset can't be larger than the number of " + s + " attributes.");
-                    System.err.println("\t Setting this value to the number of attributes, i.e., to bagging.");
+                    ClusLogger.severe("The size of the subset can't be larger than the number of " + s + " attributes.");
+                    ClusLogger.severe("\t Setting this value to the number of attributes, i.e., to bagging.");
                     val = ubound;
                 }
                 fsize = val;
@@ -283,24 +304,27 @@ public class SettingsEnsemble extends SettingsBase {
                 try {
                     double val = Double.parseDouble(value);
                     if (val > 1.0) {
-                        System.err.println("The fraction of the features used can't be larger than 1.");
-                        System.err.println("\t Setting this value to 1, i.e., to bagging.");
+                        ClusLogger.severe("The fraction of the features used can't be larger than 1.");
+                        ClusLogger.severe("\t Setting this value to 1, i.e., to bagging.");
                         val = 1.0;
                     }
                     fsize = (int) Math.ceil(val * ubound); // upper bound on the fraction number;
                 }
                 catch (Exception e2) {
-                    System.err.println("Error while setting the feature subset size!");
-                    System.err.println("The set of possible values include:");
-                    System.err.println("\t 0 or LOG for taking the log2,");
-                    System.err.println("\t SQRT for taking the sqrt,");
-                    System.err.println("\t RANDOM for taking a random subset of targets (works only in ensemble mode for target subspacing).");
-                    System.err.println("\t integer for taking the absolute number of attributes,");
-                    System.err.println("\t double (0,1) for taking the fraction values.");
+                    ClusLogger.severe("Error while setting the feature subset size!");
+                    ClusLogger.severe("The set of possible values include:");
+                    ClusLogger.severe("\t 0 or LOG for taking the log2,");
+                    ClusLogger.severe("\t SQRT for taking the sqrt,");
+                    ClusLogger.severe("\t RANDOM for taking a random subset of targets (works only in ensemble mode for target subspacing).");
+                    ClusLogger.severe("\t integer for taking the absolute number of attributes,");
+                    ClusLogger.severe("\t double (0,1) for taking the fraction values.");
                     System.exit(-1);
                 }
             }
         }
+
+        if (fsize < 0)
+            return fsize; // for random/randompertree
 
         return Math.max(1, fsize);
     }
@@ -308,7 +332,7 @@ public class SettingsEnsemble extends SettingsBase {
 
     public void updateNbRandomAttrSelected(ClusSchema schema) {
 
-        int fsize = calculateNbRandomAttrSelected(schema, 1);
+        int fsize = calculateNbRandomAttrSelected(schema, RandomAttributeTypeSelection.Descriptive);
 
         setNbRandomAttrSelected(fsize);
     }
@@ -470,12 +494,10 @@ public class SettingsEnsemble extends SettingsBase {
 
         if (
         /* is ROS is not disabled */ !getEnsembleROSAlgorithmType().equals(EnsembleROSAlgorithmType.Disabled) &&
-        /* combination of ROS algorithm and prediction algorithm is not valid */ (!validROSCombinations.get(getEnsembleROSAlgorithmType()).contains(getEnsembleROSVotingType()))) {
-            incompatible.add(String.format("%s = %s cannot be used with %s = %s",
-                    /* */
-                    m_EnsembleROSAlgorithmType.getName(), getEnsembleROSAlgorithmType(),
-                    /* */
-                    m_EnsembleROSVotingType.getName(), getEnsembleROSVotingType()));
+        /* combination of ROS algorithm and prediction algorithm is not valid */
+                (!validROSCombinations.get(getEnsembleROSAlgorithmType()).contains(getEnsembleROSVotingType()))) {
+
+            incompatible.add(formatInvalid(m_EnsembleROSAlgorithmType, getEnsembleROSAlgorithmType(), String.format("Cannot be used with %s = %s", m_EnsembleROSVotingType.getName(), getEnsembleROSVotingType())));
         }
 
         return incompatible;

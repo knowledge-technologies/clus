@@ -345,7 +345,7 @@ public abstract class ClusAttrType implements Serializable, Comparable<ClusAttrT
 
 
     public int compareValue(DataTuple t1, DataTuple t2) {
-        return -5;
+        throw new RuntimeException("si.ijs.kt.clus.data.type.ClusAttrType.compareValue(DataTuple, DataTuple) not implemented!");
     }
 
 

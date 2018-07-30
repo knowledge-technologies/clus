@@ -32,6 +32,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
@@ -79,7 +80,7 @@ public abstract class ClusInductionAlgorithmType {
 
 
     public void printInfo() {
-        System.out.println("Classifier: " + getClass().getName());
+        ClusLogger.info("Classifier: " + getClass().getName());
     }
 
 

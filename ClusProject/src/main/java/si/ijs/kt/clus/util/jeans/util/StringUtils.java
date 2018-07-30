@@ -62,7 +62,10 @@ public class StringUtils {
 
     public static String printStr(String out, int tabs) {
         int len = out.length();
-        return out + makeString(' ', tabs - len);
+        int space = tabs - len;
+        space = space <= 0 ? 1 : space;
+
+        return out + makeString(' ', space);
     }
 
 

@@ -66,7 +66,7 @@ public class SITFitnessFunction extends FitnessFunction {
             return error;
         }
         catch (ClusException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
             return Double.POSITIVE_INFINITY;
         }

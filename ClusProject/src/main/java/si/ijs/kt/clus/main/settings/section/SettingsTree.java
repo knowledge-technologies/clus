@@ -450,7 +450,7 @@ public class SettingsTree extends SettingsBase {
         m_Section.addNode(m_BinarySplit = new INIFileBool("BinarySplit", true));
         m_Section.addNode(m_RulesFromTree = new INIFileEnum<>("ConvertToRules", ConvertRules.No));
         m_Section.addNode(m_AlternativeSplits = new INIFileBool("AlternativeSplits", false));
-        m_Section.addNode(m_TreeOptimize = new INIFileEnumList<>("Optimize", new ArrayList<TreeOptimizeValues>() {}));
+        m_Section.addNode(m_TreeOptimize = new INIFileEnumList<>("Optimize", new ArrayList<TreeOptimizeValues>(), TreeOptimizeValues.class));
         m_Section.addNode(m_MSENominal = new INIFileBool("MSENominal", false));
         m_Section.addNode(m_TreeSplitSampling = new INIFileInt("SplitSampling", 0));
         m_TreeSplitSampling.setValueCheck(new IntRangeCheck(0, Integer.MAX_VALUE));

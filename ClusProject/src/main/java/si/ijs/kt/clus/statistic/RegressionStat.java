@@ -31,6 +31,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import si.ijs.kt.clus.heuristic.GISHeuristic;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -399,7 +400,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
      * @param n_tot
      *        Total number of examples with non-missing values for all
      *        attributes
-
+     * 
      */
     public boolean shouldEstimate(double k_tot, double n_tot) {
         // Condition for the old variance equation
@@ -464,17 +465,13 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
 
     private double getSVarSROS(ClusAttributeWeights scale) {
-        double result = 0.0;
-        int cnt = 0;
-        for (int i = 0; i < m_NbAttrs; i++) {
-            if (!scale.getEnabled(m_Attrs[i].getIndex()))
-                continue;
-
-            cnt++;
+        double result = 0d;
+        ClusROSModelInfo info = scale.getROSModelInfo();
+        for (Integer i : info.getTargets()) {
             result += getSVarS(i) * scale.getWeight(m_Attrs[i]);
         }
 
-        return result / cnt;
+        return result / scale.getROSModelInfo().getSizeOfSubspace();
     }
 
 
@@ -530,17 +527,14 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
 
     public double getSVarSDiffROS(ClusAttributeWeights scale, ClusStatistic other) {
-        double result = 0.0;
-        int cnt = 0;
-        RegressionStat or = (RegressionStat) other;
-        for (int i = 0; i < m_NbAttrs; i++) {
-            if (!scale.getEnabled(m_Attrs[i].getIndex()))
-                continue;
+        double result = 0d;
 
-            cnt++;
+        RegressionStat or = (RegressionStat) other;
+        for (Integer i : scale.getROSModelInfo().getTargets()) {
             result += getSVarSDiff(i, or) * scale.getWeight(m_Attrs[i]);
         }
-        return result / cnt;
+
+        return result / scale.getROSModelInfo().getSizeOfSubspace();
     }
 
 

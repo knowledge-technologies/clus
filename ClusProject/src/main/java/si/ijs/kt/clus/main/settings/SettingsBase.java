@@ -6,6 +6,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEntry;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
 
@@ -29,9 +30,10 @@ public abstract class SettingsBase implements Serializable {
 
     protected INIFileSection m_Section;
 
+
     public SettingsBase(int position, String name) {
         m_Position = position;
-        
+
         m_Section = new INIFileSection(name);
     }
 
@@ -72,9 +74,22 @@ public abstract class SettingsBase implements Serializable {
     public int getPosition() {
         return m_Position;
     }
-    
+
+
     /** Returns INI section */
     public INIFileSection getSection() {
         return m_Section;
+    }
+
+
+    /** Convenience method for denoting illegal settings */
+    public static String formatInvalid(INIFileEntry settingEntry, Object settingValue) {
+        return formatInvalid(settingEntry, settingValue, null);
+    }
+
+
+    /** Convenience method for denoting illegal settings */
+    public static String formatInvalid(INIFileEntry settingEntry, Object settingValue, String additionalMessage) {
+        return String.format("%s = %s is invalid %s", settingEntry.getName(), settingValue, additionalMessage == null ? "" : "=> Additional info: " + additionalMessage);
     }
 }

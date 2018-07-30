@@ -30,6 +30,7 @@ import java.io.Serializable;
 import java.util.Arrays;
 
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.format.ClusFormat;
 
@@ -39,7 +40,7 @@ public class ClusAttributeWeights implements Serializable {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public double[] m_Weights;
-    public boolean[] m_Enabled;
+    private ClusROSModelInfo m_ROSModelInfo = null;
 
 
     public ClusAttributeWeights(int nbAttr) {
@@ -124,12 +125,12 @@ public class ClusAttributeWeights implements Serializable {
     }
 
 
-    public void setEnabled(boolean[] enabled) {
-        m_Enabled = Arrays.copyOf(enabled, enabled.length);
+    public void setROSModelInfo(ClusROSModelInfo info) {
+        m_ROSModelInfo = info;
     }
 
 
-    public boolean getEnabled(int idx) {
-        return m_Enabled[idx];
+    public ClusROSModelInfo getROSModelInfo() {
+        return m_ROSModelInfo;
     }
 }

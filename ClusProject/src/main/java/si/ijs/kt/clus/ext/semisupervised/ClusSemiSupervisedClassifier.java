@@ -67,7 +67,7 @@ public class ClusSemiSupervisedClassifier extends ClusInductionAlgorithmType {
 
     @Override
     public ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException {
-        // TODO Auto-generated method stub
+        
         return null;
     }
 

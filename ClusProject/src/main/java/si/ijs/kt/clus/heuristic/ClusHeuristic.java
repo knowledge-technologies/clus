@@ -50,14 +50,17 @@ public abstract class ClusHeuristic {
     protected double m_NumericSplitTotStatSVarS;
 
     private Settings m_Settings;
-    
+
+
     public ClusHeuristic(Settings sett) {
         m_Settings = sett;
     }
 
-    public final Settings getSettings(){
+
+    public final Settings getSettings() {
         return m_Settings;
     }
+
 
     public void setSplitStatSVarS(double value) {
         m_NumericSplitTotStatSVarS = value;
@@ -77,8 +80,8 @@ public abstract class ClusHeuristic {
      * @param pstat
      * @param missing
      * @param ss_tot
-
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      */
     public double calcHeuristic(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing, double ss_tot) throws ClusException {
         return calcHeuristic(tstat, pstat, missing);
@@ -91,11 +94,6 @@ public abstract class ClusHeuristic {
 
     public ClusAttributeWeights getClusteringAttributeWeights() {
         return m_ClusteringWeights;
-    }
-
-
-    public void setClusteringWeightsEnabledAttributes(boolean[] w) {
-        m_ClusteringWeights.setEnabled(w);
     }
 
 
