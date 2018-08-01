@@ -67,19 +67,20 @@ def instances_generator(arff_file):
                 return attr_value.strip()
         else:
             return attr_value.strip()
+
     _, attributes, _ = load_nonsparse_arff(arff_file)
     found = 0
-    for walk in range(2):    
+    for walk in range(2):
         with open(arff_file) as f:
             for x in f:
                 if "@data" in x.lower():
                     break
-            if walk == 0:   # count the lines after @data
+            if walk == 0:  # count the lines after @data
                 for instance, _ in enumerate(f):
                     pass
                 found = instance + 1
                 print("Number of instances is approximately", found)
-            else:           # generate the instances
+            else:  # generate the instances
                 for instance, x in enumerate(f):
                     if x.strip():
                         if (instance + 1) % instances_step == 0:
@@ -87,7 +88,6 @@ def instances_generator(arff_file):
                         candidate = [my_eval(i, t) for i, t in enumerate(x.strip().split(","))]
                         found += 1
                         yield candidate
-    
 
 
 def create_predictions(python_ensemble_dir, python_ensemble_file,
@@ -96,7 +96,7 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
                        key_attribute,
                        target_attributes_string,
                        num_trees,
-                       out_file):
+                       out_files):
     """
     Computes predictions of the examples and writes everything to a file.
 
@@ -121,9 +121,11 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
     out_file : string
         Path to the file where predictions are written to, e.g., 'C:/Users/matej/predictions/experiment1.txt'
     """
+
     def get_sublist(indices, whole_list, one_based=True):
         return [whole_list[t - one_based] for t in indices]
 
+    # load ensemble
     sys.path.insert(0, python_ensemble_dir)
     exec("import {}".format(python_ensemble_file))
     print("Ensemble imported from", python_ensemble_file)
@@ -135,15 +137,19 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
     target_attributes = [attr[0] for attr in get_sublist(target_indices, attributes)]
     key_header = [] if key_attribute is None else [attributes[key_attribute - 1][0]]
     header = key_header + ["true_" + t for t in target_attributes] + ["predicted_" + t for t in target_attributes]
-    with open(out_file, "w") as f:
+    out_fs = [open(out_file, "w") for out_file in out_files]
+    for f in out_fs:
         print(",".join(header), file=f)
-        for example in examples_generator:
-            condensed_example = [example[i - 1] for i in descriptive_indices if i <= len(example)]  # base 1 ==> -1
-            prediction = eval("{}.ensemble_{}({})".format(python_ensemble_file, num_trees, condensed_example))
-            key_string = "" if key_attribute is None else "{},".format(example[key_attribute - 1])
-            true_values = get_sublist(target_indices, example)
+    for example in examples_generator:
+        condensed_example = [example[i - 1] for i in descriptive_indices if i <= len(example)]  # base 1 ==> -1
+        predictions = eval("{}.ensemble_{}({})".format(python_ensemble_file, num_trees, condensed_example))
+        key_string = "" if key_attribute is None else "{},".format(example[key_attribute - 1])
+        true_values = get_sublist(target_indices, example)
+        for prediction, f in zip(predictions, out_fs):
             new_line = key_string + ",".join([str(t) for t in true_values + prediction])
             print(new_line, file=f)
+    for f in out_fs:
+        f.close()
 
 
 # ensemble_dir = "C:/Users/matej/Documents/clusTesti/testPredikicijPython"
@@ -157,13 +163,14 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
 # arff = "C:/Users/matej/git/e8datasets/MTR/chlor_alkali_complete.arff"
 # create_predictions(ensemble_dir, ensemble_fil, arff, descriptive_attrs, key_attribute, target_attrs, num_trees, ensemble_dir + "/out.txt")
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Option parser', formatter_class=argparse.ArgumentDefaultsHelpFormatter)
+    parser = argparse.ArgumentParser(description='Option parser',
+                                     formatter_class=argparse.ArgumentDefaultsHelpFormatter)
     parser.add_argument("-dir", "--ensemble_dir", default=None,
                         help="The directory where the ensemble python script with ensemble models is located, e.g., C:/Experiments/results/")
     parser.add_argument("-ens", "--ensemble_file", default=None,
                         help='Name name of the ensemble models file, e.g., myForest_models (and not C:/Experiments/results/myForest_models.py)')
     parser.add_argument("-a", "--arff_file", default=None,
-                        help='Path to the arff file whose instances will the predictions be made for, e.g., C:/Experiments/venus_test.arff')            
+                        help='Path to the arff file whose instances will the predictions be made for, e.g., C:/Experiments/venus_test.arff')
     parser.add_argument("-da", "--descriptive_attributes", default=None,
                         help='Comma separated string of 1-based indices (or intervals thereof) that define descriptive attributes, e.g., 2,3,4 or 2-6,8,12-21')
     parser.add_argument("-k", "--key_attribute", default=None,
@@ -173,9 +180,10 @@ if __name__ == "__main__":
     parser.add_argument("-t", "--trees", default=None,
                         help="The number of trees, i.e., the size of the forest, e.g., 100")
     parser.add_argument("-o", "--output_file", default=None,
-                        help="Path to the output file where predictions are saved to, e.g., C:/Experiments/results/predicted.pred")
+                        help="Comma separated strings of paths to the output files where predictions are saved to, e.g., C:/Experiments/results/predicted100.pred,C:/Experiments/results/predicted200.pred")
     parser.add_argument("-s", "--instances_step", default=1000,
                         help="The 'frequency' of the notifications, how many instances were generated, e.g., 10. If set to 10, you will be notified on the 10th, 20th, 30th, ... instance.")
+
     parser.print_help()
     arguments = parser.parse_args(sys.argv[1:])
 
@@ -188,12 +196,8 @@ if __name__ == "__main__":
         key_attribute = int(key_attribute)
     target_attributes = arguments.target_attributes
     number_of_trees = int(arguments.trees)
-    output_file = arguments.output_file
+    output_files = arguments.output_file.split(",")
     instances_step = int(arguments.instances_step)
     print("Starting ...")
-    create_predictions(ensemble_directory, ensemble_script, arff_file, descriptive_attributes, key_attribute, target_attributes, number_of_trees, output_file)
-    
-
-
-
-
+    create_predictions(ensemble_directory, ensemble_script, arff_file, descriptive_attributes, key_attribute,
+                       target_attributes, number_of_trees, output_files)
