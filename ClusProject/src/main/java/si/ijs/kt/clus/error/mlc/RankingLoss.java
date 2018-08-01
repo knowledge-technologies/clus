@@ -163,7 +163,7 @@ public class RankingLoss extends ClusNominalError {
             throw new Exception("RankingLoss.addExample(DataTuple tuple, DataTuple pred) cannot be implemented.");
         }
         catch (Exception e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
     }

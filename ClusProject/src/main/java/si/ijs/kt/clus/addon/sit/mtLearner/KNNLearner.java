@@ -65,7 +65,7 @@ public class KNNLearner extends MTLearnerImpl {
         }
         catch (IOException e) {}
         catch (InterruptedException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
         }
 

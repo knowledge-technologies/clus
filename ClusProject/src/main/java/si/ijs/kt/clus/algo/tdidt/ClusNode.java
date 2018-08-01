@@ -40,6 +40,7 @@ import si.ijs.kt.clus.algo.split.CurrentBestTestAndHeuristic;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.Global;
@@ -83,19 +84,32 @@ public class ClusNode extends MyNode implements ClusModel {
     public NodeTest[] m_OppositeAlternatives; // contains all alternatives to m_Test that give the opposite split
     public String m_AlternativesString; // contains a string of true and opposite alternatives, sorted according to
                                         // attribute number
-                                        // - adde by Jurica Levatic (E8_IJS), March 2014
-    public List<Integer> m_LeafTuples; //contains hash codes of tuples which ended in a leaf
+                                        // - added by Jurica Levatic (E8_IJS), March 2014
+    public List<Integer> m_LeafTuples; // contains hash codes of tuples which ended in a leaf
     // - end added by Jurica
-    private UniqueNodeIdentifier m_UniqueNodeIdentifier; // matejp: used because hashCode & equals do not form a considerable good team for leaves
+    private UniqueNodeIdentifier m_UniqueNodeIdentifier; // matejp: used because hashCode & equals do not form a
+                                                         // considerable good team for leaves
+
+    // ROS
+    private ClusROSModelInfo m_ROSModelInfo;
     
-    
-    private void setUniqueNodeIdentifier(int value) {
-    	m_UniqueNodeIdentifier = new UniqueNodeIdentifier(value);
+
+    public void setROSModelInfo(ClusROSModelInfo info) {
+        m_ROSModelInfo = info;
     }
-    
+
+    public ClusROSModelInfo getROSModelInfo() {
+        return m_ROSModelInfo;
+    }
+
+    private void setUniqueNodeIdentifier(int value) {
+        m_UniqueNodeIdentifier = new UniqueNodeIdentifier(value);
+    }
+
+
     private UniqueNodeIdentifier getUniqueNodeIdentifier() {
-		return m_UniqueNodeIdentifier;
-	}
+        return m_UniqueNodeIdentifier;
+    }
 
 
     @Override
@@ -266,18 +280,18 @@ public class ClusNode extends MyNode implements ClusModel {
         return m_ID;
     }
 
+
     @Override
     public boolean equals(Object other) {
         ClusNode o = (ClusNode) other;
-        if (m_Test != null && o.m_Test != null) {  		// two internal nodes: same tests and same children
-            if (!m_Test.equals(o.m_Test)) {
-            	return false;
-            }
+        if (m_Test != null && o.m_Test != null) { // two internal nodes: same tests and same children
+            if (!m_Test.equals(o.m_Test)) { return false; }
         }
-        else if (m_Test != null || o.m_Test != null) {  // internal node is not equal to a leaf
-            	return false;
-        } else {										// two leaves should give the at least same predictions, but this is not good enough for use in HashMap!
-        	System.err.println("Warning: you are comparing two leaves. This always results in true.");
+        else if (m_Test != null || o.m_Test != null) { // internal node is not equal to a leaf
+            return false;
+        }
+        else { // two leaves should give the at least same predictions, but this is not good enough for use in HashMap!
+            System.err.println("Warning: you are comparing two leaves. This always results in true.");
         }
         int nb_c = getNbChildren();
         for (int i = 0; i < nb_c; i++) {
@@ -285,9 +299,9 @@ public class ClusNode extends MyNode implements ClusModel {
                 return false;
         }
         return true;
-    } 
+    }
 
-    
+
     @Override
     public int hashCode() {
         int hashCode = 1234;
@@ -422,10 +436,11 @@ public class ClusNode extends MyNode implements ClusModel {
 
 
     public final ClusNode afterInduce(ClusStatManager mgr) throws ClusException {
-        if (mgr == null) throw new RuntimeException("ClusStatManager = null.");
+        if (mgr == null)
+            throw new RuntimeException("ClusStatManager = null.");
 
         // treshold optimization
-        if (mgr.getSettings().getMLC().shouldRunThresholdOptimization()) { 
+        if (mgr.getSettings().getMLC().shouldRunThresholdOptimization()) {
             optimizeTresholds();
         }
         else {
@@ -436,7 +451,7 @@ public class ClusNode extends MyNode implements ClusModel {
         return this;
     }
 
-    
+
     private void optimizeTresholds() throws ClusException {
         double lower = 0.0, upper = 1.0;
         double middle = lower + (upper - lower) / 2;
@@ -462,8 +477,11 @@ public class ClusNode extends MyNode implements ClusModel {
             // to optimal value and the tree is updated accordingly
         }
         else {
-            double defaultThreshold = 0.5; // try the default threshold also: typically, this seems to be at least a close to optimal value
-            double[] candidates = new double[] { defaultThreshold, lower, upper }; // default the first: we want to choose it if nothing is strictly better
+            double defaultThreshold = 0.5; // try the default threshold also: typically, this seems to be at least a
+                                           // close to optimal value
+            double[] candidates = new double[] { defaultThreshold, lower, upper }; // default the first: we want to
+                                                                                   // choose it if nothing is strictly
+                                                                                   // better
             int optimalDiff = Integer.MAX_VALUE;
             double optimalThreshold = -10.0;
             for (double candidate : candidates) {
@@ -479,6 +497,7 @@ public class ClusNode extends MyNode implements ClusModel {
             updateTree();
         }
     }
+
 
     public void updateThresholds(double threshold) {
         if (getTargetStat() instanceof ClassificationStat) {
@@ -535,7 +554,8 @@ public class ClusNode extends MyNode implements ClusModel {
                 ClassificationStat targetStat = (ClassificationStat) getTargetStat();
                 for (int target = 0; target < targetStat.m_ClassCounts.length; target++) {
                     if (targetStat.m_ClassCounts[target][0] / targetStat.m_SumWeights[target] >= targetStat.m_Thresholds[target]) {
-                        nbPredictedRelevant += (int) targetStat.m_SumWeights[target]; // TODO: does not work for weighted sum of examples!
+                        nbPredictedRelevant += (int) targetStat.m_SumWeights[target]; // TODO: does not work for
+                                                                                      // weighted sum of examples!
                     }
                 }
             }
@@ -705,18 +725,18 @@ public class ClusNode extends MyNode implements ClusModel {
     }
 
 
-    //    /***************************************************************************
-    //     * Multi score code - this should be made more general!
-    //     ***************************************************************************/
+    // /***************************************************************************
+    // * Multi score code - this should be made more general!
+    // ***************************************************************************/
     //
-    //    public final void multiScore(MultiScore score) {
-    //        m_ClusteringStat = new MultiScoreStat(m_ClusteringStat, score);
-    //        int nb_c = getNbChildren();
-    //        for (int i = 0; i < nb_c; i++) {
-    //            ClusNode info = (ClusNode) getChild(i);
-    //            info.multiScore(score);
-    //        }
-    //    }
+    // public final void multiScore(MultiScore score) {
+    // m_ClusteringStat = new MultiScoreStat(m_ClusteringStat, score);
+    // int nb_c = getNbChildren();
+    // for (int i = 0; i < nb_c; i++) {
+    // ClusNode info = (ClusNode) getChild(i);
+    // info.multiScore(score);
+    // }
+    // }
 
     /***************************************************************************
      * Code to attach another dataset to the tree
@@ -736,7 +756,8 @@ public class ClusNode extends MyNode implements ClusModel {
 
     /***************************************************************************
      * Code for making predictions
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      ***************************************************************************/
 
     @Override
@@ -800,7 +821,7 @@ public class ClusNode extends MyNode implements ClusModel {
      * @param tuple
      */
     public void incrementProximities(DataTuple tuple) {
-        if (atBottomLevel()) { //leaf
+        if (atBottomLevel()) { // leaf
             if (m_LeafTuples == null) {
                 m_LeafTuples = new LinkedList<Integer>();
             }
@@ -836,8 +857,8 @@ public class ClusNode extends MyNode implements ClusModel {
      * @param leafTuples
      *        hash codes of tuples which are in the same leaf where
      *        the tuple ended will be stored in this variable.
-
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      */
     public ClusStatistic predictWeightedAndGetLeafTuples(DataTuple tuple, List<Integer> leafTuples) throws ClusException {
         if (atBottomLevel()) {
@@ -919,7 +940,8 @@ public class ClusNode extends MyNode implements ClusModel {
 
     /***************************************************************************
      * Change the total statistic of the tree?
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      ***************************************************************************/
 
     public final void initTargetStat(ClusStatManager smgr, RowData subset) throws ClusException {
@@ -1185,19 +1207,22 @@ public class ClusNode extends MyNode implements ClusModel {
         printTree(wrt, info, "", examples, true);
     }
 
+
     @Override
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict) {
-    	printTreeToPythonScriptIterative(wrt, "\t", dict);
+        printTreeToPythonScriptIterative(wrt, "\t", dict);
         wrt.println();
         wrt.println();
     }
-    
+
+
     @Override
     public void printModelToPythonScript(PrintWriter wrt, HashMap<String, Integer> dict, String name) {
-    	printTreeToPythonTreeObject(wrt, dict, name);
+        printTreeToPythonTreeObject(wrt, dict, name);
         wrt.println();
         wrt.println();
     }
+
 
     @Override
     public JsonObject getModelJSON() {
@@ -1314,7 +1339,7 @@ public class ClusNode extends MyNode implements ClusModel {
         int[][] tabexist = new int[lastmodel + 1][10000]; // table of booleen for each item
         Global.set_treecpt(starttree);
         Global.set_itemsetcpt(startitem);
-        //ClusModelInfo m = cr.getModelInfo(0);// cr.getModelInfo(lastmodel);
+        // ClusModelInfo m = cr.getModelInfo(0);// cr.getModelInfo(lastmodel);
 
         if (exhaustive) {
             for (int i = 0; i < cr.getNbModels(); i++) {
@@ -1431,24 +1456,24 @@ public class ClusNode extends MyNode implements ClusModel {
                 }
 
                 writeDistributionForInternalNode(writer, info);
-                //writer.print(prefix + "+--yes: ");
+                // writer.print(prefix + "+--yes: ");
                 writer.print(prefix + getHorizontalLineText() + "yes: ");
-                //((ClusNode) getChild(YES)).printTree(writer, info, prefix + "|       ", examples0, false);
+                // ((ClusNode) getChild(YES)).printTree(writer, info, prefix + "| ", examples0, false);
                 ((ClusNode) getChild(YES)).printTree(writer, info, prefix + getVerticalLineText() + getSpacesYes(), examples0, false);
-                //writer.print(prefix + "+--no:  ");
+                // writer.print(prefix + "+--no: ");
                 writer.print(prefix + getHorizontalLineText() + "no:  ");
 
                 if (hasUnknownBranch()) {
-                    //((ClusNode) getChild(NO)).printTree(writer, info, prefix + "|       ", examples1, false);
+                    // ((ClusNode) getChild(NO)).printTree(writer, info, prefix + "| ", examples1, false);
                     ((ClusNode) getChild(NO)).printTree(writer, info, prefix + getVerticalLineText() + getSpacesNo(), examples1, false);
-                    //writer.print(prefix + "+--unk: ");
+                    // writer.print(prefix + "+--unk: ");
 
                     writer.print(prefix + getHorizontalLineText() + "unk: ");
-                    //((ClusNode) getChild(UNK)).printTree(writer, info, prefix + "        ", examples0, false);
+                    // ((ClusNode) getChild(UNK)).printTree(writer, info, prefix + " ", examples0, false);
                     ((ClusNode) getChild(UNK)).printTree(writer, info, prefix + getSpacesUnk(), examples0, false);
                 }
                 else {
-                    // ((ClusNode) getChild(NO)).printTree(writer, info, prefix + "        ", examples1, false);
+                    // ((ClusNode) getChild(NO)).printTree(writer, info, prefix + " ", examples1, false);
                     ((ClusNode) getChild(NO)).printTree(writer, info, prefix + getSpacesNo(), examples1, false);
                 }
             }
@@ -1461,11 +1486,11 @@ public class ClusNode extends MyNode implements ClusModel {
                     if (examples != null) {
                         examples.apply(m_Test, i);
                     }
-                    //writer.print(prefix + "+--" + branchlabel + ": ");
+                    // writer.print(prefix + "+--" + branchlabel + ": ");
                     writer.print(prefix + getHorizontalLineText() + branchlabel + ": ");
                     String suffix = StringUtils.makeString(' ', branchlabel.length() + 4);
                     if (i != arity - 1) {
-                        //child.printTree(writer, info, prefix + "|" + suffix, examplesi, false);
+                        // child.printTree(writer, info, prefix + "|" + suffix, examplesi, false);
                         child.printTree(writer, info, prefix + getVerticalLineText() + suffix, examplesi, false);
                     }
                     else {
@@ -1650,7 +1675,7 @@ public class ClusNode extends MyNode implements ClusModel {
                 }
             }
             else {
-            	System.err.println("arity - delta != 2 becauese arity: " + arity + " and delta: " + delta);
+                System.err.println("arity - delta != 2 becauese arity: " + arity + " and delta: " + delta);
                 writer.println(prefix + "Let there be syntax errors. Situation: here arity - delta != 2");
             }
         }
@@ -1658,174 +1683,197 @@ public class ClusNode extends MyNode implements ClusModel {
             if (m_TargetStat != null) {
                 writer.println(prefix + "return " + m_TargetStat.getArrayOfStatistic());
                 // System.out.println(m_TargetStat.getClass());
-            } else {
-            	System.err.println("m_TargetStat == null");
-            	writer.println(prefix + "return null, because m_TargetStat is null");
+            }
+            else {
+                System.err.println("m_TargetStat == null");
+                writer.println(prefix + "return null, because m_TargetStat is null");
             }
         }
     }
-    
-    
+
+
     /**
-     * The iterative version of the method for printing Python code. This should be called only at the root node of the tree.
+     * The iterative version of the method for printing Python code. This should be called only at the root node of the
+     * tree.
      * Two stages:<br>
      * <ul>
-     * <li>create hash map node: number of visits, of all nodes in the tree </li>
+     * <li>create hash map node: number of visits, of all nodes in the tree</li>
      * <li>perform depth first search and print Python trees</li>
      * </ul>
+     * 
      * @param writer
      * @param prefix
      * @param dict
      */
     public final void printTreeToPythonScriptIterative(PrintWriter writer, String prefix, HashMap<String, Integer> dict) {
-    	// Hash map node: number of visits
-    	HashMap<UniqueNodeIdentifier, Integer> tree_nodes = new HashMap<UniqueNodeIdentifier, Integer>();
-    	int identifier = 0;
-    	Stack<ClusNode> temp = new Stack<>();
-    	temp.push(this);
-    	ClusNode current;
-    	while(!temp.isEmpty()) {
-    		current = temp.pop();
-    		current.setUniqueNodeIdentifier(identifier);
-    		identifier++;
-    		if (tree_nodes.containsKey(current.getUniqueNodeIdentifier())) {
-    			System.out.println(current + " exists");
-    		}
-    		tree_nodes.put(current.getUniqueNodeIdentifier(), 0);
-    		int children = current.getNbChildren();
-    		if(children != 0 && children != 2) {
-    			System.err.println("Warning: not a binary tree! Python code won't work properly with high probability.");
-    		}
-    		for(int i = 0; i < children; i++) {
-    			temp.push((ClusNode) current.getChild(i));
-    		}
-     	}
-    	// print the code
-    	current = this;
-    	int current_indentation = prefix.length() - prefix.replace("\t", "").length();
-    	while(current != null) {
-    		int arity = current.getNbChildren();
-    		String current_prefix = StringUtils.makeString('\t', current_indentation);
-    		if (arity > 0) {
-    			// internal node
-    			int visits = tree_nodes.get(current.getUniqueNodeIdentifier()).intValue();
-    			tree_nodes.put(current.getUniqueNodeIdentifier(), visits + 1);
-        		if (visits == 0) {
-        			// print if test and follow the YES branch
-        			String atrNameReplacement = String.format("xs[%d]", dict.get(current.m_Test.getType().getName()));
+        // Hash map node: number of visits
+        HashMap<UniqueNodeIdentifier, Integer> tree_nodes = new HashMap<UniqueNodeIdentifier, Integer>();
+        int identifier = 0;
+        Stack<ClusNode> temp = new Stack<>();
+        temp.push(this);
+        ClusNode current;
+        while (!temp.isEmpty()) {
+            current = temp.pop();
+            current.setUniqueNodeIdentifier(identifier);
+            identifier++;
+            if (tree_nodes.containsKey(current.getUniqueNodeIdentifier())) {
+                System.out.println(current + " exists");
+            }
+            tree_nodes.put(current.getUniqueNodeIdentifier(), 0);
+            int children = current.getNbChildren();
+            if (children != 0 && children != 2) {
+                System.err.println("Warning: not a binary tree! Python code won't work properly with high probability.");
+            }
+            for (int i = 0; i < children; i++) {
+                temp.push((ClusNode) current.getChild(i));
+            }
+        }
+        // print the code
+        current = this;
+        int current_indentation = prefix.length() - prefix.replace("\t", "").length();
+        while (current != null) {
+            int arity = current.getNbChildren();
+            String current_prefix = StringUtils.makeString('\t', current_indentation);
+            if (arity > 0) {
+                // internal node
+                int visits = tree_nodes.get(current.getUniqueNodeIdentifier()).intValue();
+                tree_nodes.put(current.getUniqueNodeIdentifier(), visits + 1);
+                if (visits == 0) {
+                    // print if test and follow the YES branch
+                    String atrNameReplacement = String.format("xs[%d]", dict.get(current.m_Test.getType().getName()));
                     String testString = "if " + current.m_Test.getPythonTestString(atrNameReplacement) + ":";
                     writer.println(current_prefix + testString);
                     current = (ClusNode) current.getChild(YES);
                     current_indentation++;
-        		} else if(visits == 1) {
-        			// print else and follow the NO branch
-        			writer.println(current_prefix + "else:");
-        			current = (ClusNode) current.getChild(NO);
-        			current_indentation++;
-        		} else if(visits == 2) {
-        			// go up
-        			current = (ClusNode) current.m_Parent;
+                }
+                else if (visits == 1) {
+                    // print else and follow the NO branch
+                    writer.println(current_prefix + "else:");
+                    current = (ClusNode) current.getChild(NO);
+                    current_indentation++;
+                }
+                else if (visits == 2) {
+                    // go up
+                    current = (ClusNode) current.m_Parent;
                     current_indentation--;
-        		} else {
-        			System.err.println("Warning: more than two visits of the node " + this.toString());
-        		}
-    		} else {
-    			// leaf
+                }
+                else {
+                    System.err.println("Warning: more than two visits of the node " + this.toString());
+                }
+            }
+            else {
+                // leaf
                 if (m_TargetStat != null) {
                     writer.println(current_prefix + "return " + current.m_TargetStat.getArrayOfStatistic());
-                } else {
-                	System.err.println("m_TargetStat == null");
-                	writer.println(current_prefix + "return null, because m_TargetStat is null");
+                }
+                else {
+                    System.err.println("m_TargetStat == null");
+                    writer.println(current_prefix + "return null, because m_TargetStat is null");
                 }
                 // go up
                 current = (ClusNode) current.m_Parent;
                 current_indentation--;
-    		}
-    	}
-    }
-    
-        
-    public final void printTreeToPythonTreeObject(PrintWriter writer, HashMap<String, Integer> dict, String modelIdentifier) {
-    	HashMap<UniqueNodeIdentifier, Integer> children_left = new HashMap<UniqueNodeIdentifier, Integer>();  // {nodeID: number of children that have not been processed yet, ...}
-    	int identifier = 0;
-    	Stack<ClusNode> temp = new Stack<>();
-    	temp.push(this);
-    	ClusNode current;
-    	while(!temp.isEmpty()) {
-    		current = temp.pop();
-    		current.setUniqueNodeIdentifier(identifier);
-    		identifier++;
-    		if (children_left.containsKey(current.getUniqueNodeIdentifier())) {
-    			System.out.println(current + " exists");
-    		}
-    		int children = current.getNbChildren();
-    		if(children != 0 && children != 2) {
-    			System.err.println("Warning: not a binary tree! Python code won't work properly with high probability.");
-    		}
-    		children_left.put(current.getUniqueNodeIdentifier(), children);
-    		for(int i = 0; i < children; i++) {
-    			temp.push((ClusNode) current.getChild(i));
-    		}
-     	}
-    	temp = new Stack<>();
-    	temp.push(this);
-    	while(!temp.isEmpty()) {
-    		current = temp.peek();
-    		UniqueNodeIdentifier currentID = current.getUniqueNodeIdentifier();
-    		boolean isProcessed = false;
-    		if(current.atBottomLevel()) {
-    			// write leaf line
-    			writer.println(pythonTreeLeafNodeLine(current, modelIdentifier));
-    			isProcessed = true;
-    		} else if(children_left.get(currentID) == 0){
-    			// write internal line
-    			writer.println(pythonTreeInternalNodeLine(current, modelIdentifier, dict.get(current.m_Test.getType().getName())));
-    			isProcessed = true;
-    		} else if (children_left.get(currentID) == current.getNbChildren()){
-    			// process children first
-    			for (int i = 0; i < current.getNbChildren(); i++) {
-    				temp.push((ClusNode) current.getChild(i));
-    			}
-    		} else {
-    			System.err.println("printTreeToPythonTree:\n    Probably something went wrong: the #processed children is neither #children nor 0!");
-    		}
-    		if (isProcessed) {
-    			if (current.getParent() != null) {
-    				UniqueNodeIdentifier parentID = ((ClusNode) current.getParent()).getUniqueNodeIdentifier(); 
-    				int previous = children_left.get(parentID);
-    				children_left.put(parentID, previous - 1);
-    			}
-    			temp.pop();
-    		}
-    	}
-    	writer.println(String.format("tree_%s = Tree(%s)", modelIdentifier, pythonNodeName(this, modelIdentifier)));
-    }
-    
-   private static String pythonNodeName(ClusNode node, String modelIdentifier) {
-	   return String.format("node_%s_%d", modelIdentifier, node.getUniqueNodeIdentifier().getID());
-   }
-    
-   private static String pythonTreeInternalNodeLine(ClusNode node, String modelIdentifier, int inputAttrIndex) {
-	   String[] children = new String[node.getNbChildren()];
-	   for(int i = 0; i < children.length; i++) {
-		   children[i] = pythonNodeName((ClusNode) node.getChild(i), modelIdentifier);
-	   }
-	   String childrenArg = String.format("children=%s", Arrays.toString(children));
-	   String frequenciesArg = String.format("branch_frequencies=%s", Arrays.toString(node.getTest().getProportions()));
-	   String testArg = String.format("test=BinaryNodeTest(%d, test_function=lambda t: t%s)", inputAttrIndex, node.m_Test.getPythonTestString(""));
-	   return String.format("%s = TreeNode(%s, %s, %s)", pythonNodeName(node, modelIdentifier), childrenArg, frequenciesArg, testArg);
-   }
-    
-    private String pythonTreeLeafNodeLine(ClusNode leaf, String modelIdentifier) {
-    	String statArg;
-    	if (m_TargetStat instanceof RegressionStat) {
-    		statArg = String.format("prediction_statistics=RegressionStat(%s)", leaf.m_TargetStat.getArrayOfStatistic());
-    	} else {
-    		throw new RuntimeException("Python code for your target-type statistics not implemented.");
-    	}
-    	return String.format("%s = TreeNode(%s)", pythonNodeName(leaf, modelIdentifier), statArg);
+            }
+        }
     }
 
+
+    public final void printTreeToPythonTreeObject(PrintWriter writer, HashMap<String, Integer> dict, String modelIdentifier) {
+        HashMap<UniqueNodeIdentifier, Integer> children_left = new HashMap<UniqueNodeIdentifier, Integer>(); // {nodeID:
+                                                                                                             // number
+                                                                                                             // of
+                                                                                                             // children
+                                                                                                             // that
+                                                                                                             // have not
+                                                                                                             // been
+                                                                                                             // processed
+                                                                                                             // yet,
+                                                                                                             // ...}
+        int identifier = 0;
+        Stack<ClusNode> temp = new Stack<>();
+        temp.push(this);
+        ClusNode current;
+        while (!temp.isEmpty()) {
+            current = temp.pop();
+            current.setUniqueNodeIdentifier(identifier);
+            identifier++;
+            if (children_left.containsKey(current.getUniqueNodeIdentifier())) {
+                System.out.println(current + " exists");
+            }
+            int children = current.getNbChildren();
+            if (children != 0 && children != 2) {
+                System.err.println("Warning: not a binary tree! Python code won't work properly with high probability.");
+            }
+            children_left.put(current.getUniqueNodeIdentifier(), children);
+            for (int i = 0; i < children; i++) {
+                temp.push((ClusNode) current.getChild(i));
+            }
+        }
+        temp = new Stack<>();
+        temp.push(this);
+        while (!temp.isEmpty()) {
+            current = temp.peek();
+            UniqueNodeIdentifier currentID = current.getUniqueNodeIdentifier();
+            boolean isProcessed = false;
+            if (current.atBottomLevel()) {
+                // write leaf line
+                writer.println(pythonTreeLeafNodeLine(current, modelIdentifier));
+                isProcessed = true;
+            }
+            else if (children_left.get(currentID) == 0) {
+                // write internal line
+                writer.println(pythonTreeInternalNodeLine(current, modelIdentifier, dict.get(current.m_Test.getType().getName())));
+                isProcessed = true;
+            }
+            else if (children_left.get(currentID) == current.getNbChildren()) {
+                // process children first
+                for (int i = 0; i < current.getNbChildren(); i++) {
+                    temp.push((ClusNode) current.getChild(i));
+                }
+            }
+            else {
+                System.err.println("printTreeToPythonTree:\n    Probably something went wrong: the #processed children is neither #children nor 0!");
+            }
+            if (isProcessed) {
+                if (current.getParent() != null) {
+                    UniqueNodeIdentifier parentID = ((ClusNode) current.getParent()).getUniqueNodeIdentifier();
+                    int previous = children_left.get(parentID);
+                    children_left.put(parentID, previous - 1);
+                }
+                temp.pop();
+            }
+        }
+        writer.println(String.format("tree_%s = Tree(%s)", modelIdentifier, pythonNodeName(this, modelIdentifier)));
+    }
+
+
+    private static String pythonNodeName(ClusNode node, String modelIdentifier) {
+        return String.format("node_%s_%d", modelIdentifier, node.getUniqueNodeIdentifier().getID());
+    }
+
+
+    private static String pythonTreeInternalNodeLine(ClusNode node, String modelIdentifier, int inputAttrIndex) {
+        String[] children = new String[node.getNbChildren()];
+        for (int i = 0; i < children.length; i++) {
+            children[i] = pythonNodeName((ClusNode) node.getChild(i), modelIdentifier);
+        }
+        String childrenArg = String.format("children=%s", Arrays.toString(children));
+        String frequenciesArg = String.format("branch_frequencies=%s", Arrays.toString(node.getTest().getProportions()));
+        String testArg = String.format("test=BinaryNodeTest(%d, test_function=lambda t: t%s)", inputAttrIndex, node.m_Test.getPythonTestString(""));
+        return String.format("%s = TreeNode(%s, %s, %s)", pythonNodeName(node, modelIdentifier), childrenArg, frequenciesArg, testArg);
+    }
+
+
+    private String pythonTreeLeafNodeLine(ClusNode leaf, String modelIdentifier) {
+        String statArg;
+        if (m_TargetStat instanceof RegressionStat) {
+            statArg = String.format("prediction_statistics=RegressionStat(%s)", leaf.m_TargetStat.getArrayOfStatistic());
+        }
+        else {
+            throw new RuntimeException("Python code for your target-type statistics not implemented.");
+        }
+        return String.format("%s = TreeNode(%s)", pythonNodeName(leaf, modelIdentifier), statArg);
+    }
 
 
     public final void showAlternatives(PrintWriter writer) {

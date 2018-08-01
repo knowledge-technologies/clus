@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.EnumSet;
+import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 
@@ -64,6 +65,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.DiskTupleIterator;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.TupleIterator;
+import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
@@ -120,6 +122,7 @@ import si.ijs.kt.clus.selection.XValSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.DebugFile;
 import si.ijs.kt.clus.util.ResourceInfo;
@@ -135,8 +138,6 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgsProvider;
 
-
-// import si.ijs.kt.clus.weka.*;
 
 public class Clus implements CMDLineArgsProvider {
 
@@ -224,6 +225,7 @@ public class Clus implements CMDLineArgsProvider {
         else {
             m_Data = view.readData(reader, m_Schema);
         }
+
         reader.close();
         if (m_Sett.getGeneral().getVerbose() > 0)
             System.out.println("Found " + m_Data.getNbRows() + " rows");
@@ -268,6 +270,9 @@ public class Clus implements CMDLineArgsProvider {
 
         // TODO: does this really need to be here? martinb
         m_Schema.setHMTRHierarchy(m_HMTRHierarchy);
+
+        // validate settings
+        m_Sett.validateSettings(m_Schema);
 
         m_Induce.initialize();
         initializeAttributeWeights(m_Data);
@@ -472,13 +477,10 @@ public class Clus implements CMDLineArgsProvider {
      * @throws Exception
      */
     public final void induce(ClusRun cr, ClusInductionAlgorithmType clss) throws Exception {
-        if (getSettings().getGeneral().getVerbose() > 0) {
-            System.out.println("Time: " + (new SimpleDateFormat("dd. MM. yyyy HH:mm:ss")).format(Calendar.getInstance().getTime()));
-            System.out.println("Run: " + cr.getIndexString());
-            System.out.println("Verbose: " + getSettings().getGeneral().getVerbose());
-            clss.printInfo();
-            System.out.println();
-        }
+        ClusLogger.info("Time: " + (new SimpleDateFormat("dd. MM. yyyy HH:mm:ss")).format(Calendar.getInstance().getTime()));
+        ClusLogger.info("Run: " + cr.getIndexString());
+        clss.printInfo();
+        ClusLogger.info("");
 
         clss.induceAll(cr);
     }
@@ -1516,6 +1518,8 @@ public class Clus implements CMDLineArgsProvider {
             cr.getAllModelsMI().addModelProcessor(ClusModelInfo.TEST_ERR, wrt);
 
             if (m_Sett.getOutput().isOutFoldData()) {
+                ClusLogger.info("Writing train and test ARFF files for fold " + fold);
+
                 ARFFFile.writeArff(m_Sett.getGeneric().getAppName() + "-test-" + fold + ".arff", cr.getTestSet());
                 ARFFFile.writeArff(m_Sett.getGeneric().getAppName() + "-train-" + fold + ".arff", (RowData) cr.getTrainingSet());
             }
@@ -1538,6 +1542,10 @@ public class Clus implements CMDLineArgsProvider {
         // (RowData)cr.getTrainingSet());
         // System.err.println("CHANGING DATA TO R FORMAT, REMOVE THIS CODE");
 
+        if (m_Sett.getGeneral().isDoNotInduce()) {
+            ClusLogger.info("Skipping model induction");
+            return cr;
+        }
         // Induce tree
         induce(cr, clss);
         if (m_Sett.getRules().isRuleWiseErrors()) {
@@ -1802,6 +1810,7 @@ public class Clus implements CMDLineArgsProvider {
 
     public static void main(String[] args) {
         try {
+       
             Clus clus = new Clus();
             Settings sett = clus.getSettings();
             CMDLineArgs cargs = new CMDLineArgs(clus);
@@ -1819,11 +1828,15 @@ public class Clus implements CMDLineArgsProvider {
                 System.out.println("Expected main argument");
                 System.exit(0);
             }
+            
+            
             if (cargs.allOK()) {
                 sett.getGeneric().setDate(new Date());
                 sett.getGeneric().setAppName(cargs.getMainArg(0));
 
                 clus.initSettings(cargs);
+
+                ClusLogger.initialize(sett.getGeneral()); // initialization of logging.
 
                 ClusInductionAlgorithmType clss = null;
 
@@ -1968,20 +1981,17 @@ public class Clus implements CMDLineArgsProvider {
                 else if (cargs.hasOption("fold")) {
                     clus.isxval = true;
                     clus.initialize(cargs, clss);
-                    clus.oneFoldRun(clss, cargs.getOptionInteger("fold"));
+
+                    List<Integer> f = cargs.getOptionList("fold");
+                    for (int i : f) {
+                        clus.oneFoldRun(clss, i);
+                    }
                 }
                 else if (cargs.hasOption("bag")) {
                     clus.isxval = true;
                     clus.initialize(cargs, clss);
                     clus.baggingRun(clss);
                 }
-                // else if (cargs.hasOption("show")) {
-                // // clus.showModel(clus.getAppName());
-                // clus.showTree(clus.getAppName());
-                // }
-                // else if (cargs.hasOption("gui")) {
-                // clus.gui(cargs.getMainArg(0));
-                // }
                 else if (cargs.hasOption("tseries")) {
                     clus.getSettings().getTimeSeries().setSectionTimeSeriesEnabled(true);
                     clus.initialize(cargs, clss);
@@ -2001,6 +2011,8 @@ public class Clus implements CMDLineArgsProvider {
             if (!sett.getAttribute().isNullGIS()) {
                 tryAnalyzePredictions(clus, sett);
             }
+
+            ClusLogger.info("Done.");
         }
         catch (ClusException e) {
             System.err.println("Error: " + e);
@@ -2060,12 +2072,14 @@ public class Clus implements CMDLineArgsProvider {
         return Debugging.contains(flag);
     }
 
+
     /**
      * A convenience method. Checks for general debugging status.
      */
     public static boolean isDebug() {
         return isDebug(DebugType.General);
     }
+
 
     /**
      * This sets global debugging flags.

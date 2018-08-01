@@ -25,11 +25,13 @@ package si.ijs.kt.clus.util.jeans.io.ini;
 import java.io.IOException;
 import java.io.PrintWriter;
 
+import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.jeans.util.MStreamTokenizer;
 
 
 public abstract class INIFileEntry extends INIFileNode {
-
+ 
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     protected String m_Name;
 
 

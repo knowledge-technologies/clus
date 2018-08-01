@@ -34,7 +34,7 @@ public class InduceExtraTreeCallable implements Callable<OneBagResults> {
 
     @Override
     public OneBagResults call() throws Exception {
-        // TODO Auto-generated method stub
+        
         return m_Cei.induceOneExtraTree(m_Cr, m_I, m_Train_iterator, m_Test_iterator, m_Rnd, m_Mgr);
     }
 

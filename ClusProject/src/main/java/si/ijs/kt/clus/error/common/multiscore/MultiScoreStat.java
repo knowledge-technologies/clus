@@ -27,7 +27,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.data.cols.ColTarget;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.SparseDataTuple;
-import si.ijs.kt.clus.ext.ensemble.ros.ClusEnsembleROSInfo;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
@@ -174,7 +174,7 @@ public class MultiScoreStat extends ClusStatistic {
 
 
     @Override
-    public void vote(ArrayList<ClusStatistic> votes, ClusEnsembleROSInfo targetSubspaceInfo) {
+    public void vote(ArrayList<ClusStatistic> votes, ClusROSForestInfo ROSForestInfo) {
         System.err.println(getClass().getName() + "vote (): Not implemented");
     }
 

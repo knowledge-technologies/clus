@@ -321,7 +321,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
             return TimeSeries.areEqual(thisMedoid, otherMedoid);
         }
         catch (ClusException e) {
-            // TODO Auto-generated catch block
+            
             e.printStackTrace();
             return false;
         }

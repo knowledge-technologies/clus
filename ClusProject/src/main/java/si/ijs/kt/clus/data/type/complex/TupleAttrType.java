@@ -139,5 +139,4 @@ public class TupleAttrType extends ClusAttrType {
             return true;
         }
     }
-
 }

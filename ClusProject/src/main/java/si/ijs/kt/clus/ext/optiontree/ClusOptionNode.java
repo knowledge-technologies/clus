@@ -329,60 +329,60 @@ public class ClusOptionNode extends MyNode {
 
     @Override
     public JsonObject getModelJSON() {
-        // TODO Auto-generated method stub
+        
         return null;
     }
 
 
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info) {
-        // TODO Auto-generated method stub
+        
         return null;
     }
 
 
     @Override
     public JsonObject getModelJSON(StatisticPrintInfo info, RowData examples) {
-        // TODO Auto-generated method stub
+        
         return null;
     }
 
 
     @Override
     public void attachModel(HashMap table) throws ClusException {
-        // TODO Auto-generated method stub
+        
     }
 
 
     @Override
     public void retrieveStatistics(ArrayList list) {
-        // TODO Auto-generated method stub
+        
     }
 
 
     @Override
     public void applyModelProcessors(DataTuple tuple, MyArray mproc)
             throws IOException {
-        // TODO Auto-generated method stub        
+                
     }
 
 
     @Override
     public int getModelSize() {
-        // TODO Auto-generated method stub
+        
         return 0;
     }
 
 
     @Override
     public ClusModel prune(int prunetype) {
-        // TODO Auto-generated method stub
+        
         return null;
     }
 
 
     @Override
     public void makeLeaf() {
-        // TODO Auto-generated method stub        
+                
     }
 }

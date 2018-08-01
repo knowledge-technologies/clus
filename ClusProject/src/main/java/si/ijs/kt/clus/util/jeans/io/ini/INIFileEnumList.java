@@ -11,73 +11,83 @@ import si.ijs.kt.clus.main.settings.Settings;
 
 public class INIFileEnumList<T extends Enum<T>> extends INIFileEntry {
 
-	private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
-	private Class<T> m_EnumType;
-	private List<T> m_Values = null;
+    private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
+    private Class<T> m_EnumType;
+    private List<T> m_Values = null;
 
-	@SuppressWarnings("unchecked")
-	public INIFileEnumList(String name, T defaultValue) {
-		super(name);
-		m_EnumType = (Class<T>) defaultValue.getClass();
 
-		m_Values = new ArrayList<>();
-		m_Values.add(defaultValue);
-	}
+    @SuppressWarnings("unchecked")
+    public INIFileEnumList(String name, T defaultValue) {
+        super(name);
+        m_EnumType = (Class<T>) defaultValue.getClass();
 
-	@SuppressWarnings("unchecked")
-	public INIFileEnumList(String name, List<T> values) {
-		super(name);
+        m_Values = new ArrayList<>();
+        m_Values.add(defaultValue);
+    }
 
-		if (values == null) {
-			throw new RuntimeException("INIFileEnumList(String, List<T>) --> List<T> is null!");
-		} else {
-			m_EnumType = (Class<T>) values.getClass();
-			m_Values = values;
-		}
-	}
 
-	@Override
-	public String getStringValue() {
-		return "[" + m_Values.stream().map(T::toString).collect(Collectors.joining(", ")) + "]";
-	}
+    @SuppressWarnings("unchecked")
+    public INIFileEnumList(String name, List<T> values, Class<T> type) {
+        super(name);
 
-	@Override
-	public void setValue(String value) throws IOException {
-		String[] entries = value.replace("[", "").replace("]", "").replace(" ", "").split(",");
+        if (values == null) {
+            throw new RuntimeException("INIFileEnumList(String, List<T>) --> List<T> is null!");
+        }
+        else {
+            m_Values = new ArrayList<T>(values);
+            m_EnumType = type;           
+        }
+    }
 
-		m_Values.clear(); // remove old values
 
-		for (String entry : entries) {
+    @Override
+    public String getStringValue() {
+        return "[" + m_Values.stream().map(T::toString).collect(Collectors.joining(", ")) + "]";
+    }
 
-			try {
-				m_Values.add(Enum.valueOf(m_EnumType, entry));
-			} catch (IllegalArgumentException e) {
-				System.err.println(String.format("Value %s is illegal for the option %s", entry, m_hName));
-				System.err.println(
-						String.format("List of allowed values: " + Arrays.toString(m_EnumType.getEnumConstants())));
-				throw e;
-			}
-		}
-	}
 
-	@Override
-	public INIFileNode cloneNode() {
-		return new INIFileEnumList<T>(getName(), m_Values);
-	}
+    @Override
+    public void setValue(String value) throws IOException {
+        String[] entries = value.replace("[", "").replace("]", "").replace(" ", "").split(",");
 
-	public void setValue(List<T> values) {
-		m_Values = values;
-	}
+        m_Values.clear(); // remove old values
 
-	public List<T> getValue() {
-		return m_Values;
-	}
+        for (String entry : entries) {
 
-	public int getVectorSize() {
-		return m_Values.size();
-	}
+            try {
+                m_Values.add(Enum.valueOf(m_EnumType, entry));
+            }
+            catch (IllegalArgumentException e) {
+                System.err.println(String.format("Value %s is illegal for the option %s", entry, m_hName));
+                System.err.println(String.format("List of allowed values: " + Arrays.toString(m_EnumType.getEnumConstants())));
+                throw e;
+            }
+        }
+    }
 
-	public boolean IsVector() {
-		return m_Values.size() > 1;
-	}
+
+    @Override
+    public INIFileNode cloneNode() {
+        return new INIFileEnumList<T>(getName(), m_Values, m_EnumType);
+    }
+
+
+    public void setValue(List<T> values) {
+        m_Values = values;
+    }
+
+
+    public List<T> getValue() {
+        return m_Values;
+    }
+
+
+    public int getVectorSize() {
+        return m_Values.size();
+    }
+
+
+    public boolean IsVector() {
+        return m_Values.size() > 1;
+    }
 }

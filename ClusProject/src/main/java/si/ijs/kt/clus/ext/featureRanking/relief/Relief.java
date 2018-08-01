@@ -21,7 +21,7 @@ public class Relief extends ClusInductionAlgorithmType {
 
     public Relief(Clus clus) {
         super(clus);
-        // TODO Auto-generated constructor stub
+        
     }
 
 
@@ -39,21 +39,21 @@ public class Relief extends ClusInductionAlgorithmType {
 
     @Override
     public void pruneAll(ClusRun cr) throws ClusException, IOException {
-        // TODO Auto-generated method stub
+        
 
     }
 
 
     @Override
     public ClusModel pruneSingle(ClusModel model, ClusRun cr) throws ClusException, IOException {
-        // TODO Auto-generated method stub
+        
         return null;
     }
 
 
     @Override
     public void postProcess(ClusRun cr) throws ClusException, IOException {
-        // TODO Auto-generated method stub
+        
         
     }
 

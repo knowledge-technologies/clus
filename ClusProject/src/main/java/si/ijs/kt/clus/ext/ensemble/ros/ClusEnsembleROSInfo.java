@@ -8,7 +8,10 @@ import java.util.Arrays;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSAlgorithmType;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.util.ClusUtil;
+
 
 /**
  * @author martinb
@@ -20,19 +23,31 @@ public class ClusEnsembleROSInfo implements Serializable {
 
     private ArrayList<int[]> m_AllSubspaces;
     private double[] m_Coverage; // how many times a target was used (per-target)
-    private int[] m_CoverageOpt; // used when running ROS ensembles are running in optimized mode (this is a per-target counter)
+    private int[] m_CoverageOpt; // used when running ROS ensembles are running in optimized mode (this is a per-target
+                                 // counter)
     private double m_AverageTargetsUsed; // average number of targets used in the ensemble
     private ClusSchema m_Schema;
 
+    // new
+    private EnsembleROSAlgorithmType m_ROSAlgorithmType = null;
+    private EnsembleROSVotingType m_ROSVotingType = null;
+    private Integer m_ROSSubspaceSize = null;
 
-    public ClusEnsembleROSInfo(ClusSchema schema, ArrayList<int[]> info) {
-        m_AllSubspaces = info;
+
+    public ClusEnsembleROSInfo(ClusSchema schema, ArrayList<int[]> info, EnsembleROSAlgorithmType algorithmType, EnsembleROSVotingType votingType, int subspaceSize) {
         m_Schema = schema;
+        m_ROSAlgorithmType = algorithmType;
+        m_ROSVotingType = votingType;
+        m_ROSSubspaceSize = subspaceSize;
+
+        m_AllSubspaces = info;
+
         calculateCoverage();
 
         m_CoverageOpt = new int[m_Schema.getNbTargetAttributes()];
-        for (int i = 0; i < m_CoverageOpt.length; i++)
+        for (int i = 0; i < m_CoverageOpt.length; i++) {
             m_CoverageOpt[i] = 0;
+        }
     }
 
 
@@ -175,16 +190,16 @@ public class ClusEnsembleROSInfo implements Serializable {
     /** Returns a trimmed variant of current object, containing only {@code numberOfSubspaces} ROS subspaces */
     public ClusEnsembleROSInfo getTrimmedInfo(int numberOfSubspaces) {
 
-        if (numberOfSubspaces == m_AllSubspaces.size())
-            return this;
+        if (numberOfSubspaces > m_AllSubspaces.size()) {
+            throw new RuntimeException("number of subspaces > m_AllSubspaces.size()");
+        }
+        else if (numberOfSubspaces == m_AllSubspaces.size()) { return this; }
 
         ArrayList<int[]> ary = new ArrayList<int[]>();
         for (int i = 0; i < numberOfSubspaces; i++) {
             ary.add(m_AllSubspaces.get(i));
         }
 
-        ClusEnsembleROSInfo copy = new ClusEnsembleROSInfo(this.m_Schema, ary);
-
-        return copy;
+        return new ClusEnsembleROSInfo(this.m_Schema, ary, m_ROSAlgorithmType, m_ROSVotingType, m_ROSSubspaceSize);
     }
 }

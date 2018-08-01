@@ -22,6 +22,7 @@
 
 package si.ijs.kt.clus.util.jeans.util.cmdline;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 
 
@@ -152,6 +153,19 @@ public class CMDLineArgs {
 
     public int getNbMainArgs() {
         return m_NbMainArgs;
+    }
+
+
+    public ArrayList<Integer> getOptionList(String option) {
+        ArrayList<Integer> values = new ArrayList<>();
+
+        String v = (String) $optargs.get(option);
+        String[] lst = v.split(",");
+        for(String s : lst) {
+            values.add(Integer.parseInt(s));
+        }
+        
+        return values;
     }
 
 

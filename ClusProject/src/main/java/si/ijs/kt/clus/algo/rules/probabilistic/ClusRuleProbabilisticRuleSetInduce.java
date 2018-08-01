@@ -398,7 +398,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
                     // average RMSE over all targets
                 }
                 catch (ClusException e) {
-                    // TODO Auto-generated catch block
+                    
                     e.printStackTrace();
                     return Double.POSITIVE_INFINITY;
                 }

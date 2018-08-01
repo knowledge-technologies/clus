@@ -214,7 +214,7 @@ public class SpearmanRankCorrelation extends ClusNumericError {
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        // TODO Auto-generated method stub
+        
         // should take into account the getAdditionalInfo() method!
         return null;
     }

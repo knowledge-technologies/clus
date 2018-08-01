@@ -19,9 +19,10 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
     private double[][] m_AvgPredictions;
 
-    //    public ClusEnsembleInduceOptRegHMLC(TupleIterator train, TupleIterator test, int nb_tuples) throws IOException, ClusException {
-    //        super(train, test, nb_tuples);
-    //    }
+    // public ClusEnsembleInduceOptRegHMLC(TupleIterator train, TupleIterator test, int nb_tuples) throws IOException,
+    // ClusException {
+    // super(train, test, nb_tuples);
+    // }
 
 
     public ClusEnsembleInduceOptRegHMLC(TupleIterator train, TupleIterator test, Settings sett) throws IOException, ClusException {
@@ -44,11 +45,20 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
         m_NbUpdates++;
 
         // for ROS
-        if (getSettings().getEnsemble().isEnsembleROSEnabled()) {
-            int[] enabledTargets = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(m_NbUpdates - 1)); // model (m_NbUpdates-1) uses enabledTargets
-            m_EnsembleROSInfo.incrementCoverageOpt(enabledTargets);
-
-            throw new ClusException("TODO: ROS not implemented for optimized ensembles for MTR");
+        if (getSettings().getEnsemble().isEnsembleROSEnabled()) { throw new ClusException("si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduceOptRegHMLC.updatePredictionsForTuples(ClusModel, TupleIterator, TupleIterator): ROS not implemented for optimized ensembles.");
+        // FIXME: ROS implement optimized MTR
+        /*
+         * switch (getSettings().getEnsemble().getEnsembleROSAlgorithmType()) {
+         * case FixedSubspaces:
+         * // model (m_NbUpdates-1) uses enabledTargets
+         * int[] enabledTargets = m_EnsembleROSInfo.getOnlyTargets(m_EnsembleROSInfo.getModelSubspace(m_NbUpdates - 1));
+         * m_EnsembleROSInfo.incrementCoverageOpt(enabledTargets);
+         * case DynamicSubspaces:
+         * throw new
+         * ClusException("si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduceOptRegHMLC.updatePredictionsForTuples(ClusModel, TupleIterator, TupleIterator) not implemented"
+         * );
+         * }
+         */
         }
 
         if (train != null) {
@@ -85,58 +95,6 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
         m_NbUpdatesLock.writingUnlock();
     }
 
-    //    @Deprecated
-    //    public void initModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test) throws IOException, ClusException {
-    //        if (train != null) {
-    //            train.init();
-    //            DataTuple train_tuple = train.readTuple();
-    //            while (train_tuple != null) {
-    //                int position = locateTuple(train_tuple);
-    //                RegressionStatBase stat = (RegressionStatBase) model.predictWeighted(train_tuple);
-    //                m_AvgPredictions[position] = stat.getNumericPred();
-    //                train_tuple = train.readTuple();
-    //            }
-    //            train.init();
-    //        }
-    //        if (test != null) {
-    //            test.init();
-    //            DataTuple test_tuple = test.readTuple();
-    //            while (test_tuple != null) {
-    //                int position = locateTuple(test_tuple);
-    //                RegressionStatBase stat = (RegressionStatBase) model.predictWeighted(test_tuple);
-    //                m_AvgPredictions[position] = stat.getNumericPred();
-    //                test_tuple = test.readTuple();
-    //            }
-    //            test.init();
-    //        }
-    //    }
-
-    //    @Deprecated
-    //    public void addModelPredictionForTuples(ClusModel model, TupleIterator train, TupleIterator test, int nb_models) throws IOException, ClusException {
-    //        if (train != null) {
-    //            train.init();
-    //            DataTuple train_tuple = train.readTuple();
-    //            while (train_tuple != null) {
-    //                int position = locateTuple(train_tuple);
-    //                RegressionStatBase stat = (RegressionStatBase) model.predictWeighted(train_tuple);
-    //                m_AvgPredictions[position] = incrementPredictions(m_AvgPredictions[position], stat.getNumericPred(), nb_models);
-    //                train_tuple = train.readTuple();
-    //            }
-    //            train.init();
-    //        }
-    //        if (test != null) {
-    //            test.init();
-    //            DataTuple test_tuple = test.readTuple();
-    //            while (test_tuple != null) {
-    //                int position = locateTuple(test_tuple);
-    //                ClusStatistic stat = model.predictWeighted(test_tuple);
-    //                m_AvgPredictions[position] = incrementPredictions(m_AvgPredictions[position], stat.getNumericPred(), nb_models);
-    //                test_tuple = test.readTuple();
-    //            }
-    //            test.init();
-    //        }
-    //    }
-
 
     @Override
     public int getPredictionLength(int tuple) {
@@ -155,8 +113,9 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
         for (int i = 0; i < m_AvgPredictions.length; i++) {
             for (int j = 0; j < m_AvgPredictions[i].length; j++) {
                 // System.out.println("Before: " + m_AvgPredictions[i][j]);
-//                m_AvgPredictions[i][j] = Double.parseDouble(ClusFormat.FOUR_AFTER_DOT.format(m_AvgPredictions[i][j]));
-            	m_AvgPredictions[i][j] = ClusUtil.roundToSignificantFigures(m_AvgPredictions[i][j], SIGNIFICANT_DIGITS_IN_PREDICTIONS);
+                // m_AvgPredictions[i][j] =
+                // Double.parseDouble(ClusFormat.FOUR_AFTER_DOT.format(m_AvgPredictions[i][j]));
+                m_AvgPredictions[i][j] = ClusUtil.roundToSignificantFigures(m_AvgPredictions[i][j], SIGNIFICANT_DIGITS_IN_PREDICTIONS);
                 // System.out.println("After: " + m_AvgPredictions[i][j]);
             }
         }

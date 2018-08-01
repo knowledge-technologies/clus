@@ -242,6 +242,16 @@ public class ClusSchema implements Serializable {
     }
 
 
+    public final ClusAttrType[] getClusteringAttributes() {
+        return m_AllAttrUse[AttributeUseType.Clustering.getIndex()];
+    }
+
+
+    public final int getNbClusteringAttributes()
+    {
+        return getNbNumericAttrUse(AttributeUseType.Clustering);
+    }
+
     public final int getNbNominalDescriptiveAttributes() {
         return getNbNominalAttrUse(AttributeUseType.Descriptive);
     }

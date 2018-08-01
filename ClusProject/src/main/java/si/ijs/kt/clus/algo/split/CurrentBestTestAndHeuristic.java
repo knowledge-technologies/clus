@@ -46,7 +46,7 @@ import si.ijs.kt.clus.util.exception.ClusException;
 public class CurrentBestTestAndHeuristic {
 
     private Settings m_Sett;
-    
+
     private static int SHOW_TESTS_IN_OUTPUT = 3;
 
     public final static int TYPE_NONE = -1;
@@ -79,7 +79,7 @@ public class CurrentBestTestAndHeuristic {
     public double m_PosFreq;
 
     // Data set
-//    private RowData m_Subset;
+    // private RowData m_Subset;
     // daniela
     public double m_BestI;
     public double m_BestC;
@@ -92,10 +92,10 @@ public class CurrentBestTestAndHeuristic {
     public double hMin = Double.POSITIVE_INFINITY;
     public double hMax = Double.NEGATIVE_INFINITY;
 
-//    private static final int GIS_NOT_CHECKED = -1;
-//    private static final int GIS_NO = 0;
-//    private static final int GIS_YES = 1;
-//    private int isGIS = GIS_NOT_CHECKED;
+    // private static final int GIS_NOT_CHECKED = -1;
+    // private static final int GIS_NO = 0;
+    // private static final int GIS_YES = 1;
+    // private int isGIS = GIS_NOT_CHECKED;
     // daniela end
 
 
@@ -140,8 +140,8 @@ public class CurrentBestTestAndHeuristic {
         m_BestTest.setUnknownFreq(m_UnknownFreq);
         m_BestTest.setHeuristicValue(m_BestHeur);
         // daniela
-        //m_BestTest.setIValue(m_BestI);
-        //m_BestTest.setIValue(m_BestC);
+        // m_BestTest.setIValue(m_BestI);
+        // m_BestTest.setIValue(m_BestC);
         // daniela end
         return m_BestTest;
     }
@@ -159,7 +159,7 @@ public class CurrentBestTestAndHeuristic {
             m_TestStat[i].setSDataSize(subset.getNbRows());
         }
         m_Heuristic.setData(subset);
-//        m_Subset = subset;
+        // m_Subset = subset;
     }
 
 
@@ -323,7 +323,8 @@ public class CurrentBestTestAndHeuristic {
 
     /***************************************************************************
      * Numeric splits
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      ***************************************************************************/
 
     // Where is this used?
@@ -348,7 +349,7 @@ public class CurrentBestTestAndHeuristic {
         if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
             System.out.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
         if (heur != Double.NEGATIVE_INFINITY) {
-            //System.out.println(at.getName()+" > "+value + "--> heur=" + heur);
+            // System.out.println(at.getName()+" > "+value + "--> heur=" + heur);
             Double currentMin = mins.get(at.getName());
             if (currentMin == null) {
                 currentMin = Double.POSITIVE_INFINITY;
@@ -361,7 +362,7 @@ public class CurrentBestTestAndHeuristic {
             }
             if (heur > currentMax)
                 maxes.put(at.getName(), heur);
-            //System.out.println("at/h/min/max1: "+at+" "+heur+" "+mins.get(at.getName())+" "+maxes.get(at.getName()));
+            // System.out.println("at/h/min/max1: "+at+" "+heur+" "+mins.get(at.getName())+" "+maxes.get(at.getName()));
         }
     }
 
@@ -388,7 +389,7 @@ public class CurrentBestTestAndHeuristic {
      * @param val
      * @param at
      * @param permutation
-     * @throws Exception 
+     * @throws Exception
      */
     public final void updateNumericGIS(double val, ClusAttrType at, Integer[] permutation) throws Exception {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
@@ -410,11 +411,13 @@ public class CurrentBestTestAndHeuristic {
                     heur = I;
                 }
             }
-            else if (m_Heuristic instanceof GISHeuristic && (SettingsTree.ALPHA != 1.0)) { //GIS heuristics (scaled heur, spatial heur)
-                //boolean conditionI=true;
-                //conditionI = (I > m_BestI) && (I > 0);                    //1.option max I, max variance reduction    
-                //heur = heur*I;                                            //2.option multiplication of both
-                //System.out.println("old Var: "+heur+" "+hMin+"-->"+hMax+" old I: "+I); //3.option linear combination of both  
+            else if (m_Heuristic instanceof GISHeuristic && (SettingsTree.ALPHA != 1.0)) { // GIS heuristics (scaled
+                                                                                           // heur, spatial heur)
+                // boolean conditionI=true;
+                // conditionI = (I > m_BestI) && (I > 0); //1.option max I, max variance reduction
+                // heur = heur*I; //2.option multiplication of both
+                // System.out.println("old Var: "+heur+" "+hMin+"-->"+hMax+" old I: "+I); //3.option linear combination
+                // of both
                 GISHeuristic gisHeuristic = (GISHeuristic) m_Heuristic;
                 I = gisHeuristic.calcI(m_TotCorrStat, m_PosStat, m_MissingStat, permutation);
                 if (alpha != 0.0) {
@@ -447,7 +450,7 @@ public class CurrentBestTestAndHeuristic {
             m_SplitAttr = at;
             // daniela
             m_BestI = I;
-            //m_BestC = I;
+            // m_BestC = I;
             // daniela end
         }
     }
@@ -455,7 +458,7 @@ public class CurrentBestTestAndHeuristic {
 
     public final void updateNumeric(double val, ClusAttrType at, double ss_tot, boolean isEfficient) throws ClusException {
         double heur = isEfficient ? m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat, ss_tot) : m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
-        //      System.out.println(t1 - t0);
+
         if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
             System.out.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
 
@@ -512,7 +515,7 @@ public class CurrentBestTestAndHeuristic {
      *        Split value.
      * @param at
      *        Attribute
-     * @throws ClusException 
+     * @throws ClusException
      */
     public final void updateInverseNumeric(double val, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
@@ -535,7 +538,8 @@ public class CurrentBestTestAndHeuristic {
 
     /***************************************************************************
      * Heuristics
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      ***************************************************************************/
 
     public final double calcHeuristic(ClusStatistic stat) throws ClusException {
@@ -544,7 +548,7 @@ public class CurrentBestTestAndHeuristic {
 
 
     public final double calcHeuristic(ClusStatistic tot, ClusStatistic pos) throws ClusException {
-        if (m_Sett.getTree().getMissingClusteringAttrHandling().equals(MissingClusteringAttributeHandlingType.EstimateFromParentNode )) {
+        if (m_Sett.getTree().getMissingClusteringAttrHandling().equals(MissingClusteringAttributeHandlingType.EstimateFromParentNode)) {
             tot.setParentStat(m_TotStat.getParentStat());
             pos.setParentStat(m_PosStat.getParentStat());
         }

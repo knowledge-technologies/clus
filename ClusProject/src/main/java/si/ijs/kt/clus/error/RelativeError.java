@@ -84,7 +84,7 @@ public class RelativeError extends ClusNumericError implements ComponentError {
 
     @Override
     public ClusError getErrorClone(ClusErrorList par) {
-        // TODO Auto-generated method stub
+        
         // should also take into account the getAdditionalError() method!
         return null;
     }

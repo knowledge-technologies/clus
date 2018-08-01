@@ -20,7 +20,7 @@ public class SettingsKNN extends SettingsBase {
 
     public SettingsKNN(int position) {
         super(position, "kNN");
-        // TODO Auto-generated constructor stub
+        
     }
 
     /***********************************************************************
@@ -200,7 +200,7 @@ public class SettingsKNN extends SettingsBase {
 
     @Override
     public void initNamedValues() {
-        // TODO Auto-generated method stub
+        
 
     }
 }

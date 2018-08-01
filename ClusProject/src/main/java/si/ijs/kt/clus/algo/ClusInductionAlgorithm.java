@@ -148,7 +148,8 @@ public abstract class ClusInductionAlgorithm {
 
     /**
      * Compute the statistics for all the (rows in the) data.
-     * @throws ClusException 
+     * 
+     * @throws ClusException
      */
     public ClusStatistic createTotalTargetStat(RowData data) throws ClusException {
         ClusStatistic stat = m_StatManager.createTargetStat();
