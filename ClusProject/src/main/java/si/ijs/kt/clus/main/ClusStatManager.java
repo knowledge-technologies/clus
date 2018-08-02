@@ -143,6 +143,7 @@ import si.ijs.kt.clus.statistic.CombStatClassRegHier;
 import si.ijs.kt.clus.statistic.GeneticDistanceStat;
 import si.ijs.kt.clus.statistic.HierSingleLabelStat;
 import si.ijs.kt.clus.statistic.HierSumPairwiseDistancesStat;
+import si.ijs.kt.clus.statistic.KnnMlcStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
@@ -592,7 +593,11 @@ public class ClusStatManager implements Serializable {
 				// }
 			}
 			if (getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
-				return new ClassificationStat(getSettings(), nom, getSettings().getMLC().getMultiLabelThreshold());
+				if (getSettings().getKNN().getSection().isEnabled() && getSettings().getKNN().isMlcKnn()) {
+					return new KnnMlcStat(getSettings(), nom, getSettings().getMLC().getMultiLabelThreshold());
+				} else {
+					return new ClassificationStat(getSettings(), nom, getSettings().getMLC().getMultiLabelThreshold());
+				}
 			} else {
 				return new ClassificationStat(getSettings(), nom);
 			}

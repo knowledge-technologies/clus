@@ -29,6 +29,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map.Entry;
 
 import com.google.gson.JsonObject;
 
@@ -50,6 +51,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
+import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.distance.primitive.ChebyshevDistance;
@@ -89,6 +91,10 @@ public class KnnModel implements ClusModel, Serializable {
     private DataTuple m_CurrentTuple; // used for efficient use of predictWeighted in Clus.calcError()
     private LinkedList<DataTuple> m_CurrentNeighbours; // m_MaxK nearest neighbours of m_CurrentTuple
     private KnnModel m_Master = null;
+    // MLC KNN
+    private boolean m_IsMlcKnn = false;
+    private double[][] m_PriorLabelProbabilities;
+    private ArrayList<HashMap<Integer, double[][]>> m_NeighbourhoodProbabilities;
 
 
     // Slave mode - this model is used only for voting, searching is done by master
@@ -264,10 +270,13 @@ public class KnnModel implements ClusModel, Serializable {
                 System.err.println("Testing error will not be computed, since we do not know the neighbours for each testing instance.");
             }
         }
-
+        
+        // special MLC version
+        m_IsMlcKnn = this.cr.getStatManager().getSettings().getKNN().isMlcKnn();
+        
         // save prediction template
         // @todo : should all this be repalced with:
-        statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
+    	statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
 
         // if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
         // if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
@@ -356,6 +365,10 @@ public class KnnModel implements ClusModel, Serializable {
                 stat.updateWeighted(dt, weighting.weight(dt));
             stat.calcMean();
         }
+        else if (m_IsMlcKnn) {
+        	DataTuple fake = computeMlcKnnPredictionsAsTuple(nearest);
+        	stat.updateWeighted(fake, 1.0);
+        }
         else {
             for (DataTuple dt : nearest)
                 stat.updateWeighted(dt, weighting.weight(dt));
@@ -363,8 +376,12 @@ public class KnnModel implements ClusModel, Serializable {
         }
         return stat;
     }
-
-
+    
+    private DataTuple computeMlcKnnPredictionsAsTuple(LinkedList<DataTuple> nearestNeighbours) {
+    	return null;    	
+    }
+    
+    
     @Override
     public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
         // System.out.println("-----------");
@@ -461,5 +478,63 @@ public class KnnModel implements ClusModel, Serializable {
     public int getID() {
         throw new UnsupportedOperationException(this.getClass().getName() + ":getID - Not supported yet for kNN.");
     }
+
+
+	public void tryInitializeMLC(int[] ks, RowData trainSet) throws ClusException {
+		if (m_IsMlcKnn) {
+			int nbExamples = trainSet.getNbRows();
+			ClusAttrType[] labels = trainSet.getSchema().getAllAttrUse(AttributeUseType.Target);
+			int nbLabels = labels.length;
+			m_PriorLabelProbabilities = new double[nbLabels][2];
+			m_NeighbourhoodProbabilities = new ArrayList<>();
+			for(int label = 0; label < nbLabels; label++) {
+				HashMap<Integer, double[][]> labelMap = new HashMap<>();
+				for (int k : ks) {
+					labelMap.put(k, new double[2][m_MaxK + 1]);
+				}
+				m_NeighbourhoodProbabilities.add(labelMap);
+			}
+			// counting
+			for (DataTuple dt : trainSet.getData()) {
+				LinkedList<DataTuple> nearest = this.search.returnNNs(dt, m_MaxK);
+				for (int label = 0; label < nbLabels; label++) {
+					NominalAttrType attr = (NominalAttrType) labels[label];
+					int dtAttrValue = attr.getNominal(dt);
+					m_PriorLabelProbabilities[label][dtAttrValue]++;	
+					int labelCount = 0;
+					int nbNeighs = 0;
+					int kIndex = 0;
+					int neighAttrValue;
+					for (DataTuple n : nearest) {
+						nbNeighs++;
+						neighAttrValue = attr.getNominal(n);
+						if (neighAttrValue == 0) {   // <--> label relevant 
+							labelCount++;
+						}
+						if (ks[kIndex] == nbNeighs) {
+							m_NeighbourhoodProbabilities.get(label).get(nbNeighs)[dtAttrValue][labelCount]++;
+							kIndex++;
+						}
+					}
+					if (kIndex != ks.length) {
+						throw new RuntimeException("Not all neighbourhood sizes were analyzed.");
+					}
+				}
+			}
+			// normalization
+			for (int label = 0; label < nbLabels; label++) {
+				HashMap<Integer, double[][]> labelMap = m_NeighbourhoodProbabilities.get(label);
+				for (double[][] counts : labelMap.values()) {
+					for(int isRelevant = 0; isRelevant < counts.length; isRelevant++) {
+						for (int labelCount = 0; labelCount < counts[isRelevant].length; labelCount++)
+							counts[isRelevant][labelCount] /= m_PriorLabelProbabilities[label][isRelevant];
+						}
+				}
+				for(int isRelevant = 0; isRelevant < m_PriorLabelProbabilities[label].length; isRelevant++) {
+					m_PriorLabelProbabilities[label][isRelevant] /= nbExamples;
+				}
+			}
+		}
+	}
 
 }

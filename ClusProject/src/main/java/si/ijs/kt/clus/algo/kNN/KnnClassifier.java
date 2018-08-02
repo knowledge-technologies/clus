@@ -23,6 +23,7 @@
 package si.ijs.kt.clus.algo.kNN;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 import si.ijs.kt.clus.Clus;
@@ -36,7 +37,6 @@ import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.DistanceWeights;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -99,6 +99,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             for (int k : ks) {
             	maxK = Math.max(maxK, k);
             }
+            Arrays.sort(ks);
             ClusAttrType[] necessaryDescriptiveAttributes;
             if (isSparse) {
             	necessaryDescriptiveAttributes = trainData.getSchema().getNominalAttrUse(AttributeUseType.Descriptive);
@@ -108,6 +109,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             // base model
             String model_name = DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS;            
             KnnModel model = new KnnModel(cr, 1, DistanceWeights.Constant, maxK, isSparse, necessaryDescriptiveAttributes);
+            model.tryInitializeMLC(ks, trainData);
             ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL, model_name);
             model_info.setModel(model);
             model_info.setName(model_name);
