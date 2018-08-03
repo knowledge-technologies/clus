@@ -8,6 +8,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileArray;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnumList;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
@@ -44,6 +45,7 @@ public class SettingsKNN extends SettingsBase {
     private static String[] EMPTY_STRING_ARRAY = new String[] {};
 
     private INIFileBool m_IsMlcKnn;
+    private INIFileDouble m_MlcCountSmoother;
     
     private final static int[] DEFAULT_K = new int[] { 1, 3 };
 
@@ -202,6 +204,7 @@ public class SettingsKNN extends SettingsBase {
         m_Section.addNode(m_SaveNeighboursFile = new INIFileString("SaveNeighboursFile", EMPTY_STRING));
         
         m_Section.addNode(m_IsMlcKnn = new INIFileBool("IsMlcKnn", false));
+        m_Section.addNode(m_MlcCountSmoother = new INIFileDouble("MlcCountSmoother", 1.0)); // Laplace by default...
 
         m_Section.setEnabled(false);
     }

@@ -29,7 +29,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Map.Entry;
 
 import com.google.gson.JsonObject;
 
@@ -51,7 +50,6 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
-import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.distance.primitive.ChebyshevDistance;
@@ -67,6 +65,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsKNN.DistanceWeights;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.SearchMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.statistic.KnnMlcStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -118,11 +117,12 @@ public class KnnModel implements ClusModel, Serializable {
         this.m_MaxK = Math.max(Math.max(this.m_K, this.m_MaxK), maxK);
         this.weightingOption = weighting;
         // settings file name; use name for .weight file
-        String fName = this.cr.getStatManager().getSettings().getGeneric().getAppName();
+        Settings sett = this.cr.getStatManager().getSettings();
+        String fName = sett.getGeneric().getAppName();
         // Initialize attribute weighting according to settings file
         AttributeWeighting attrWe = new NoWeighting();
 
-        String attrWeighting = this.cr.getStatManager().getSettings().getKNN().getKNNAttrWeight();
+        String attrWeighting = sett.getKNN().getKNNAttrWeight();
         boolean loadedWeighting = false;
         if (attrWeighting.toLowerCase().compareTo("none") == 0) {
 
@@ -134,7 +134,7 @@ public class KnnModel implements ClusModel, Serializable {
                 if (wS.length == 2)
                     nbBags = Integer.parseInt(wS[1]);
                 else
-                    this.cr.getStatManager().getSettings().getKNN().setKNNAttrWeight(attrWeighting + "," + nbBags);
+                	sett.getKNN().setKNNAttrWeight(attrWeighting + "," + nbBags);
                 attrWe = new RandomForestWeighting(this.cr, nbBags);
             }
             catch (Exception e) {
@@ -169,8 +169,8 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // Initialize distance according to settings file
-        // int dist = this.cr.getStatManager().getSettings().getKNN().getKNNDistance();
-        Distance dist = this.cr.getStatManager().getSettings().getKNN().getDistance();
+        // int dist = sett.getKNN().getKNNDistance();
+        Distance dist = sett.getKNN().getDistance();
 
         SearchDistance searchDistance = new SearchDistance();
         ClusDistance distance;
@@ -228,7 +228,6 @@ public class KnnModel implements ClusModel, Serializable {
         searchDistance.setNormalizationWeights(mins, maxs);
 
         // Select search method according to settings file.
-        Settings sett = this.cr.getStatManager().getSettings();
         SearchMethod searchMethod = sett.getKNN().getSearchMethod();
         switch (searchMethod) {
             case VPTree:
@@ -248,7 +247,7 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // debug info
-        if (this.cr.getStatManager().getSettings().getGeneral().getVerbose() >= 1) {
+        if (sett.getGeneral().getVerbose() >= 1) {
             System.out.println("Search method: " + this.search.getClass());
             System.out.println("Search distance: " + searchDistance.getBasicDistance().getClass());
             System.out.println("Number of neighbours: " + this.m_K);
@@ -272,17 +271,21 @@ public class KnnModel implements ClusModel, Serializable {
         }
         
         // special MLC version
-        m_IsMlcKnn = this.cr.getStatManager().getSettings().getKNN().isMlcKnn();
+        m_IsMlcKnn = sett.getKNN().isMlcKnn();
         
         // save prediction template
         // @todo : should all this be repalced with:
-    	statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
+        if (sett.getKNN().isMlcKnn()) {
+        	statTemplate = new KnnMlcStat(sett, cr.getStatManager().getSchema().getNominalAttrUse(AttributeUseType.Target));
+        } else {
+        	statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
+        }
 
         // if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
-        // if(cr.getStatManager().getSettings().getSectionMultiLabel().isEnabled()){
+        // if(sett.getSectionMultiLabel().isEnabled()){
         // statTemplate = new
         // ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target),
-        // cr.getStatManager().getSettings().getMultiLabelTrheshold());
+        // sett.getMultiLabelTrheshold());
         // } else{
         // statTemplate = new
         // ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target));
@@ -365,10 +368,6 @@ public class KnnModel implements ClusModel, Serializable {
                 stat.updateWeighted(dt, weighting.weight(dt));
             stat.calcMean();
         }
-        else if (m_IsMlcKnn) {
-        	DataTuple fake = computeMlcKnnPredictionsAsTuple(nearest);
-        	stat.updateWeighted(fake, 1.0);
-        }
         else {
             for (DataTuple dt : nearest)
                 stat.updateWeighted(dt, weighting.weight(dt));
@@ -377,10 +376,20 @@ public class KnnModel implements ClusModel, Serializable {
         return stat;
     }
     
-    private DataTuple computeMlcKnnPredictionsAsTuple(LinkedList<DataTuple> nearestNeighbours) {
-    	return null;    	
+    public void tryInitializeMLC(int[] ks, RowData trainData) throws ClusException {
+    	if (m_IsMlcKnn) {
+    		((KnnMlcStat) statTemplate).tryInitializeMLC(ks, trainData, this);
+    	}
     }
     
+    
+    public int getMaxK() {
+    	return m_MaxK;
+    }
+    
+    public SearchAlgorithm getSearch() {
+    	return search;
+    }
     
     @Override
     public void applyModelProcessors(DataTuple tuple, MyArray mproc) throws IOException {
@@ -478,63 +487,4 @@ public class KnnModel implements ClusModel, Serializable {
     public int getID() {
         throw new UnsupportedOperationException(this.getClass().getName() + ":getID - Not supported yet for kNN.");
     }
-
-
-	public void tryInitializeMLC(int[] ks, RowData trainSet) throws ClusException {
-		if (m_IsMlcKnn) {
-			int nbExamples = trainSet.getNbRows();
-			ClusAttrType[] labels = trainSet.getSchema().getAllAttrUse(AttributeUseType.Target);
-			int nbLabels = labels.length;
-			m_PriorLabelProbabilities = new double[nbLabels][2];
-			m_NeighbourhoodProbabilities = new ArrayList<>();
-			for(int label = 0; label < nbLabels; label++) {
-				HashMap<Integer, double[][]> labelMap = new HashMap<>();
-				for (int k : ks) {
-					labelMap.put(k, new double[2][m_MaxK + 1]);
-				}
-				m_NeighbourhoodProbabilities.add(labelMap);
-			}
-			// counting
-			for (DataTuple dt : trainSet.getData()) {
-				LinkedList<DataTuple> nearest = this.search.returnNNs(dt, m_MaxK);
-				for (int label = 0; label < nbLabels; label++) {
-					NominalAttrType attr = (NominalAttrType) labels[label];
-					int dtAttrValue = attr.getNominal(dt);
-					m_PriorLabelProbabilities[label][dtAttrValue]++;	
-					int labelCount = 0;
-					int nbNeighs = 0;
-					int kIndex = 0;
-					int neighAttrValue;
-					for (DataTuple n : nearest) {
-						nbNeighs++;
-						neighAttrValue = attr.getNominal(n);
-						if (neighAttrValue == 0) {   // <--> label relevant 
-							labelCount++;
-						}
-						if (ks[kIndex] == nbNeighs) {
-							m_NeighbourhoodProbabilities.get(label).get(nbNeighs)[dtAttrValue][labelCount]++;
-							kIndex++;
-						}
-					}
-					if (kIndex != ks.length) {
-						throw new RuntimeException("Not all neighbourhood sizes were analyzed.");
-					}
-				}
-			}
-			// normalization
-			for (int label = 0; label < nbLabels; label++) {
-				HashMap<Integer, double[][]> labelMap = m_NeighbourhoodProbabilities.get(label);
-				for (double[][] counts : labelMap.values()) {
-					for(int isRelevant = 0; isRelevant < counts.length; isRelevant++) {
-						for (int labelCount = 0; labelCount < counts[isRelevant].length; labelCount++)
-							counts[isRelevant][labelCount] /= m_PriorLabelProbabilities[label][isRelevant];
-						}
-				}
-				for(int isRelevant = 0; isRelevant < m_PriorLabelProbabilities[label].length; isRelevant++) {
-					m_PriorLabelProbabilities[label][isRelevant] /= nbExamples;
-				}
-			}
-		}
-	}
-
 }

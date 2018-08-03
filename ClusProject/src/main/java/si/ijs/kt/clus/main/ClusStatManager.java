@@ -593,11 +593,7 @@ public class ClusStatManager implements Serializable {
 				// }
 			}
 			if (getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
-				if (getSettings().getKNN().getSection().isEnabled() && getSettings().getKNN().isMlcKnn()) {
-					return new KnnMlcStat(getSettings(), nom, getSettings().getMLC().getMultiLabelThreshold());
-				} else {
-					return new ClassificationStat(getSettings(), nom, getSettings().getMLC().getMultiLabelThreshold());
-				}
+				return new ClassificationStat(getSettings(), nom, getSettings().getMLC().getMultiLabelThreshold());
 			} else {
 				return new ClassificationStat(getSettings(), nom);
 			}
