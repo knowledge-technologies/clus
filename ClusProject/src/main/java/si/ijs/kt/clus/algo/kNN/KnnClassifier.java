@@ -109,7 +109,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             // base model
             String model_name = DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS;            
             KnnModel model = new KnnModel(cr, 1, DistanceWeights.Constant, maxK, isSparse, necessaryDescriptiveAttributes);
-            model.tryInitializeMLC(ks, trainData);
+            model.tryInitializeMLC(ks, trainData, getSettings().getKNN().getMlcCountSmoother());
             ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL, model_name);
             model_info.setModel(model);
             model_info.setName(model_name);

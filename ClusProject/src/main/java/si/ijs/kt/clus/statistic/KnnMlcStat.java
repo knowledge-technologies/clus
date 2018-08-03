@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.stream.DoubleStream;
 
 import si.ijs.kt.clus.algo.kNN.KnnModel;
 import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
@@ -63,7 +64,7 @@ public class KnnMlcStat extends ClassificationStat {
      * @param model
      * @throws ClusException
      */
-	public void tryInitializeMLC(int[] ks, RowData trainSet, KnnModel model) throws ClusException {
+	public void tryInitializeMLC(int[] ks, RowData trainSet, KnnModel model, double smoother) throws ClusException {
 		if (m_IsInitialized) {
 			throw new RuntimeException("This method was called more than once.");
 		}
@@ -114,15 +115,17 @@ public class KnnMlcStat extends ClassificationStat {
 			HashMap<Integer, double[][]> labelMap = m_NeighbourhoodProbabilities.get(label);
 			for (double[][] counts : labelMap.values()) {
 				for(int isRelevant = 0; isRelevant < counts.length; isRelevant++) {
+					double countSum = DoubleStream.of(counts[isRelevant]).sum();
 					for (int labelCount = 0; labelCount < counts[isRelevant].length; labelCount++)
-						counts[isRelevant][labelCount] /= m_PriorLabelProbabilities[label][isRelevant];
+						counts[isRelevant][labelCount] = makeSmoother(counts[isRelevant][labelCount], countSum, counts[isRelevant].length, smoother);
 					}
 			}
 			for(int isRelevant = 0; isRelevant < m_PriorLabelProbabilities[label].length; isRelevant++) {
-				m_PriorLabelProbabilities[label][isRelevant] /= nbExamples;
+				m_PriorLabelProbabilities[label][isRelevant] = makeSmoother(m_PriorLabelProbabilities[label][isRelevant], nbExamples, m_PriorLabelProbabilities[label].length, smoother);
 			}
 		}
 	}
+	
 	
     @Override
     public void calcMean() {
@@ -152,5 +155,9 @@ public class KnnMlcStat extends ClassificationStat {
 
     private double getProbability(int labelIndex, int labelValue, int classCount) {
     	return m_PriorLabelProbabilities[labelIndex][labelValue] * m_NeighbourhoodProbabilities.get(labelIndex).get(m_NbExamples)[labelValue][classCount];
+    }
+    
+    private static double makeSmoother(double origNumerator, double origDenominator, double classes, double smoother) {
+    	return (origNumerator + smoother) / (classes * smoother + origDenominator);
     }
 }

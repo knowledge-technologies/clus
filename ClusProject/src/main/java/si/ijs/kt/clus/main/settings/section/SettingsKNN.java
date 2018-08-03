@@ -182,6 +182,10 @@ public class SettingsKNN extends SettingsBase {
         }
         return interval;
     }
+    
+    public double getMlcCountSmoother() {
+    	return m_MlcCountSmoother.getValue();
+    }
 
 
     @Override

@@ -376,9 +376,9 @@ public class KnnModel implements ClusModel, Serializable {
         return stat;
     }
     
-    public void tryInitializeMLC(int[] ks, RowData trainData) throws ClusException {
+    public void tryInitializeMLC(int[] ks, RowData trainData, double smoothing) throws ClusException {
     	if (m_IsMlcKnn) {
-    		((KnnMlcStat) statTemplate).tryInitializeMLC(ks, trainData, this);
+    		((KnnMlcStat) statTemplate).tryInitializeMLC(ks, trainData, this, smoothing);
     	}
     }
     
