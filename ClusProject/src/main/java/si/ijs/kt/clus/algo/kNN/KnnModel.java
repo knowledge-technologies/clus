@@ -80,10 +80,10 @@ public class KnnModel implements ClusModel, Serializable {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    private SearchAlgorithm search;
-    private DistanceWeights weightingOption;
-    private ClusRun cr;
-    protected ClusStatistic statTemplate;
+    private SearchAlgorithm m_Search;
+    private DistanceWeights m_WeightingOption;
+    private ClusRun m_ClusRun;
+    protected ClusStatistic m_StatTemplate;
     private int m_K = 1; // the number of nearest neighbours, see also https://www.youtube.com/watch?v=KqOsrniBooQ
     private int m_MaxK = 1; // maximal number of neighbours among the master itself and his 'workers': for efficient use
                             // of predictWeighted in Clus.calcError()
@@ -92,19 +92,17 @@ public class KnnModel implements ClusModel, Serializable {
     private KnnModel m_Master = null;
     // MLC KNN
     private boolean m_IsMlcKnn = false;
-    private double[][] m_PriorLabelProbabilities;
-    private ArrayList<HashMap<Integer, double[][]>> m_NeighbourhoodProbabilities;
 
 
     // Slave mode - this model is used only for voting, searching is done by master
     public KnnModel(ClusRun cr, int k, DistanceWeights weighting, KnnModel master) {
-        this.cr = cr;
+        this.m_ClusRun = cr;
         this.m_K = k;
         this.m_MaxK = Math.max(this.m_K, master.m_MaxK);
         master.m_MaxK = this.m_MaxK;
-        this.weightingOption = weighting;
-        this.search = master.search;
-        this.statTemplate = master.statTemplate;
+        this.m_WeightingOption = weighting;
+        this.m_Search = master.m_Search;
+        this.m_StatTemplate = master.m_StatTemplate;
         this.m_Master = master;
     }
 
@@ -112,12 +110,12 @@ public class KnnModel implements ClusModel, Serializable {
     // Default constructor.
    	@SuppressWarnings("unused")
     public KnnModel(ClusRun cr, int k, DistanceWeights weighting, int maxK, boolean isSparse, ClusAttrType[] necessaryDescriptiveAttributes) throws ClusException, IOException, InterruptedException {
-        this.cr = cr;
+        this.m_ClusRun = cr;
         this.m_K = k;
         this.m_MaxK = Math.max(Math.max(this.m_K, this.m_MaxK), maxK);
-        this.weightingOption = weighting;
+        this.m_WeightingOption = weighting;
         // settings file name; use name for .weight file
-        Settings sett = this.cr.getStatManager().getSettings();
+        Settings sett = this.m_ClusRun.getStatManager().getSettings();
         String fName = sett.getGeneric().getAppName();
         // Initialize attribute weighting according to settings file
         AttributeWeighting attrWe = new NoWeighting();
@@ -135,7 +133,7 @@ public class KnnModel implements ClusModel, Serializable {
                     nbBags = Integer.parseInt(wS[1]);
                 else
                 	sett.getKNN().setKNNAttrWeight(attrWeighting + "," + nbBags);
-                attrWe = new RandomForestWeighting(this.cr, nbBags);
+                attrWe = new RandomForestWeighting(this.m_ClusRun, nbBags);
             }
             catch (Exception e) {
                 throw new ClusException("Error at reading attributeWeighting value. RF value detected, but error accured while reading number of bags.");
@@ -231,16 +229,16 @@ public class KnnModel implements ClusModel, Serializable {
         SearchMethod searchMethod = sett.getKNN().getSearchMethod();
         switch (searchMethod) {
             case VPTree:
-                this.search = new VPTree(this.cr, searchDistance);
+                this.m_Search = new VPTree(this.m_ClusRun, searchDistance);
                 break;
             case KDTree:
-                this.search = new KDTree(this.cr, searchDistance);
+                this.m_Search = new KDTree(this.m_ClusRun, searchDistance);
                 break;
             case BruteForce:
-                this.search = new BruteForce(this.cr, searchDistance);
+                this.m_Search = new BruteForce(this.m_ClusRun, searchDistance);
                 break;
             case Oracle:
-                this.search = new OracleBruteForce(this.cr, searchDistance);
+                this.m_Search = new OracleBruteForce(this.m_ClusRun, searchDistance);
                 break;
             default:
                 throw new RuntimeException("Wrong search method: " + searchMethod.toString());
@@ -248,7 +246,7 @@ public class KnnModel implements ClusModel, Serializable {
 
         // debug info
         if (sett.getGeneral().getVerbose() >= 1) {
-            System.out.println("Search method: " + this.search.getClass());
+            System.out.println("Search method: " + this.m_Search.getClass());
             System.out.println("Search distance: " + searchDistance.getBasicDistance().getClass());
             System.out.println("Number of neighbours: " + this.m_K);
             System.out.println("Distance weights: " + sett.getKNN().getKNNDistanceWeights());
@@ -256,9 +254,9 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // build tree, preprocessing
-        this.search.build(m_MaxK);
-        RowData train = this.cr.getDataSet(ClusModelInfoList.TRAINSET);
-        RowData test = this.cr.getDataSet(ClusModelInfoList.TESTSET);
+        this.m_Search.build(m_MaxK);
+        RowData train = this.m_ClusRun.getDataSet(ClusModelInfoList.TRAINSET);
+        RowData test = this.m_ClusRun.getDataSet(ClusModelInfoList.TESTSET);
         if (searchMethod == SearchMethod.Oracle) {
             if (sett.getKNN().mustNotComputeTrainingError(train.getNbRows())) {
                 sett.getOutput().setOutTrainError(false);
@@ -276,37 +274,37 @@ public class KnnModel implements ClusModel, Serializable {
         // save prediction template
         // @todo : should all this be repalced with:
         if (sett.getKNN().isMlcKnn()) {
-        	statTemplate = new KnnMlcStat(sett, cr.getStatManager().getSchema().getNominalAttrUse(AttributeUseType.Target));
+        	m_StatTemplate = new KnnMlcStat(sett, cr.getStatManager().getSchema().getNominalAttrUse(AttributeUseType.Target));
         } else {
-        	statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
+        	m_StatTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
         }
 
-        // if( cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
+        // if( m_ClusRun.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
         // if(sett.getSectionMultiLabel().isEnabled()){
-        // statTemplate = new
+        // m_StatTemplate = new
         // ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target),
         // sett.getMultiLabelTrheshold());
         // } else{
-        // statTemplate = new
+        // m_StatTemplate = new
         // ClassificationStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNominalAttrUse(AttributeUseType.Target));
         // }
         // }
-        // else if( cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION )
-        // statTemplate = new
+        // else if( m_ClusRun.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION )
+        // m_StatTemplate = new
         // RegressionStat(this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getNumericAttrUse(AttributeUseType.Target));
-        // else if( cr.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES ){
+        // else if( m_ClusRun.getStatManager().getMode() == ClusStatManager.MODE_TIME_SERIES ){
         // // TimeSeriesAttrType attr =
         // this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(AttributeUseType.Target)[0];
-        // // statTemplate = new TimeSeriesStat(attxr, new DTWTimeSeriesDist(attr), 0 );
+        // // m_StatTemplate = new TimeSeriesStat(attxr, new DTWTimeSeriesDist(attr), 0 );
         // System.out.println("-------------");
-        // statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
-        // System.out.println(statTemplate.getDistanceName());
+        // m_StatTemplate = m_ClusRun.getStatManager().getStatistic(AttributeUseType.Target);
+        // System.out.println(m_StatTemplate.getDistanceName());
         // System.out.println("----------------");
-        // }else if( cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL ){
-        // statTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
+        // }else if( m_ClusRun.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL ){
+        // m_StatTemplate = m_ClusRun.getStatManager().getStatistic(AttributeUseType.Target);
         // System.out.println("----------------------");
-        // System.out.println(statTemplate.getDistanceName());
-        // System.out.println(statTemplate.getClass());
+        // System.out.println(m_StatTemplate.getDistanceName());
+        // System.out.println(m_StatTemplate.getClass());
         // System.out.println("----------------------");
         // }
     }
@@ -319,7 +317,7 @@ public class KnnModel implements ClusModel, Serializable {
                                                                      // sorted from the nearest to the farthest
 
         if (this.m_Master == null) { // this is the master
-            this.m_CurrentNeighbours = this.search.returnNNs(tuple, this.m_MaxK);
+            this.m_CurrentNeighbours = this.m_Search.returnNNs(tuple, this.m_MaxK);
             this.m_CurrentTuple = tuple;
             for (int neighbour = 0; neighbour < this.m_K; neighbour++) {
                 nearest.add(this.m_CurrentNeighbours.get(neighbour));
@@ -334,17 +332,17 @@ public class KnnModel implements ClusModel, Serializable {
 
         // Initialize distance weighting according to setting file
         DistanceWeighting weighting;
-        switch (this.weightingOption) {
+        switch (this.m_WeightingOption) {
             case OneOverD:
-                weighting = new WeightOver(nearest, this.search, tuple);
+                weighting = new WeightOver(nearest, this.m_Search, tuple);
                 break;
 
             case OneMinusD:
-                weighting = new WeightMinus(nearest, this.search, tuple);
+                weighting = new WeightMinus(nearest, this.m_Search, tuple);
                 break;
 
             case Constant:
-                weighting = new WeightConstant(nearest, this.search, tuple);
+                weighting = new WeightConstant(nearest, this.m_Search, tuple);
                 break;
 
             default:
@@ -352,21 +350,16 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // Vote
-        ClusStatistic stat = statTemplate.cloneStat();
+        ClusStatistic stat = m_StatTemplate.cloneStat();
         if (stat instanceof TimeSeriesStat) {
             for (DataTuple dt : nearest) {
-                ClusStatistic dtStat = statTemplate.cloneStat();
+                ClusStatistic dtStat = m_StatTemplate.cloneStat();
                 dtStat.setSDataSize(1);
                 dtStat.updateWeighted(dt, 0);
                 dtStat.computePrediction();
                 stat.addPrediction(dtStat, weighting.weight(dt));
             }
             stat.computePrediction();
-        }
-        else if (stat instanceof WHTDStatistic) {
-            for (DataTuple dt : nearest)
-                stat.updateWeighted(dt, weighting.weight(dt));
-            stat.calcMean();
         }
         else {
             for (DataTuple dt : nearest)
@@ -378,7 +371,7 @@ public class KnnModel implements ClusModel, Serializable {
     
     public void tryInitializeMLC(int[] ks, RowData trainData, double smoothing) throws ClusException {
     	if (m_IsMlcKnn) {
-    		((KnnMlcStat) statTemplate).tryInitializeMLC(ks, trainData, this, smoothing);
+    		((KnnMlcStat) m_StatTemplate).tryInitializeMLC(ks, trainData, this, smoothing);
     	}
     }
     
@@ -388,7 +381,7 @@ public class KnnModel implements ClusModel, Serializable {
     }
     
     public SearchAlgorithm getSearch() {
-    	return search;
+    	return m_Search;
     }
     
     @Override
@@ -406,7 +399,7 @@ public class KnnModel implements ClusModel, Serializable {
 
     @Override
     public String getModelInfo() {
-        return "kNN model weighted with " + this.weightingOption.toString() + " and " + m_K + " neighbors.";
+        return "kNN model weighted with " + this.m_WeightingOption.toString() + " and " + m_K + " neighbors.";
     }
 
 
