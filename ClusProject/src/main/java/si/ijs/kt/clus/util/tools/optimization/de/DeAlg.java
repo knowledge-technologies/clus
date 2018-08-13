@@ -34,6 +34,7 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.main.ClusStatManager;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.tools.optimization.OptAlg;
@@ -110,7 +111,7 @@ public class DeAlg extends OptAlg {
             }
             wrt_log.close();
             // wrt_pop.close();
-            System.out.println(" done!");
+            ClusLogger.info(" done!");
         }
         catch (Exception e) {
             e.printStackTrace();

@@ -38,6 +38,7 @@ import si.ijs.kt.clus.error.common.ComponentError;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
@@ -120,7 +121,7 @@ public class MSError extends ClusNumericError implements ComponentError {
         // int nb = getNbExamples();
         int nb = m_nbEx[i];
 
-        // System.out.println(m_SumErr[i]);
+        // ClusLogger.info(m_SumErr[i]);
         double err = nb != 0.0 ? m_SumErr[i] / nb : 0.0;
         if (m_Weights != null)
             err *= m_Weights.getWeight(getAttr(i));
@@ -189,7 +190,7 @@ public class MSError extends ClusNumericError implements ComponentError {
     public void addExample(double[] real, double[] predicted, boolean isRelative) {
         for (int i = 0; i < m_Dim; i++) {
             double err = sqr(real[i] - predicted[i]);
-            System.out.println(err);
+            ClusLogger.info(err);
             if (!Double.isInfinite(err) && !Double.isNaN(err)) {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);
@@ -213,7 +214,7 @@ public class MSError extends ClusNumericError implements ComponentError {
         for (int i = 0; i < m_Dim; i++) {
             double predicted_i = predicted[i] ? 1.0 : 0.0;
             double err = sqr(real[i] - predicted_i);
-            System.out.println(err);
+            ClusLogger.info(err);
             if (!Double.isInfinite(err) && !Double.isNaN(err)) {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);

@@ -113,7 +113,7 @@ public class FindBestTest {
 				hMinB = heur;
 			}
 		}
-		// System.out.println(heur+" "+hMinB+" -- "+hMaxB);
+		// ClusLogger.info(heur+" "+hMinB+" -- "+hMaxB);
 	}
 	// daniela end
 
@@ -200,7 +200,7 @@ public class FindBestTest {
 		 * start_time; m_Timer += elapsed;
 		 */
 
-		// System.out.println("done");
+		// ClusLogger.info("done");
 
 		// Find best split
 		m_Split.findSplit(m_BestTest, at);
@@ -362,7 +362,7 @@ public class FindBestTest {
 				if (value != prev) {
 					if (!Double.isNaN(value)) {
 						m_BestTest.calculateHMinMax(value, at);
-						// System.out.println(at +" za: "+m_BestTest.hMax+"-->"+m_BestTest.hMin);
+						// ClusLogger.info(at +" za: "+m_BestTest.hMax+"-->"+m_BestTest.hMin);
 					}
 					prev = value;
 					m_BestTest.m_PosStat.setPrevIndex(i);
@@ -383,7 +383,7 @@ public class FindBestTest {
 		// daniela generateMatrix for each attribute gisheuristic
 		try {
 			ClusHeuristic m_Heuristic = m_StatManager.getHeuristic();
-			// System.out.println(m_Heuristic);
+			// ClusLogger.info(m_Heuristic);
 			if (SettingsTree.ALPHA != 1.0 && m_Heuristic instanceof VarianceReductionHeuristicCompatibility) {
 				VarianceReductionHeuristicCompatibility gisHeuristic = (VarianceReductionHeuristicCompatibility) m_Heuristic;
 				ClusAttrType[] arr = at.getSchema().getAllAttrUse(AttributeUseType.GIS); // numeric and string GIS

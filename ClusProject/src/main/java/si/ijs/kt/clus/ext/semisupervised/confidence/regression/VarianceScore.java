@@ -84,7 +84,7 @@ public class VarianceScore extends PredictionConfidence {
 
             for (int j = 0; j < stat.getNbAttributes(); j++) {
                 // if((stat.m_SumWeights == null)) {
-                // System.out.println("Bug");
+                // ClusLogger.info("Bug");
                 // //FIXME: There is some bug, if an example has many missing values then some trees return null instead
                 // of vote
                 // }

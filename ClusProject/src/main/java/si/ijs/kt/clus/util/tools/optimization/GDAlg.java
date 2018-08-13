@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDMTCombineGradient;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
@@ -244,7 +245,7 @@ public class GDAlg extends OptAlg {
                     wrt_log.println("Detected oscillation, reducing step size of: " + m_GDProbl.m_stepSize);
 
                 if (debugPrint)
-                    System.out.println("DEBUG: Detected oscillation on iteration " + nbOfIterations + ", reducing step size of: " + m_GDProbl.m_stepSize);
+                    ClusLogger.info("DEBUG: Detected oscillation on iteration " + nbOfIterations + ", reducing step size of: " + m_GDProbl.m_stepSize);
                 // System.exit(1); //DEBUG
                 // For MaxLoss combination the oscillation may be because we are finding some local
                 // optimum point for some weight and it is the most significant. Let us put this weight
@@ -281,7 +282,7 @@ public class GDAlg extends OptAlg {
         } // While
 
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println(" done!");
+            ClusLogger.info(" done!");
 
         if (getSettings().getRules().getOptGDEarlyStopAmount() > 0) {
             m_GDProbl.isEarlyStop(m_weights); // Check if current weights have better fitness than the best so far

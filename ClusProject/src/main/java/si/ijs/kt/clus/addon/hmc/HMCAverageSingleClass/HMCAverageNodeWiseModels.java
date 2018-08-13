@@ -41,6 +41,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -153,7 +154,7 @@ public class HMCAverageNodeWiseModels {
             String nodeName = parent.toPathString("=");
             String name = getSettings().getGeneric().getAppName() + "-" + nodeName + "-" + childName;
             String toload = "hsc/model/" + name + ".model";
-            System.out.println("Loading: " + toload);
+            ClusLogger.info("Loading: " + toload);
             ClusModelCollectionIO io = ClusModelCollectionIO.load(toload);
             ClusModel model = io.getModel("Original");
             if (model == null) { throw new ClusException("Error: .model file does not contain model named 'Original'"); }

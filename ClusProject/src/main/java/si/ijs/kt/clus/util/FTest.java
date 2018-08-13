@@ -153,7 +153,7 @@ public class FTest {
         }
         while ((value - limit) / limit > 0.05);
         if (verbosityLevel > 0) {
-            System.out.println("F-Test = " + sig + " limit = " + ClusFormat.TWO_AFTER_DOT.format(limit) + " values = " + values.size());
+            ClusLogger.info("F-Test = " + sig + " limit = " + ClusFormat.TWO_AFTER_DOT.format(limit) + " values = " + values.size());
         }
         FTEST_LIMIT = limit;
         FTEST_VALUE = new double[values.size() + 3];

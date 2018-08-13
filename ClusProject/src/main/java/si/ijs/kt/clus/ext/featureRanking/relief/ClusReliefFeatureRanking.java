@@ -14,6 +14,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.SparseDataTuple;
@@ -40,6 +41,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief.MultilabelDistance;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesDistanceMeasure;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 import si.ijs.kt.clus.util.tuple.Triple;
@@ -291,9 +293,11 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         }
         m_NbDescriptiveAttrs = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE].length;
         m_NbTargetAttrs = m_DescriptiveTargetAttr[TARGET_SPACE].length;
+        m_IsSparse = m_Data.isSparse();
         // efficient distance computation for sparse tuples
         int nbNonNumericDescriptive = m_NbDescriptiveAttrs;  // if not sparse, the variables names are misleading:
         int nbNonNumericTarget = m_NbTargetAttrs;            // these are simply the numbers of desc./targ. attributes ...
+        
         if (m_IsSparse) {
         	nbNonNumericDescriptive -= m_Data.getSchema().getNbNumericAttrUse(AttributeUseType.Descriptive);
         	nbNonNumericTarget -= m_Data.getSchema().getNbNumericAttrUse(AttributeUseType.Target);
@@ -312,7 +316,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         		throw new RuntimeException("Something fishy with the number of nonumeric attributes.");
         	}
         }
-        m_IsSparse = m_Data.isSparse();
         // number of rankings        
         m_PerformPerTargetRanking = m_Data.m_Schema.getSettings().getEnsemble().shouldPerformRankingPerTarget();
         if (m_PerformPerTargetRanking && m_NbTargetAttrs == 1) {
@@ -927,8 +930,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             	Set<Integer> inds2 = ((SparseDataTuple) t2).getAttributeIndicesSet();
             	HashSet<Integer> inds = new HashSet<>(inds1);
             	inds.addAll(inds2);
+            	ClusSchema s = t1.getSchema();
             	for(int ind : inds) {
-            		attr = t1.getSchema().getAttrType(ind);
+            		attr = s.getAttrType(ind);
             		dist += computeDistance1D(t1, t2, attr); // computeNumeric1D may be not general enough in the future:)
             	}
             }
@@ -1163,7 +1167,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 System.out.print(".");
                 m_Percents++;
                 if (m_Percents / 10 * 10 == m_Percents) {
-                    System.out.println(String.format(" %3d percents", m_Percents));
+                    ClusLogger.info(String.format(" %3d percents", m_Percents));
                 }
             }
         }
@@ -1179,7 +1183,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 System.out.print(".");
                 m_NeighPercents++;
                 if (m_NeighPercents / 10 * 10 == m_NeighPercents) {
-                    System.out.println(String.format(" %3d percents", m_NeighPercents));
+                    ClusLogger.info(String.format(" %3d percents", m_NeighPercents));
                 }
             }
             m_CounterLock.writingUnlock();
@@ -1321,7 +1325,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      */
     public static void printMessage(String message, int desiredVerboseLevel, int verboseLevel) {
         if (desiredVerboseLevel <= verboseLevel) {
-            System.out.println(message);
+            ClusLogger.info(message);
         }
     }
 

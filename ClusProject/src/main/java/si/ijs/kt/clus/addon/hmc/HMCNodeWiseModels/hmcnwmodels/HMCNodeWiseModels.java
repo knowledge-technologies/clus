@@ -49,6 +49,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.StringTable;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
@@ -97,13 +98,13 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
             doRun();
         }
         else {
-            System.out.println("m_Cargs nok");
+            ClusLogger.info("m_Cargs nok");
         }
     }
 
 
 //    private void readFtests(String filename) {
-//        System.out.println("filename: " + filename);
+//        ClusLogger.info("filename: " + filename);
 //        try {
 //            BufferedReader in = new BufferedReader(new FileReader(filename));
 //            String s;
@@ -236,10 +237,10 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
             /*
              * String fstr = (String) m_Mappings.get(parentChildName);
              * if (fstr==null) {
-             * System.out.println("geen ftest gevonden voor "+ parentChildName);
+             * ClusLogger.info("geen ftest gevonden voor "+ parentChildName);
              * }
              * else {
-             * System.out.println("fstr: "+ fstr);
+             * ClusLogger.info("fstr: "+ fstr);
              * float ft = Float.valueOf(fstr);
              * m_Clus.getSettings().setFTest(ft);
              * }
@@ -323,17 +324,17 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
             m.run(args);
         }
         catch (IOException io) {
-            System.out.println("IO Error: " + io.getMessage());
+            ClusLogger.info("IO Error: " + io.getMessage());
         }
         catch (ClusException cl) {
-            System.out.println("Error: " + cl.getMessage());
+            ClusLogger.info("Error: " + cl.getMessage());
             cl.printStackTrace();
         }
         catch (ClassNotFoundException cn) {
-            System.out.println("Error: " + cn.getMessage());
+            ClusLogger.info("Error: " + cn.getMessage());
         }
         catch (InterruptedException ie) {
-            System.out.println("Error: " + ie.getMessage());
+            ClusLogger.info("Error: " + ie.getMessage());
             ie.printStackTrace();
         }
         catch (Exception e) {

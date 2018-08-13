@@ -24,6 +24,7 @@ import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.util.IntervalCollection;
 
@@ -41,8 +42,8 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
 
     @Override
     public void printInfo() {
-        System.out.println("---------SIT---------");
-        System.out.println("Heuristic: " + getStatManager().getHeuristicName());
+        ClusLogger.info("---------SIT---------");
+        ClusLogger.info("Heuristic: " + getStatManager().getHeuristicName());
     }
 
 
@@ -100,7 +101,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
 
         ClusErrorList err_list = mi.getTestError();
         ClusError err = err_list.getFirstError();
-        System.out.println();
+        ClusLogger.info();
 
         return err;
     }
@@ -145,7 +146,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                 System.out.print((j + 1) + " ");
             }
         }
-        System.out.println();
+        ClusLogger.info();
 
         for (int i = support_range[0]; i <= support_range[1]; i++) {
             mgr.getClusteringWeights().m_Weights = weights.clone();
@@ -160,26 +161,26 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                         System.out.print((j + 1) + " ");
                     }
                 }
-                System.out.println();
+                ClusLogger.info();
                 err = doParamXVal(trset, pruneset);
-                System.out.println("Correlation: " + err.getModelErrorComponent(emc));
+                ClusLogger.info("Correlation: " + err.getModelErrorComponent(emc));
                 if (err.getModelErrorComponent(emc) > best_err) {
                     best_err = err.getModelErrorComponent(emc);
                     best_weights = mgr.getClusteringWeights().m_Weights.clone();
                 }
-                System.out.println();
+                ClusLogger.info();
 
             }
         }
 
-        System.out.println("Best error: " + best_err);
+        ClusLogger.info("Best error: " + best_err);
         System.out.print("Best targets:");
         for (int j = 0; j < weights.length; j++) {
             if (best_weights[j] == 1) {
                 System.out.print((j + 1) + " ");
             }
         }
-        System.out.println();
+        ClusLogger.info();
         // set the weights to the best weights found
         mgr.getClusteringWeights().m_Weights = best_weights;
 
@@ -201,7 +202,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                 System.out.print((j + 1) + " ");
             }
         }
-        System.out.println();
+        ClusLogger.info();
 
         for (int i = support_range[0]; i <= support_range[1]; i++) {
             mgr.getClusteringWeights().m_Weights = weights.clone();
@@ -216,19 +217,19 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                         System.out.print((j + 1) + " ");
                     }
                 }
-                System.out.println();
+                ClusLogger.info();
                 err = doParamXVal(trset, pruneset);
-                System.out.println("Correlation: " + err.getModelErrorComponent(emc));
+                ClusLogger.info("Correlation: " + err.getModelErrorComponent(emc));
                 if (err.getModelErrorComponent(emc) > best_err) {
                     best_err = err.getModelErrorComponent(emc);
                     best_weights = mgr.getClusteringWeights().m_Weights.clone();
                 }
-                System.out.println();
+                ClusLogger.info();
 
             }
         }
 
-        System.out.println("Best error: " + best_err);
+        ClusLogger.info("Best error: " + best_err);
         System.out.print("Best targets:");
         for (int j = 0; j < weights.length; j++) {
             if (best_weights[j] == 1) {
@@ -266,7 +267,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         double best_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
 
         if (recursive) {
-            System.out.println("\n---recursive sit---");
+            ClusLogger.info("\n---recursive sit---");
             weights = mgr.getClusteringWeights().m_Weights;
             double new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
             while (new_err > best_err) {
@@ -276,7 +277,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             }
         }
 
-        System.out.println();
+        ClusLogger.info();
 
     }
 
@@ -305,7 +306,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         double ST_err = err.getModelErrorComponent(emc);
         double best_err = ST_err;
 
-        System.out.println("Estimated ST error: " + ST_err);
+        ClusLogger.info("Estimated ST error: " + ST_err);
 
         // estimate MT-error
         // set all candidate targets to 1
@@ -314,11 +315,11 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         }
         err = doParamXVal(trset, pruneset);
         double MT_err = err.getModelErrorComponent(emc);
-        System.out.println("Estimated MT error: " + MT_err);
+        ClusLogger.info("Estimated MT error: " + MT_err);
 
         if (MT_err > ST_err) {
             best_err = MT_err;
-            System.out.println("\n---recursive sub sit---");
+            ClusLogger.info("\n---recursive sub sit---");
             weights = mgr.getClusteringWeights().m_Weights;
             double new_err = substractBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
             while (new_err > best_err) {
@@ -328,7 +329,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             }
         }
         else {
-            System.out.println("\n---recursive add sit---");
+            ClusLogger.info("\n---recursive add sit---");
             resetWeights(main_target);
             weights = mgr.getClusteringWeights().m_Weights;
             double new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
@@ -339,7 +340,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             }
         }
 
-        System.out.println();
+        ClusLogger.info();
 
     }
 
@@ -369,7 +370,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         double ST_err = err.getModelErrorComponent(emc);
         double best_err = ST_err;
 
-        System.out.println("Estimated ST error: " + ST_err);
+        ClusLogger.info("Estimated ST error: " + ST_err);
 
         double[] starting_weights = weights.clone();
         // estimate starting set
@@ -380,7 +381,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             double MT_err = err.getModelErrorComponent(emc);
             if (MT_err > ST_err) {
                 starting_weights[i] = 1;
-                System.out.println("Adding target " + (i + 1) + " to starting set");
+                ClusLogger.info("Adding target " + (i + 1) + " to starting set");
             }
         }
         mgr.getClusteringWeights().m_Weights = starting_weights;
@@ -392,7 +393,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             }
         }
 
-        System.out.println("\n---recursive sit---");
+        ClusLogger.info("\n---recursive sit---");
 
         weights = starting_weights;
         double new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
@@ -404,7 +405,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             new_err = addBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
             new_err = substractBestSupportTasks(weights.clone(), emc, support_range, trset, pruneset);
         }
-        System.out.println();
+        ClusLogger.info();
     }
 
 
@@ -441,7 +442,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                 System.out.print((j + 1) + " ");
             }
         }
-        System.out.println();
+        ClusLogger.info();
         while (improved) {
             improved = false;
             // add sweep
@@ -460,7 +461,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                                 System.out.print((j + 1) + " ");
                             }
                         }
-                        System.out.println();
+                        ClusLogger.info();
 
                         mgr.getClusteringWeights().m_Weights = selected_weights.clone();
                         improved = true;
@@ -483,7 +484,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                                 System.out.print((j + 1) + " ");
                             }
                         }
-                        System.out.println();
+                        ClusLogger.info();
 
                         mgr.getClusteringWeights().m_Weights = selected_weights.clone();
                         improved = true;
@@ -502,7 +503,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
             }
         }
 
-        System.out.println();
+        ClusLogger.info();
 
     }
 
@@ -540,7 +541,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
                     weights[b + support_range[0]] = 0;
                 }
             }
-            System.out.println();
+            ClusLogger.info();
             for (int j = 0; j < weights.length; j++) {
                 if (weights[j] == 1) {
                     System.out.print((j + 1) + " ");
@@ -563,7 +564,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
         long done_time = ResourceInfo.getTime();
 
         // Induce final model
-        System.out.println("----------Building final model------------");
+        ClusLogger.info("----------Building final model------------");
         m_Class.induceAll(cr);
         // overwrite InductionTime -> otherwise the induction time is only the time of inducing the final model
         cr.setInductionTime(done_time - start_time);

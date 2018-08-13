@@ -61,6 +61,7 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
@@ -467,7 +468,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
             }
         }
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Rules left: " + getModelSize() + " out of " + nb_rules);
+            ClusLogger.info("Rules left: " + getModelSize() + " out of " + nb_rules);
         return nb_rules - 1;
     }
 
@@ -1296,7 +1297,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      */
     private void shiftRulePredictions(double[] defaultPred) {
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Shifting rule predictions according to the default prediction.");
+            ClusLogger.info("Shifting rule predictions according to the default prediction.");
         for (int iRule = 1; iRule < getModelSize(); iRule++) {
             ClusRule rule = getRule(iRule);
             if (rule.isRegularRule()) {// If this is linear term, do not touch it
@@ -1327,7 +1328,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
     private void omitRulePredictions() {
 
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Omitting rule predictions for optimization.");
+            ClusLogger.info("Omitting rule predictions for optimization.");
 
         // It depends on inner normalization if rule0 is omitted
         // If normalization is done in such a way that x-avg for all the targets, do not omit because it will be omitted
@@ -1382,7 +1383,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
                                                                            // stat.m_Means[iTarget];
                         stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;
 
-                        // System.out.println(stat.m_Means[iTarget]/(2*getTargStd(iTarget)));
+                        // ClusLogger.info(stat.m_Means[iTarget]/(2*getTargStd(iTarget)));
                     }
                 }
                 else {
@@ -1413,7 +1414,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      */
     private void weightGeneralityForPredictions(int nbOfExamples) {
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Scaling the rule predictions for generalization weighting.");
+            ClusLogger.info("Scaling the rule predictions for generalization weighting.");
         for (int iRule = 0; iRule < getModelSize(); iRule++) {
             ClusRule rule = getRule(iRule);
             if (rule.isRegularRule()) {// If this is linear term, do not touch it
@@ -1505,7 +1506,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      */
     public double[] addDefaultRuleToRuleSet() {
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Adding default rule explicitly to rule set.");
+            ClusLogger.info("Adding default rule explicitly to rule set.");
         ClusRule defaultRuleForEnsembles = new ClusRule(m_StatManager);
 
         defaultRuleForEnsembles.m_TargetStat = m_TargetStat;
@@ -1543,7 +1544,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
     // private void addLinearTermsToRuleSet(double[] mins, double[] maxs, double[] means, double[] stdDevs) {
     private void addLinearTermsToRuleSet() {
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Adding linear terms as rules.");
+            ClusLogger.info("Adding linear terms as rules.");
 
         int nbTargets = (m_StatManager.getStatistic(AttributeUseType.Target)).getNbAttributes();
         int nbDescrAttr = m_StatManager.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
@@ -1562,7 +1563,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
         }
 
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("\tAdded " + nbDescrAttr + " linear terms for each target, total " + nbDescrAttr * nbTargets + " terms.");
+            ClusLogger.info("\tAdded " + nbDescrAttr + " linear terms for each target, total " + nbDescrAttr * nbTargets + " terms.");
     }
 
 
@@ -1598,7 +1599,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
             // addSingleLinearTerm(int iDescriptDim, int iTargetDim)
         }
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("\tAdded " + addedTerms + " linear terms explicitly to the set.");
+            ClusLogger.info("\tAdded " + addedTerms + " linear terms explicitly to the set.");
 
         ClusRuleLinearTerm.DeleteImplicitLinearTerms(); // Not needed anymore
     }

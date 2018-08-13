@@ -22,6 +22,7 @@ import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 public abstract class ClusModelInfoList implements Serializable {
@@ -109,7 +110,7 @@ public abstract class ClusModelInfoList implements Serializable {
   public void showModelInfos() {
     for (int i = 0; i < getNbModels(); i++) {
       ClusModelInfo info = getModelInfo(i);
-      System.out.println("Model " + i + " name: '" + info.getName() + "'");
+      ClusLogger.info("Model " + i + " name: '" + info.getName() + "'");
     }
   }
 

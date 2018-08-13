@@ -44,7 +44,7 @@ public final class Evaluator {
             }
         }
         if (errorIdx == -1) {
-            // System.out.println("main target not in targetset");
+            // ClusLogger.info("main target not in targetset");
             return 0;
         }
 
@@ -128,7 +128,7 @@ public final class Evaluator {
             }
         }
         if (errorIdx == -1) {
-            // System.out.println("main target not in targetset");
+            // ClusLogger.info("main target not in targetset");
             return 0;
         }
         return error.getModelErrorComponent(errorIdx);
@@ -154,7 +154,7 @@ public final class Evaluator {
             }
         }
         if (errorIdx == -1) {
-            // System.out.println("main target not in targetset");
+            // ClusLogger.info("main target not in targetset");
             return 0;
         }
         return error.getModelErrorComponent(errorIdx);
@@ -199,7 +199,7 @@ public final class Evaluator {
             }
         }
         if (errorIdx == -1) {
-            // System.out.println("main target not in targetset");
+            // ClusLogger.info("main target not in targetset");
             return 0;
         }
         return error.getModelErrorComponent(errorIdx);

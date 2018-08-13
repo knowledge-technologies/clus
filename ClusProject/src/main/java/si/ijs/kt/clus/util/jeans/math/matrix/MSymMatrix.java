@@ -175,11 +175,11 @@ public class MSymMatrix extends MMatrix implements Serializable {
         String output = "";
         int j;
         for (j = 0; j <= row; j++) {
-            // System.out.println(j);
+            // ClusLogger.info(j);
             output = output + m_Data[row][j] + " ";
         }
         for (j = row + 1; j < m_Size; j++) {
-            // System.out.println(j);
+            // ClusLogger.info(j);
             output = output + m_Data[j][row] + " ";
         }
         output = output + "\n";

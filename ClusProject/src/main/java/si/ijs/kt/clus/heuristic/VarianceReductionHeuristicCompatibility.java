@@ -39,6 +39,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsTree.SpatialMatrixType;
 import si.ijs.kt.clus.main.settings.section.SettingsTree.SpatialMeasure;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.FTest;
 
 
@@ -79,9 +80,9 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
         double ss_neg = tstat.getSVarSDiff(m_ClusteringWeights, pstat);
         double value = FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
         if (getSettings().getGeneral().getVerbose() >= 10) {
-            System.out.println("TOT: " + tstat.getDebugString());
-            System.out.println("POS: " + pstat.getDebugString());
-            System.out.println("-> (" + ss_tot + ", " + ss_pos + ", " + ss_neg + ") " + value);
+            ClusLogger.info("TOT: " + tstat.getDebugString());
+            ClusLogger.info("POS: " + pstat.getDebugString());
+            ClusLogger.info("-> (" + ss_tot + ", " + ss_pos + ", " + ss_neg + ") " + value);
         }
         // NOTE: This is here for compatibility reasons only
         if (value < 1e-6)
@@ -163,7 +164,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
         }
         double bandwidth = schema.getSettings().getTree().getBandwidth();
         double b = bandwidth * maxdist;
-        //System.out.println(maxdist);
+        //ClusLogger.info(maxdist);
         if (maxOnMinDistLine != Double.POSITIVE_INFINITY && b < maxOnMinDistLine)
             b = maxOnMinDistLine;
         //calculate the weights 
@@ -221,7 +222,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
                                 w[i][j] = 0;
                                 break;
                         }
-                        //W += w[i][j]; //System.out.println(i+"\t"+j+"\t"+exi+"\t"+exj+"\t"+(long)(i*N+j)+"\t"+w[i][j]);
+                        //W += w[i][j]; //ClusLogger.info(i+"\t"+j+"\t"+exi+"\t"+exj+"\t"+(long)(i*N+j)+"\t"+w[i][j]);
                     }
                     m_distances.put((long) (i * N + j), w[i][j]); //write to hasp map only, not in file
                     //pw.println(i+"#"+j+" "+d);
@@ -229,7 +230,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
                 }
             }
         }
-        //System.out.println("spatialMatrix end: "+ System.currentTimeMillis());
+        //ClusLogger.info("spatialMatrix end: "+ System.currentTimeMillis());
         //pw.close();
     }
 
@@ -307,7 +308,7 @@ public class VarianceReductionHeuristicCompatibility extends ClusHeuristic {
                         }
                     }
                     m_distancesS.put((i), w); //write to hasp map non-zero only, not in file
-                    //System.out.println((i)+" "+w);
+                    //ClusLogger.info((i)+" "+w);
                 }
             }
         }

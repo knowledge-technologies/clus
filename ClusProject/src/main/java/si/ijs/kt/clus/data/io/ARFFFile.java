@@ -75,7 +75,7 @@ public class ARFFFile {
             if (token == null) { throw new IOException("End of ARFF file before " + TAG_NAME[expected] + " tag"); }
             if (token.equals(TAG_NAME[0])) {
                 schema.setRelationName(tokens.readTillEol().trim());
-                // System.out.println("Relation name: "+schema.getRelationName());
+                // ClusLogger.info("Relation name: "+schema.getRelationName());
                 expected = 1;
             }
             else if (token.equals(TAG_NAME[1])) {
@@ -102,7 +102,7 @@ public class ARFFFile {
             if (expected < 3)
                 token = tokens.getToken().toUpperCase();
         }
-        // System.out.println("Number of attributes: "+schema.getNbTargetAttributes());
+        // ClusLogger.info("Number of attributes: "+schema.getNbTargetAttributes());
         return schema;
     }
 

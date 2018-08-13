@@ -49,6 +49,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.XValDataSelection;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.io.DummySerializable;
@@ -576,10 +577,10 @@ public class ClusSchema implements Serializable {
 
 
     public final void showDebug() {
-        System.out.println("Nb ints: " + getNbInts());
-        System.out.println("Nb double: " + getNbDoubles());
-        System.out.println("Nb obj: " + getNbObjects());
-        System.out.println("Idx   Name                          Descr Status    Ref   Type             Sparse Missing");
+        ClusLogger.info("Nb ints: " + getNbInts());
+        ClusLogger.info("Nb double: " + getNbDoubles());
+        ClusLogger.info("Nb obj: " + getNbObjects());
+        ClusLogger.info("Idx   Name                          Descr Status    Ref   Type             Sparse Missing");
         for (int j = 0; j < m_NbAttrs; j++) {
             ClusAttrType at = m_Attr.get(j);
             System.out.print(StringUtils.printInt(j + 1, 6));
@@ -624,7 +625,7 @@ public class ClusSchema implements Serializable {
             }
             System.out.print("    ");
             System.out.print(StringUtils.printStr(ClusFormat.TWO_AFTER_DOT.format(at.getNbMissing()), 8));
-            System.out.println();
+            ClusLogger.info();
         }
     }
 
@@ -675,7 +676,7 @@ public class ClusSchema implements Serializable {
 
     public final void setTestSet(int id) {
         if (id != -1) {
-            System.out.println("Setting test set ID: " + id);
+            ClusLogger.info("Setting test set ID: " + id);
             ClusAttrType type = m_Attr.get(id);
             m_Attr.set(id, m_TSAttr = new IndexAttrType(type.getName()));
         }
@@ -847,7 +848,7 @@ public class ClusSchema implements Serializable {
             }
             m_NonSparse = vectorToAttrArray(nonSparse);
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("Number of sparse attributes: " + nbSparse);
+                ClusLogger.info("Number of sparse attributes: " + nbSparse);
             addRowsIndex();
             m_IsSparse = true;
         }
@@ -856,7 +857,7 @@ public class ClusSchema implements Serializable {
 
     public void printInfo() {
         if (getSettings().getGeneral().getVerbose() >= 1) {
-            System.out.println("Space required by nominal attributes: " + m_NbVt[ValueType.Int.getIndex()] * 4 + " bytes/tuple regular, " + m_NbVt[ValueType.BitwiseInt.getIndex()] * 4 + " bytes/tuple bitwise");
+            ClusLogger.info("Space required by nominal attributes: " + m_NbVt[ValueType.Int.getIndex()] * 4 + " bytes/tuple regular, " + m_NbVt[ValueType.BitwiseInt.getIndex()] * 4 + " bytes/tuple bitwise");
         }
     }
 

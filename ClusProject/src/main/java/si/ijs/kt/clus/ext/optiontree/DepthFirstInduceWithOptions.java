@@ -40,6 +40,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
 import si.ijs.kt.clus.util.exception.ClusException;
 
@@ -133,7 +134,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
             node.testToNode(best);
             // Output best test
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
+                ClusLogger.info("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();
             NodeTest test = node.getTest();
@@ -161,7 +162,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
             optionNode.setStatManager(m_StatManager);
 
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("New option node.");
+                ClusLogger.info("New option node.");
 
             if (node != m_Root) {
                 node.getParent().setChild(node.getParent().getChildIndex(node), optionNode);
@@ -183,7 +184,7 @@ public class DepthFirstInduceWithOptions extends ClusInductionAlgorithm {
                 newNode.testToNode(tnh);
 
                 if (getSettings().getGeneral().getVerbose() > 0)
-                    System.out.println("Test: " + newNode.getTestString() + " -> " + tnh.getHeuristicValue());
+                    ClusLogger.info("Test: " + newNode.getTestString() + " -> " + tnh.getHeuristicValue());
 
                 newNode.setTest(tnh.updateTest());
                 newNode.initClusteringStat(m_StatManager, m_Root.getClusteringStat(), data);

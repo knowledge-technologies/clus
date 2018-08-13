@@ -39,6 +39,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRNode;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.io.ClusSerializable;
 
@@ -240,7 +241,7 @@ public class NumericAttrType extends ClusAttrType {
                 System.err.println("Either error calculating aggregate or certain value is missing");
                 val = MISSING;
             }
-            // if(getSettings().getGeneral().getVerbose() > 0) System.out.println("CALCULATING HMTR AGGREGATE - row:
+            // if(getSettings().getGeneral().getVerbose() > 0) ClusLogger.info("CALCULATING HMTR AGGREGATE - row:
             // "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is:
             // "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
@@ -273,7 +274,7 @@ public class NumericAttrType extends ClusAttrType {
             String[] lineElements = line.split(",");
 
             if (data.getRow() == 232) {
-                System.out.println();
+                ClusLogger.info();
             }
 
             double val = MISSING;
@@ -292,7 +293,7 @@ public class NumericAttrType extends ClusAttrType {
             if (Double.isNaN(val))
                 throw new IOException("Error reading HMTR aggregate from dump! Aggregation function is: " + getSettings().getHMTR().getHMTRAggregationName());
 
-            // if(getSettings().getGeneral().getVerbose() > 0) System.out.println("READING HMTR AGGREGATE - row:
+            // if(getSettings().getGeneral().getVerbose() > 0) ClusLogger.info("READING HMTR AGGREGATE - row:
             // "+(data.getRow()+1)+" name: "+name + ", value: " + val + " aggregation function is:
             // "+Settings.HMTR_AGGS[getSettings().getHMTRAggregation().getValue()]);
 
@@ -428,7 +429,7 @@ public class NumericAttrType extends ClusAttrType {
 
         @Override
         public void term(ClusSchema schema) {
-            // System.out.println("Attribute: "+getName()+" "+((double)100.0*m_NbZero/m_NbTotal));
+            // ClusLogger.info("Attribute: "+getName()+" "+((double)100.0*m_NbZero/m_NbTotal));
             if (m_NbNeg == 0 && m_NbZero > m_NbTotal * 5 / 10) {
                 setSparse(true);
             }

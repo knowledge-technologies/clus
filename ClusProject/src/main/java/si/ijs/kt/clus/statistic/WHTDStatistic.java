@@ -47,6 +47,7 @@ import si.ijs.kt.clus.heuristic.GISHeuristic;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyDistance;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
@@ -242,7 +243,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             for (int j = 0; j < tp.getNbClasses(); j++) {
                 ClassesValue val = tp.getClass(j);
                 int idx = val.getIndex();
-                // if (Settings.VERBOSE > 10) System.out.println("idx = "+idx+" weight = "+weight);
+                // if (Settings.VERBOSE > 10) ClusLogger.info("idx = "+idx+" weight = "+weight);
                 m_SumValues[idx] += weight;
                 if (m_Distance.equals(HierarchyDistance.NoDistance)) {// poolAUPRC case
                     m_P[idx] += weight;
@@ -374,8 +375,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     int lower = Math.max(rule_cls, min_this);
                     if (rule_cls < min_this || lower > upper) {
                         System.err.println("BUG?");
-                        System.out.println("rule = " + m_Validation.getTotalWeight() * m_Validation.m_Means[i]);
-                        System.out.println("pop_tot = " + pop_tot + " pop_cls = " + pop_cls + " rule_tot = " + rule_tot + " rule_cls = " + rule_cls);
+                        ClusLogger.info("rule = " + m_Validation.getTotalWeight() * m_Validation.m_Means[i]);
+                        ClusLogger.info("pop_tot = " + pop_tot + " pop_cls = " + pop_cls + " rule_tot = " + rule_tot + " rule_cls = " + rule_cls);
                     }
                     // HypergeometricDistribution dist = m_Fac.createHypergeometricDistribution(pop_tot, pop_cls,
                     // rule_tot);
@@ -623,7 +624,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         else
             avgik = 0;
-        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
+        // ClusLogger.info("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
         double IL = avgik * (N - M);
 
         // right side
@@ -671,10 +672,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgikR = num / den;
         else
             avgikR = 0;
-        // System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+upsumR+" downsum:
+        // ClusLogger.info("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+upsumR+" downsum:
         // "+downsumR);
         double scaledI = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
-        // System.out.println();
+        // ClusLogger.info();
         if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
@@ -718,9 +719,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     previousSumWXXR[0] += w * Math.sqrt(getSquaredDistanceH(exi, m_Weights) * getSquaredDistanceH(exj, m_Weights));
                 }
             }
-            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // ClusLogger.info("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
             // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // ClusLogger.info("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
             // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
         // else
@@ -877,9 +878,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             }
         }
 
-        // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+        // ClusLogger.info("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
         // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-        // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+        // ClusLogger.info("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
         // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
 
         vkupenBrojElementiVoOvojSplit = N;
@@ -900,9 +901,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
         avgikR += ikkR;
         avgik += ikk;
-        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // ClusLogger.info("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
         // "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
+        // ClusLogger.info("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
         // "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (avgik * N + avgikR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
@@ -966,9 +967,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // ClusLogger.info("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
             // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // ClusLogger.info("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
             // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
         // else
@@ -1213,9 +1214,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             }
         }
 
-        // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+        // ClusLogger.info("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
         // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-        // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+        // ClusLogger.info("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
         // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         vkupenBrojElementiVoOvojSplit = N;
         num = (vkupenBrojElementiVoOvojSplit - 1) * previousSumWXX[0];
@@ -1233,15 +1234,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else
             ikkR = 0;
 
-        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // ClusLogger.info("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
         // "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
+        // ClusLogger.info("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
         // "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (ikk * N + ikkR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
         N = splitIndex;
         double scaledI = 1 + I;
-        // System.out.println(scaledI);
+        // ClusLogger.info(scaledI);
         if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
@@ -1308,8 +1309,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         else
             avgik = 1;
-        // System.out.println("w: "+W+"num: "+num+"den: "+den+"Left Moran I: "+avgik+"ex: "+((N-M)));
-        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
+        // ClusLogger.info("w: "+W+"num: "+num+"den: "+den+"Left Moran I: "+avgik+"ex: "+((N-M)));
+        // ClusLogger.info("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
         double IL = avgik * (N - M);
 
         // right side
@@ -1357,7 +1358,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgikR = num / den;
         else
             avgikR = 1;
-        // System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+num+" downsum: "+den);
+        // ClusLogger.info("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+num+" downsum: "+den);
         double I = (IL + avgikR * (N - M)) / m_data.getNbRows();
         double scaledI = 1 + I;
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
@@ -1419,7 +1420,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgik = num / den;
         else
             avgik = 1;
-        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
+        // ClusLogger.info("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+upsum+" downsum: "+downsum);
         double IL = avgik * (N - M);
 
         // right side
@@ -1459,10 +1460,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgikR = num / den;
         else
             avgikR = 1;
-        // System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+upsum+" downsum: "+downsum);
+        // ClusLogger.info("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+" upsum: "+upsum+" downsum: "+downsum);
         double I = (IL + avgikR * (N - M)) / m_data.getNbRows();
         double scaledI = 1 + I;
-        // System.out.println(scaledI);
+        // ClusLogger.info(scaledI);
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return scaledI;
     }
@@ -1548,7 +1549,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         else
             avgikR = 1;
         double I = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
-        // System.out.println(I);
+        // ClusLogger.info(I);
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
     }
@@ -1616,7 +1617,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         }
         else
             avgik = 0;
-        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
+        // ClusLogger.info("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" upsum: "+num+" downsum: "+den);
         double IL = avgik * (N - M);
 
         // right side
@@ -1662,10 +1663,10 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             avgikR = num / den;
         else
             avgikR = 0;
-        // System.out.println("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+num+" downsum:
+        // ClusLogger.info("Right Moran I: "+avgikR+"ex: "+((N-M))+"w: "+WR+"means: "+" upsum: "+num+" downsum:
         // "+den);
         double scaledI = 1 + ((IL + avgikR * (N - M)) / m_data.getNbRows());
-        // System.out.println(scaledI);
+        // ClusLogger.info(scaledI);
         if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
@@ -1722,9 +1723,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // ClusLogger.info("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
             // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // ClusLogger.info("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
             // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
         // else
@@ -1957,9 +1958,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             }
         }
 
-        // System.out.println("Update SumLeft : sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W
+        // ClusLogger.info("Update SumLeft : sumX2 "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W
         // "+previousSumWXX[0]);
-        // System.out.println("Update SumRight : sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W
+        // ClusLogger.info("Update SumRight : sumX2 "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W
         // "+previousSumWXXR[0]);
         vkupenBrojElementiVoOvojSplit = N;
         num = vkupenBrojElementiVoOvojSplit * previousSumWXX[0];
@@ -1976,15 +1977,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ikkR = numR / denR; // I for each target
         else
             ikkR = 1;
-        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // ClusLogger.info("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
         // "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
+        // ClusLogger.info("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
         // "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (ikk * N + ikkR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
         N = splitIndex;
         double scaledI = 1 + I;
-        // System.out.println(scaledI);
+        // ClusLogger.info(scaledI);
         if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
@@ -2032,9 +2033,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     // else {previousSumWXXR[0]+=getSquaredDistanceH(exi,m_Weights);}
                 }
             }
-            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // ClusLogger.info("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
             // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // ClusLogger.info("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
             // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
         // else
@@ -2233,15 +2234,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             ikkR = previousSumWXXR[0] / previousSumX2R[0];
         else
             ikkR = 1;
-        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // ClusLogger.info("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
         // "+previousSumW[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
+        // ClusLogger.info("Right Moran I: "+ikkR+"numR "+numR+"denR "+denR+" "+" NM: "+(NR-splitIndex)+" WR
         // "+previousSumWR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (ikk * N + ikkR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
         N = splitIndex;
         double scaledI = 1 + I;
-        // System.out.println(scaledI);
+        // ClusLogger.info(scaledI);
         if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
@@ -2301,9 +2302,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                     }
                 }
             }
-            // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+            // ClusLogger.info("Init SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
             // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-            // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+            // ClusLogger.info("Init SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
             // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         }
         // else
@@ -2536,9 +2537,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             }
         }
 
-        // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
+        // ClusLogger.info("Update SumLeft : sumX "+previousSumX[0]+" sumX2 "+previousSumX2[0]+" sumW
         // "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+" sumXW"+previousSumWX[0]);
-        // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
+        // ClusLogger.info("Update SumRight : sumX "+previousSumXR[0]+" sumX2 "+previousSumX2R[0]+" sumW
         // "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+" sumXW"+previousSumWXR[0]);
         vkupenBrojElementiVoOvojSplit = N;
         num = (vkupenBrojElementiVoOvojSplit - 1) * previousSumWXX[0];
@@ -2560,15 +2561,15 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             // ikkR = 0;
         }
 
-        // System.out.println("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
+        // ClusLogger.info("Left Moran I: "+ikk+"num "+num+"den "+den+" "+" NM: "+(splitIndex)+" W:
         // "+previousSumW[0]+" wx:"+previousSumWX[0]+" wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-        // System.out.println("Right Moran I: "+ikkR+"numR "+numR+"denR "+den+" "+" NM: "+(NR-splitIndex)+" WR
+        // ClusLogger.info("Right Moran I: "+ikkR+"numR "+numR+"denR "+den+" "+" NM: "+(NR-splitIndex)+" WR
         // "+previousSumWR[0]+" wxR: "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
         I = (avgik * N + avgikR * (NR - N)) / vkupenBrojElementiVoCelataSuma;
         M = prevIndex;
         N = splitIndex;
         double scaledI = 2 - I;
-        // System.out.println(scaledI);
+        // ClusLogger.info(scaledI);
         if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
@@ -2716,7 +2717,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
             wrt.close();
         }
         catch (IOException e) {
-            System.out.println("IO Error: " + e.getMessage());
+            ClusLogger.info("IO Error: " + e.getMessage());
         }
     }
 

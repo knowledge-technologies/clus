@@ -65,7 +65,6 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.DiskTupleIterator;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.TupleIterator;
-import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
@@ -110,7 +109,7 @@ import si.ijs.kt.clus.model.processor.ClusEnsemblePredictionWriter;
 import si.ijs.kt.clus.model.processor.ModelProcessorCollection;
 import si.ijs.kt.clus.model.processor.PredictionWriter;
 import si.ijs.kt.clus.pruning.PruneTree;
-import si.ijs.kt.clus.selection.BaggingSelection;
+import si.ijs.kt.clus.selection.BagSelection;
 import si.ijs.kt.clus.selection.ClusSelection;
 import si.ijs.kt.clus.selection.CriterionBasedSelection;
 import si.ijs.kt.clus.selection.OverSample;
@@ -123,6 +122,7 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.CombStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.util.ClusLogger;
+import si.ijs.kt.clus.util.ClusMisc;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.DebugFile;
 import si.ijs.kt.clus.util.ResourceInfo;
@@ -182,26 +182,26 @@ public class Clus implements CMDLineArgsProvider {
         initializeHMTRHierarchy(); // creates the hierarchy for hierarchical MTR if the section HMTR is present
         ARFFFile arff = null;
         if (m_Sett.getGeneral().getVerbose() > 0)
-            System.out.println("Loading '" + m_Sett.getGeneric().getAppName() + "'");
+            ClusLogger.info("Loading '" + m_Sett.getGeneric().getAppName() + "'");
         ClusRandom.initialize(m_Sett);
 
         ClusReader reader = new ClusReader(m_Sett.getData().getDataFile(), m_Sett);
         if (m_Sett.getGeneral().getVerbose() > 0)
-            System.out.println();
+            ClusLogger.info();
         if (cargs.hasOption("c45")) {
             if (m_Sett.getGeneral().getVerbose() > 0)
-                System.out.println("Reading C45 .names/.data");
+                ClusLogger.info("Reading C45 .names/.data");
         }
         else {
             if (m_Sett.getGeneral().getVerbose() > 0)
-                System.out.println("Reading ARFF Header");
+                ClusLogger.info("Reading ARFF Header");
             arff = new ARFFFile(reader);
             m_Schema = arff.read(m_Sett);
         }
         // Count rows and move to data segment
         if (m_Sett.getGeneral().getVerbose() > 0) {
-            System.out.println();
-            System.out.println("Reading CSV Data");
+            ClusLogger.info();
+            ClusLogger.info("Reading CSV Data");
         }
 
         // Update schema based on settings
@@ -228,11 +228,11 @@ public class Clus implements CMDLineArgsProvider {
 
         reader.close();
         if (m_Sett.getGeneral().getVerbose() > 0)
-            System.out.println("Found " + m_Data.getNbRows() + " rows");
+            ClusLogger.info("Found " + m_Data.getNbRows() + " rows");
 
         if (!getSettings().getData().getNormalizeData().equals(NormalizeDataValues.None)) {
             if (m_Sett.getGeneral().getVerbose() > 0)
-                System.out.println("Normalizing numerical data");
+                ClusLogger.info("Normalizing numerical data");
             m_Data = returnNormalizedData(m_Data);
         }
 
@@ -281,7 +281,7 @@ public class Clus implements CMDLineArgsProvider {
         initializeSummary(clss);
 
         if (m_Sett.getGeneral().getVerbose() > 0)
-            System.out.println();
+            ClusLogger.info();
 
         // Sample data
         if (cargs.hasOption("sample")) {
@@ -290,10 +290,10 @@ public class Clus implements CMDLineArgsProvider {
         }
 
         if (m_Sett.getGeneral().getVerbose() > 0)
-            System.out.println("Has missing values: " + m_Schema.hasMissing());
+            ClusLogger.info("Has missing values: " + m_Schema.hasMissing());
 
         if (ResourceInfo.isLibLoaded()) {
-            System.out.println("Memory usage: loading data took " + (ClusStat.m_LoadedMemory - ClusStat.m_InitialMemory) + " kB");
+            ClusLogger.info("Memory usage: loading data took " + (ClusStat.m_LoadedMemory - ClusStat.m_InitialMemory) + " kB");
         }
     }
 
@@ -305,7 +305,7 @@ public class Clus implements CMDLineArgsProvider {
             m_HMTRHierarchy = new ClusHMTRHierarchy();
 
             if (m_Sett.getGeneral().getVerbose() > 0) {
-                System.out.println("Creating hierarchy for HMTR" + System.lineSeparator());
+                ClusLogger.info("Creating hierarchy for HMTR" + System.lineSeparator());
             }
 
             m_HMTRHierarchy.initialize(m_Sett);// m_Sett.getHMTRHierarchyString().getStringValue(),
@@ -315,7 +315,7 @@ public class Clus implements CMDLineArgsProvider {
                 m_HMTRHierarchy.printHierarchy();
 
                 if (m_Sett.getHMTR().getHMTRType().equals(HierarchyTypesHMTR.Tree)) {
-                    System.out.println(m_HMTRHierarchy.printHierarchyTree());
+                    ClusLogger.info(m_HMTRHierarchy.printHierarchyTree());
                 }
 
                 m_HMTRHierarchy.printDepth();
@@ -357,7 +357,7 @@ public class Clus implements CMDLineArgsProvider {
 
         if (!getSettings().getData().getNormalizeData().equals(NormalizeDataValues.None)) {
             if (m_Sett.getGeneral().getVerbose() > 0)
-                System.out.println("Normalizing numerical data");
+                ClusLogger.info("Normalizing numerical data");
             m_Data = returnNormalizedData(m_Data);
         }
 
@@ -462,8 +462,8 @@ public class Clus implements CMDLineArgsProvider {
         }
         m_Data = (RowData) m_Data.selectFrom(sel, null); // no problem, parallelism comes later
         int nb_sel = m_Data.getNbRows();
-        System.out.println("Sample (" + svalue + ") " + nb_rows + " -> " + nb_sel);
-        System.out.println();
+        ClusLogger.info("Sample (" + svalue + ") " + nb_rows + " -> " + nb_sel);
+        ClusLogger.info();
     }
 
 
@@ -501,7 +501,7 @@ public class Clus implements CMDLineArgsProvider {
     // iter.init();
     // ClusSchema mschema = iter.getSchema();
     // if (iter.shouldAttach()) {
-    // System.out.println("Effect of should_attach not implemented in postprocModel");
+    // ClusLogger.info("Effect of should_attach not implemented in postprocModel");
     // }
     // coll.initialize(model, mschema);
     // DataTuple tuple = iter.readTuple();
@@ -584,9 +584,9 @@ public class Clus implements CMDLineArgsProvider {
         ClusStatistic[] stats = new ClusStatistic[1];
         stats[0] = allStat;
         /*
-         * if (!m_Sett.isNullTestFile()) { System.out.println("Loading: " +
+         * if (!m_Sett.isNullTestFile()) { ClusLogger.info("Loading: " +
          * m_Sett.getTestFile()); updateStatistic(m_Sett.getTestFile(), stats);
-         * } if (!m_Sett.isNullPruneFile()) { System.out.println("Loading: " +
+         * } if (!m_Sett.isNullPruneFile()) { ClusLogger.info("Loading: " +
          * m_Sett.getPruneFile()); updateStatistic(m_Sett.getPruneFile(),
          * stats); }
          */
@@ -625,7 +625,7 @@ public class Clus implements CMDLineArgsProvider {
         preprocess(m_Data);
         /*
          * ClusTarget target = m_Data.getTarget(); target.initTransformation();
-         * if (m_Sett.shouldNormalize()) { System.out.println("Normalizing
+         * if (m_Sett.shouldNormalize()) { ClusLogger.info("Normalizing
          * data"); target.normalize(); }
          */
     }
@@ -654,7 +654,7 @@ public class Clus implements CMDLineArgsProvider {
     public final RowData loadDataFile(String fname) throws IOException, ClusException {
         ClusReader reader = new ClusReader(fname, m_Sett);
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Reading: " + fname);
+            ClusLogger.info("Reading: " + fname);
         ARFFFile arff = new ARFFFile(reader);
         // FIXME - test if schema equal
         arff.read(m_Sett); // Read schema, but ignore :-)
@@ -663,7 +663,7 @@ public class Clus implements CMDLineArgsProvider {
         RowData data = view.readData(reader, m_Schema);
         reader.close();
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Found " + data.getNbRows() + " rows");
+            ClusLogger.info("Found " + data.getNbRows() + " rows");
         preprocSingle(data);
         return data;
     }
@@ -771,7 +771,7 @@ public class Clus implements CMDLineArgsProvider {
             RandomSelection prunesel = new RandomSelection(nbtot, nbsel);
             cr.setPruneSet(train.select(prunesel), prunesel);
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("Selecting pruning set: " + nbsel);
+                ClusLogger.info("Selecting pruning set: " + nbsel);
         }
         if (!m_Sett.getData().isNullPruneFile()) {
             String prset = m_Sett.getData().getPruneFile();
@@ -782,7 +782,7 @@ public class Clus implements CMDLineArgsProvider {
                 ClusData prune = loadDataFile(prset);
                 cr.setPruneSet(prune, null);
                 if (getSettings().getGeneral().getVerbose() > 0)
-                    System.out.println("Selecting pruning set: " + prset);
+                    ClusLogger.info("Selecting pruning set: " + prset);
             }
         }
         cr.setIndex(idx);
@@ -825,7 +825,7 @@ public class Clus implements CMDLineArgsProvider {
         }
         /* return the error */
         double err = error.getFirstError().getModelError();
-        // System.out.println("Error: "+err);
+        // ClusLogger.info("Error: "+err);
         return err;
     }
 
@@ -968,18 +968,18 @@ public class Clus implements CMDLineArgsProvider {
         }
         if (m_Sett.getOutput().isOutTrainError()) {
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("Computing training error");
+                ClusLogger.info("Computing training error");
             calcError(cr.getTrainIter(), ClusModelInfo.TRAIN_ERR, cr, ens_pred);
         }
         if (m_Sett.getOutput().isOutTestError() && cr.getTestIter() != null) {
             cr.getTestSet(); // this properly initialises the test set iterator if this was not done previously
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("Computing testing error");
+                ClusLogger.info("Computing testing error");
             calcError(cr.getTestIter(), ClusModelInfo.TEST_ERR, cr, ens_pred);
         }
         if (m_Sett.getOutput().isOutValidError() && cr.getPruneSet() != null) {
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("Computing validation error");
+                ClusLogger.info("Computing validation error");
             calcError(cr.getPruneIter(), ClusModelInfo.VALID_ERR, cr, ens_pred);
         }
         if (summary != null) {
@@ -1006,13 +1006,13 @@ public class Clus implements CMDLineArgsProvider {
         ClusNode pruned = (ClusNode) orig.cloneTree();
         pruner.prune(pruned);
         pruned.numberTree();
-        System.out.println();
-        System.out.println("Tree read from .out:");
+        ClusLogger.info();
+        ClusLogger.info("Tree read from .out:");
         orig.printTree();
-        System.out.println();
+        ClusLogger.info();
         if (rdr.getLineAfterTree() != null) {
-            System.out.println("First line after tree: '" + rdr.getLineAfterTree() + "'");
-            System.out.println();
+            ClusLogger.info("First line after tree: '" + rdr.getLineAfterTree() + "'");
+            ClusLogger.info();
         }
         ClusModelCollectionIO io = new ClusModelCollectionIO();
         ClusModelInfo pruned_info = new ClusModelInfo("Pruned");
@@ -1109,7 +1109,7 @@ public class Clus implements CMDLineArgsProvider {
                 // is not needed.
                 variance[jNumAttrib] = 0.25; // And the divider will be
                                              // 2*1/sqrt(4)= 1
-                System.out.println("Warning: Variance of attribute " + jNumAttrib + " is zero.");
+                ClusLogger.info("Warning: Variance of attribute " + jNumAttrib + " is zero.");
             }
             else {
                 variance[jNumAttrib] /= nbOfValidValues[jNumAttrib];
@@ -1175,7 +1175,7 @@ public class Clus implements CMDLineArgsProvider {
         }
 
         RowData normalized_data = new RowData(normalized, data.getSchema());
-        System.out.println("Normalized number of examples: " + normalized_data.getNbRows());
+        ClusLogger.info("Normalized number of examples: " + normalized_data.getNbRows());
 
         // //DEBUG
         //
@@ -1259,7 +1259,7 @@ public class Clus implements CMDLineArgsProvider {
                 System.out.print(StringUtils.printStr(type.getName() + " ", 30));
                 System.out.print(StringUtils.printStr(format.format(rstat.getMean(j)), 10));
                 System.out.print(StringUtils.printStr(format.format(Math.sqrt(rstat.getVariance(j))), 10));
-                System.out.println();
+                ClusLogger.info();
             }
         }
         ArrayList<DataTuple> normalized = new ArrayList<DataTuple>();
@@ -1277,7 +1277,7 @@ public class Clus implements CMDLineArgsProvider {
             normalized.add(tuple);
         }
         RowData normalized_data = new RowData(normalized, getSchema());
-        System.out.println("Size: " + normalized_data.getNbRows());
+        ClusLogger.info("Size: " + normalized_data.getNbRows());
 
         String fname = m_Sett.getGeneric().getFileAbsolute(FileUtil.getName(m_Sett.getData().getDataFile()) + "_norm.arff");
         ARFFFile.writeArff(fname, normalized_data);
@@ -1310,8 +1310,8 @@ public class Clus implements CMDLineArgsProvider {
     public final void showModel(String fname) throws IOException, ClusException, ClassNotFoundException {
         ClusModelCollectionIO io = ClusModelCollectionIO.load(fname);
         ClusNode res = (ClusNode) io.getModel("Pruned");
-        System.out.println("Tree read from .model:");
-        System.out.println();
+        ClusLogger.info("Tree read from .model:");
+        ClusLogger.info();
         res.inverseTests();
         res.printTree();
     }
@@ -1441,7 +1441,7 @@ public class Clus implements CMDLineArgsProvider {
         m_Summary.setTotalRuns(sel.getNbFolds());
         for (int fold = 0; fold < sel.getNbFolds(); fold++) {
             String dat_fname = "folds/" + m_Sett.getGeneric().getAppName() + ".fold." + fold;
-            System.out.println("Reading: " + dat_fname);
+            ClusLogger.info("Reading: " + dat_fname);
             ObjectLoadStream strm = new ObjectLoadStream(new FileInputStream(dat_fname));
             try {
                 m_Summary.addSummary((ClusRun) strm.readObject());
@@ -1453,7 +1453,7 @@ public class Clus implements CMDLineArgsProvider {
         PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(m_Sett.getGeneric().getAppName() + ".test.pred")));
         for (int fold = 0; fold < sel.getNbFolds(); fold++) {
             String pw_fname = "folds/" + m_Sett.getGeneric().getAppName() + ".test.pred." + fold;
-            System.out.println("Combining: " + pw_fname);
+            ClusLogger.info("Combining: " + pw_fname);
             LineNumberReader rdr = new LineNumberReader(new InputStreamReader(new FileInputStream(pw_fname)));
             String line = rdr.readLine();
             if (fold != 0) {
@@ -1626,7 +1626,7 @@ public class Clus implements CMDLineArgsProvider {
         int nbsets = m_Sett.getExperimental().getBaggingSets();
         int nbrows = m_Data.getNbRows();
         for (int i = 0; i < nbsets; i++) {
-            BaggingSelection msel = new BaggingSelection(nbrows, getSettings().getEnsemble().getEnsembleBagSize(), null);
+            BagSelection msel = new BagSelection(nbrows, getSettings().getEnsemble().getEnsembleBagSize(), null);
             ClusRun cr = partitionData(msel, i + 1);
             ClusModelInfo mi = cr.getModelInfo(ClusModel.PRUNED);
             mi.addModelProcessor(ClusModelInfo.TEST_ERR, wrt);
@@ -1684,7 +1684,7 @@ public class Clus implements CMDLineArgsProvider {
 
     public void showInfo() throws ClusException, IOException {
         RowData data = m_Data;
-        System.out.println("Name            #Rows      #Missing  #Nominal #Numeric #Target  #Classes");
+        ClusLogger.info("Name            #Rows      #Missing  #Nominal #Numeric #Target  #Classes");
         System.out.print(StringUtils.printStr(m_Sett.getGeneric().getAppName(), 16));
         System.out.print(StringUtils.printInt(data.getNbRows(), 11));
         // double perc = -1; //
@@ -1697,14 +1697,14 @@ public class Clus implements CMDLineArgsProvider {
         NominalAttrType[] tarnom = m_Schema.getNominalAttrUse(AttributeUseType.Target);
         if (tarnom != null && tarnom.length >= 1) {
             if (tarnom.length == 1)
-                System.out.println(tarnom[0].getNbValues());
+                ClusLogger.info(tarnom[0].getNbValues());
             else
-                System.out.println("M:" + tarnom.length);
+                ClusLogger.info("M:" + tarnom.length);
         }
         else {
-            System.out.println("(num)");
+            ClusLogger.info("(num)");
         }
-        System.out.println();
+        ClusLogger.info();
         m_Schema.showDebug();
         if (getStatManager().hasClusteringStat()) {
             ClusStatistic[] stats = new ClusStatistic[2];
@@ -1712,11 +1712,11 @@ public class Clus implements CMDLineArgsProvider {
             stats[1] = getStatManager().createStatistic(AttributeUseType.All);
             m_Data.calcTotalStats(stats);
             if (!m_Sett.getData().isNullTestFile()) {
-                System.out.println("Loading: " + m_Sett.getData().getTestFile());
+                ClusLogger.info("Loading: " + m_Sett.getData().getTestFile());
                 updateStatistic(m_Sett.getData().getTestFile(), stats);
             }
             if (!m_Sett.getData().isNullPruneFile()) {
-                System.out.println("Loading: " + m_Sett.getData().getPruneFile());
+                ClusLogger.info("Loading: " + m_Sett.getData().getPruneFile());
                 updateStatistic(m_Sett.getData().getPruneFile(), stats);
             }
             ClusStatistic.calcMeans(stats);
@@ -1757,7 +1757,7 @@ public class Clus implements CMDLineArgsProvider {
 
     @Override
     public void showHelp() {
-        ClusOutput.showHelp();
+        ClusMisc.showHelp();
     }
 
 
@@ -1792,7 +1792,7 @@ public class Clus implements CMDLineArgsProvider {
         try {
             // NumericAttrType[] t = clus.m_Schema.getNumericAttrUse(AttributeUseType.Target);
             NominalAttrType[] t = clus.m_Schema.getNominalAttrUse(AttributeUseType.Target);
-            // System.out.println(t.length); // matejp commented this out
+            // ClusLogger.info(t.length); // matejp commented this out
             if (t.length == 1) {
                 PredictionAnalyzer.calculateI(ts_name, ts_size, b);
             }
@@ -1815,20 +1815,18 @@ public class Clus implements CMDLineArgsProvider {
             Settings sett = clus.getSettings();
             CMDLineArgs cargs = new CMDLineArgs(clus);
             cargs.process(args);
-            if(!cargs.hasOption("silent")) {
-            	ClusOutput.printHeader();
-            }
-            if (cargs.hasOption("copying")) {
-                ClusOutput.printGPL();
+
+        	if (cargs.hasOption("copying")) {
+        	    ClusMisc.printGPL();
                 System.exit(0);
             }
             else if (cargs.getNbMainArgs() == 0) {
                 clus.showHelp();
-                System.out.println();
-                System.out.println("Expected main argument");
                 System.exit(0);
             }
             
+            ClusMisc.printHeader(cargs.hasOption("silent"));
+
             
             if (cargs.allOK()) {
                 sett.getGeneric().setDate(new Date());
@@ -1937,11 +1935,7 @@ public class Clus implements CMDLineArgsProvider {
 
                 /**
                  * The second group of command line parameters is for
-                 * miscellaneous action. The options are corrmatrix, info,
-                 * writetargets, out2model, test, normalize, debug, xval (test
-                 * error estimation via K-fold cross validation), fold, bag
-                 * (originally bagging, may not be used) show, gui, tseries TODO
-                 * What do these mean?
+                 * miscellaneous action.
                  */
                 if (cargs.hasOption("corrmatrix")) {
                     clus.initialize(cargs, clss);

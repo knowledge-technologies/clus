@@ -55,7 +55,7 @@ public class M5Pruner extends PruneTree {
         //if pruning according to target stat
         //m_GlobalDeviation = Math.sqrt(stat.getSVarS(m_ClusteringWeights) / stat.getTargetSumWeights());
         pruneRecursive(node);
-        // System.out.println("Performing test of M5 pruning");
+        // ClusLogger.info("Performing test of M5 pruning");
         // TestM5PruningRuleNode.performTest(orig, node, m_GlobalDeviation, m_TargetWeights, m_TrainingData);
     }
 
@@ -94,8 +94,8 @@ public class M5Pruner extends PruneTree {
         //double rmsSubTree = Math.sqrt(node.estimateTargetSS(m_ClusteringWeights)/stat.getTargetSumWeights());
         //double adjustedErrorTree = rmsSubTree * pruningFactor(stat.getTargetSumWeights(), node.getModelSize());
         
-        // System.out.println("C leaf: "+rmsLeaf+" tree: "+rmsSubTree);
-        // System.out.println("C leafadj: "+adjustedErrorLeaf +" treeadj: "+rmsSubTree);
+        // ClusLogger.info("C leaf: "+rmsLeaf+" tree: "+rmsSubTree);
+        // ClusLogger.info("C leafadj: "+adjustedErrorLeaf +" treeadj: "+rmsSubTree);
         if ((adjustedErrorLeaf <= adjustedErrorTree) || (adjustedErrorLeaf < (m_GlobalDeviation * 0.00001))) {
             node.makeLeaf();
         }

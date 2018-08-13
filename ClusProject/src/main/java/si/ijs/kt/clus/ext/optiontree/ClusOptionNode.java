@@ -46,6 +46,7 @@ import si.ijs.kt.clus.statistic.HierSingleLabelStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 
@@ -173,7 +174,7 @@ public class ClusOptionNode extends MyNode {
     @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive) {
         int lastmodel = cr.getNbModels() - 1;
-        System.out.println("The number of models to print is:" + lastmodel);
+        ClusLogger.info("The number of models to print is:" + lastmodel);
         String[][] tabitem = new String[lastmodel + 1][10000]; //table of item
         int[][] tabexist = new int[lastmodel + 1][10000]; //table of booleen for each item
         Global.set_treecpt(starttree);

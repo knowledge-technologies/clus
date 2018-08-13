@@ -19,6 +19,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsTree.TreeOptimizeValues;
 import si.ijs.kt.clus.model.test.NodeTest;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
@@ -29,21 +30,21 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
     public DepthFirstInduceSparse(ClusSchema schema, Settings sett) throws ClusException, IOException {
         super(schema, sett);
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Sparse implementation");
+            ClusLogger.info("Sparse implementation");
     }
 
 
     public DepthFirstInduceSparse(ClusInductionAlgorithm other) {
         super(other);
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Sparse implementation");
+            ClusLogger.info("Sparse implementation");
     }
 
 
     public DepthFirstInduceSparse(ClusInductionAlgorithm other, NominalSplit split) {
         super(other);
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Sparse implementation");
+            ClusLogger.info("Sparse implementation");
     }
 
 
@@ -59,7 +60,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
     public DepthFirstInduceSparse(ClusInductionAlgorithm other, ClusStatManager mgr, boolean parallelism) {
         super(other, mgr, parallelism);
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Sparse implementation");
+            ClusLogger.info("Sparse implementation");
     }
 
 
@@ -126,9 +127,9 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
                                                                                                                 // Object[]
                                                                                                                 // examplelists
         if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
-            System.out.println("Depth " + node.getLevel() + ": inducing new node: " + attrs.length + " attributes, " + data.getNbRows() + " examples");
+            ClusLogger.info("Depth " + node.getLevel() + ": inducing new node: " + attrs.length + " attributes, " + data.getNbRows() + " examples");
         }
-        // System.out.println("INDUCE SPARSE with " + attrs.length + " attributes and " + data.getNbRows() + "
+        // ClusLogger.info("INDUCE SPARSE with " + attrs.length + " attributes and " + data.getNbRows() + "
         // examples");
         // Initialize selector and perform various stopping criteria
         if (initSelectorAndStopCrit(node, data)) {
@@ -156,7 +157,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             node.testToNode(best);
             // Output best test
             if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS)
-                System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
+                ClusLogger.info("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();
             NodeTest test = node.getTest();
@@ -206,7 +207,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             makeLeaf(node);
         }
         if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
-            System.out.println("Depth " + node.getLevel() + ": node finished.");
+            ClusLogger.info("Depth " + node.getLevel() + ": node finished.");
         }
     }
 
@@ -264,7 +265,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
 
 
     public void induceRandomForestRecursive2(ClusNode node, RowData data, Object[] attrs, ClusRandomNonstatic rnd) throws Exception {
-        // System.out.println("INDUCE SPARSE with " + attrs.length + " attributes and " + data.getNbRows() + "
+        // ClusLogger.info("INDUCE SPARSE with " + attrs.length + " attributes and " + data.getNbRows() + "
         // examples");
         // Initialize selector and perform various stopping criteria
         if (initSelectorAndStopCrit(node, data)) {
@@ -286,7 +287,7 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             node.testToNode(best);
             // Output best test
             if (getSettings().getGeneral().getVerbose() > 1)
-                System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
+                ClusLogger.info("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             // Create children
             int arity = node.updateArity();
             NodeTest test = node.getTest();

@@ -74,14 +74,14 @@ public class BottomUpPruningVSB extends PruneTree {
                     ClusStatistic pred = node.predictWeighted(tuple);
                     m_TreeErr.addExample(tuple, pred);
                     m_NodeErr.addExample(tuple, node.predictWeightedLeaf(tuple));
-                    // System.out.println("Val: "+tuple.m_Doubles[0]+","+node.getTotalStat().getNumericPred()[0]);
+                    // ClusLogger.info("Val: "+tuple.m_Doubles[0]+","+node.getTotalStat().getNumericPred()[0]);
                 }
                 // FIXME - error should count this :-)
                 m_TreeErr.getParent().setNbExamples(nbrows);
                 double tree_err = m_TreeErr.getModelError();
                 double node_err = m_NodeErr.getModelError();
-                // System.out.println("Tree Accuracy: "+tree_err);
-                // System.out.println("Node Accuracy: "+node_err);
+                // ClusLogger.info("Tree Accuracy: "+tree_err);
+                // ClusLogger.info("Node Accuracy: "+node_err);
                 if (m_TreeErr.shouldBeLow()) {
                     if (tree_err > node_err)
                         node.makeLeaf();

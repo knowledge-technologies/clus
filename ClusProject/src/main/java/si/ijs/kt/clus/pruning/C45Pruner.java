@@ -49,7 +49,7 @@ public class C45Pruner extends PruneTree {
         // ClusNode orig = (ClusNode)node.cloneTree();
         node.pruneByTrainErr(null);
         pruneC45Recursive(node, m_TrainingData);
-        // System.out.println("Performing test of C45 pruning");
+        // ClusLogger.info("Performing test of C45 pruning");
         // TestC45PruningRuleNode.performTest(orig, node, m_TrainingData);
     }
 

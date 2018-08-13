@@ -232,7 +232,7 @@ public class INIFileNominalOrDoubleOrVector extends INIFileEntry {
             }
             else {
                 try {
-                    // System.out.println("Setting double value: "+token+" for "+getName());
+                    // ClusLogger.info("Setting double value: "+token+" for "+getName());
                     setDouble(Double.parseDouble(token));
                 }
                 catch (NumberFormatException e) {

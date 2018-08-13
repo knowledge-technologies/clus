@@ -89,7 +89,7 @@ public class TreeErrorComputer extends ClusModelProcessor {
         // // Debug?
         // // ClusError clone = error.getErrorClone();
         // // computeErrorStandard(tree, test, clone);
-        // // System.out.println("Simple = "+error.getModelError()+" standard = "+clone.getModelError());
+        // // ClusLogger.info("Simple = "+error.getModelError()+" standard = "+clone.getModelError());
         // }
     }
 

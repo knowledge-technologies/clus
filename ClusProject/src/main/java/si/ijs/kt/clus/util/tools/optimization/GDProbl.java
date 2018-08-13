@@ -34,6 +34,7 @@ import java.util.ListIterator;
 
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDMTCombineGradient;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
@@ -229,7 +230,7 @@ public class GDProbl extends OptProbl {
         }
         m_dynStepLowerBound = 1.0 / sum;
         if (m_printGDDebugInformation)
-            System.out.println("DEBUG: DynStepSize lower bound is " + m_dynStepLowerBound);
+            ClusLogger.info("DEBUG: DynStepSize lower bound is " + m_dynStepLowerBound);
 
         // getSettings().getOptGDMaxIter()/m_earlyStopStep = nb of drops
         // TODO 100 Change to variable m_earlyStopStep
@@ -877,7 +878,7 @@ public class GDProbl extends OptProbl {
         if (newFitness > getSettings().getRules().getOptGDEarlyStopTreshold() * m_minFitness) {
             stop = true;
             if (m_printGDDebugInformation)
-                System.out.println("\nGD: Independent test set error increase detected - overfitting.\n");
+                ClusLogger.info("\nGD: Independent test set error increase detected - overfitting.\n");
         }
 
         return stop;

@@ -75,14 +75,14 @@ public class SubsetSplit extends NominalSplit {
         }
         tot.calcMean();
         pos.calcMean();
-        // System.out.println("}: "+mheur+" "+tot+" "+pos);
-        // System.out.println("}: "+mheur);
+        // ClusLogger.info("}: "+mheur+" "+tot+" "+pos);
+        // ClusLogger.info("}: "+mheur);
     }
 
 
     @Override
     public void findSplit(CurrentBestTestAndHeuristic node, NominalAttrType type) throws ClusException {
-        // System.out.println("find split for attr: " + type);
+        // ClusLogger.info("find split for attr: " + type);
         double unk_freq = 0.0;
         int nbvalues = type.getNbValues();
         boolean isin[] = new boolean[nbvalues];
@@ -155,7 +155,7 @@ public class SubsetSplit extends NominalSplit {
                                                                                     // both singletons were valid AND
                                                                                     // you want to reuse their
                                                                                     // computations
-                                                                                    // System.out.println("mheur: " +
+                                                                                    // ClusLogger.info("mheur: " +
                                                                                     // mheur);
                             if (mheur > bheur) {
                                 bheur = mheur;
@@ -203,7 +203,7 @@ public class SubsetSplit extends NominalSplit {
                         isin_current[j] = true;
                         double mheur = node.calcHeuristic(m_MStat, m_CStat);
                         // showTest(type, isin_current, -1, mheur, m_MStat, m_CStat);
-                        // System.out.println("mheur: " + mheur);
+                        // ClusLogger.info("mheur: " + mheur);
                         if (mheur > bheur) {
                             bheur = mheur;
                             bvalue = j;
@@ -224,15 +224,15 @@ public class SubsetSplit extends NominalSplit {
                 }
             }
         }
-        // System.out.println("pos_freq_orig = " + pos_freq);
-        // System.out.println("attr: " + type + " best heur: " + bheur);
+        // ClusLogger.info("pos_freq_orig = " + pos_freq);
+        // ClusLogger.info("attr: " + type + " best heur: " + bheur);
         if (bheur > node.m_BestHeur + ClusHeuristic.DELTA) {
             node.m_UnknownFreq = unk_freq;
             node.m_BestHeur = bheur;
             node.m_TestType = CurrentBestTestAndHeuristic.TYPE_TEST;
             node.m_BestTest = new SubsetTest(type, card, isin, pos_freq);
             node.resetAlternativeBest();
-            // System.out.println("attr: " + type + " best test: " + node.m_BestTest.getString());
+            // ClusLogger.info("attr: " + type + " best test: " + node.m_BestTest.getString());
         }
         else if (getStatManager().getSettings().getTree().showAlternativeSplits() && (((bheur > node.m_BestHeur - ClusHeuristic.DELTA) && (bheur < node.m_BestHeur + ClusHeuristic.DELTA)) || (bheur == Double.POSITIVE_INFINITY))) {
             // if same heuristic: add to alternatives (list will later be pruned to remove those tests that do
@@ -292,7 +292,7 @@ public class SubsetSplit extends NominalSplit {
 
     @Override
     public void findExtraTreeSplit(CurrentBestTestAndHeuristic node, NominalAttrType type, Random rnd) throws ClusException {
-        // System.out.println("find split for attr: " + type);
+        // ClusLogger.info("find split for attr: " + type);
         double minAllowedFrequency = 0.01;
         double unk_freq = 0.0;
         int nbvalues = type.getNbValues();
@@ -393,9 +393,11 @@ public class SubsetSplit extends NominalSplit {
             }
 
             if (count == nbTries || card == nbvalues || card == 0) {
-                System.out.println("Due to the randomness in split search, a usefull split was not found in " + count + " tries:");
-                System.out.println("   Cardinality = " + card);
-                System.out.println("   nb values = " + nbvalues);
+            	if (getStatManager().getSettings().getGeneral().getVerbose() >= 2) {
+            		System.err.println("Due to the randomness in split search, a usefull split was not found in " + count + " tries:");
+            		System.err.println("   Cardinality = " + card);
+                    System.err.println("   nb values = " + nbvalues);
+            	}                
             }
             if (found_test) {
                 bheur = node.calcHeuristic(m_MStat, node.m_TestStat[0]);

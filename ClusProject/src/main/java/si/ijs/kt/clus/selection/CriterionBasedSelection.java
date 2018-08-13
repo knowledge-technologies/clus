@@ -6,6 +6,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class CriterionBasedSelection {
@@ -38,7 +39,7 @@ public class CriterionBasedSelection {
             }
         }
         if (sel.getNbSelected() != nbrows) {
-            System.out.println("Tuples with missing target: " + (nbrows - sel.getNbSelected()));
+            ClusLogger.info("Tuples with missing target: " + (nbrows - sel.getNbSelected()));
             return (RowData) data.selectFrom(sel, null); // no problem, parallelism comes later
         }
         else {

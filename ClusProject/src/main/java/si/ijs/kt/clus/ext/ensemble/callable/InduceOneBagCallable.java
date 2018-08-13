@@ -1,4 +1,3 @@
-
 package si.ijs.kt.clus.ext.ensemble.callable;
 
 import java.util.concurrent.Callable;
@@ -8,7 +7,7 @@ import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.ext.ensemble.container.OneBagResults;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.selection.BaggingSelection;
+import si.ijs.kt.clus.selection.BagSelection;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
 
@@ -20,12 +19,12 @@ public class InduceOneBagCallable implements Callable<OneBagResults> {
     private int m_I, m_OrigMaxDepth;
     private OOBSelection m_Oob_sel; //, m_Oob_total;
     private TupleIterator m_Train_iterator, m_Test_iterator;
-    private BaggingSelection m_Msel;
+    private BagSelection m_Msel;
     private ClusRandomNonstatic m_Rnd;
     private ClusStatManager m_Mgr;
 
 
-    public InduceOneBagCallable(ClusEnsembleInduce cei, ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager mgr) {
+    public InduceOneBagCallable(ClusEnsembleInduce cei, ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, TupleIterator train_iterator, TupleIterator test_iterator, BagSelection msel, ClusRandomNonstatic rnd, ClusStatManager mgr) {
         this.m_Cei = cei;
         this.m_Cr = cr;
         this.m_I = i;
@@ -47,3 +46,4 @@ public class InduceOneBagCallable implements Callable<OneBagResults> {
     }
 
 }
+

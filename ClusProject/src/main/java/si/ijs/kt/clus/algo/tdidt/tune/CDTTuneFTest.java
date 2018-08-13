@@ -52,6 +52,7 @@ import si.ijs.kt.clus.selection.ClusSelection;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
@@ -88,8 +89,8 @@ public class CDTTuneFTest extends ClusDecisionTree {
 
     @Override
     public void printInfo() {
-        System.out.println("TDIDT (Tuning F-Test)");
-        System.out.println("Heuristic: " + getStatManager().getHeuristicName());
+        ClusLogger.info("TDIDT (Tuning F-Test)");
+        ClusLogger.info("Heuristic: " + getStatManager().getHeuristicName());
     }
 
 
@@ -176,7 +177,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
             }
             avgSize /= nbfolds;
             if (getSettings().getGeneral().getVerbose() > 1)
-                System.out.println();
+                ClusLogger.info();
         }
         ClusModelInfo mi = summ.getModelInfo(ClusModel.ORIGINAL);
         getSettings().getGeneral().enableVerbose(prevVerb);
@@ -199,7 +200,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
         for (int i = 0; i < m_FTests.length; i++) {
             getSettings().getTree().setFTest(m_FTests[i], getSettings().getGeneral().getVerbose());
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("Try for F-test value = " + m_FTests[i]);
+                ClusLogger.info("Try for F-test value = " + m_FTests[i]);
             double err = doParamXVal(trset, pruneset);
             if (getSettings().getGeneral().getVerbose() > 1)
                 System.out.print("-> " + err);
@@ -208,11 +209,11 @@ public class CDTTuneFTest extends ClusDecisionTree {
                     best_error = err;
                     best_value = i;
                     if (getSettings().getGeneral().getVerbose() > 1)
-                        System.out.println(" *");
+                        ClusLogger.info(" *");
                 }
                 else {
                     if (getSettings().getGeneral().getVerbose() > 1)
-                        System.out.println();
+                        ClusLogger.info();
                 }
             }
             else {
@@ -220,19 +221,19 @@ public class CDTTuneFTest extends ClusDecisionTree {
                     best_error = err;
                     best_value = i;
                     if (getSettings().getGeneral().getVerbose() > 1)
-                        System.out.println(" *");
+                        ClusLogger.info(" *");
                 }
                 else {
                     if (getSettings().getGeneral().getVerbose() > 1)
-                        System.out.println();
+                        ClusLogger.info();
                 }
             }
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println();
+                ClusLogger.info();
         }
         getSettings().getTree().setFTest(m_FTests[best_value], getSettings().getGeneral().getVerbose());
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Best F-test value is: " + m_FTests[best_value]);
+            ClusLogger.info("Best F-test value is: " + m_FTests[best_value]);
     }
 
 
@@ -243,7 +244,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
             RowData valid = (RowData) cr.getPruneSet();
             RowData train = (RowData) cr.getTrainingSet();
             findBestFTest(train, valid);
-            System.out.println();
+            ClusLogger.info();
             // Induce final model
             cr.combineTrainAndValidSets();
             ClusRandom.initialize(getSettings());

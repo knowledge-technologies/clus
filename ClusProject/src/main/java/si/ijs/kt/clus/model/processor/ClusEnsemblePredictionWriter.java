@@ -13,6 +13,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.Status;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStatBase;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
@@ -234,7 +235,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
 
 
     public void closeWriter() {
-        System.out.println("Ensemble predictions written in " + m_Fname);
+        ClusLogger.info("Ensemble predictions written in " + m_Fname);
         m_Writer.flush();
         m_Writer.close();
     }
@@ -246,7 +247,7 @@ public class ClusEnsemblePredictionWriter extends ClusModelProcessor {
 
 
     public void printVotes() {
-        System.out.println("Votes: " + m_Votes);
+        ClusLogger.info("Votes: " + m_Votes);
     }
 
 

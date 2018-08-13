@@ -27,6 +27,7 @@ import java.util.Arrays;
 import si.ijs.kt.clus.ext.hierarchical.ClassHierarchy;
 import si.ijs.kt.clus.ext.hierarchical.ClassTerm;
 import si.ijs.kt.clus.ext.hierarchical.HierIO;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
@@ -154,7 +155,7 @@ public class GenerateData {
                 increase = true;
             }
             if ((count % 100) == 0) {
-                System.out.println("Current: " + stat.getMean() + " " + terms.size());
+                ClusLogger.info("Current: " + stat.getMean() + " " + terms.size());
             }
             count++;
         }
@@ -203,21 +204,21 @@ public class GenerateData {
         MAX_CLASS = Integer.parseInt(args[2]);
         int RND = Integer.parseInt(args[3]);
 
-        System.out.println("Branch: " + MAX_BRANCH);
-        System.out.println("Depth:  " + MAX_DEPTH);
-        System.out.println("Class:  " + MAX_CLASS);
-        System.out.println("Random: " + RND);
+        ClusLogger.info("Branch: " + MAX_BRANCH);
+        ClusLogger.info("Depth:  " + MAX_DEPTH);
+        ClusLogger.info("Class:  " + MAX_CLASS);
+        ClusLogger.info("Random: " + RND);
 
         ClusRandom.initialize(RND);
         ClassTerm root = createSimpleHierarchy();
 
         HierIO io = new HierIO();
-        System.out.println("Hierarchy:");
+        ClusLogger.info("Hierarchy:");
         io.writeHierarchy(root, ClusFormat.OUT_WRITER);
 
         SingleStat hb = new SingleStat();
         root.getMeanBranch(null, hb);
-        System.out.println("Mean branching factor: " + hb);
+        ClusLogger.info("Mean branching factor: " + hb);
 
         MyArray cls = new MyArray();
         addClasses(root, cls);

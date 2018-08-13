@@ -59,6 +59,7 @@ import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
 import si.ijs.kt.clus.util.jeans.math.SingleStat;
@@ -118,7 +119,7 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
         ClusStatManager smanager = m_BeamInduce.getStatManager();
         Settings sett = smanager.getSettings();
         m_MaxTreeSize = sett.getBeamSearch().getBeamTreeMaxSize();
-        System.out.println("BeamSearch : the maximal size of the trees is " + m_MaxTreeSize);
+        ClusLogger.info("BeamSearch : the maximal size of the trees is " + m_MaxTreeSize);
         m_BeamPostPruning = sett.getBeamSearch().isBeamPostPrune();
         m_Heuristic = (ClusBeamHeuristic) smanager.getHeuristic();
         Heuristic attr_heur = sett.getBeamSearch().getBeamAttrHeuristic();
@@ -167,7 +168,7 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
         stat.calcMean();
         m_Induce.initSelectorAndSplit(stat);
         initSelector(m_Induce.getBestTest());
-        System.out.println("Root statistic: " + stat);
+        ClusLogger.info("Root statistic: " + stat);
         /* Has syntactic constraints? */
         ClusNode root = null;
         String constr_file = sett.getConstraints().getConstraintFile();
@@ -223,7 +224,7 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
             sel.setBestHeur(beam_min_value);
             // process attribute
             ClusAttrType at = attrs[i];
-            // System.out.println("Attribute: "+at.getName());
+            // ClusLogger.info("Attribute: "+at.getName());
             if (at instanceof NominalAttrType)
                 find.findNominal((NominalAttrType) at, data, null);
             else
@@ -234,7 +235,7 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
                 ref_leaf.testToNode(sel);
                 // output best test
                 if (getSettings().getGeneral().getVerbose() > 0)
-                    System.out.println("Test: " + ref_leaf.getTestString() + " -> " + sel.m_BestHeur + " (" + ref_leaf.getTest().getPosFreq() + ")");
+                    ClusLogger.info("Test: " + ref_leaf.getTestString() + " -> " + sel.m_BestHeur + " (" + ref_leaf.getTest().getPosFreq() + ")");
                 // create child nodes
                 ClusStatManager mgr = m_Induce.getStatManager();
                 int arity = ref_leaf.updateArity();
@@ -278,10 +279,10 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
                 }
                 else {
                     if (SettingsBeamSearch.BEAM_SYNT_DIST_CONSTR) {
-                        System.out.println("OLD HEUR = " + new_heur);
+                        ClusLogger.info("OLD HEUR = " + new_heur);
                         new_model.setModelPredictions(m_BeamModelDistance.getPredictions(new_model.getModel()));
                         new_heur -= SettingsBeamSearch.BEAM_SIMILARITY * m_BeamModelDistance.getDistToConstraint(new_model, m_BeamSyntConstr);
-                        System.out.println("UPDT HEUR = " + new_heur);
+                        ClusLogger.info("UPDT HEUR = " + new_heur);
                     }
                     // Check for sure if _strictly_ better!
                     if (new_heur > beam_min_value) {
@@ -338,7 +339,7 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
         setBeamChanged(false);
         ArrayList models = beam.toArray();
         for (int i = 0; i < models.size(); i++) {
-            // System.out.println("Refining model: "+i);
+            // ClusLogger.info("Refining model: "+i);
             setCurrentModel(i);
             ClusBeamModel model = (ClusBeamModel) models.get(i);
             if (!(model.isRefined() || model.isFinished())) {
@@ -417,7 +418,7 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
 
 
     public void printBeamStats(int level) {
-        System.out.println(getLevelStat(level));
+        ClusLogger.info(getLevelStat(level));
     }
 
 
@@ -458,14 +459,14 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
 
     public ClusNode beamSearch(ClusRun run) throws Exception {
         reset();
-        System.out.println("Starting beam search");
+        ClusLogger.info("Starting beam search");
         m_Induce = new ConstraintDFInduce(m_BeamInduce);
         ClusBeam beam = initializeBeam(run);
         // MyFile beamlog = new MyFile("beam.log", true);
         // tryLogBeam(beamlog, beam, "Initial beam:");
         int i = 0;
         while (true) {
-            System.out.println("Step: " + i);
+            ClusLogger.info("Step: " + i);
             refineBeam(beam, run);
             if (isBeamChanged()) {
                 // tryLogBeam(beamlog, beam, "Step:"+i);
@@ -479,7 +480,7 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
         setBeam(beam);
         double best = beam.getBestModel().getValue();
         double worst = beam.getWorstModel().getValue();
-        System.out.println("Worst = " + worst + " Best = " + best);
+        ClusLogger.info("Worst = " + worst + " Best = " + best);
         printBeamStats(i - 1);
         ClusNode result = (ClusNode) beam.getBestAndSmallestModel().getModel();
         // beamlog.close();
@@ -525,13 +526,13 @@ public class ClusBeamSearch extends ClusInductionAlgorithmType {
     public double sanityCheck(double value, ClusNode tree) throws ClusException {
         /*
          * int size = tree.getModelSize();
-         * System.out.println("Size = "+size);
+         * ClusLogger.info("Size = "+size);
          * tree.printTree();
-         * System.out.println("Evaluating measure...");
+         * ClusLogger.info("Evaluating measure...");
          */
         double expected = estimateBeamMeasure(tree);
         if (Math.abs(value - expected) > 1e-6) {
-            System.out.println("Bug in heurisitc: " + value + " <> " + expected);
+            ClusLogger.info("Bug in heurisitc: " + value + " <> " + expected);
             PrintWriter wrt = new PrintWriter(System.out);
             tree.printModel(wrt);
             wrt.close();

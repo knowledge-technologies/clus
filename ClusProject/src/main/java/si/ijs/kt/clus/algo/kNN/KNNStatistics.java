@@ -31,6 +31,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
+import si.ijs.kt.clus.util.ClusLogger;
 
 /**
  * This class calculates several usefull statistics of
@@ -121,9 +122,9 @@ public class KNNStatistics {
         }
         //now index_max is the most frequent value for this attribute in the given data.
         stat.setMean(index_max);
-        //System.out.println("Mean for attribute "+attr.getName()+":"+index_max);
+        //ClusLogger.info("Mean for attribute "+attr.getName()+":"+index_max);
         attr.setStatistic(stat);
-        System.out.println("Prototype values for attribute "+attr.getName()+":");
+        ClusLogger.info("Prototype values for attribute "+attr.getName()+":");
 
         //fill in prototype values
         int idx = attr.getArrayIndex();
@@ -133,7 +134,7 @@ public class KNNStatistics {
             $prototypes[i].setIntVal(index_maxs[i],idx);
 
         }
-        System.out.println();
+        ClusLogger.info();
 
     }
     /**
@@ -165,7 +166,7 @@ public class KNNStatistics {
             //check if  missing value.
             if (curVal == Double.NaN){
                 actualnbr--;
-                System.out.println("Fuck");
+                ClusLogger.info("Fuck");
             }
             else{
                 if (curVal < min ) min = curVal;
@@ -201,14 +202,14 @@ public class KNNStatistics {
         stat.setMax(max);
         stat.setMin(min);
         stat.setVariance(variance);
-        /*System.out.println("Mean for attribute "+attr.getName()+":"+mean);
-        System.out.println("Max for attribute "+attr.getName()+":"+max);
-        System.out.println("Min for attribute "+attr.getName()+":"+min);
-        System.out.println("Variance for attribute "+attr.getName()+":"+variance);
+        /*ClusLogger.info("Mean for attribute "+attr.getName()+":"+mean);
+        ClusLogger.info("Max for attribute "+attr.getName()+":"+max);
+        ClusLogger.info("Min for attribute "+attr.getName()+":"+min);
+        ClusLogger.info("Variance for attribute "+attr.getName()+":"+variance);
         */
         //save the statistic at the attributetype
         attr.setStatistic(stat);
-        System.out.println("Prototype values for attribute "+attr.getName()+":");
+        ClusLogger.info("Prototype values for attribute "+attr.getName()+":");
 
         //fill in prototype values
         int idx = attr.getArrayIndex();
@@ -217,7 +218,7 @@ public class KNNStatistics {
             System.out.print(means[i]+",");
             $prototypes[i].setDoubleVal(means[i],idx);
         }
-        System.out.println();
+        ClusLogger.info();
 
     }
     public DataTuple[] getPrototypes(){
@@ -248,6 +249,6 @@ public class KNNStatistics {
                 System.out.print(attrs[i].getNumeric(t)+",");
             }
         }
-        System.out.println(")");
+        ClusLogger.info(")");
     }
 }

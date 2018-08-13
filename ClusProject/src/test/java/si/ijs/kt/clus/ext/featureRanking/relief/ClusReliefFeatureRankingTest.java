@@ -17,6 +17,7 @@ import org.junit.jupiter.api.Test;
 import si.ijs.kt.clus.BaseTestCase;
 import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.ext.featureRanking.Fimp;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.tuple.Pair;
 import si.ijs.kt.clus.util.tuple.Quadruple;
 
@@ -27,29 +28,29 @@ public class ClusReliefFeatureRankingTest extends BaseTestCase {
 
   @BeforeAll
   public static void filesBeforeTests() {
-    System.out.println("Computing current files ...");
+    ClusLogger.info("Computing current files ...");
     m_OldFiles = currentFiles();
   }
 
   @AfterAll
   public static void cleanNewFiles() {
-    System.out.println("Clean up ...");
+    ClusLogger.info("Clean up ...");
     HashSet<String> newFiles = currentFiles();
     for (String file : newFiles) {
-      // System.out.println(file);
+      // ClusLogger.info(file);
       if (!m_OldFiles.contains(file)) {
-        // System.out.println("will be deleted");
+        // ClusLogger.info("will be deleted");
         (new File(file)).delete();
       } else {
-        // System.out.println("wont be");
+        // ClusLogger.info("wont be");
       }
     }
-    System.out.println("Done.");
+    ClusLogger.info("Done.");
   }
 
   @Test
   public void computeReliefImportance() throws IOException {
-    System.out.println("Testing ...");
+    ClusLogger.info("Testing ...");
     String format = m_Subfolder + "/test%s.%s";
     String[] tasks = new String[] {"Mixed", "MLCHammingLoss", "MTR", "TreeHMLC", "DagHMLC-RealWorld", "TreeHMLC-RealWorld", "MLC-RealWorld", "MTR-RealWorld", "STC-RealWorld"};
     ArrayList<Pair<String, String>> settingsFimps = new ArrayList<Pair<String, String>>();

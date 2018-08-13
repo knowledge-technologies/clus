@@ -39,6 +39,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.pruning.PruneTree;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
@@ -53,8 +54,8 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
 
 	@Override
 	public void printInfo() {
-		System.out.println("TDIDT");
-		System.out.println("Heuristic: " + getStatManager().getHeuristicName());
+		ClusLogger.info("TDIDT");
+		ClusLogger.info("Heuristic: " + getStatManager().getHeuristicName());
 	}
 
 	@Override

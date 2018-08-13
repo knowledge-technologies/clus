@@ -436,7 +436,7 @@ public class ClusRuleLinearTerm extends ClusRule {
     // nbOfValidValues[jNumAttrib]++;
     // }
     // if (jNumAttrib == 20)
-    // System.out.println("DEBUG: loytyi");
+    // ClusLogger.info("DEBUG: loytyi");
     // }
     // }
     //
@@ -464,7 +464,7 @@ public class ClusRuleLinearTerm extends ClusRule {
     // if (!Double.isNaN(value) && !Double.isInfinite(value)) // Value not given
     // variance[jNumAttrib] += Math.pow(value - means[jNumAttrib], 2.0);
     // if (jNumAttrib == 20)
-    // System.out.println("DEBUG: loytyi");
+    // ClusLogger.info("DEBUG: loytyi");
     // }
     // }
     //
@@ -480,7 +480,7 @@ public class ClusRuleLinearTerm extends ClusRule {
     // // is not needed.
     // variance[jNumAttrib] = 0.25; // And the divider will be
     // // 2*1/sqrt(4)= 1
-    // System.out.println("Warning: Variance of attribute " + jNumAttrib +" is zero.");
+    // ClusLogger.info("Warning: Variance of attribute " + jNumAttrib +" is zero.");
     // } else {
     // variance[jNumAttrib] /= nbOfValidValues[jNumAttrib];
     // }

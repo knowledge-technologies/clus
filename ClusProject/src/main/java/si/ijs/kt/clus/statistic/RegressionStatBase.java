@@ -270,7 +270,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
             if (shouldNormalize[idx]) {
                 double var = getVariance(i);
                 double norm = var > 0 ? 1 / var : 1; // No normalization if variance = 0;
-                // if (m_NbAttrs < 15) System.out.println(" Normalization for: "+m_Attrs[i].getName()+" = "+norm);
+                // if (m_NbAttrs < 15) ClusLogger.info(" Normalization for: "+m_Attrs[i].getName()+" = "+norm);
                 weights.setWeight(m_Attrs[i], norm);
             }
         }

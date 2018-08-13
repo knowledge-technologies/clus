@@ -55,6 +55,7 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.UniqueNodeIdentifier;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -1155,7 +1156,7 @@ public class ClusNode extends MyNode implements ClusModel {
     public static double estimateErrorRecursive(ClusNode tree) {
         if (tree.atBottomLevel()) {
             ClusStatistic total = tree.getTargetStat();
-            // System.out.println("CLUSNODE error at leaf is "+total.getErrorRel());
+            // ClusLogger.info("CLUSNODE error at leaf is "+total.getErrorRel());
             return total.getError();
         }
         else {
@@ -1334,7 +1335,7 @@ public class ClusNode extends MyNode implements ClusModel {
     @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive) {
         int lastmodel = cr.getNbModels() - 1;
-        System.out.println("The number of models to print is:" + lastmodel);
+        ClusLogger.info("The number of models to print is:" + lastmodel);
         String[][] tabitem = new String[lastmodel + 1][10000]; // table of item
         int[][] tabexist = new int[lastmodel + 1][10000]; // table of booleen for each item
         Global.set_treecpt(starttree);
@@ -1554,7 +1555,7 @@ public class ClusNode extends MyNode implements ClusModel {
 
             }
             else {
-                System.out.println("PrintPaths error: only binary trees supported");
+                ClusLogger.info("PrintPaths error: only binary trees supported");
             }
         }
         else { // at the leaves
@@ -1596,7 +1597,7 @@ public class ClusNode extends MyNode implements ClusModel {
                 cpt--;// to remove the last test on the father : now the test is negative
                 // in ca se the test is negative
                 tabitem[cpt] = m_Test.getTestString();
-                // System.out.println("cpt = "+cpt+", tabitem = "+tabitem[cpt]);
+                // ClusLogger.info("cpt = "+cpt+", tabitem = "+tabitem[cpt]);
                 tabexist[cpt] = 0;
                 cpt++;
                 if (hasUnknownBranch()) {
@@ -1682,7 +1683,7 @@ public class ClusNode extends MyNode implements ClusModel {
         else {
             if (m_TargetStat != null) {
                 writer.println(prefix + "return " + m_TargetStat.getArrayOfStatistic());
-                // System.out.println(m_TargetStat.getClass());
+                // ClusLogger.info(m_TargetStat.getClass());
             }
             else {
                 System.err.println("m_TargetStat == null");
@@ -1717,7 +1718,7 @@ public class ClusNode extends MyNode implements ClusModel {
             current.setUniqueNodeIdentifier(identifier);
             identifier++;
             if (tree_nodes.containsKey(current.getUniqueNodeIdentifier())) {
-                System.out.println(current + " exists");
+                ClusLogger.info(current + " exists");
             }
             tree_nodes.put(current.getUniqueNodeIdentifier(), 0);
             int children = current.getNbChildren();
@@ -1798,7 +1799,7 @@ public class ClusNode extends MyNode implements ClusModel {
             current.setUniqueNodeIdentifier(identifier);
             identifier++;
             if (children_left.containsKey(current.getUniqueNodeIdentifier())) {
-                System.out.println(current + " exists");
+                ClusLogger.info(current + " exists");
             }
             int children = current.getNbChildren();
             if (children != 0 && children != 2) {

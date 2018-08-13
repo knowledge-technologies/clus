@@ -41,6 +41,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.NumericTest;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.exception.ClusException;
 
@@ -136,7 +137,7 @@ public class ILevelCInduce extends DepthFirstInduce {
         double violated_norm = 1.0 * violated / m_Constraints.size();
         double alpha = getSettings().getILevelC().getILevelCAlpha();
         double heur = (1.0 - alpha) * ss_norm + alpha * violated_norm;
-        // System.out.println("Violated: "+violated+" SS: "+ss+" -> "+heur);
+        // ClusLogger.info("Violated: "+violated+" SS: "+ss+" -> "+heur);
         return heur;
     }
 
@@ -180,7 +181,7 @@ public class ILevelCInduce extends DepthFirstInduce {
     public void findNumericConstraints(NumericAttrType at, ClusNode leaf, boolean use_p_lab, double ss_offset, int violated_offset, int violated_leaf, int[] clusters) throws ClusException {
         RowData data = (RowData) leaf.getVisitor();
         ILevelCStatistic tot = (ILevelCStatistic) leaf.getClusteringStat();
-        // System.out.println("Trying: "+at.getName());
+        // ClusLogger.info("Trying: "+at.getName());
         int idx = at.getArrayIndex();
         if (at.isSparse()) {
             data.sortSparse(at, m_SortHelper);
@@ -266,7 +267,7 @@ public class ILevelCInduce extends DepthFirstInduce {
         double ss_offset = ss - ss_leaf;
         int[] v_info = countViolatedConstaints(leaf_data, clusters);
         int violated_offset = violated - v_info[0];
-        System.out.println("Violated by leaf: " + v_info[0] + " internal ML: " + v_info[1] + " (of " + violated + " total)");
+        ClusLogger.info("Violated by leaf: " + v_info[0] + " internal ML: " + v_info[1] + " (of " + violated + " total)");
         ClusSchema schema = getSchema();
         ClusAttrType[] attrs = schema.getDescriptiveAttributes();
         for (int i = 0; i < attrs.length; i++) {
@@ -466,14 +467,14 @@ public class ILevelCInduce extends DepthFirstInduce {
             else {
                 /* refine tree and continue */
                 enterBestTest(root, root, clusters);
-                System.out.println("Tree:");
+                ClusLogger.info("Tree:");
                 root.printTree();
                 ss = root.estimateClusteringSS(m_Scale);
                 clusters = assignAllInstances(root);
                 violated = countViolatedConstaints(clusters);
                 double heur = computeHeuristic(violated, ss);
                 if (Math.abs(heur - m_BestHeur) > 1e-6) { throw new ClusException("Error: heuristic " + heur + " <> " + m_BestHeur); }
-                System.out.println("CHECK heuristic " + heur + " == " + m_BestHeur + " [OK]");
+                ClusLogger.info("CHECK heuristic " + heur + " == " + m_BestHeur + " [OK]");
             }
         }
     }
@@ -587,7 +588,7 @@ public class ILevelCInduce extends DepthFirstInduce {
             test.addTo(allData);
             data = new RowData(allData, data.getSchema());
         }
-        System.out.println("All data: " + data.getNbRows());
+        ClusLogger.info("All data: " + data.getNbRows());
         /* and process it ... */
         data.addIndices();
         m_NbTrain = data.getNbRows();
@@ -628,7 +629,7 @@ public class ILevelCInduce extends DepthFirstInduce {
             DerivedConstraintsComputer comp = new DerivedConstraintsComputer(points, m_Constraints);
             comp.compute();
             m_ConstraintsIndex = createConstraintsIndex();
-            System.out.println("Number of instance level constraints: " + m_Constraints.size());
+            ClusLogger.info("Number of instance level constraints: " + m_Constraints.size());
             /* create initial node */
             ClusNode root = new ClusNode();
             root.initClusteringStat(m_StatManager, data);
@@ -640,7 +641,7 @@ public class ILevelCInduce extends DepthFirstInduce {
             /* initialize scale */
             m_Scale = (ClusNormalizedAttributeWeights) getStatManager().getClusteringWeights();
             m_GlobalSS = ilevels.getSVarS(m_Scale);
-            System.out.println("Global SS: " + m_GlobalSS);
+            ClusLogger.info("Global SS: " + m_GlobalSS);
             /* induce tree now */
             initSelectorAndSplit(root.getClusteringStat());
             iLevelCInduce(root);

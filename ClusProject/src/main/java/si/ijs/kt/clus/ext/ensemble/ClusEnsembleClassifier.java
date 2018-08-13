@@ -32,6 +32,7 @@ import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.model.ClusModel;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
@@ -69,7 +70,7 @@ public class ClusEnsembleClassifier extends ClusInductionAlgorithmType {
 
     @Override
     public void printInfo() {
-        System.out.println("Ensemble Classifier");
+        ClusLogger.info("Ensemble Classifier");
     }
 
 

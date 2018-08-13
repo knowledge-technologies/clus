@@ -36,6 +36,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
 
 
@@ -120,23 +121,23 @@ public class CorrelationMatrixComputer {
         int nb_tar;
         if (m_IsRegression) {
             nb_tar = m_MatrixPC.length;
-            System.out.println("Number of numeric: " + nb_tar);
+            ClusLogger.info("Number of numeric: " + nb_tar);
         }
         else {
             nb_tar = m_MatrixNC.length;
-            System.out.println("Number of nominal: " + nb_tar);
+            ClusLogger.info("Number of nominal: " + nb_tar);
         }
-        System.out.println();
+        ClusLogger.info();
         System.out.print("\\begin{tabular}{");
         for (int i = 0; i < nb_tar + 2; i++) {
             System.out.print("l");
         }
-        System.out.println("}");
+        ClusLogger.info("}");
         for (int i = 0; i < nb_tar; i++) {
             System.out.print(" & " + (i + 1));
         }
-        System.out.println("& Avg.");
-        System.out.println("\\\\");
+        ClusLogger.info("& Avg.");
+        ClusLogger.info("\\\\");
         int nb_pairs = 0;
         double pairs_sum = 0;
         for (int i = 0; i < nb_tar; i++) {
@@ -164,16 +165,16 @@ public class CorrelationMatrixComputer {
                 System.out.print(" & " + ClusFormat.THREE_AFTER_DOT.format(corr));
             }
             System.out.print(" & " + ClusFormat.THREE_AFTER_DOT.format(avg / cnt));
-            System.out.println("\\\\");
+            ClusLogger.info("\\\\");
         }
         System.out.print("\\multicolumn{" + (nb_tar + 2) + "}{l}{Pairwise average:");
         if (nb_pairs > 0) {
-            System.out.println(" " + ClusFormat.THREE_AFTER_DOT.format(pairs_sum / nb_pairs) + "}");
+            ClusLogger.info(" " + ClusFormat.THREE_AFTER_DOT.format(pairs_sum / nb_pairs) + "}");
         }
         else {
-            System.out.println(" Undefined}");
+            ClusLogger.info(" Undefined}");
         }
-        System.out.println("\\end{tabular}");
+        ClusLogger.info("\\end{tabular}");
     }
 
 }

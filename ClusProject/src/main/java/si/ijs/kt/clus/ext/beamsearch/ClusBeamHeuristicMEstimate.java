@@ -31,6 +31,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsBeamSearch;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 
@@ -98,7 +99,7 @@ public class ClusBeamHeuristicMEstimate extends ClusBeamHeuristic {
     @Override
     public void setRootStatistic(ClusStatistic stat) {
         m_Prior = (stat.getTotalWeight() - stat.getError()) / stat.getTotalWeight();
-        System.out.println("Setting prior: " + m_Prior);
+        ClusLogger.info("Setting prior: " + m_Prior);
     }
 
 

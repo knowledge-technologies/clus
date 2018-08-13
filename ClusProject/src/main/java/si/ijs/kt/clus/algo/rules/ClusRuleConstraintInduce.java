@@ -65,6 +65,7 @@ import si.ijs.kt.clus.model.test.ClusRuleConstraintInduceTest;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
@@ -188,11 +189,11 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
                 catch (ClusException e) {
                     // do nothing
                 }
-            System.out.println("Best test: " + m_BestTest);
+            ClusLogger.info("Best test: " + m_BestTest);
             if (m_BestTest != null && m_BestHeur != Double.NEGATIVE_INFINITY) {
                 ClusRuleConstraintInduceTest test = m_BestTest;
                 if (getSettings().getGeneral().getVerbose() > 0)
-                    System.out.println("  Test: " + test.getString() + " -> " + m_BestHeur);
+                    ClusLogger.info("  Test: " + test.getString() + " -> " + m_BestHeur);
                 RowData subset;
                 if (test.isSmallerThanTest())
                     subset = data.applyConstraint(test, ClusNode.NO);
@@ -232,8 +233,8 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         for (int i = 0; i < models.size(); i++) {
             ClusBeamModel model = (ClusBeamModel) models.get(i);
             if (!(model.isRefined() || model.isFinished())) {
-                // System.out.println("Refine "+model.toString());
-                // if (getSettings().getGeneral().getVerbose() > 0) System.out.println(" Refine: model " + i);
+                // ClusLogger.info("Refine "+model.toString());
+                // if (getSettings().getGeneral().getVerbose() > 0) ClusLogger.info(" Refine: model " + i);
                 refineModel(model, beam, i);
                 model.setRefined(true);
                 model.setParentModelIndex(-1);
@@ -247,7 +248,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         int i = 0;
         while (true) {
             if (getSettings().getGeneral().getVerbose() > 0) {
-                System.out.println("Step: " + i);
+                ClusLogger.info("Step: " + i);
             }
             else {
                 if (i != 0) {
@@ -257,16 +258,16 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             }
             System.out.flush();
             refineBeam(beam);
-            System.out.println();
+            ClusLogger.info();
             if (!isBeamChanged()) {
                 break;
             }
             i++;
         }
-        System.out.println();
+        ClusLogger.info();
         double best = beam.getBestModel().getValue();
         double worst = beam.getWorstModel().getValue();
-        System.out.println("Worst = " + worst + " Best = " + best);
+        ClusLogger.info("Worst = " + worst + " Best = " + best);
         ClusRule result = (ClusRule) beam.getBestAndSmallestModel().getModel();
         // Create target statistic for rule
         RowData rule_data = (RowData) result.getVisitor();
@@ -299,7 +300,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         System.out.print("Step: ");
         while (true) {
             if (getSettings().getGeneral().getVerbose() > 0) {
-                System.out.println("Step: " + i);
+                ClusLogger.info("Step: " + i);
             }
             else {
                 if (i != 0) {
@@ -314,10 +315,10 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             }
             i++;
         }
-        System.out.println();
+        ClusLogger.info();
         double best = beam.getBestModel().getValue();
         double worst = beam.getWorstModel().getValue();
-        System.out.println("Worst = " + worst + " Best = " + best);
+        ClusLogger.info("Worst = " + worst + " Best = " + best);
         ArrayList beam_models = beam.toArray();
         ClusRule[] result = new ClusRule[beam_models.size()];
         for (int j = 0; j < beam_models.size(); j++) {
@@ -344,14 +345,14 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             else {
                 rule.computePrediction();
                 rule.printModel();
-                System.out.println();
+                ClusLogger.info();
                 rset.add(rule);
                 data = rule.removeCovered(data);
             }
         }
         ClusStatistic left_over = createTotalTargetStat(data);
         left_over.calcMean();
-        System.out.println("Left Over: " + left_over);
+        ClusLogger.info("Left Over: " + left_over);
         rset.setTargetStat(left_over);
     }
 
@@ -376,7 +377,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             else {
                 rule.computePrediction();
                 rule.printModel();
-                System.out.println();
+                ClusLogger.info();
                 rset.add(rule);
                 data = rule.reweighCovered(data);
                 i++;
@@ -399,7 +400,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         }
         ClusStatistic left_over = createTotalTargetStat(data);
         left_over.calcMean();
-        System.out.println("Left Over: " + left_over);
+        ClusLogger.info("Left Over: " + left_over);
         rset.setTargetStat(left_over);
     }
 
@@ -407,7 +408,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
     public double sanityCheck(double value, ClusRule rule) throws ClusException {
         double expected = estimateBeamMeasure(rule);
         if (Math.abs(value - expected) > MathUtil.C1E_6) {
-            System.out.println("Bug in heurisitc: " + value + " <> " + expected);
+            ClusLogger.info("Bug in heurisitc: " + value + " <> " + expected);
             PrintWriter wrt = new PrintWriter(System.out);
             rule.printModel(wrt);
             wrt.close();
@@ -584,7 +585,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         }
         ClusStatistic left_over = createTotalTargetStat(data);
         left_over.calcMean();
-        System.out.println("Left Over: " + left_over);
+        ClusLogger.info("Left Over: " + left_over);
         rset.setTargetStat(left_over);
     }
 
@@ -609,14 +610,14 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             ClusRule rule = generateOneRandomRule(data, rn);
             rule.computePrediction();
             rule.printModel();
-            System.out.println();
+            ClusLogger.info();
             if (!rset.addIfUnique(rule)) {
                 i--;
             }
         }
         ClusStatistic left_over = createTotalTargetStat(data);
         left_over.calcMean();
-        System.out.println("Left Over: " + left_over);
+        ClusLogger.info("Left Over: " + left_over);
         rset.setTargetStat(left_over);
         rset.postProc();
         // Computing dispersion
@@ -695,7 +696,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             if (sel.hasBestTest()) {
                 NodeTest test = sel.updateTest();
                 if (getSettings().getGeneral().getVerbose() > 0)
-                    System.out.println("  Test: " + test.getString() + " -> " + sel.m_BestHeur);
+                    ClusLogger.info("  Test: " + test.getString() + " -> " + sel.m_BestHeur);
                 result.addTest(test);
                 // data = data.applyWeighted(test, ClusNode.YES);
                 data = data.apply(test, ClusNode.YES); // ???
@@ -736,7 +737,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
             test.addTo(allData);
             data = new RowData(allData, data.getSchema());
         }
-        System.out.println("All data: " + data.getNbRows());
+        ClusLogger.info("All data: " + data.getNbRows());
         size = data.getNbRows();
         data.addIndices();
         ArrayList points = data.toArrayList();
@@ -757,14 +758,14 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         // ML(a,b) + ML(b,c) => ML(a,c)
         // ML(a,b) + CL(b,c) => CL(a,c)
         // createExtraConstraints(m_Constraints, data.toArrayList());
-        System.out.println("All constraints: " + m_Constraints.size());
+        ClusLogger.info("All constraints: " + m_Constraints.size());
         // end import
         m_Scale = (ClusNormalizedAttributeWeights) getStatManager().getClusteringWeights();
         m_Data = data;
         ClusStatistic allStat = getStatManager().createStatistic(AttributeUseType.Descriptive);
         data.calcTotalStat(allStat);
         m_Global_Var = allStat.getSVarS(m_Scale);
-        System.out.println("Global Variance: " + m_Global_Var);
+        ClusLogger.info("Global Variance: " + m_Global_Var);
         ClusModel model = induceSingleUnpruned(cr);
         // FIXME: implement cloneModel();
         // cr.getModelInfo(ClusModels.ORIGINAL).setModel(model);
@@ -886,22 +887,22 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         for (int i = 0; i < crs.getModelSize(); i++) {
             ClusRule rule = crs.getRule(i);
             ArrayList<Double> av = hash.get(rule);
-            // System.out.println(av);
+            // ClusLogger.info(av);
             ArrayList<Double> center = assign.get(av);
             labeling[i] = centers.indexOf(center) + 1;
         }
         // order labeling
-        // System.out.println("next");
+        // ClusLogger.info("next");
         // int expectedLabel = 1;
         // for(int i = 0; i < labeling.length; i++){
         //// for(int j = 0; j < labeling.length;j++){
         //// System.out.print(labeling[j]);
         //// }
-        //// System.out.println();
+        //// ClusLogger.info();
         // int label = labeling[i];
         // if(label >= expectedLabel){
         // if(label > expectedLabel){
-        // //System.out.println("replace "+label+" by "+expectedLabel);
+        // //ClusLogger.info("replace "+label+" by "+expectedLabel);
         // for(int j = i; j < labeling.length; j++){
         // if(labeling[j] == label)
         // labeling[j] = expectedLabel;
@@ -1011,18 +1012,18 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
     private int getMostFrequentClone(ArrayList<ArrayList<Double>> clone, ClusRuleSet crs, double m) {
         int highestFreq = 0;
         int c = -1;
-        System.out.println("max" + m);
+        ClusLogger.info("max" + m);
         for (int i = 0; i < clone.size(); i++) {
             ClusRule rule = crs.getRule(i);
             int freq = ((RowData) rule.getVisitor()).toArrayList().size();
-            System.out.println(freq);
+            ClusLogger.info(freq);
             if (freq > highestFreq && freq < m) {
                 c = i;
                 highestFreq = freq;
             }
         }
-        System.out.println("freq:" + highestFreq);
-        System.out.println(c);
+        ClusLogger.info("freq:" + highestFreq);
+        ClusLogger.info(c);
         return c;
     }
 
@@ -1289,7 +1290,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
                 if (!(d.contains(t1) && d.contains(t2)))
                     Cviol++;
                 if (t1.equals(null) && t2.equals(null))
-                    System.out.println("ML should have been removed");
+                    ClusLogger.info("ML should have been removed");
             }
             else {
                 CL.add(c);
@@ -1308,7 +1309,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
                 if (d.contains(t1) && d.contains(t2))
                     Cviol++;
                 else if (!d.contains(t1) && !d.contains(t2))
-                    System.out.println("CL should have been removed");
+                    ClusLogger.info("CL should have been removed");
                 ;
             }
         }

@@ -70,7 +70,7 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
         double offset = m_StatManager.getSettings().getRules().getHeurDispOffset();
         double def_value = getTrainDataHeurValue();
         // System.out.print("Inside calcHeuristic()");
-        // System.out.println(" - default SS: "+def_value);
+        // ClusLogger.info(" - default SS: "+def_value);
         double value = pstat.getSVarS(m_ClusteringWeights, m_Data);
         // System.out.print("raw SS: "+value);
         // Normalization with the purpose of getting most of the single variances within the
@@ -80,12 +80,12 @@ public class ClusRuleHeuristicSSD extends ClusHeuristic {
         double norm = m_StatManager.getSettings().getRules().getVarBasedDispNormWeight();
         value = 1 / (norm * norm) * (1 - value / def_value) + offset;
         // Normalized version of 'value = def_value -value + offset'
-        // System.out.println(", combined disp. value: "+value);
+        // ClusLogger.info(", combined disp. value: "+value);
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat(AttributeUseType.Clustering).getTotalWeight();
         double cov_par = m_StatManager.getSettings().getRules().getHeurCoveragePar();
         value *= Math.pow(n_pos / train_sum_w, cov_par);
-        // System.out.println(" cov: "+n_pos+"/"+train_sum_w+", final value: "+value); //+" -> -"+value);
+        // ClusLogger.info(" cov: "+n_pos+"/"+train_sum_w+", final value: "+value); //+" -> -"+value);
         if (value < 1e-6)
             return Double.NEGATIVE_INFINITY;
         return value;

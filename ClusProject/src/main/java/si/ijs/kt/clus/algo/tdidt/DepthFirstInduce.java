@@ -228,7 +228,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             if (altarity != arity) {
                 alternatives.remove(k);
                 k--;
-                System.out.println("Alternative split with different arity: " + nt.getString());
+                ClusLogger.info("Alternative split with different arity: " + nt.getString());
                 // removed = true;
             }
             else {
@@ -272,7 +272,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 if (!same) {
                     alternatives.remove(k);
                     k--;
-                    System.out.println("Alternative split with different ex in subsets: " + nt.getString());
+                    ClusLogger.info("Alternative split with different ex in subsets: " + nt.getString());
                     // removed = true;
                 }
 
@@ -281,13 +281,13 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         node.setAlternatives(alternatives);
         node.setOppositeAlternatives(oppositeAlternatives);
         node.setAlternativesString(alternativeString);
-        // if (removed) System.out.println("Alternative splits were possible");
+        // if (removed) ClusLogger.info("Alternative splits were possible");
     }
 
 
     public void makeLeaf(ClusNode node) {
         if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
-            System.out.println("Creating a leaf ...");
+            ClusLogger.info("Creating a leaf ...");
         }
         node.makeLeaf();
         if (getSettings().getTree().hasTreeOptimize(TreeOptimizeValues.NoClusteringStats)) {
@@ -306,7 +306,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         }
 
         if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
-            System.out.println("Depth " + node.getLevel() + ": inducing new node: " + data.getNbRows() + " examples");
+            ClusLogger.info("Depth " + node.getLevel() + ": inducing new node: " + data.getNbRows() + " examples");
         }
         if (rnd == null) {
             // rnd may be null due to some calls of induce that do not support
@@ -314,7 +314,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             ClusEnsembleInduce.giveParallelisationWarning(ParallelTrap.StaticRandom);
         }
 
-        // System.out.println("nonsparse induce");
+        // ClusLogger.info("nonsparse induce");
 
         // Initialize selector and perform various stopping criteria
         if (initSelectorAndStopCrit(node, data)) {
@@ -406,7 +406,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             node.testToNode(best);
             // Output best test
             if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS)
-                System.out.println("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
+                ClusLogger.info("Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
 
             // Create children
             int arity = node.updateArity();
@@ -480,20 +480,20 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
     /*
      * public void inducePert(ClusNode node, RowData data) {
-     * //System.out.println("nonsparse inducePert"); // Initialize selector and
+     * //ClusLogger.info("nonsparse inducePert"); // Initialize selector and
      * perform various stopping criteria if (initSelectorAndStopCrit(node, data)) {
-     * makeLeaf(node); return; } // Find best test // System.out.println("Schema: "
+     * makeLeaf(node); return; } // Find best test // ClusLogger.info("Schema: "
      * + getSchema().toString()); ArrayList<Integer> tuplelist =
      * data.getPertTuples(); if (tuplelist.size()<2) { makeLeaf(node); return; } //
      * we only check the first two tuples. In case of multi-class classification,
      * this corresponds to two random(?) classes to split. int tuple1index =
      * tuplelist.get(0); DataTuple tuple1 = data.getTuple(tuple1index); int
      * tuple2index = tuplelist.get(1); DataTuple tuple2 =
-     * data.getTuple(tuple2index); // System.out.println("tuples chosen: " +
+     * data.getTuple(tuple2index); // ClusLogger.info("tuples chosen: " +
      * tuple1index + " " + tuple1.m_Index + " and " + tuple2index + " " +
      * tuple2.m_Index); ClusAttrType attr =
      * tuple1.findDiscriminatingAttribute(tuple2); //
-     * System.out.println("attribute chosen: " + attr.toString()); if (attr != null)
+     * ClusLogger.info("attribute chosen: " + attr.toString()); if (attr != null)
      * { m_FindBestTest.findPert(attr, tuple1, tuple2); } else { // no
      * discriminating attribute can be found, should not occur System.out.
      * println("No discriminating attribute found for the two selected tuples. Making leaf..."
@@ -502,7 +502,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
      * (best.hasBestTest()) { // start_time = System.currentTimeMillis();
      * node.testToNode(best); // Output best test if
      * (getSettings().getGeneral().getVerbose() > 0)
-     * System.out.println("Test: "+node.getTestString()+" -> "
+     * ClusLogger.info("Test: "+node.getTestString()+" -> "
      * +best.getHeuristicValue()); // Create children int arity =
      * node.updateArity(); NodeTest test = node.getTest(); RowData[] subsets = new
      * RowData[arity]; for (int j = 0; j < arity; j++) { subsets[j] =

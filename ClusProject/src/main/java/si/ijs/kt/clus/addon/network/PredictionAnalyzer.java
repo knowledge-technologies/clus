@@ -6,6 +6,8 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.util.StringTokenizer;
 
+import si.ijs.kt.clus.util.ClusLogger;
+
 class Numero {
     double x;
     double y;
@@ -173,7 +175,7 @@ public class PredictionAnalyzer {
         
         calcolaW();
         float bandwidth = (float)(0.95*maxdist);
-        System.out.println("maxDist: "+maxdist+" Ireal: "+MoranIndex1((float)b)+" IrealMax: "+MoranIndex1(bandwidth)+" Ipredicted: "+MoranIndex2((float)b)+" IpredictedMax: "+MoranIndex2(bandwidth));
+        ClusLogger.info("maxDist: "+maxdist+" Ireal: "+MoranIndex1((float)b)+" IrealMax: "+MoranIndex1(bandwidth)+" Ipredicted: "+MoranIndex2((float)b)+" IpredictedMax: "+MoranIndex2(bandwidth));
     }
 
     public static void calculateBI(String fileName, int fileSize, double b) {
@@ -215,7 +217,7 @@ public class PredictionAnalyzer {
         }
         calcolaW();
         bandwidth = (float)(0.95*maxdist); 
-        System.out.println("bandwidth: "+b+" Real1: "+MoranIndex1((float)b)+" Real2: "+MoranIndex2((float)b)+" Pred1: "+MoranIndex11((float)b)+" Pred2: "+MoranIndex22((float)b));
-        System.out.println("maxDist: "+maxdist+" Real1: "+MoranIndex1(bandwidth)+" Real2: "+MoranIndex2(bandwidth)+" Pred1: "+MoranIndex11(bandwidth)+" Pred2: "+MoranIndex22(bandwidth));
+        ClusLogger.info("bandwidth: "+b+" Real1: "+MoranIndex1((float)b)+" Real2: "+MoranIndex2((float)b)+" Pred1: "+MoranIndex11((float)b)+" Pred2: "+MoranIndex22((float)b));
+        ClusLogger.info("maxDist: "+maxdist+" Real1: "+MoranIndex1(bandwidth)+" Real2: "+MoranIndex2(bandwidth)+" Pred1: "+MoranIndex11(bandwidth)+" Pred2: "+MoranIndex22(bandwidth));
     }
 }

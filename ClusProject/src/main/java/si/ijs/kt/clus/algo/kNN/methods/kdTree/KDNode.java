@@ -30,6 +30,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
 import si.ijs.kt.clus.main.ClusModelInfoList;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -221,7 +222,7 @@ public class KDNode {
             System.out.print("\t");
         for (DataTuple tuple : m_Tuples)
             System.out.print(tuple.hashCode() + "; ");
-        System.out.println("");
+        ClusLogger.info("");
         if (!this.isLeaf()) {
             m_LeftSubTree.output();
             m_RightSubTree.output();

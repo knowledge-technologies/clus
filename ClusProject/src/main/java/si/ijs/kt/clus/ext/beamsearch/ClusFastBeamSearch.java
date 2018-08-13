@@ -40,6 +40,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.test.NodeTest;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -154,7 +155,7 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
         double offset = root.getValue() - m_Heuristic.computeLeafAdd(leaf);
         NodeTest[] besttests = attrsel.getBestTests();
         if (m_Verbose)
-            System.out.println("[M:" + beam.getMinValue() + "]");
+            ClusLogger.info("[M:" + beam.getMinValue() + "]");
         for (int i = 0; i < besttests.length; i++) {
             NodeTest test = besttests[i];
             if (test != null) {
@@ -168,7 +169,7 @@ public class ClusFastBeamSearch extends ClusBeamSearch {
                     // visitor is removed in updateModelRefinement() !
                     ref_leaf.setVisitor(leaf.getVisitor());
                     if (getSettings().getGeneral().getVerbose() > 0)
-                        System.out.println("Test: " + ref_leaf.getTestString() + " -> " + ref_leaf.getTest().getHeuristicValue() + " (" + ref_leaf.getTest().getPosFreq() + ")");
+                        ClusLogger.info("Test: " + ref_leaf.getTestString() + " -> " + ref_leaf.getTest().getHeuristicValue() + " (" + ref_leaf.getTest().getPosFreq() + ")");
                     int arity = ref_leaf.updateArity();
                     for (int j = 0; j < arity; j++) {
                         ClusNode child = new ClusNode();

@@ -10,6 +10,7 @@ import si.ijs.kt.clus.error.common.ClusNumericError;
 import si.ijs.kt.clus.error.common.ComponentError;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class RelativeError extends ClusNumericError implements ComponentError {
@@ -74,7 +75,7 @@ public class RelativeError extends ClusNumericError implements ComponentError {
             double real_i = getAttr(i).getNumeric(real);
             double predicted_i = getAttr(i).getNumeric(pred);
             double err = Math.abs(real_i - predicted_i) / real_i;
-            System.out.println(real_i);
+            ClusLogger.info(real_i);
 
             m_SumRelErr[i] += err;
 
@@ -93,9 +94,9 @@ public class RelativeError extends ClusNumericError implements ComponentError {
     @Override
     public double getModelErrorComponent(int i) {
         int nb = getNbExamples();
-        // System.out.println(m_SumRelErr[i]);
+        // ClusLogger.info(m_SumRelErr[i]);
         double err = nb != 0.0 ? m_SumRelErr[i] / nb : 0.0;
-        System.out.println(err);
+        ClusLogger.info(err);
 
         return err;
     }

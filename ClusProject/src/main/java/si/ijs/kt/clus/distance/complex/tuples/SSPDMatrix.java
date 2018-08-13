@@ -30,6 +30,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.IntegerAttrType;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.matrix.MSymMatrix;
 
@@ -61,7 +62,7 @@ public class SSPDMatrix extends ClusDistance {
             reader.readFloat();
             nb++;
         }
-        System.out.println("Loading SSPD Matrix: " + filename + " (Size: " + nb + ")");
+        ClusLogger.info("Loading SSPD Matrix: " + filename + " (Size: " + nb + ")");
         SSPDMatrix matrix = new SSPDMatrix(nb);
         reader.reOpen();
         for (int i = 0; i < nb; i++) {

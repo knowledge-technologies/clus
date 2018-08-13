@@ -29,6 +29,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsRules.InitialRuleGeneratingM
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.tools.optimization.sls.OptSmoothLocalSearch;
 
@@ -95,7 +96,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
         if (trainSize < 1.0)
             System.err.println("Validation set is too big!");
-        System.out.println(String.format("Splitting learning data: Train set: %s examples | Validation set: %s examples", trainSize, validationSize));
+        ClusLogger.info(String.format("Splitting learning data: Train set: %s examples | Validation set: %s examples", trainSize, validationSize));
 
         RowData validationData = new RowData(getSchema());
         RowData trainData = new RowData(getSchema());
@@ -133,7 +134,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
         m_originalFullData = (RowData) mainClusRun.getTrainingSet();
 
         // print constraints
-        System.out.println("Constraints: MaxRuleCardinality = " + m_maxRuleCardinality + " MaxRuleSetSize = " + m_maxRulesNb);
+        ClusLogger.info("Constraints: MaxRuleCardinality = " + m_maxRuleCardinality + " MaxRuleSetSize = " + m_maxRulesNb);
 
         // generate objective function
         ClusRuleProbabilisticRuleSetInduceWeights objWeights = new ClusRuleProbabilisticRuleSetInduceWeights();
@@ -141,7 +142,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
 
         if (estimateWeights) // otherwise take defaults
         {
-            System.out.println("ESTIMATING WEIGHTS");
+            ClusLogger.info("ESTIMATING WEIGHTS");
 
             getSettings().getEnsemble().setNbBags(1); // make estimation on one PCT
 
@@ -456,7 +457,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
                 /* */
                 (weights.isEnabledObjectiveIncorrectCover() ? weights.WEIGHT_OBJECTIVE_INCORRECT_COVER * objectiveIncorrectCover.apply(t) : 0);
 
-                // System.out.println(sum);
+                // ClusLogger.info(sum);
 
                 return sum;
             }
@@ -526,8 +527,8 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
      * @throws Exception
      */
     ClusRuleSet getRandomForestRules(RowData dataToUse) throws Exception {
-        System.out.println("Inducing random forest for initial rule set");
-        System.out.println("==============================================================================");
+        ClusLogger.info("Inducing random forest for initial rule set");
+        ClusLogger.info("==============================================================================");
 
         boolean ensembleMode = getSettings().getEnsemble().isEnsembleMode();
         boolean sectionEnsembleEnabled = getSettings().getEnsemble().isSectionEnsembleEnabled();
@@ -564,13 +565,13 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
             numberOfUniqueRules += ruleSet.addRuleSet(treeTransform.constructRules(treeRootNode, getStatManager()));
         }
 
-        System.out.println("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules.\n\tCreated " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
+        ClusLogger.info("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules.\n\tCreated " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
 
         getSettings().getEnsemble().setSectionEnsembleEnabled(sectionEnsembleEnabled); // For printing out the ensemble
                                                                                        // texts
         getSettings().getEnsemble().setEnsembleMode(ensembleMode); // For ensemble things working
 
-        System.out.println("==============================================================================");
+        ClusLogger.info("==============================================================================");
 
         if (!estimateWeights) {
             // get default model and add it to the initial Clus run
@@ -654,7 +655,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
             ruleSet.getRule(i).getTargetStat().calcMean();
         }
 
-        System.out.println("Transformed an Option Tree into " + ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
+        ClusLogger.info("Transformed an Option Tree into " + ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
 
         m_mainClus.getSettings().getOptionTree().setSectionOptionEnabled(sectionOptionEnabled);
 
@@ -707,7 +708,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
     // ClusRuleSet SmoothLocalSearch(ClusRuleSet initialRuleSet, double delta, double deltaPrime, Function<ClusRuleSet,
     // Double> objectiveFunction)
     // {
-    // System.out.println("Smooth Local Search optimization: started");
+    // ClusLogger.info("Smooth Local Search optimization: started");
     //
     // // calculate tresholds only once
     // double probabilityBiased = (1+delta)/2;
@@ -758,7 +759,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
     // getExpectedValue(setWithoutRuleToCheck, errorMargin, objectiveFunction);
     // }
     //
-    // //System.out.println("SLS: Finding biased rules");
+    // //ClusLogger.info("SLS: Finding biased rules");
     // for (int rule = 0; rule < initialRuleSet.getModelSize(); rule++)
     // {
     // if (!A.contains(rule) &&
@@ -772,7 +773,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
     // }
     // }
     //
-    // System.out.println("SLS: Removing bad rules");
+    // ClusLogger.info("SLS: Removing bad rules");
     // for (int rule : A)
     // {
     // if (estimates[rule] < -2*errorMargin)
@@ -791,7 +792,7 @@ public class ClusRuleProbabilisticRuleSetInduce extends ClusRuleInduce {
     // // return a random subset with bias deltaPrime on A
     // rndSet = randomSampleWithBias(initialRuleSet, A, probabilityPrimeBiased, (ArrayList<Integer>) indices.clone());
     //
-    // System.out.println("Smooth local search optimization: finished");
+    // ClusLogger.info("Smooth local search optimization: finished");
     // return rndSet;
     // }
 

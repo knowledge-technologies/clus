@@ -50,7 +50,7 @@ public class OptSmoothLocalSearch {
      */
 
     public ClusRuleSet SmoothLocalSearch(ClusRuleSet initialRuleSet, double delta, double deltaPrime, Function<ClusRuleSet, Double> objectiveFunction) {
-        // System.out.println("Smooth Local Search optimization: started" );
+        // ClusLogger.info("Smooth Local Search optimization: started" );
 
         this.initialRuleSet = initialRuleSet;
         this.objectiveFunction = objectiveFunction;
@@ -82,41 +82,41 @@ public class OptSmoothLocalSearch {
         boolean dowork = true;
 
         while (dowork) {
-            // if (ecnt%sth==0 || fcnt%sth==0 || rcnt%sth==0) System.out.println(ecnt + " " + fcnt + " " + rcnt);
+            // if (ecnt%sth==0 || fcnt%sth==0 || rcnt%sth==0) ClusLogger.info(ecnt + " " + fcnt + " " + rcnt);
 
-            // System.out.println("SLS: Calculating estimates");
+            // ClusLogger.info("SLS: Calculating estimates");
             // estimates = calculateEstimates(probabilityBiased);
 
             // for(int i=0;i<estimates.length;i++) estimates[i] = 0;
             //
             // long startTime = System.currentTimeMillis();
             // calculateEstimates(probabilityBiased);
-            // long estimatedTime = System.currentTimeMillis() - startTime; System.out.println("Time 1:" +
+            // long estimatedTime = System.currentTimeMillis() - startTime; ClusLogger.info("Time 1:" +
             // estimatedTime);
             // double sum = 0;
             // for(int i=0;i<estimates.length;i++) sum+=estimates[i];
-            // System.out.println("SUM 1: " + sum);
+            // ClusLogger.info("SUM 1: " + sum);
             //
             //
             // for(int i=0;i<estimates.length;i++) estimates[i] = 0;
 
             // long startTime = System.currentTimeMillis();
             calculateEstimatesParallel(probabilityBiased);
-            // long estimatedTime = System.currentTimeMillis() - startTime; System.out.println("Time estimates:" +
+            // long estimatedTime = System.currentTimeMillis() - startTime; ClusLogger.info("Time estimates:" +
             // estimatedTime);
             // sum = 0;
             // for(int i=0;i<estimates.length;i++) sum+=estimates[i];
-            // System.out.println("SUM 2: " + sum);
+            // ClusLogger.info("SUM 2: " + sum);
 
             // ecnt++;
 
-            // System.out.println("SLS: Finding biased rules");
+            // ClusLogger.info("SLS: Finding biased rules");
             if (findBiasedRules()) {
                 // fcnt++;
                 continue; // go recalculate estimates
             }
 
-            // System.out.println("SLS: Removing bad rules");
+            // ClusLogger.info("SLS: Removing bad rules");
             if (removeBadRules()) {
                 // rcnt++;
                 continue; // go recalculate estimates
@@ -128,9 +128,9 @@ public class OptSmoothLocalSearch {
         // return a random subset with bias deltaPrime on A
         rndSet = randomSampleWithBias(probabilityPrimeBiased);
 
-        // if (ecnt%sth==0 || fcnt%sth==0 || rcnt%sth==0) System.out.println(ecnt + " " + fcnt + " " + rcnt);
+        // if (ecnt%sth==0 || fcnt%sth==0 || rcnt%sth==0) ClusLogger.info(ecnt + " " + fcnt + " " + rcnt);
 
-        // System.out.println("Smooth local search optimization: finished");
+        // ClusLogger.info("Smooth local search optimization: finished");
         return rndSet;
     }
 
@@ -222,7 +222,7 @@ public class OptSmoothLocalSearch {
                         // calculate estimate
                         estimates[rule] = getEstimate(ruleToCheck, prob);
 
-                        // System.out.println("THREAD " + rule);
+                        // ClusLogger.info("THREAD " + rule);
 
                     };
                 });
@@ -370,7 +370,7 @@ public class OptSmoothLocalSearch {
 
                 error = tmp / Math.sqrt(counter); // this is Std Error
 
-                // System.out.println(Math.abs(error-errorMargin));
+                // ClusLogger.info(Math.abs(error-errorMargin));
 
                 // // try to reset recalculation iteration interval so that we dont iterate forever
                 // numberOfIterationsBeforeCalculation = Math.max(

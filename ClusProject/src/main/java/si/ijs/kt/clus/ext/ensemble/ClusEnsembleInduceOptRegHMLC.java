@@ -109,14 +109,14 @@ public class ClusEnsembleInduceOptRegHMLC extends ClusEnsembleInduceOptimization
 
     @Override
     public void roundPredictions() {
-        // System.out.println("Rounding up predictions!");
+        // ClusLogger.info("Rounding up predictions!");
         for (int i = 0; i < m_AvgPredictions.length; i++) {
             for (int j = 0; j < m_AvgPredictions[i].length; j++) {
-                // System.out.println("Before: " + m_AvgPredictions[i][j]);
+                // ClusLogger.info("Before: " + m_AvgPredictions[i][j]);
                 // m_AvgPredictions[i][j] =
                 // Double.parseDouble(ClusFormat.FOUR_AFTER_DOT.format(m_AvgPredictions[i][j]));
                 m_AvgPredictions[i][j] = ClusUtil.roundToSignificantFigures(m_AvgPredictions[i][j], SIGNIFICANT_DIGITS_IN_PREDICTIONS);
-                // System.out.println("After: " + m_AvgPredictions[i][j]);
+                // ClusLogger.info("After: " + m_AvgPredictions[i][j]);
             }
         }
     }

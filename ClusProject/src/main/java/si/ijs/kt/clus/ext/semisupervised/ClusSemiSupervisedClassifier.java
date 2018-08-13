@@ -13,6 +13,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
@@ -85,7 +86,7 @@ public class ClusSemiSupervisedClassifier extends ClusInductionAlgorithmType {
     @Override
     public void printInfo() {
         Settings sett = getSettings();
-        System.out.println("SSL Method: " + sett.getSSL().getSemiSupervisedMethod().toString());
+        ClusLogger.info("SSL Method: " + sett.getSSL().getSemiSupervisedMethod().toString());
         System.out.print("Base method: ");
         m_clss.printInfo();
     }

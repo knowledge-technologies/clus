@@ -17,6 +17,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -98,7 +99,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
         }
 
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules.\n\tCreated " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
+            ClusLogger.info("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules.\n\tCreated " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
 
         RowData trainingData = (RowData) cr.getTrainingSet();
 
@@ -113,7 +114,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
         }
         else {
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("All training examples covered - default rule on entire training set!");
+                ClusLogger.info("All training examples covered - default rule on entire training set!");
             ruleSet.m_Comment = new String(" (on entire training set)");
             left_over = getStatManager().getTrainSetStat(AttributeUseType.Target).cloneStat();
             left_over.copy(getStatManager().getTrainSetStat(AttributeUseType.Target));
@@ -121,7 +122,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
             // left_over.setSumWeight(0);
             System.err.println(left_over.toString());
         }
-        System.out.println("Left Over: " + left_over);
+        ClusLogger.info("Left Over: " + left_over);
         ruleSet.setTargetStat(left_over);
 
         // ************************** The following are copied from ClusRuleInduce.induce

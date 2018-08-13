@@ -4,6 +4,7 @@ import java.util.Arrays;
 
 import si.ijs.kt.clus.ext.semisupervised.utils.DoublesPair;
 import si.ijs.kt.clus.ext.semisupervised.utils.IndiceValuePair;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
 /**
@@ -210,7 +211,7 @@ public class Helper {
      */
     public static void printArray(DoublesPair[] array) {
         for (int i = 0; i < array.length; i++) {
-            System.out.println(array[i].getFirst() + "," + array[i].getSecond());
+            ClusLogger.info(array[i].getFirst() + "," + array[i].getSecond());
         }
     }
 

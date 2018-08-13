@@ -39,6 +39,7 @@ import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -164,7 +165,7 @@ public class ClusSplitNode extends MyNode {
     @Override
     public void printModelToQuery(PrintWriter wrt, ClusRun cr, int starttree, int startitem, boolean exhaustive){
         int lastmodel = cr.getNbModels()-1;
-        System.out.println("The number of models to print is:"+lastmodel);
+        ClusLogger.info("The number of models to print is:"+lastmodel);
         String [][] tabitem = new String[lastmodel+1][10000]; //table of item
         int [][] tabexist = new int[lastmodel+1][10000]; //table of boolean for each item
         Global.set_treecpt(starttree);
@@ -371,7 +372,7 @@ public class ClusSplitNode extends MyNode {
         } else {
             if (m_TargetStat != null) {
                 writer.println(prefix+"return "+m_TargetStat.getArrayOfStatistic());
-                System.out.println(m_TargetStat.getClass());
+                ClusLogger.info(m_TargetStat.getClass().toString());
             }
         }
     }

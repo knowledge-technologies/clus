@@ -32,6 +32,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 /**
@@ -78,7 +79,7 @@ public class ImplicitLinearTerms {
             int nbTargets = (m_StatManager.getStatistic(AttributeUseType.Target)).getNbAttributes();
             int nbDescrAttr = statMgr.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
 
-            System.out.println("\tIn optimization using implicitly the predictions of " + nbDescrAttr + " linear terms for each target, total " + nbDescrAttr * nbTargets + " terms.");
+            ClusLogger.info("\tIn optimization using implicitly the predictions of " + nbDescrAttr + " linear terms for each target, total " + nbDescrAttr * nbTargets + " terms.");
         }
     }
 

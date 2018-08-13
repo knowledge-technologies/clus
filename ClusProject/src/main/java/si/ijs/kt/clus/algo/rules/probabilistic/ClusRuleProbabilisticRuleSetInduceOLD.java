@@ -80,7 +80,7 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //		// calculate counts of cardinality for rule set
 //		m_cardinalityCounts = CalculateCounts(m_initialRuleSet);
 //
-//		System.out.println(String.format("Maximum rule set length: %s", maxRuleSetLength == Integer.MAX_VALUE ? "Maximum available" : maxRuleSetLength));
+//		ClusLogger.info(String.format("Maximum rule set length: %s", maxRuleSetLength == Integer.MAX_VALUE ? "Maximum available" : maxRuleSetLength));
 //
 //		if (maxRuleSetLength == Integer.MAX_VALUE)
 //		{
@@ -90,7 +90,7 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //			System.err.println(String.format("Defaulted to (number_of_initial_rules/ensemble_size): %s", maxRuleSetLength));
 //		}
 //		
-//		System.out.println(String.format("Maximum rule cardinality: %s", m_maxRuleCardinality == Integer.MAX_VALUE ? "Maximum available" : m_maxRuleCardinality));
+//		ClusLogger.info(String.format("Maximum rule cardinality: %s", m_maxRuleCardinality == Integer.MAX_VALUE ? "Maximum available" : m_maxRuleCardinality));
 //		if (m_maxRuleCardinality == Integer.MAX_VALUE)
 //		{
 //			// take cardinality of rules that are most frequent
@@ -135,7 +135,7 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //		int trainSize = all_data.getNbRows() - validationSize;
 //		
 //		if (trainSize < 1.0) System.err.println("Validation set is too big!");		
-//		System.out.println(String.format("Splitting learning data: Train set: %s examples | Validation set: %s examples", trainSize, validationSize));
+//		ClusLogger.info(String.format("Splitting learning data: Train set: %s examples | Validation set: %s examples", trainSize, validationSize));
 //		
 //		
 //		RowData validationData = new RowData(getSchema());
@@ -176,8 +176,8 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //		// induce ensemble of trees, convert to rules (from FIRE)	
 //		if (getSettings().getVerbose() >= 1) 
 //		{
-//			System.out.println("Inducing random forest for initial rule set");
-//			System.out.println("-----------------------------------");
+//			ClusLogger.info("Inducing random forest for initial rule set");
+//			ClusLogger.info("-----------------------------------");
 //		}
 //
 //		// create new run so that it doesn't mix with rule model
@@ -188,7 +188,7 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //		
 //		if (getSettings().getVerbose() >= 1) 
 //		{
-//			System.out.println("-----------------------------------");
+//			ClusLogger.info("-----------------------------------");
 //		}
 //		
 //		// get default and PCT ensemble original model and add them to initial Clus run
@@ -272,7 +272,7 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //		
 //		bestModel = calcError(sampledRuleSetsRun);
 //		
-//		System.out.println("Best rule set: " + sampledRuleSetsRun.getModelName(bestModel));
+//		ClusLogger.info("Best rule set: " + sampledRuleSetsRun.getModelName(bestModel));
 //		
 //		return sampledRuleSetsRun.getModelInfo(bestModel);
 //	}
@@ -285,7 +285,7 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //		
 //		sampledRuleSetsRun.setTrainingSet(m_validationData);
 //
-//		if (Settings.VERBOSE > 0) System.out.println("Computing validation error for all rule sets");
+//		if (Settings.VERBOSE > 0) ClusLogger.info("Computing validation error for all rule sets");
 //		
 //		sampledRuleSetsRun.copyAllModelsMIs();
 //
@@ -369,7 +369,7 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //			debug_PrintRuleSet(sampledRuleSet, m_folderName, String.format("unordered_list_%s.txt", (i + 1)), true);
 //		}
 //		
-//		System.out.println("Number of rule sets sampled: " + samplingRun.getNbModels());
+//		ClusLogger.info("Number of rule sets sampled: " + samplingRun.getNbModels());
 //		
 //		return samplingRun;
 //	}
@@ -532,11 +532,11 @@ public class ClusRuleProbabilisticRuleSetInduceOLD //extends ClusRuleFromTreeInd
 //			   (f.exists() && !f.isDirectory())) {
 //			   if (f.mkdir())
 //			   {
-//				   System.out.println("Created rules.debug directory.");
+//				   ClusLogger.info("Created rules.debug directory.");
 //			   }
 //			   else
 //			   {
-//				   System.out.println("Unable to create rules.debug directory.\nWill not write rule debug info.");
+//				   ClusLogger.info("Unable to create rules.debug directory.\nWill not write rule debug info.");
 //				   cancel = true;
 //			   }
 //			}

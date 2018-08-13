@@ -32,6 +32,7 @@ import java.io.Serializable;
 
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 /**
@@ -63,7 +64,7 @@ public abstract class AttributeWeighting implements Serializable {
             out.writeObject(attrWe);
             out.close();
             fileOut.close();
-            System.out.println("Saved weighting into file " + file);
+            ClusLogger.info("Saved weighting into file " + file);
         }
         catch (FileNotFoundException e) {
             e.printStackTrace();
@@ -82,7 +83,7 @@ public abstract class AttributeWeighting implements Serializable {
             attrWe = (AttributeWeighting) in.readObject();
             in.close();
             fileIn.close();
-            System.out.println("Loaded weighting from file " + file);
+            ClusLogger.info("Loaded weighting from file " + file);
         }
         catch (ClassNotFoundException e) {
             e.printStackTrace();

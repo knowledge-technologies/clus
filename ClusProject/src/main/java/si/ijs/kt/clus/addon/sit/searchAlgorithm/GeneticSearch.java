@@ -19,6 +19,7 @@ import org.jgap.impl.MutationOperator;
 
 import si.ijs.kt.clus.addon.sit.TargetSet;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class GeneticSearch extends SearchAlgorithmImpl {
@@ -71,9 +72,9 @@ public class GeneticSearch extends SearchAlgorithmImpl {
             Long dif = new_d - d;
             d = new_d;
 
-            System.out.println("Evolution " + (i + 1) + " completed in " + dif / 1000 + " sec.");
+            ClusLogger.info("Evolution " + (i + 1) + " completed in " + dif / 1000 + " sec.");
             System.out.print("Best fitness so far:" + (10 - bestSolutionSoFar.getFitnessValue()));
-            System.out.println("Best support set:" + getTargetSet(candidates, bestSolutionSoFar));
+            ClusLogger.info("Best support set:" + getTargetSet(candidates, bestSolutionSoFar));
 
         }
         return getTargetSet(candidates, bestSolutionSoFar);

@@ -28,6 +28,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.util.MStreamTokenizer;
 
 
@@ -146,10 +147,10 @@ public class INIFileSection extends INIFileNode {
                 return node;
         }
         else {
-            System.out.println("Can't find node: " + nextNode);
+            ClusLogger.info("Can't find node: " + nextNode);
             for (Enumeration<INIFileNode> e = getNodes(); e.hasMoreElements();) {
                 INIFileNode entry = e.nextElement();
-                System.out.println("   " + entry.getName());
+                ClusLogger.info("   " + entry.getName());
             }
             return null;
         }

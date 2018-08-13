@@ -58,11 +58,11 @@ public class HierModelPostProc /* extends ClusModelProcessor */ {
      * public ClassesTuple findBestPrediction(MyArray examples) {
      * double bestvalue = Double.POSITIVE_INFINITY;
      * ClassesTuple besttuple = new ClassesTuple(0);
-     * System.out.println("Finding best prediction for set of "+examples.size()+" examples.");
+     * ClusLogger.info("Finding best prediction for set of "+examples.size()+" examples.");
      * for (int i = 0; i < examples.size(); i++) {
      * DoubleObject obj = (DoubleObject)examples.elementAt(i);
      * ClassesTuple actual = (ClassesTuple)obj.getObject();
-     * System.out.println("  -  "+actual);
+     * ClusLogger.info("  -  "+actual);
      * }
      * // Try all 1-class tuples
      * ClassesTuple current = new ClassesTuple(1);
@@ -76,7 +76,7 @@ public class HierModelPostProc /* extends ClusModelProcessor */ {
      * bestvalue = value;
      * }
      * }
-     * System.out.println("  -> "+besttuple+" "+bestvalue);
+     * ClusLogger.info("  -> "+besttuple+" "+bestvalue);
      * // Try all 2-class tuples
      * return besttuple;
      * }

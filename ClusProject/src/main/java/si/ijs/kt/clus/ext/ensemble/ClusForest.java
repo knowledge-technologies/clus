@@ -49,7 +49,6 @@ import si.ijs.kt.clus.ext.hierarchical.HierClassTresholdPruner;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -62,6 +61,7 @@ import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.RegressionStatBase;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
@@ -415,7 +415,6 @@ public class ClusForest implements ClusModel, Serializable {
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
         for (int i = 0; i < m_Trees.size(); i++) {
             votes.add(m_Trees.get(i).predictWeighted(tuple));
-
         }
 
         m_Stat.reset();
@@ -793,14 +792,49 @@ public class ClusForest implements ClusModel, Serializable {
         String aggregation;
         switch (mode) {
             case ClusStatManager.MODE_CLASSIFY:
-                aggregation = "def aggregate(predictions):\n" + "    n = len(predictions)\n" + "    m = len(predictions[0])\n" + "    counts = [{} for _ in range(m)]\n" + "    for i in range(n):\n" + "        for j in range(m):\n" + "            pred = predictions[i][j]\n" + "            if pred not in counts[j]:\n" + "                counts[j][pred] = 0\n" + "            counts[j][pred] += 1\n" + "    return [max(counts[j], key=lambda pred: counts[j][pred]) for j in range(m)]";
+                aggregation =
+                		"def aggregate(predictions, sizes=None):\n" +
+                		"    n = len(predictions)\n" +
+            			"    m = len(predictions[0])\n" +
+            			"    if sizes is None:\n" + 
+                		"        sizes = [n]\n" +
+                		"    aggregated = []\n" +
+                		"    counts = [{} for _ in range(m)]\n" +
+                		"    size_index = 0\n" + 
+            			"    for i in range(n):\n" +
+            			"        for j in range(m):\n" +
+            			"            pred = predictions[i][j]\n" +
+            			"            if pred not in counts[j]:\n" +
+            			"                counts[j][pred] = 0\n" +
+            			"            counts[j][pred] += 1\n" +
+            			"        if sizes[size_index] == i + 1:\n" + 
+                		"            aggregated.append([max(counts[j], key=lambda pred: counts[j][pred]) for j in range(m)])\n" + 
+                		"            size_index += 1\n" + 
+            			"    return aggregated";
                 break;
             case ClusStatManager.MODE_REGRESSION:
-                aggregation = "def aggregate(predictions):\n" + "    n = len(predictions)\n" + "    m = len(predictions[0])\n" + "    sums = [0 for _ in range(m)]\n" + "    for i in range(n):\n" + "        for j in range(m):\n" + "            sums[j] += predictions[i][j]\n" + "    return [sums[j] / n for j in range(m)]";
+                aggregation =
+                		"def aggregate(predictions, sizes=None):\n" + 
+                		"    n = len(predictions)\n" + 
+                		"    m = len(predictions[0])\n" + 
+                		"    if sizes is None:\n" + 
+                		"        sizes = [n]\n" + 
+                		"    sums = [0 for _ in range(m)]\n" + 
+                		"    aggregated = []\n" + 
+                		"    size_index = 0\n" + 
+                		"    for i in range(n):\n" + 
+                		"        for j in range(m):\n" + 
+                		"            sums[j] += predictions[i][j]\n" + 
+                		"        if sizes[size_index] == i + 1:\n" + 
+                		"            aggregated.append([sums[j] / sizes[size_index] for j in range(m)])\n" + 
+                		"            size_index += 1\n" + 
+                		"    return aggregated";
                 break;
             default:
                 System.err.println("Unsupported mode, you will have to write your own aggregation function.");
-                aggregation = "def aggregate(predictions):\n" + "    return None";
+                aggregation =
+                		"def aggregate(predictions):\n" +
+                		"    return None";
         }
         wrtr.println(aggregation);
         wrtr.println();
@@ -853,7 +887,7 @@ public class ClusForest implements ClusModel, Serializable {
                 printOneTree(wrtr, (ClusNode) model, m_TreeIndices.get(i), type);
             }
             wrtr.close();
-            System.out.println(String.format("Python trees for the model %s written to: ", getModelInfo()) + pyscript.getPath());
+            ClusLogger.info(String.format("Python trees for the model %s written to: ", getModelInfo()) + pyscript.getPath());
         }
         catch (IOException e) {
             System.err.println(this.getClass().getName() + ".printForestToPython(): Error while writing models to python script");
@@ -945,10 +979,10 @@ public class ClusForest implements ClusModel, Serializable {
     public void showForest() {
         ClusModel model;
         for (int i = 0; i < m_Trees.size(); i++) {
-            System.out.println("***************************");
+            ClusLogger.info("***************************");
             model = m_Trees.get(i);
             ((ClusNode) model).printTree();
-            System.out.println("***************************");
+            ClusLogger.info("***************************");
         }
     }
 

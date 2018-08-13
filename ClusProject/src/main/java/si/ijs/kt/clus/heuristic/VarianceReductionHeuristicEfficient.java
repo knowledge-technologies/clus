@@ -27,6 +27,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.FTest;
 import si.ijs.kt.clus.util.exception.ClusException;
 
@@ -110,7 +111,7 @@ public class VarianceReductionHeuristicEfficient extends ClusHeuristic {
 
     public void printInfo(double ss_tot, double ss_pos, double ss_neg, ClusStatistic pstat) throws ClusException {
         pstat.calcMean();
-        System.out.println("C-pos: " + pstat);
-        System.out.println("SS-pos: " + ss_pos + " SS-neg: " + ss_neg + " -> " + (ss_tot - (ss_pos + ss_neg)));
+        ClusLogger.info("C-pos: " + pstat);
+        ClusLogger.info("SS-pos: " + ss_pos + " SS-neg: " + ss_neg + " -> " + (ss_tot - (ss_pos + ss_neg)));
     }
 }

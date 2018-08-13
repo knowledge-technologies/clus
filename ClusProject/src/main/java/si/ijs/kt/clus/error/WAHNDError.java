@@ -30,6 +30,7 @@ import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class WAHNDError extends ClusError {
@@ -72,7 +73,7 @@ public class WAHNDError extends ClusError {
 
 
     public void addExample(ClusData data, int idx, ClusStatistic pred) {
-        System.out.println("WAHNDError: addExample/3 not implemented");
+        ClusLogger.info("WAHNDError: addExample/3 not implemented");
     }
 
 

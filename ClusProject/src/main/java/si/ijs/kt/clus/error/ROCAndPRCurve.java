@@ -105,9 +105,9 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
         double prev = Double.NaN;
         for (int i = 0; i < m_Values.size(); i++) {
             DoubleBooleanCount val = m_Values.get(i);
-            // System.out.println("********Val= "+val);
+            // ClusLogger.info("********Val= "+val);
             if (val.getDouble() != prev && !first) {
-                // System.out.println("Thr: "+((val.getDouble()+prev)/2)+" TP: "+TP_cnt+" FP: "+FP_cnt);
+                // ClusLogger.info("Thr: "+((val.getDouble()+prev)/2)+" TP: "+TP_cnt+" FP: "+FP_cnt);
                 addOutput(TP_cnt, FP_cnt);
             }
             if (val.getBoolean()) {
@@ -119,7 +119,7 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
             prev = val.getDouble();
             first = false;
         }
-        // System.out.println("Thr: 0.0 TP: "+TP_cnt+" FP: "+FP_cnt);
+        // ClusLogger.info("Thr: 0.0 TP: "+TP_cnt+" FP: "+FP_cnt);
         // addOutput(TP_cnt, FP_cnt) -> curve will always include point with recall = 1.0
         addOutput(TP_cnt, FP_cnt);
     }
@@ -157,13 +157,13 @@ public class ROCAndPRCurve implements Serializable { // does not implement Compo
 
     public double computeArea(ArrayList<double[]> curve) {
         double area = 0.0;
-        // System.out.println("Computing areas");
+        // ClusLogger.info("Computing areas");
         if (curve.size() > 0) {
             double[] prev = curve.get(0);
-            // System.out.println("PT: "+prev[0]+","+prev[1]);
+            // ClusLogger.info("PT: "+prev[0]+","+prev[1]);
             for (int i = 1; i < curve.size(); i++) {
                 double[] pt = curve.get(i);
-                // System.out.println("PT: "+pt[0]+","+pt[1]);
+                // ClusLogger.info("PT: "+pt[0]+","+pt[1]);
                 area += 0.5 * (pt[1] + prev[1]) * (pt[0] - prev[0]);
                 prev = pt;
             }

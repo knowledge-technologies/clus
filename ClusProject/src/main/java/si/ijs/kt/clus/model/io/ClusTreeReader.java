@@ -40,6 +40,7 @@ import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.model.test.NominalTest;
 import si.ijs.kt.clus.model.test.NumericTest;
 import si.ijs.kt.clus.model.test.SubsetTest;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.util.MStringTokenizer;
 
 
@@ -60,7 +61,7 @@ public class ClusTreeReader {
     public ClusNode loadTree(String fname, ClusSchema schema) throws IOException {
         m_FName = fname;
         m_Schema = schema;
-        System.out.println("Loading constraint file: " + fname);
+        ClusLogger.info("Loading constraint file: " + fname);
         LineNumberReader rdr = new LineNumberReader(new InputStreamReader(new FileInputStream(fname)));
         String line = rdr.readLine();
         /* Skip empty lines */
@@ -85,7 +86,7 @@ public class ClusTreeReader {
         m_FName = fname;
         m_Schema = schema;
         m_NoPartialTree = true;
-        System.out.println("Loading .out file: " + fname);
+        ClusLogger.info("Loading .out file: " + fname);
         LineNumberReader rdr = new LineNumberReader(new InputStreamReader(new FileInputStream(fname)));
         String line = rdr.readLine();
         while (line != null && !line.trim().equals(find)) {
@@ -115,7 +116,7 @@ public class ClusTreeReader {
         m_FName = fname;
         m_Schema = schema;
         m_NoPartialTree = true;
-        System.out.println("Loading .tree file: " + fname);
+        ClusLogger.info("Loading .tree file: " + fname);
         LineNumberReader rdr = new LineNumberReader(new InputStreamReader(new FileInputStream(fname)));
         String line = rdr.readLine();
 
@@ -138,7 +139,7 @@ public class ClusTreeReader {
 
     public ClusNode readTree(String line) throws IOException {
         String trim = line.trim();
-        System.out.println("Reading: '" + line + "'");
+        ClusLogger.info("Reading: '" + line + "'");
         ClusNode result = new ClusNode();
         if (!trim.equals("?")) {
             int arity = 2;

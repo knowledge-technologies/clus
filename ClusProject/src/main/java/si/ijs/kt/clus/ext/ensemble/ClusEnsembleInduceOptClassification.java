@@ -195,9 +195,9 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     //                      counts = transformToProbabilityDistribution(counts);
     //              }
     //              m_AvgPredictions[position] = counts;
-    //              // System.out.println(train_tuple.toString());
-    //              // System.out.println(stat.getString());
-    //              // System.out.println(m_AvgPredictions[position][0][0]+ " " + m_AvgPredictions[position][0][1] + " " +
+    //              // ClusLogger.info(train_tuple.toString());
+    //              // ClusLogger.info(stat.getString());
+    //              // ClusLogger.info(m_AvgPredictions[position][0][0]+ " " + m_AvgPredictions[position][0][1] + " " +
     //              // m_AvgPredictions[position][0][2]);
     //              train_tuple = train.readTuple();
     //          }
@@ -221,9 +221,9 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     //                      counts = transformToProbabilityDistribution(counts);
     //              }
     //              m_AvgPredictions[position] = counts;
-    //              // System.out.println(test_tuple.toString());
-    //              // System.out.println(stat.getString());
-    //              // System.out.println(m_AvgPredictions[position][0][0]+ " " + m_AvgPredictions[position][0][1] + " " +
+    //              // ClusLogger.info(test_tuple.toString());
+    //              // ClusLogger.info(stat.getString());
+    //              // ClusLogger.info(m_AvgPredictions[position][0][0]+ " " + m_AvgPredictions[position][0][1] + " " +
     //              // m_AvgPredictions[position][0][2]);
     //              test_tuple = test.readTuple();
     //          }
@@ -251,9 +251,9 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     //                      counts = transformToProbabilityDistribution(counts);
     //              }
     //              m_AvgPredictions[position] = incrementPredictions(m_AvgPredictions[position], counts, nb_models);
-    //              // System.out.println(train_tuple.toString());
-    //              // System.out.println(stat.getString());
-    //              // System.out.println(m_AvgPredictions[position][0][0]+ " " + m_AvgPredictions[position][0][1] + " " +
+    //              // ClusLogger.info(train_tuple.toString());
+    //              // ClusLogger.info(stat.getString());
+    //              // ClusLogger.info(m_AvgPredictions[position][0][0]+ " " + m_AvgPredictions[position][0][1] + " " +
     //              // m_AvgPredictions[position][0][2]);
     //
     //              train_tuple = train.readTuple();
@@ -278,9 +278,9 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     //                      counts = transformToProbabilityDistribution(counts);
     //              }
     //              m_AvgPredictions[position] = incrementPredictions(m_AvgPredictions[position], counts, nb_models);
-    //              // System.out.println(test_tuple.toString());
-    //              // System.out.println(stat.getString());
-    //              // System.out.println(m_AvgPredictions[position][0][0]+ " " + m_AvgPredictions[position][0][1] + " " +
+    //              // ClusLogger.info(test_tuple.toString());
+    //              // ClusLogger.info(stat.getString());
+    //              // ClusLogger.info(m_AvgPredictions[position][0][0]+ " " + m_AvgPredictions[position][0][1] + " " +
     //              // m_AvgPredictions[position][0][2]);
     //
     //              test_tuple = test.readTuple();

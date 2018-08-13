@@ -152,7 +152,7 @@ public class CartPruning extends PruneTree {
         CartVisitor cart = (CartVisitor) node.getVisitor();
         m_U1 = 1 + cart.delta_u1;
         m_U2 = m_ErrorMeasure.computeLeafError(node.getClusteringStat()) + cart.delta_u2;
-        // System.out.println("Leaves: "+m_U1+" error: "+m_U2);
+        // ClusLogger.info("Leaves: "+m_U1+" error: "+m_U2);
     }
 
 
@@ -220,7 +220,7 @@ public class CartPruning extends PruneTree {
         }
         m_U1 -= delta_u1;
         m_U2 -= delta_u2;
-        // System.out.println("Leaves: "+m_U1+" error: "+m_U2);
+        // ClusLogger.info("Leaves: "+m_U1+" error: "+m_U2);
     }
 
 

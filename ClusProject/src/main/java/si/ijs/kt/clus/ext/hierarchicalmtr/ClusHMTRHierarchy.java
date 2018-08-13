@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 /**
@@ -56,14 +57,14 @@ public class ClusHMTRHierarchy  { //implements Serializable {
 
     public void printDepth() {
         for (Map.Entry<String, Integer> entry : this.m_NodeDepth.entrySet()) {
-            System.out.println("Attribute: " + entry.getKey() + ", depth: " + entry.getValue());
+            ClusLogger.info("Attribute: " + entry.getKey() + ", depth: " + entry.getValue());
         }
     }
 
 
     public void printWeights() {
         for (Map.Entry<String, Double> entry : this.m_NodeWeights.entrySet()) {
-            System.out.println("Attribute: " + entry.getKey() + ", weight: " + entry.getValue());
+            ClusLogger.info("Attribute: " + entry.getKey() + ", weight: " + entry.getValue());
         }
     }
 
@@ -130,10 +131,10 @@ public class ClusHMTRHierarchy  { //implements Serializable {
 
     public void printHierarchy() {
 
-        System.out.println("Hiearchy: ");
+        ClusLogger.info("Hiearchy: ");
 
         for (ClusHMTRNode node : m_Nodes) {
-            System.out.println(node.printNodeAndChildren());
+            ClusLogger.info(node.printNodeAndChildren());
 
             List<ClusHMTRNode> parents = getParents(node);
 
@@ -141,11 +142,11 @@ public class ClusHMTRHierarchy  { //implements Serializable {
             for (ClusHMTRNode parent : parents) {
                 System.out.print("\"" + parent.getName() + "\" ");
             }
-            System.out.println();
+            ClusLogger.info();
             ;
         }
 
-        System.out.println();
+        ClusLogger.info();
     }
 
 

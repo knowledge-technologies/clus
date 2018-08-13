@@ -4,6 +4,7 @@ package si.ijs.kt.clus.statistic;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.list.BitList;
@@ -164,7 +165,7 @@ public class GeneticDistanceStat extends BitVectorStat {
 
     @Override
     public int[] getNominalPred() {
-        System.out.println("getNominalPred: not implemented for GeneticDistanceStat");
+        ClusLogger.info("getNominalPred: not implemented for GeneticDistanceStat");
         return null;
     }
 

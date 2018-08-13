@@ -30,6 +30,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.util.list.MyList;
 
 
@@ -144,7 +145,7 @@ public class OptXValGroup extends MyList {
             System.out.print("," + m_Folds[i]);
         }
         System.out.print("] - ");
-        System.out.println(m_Test.getString());
+        ClusLogger.info(m_Test.getString());
     }
 
 

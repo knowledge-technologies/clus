@@ -72,14 +72,14 @@ public class HierClassWiseAccuracy extends ClusError {
 
     @Override
     public void addExample(DataTuple tuple, ClusStatistic pred) {
-        // System.out.println("tuple: "+tuple.toString());
+        // ClusLogger.info("tuple: "+tuple.toString());
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(hierarchyIndex);
         boolean[] predarr = ((WHTDStatistic) pred).getDiscretePred();
         for (int i = 0; i < m_Dim; i++) {
             if (predarr[i]) {
                 /* Predicted this class, was it correct? */
-                // System.out.println("Ex: "+tuple.toString());
-                // System.out.println(pred.getClassString()+" "+m_Hier.getTermAt(i).toStringHuman(m_Hier));
+                // ClusLogger.info("Ex: "+tuple.toString());
+                // ClusLogger.info(pred.getClassString()+" "+m_Hier.getTermAt(i).toStringHuman(m_Hier));
                 m_NbPosPredictions[i] += 1.0;
                 if (tp.hasClass(i)) {
                     m_TP[i] += 1.0;

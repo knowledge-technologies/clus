@@ -28,6 +28,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -77,16 +78,15 @@ public class Sit implements CMDLineArgsProvider {
     public void initialize() throws IOException, ClusException {
         // Load settings file
         ARFFFile arff = null;
-        System.out.println("Loading '" + m_Sett.getGeneric().getAppName() + "'");
+        ClusLogger.info("Loading '" + m_Sett.getGeneric().getAppName() + "'");
         ClusRandom.initialize(m_Sett);
         ClusReader reader = new ClusReader(m_Sett.getData().getDataFile(), m_Sett);
-        System.out.println();
-        System.out.println("Reading ARFF Header");
+        ClusLogger.info();
+        ClusLogger.info("Reading ARFF Header");
         arff = new ARFFFile(reader);
         m_Schema = arff.read(m_Sett);
         // Count rows and move to data segment
-        System.out.println();
-        System.out.println("Reading CSV Data");
+        ClusLogger.info("Reading CSV Data");
         // Updata schema based on settings
         m_Sett.updateTarget(m_Schema);
         m_Schema.initializeSettings(m_Sett);
@@ -106,7 +106,7 @@ public class Sit implements CMDLineArgsProvider {
         getSettings().getExperimental();
         // Set XVal field in Settings
         SettingsExperimental.IS_XVAL = true;
-        System.out.println("Has missing values: " + m_Schema.hasMissing());
+        ClusLogger.info("Has missing values: " + m_Schema.hasMissing());
     }
 
 
@@ -138,11 +138,11 @@ public class Sit implements CMDLineArgsProvider {
     private void InitLearner() {
 
         if (this.m_Sett.getSIT().getLearnerName().equals("KNN")) {
-            System.out.println("Using KNN Learner");
+            ClusLogger.info("Using KNN Learner");
             this.m_Learner = new KNNLearner();
         }
         else {
-            System.out.println("Using Clus Learner");
+            ClusLogger.info("Using Clus Learner");
             this.m_Learner = new ClusLearner();
 
         }
@@ -160,11 +160,11 @@ public class Sit implements CMDLineArgsProvider {
      */
     private void InitLearner(RowData data) {
         if (this.m_Sett.getSIT().getLearnerName().equals("KNN")) {
-            System.out.println("Using KNN Learner");
+            ClusLogger.info("Using KNN Learner");
             this.m_Learner = new KNNLearner();
         }
         else {
-            System.out.println("Using Clus Learner");
+            ClusLogger.info("Using Clus Learner");
             this.m_Learner = new ClusLearner();
 
         }
@@ -185,27 +185,27 @@ public class Sit implements CMDLineArgsProvider {
         String search = m_Sett.getSIT().getSearchName();
         if (search.equals("OneTarget")) {
             this.m_Search = new OneTarget();
-            System.out.println("Search = single target");
+            ClusLogger.info("Search = single target");
         }
         else if (search.equals("AllTargets")) {
             this.m_Search = new AllTargets();
-            System.out.println("Search = full multi target");
+            ClusLogger.info("Search = full multi target");
         }
         else if (search.equals("GeneticSearch")) {
             this.m_Search = new GeneticSearch();
-            System.out.println("Search = Genetic search strategy");
+            ClusLogger.info("Search = Genetic search strategy");
         }
         else if (search.equals("SIT")) {
             this.m_Search = new GreedySIT();
-            System.out.println("Search = SIT, with stop criterion");
+            ClusLogger.info("Search = SIT, with stop criterion");
         }
         else if (search.equals("NoStop")) {
             this.m_Search = new NoStopSearch();
-            System.out.println("Search = SIT, no stop criterion");
+            ClusLogger.info("Search = SIT, no stop criterion");
         }
         else if (search.equals("TC")) {
             this.m_Search = new TC();
-            System.out.println("Search = TC");
+            ClusLogger.info("Search = TC");
         }
         else {
             System.err.println("Search strategy unknown!");
@@ -264,7 +264,7 @@ public class Sit implements CMDLineArgsProvider {
 
 
     public void singleRun() throws ClusException {
-        System.out.println("Starting single run");
+        ClusLogger.info("Starting single run");
         /* Init the Learner */
         InitLearner();
         /* Init the Search algorithm */
@@ -305,7 +305,7 @@ public class Sit implements CMDLineArgsProvider {
     public void XValRun() throws Exception {
         ErrorOutput errOut = new ErrorOutput(this.m_Sett);
         errOut.writeHeader();
-        System.out.println("Starting XVal run");
+        ClusLogger.info("Starting XVal run");
 
         XValRandomSelection m_XValSel = null;
         int nrFolds = 26;
@@ -322,12 +322,12 @@ public class Sit implements CMDLineArgsProvider {
         int errorIdx = mainTarget.getArrayIndex();
 
         for (int i = 0; i < nrFolds; i++) {
-            System.out.println("Outer XVAL fold " + (i + 1));
+            ClusLogger.info("Outer XVAL fold " + (i + 1));
             XValSelection msel = new XValSelection(m_XValSel, i);
             RowData train = (RowData) m_Data.cloneData();
             RowData test = (RowData) train.select(msel);
 
-            System.out.println(test.getNbRows());
+            ClusLogger.info(test.getNbRows());
 
             /* Init the Learner */
             InitLearner(train);
@@ -378,7 +378,7 @@ public class Sit implements CMDLineArgsProvider {
     public void YATSXValRun() throws Exception {
         ErrorOutput errOut = new ErrorOutput(this.m_Sett);
         errOut.writeHeader();
-        System.out.println("Starting XVal run");
+        ClusLogger.info("Starting XVal run");
 
         XValRandomSelection m_XValSel = null;
         int nrFolds = 500;
@@ -395,12 +395,12 @@ public class Sit implements CMDLineArgsProvider {
         int errorIdx = mainTarget.getArrayIndex();
 
         for (int i = 0; i < nrFolds; i++) {
-            System.out.println("Outer XVAL fold " + (i + 1));
+            ClusLogger.info("Outer XVAL fold " + (i + 1));
             XValSelection msel = new XValSelection(m_XValSel, i);
             RowData train = (RowData) m_Data.cloneData();
             RowData test = (RowData) train.select(msel);
 
-            // System.out.println(test.getNbRows());
+            // ClusLogger.info(test.getNbRows());
 
             /* Init the Learner */
             InitLearner(train);
@@ -449,7 +449,7 @@ public class Sit implements CMDLineArgsProvider {
 
             if (errorName.equals("RME")) {
                 error = Evaluator.getRelativeError(predictions, errorIdx);
-                System.out.println(error);
+                ClusLogger.info(error);
             }
             else if (errorName.equals("MSE")) {
                 error = Evaluator.getMSE(predictions, errorIdx);
@@ -486,8 +486,8 @@ public class Sit implements CMDLineArgsProvider {
         cargs.process(args);
         if (cargs.getNbMainArgs() == 0) {
             sit.showHelp();
-            System.out.println();
-            System.out.println("Expected main argument");
+            ClusLogger.info();
+            ClusLogger.info("Expected main argument");
             System.exit(0);
         }
         if (cargs.allOK()) {
@@ -507,6 +507,6 @@ public class Sit implements CMDLineArgsProvider {
 
         // sit.YATSXValRun();
 
-        System.out.println("Finished");
+        ClusLogger.info("Finished");
     }
 }

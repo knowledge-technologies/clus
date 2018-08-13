@@ -354,8 +354,8 @@ public class ContingencyTable extends ClusNominalError implements ComponentError
 
     @Override
     public double get_error_classif() {
-        // System.out.println("nb of examples : "+getNbExamples());
-        // System.out.println("nb of correctly classify examples : "+calcNbCorrect(m_ContTable[0]));
+        // ClusLogger.info("nb of examples : "+getNbExamples());
+        // ClusLogger.info("nb of correctly classify examples : "+calcNbCorrect(m_ContTable[0]));
         return (1 - get_accuracy());
     }
 

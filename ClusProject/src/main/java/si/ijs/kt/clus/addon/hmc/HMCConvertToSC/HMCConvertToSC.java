@@ -18,6 +18,7 @@ import si.ijs.kt.clus.ext.hierarchical.ClassesTuple;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -182,7 +183,7 @@ public class HMCConvertToSC {
                 mainargs++;
         }
         if (args.length - mainargs != 2) {
-            System.out.println("Usage: HMCConvertToSC input output");
+            ClusLogger.info("Usage: HMCConvertToSC input output");
             System.exit(0);
         }
         String input = args[mainargs];

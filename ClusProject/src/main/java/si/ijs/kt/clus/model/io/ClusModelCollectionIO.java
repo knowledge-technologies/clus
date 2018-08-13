@@ -35,6 +35,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.io.ObjectLoadStream;
 import si.ijs.kt.clus.util.jeans.io.ObjectSaveStream;
 
@@ -88,12 +89,12 @@ public class ClusModelCollectionIO implements Serializable {
 
     public void printModelNames() {
         if (getNbModels() == 0) {
-            System.out.println("Collection does not contain any models");
+            ClusLogger.info("Collection does not contain any models");
         }
         else {
             for (int i = 0; i < getNbModels(); i++) {
                 ClusModelInfo info = (ClusModelInfo) m_ModelInfos.get(i);
-                System.out.println("Model: " + info.getName());
+                ClusLogger.info("Model: " + info.getName());
             }
         }
     }

@@ -60,7 +60,7 @@ public class BitwiseNominalAttrType extends NominalAttrType {
 
     @Override
     public void setNominal(DataTuple tuple, int value) {
-        // System.out.println("BIT setNominal: " + value+ " arrayindex: " + getArrayIndex() + " bitpos: " +
+        // ClusLogger.info("BIT setNominal: " + value+ " arrayindex: " + getArrayIndex() + " bitpos: " +
         // getBitPosition());
         int intvalue = tuple.getIntVal(getArrayIndex()) | (value << getBitPosition());
         tuple.setIntVal(intvalue, getArrayIndex());

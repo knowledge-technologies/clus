@@ -39,6 +39,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
 import si.ijs.kt.clus.util.exception.ClusException;
 
@@ -85,7 +86,7 @@ public class FindBestTests {
         RowData sample = createSample(data, rnd);
         int nbvalues = at.getNbValues();
         
-        //System.out.println("Adding nom test");
+        //ClusLogger.info("Adding nom test");
         
         SubsetSplit split = new SubsetSplit();
         split.initialize(m_StatManager);
@@ -128,7 +129,7 @@ public class FindBestTests {
         RowData sample = createSample(data, rnd);
         DataTuple tuple;
 
-        //System.out.println("Adding num test");
+        //ClusLogger.info("Adding num test");
         
         TestAndHeuristic tnh = new TestAndHeuristic(getSettings());
         tnh.create(m_StatManager, m_MaxStats);
@@ -156,7 +157,7 @@ public class FindBestTests {
             tnh.subtractMissing();
         }
         
-        //System.out.println(nb_rows);
+        //ClusLogger.info(nb_rows);
         
         double prev = Double.NaN;
         for (int j = first; j < nb_rows; j++) {
@@ -270,7 +271,7 @@ public class FindBestTests {
             System.out.print(" heuristic: ");
             System.out.print(tnh.m_BestHeur);
             System.out.print(" split: ");
-            System.out.println(tnh.m_Split);
+            ClusLogger.info(tnh.m_Split);
         }
     }
     

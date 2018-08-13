@@ -29,6 +29,7 @@ import java.util.Arrays;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.util.array.MDoubleArray;
 
 
@@ -54,7 +55,7 @@ public class HierMatrixOutput {
             wrt.close();
         }
         catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            ClusLogger.info("Error: " + e.getMessage());
         }
     }
 

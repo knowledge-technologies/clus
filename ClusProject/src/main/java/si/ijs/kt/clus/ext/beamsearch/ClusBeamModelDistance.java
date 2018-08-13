@@ -256,7 +256,7 @@ public class ClusBeamModelDistance {
                 dist += getDistance(predictions.get(m), predictions.get(n));
             }
             dist = 1 - (dist / beam.size());
-            // System.out.println("Model "+m+": "+(-((ClusBeamModel)beam.get(m)).getValue())+"\t"+dist);
+            // ClusLogger.info("Model "+m+": "+(-((ClusBeamModel)beam.get(m)).getValue())+"\t"+dist);
             result += dist;
         }
         return result / beam.size();

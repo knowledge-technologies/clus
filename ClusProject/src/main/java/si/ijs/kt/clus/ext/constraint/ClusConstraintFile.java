@@ -32,6 +32,7 @@ import java.util.HashMap;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.model.io.ClusTreeReader;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -61,7 +62,7 @@ public class ClusConstraintFile {
     public void load(String fname, ClusSchema schema) throws IOException {
         ClusTreeReader rdr = new ClusTreeReader();
         ClusNode root = rdr.loadTree(fname, schema);
-        System.out.println("Constraint: ");
+        ClusLogger.info("Constraint: ");
         root.printTree();
         m_Constraints.put(fname, root);
     }

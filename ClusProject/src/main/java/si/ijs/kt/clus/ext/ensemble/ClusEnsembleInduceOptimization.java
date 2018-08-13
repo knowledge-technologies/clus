@@ -299,7 +299,7 @@ public abstract class ClusEnsembleInduceOptimization implements Serializable {
     // }
 
     public abstract void roundPredictions(); // {
-    // System.out.println("Rounding up predictions!");
+    // ClusLogger.info("Rounding up predictions!");
     // if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY)
     // ClusEnsembleInduceOptClassification.roundPredictions();
     // else if (ClusStatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL || ClusStatManager.getMode() ==

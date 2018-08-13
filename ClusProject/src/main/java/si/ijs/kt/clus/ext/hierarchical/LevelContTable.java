@@ -48,7 +48,7 @@ public class LevelContTable {
      * public void setDefault(ClusStatistic stat) {
      * }
      * public void addExample(ClusData data, int idx, ClusStatistic pred) {
-     * System.out.println("LevelContTable: addExample/3 not implemented");
+     * ClusLogger.info("LevelContTable: addExample/3 not implemented");
      * }
      * public double calcSquaredDistance(ClassesTuple ex, SPMDStatistic pred) {
      * int nb = ex.size();

@@ -5,6 +5,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.GeneticDistanceStat;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
@@ -114,7 +115,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
 
     // the number of positions that are different
     public double getEditDistance(String[] seq1, String[] seq2) {
-        // System.out.println("edit");
+        // ClusLogger.info("edit");
         double p = 0;
         for (int i = 0; i < seq1.length; i++) {
             if (!seq1[i].equals(seq2[i])) {
@@ -143,9 +144,9 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
         }
         double p_distance = p / nb;
         if (p_distance == Double.POSITIVE_INFINITY)
-            System.out.println("p: " + p + " nb: " + nb + " " + seq1 + " " + seq2);
+            ClusLogger.info("p: " + p + " nb: " + nb + " " + seq1 + " " + seq2);
         if (p_distance == Double.NEGATIVE_INFINITY)
-            System.out.println("p: " + p + " nb: " + nb + " " + seq1 + " " + seq2);
+            ClusLogger.info("p: " + p + " nb: " + nb + " " + seq1 + " " + seq2);
         return p_distance;
     }
 
@@ -156,7 +157,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
         double jk_distance;
         if (p_distance > 0.749) {
             jk_distance = 2.1562; // not defined for >= 0.75
-            System.out.println("Warning: infinite Jukes Cantor distance (p-distance => 0.75), set to 2.1562");
+            ClusLogger.info("Warning: infinite Jukes Cantor distance (p-distance => 0.75), set to 2.1562");
         }
         else
             jk_distance = -0.75 * Math.log(1.0 - ((4.0 * p_distance) / 3.0));
@@ -211,7 +212,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
         double term2 = Math.log10(1.0 / (1.0 - 2.0 * tv_ratio));
         double kimura = term1 + term2;
 
-        // System.out.println("kimura_distance: " + kimura);
+        // ClusLogger.info("kimura_distance: " + kimura);
         return kimura;
     }
 
@@ -221,7 +222,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
         double kimura;
         if (p_distance > 0.8541) {
             kimura = 12.84; // not defined for >= 0.8514
-            System.out.println("Warning: infinite AminoKimura distances (p-distance > 0.85), set to 12.84");
+            ClusLogger.info("Warning: infinite AminoKimura distances (p-distance > 0.85), set to 12.84");
         }
         else
             kimura = -1.0 * Math.log(1.0 - p_distance - 0.2 * Math.pow(p_distance, 2.0));
@@ -341,16 +342,16 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
 
     /*
      * public int getOriginalIndex(DataTuple tuple) {
-     * //System.out.println("target tuple: " + tuple.toString());
+     * //ClusLogger.info("target tuple: " + tuple.toString());
      * String str = tuple.toString();
      * for(int i=0; i<m_RootData.getNbRows(); i++) {
      * DataTuple oertuple = m_RootData.getTuple(i);
      * String oerstr = oertuple.toString();
-     * //System.out.println("tuple: " + i + " : " + oertuple.toString());
+     * //ClusLogger.info("tuple: " + i + " : " + oertuple.toString());
      * if (str.equals(oerstr))
      * return i;
      * }
-     * System.out.println("*************** original tupleindex not found *****************");
+     * ClusLogger.info("*************** original tupleindex not found *****************");
      * return -1;
      * }
      */
@@ -390,7 +391,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
      * for (int p=0; p<nbtargets; p++) {
      * Set posset = poshash[p].keySet();
      * Set negset = neghash[p].keySet();
-     * //System.out.println("pos " + p + " : posset = " + posset.toString() + " negset = " + negset.toString());
+     * //ClusLogger.info("pos " + p + " : posset = " + posset.toString() + " negset = " + negset.toString());
      * int nbintersection = intersectionSize(posset,negset);
      * // if nbintersection == 0 -> for sure a mutation happened
      * // if nbintersection == 1 -> for sure no mutation happened
@@ -425,7 +426,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
      * }
      * for (int p=0; p<nbtargets; p++) {
      * Set set = hash[p].keySet();
-     * //System.out.println("pos " + p + " : posset = " + posset.toString() + " negset = " + negset.toString());
+     * //ClusLogger.info("pos " + p + " : posset = " + posset.toString() + " negset = " + negset.toString());
      * int mutationsatposition = set.size()-1;
      * nbmutations += mutationsatposition;
      * }
@@ -454,7 +455,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
      * }
      * dist2 += getDistance(proto,ch);
      * }
-     * // System.out.println("dist: " + dist + " dist2: " + dist2);
+     * // ClusLogger.info("dist: " + dist + " dist2: " + dist2);
      * return dist;
      * //return dist2;
      * }
@@ -579,8 +580,8 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
      * nstat.subtractFromThis(pstat);
      * double n_pos = pstat.m_SumWeight;
      * double n_neg = nstat.m_SumWeight;
-     * // System.out.println("nb pos examples: " + n_pos);
-     * // System.out.println("nb neg examples: " + n_neg);
+     * // ClusLogger.info("nb pos examples: " + n_pos);
+     * // ClusLogger.info("nb neg examples: " + n_neg);
      * // Acceptable test?
      * if (n_pos < Settings.MINIMAL_WEIGHT || n_neg < Settings.MINIMAL_WEIGHT) {
      * return Double.NEGATIVE_INFINITY;
@@ -605,7 +606,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
      * // double interiordist = calculatePairwiseDistance(pstat,m_Data,nstat,m_Data);
      * // double interiordist = calculateTotalDistanceBetweenPrototypeMatrices(tstat.m_NbTarget,pstat,nstat);
      * double interiordist = calcPWSLDistance(posindices, negindices);
-     * // System.out.println("heur = " + interiordist);
+     * // ClusLogger.info("heur = " + interiordist);
      * //double maxposdist = calculateTotalDistanceToPrototype(tstat.m_NbTarget, pstat,m_Data);
      * //double maxnegdist = calculateTotalDistanceToPrototype(tstat.m_NbTarget, nstat,m_Data);
      * //double posdist = calculateStarDistance(pstat,m_Data);
@@ -616,7 +617,7 @@ public abstract class GeneticDistanceHeuristic extends ClusHeuristic {
      * //double negdist = (maxnegdist + minnegdist) / 2;
      * double result = interiordist;
      * // double result = calcTotalDistanceWithSlAsProto(posindices, negindices);
-     * //System.out.println("posdist: " + posdist + " (max: " + maxposdist + ", min: " + minposdist + ") " +
+     * //ClusLogger.info("posdist: " + posdist + " (max: " + maxposdist + ", min: " + minposdist + ") " +
      * " negdist: " + negdist + " (max: " + maxnegdist + ", min: " + minnegdist + ") "+ " interior: " + interiordist +
      * " result: " + result);
      * //return 0.0 - result;

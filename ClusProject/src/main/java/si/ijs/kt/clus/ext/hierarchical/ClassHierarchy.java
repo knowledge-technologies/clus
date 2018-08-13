@@ -44,6 +44,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyWeight;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.SingleStat;
 import si.ijs.kt.clus.util.jeans.tree.CompleteTreeIterator;
@@ -177,7 +178,7 @@ public class ClassHierarchy implements Serializable {
             ClassTerm term = getTermAt(i);
             term.setIndex(i);
         }
-        // matejp: commented this out: System.out.println("Hierarchy initialized: " + getTotal() + " nodes");
+        // matejp: commented this out: ClusLogger.info("Hierarchy initialized: " + getTotal() + " nodes");
         // after this, the hierarchy must not change anymore
         setLocked(true);
     }
@@ -451,17 +452,17 @@ public class ClassHierarchy implements Serializable {
     public final void showSummary() {
         int leaves = 0;
         int depth = getMaxDepth();
-        System.out.println("Depth: " + depth);
-        System.out.println("Nodes: " + getTotal());
+        ClusLogger.info("Depth: " + depth);
+        ClusLogger.info("Nodes: " + getTotal());
         ClassTerm root = getRoot();
         int nb = root.getNbChildren();
         for (int i = 0; i < nb; i++) {
             ClassTerm chi = (ClassTerm) root.getChild(i);
             int nbl = chi.getNbLeaves();
-            System.out.println("Child " + i + ": " + chi.getID() + " " + nbl);
+            ClusLogger.info("Child " + i + ": " + chi.getID() + " " + nbl);
             leaves += nbl;
         }
-        System.out.println("Leaves: " + leaves);
+        ClusLogger.info("Leaves: " + leaves);
     }
 
 
@@ -488,7 +489,7 @@ public class ClassHierarchy implements Serializable {
 
 
     public final ClassTerm getClassTermDAG(ClassesValue vl) throws ClusException {
-        // System.out.println("Meest specifieke klasse: "+vl.getMostSpecificClass());
+        // ClusLogger.info("Meest specifieke klasse: "+vl.getMostSpecificClass());
         ClassTerm term = getClassTermByName(vl.getMostSpecificClass());
         if (term == null)
             throw new ClusException("Classes value not in DAG hierarchy: " + vl.toPathString());
@@ -563,7 +564,7 @@ public class ClassHierarchy implements Serializable {
         for (int i = 0; i < cls.length; i++) {
             String[] rel = cls[i].split("\\s*\\/\\s*");
             if (rel.length != 2) {
-                // System.out.println(cls[i]);
+                // ClusLogger.info(cls[i]);
                 throw new ClusException("Illegal parent child tuple in .arff");
             }
             String parent = rel[0];
@@ -607,7 +608,7 @@ public class ClassHierarchy implements Serializable {
                 findCycleRecursive(child, visited, pi, hasCycle);
             }
             else if (visited[child.getIndex()] == DFS_GRAY) {
-                System.out.println("Cycle: ");
+                ClusLogger.info("Cycle: ");
                 System.out.print("(" + term.getID() + "," + child.getID() + ")");
                 ClassTerm w = term;
                 do {
@@ -615,7 +616,7 @@ public class ClassHierarchy implements Serializable {
                     w = pi[w.getIndex()];
                 }
                 while (w != child);
-                System.out.println();
+                ClusLogger.info();
                 hasCycle[0] = true;
             }
         }

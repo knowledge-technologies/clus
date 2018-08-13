@@ -34,6 +34,7 @@ import si.ijs.kt.clus.model.test.InverseNumericTest;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.NumericTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 public class TestAndHeuristic {
@@ -96,14 +97,14 @@ public class TestAndHeuristic {
     public final NodeTest updateTest() {
         if (m_TestType == TYPE_NUMERIC) {
             m_TestType = TYPE_TEST;
-            //System.out.println(m_SplitAttr);
+            //ClusLogger.info(m_SplitAttr);
             m_Test = new NumericTest(m_SplitAttr.getType(), m_Split, m_PosFreq);
         } else if (m_TestType == TYPE_INVERSE_NUMERIC) {
             m_TestType = TYPE_TEST;
             m_Test = new InverseNumericTest(m_SplitAttr.getType(), m_Split, m_PosFreq);
         }
         if (m_Test == null) {
-            System.out.println("Best test is null");
+            ClusLogger.info("Best test is null");
         }
         m_Test.preprocess(ClusDecisionTree.DEPTH_FIRST);
         m_Test.setUnknownFreq(m_UnknownFreq);
@@ -136,7 +137,7 @@ public class TestAndHeuristic {
         m_TestType = TYPE_NONE;
         m_BestHeur = Double.NEGATIVE_INFINITY;
         m_UnknownFreq = 0.0;
-        //System.out.println("Reset test");
+        //ClusLogger.info("Reset test");
         // resetAlternativeBest();
     }
 
@@ -222,10 +223,10 @@ public class TestAndHeuristic {
  ***************************************************************************/
 
     public final void create(ClusStatManager smanager, int nbstat) throws ClusException {
-        //System.out.println("Create called");
+        //ClusLogger.info("Create called");
         m_TotStat = null;
         m_Heuristic = smanager.getHeuristic();
-        //System.out.println(m_Heuristic == null);
+        //ClusLogger.info(m_Heuristic == null);
         m_TestStat = new ClusStatistic[nbstat];
         for (int i = 0; i < nbstat; i++) {
             m_TestStat[i] = smanager.createClusteringStat();
@@ -312,8 +313,8 @@ public class TestAndHeuristic {
     // Where is this used?
     public final void updateNumeric(double val, ClusStatistic pos, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, pos, m_MissingStat);
-        //System.out.println(heur);
-        //System.out.println(m_BestHeur);
+        //ClusLogger.info(heur);
+        //ClusLogger.info(m_BestHeur);
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
@@ -323,18 +324,18 @@ public class TestAndHeuristic {
             m_Split = val;
             m_BestHeur = heur;
             m_SplitAttr = at;
-            //System.out.println("Test set");
+            //ClusLogger.info("Test set");
         }
     }
 
     public final void updateNumeric(double val, ClusAttrType at) throws ClusException {
-        //System.out.println(m_Heuristic == null);
-        // System.out.println(val);
+        //ClusLogger.info(m_Heuristic == null);
+        // ClusLogger.info(val);
         
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
-        //System.out.println(m_BestHeur);
-        //System.out.println(heur);
+        //ClusLogger.info(m_BestHeur);
+        //ClusLogger.info(heur);
         if (heur - ClusHeuristic.DELTA > m_BestHeur ) {
             if (m_Sett.getGeneral().getVerbose() >= 2) System.err.println("Better.");
             double tot_w = getTotWeight();
@@ -349,7 +350,7 @@ public class TestAndHeuristic {
             m_BestHeur = heur;
             m_SplitAttr = at;
         }
-//      System.out.println("Try: "+at+">"+ClusFormat.TWO_AFTER_DOT.format(val)+" -> "+heur);
+//      ClusLogger.info("Try: "+at+">"+ClusFormat.TWO_AFTER_DOT.format(val)+" -> "+heur);
 //      DebugFile.log(""+at.getType().getName()+">"+ClusFormat.TWO_AFTER_DOT.format(val)+","+heur);
     }
 

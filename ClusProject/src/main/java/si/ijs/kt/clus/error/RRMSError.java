@@ -10,6 +10,7 @@ import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
 
@@ -135,7 +136,7 @@ public class RRMSError extends MSError {
         double defaultModelError = (m_SumSquaredTrueValues[i] - m_SumTrueValues[i] * m_SumTrueValues[i] / m_nbEx[i]) / m_nbEx[i];
 
         if (defaultModelError == 0) {
-            System.out.println("Default error is zero.");
+            ClusLogger.info("Default error is zero.");
         }
         return Math.sqrt(modelError / defaultModelError);
 

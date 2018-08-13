@@ -48,6 +48,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsTree.TreeOptimizeValues;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.exception.ClusException;
 
@@ -149,7 +150,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
             if (altarity != arity) {
                 v.remove(k);
                 k--;
-                System.out.println("Alternative split with different arity: " + nt.getString());
+                ClusLogger.info("Alternative split with different arity: " + nt.getString());
             }
             else {
                 // arity altijd 2 hier
@@ -188,13 +189,13 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
                 if (!same) {
                     v.remove(k);
                     k--;
-                    System.out.println("Alternative split with different ex in subsets: " + nt.getString());
+                    ClusLogger.info("Alternative split with different ex in subsets: " + nt.getString());
                 }
 
             }
         }
         node.setAlternatives(v);
-        // if (removed) System.out.println("Alternative splits were possible");
+        // if (removed) ClusLogger.info("Alternative splits were possible");
     }
 
 
@@ -287,7 +288,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 
 
     public void induce(ArrayList<ClusNode> listNodes, ArrayList<RowData> subsets, ArrayList<RowData> dataLeaves, int bestTestIndex) throws Exception {
-        // System.out.println("nonsparse induce");
+        // ClusLogger.info("nonsparse induce");
 
         // System.out.print("Best node index is "+bestTestIndex+"\n");
 
@@ -297,7 +298,7 @@ public class BestFirstInduce extends ClusInductionAlgorithm {
 
         // Output best test
         if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Test: " + node.getTestString() + " -> " + node.getTest().getHeuristicValue());
+            ClusLogger.info("Test: " + node.getTestString() + " -> " + node.getTest().getHeuristicValue());
 
         // Extending the node
 

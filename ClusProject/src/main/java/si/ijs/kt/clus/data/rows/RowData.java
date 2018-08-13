@@ -49,6 +49,7 @@ import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.SoftTest;
 import si.ijs.kt.clus.selection.ClusSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.ClusRandomNonstatic;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -489,7 +490,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         // Arrays.sort(other, 0, nbother);
         MSorter.quickSort(helper, 0, nbother);
         // long done_time = ResourceInfo.getTime();
-        // System.out.println("Sorting took: "+((double)(done_time-start_time)/1000.0)+" sec");
+        // ClusLogger.info("Sorting took: "+((double)(done_time-start_time)/1000.0)+" sec");
         int pos = 0;
         for (int i = 0; i < nbmiss; i++) {
             m_Data[pos++] = missing[i];
@@ -1083,25 +1084,25 @@ public class RowData extends ClusData implements MSortable, Serializable {
 
 
     public void showDebug(ClusSchema schema) {
-        System.out.println("Data: " + m_NbRows + " Size: " + m_Data.length);
+        ClusLogger.info("Data: " + m_NbRows + " Size: " + m_Data.length);
         for (int i = 0; i < m_NbRows; i++) {
             DataTuple tuple = getTuple(i);
             if (tuple == null) {
-                System.out.println("? ");
+                ClusLogger.info("? ");
             }
             else {
                 ClusAttrType at = schema.getAttrType(0);
-                System.out.println(at.getString(tuple));
+                ClusLogger.info(at.getString(tuple));
                 /*
                  * if (tuple.m_Index == -1) {
-                 * System.out.println(" Folds: "+MyIntArray.print(tuple.m_Folds));
+                 * ClusLogger.info(" Folds: "+MyIntArray.print(tuple.m_Folds));
                  * } else {
-                 * System.out.println(" LO: "+tuple.m_Index);
+                 * ClusLogger.info(" LO: "+tuple.m_Index);
                  * }
                  */
             }
         }
-        System.out.println();
+        ClusLogger.info();
     }
 
 
@@ -1200,7 +1201,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
                 System.out.print(",");
             System.out.print(type.getName());
         }
-        System.out.println();
+        ClusLogger.info();
         for (int i = 0; i < m_NbRows; i++) {
             DataTuple tuple = getTuple(i);
             for (int j = 0; j < m_Schema.getNbAttributes(); j++) {
@@ -1209,7 +1210,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
                     System.out.print(",");
                 System.out.print(type.getString(tuple));
             }
-            System.out.println();
+            ClusLogger.info();
         }
     }
 
@@ -1393,7 +1394,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
      * ClusAttrType target = targets[rndtarget];
      * int targettype = target.getValueType();
      * if (targettype != ClusAttrType.VALUE_TYPE_INT) {
-     * System.out.println("Target not nominal: ClusAttrType " + targettype);
+     * ClusLogger.info("Target not nominal: ClusAttrType " + targettype);
      * }
      * else {
      * for (int i = 0; i < getNbRows(); i++) {
@@ -1411,7 +1412,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
      * }
      * Set<Integer> keys = classhash.keySet();
      * Iterator<Integer> keysit = keys.iterator();
-     * //System.out.println("Printing " + getNbRows() + " tuples");
+     * //ClusLogger.info("Printing " + getNbRows() + " tuples");
      * ArrayList<Integer> result = new ArrayList<Integer>();
      * while (keysit.hasNext())
      * {
@@ -1425,7 +1426,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
      * //for (int j=0;j<intarray.length;j++) {
      * // System.out.print(intarray[j].toString()+" ");
      * //}
-     * //System.out.println();
+     * //ClusLogger.info();
      * }
      * return result;
      * }

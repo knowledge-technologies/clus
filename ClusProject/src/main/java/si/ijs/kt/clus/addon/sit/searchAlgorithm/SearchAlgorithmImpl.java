@@ -50,7 +50,7 @@ public abstract class SearchAlgorithmImpl implements SearchAlgorithm {
 
         String error = m_Sett.getSIT().getError();
         if (error.equals("MSE")) {
-            // System.out.println("using mse");
+            // ClusLogger.info("using mse");
             return 1 - Evaluator.getMSE(folds, mainTarget.getArrayIndex());
         }
         if (error.equals("MisclassificationError")) { return 1 - Evaluator.getMisclassificationError(folds, mainTarget.getArrayIndex()); }

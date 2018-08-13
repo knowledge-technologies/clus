@@ -6,6 +6,7 @@ import java.util.Iterator;
 
 import si.ijs.kt.clus.addon.sit.TargetSet;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -35,7 +36,7 @@ public class TC extends SearchAlgorithmImpl {
                 TargetSet test = new TargetSet(target);
                 ClusAttrType from = (ClusAttrType) i2.next();
                 test.add(from);
-                // System.out.println("Transfer from:"+from+" to: "+target);
+                // ClusLogger.info("Transfer from:"+from+" to: "+target);
                 double err = eval(test, target);
                 l.add((err - base_err) / base_err);
 
@@ -44,7 +45,7 @@ public class TC extends SearchAlgorithmImpl {
             for (int c = (l.size() - 1); c > 0; c--) {
                 System.out.print(l.get(c) + ",");
             }
-            System.out.println(l.get(0) + "],");
+            ClusLogger.info(l.get(0) + "],");
 
         }
 

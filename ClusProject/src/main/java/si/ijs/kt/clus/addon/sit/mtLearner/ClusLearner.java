@@ -67,7 +67,7 @@ public class ClusLearner extends MTLearnerImpl {
 
                 tr.setWeight(tr.getWeight() / test.getNbRows());
                 // tr.setWeight(1);
-                // System.out.println(tr.getWeight());
+                // ClusLogger.info(tr.getWeight());
 
             }
 

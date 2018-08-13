@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+import si.ijs.kt.clus.util.ClusLogger;
+
 public class SaveLoadNeighbours {
 	/**
 	 * The file, storing the nearest neighbours data:<br>
@@ -53,7 +55,7 @@ public class SaveLoadNeighbours {
 		PrintWriter writer = new PrintWriter(m_OutputFile, "UTF-8");
 		ArrayList<String> lines = new ArrayList<String>();
 		for(Integer targetInd : nearestNeighbours.keySet()) {
-			System.out.println("Saving target index " + targetInd.toString());
+			ClusLogger.info("Saving target index " + targetInd.toString());
 			lines.add(String.format("%s;%d", START_TARGET, targetInd));
 			HashMap<Integer, NearestNeighbour[][]> neighboursTarget = nearestNeighbours.get(targetInd);
 			for(Integer tupleInd : neighboursTarget.keySet()) {
@@ -80,11 +82,11 @@ public class SaveLoadNeighbours {
 			lines = new ArrayList<String>();
 		}
 		writer.close();
-		System.out.println("Nearest neighbours written to: " + m_OutputFile);
+		ClusLogger.info("Nearest neighbours written to: " + m_OutputFile);
 	}
 	
 	public HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> loadNeighboursFromFile(String nearestNeighboursFile) throws IOException {
-		System.out.println("Loading from " + nearestNeighboursFile);
+		ClusLogger.info("Loading from " + nearestNeighboursFile);
 		HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>> nearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
 		int dummy = -123;
 		Integer targetInd = dummy;
@@ -97,7 +99,7 @@ public class SaveLoadNeighbours {
 	    String line = br.readLine();	    
 	    while (line != null) {
 	    	if(line.startsWith(START_TARGET)) {
-	    		System.out.println(line);
+	    		ClusLogger.info(line);
 	    		// start processing new target
 	    		targetInd = intAfterSemicolon(line);
 	    		nearestNeighbours.put(targetInd, new HashMap<Integer, NearestNeighbour[][]>());
@@ -140,7 +142,7 @@ public class SaveLoadNeighbours {
 	        line = br.readLine();
 	    }
 	    br.close();
-	    System.out.println("Loaded");
+	    ClusLogger.info("Loaded");
 		return nearestNeighbours;
 	}
 	

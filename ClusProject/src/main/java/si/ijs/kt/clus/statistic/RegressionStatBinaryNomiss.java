@@ -22,12 +22,10 @@
 
 package si.ijs.kt.clus.statistic;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
-import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;

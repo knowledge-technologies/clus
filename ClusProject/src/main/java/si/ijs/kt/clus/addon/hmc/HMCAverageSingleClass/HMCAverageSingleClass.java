@@ -57,6 +57,7 @@ import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
@@ -200,7 +201,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                 int[] mapping_classes = new int[schema.getNbAttributes()];
                 for (int y = 0; y < na.length; y++) {
                     String label = na[y].getName();
-                    // System.out.println("Label: "+label);
+                    // ClusLogger.info("Label: "+label);
                     boolean found = false;
                     for (int a = 0; a < hier.getTotal(); a++) {
                         if (hier.getTermAt(a).toStringHuman(hier).equals(label)) {
@@ -234,11 +235,11 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                  */
 
                 // check
-                System.out.println("Number of rows in predictions-file: " + rw.getNbRows());
-                System.out.println("Number of rows in test-file: " + testset.getNbRows());
+                ClusLogger.info("Number of rows in predictions-file: " + rw.getNbRows());
+                ClusLogger.info("Number of rows in test-file: " + testset.getNbRows());
 
                 // m_NbModels = 1;
-                System.out.println("Number of classes: " + hier.getTotal());
+                ClusLogger.info("Number of classes: " + hier.getTotal());
 
                 // store predictions in predProb-matrix
                 // ClusAttrType[] keys = schema.getAllAttrUse(ClusAttrType.ATTR_USE_KEY);
@@ -246,7 +247,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                  * weggedaan 25/2
                  * StringAttrType key = (StringAttrType)schema.getAttrType(0);
                  */
-                // System.out.println("Lengte van key array: "+keys.length);
+                // ClusLogger.info("Lengte van key array: "+keys.length);
                 // StringAttrType key = (StringAttrType)keys[0];
                 for (int x = 0; x < rw.getNbRows(); x++) {
                     // for (int y=0;y<schema.getNbAttributes();y++) {
@@ -256,7 +257,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                      * DataTuple tuple_test = testset.getTuple(z);
                      */
                     //DataTuple tuple_test = testset.getTuple(x);
-                    // System.out.println("Tuple: "+tuple_test.toString());
+                    // ClusLogger.info("Tuple: "+tuple_test.toString());
                     /*
                      * if (!key.getString(tuple).equals(key.getString(tuple_test))) {
                      * throw new ClusException("Key attributes do not match: "+key.getString(tuple)+" <> "
@@ -265,7 +266,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                      */
                     for (int y = 0; y < na.length; y++) {
                         int a = mapping_classes[y];
-                        // System.out.println("Storing "+na[y].getNumeric(tuple)+" in example "+z+" for class "+a);
+                        // ClusLogger.info("Storing "+na[y].getNumeric(tuple)+" in example "+z+" for class "+a);
                         /* m_PredProb[0][z][a] = na[y].getNumeric(tuple); //na[0]: eerste attribuut (klasse); */
                         m_PredProb[0][x][a] = na[y].getNumeric(tuple);
                     }
@@ -274,7 +275,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
 
                 // Array with error measures for each threshold
                 INIFileNominalOrDoubleOrVector class_thr = getSettings().getHMLC().getClassificationThresholds();
-                // System.out.println("Bool is "+class_thr.isVector());
+                // ClusLogger.info("Bool is "+class_thr.isVector());
                 if (class_thr.isVector()) {
                     HierClassTresholdPruner pruner = (HierClassTresholdPruner) getStatManager().getTreePruner(null);
                     m_EvalArray = new ClusErrorList[2][pruner.getNbResults()];
@@ -283,7 +284,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                         m_EvalArray[ClusModelInfoList.TESTSET][i] = new ClusErrorList();
                         m_EvalArray[ClusModelInfoList.TESTSET][i].addError(new HierClassWiseAccuracy(m_EvalArray[ClusModelInfoList.TESTSET][i], hier));
                         m_EvalArray[ClusModelInfoList.TESTSET][i].addError(null); // why is this necessary again?
-                        // System.out.println("Evalarray: "+m_EvalArray[ClusModelInfoList.TESTSET][i].getNbTotal());
+                        // ClusLogger.info("Evalarray: "+m_EvalArray[ClusModelInfoList.TESTSET][i].getNbTotal());
                         // }
                     }
                 }
@@ -295,7 +296,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                 def_model.setModel(ClusDecisionTree.induceDefault(cr));
                 // Create original model
                 ClusModelInfo orig_model_inf = cr.addModelInfo(ClusModel.ORIGINAL);
-                // System.out.println("Number of models: "+m_NbModels);
+                // ClusLogger.info("Number of models: "+m_NbModels);
                 HMCAverageTreeModel orig_model = new HMCAverageTreeModel(target, m_PredProb, m_NbModels, m_TotSize);
                 orig_model_inf.setModel(orig_model);
                 // Calculate error measures
@@ -319,7 +320,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
                         pruned_info.setShouldWritePredictions(false);
                         // pruned_info.setTrainError(m_EvalArray[ClusModelInfoList.TRAINSET][i]);
                         pruned_info.setTestError(m_EvalArray[ClusModelInfoList.TESTSET][i]);
-                        // System.out.println("Evalarray: "+m_EvalArray[ClusModelInfoList.TESTSET][i].getNbExamples());
+                        // ClusLogger.info("Evalarray: "+m_EvalArray[ClusModelInfoList.TESTSET][i].getNbExamples());
                     }
                 }
                 output.writeHeader();
@@ -382,7 +383,7 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
 
     public ClusModel loadModel(String file) throws IOException, ClusException, ClassNotFoundException {
         String class_str = getClassStr(file);
-        System.out.println("Loading: " + file + " class: " + class_str);
+        ClusLogger.info("Loading: " + file + " class: " + class_str);
         ClusModelCollectionIO io = ClusModelCollectionIO.load(file);
         ClusModel sub_model = io.getModel("Original");
         if (sub_model == null) { throw new ClusException("Error: .model file does not contain model named 'Original'"); }
@@ -549,16 +550,16 @@ public class HMCAverageSingleClass implements CMDLineArgsProvider {
             avg.run(args);
         }
         catch (IOException io) {
-            System.out.println("IO Error: " + io.getMessage());
+            ClusLogger.info("IO Error: " + io.getMessage());
         }
         catch (ClusException cl) {
-            System.out.println("Error: " + cl.getMessage());
+            ClusLogger.info("Error: " + cl.getMessage());
         }
         catch (ClassNotFoundException cn) {
-            System.out.println("Error: " + cn.getMessage());
+            ClusLogger.info("Error: " + cn.getMessage());
         }
         catch (Exception e) {
-            System.out.println(e.toString());
+            ClusLogger.info(e.toString());
         }
     }
 }

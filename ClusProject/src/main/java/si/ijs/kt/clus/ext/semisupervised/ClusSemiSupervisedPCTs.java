@@ -24,6 +24,7 @@ import si.ijs.kt.clus.selection.RandomSelection;
 import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
@@ -183,9 +184,9 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 		        cr.setTrainingSet(trainingSet);
 	        }
 
-	        System.out.println();
-	        System.out.println("Weight parameter w = "+ bestWeight +" for SSL-PCT algorithm was selected via " + m_InternalXValFolds + "-fold internal cross validation");
-	        System.out.println();
+	        ClusLogger.info();
+	        ClusLogger.info("Weight parameter w = "+ bestWeight +" for SSL-PCT algorithm was selected via " + m_InternalXValFolds + "-fold internal cross validation");
+	        ClusLogger.info();
 	        
         } else {
         	bestWeight = m_ParameterValues[0];
@@ -262,7 +263,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 		if (m_UnlabeledData == null && tempTrainingSet.getNbUnlabeled() == 0) {
 			m_UnlabeledData = new RowData(cr.getStatManager().getSchema());
 			
-			System.out.println(
+			ClusLogger.info(
 					"UnlabeledData not set. Unlabeled examples will be selected from training set (Percentage labeled = "
 							+ m_PercentageLabeled + ")");
 
@@ -273,7 +274,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 			// we have to remove from training set instances which will be
 			// in the unlabeled set,
 			// because if we just set their weights to 0, they will anyway
-			// be selected in bagging process		
+			// be selected in bootstrapping process		
 			if(m_ParameterValues.length > 1) { //we should do parameter optimization, we need unlabeled data in a separate set
 				for (int i = 0; i < tempTrainingSet.getNbRows(); i++) {
 					if (!randomSelection.isSelected(i)) {
@@ -301,7 +302,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 			}
 			
 			if (cr.getTestSet() == null) {
-		           System.out.println("Testing data not set. Semi-supervised learning will be evaluated on unlabeled data.");
+		           ClusLogger.info("Testing data not set. Semi-supervised learning will be evaluated on unlabeled data.");
 		           cr.setTestSet(tempTestSet.getIterator());
 		    }
 		

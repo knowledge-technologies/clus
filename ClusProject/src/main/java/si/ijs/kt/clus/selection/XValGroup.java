@@ -22,6 +22,8 @@
 
 package si.ijs.kt.clus.selection;
 
+import si.ijs.kt.clus.util.ClusLogger;
+
 public class XValGroup {
 
     protected int[] m_Elements;
@@ -58,6 +60,6 @@ public class XValGroup {
                 System.out.print(",");
             System.out.print(getElement(i));
         }
-        System.out.println("]");
+        ClusLogger.info("]");
     }
 }

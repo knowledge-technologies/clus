@@ -43,6 +43,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -85,7 +86,7 @@ public class ConstraintDFInduce extends DepthFirstInduce {
             if (best.hasBestTest()) {
                 node.testToNode(best);
                 if (getSettings().getGeneral().getVerbose() > 0)
-                    System.out.println("Fill in Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
+                    ClusLogger.info("Fill in Test: " + node.getTestString() + " -> " + best.getHeuristicValue());
             }
             else {
                 node.makeLeaf();

@@ -40,6 +40,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.MDoubleArray;
 
@@ -105,8 +106,8 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
         int verbose = getSettings().getGeneral().getVerbose();
         for (int i = 0; i < nbTrees; i++) {
             if (verbose != 0) {
-                System.out.println();
-                System.out.println("Tree: " + i + " (of max: " + nbTrees + ")");
+                ClusLogger.info();
+                ClusLogger.info("Tree: " + i + " (of max: " + nbTrees + ")");
             }
             RowData train = trainData.sampleWeighted(m_Random);
             ClusNode tree = tdidt.induceSingleUnpruned(train, null);
@@ -114,7 +115,7 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
             double Lbar = computeAverageLoss(trainData, L);
             double beta = Lbar / (1 - Lbar);
             if (verbose != 0) {
-                System.out.println("Average loss: " + Lbar + " beta: " + beta);
+                ClusLogger.info("Average loss: " + Lbar + " beta: " + beta);
             }
             if (Lbar >= 0.5)
                 break;

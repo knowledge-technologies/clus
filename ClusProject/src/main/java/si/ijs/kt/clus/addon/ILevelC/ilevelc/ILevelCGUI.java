@@ -53,6 +53,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.ext.ilevelc.DerivedConstraintsComputer;
 import si.ijs.kt.clus.ext.ilevelc.ILevelConstraint;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 
@@ -163,8 +164,8 @@ public class ILevelCGUI extends JFrame {
                     repaint();
                 }
                 catch (Exception e) {
-                    System.out.println("Error saving: " + fname);
-                    System.out.println("Exception: " + e);
+                    ClusLogger.info("Error saving: " + fname);
+                    ClusLogger.info("Exception: " + e);
                     e.printStackTrace();
                 }
             }
@@ -192,8 +193,8 @@ public class ILevelCGUI extends JFrame {
                     wrt.close();
                 }
                 catch (Exception e) {
-                    System.out.println("Error saving: " + fname);
-                    System.out.println("Exception: " + e);
+                    ClusLogger.info("Error saving: " + fname);
+                    ClusLogger.info("Exception: " + e);
                     e.printStackTrace();
                 }
             }
@@ -330,11 +331,11 @@ public class ILevelCGUI extends JFrame {
             gui.setVisible(true);
         }
         catch (ClusException e) {
-            System.out.println("Exception: " + e);
+            ClusLogger.info("Exception: " + e);
             e.printStackTrace();
         }
         catch (IOException e) {
-            System.out.println("IOException: " + e);
+            ClusLogger.info("IOException: " + e);
             e.printStackTrace();
         }
     }

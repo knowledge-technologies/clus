@@ -17,6 +17,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class KNNLearner extends MTLearnerImpl {
@@ -30,8 +31,8 @@ public class KNNLearner extends MTLearnerImpl {
         writeCSV("test.csv" + appName, targets, test);
 
         /*
-         * System.out.println(train.getNbRows());
-         * System.out.println(test.getNbRows());
+         * ClusLogger.info(train.getNbRows());
+         * ClusLogger.info(test.getNbRows());
          */
 
         NumericAttrType[] descriptive = test.m_Schema.getNumericAttrUse(AttributeUseType.Descriptive);
@@ -49,7 +50,7 @@ public class KNNLearner extends MTLearnerImpl {
             for (int i = 0; i < commands.length; i++) {
                 System.out.print(commands[i] + " ");
             }
-            // System.out.println();
+            // ClusLogger.info();
 
             // commands = new String[]{"/home/beau/SIT_evaluation/gent/top40/ga_basic_SIT"};
 
@@ -57,7 +58,7 @@ public class KNNLearner extends MTLearnerImpl {
             //String line;
             //BufferedReader input = new BufferedReader(new InputStreamReader(child.getInputStream()));
             //while ((line = input.readLine()) != null) {
-                // System.out.println(line);
+                // ClusLogger.info(line);
             //}
 
             child.waitFor();
@@ -106,7 +107,7 @@ public class KNNLearner extends MTLearnerImpl {
 
         }
         catch (ArrayIndexOutOfBoundsException e) {
-            System.out.println("no results file found?");
+            ClusLogger.info("no results file found?");
         }
         catch (IOException e) {
             e.printStackTrace();

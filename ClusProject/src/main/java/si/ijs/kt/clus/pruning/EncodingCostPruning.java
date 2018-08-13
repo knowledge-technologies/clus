@@ -28,6 +28,7 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.heuristic.EncodingCost;
 import si.ijs.kt.clus.model.test.NodeTest;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -62,12 +63,12 @@ public class EncodingCostPruning extends PruneTree {
 
     @Override
     public void prune(ClusNode node) throws ClusException {
-        System.out.println("Encoding cost pruning started");
+        ClusLogger.info("Encoding cost pruning started");
         node.numberCompleteTree();
         int totalNbNodes = node.getTotalTreeSize();
         m_EC.initializeLogPMatrix(totalNbNodes);
         doPrune(node);
-        System.out.println("Encoding cost pruning resulted in the following clusters (1 per line):");
+        ClusLogger.info("Encoding cost pruning resulted in the following clusters (1 per line):");
         printInstanceLabels(node, m_Data);
         // m_EC.printDuration();
     }
@@ -75,14 +76,14 @@ public class EncodingCostPruning extends PruneTree {
 
     public void doPrune(ClusNode node) throws ClusException {
         m_Ecc = calculateEncodingCost(node, m_Data);
-        // System.out.println(" -> orig ecc = " + m_Ecc);
+        // ClusLogger.info(" -> orig ecc = " + m_Ecc);
         if (m_Ecc < m_BestEcc) {
             m_BestEcc = m_Ecc;
             m_BestTreeSoFar = node.cloneTreeWithVisitors();
         }
         traverseTreeAndRecordEncodingCostIfLeafChildren(node, node, m_Data);
         if (m_BestNodeToPrune != null) {
-            System.out.println("Pruning node such that ECC drops with " + m_EccGain);
+            ClusLogger.info("Pruning node such that ECC drops with " + m_EccGain);
             m_BestNodeToPrune.makeLeaf();
             m_EccGain = Double.NEGATIVE_INFINITY;
             m_BestNodeToPrune = null;
@@ -149,12 +150,12 @@ public class EncodingCostPruning extends PruneTree {
                 node.makeLeaf();
                 // calculate ecc
                 double ecc = calculateEncodingCost(rootNode, rootData);
-                // System.out.println("new ecc = " + ecc);
+                // ClusLogger.info("new ecc = " + ecc);
                 double eccGain = m_Ecc - ecc;
                 if (eccGain > m_EccGain) {
                     m_EccGain = eccGain;
                     m_BestNodeToPrune = node;
-                    // System.out.println("better!");
+                    // ClusLogger.info("better!");
                 }
                 // reset node
                 node.setTest(test);
@@ -184,12 +185,12 @@ public class EncodingCostPruning extends PruneTree {
             node.makeLeaf();
             // calculate ecc
             double ecc = calculateEncodingCost(rootNode, rootData);
-            System.out.println("new ecc = " + ecc);
+            ClusLogger.info("new ecc = " + ecc);
             double eccGain = m_Ecc - ecc;
             if (eccGain > m_EccGain) {
                 m_EccGain = eccGain;
                 m_BestNodeToPrune = node;
-                System.out.println("better!");
+                ClusLogger.info("better!");
             }
             // reset node
             node.setTest(test);
@@ -212,7 +213,7 @@ public class EncodingCostPruning extends PruneTree {
         else {
             clusters.add(data);
             clusterIds.add(new Integer(node.getID() - 1));
-            // System.out.println("cluster = " + (node.getID()-1));
+            // ClusLogger.info("cluster = " + (node.getID()-1));
         }
     }
 

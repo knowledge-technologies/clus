@@ -146,6 +146,7 @@ import si.ijs.kt.clus.statistic.HierSumPairwiseDistancesStat;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 
@@ -245,7 +246,7 @@ public class ClusStatManager implements Serializable {
 	}
 
 	public final ClassHierarchy getHier() {
-		// System.out.println("ClusStatManager.getHier/0 called");
+		// ClusLogger.info("ClusStatManager.getHier/0 called");
 		return m_Hier;
 	}
 
@@ -286,10 +287,10 @@ public class ClusStatManager implements Serializable {
 			double num_weight = winfo.getDouble(SettingsAttribute.NUMERIC_WEIGHT);
 			double nom_weight = winfo.getDouble(SettingsAttribute.NOMINAL_WEIGHT);
 			if (getSettings().getGeneral().getVerbose() >= 2) {
-				System.out.println("  Target weight     = " + target_weight);
-				System.out.println("  Non target weight = " + non_target_weight);
-				System.out.println("  Numeric weight    = " + num_weight);
-				System.out.println("  Nominal weight    = " + nom_weight);
+				ClusLogger.info("  Target weight     = " + target_weight);
+				ClusLogger.info("  Non target weight = " + non_target_weight);
+				ClusLogger.info("  Numeric weight    = " + num_weight);
+				ClusLogger.info("  Nominal weight    = " + nom_weight);
 			}
 			for (int i = 0; i < num.length; i++) {
 				NumericAttrType cr_num = num[i];
@@ -361,7 +362,7 @@ public class ClusStatManager implements Serializable {
 		initWeights(m_DispersionWeights, num, nom, getSettings().getRules().getDispersionWeights());
 		if (getSettings().getGeneral().getVerbose() >= 1 && (isRuleInduceOnly() || isTreeToRuleInduce())
 				&& getSettings().getRules().computeDispersion()) {
-			System.out.println(
+			ClusLogger.info(
 					"Dispersion:   " + m_DispersionWeights.getName(m_Schema.getAllAttrUse(AttributeUseType.All)));
 		}
 	}
@@ -417,7 +418,7 @@ public class ClusStatManager implements Serializable {
 			 * m_Schema.getNbDescriptiveAttributes()); m_ClusteringWeights.setWeight(cr,
 			 * sslweight); } }
 			 */
-			System.out.println("Clustering: "
+			ClusLogger.info("Clustering: "
 					+ m_ClusteringWeights.getName(m_Schema.getAllAttrUse(AttributeUseType.Clustering)));
 		}
 	}
@@ -486,7 +487,7 @@ public class ClusStatManager implements Serializable {
 		int nb_nom = m_Schema.getNbNominalAttrUse(AttributeUseType.Clustering);
 		int nb_num = m_Schema.getNbNumericAttrUse(AttributeUseType.Clustering);
 		if(getSettings().getGeneral().getVerbose() >= 1) {
-			System.out.println("Clustering attributes check ==> #nominal: " + nb_nom + " #numeric: " + nb_num);
+			ClusLogger.info("Clustering attributes check ==> #nominal: " + nb_nom + " #numeric: " + nb_num);
 		}
 
 		if (m_Schema.hasAttributeType(AttributeUseType.Target, AttributeType.Classes)) {
@@ -679,10 +680,10 @@ public class ClusStatManager implements Serializable {
 		case MODE_HIERARCHICAL_MTR:
 			if (getSettings().getHMTR().getHMTRDistance().getValue().equals(HierarchyDistanceHMTR.WeightedEuclidean)) {
 				if (getSettings().getGeneral().getVerbose() > 0)
-					System.out.println("HMTR - Euclidean distance");
+					ClusLogger.info("HMTR - Euclidean distance");
 			} else if (getSettings().getHMTR().getHMTRDistance().getValue().equals(HierarchyDistanceHMTR.Jaccard)) {
 				if (getSettings().getGeneral().getVerbose() > 0)
-					System.out.println("HMTR - Jaccard distance");
+					ClusLogger.info("HMTR - Jaccard distance");
 			}
 			m_HMTRHier = m_Schema.getHMTRHierarchy();
 			setTargetStatistic(new RegressionStat(getSettings(), num2, m_HMTRHier));
@@ -1413,12 +1414,12 @@ public class ClusStatManager implements Serializable {
 	}
 
 	public synchronized void setTargetStatistic(ClusStatistic stat) {
-		// System.out.println("Setting target statistic: " + stat.getClass().getName());
+		// ClusLogger.info("Setting target statistic: " + stat.getClass().getName());
 		m_StatisticAttrUse[AttributeUseType.Target.getIndex()] = stat;
 	}
 
 	public synchronized void setClusteringStatistic(ClusStatistic stat) {
-		// System.out.println("Setting clustering statistic: " +
+		// ClusLogger.info("Setting clustering statistic: " +
 		// stat.getClass().getName());
 		m_StatisticAttrUse[AttributeUseType.Clustering.getIndex()] = stat;
 	}
@@ -1543,7 +1544,7 @@ public class ClusStatManager implements Serializable {
 			if (!type.isDisabled() && type instanceof ClassesAttrType) {
 				ClassesAttrType cltype = (ClassesAttrType) type;
 				if (getSettings().getGeneral().getVerbose() >= 1) {
-					System.out.println("Classes type: " + type.getName());
+					ClusLogger.info("Classes type: " + type.getName());
 				}
 				m_Hier = cltype.getHier();
 				// idx++;

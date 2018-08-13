@@ -22,6 +22,8 @@
 
 package si.ijs.kt.clus.util.jeans.util.sort;
 
+import si.ijs.kt.clus.util.ClusLogger;
+
 public class DoubleIndexSorter {
 
     protected static DoubleIndexSorter m_Instance;
@@ -175,7 +177,7 @@ public class DoubleIndexSorter {
         sr.setData(arr);
         sr.sort();
         for (int i = 0; i < 80; i++) {
-            System.out.println(arr[i]);
+            ClusLogger.info(arr[i]);
         }
     }
 }

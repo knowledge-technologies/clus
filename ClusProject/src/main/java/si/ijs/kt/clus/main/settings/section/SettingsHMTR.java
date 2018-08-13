@@ -10,6 +10,7 @@ import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRHierarchy;
 import si.ijs.kt.clus.ext.hierarchicalmtr.ClusHMTRNode;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
@@ -143,8 +144,8 @@ public class SettingsHMTR extends SettingsBase {
 
             if (m_SettGeneral.getVerbose() > 0) {
                 System.out.print("Aggregate attributes (a.k.a. not present in the database): ");
-                System.out.println(String.join(", ", aggregates));
-                System.out.println();
+                ClusLogger.info(String.join(", ", aggregates));
+                ClusLogger.info();
             }
 
             int nb = schema.getNbAttributes();

@@ -40,6 +40,7 @@ import si.ijs.kt.clus.model.test.InverseNumericTest;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.model.test.NumericTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -134,7 +135,7 @@ public class CurrentBestTestAndHeuristic {
             m_BestTest = new InverseNumericTest(m_SplitAttr.getType(), m_BestSplit, m_PosFreq);
         }
         if (m_BestTest == null) {
-            System.out.println("Best test is null");
+            ClusLogger.info("Best test is null");
         }
         m_BestTest.preprocess(ClusDecisionTree.DEPTH_FIRST);
         m_BestTest.setUnknownFreq(m_UnknownFreq);
@@ -347,9 +348,9 @@ public class CurrentBestTestAndHeuristic {
     public final void calcMinMax(ClusAttrType at, double value) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
-            System.out.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
+            ClusLogger.info("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
         if (heur != Double.NEGATIVE_INFINITY) {
-            // System.out.println(at.getName()+" > "+value + "--> heur=" + heur);
+            // ClusLogger.info(at.getName()+" > "+value + "--> heur=" + heur);
             Double currentMin = mins.get(at.getName());
             if (currentMin == null) {
                 currentMin = Double.POSITIVE_INFINITY;
@@ -362,7 +363,7 @@ public class CurrentBestTestAndHeuristic {
             }
             if (heur > currentMax)
                 maxes.put(at.getName(), heur);
-            // System.out.println("at/h/min/max1: "+at+" "+heur+" "+mins.get(at.getName())+" "+maxes.get(at.getName()));
+            // ClusLogger.info("at/h/min/max1: "+at+" "+heur+" "+mins.get(at.getName())+" "+maxes.get(at.getName()));
         }
     }
 
@@ -394,7 +395,7 @@ public class CurrentBestTestAndHeuristic {
     public final void updateNumericGIS(double val, ClusAttrType at, Integer[] permutation) throws Exception {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
-            System.out.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
+            ClusLogger.info("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
 
         double I = 0;
         double alpha = SettingsTree.ALPHA; // daniela
@@ -416,7 +417,7 @@ public class CurrentBestTestAndHeuristic {
                 // boolean conditionI=true;
                 // conditionI = (I > m_BestI) && (I > 0); //1.option max I, max variance reduction
                 // heur = heur*I; //2.option multiplication of both
-                // System.out.println("old Var: "+heur+" "+hMin+"-->"+hMax+" old I: "+I); //3.option linear combination
+                // ClusLogger.info("old Var: "+heur+" "+hMin+"-->"+hMax+" old I: "+I); //3.option linear combination
                 // of both
                 GISHeuristic gisHeuristic = (GISHeuristic) m_Heuristic;
                 I = gisHeuristic.calcI(m_TotCorrStat, m_PosStat, m_MissingStat, permutation);
@@ -436,11 +437,11 @@ public class CurrentBestTestAndHeuristic {
 
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
-                System.out.println("Better.");
+                ClusLogger.info("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
             if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT) {
-                System.out.println(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
+                ClusLogger.info(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
             }
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
             m_TestType = TYPE_NUMERIC;
@@ -460,15 +461,15 @@ public class CurrentBestTestAndHeuristic {
         double heur = isEfficient ? m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat, ss_tot) : m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
 
         if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
-            System.out.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
+            ClusLogger.info("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
 
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
-                System.out.println("Better.");
+                ClusLogger.info("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
             if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT) {
-                System.out.println(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
+                ClusLogger.info(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
             }
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
             m_TestType = TYPE_NUMERIC;
@@ -477,7 +478,7 @@ public class CurrentBestTestAndHeuristic {
             m_BestHeur = heur;
             m_SplitAttr = at;
         }
-        // System.out.println("Try: "+at+">"+ClusFormat.TWO_AFTER_DOT.format(val)+" -> "+heur);
+        // ClusLogger.info("Try: "+at+">"+ClusFormat.TWO_AFTER_DOT.format(val)+" -> "+heur);
         // DebugFile.log(""+at.getType().getName()+">"+ClusFormat.TWO_AFTER_DOT.format(val)+","+heur);
     }
 
@@ -486,15 +487,15 @@ public class CurrentBestTestAndHeuristic {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
 
         if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
-            System.out.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
+            ClusLogger.info("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
 
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
-                System.out.println("Better.");
+                ClusLogger.info("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
             if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT) {
-                System.out.println(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
+                ClusLogger.info(" tot_w: " + tot_w + " tot_no_unk: " + tot_no_unk);
             }
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;
             m_TestType = TYPE_NUMERIC;
@@ -503,7 +504,7 @@ public class CurrentBestTestAndHeuristic {
             m_BestHeur = heur;
             m_SplitAttr = at;
         }
-        // System.out.println("Try: "+at+">"+ClusFormat.TWO_AFTER_DOT.format(val)+" -> "+heur);
+        // ClusLogger.info("Try: "+at+">"+ClusFormat.TWO_AFTER_DOT.format(val)+" -> "+heur);
         // DebugFile.log(""+at.getType().getName()+">"+ClusFormat.TWO_AFTER_DOT.format(val)+","+heur);
     }
 
@@ -520,10 +521,10 @@ public class CurrentBestTestAndHeuristic {
     public final void updateInverseNumeric(double val, ClusAttrType at) throws ClusException {
         double heur = m_Heuristic.calcHeuristic(m_TotCorrStat, m_PosStat, m_MissingStat);
         if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
-            System.out.println("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
+            ClusLogger.info("Heur: " + heur + " nb: " + m_PosStat.getTotalWeight());
         if (heur > m_BestHeur + ClusHeuristic.DELTA) {
             if (m_Sett.getGeneral().getVerbose() >= SHOW_TESTS_IN_OUTPUT)
-                System.out.println("Better.");
+                ClusLogger.info("Better.");
             double tot_w = getTotWeight();
             double tot_no_unk = getTotNoUnkW();
             m_UnknownFreq = (tot_w - tot_no_unk) / tot_w;

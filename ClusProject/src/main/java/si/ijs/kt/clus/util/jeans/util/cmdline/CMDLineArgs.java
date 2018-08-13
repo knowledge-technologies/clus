@@ -25,6 +25,8 @@ package si.ijs.kt.clus.util.jeans.util.cmdline;
 import java.util.ArrayList;
 import java.util.Hashtable;
 
+import si.ijs.kt.clus.util.ClusLogger;
+
 
 public class CMDLineArgs {
 
@@ -70,8 +72,8 @@ public class CMDLineArgs {
                         }
                         else {
                             $prov.showHelp();
-                            System.out.println();
-                            System.out.println("Option -" + arg + " requires " + arity + " arguments");
+                            ClusLogger.info();
+                            ClusLogger.info("Option -" + arg + " requires " + arity + " arguments");
                             return;
                         }
                         found = true;
@@ -79,8 +81,8 @@ public class CMDLineArgs {
                 }
                 if (!found) {
                     $prov.showHelp();
-                    System.out.println();
-                    System.out.println("Unknown option: -" + arg);
+                    ClusLogger.info();
+                    ClusLogger.info("Unknown option: -" + arg);
                     return;
                 }
             }

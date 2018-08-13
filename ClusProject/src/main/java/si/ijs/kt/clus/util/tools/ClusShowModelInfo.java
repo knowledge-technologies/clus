@@ -33,13 +33,14 @@ import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.io.ClusModelCollectionIO;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class ClusShowModelInfo {
 
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("Usage: java clus.tools.ClusShowModelInfo somefile.model");
+            ClusLogger.info("Usage: java clus.tools.ClusShowModelInfo somefile.model");
             System.exit(1);
         }
         try {

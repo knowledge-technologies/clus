@@ -49,6 +49,7 @@ import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -238,9 +239,9 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
             unlabeledAdded = 0;
             iterations++;
 
-            System.out.println();
-            System.out.println("SelfTraining iteration: " + iterations);
-            System.out.println();
+            ClusLogger.info();
+            ClusLogger.info("SelfTraining iteration: " + iterations);
+            ClusLogger.info();
 
             // we have to reset ClusOOBErrorEstimate, because it has static variables
             if (getSettings().getEnsemble().shouldEstimateOOB()) {
@@ -278,8 +279,8 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     airBagTrials++;
                     if (airBagTrials > m_maxAirbagTrials) {
                         m_Model = oldModel;
-                        // System.out.println("");
-                        System.out.println("Stopping because of airbag.");
+                        // ClusLogger.info("");
+                        ClusLogger.info("Stopping because of airbag.");
                         break; // this stops the main while loop
                     }
                 }
@@ -355,7 +356,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     }
                 }
 
-                System.out.println(m_PredConfidence.getCounter());
+                ClusLogger.info(m_PredConfidence.getCounter());
 
                 Arrays.sort(confidencesOOBErrors); // sort confidence scores
 
@@ -378,7 +379,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     // pValue = tTest.tTest(OOBErrors, Arrays.copyOfRange(OOBErrors, i, OOBErrors.length));
 
                     if (pValue < confidenceLevel) {
-                        System.out.println("AutomaticOOB: found threshold: " + confidencesOOBErrors[i].getFirst() + " (p-value = " + pValue + ")");
+                        ClusLogger.info("AutomaticOOB: found threshold: " + confidencesOOBErrors[i].getFirst() + " (p-value = " + pValue + ")");
                         m_Threshold = confidencesOOBErrors[i].getFirst();
                         thresholdFound = true;
                         break;
@@ -386,7 +387,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                 }
 
                 if (!thresholdFound) {
-                    System.out.println("AutomaticOOB: threshold not found, using 0.0");
+                    ClusLogger.info("AutomaticOOB: threshold not found, using 0.0");
                     m_Threshold = 0.0;
                     // confidenceLevel += 0.025;
                 }
@@ -410,7 +411,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                         }
                     }
                     HMCthreshold = thCalib.getThreshold();
-                    // System.out.println("best th: " + HMCthreshold + " card: " +
+                    // ClusLogger.info("best th: " + HMCthreshold + " card: " +
                     // ((calibrateByLabelCardinality)thCalib).getCardinality(HMCthreshold))
                 }
                 else {
@@ -448,7 +449,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                 // Threshold
                 m_UnlabeledCriteria = SSLUnlabeledCriteria.Threshold;
 
-                System.out.println("Threshold selected: " + m_Threshold);
+                ClusLogger.info("Threshold selected: " + m_Threshold);
             } // END - K PERCENTAGE MOST AVERAGE
 
             // BEGIN - THRESHOLD, OR AUTOMATICOOB
@@ -572,8 +573,8 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     unlabeledAdded = 0;
                     conf = confidenceScoresSorted[0].getValue();
 
-                    System.out.println("Started exhaustive search (current OOBError = " + bestOOB + ")");
-                    System.out.println();
+                    ClusLogger.info("Started exhaustive search (current OOBError = " + bestOOB + ")");
+                    ClusLogger.info();
 
                     for (double threshold : m_ExhaustiveSearchThresholds) {
                         // it would we useful to have confidences sorted(0 - biggest conf, max - lower conf), so we dont
@@ -625,11 +626,11 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
                             // writerTest.println(errTest.getModelError() + "," + errTrain.getModelError() + "," +
                             // OOBError);
-                            System.out.println("Trying threshold: " + threshold);
-                            System.out.println("OOBError: " + OOBError);
-                            System.out.println("Examples added: " + unlabeledAdded);
-                            System.out.println("Training set size: " + m_TrainingSet.getNbRows());
-                            System.out.println();
+                            ClusLogger.info("Trying threshold: " + threshold);
+                            ClusLogger.info("OOBError: " + OOBError);
+                            ClusLogger.info("Examples added: " + unlabeledAdded);
+                            ClusLogger.info("Training set size: " + m_TrainingSet.getNbRows());
+                            ClusLogger.info();
 
                             if (OOBError < bestOOB) {
                                 bestOOB = OOBError;
@@ -640,7 +641,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                                 bestUnlabeledAdded = unlabeledAdded;
                                 bestTrainingSet = m_TrainingSet.shallowCloneData();
                             }
-                            System.out.println("Th: " + threshold + " BtSize: " + bestTrainingSet.getNbRows());
+                            ClusLogger.info("Th: " + threshold + " BtSize: " + bestTrainingSet.getNbRows());
                         }
                     }
 
@@ -650,7 +651,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     unlabeledAdded = bestUnlabeledAdded;
 
                     if (betterFound) {
-                        System.out.println("Found threshold: " + bestThreshold + " (new OOBError = " + bestOOB + ")");
+                        ClusLogger.info("Found threshold: " + bestThreshold + " (new OOBError = " + bestOOB + ")");
                         m_Model = bestModel;
                         // remove unlabeled examples which were moved to training set from unlabeled set
                         for (int j = 0; j < best_i; j++) {
@@ -667,7 +668,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
                     }
                     else {
-                        System.out.println("Threshold not found");
+                        ClusLogger.info("Threshold not found");
                     }
                 }
                 while (betterFound);
@@ -680,7 +681,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                 m_TrainingSet.add(dataTuple);
             }
 
-            System.out.println("Unlabeled added: " + unlabeledAdded);
+            ClusLogger.info("Unlabeled added: " + unlabeledAdded);
 
             writer.println(iterations + "," + m_Threshold + "," + unlabeledAdded + "," + unlabeledAddeddTotal + "," + calculateError(cr.getTestSet()).getModelError() + "," + originalError + "," + getOOBError(m_TrainingSet, origLabeledMax).getModelError() + "," + getOOBError(m_TrainingSet, m_TrainingSet.getNbRows()).getModelError() + "," + calculateError(m_TrainingSet).getModelError());
             writer.flush();
@@ -688,10 +689,10 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
         writer.close();
 
-        System.out.println();
-        System.out.println("Total self-training iterations performed: " + iterations);
-        System.out.println("Unlabeled examples added: " + unlabeledAddeddTotal);
-        System.out.println();
+        ClusLogger.info();
+        ClusLogger.info("Total self-training iterations performed: " + iterations);
+        ClusLogger.info("Unlabeled examples added: " + unlabeledAddeddTotal);
+        ClusLogger.info();
         ClusModelInfo origInfo = cr.addModelInfo(ClusModel.ORIGINAL);
         String additionalInfo;
         additionalInfo = "Semi-supervised Self-training\n\t Iterations performed = " + iterations + "\n\t Unlabeled examples added: " + unlabeledAddeddTotal + "\n\t Base model: ";

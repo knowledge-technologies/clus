@@ -12,6 +12,7 @@ import si.ijs.kt.clus.algo.rules.ClusRule;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.test.NodeTest;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class ClusRuleHelperMethods {
@@ -56,10 +57,10 @@ public class ClusRuleHelperMethods {
             if (!f.exists() ||
                     (f.exists() && !f.isDirectory())) {
                 if (f.mkdir()) {
-                    System.out.println("Created rules.debug directory.");
+                    ClusLogger.info("Created rules.debug directory.");
                 }
                 else {
-                    System.out.println("Unable to create rules.debug directory.\nWill not write rule debug info.");
+                    ClusLogger.info("Unable to create rules.debug directory.\nWill not write rule debug info.");
                     cancel = true;
                 }
             }

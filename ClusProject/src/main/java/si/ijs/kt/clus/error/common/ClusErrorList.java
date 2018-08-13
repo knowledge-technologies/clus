@@ -37,6 +37,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
@@ -98,7 +99,7 @@ public class ClusErrorList implements Serializable {
         for (int i = 0; i < nb_e; i++) {
             ClusError err = m_Error.get(i);
             if (err.getParent() != this)
-                System.out.println("Child: " + err + " has incorrect parent: " + err.getParent() + " " + this);
+                ClusLogger.info("Child: " + err + " has incorrect parent: " + err.getParent() + " " + this);
         }
     }
 

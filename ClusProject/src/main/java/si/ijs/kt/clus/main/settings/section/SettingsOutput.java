@@ -1,14 +1,11 @@
 
 package si.ijs.kt.clus.main.settings.section;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
-import si.ijs.kt.clus.main.settings.section.SettingsOutput.WritePredictions;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;

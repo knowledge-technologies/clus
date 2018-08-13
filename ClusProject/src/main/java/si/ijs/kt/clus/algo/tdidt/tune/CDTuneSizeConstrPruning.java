@@ -56,6 +56,7 @@ import si.ijs.kt.clus.selection.XValMainSelection;
 import si.ijs.kt.clus.selection.XValRandomSelection;
 import si.ijs.kt.clus.selection.XValSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
 import si.ijs.kt.clus.util.jeans.math.SingleStatList;
@@ -91,8 +92,8 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
 
     @Override
     public void printInfo() {
-        System.out.println("TDIDT (Tuning Size Constraint)");
-        System.out.println("Heuristic: " + getStatManager().getHeuristicName());
+        ClusLogger.info("TDIDT (Tuning Size Constraint)");
+        ClusLogger.info("Heuristic: " + getStatManager().getHeuristicName());
     }
 
 
@@ -364,7 +365,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
             pruners[i] = pruner;
         }
         if (maxsize == 1) {
-            System.out.println("Optimal size (maxsize = 1) = 1");
+            ClusLogger.info("Optimal size (maxsize = 1) = 1");
             m_Class.getSettings().getConstraints().setSizeConstraintPruning(1);
             return;
         }
@@ -413,7 +414,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
         }
         refineGraph(graph, runs, pruners, model, summ);
         int optimalSize = findOptimalSize(graph, shouldBeLow);
-        System.out.println(" Best = " + optimalSize);
+        ClusLogger.info(" Best = " + optimalSize);
         // Write dat file
         setFinalResult(graph, optimalSize, maxsize);
         getSettings().getConstraints().setSizeConstraintPruning(optimalSize);
@@ -423,7 +424,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
 
     @Override
     public void saveInformation(String fname) {
-        System.out.println("Saving: " + fname + ".dat");
+        ClusLogger.info("Saving: " + fname + ".dat");
         MyFile file = new MyFile(fname + ".dat");
         file.log("" + m_Optimal + "\t" + m_MaxSize);
         for (int i = 0; i < m_Graph.size(); i++) {
@@ -443,7 +444,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
 
     @Override
     public ClusModel induceSingle(ClusRun cr) {
-        System.out.println(">>> Error: induceSingle/1 not implemented");
+        ClusLogger.info(">>> Error: induceSingle/1 not implemented");
         return null;
     }
 
@@ -467,17 +468,17 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
             m_TotalStat = createTotalStat(train);
             m_NbExamples = train.getNbRows();
             // m_Distribution = DistributionFactory.newInstance().createTDistribution(getSettings().getTuneNbFolds()-1);
-            System.out.println("Has missing values: " + m_HasMissing);
+            ClusLogger.info("Has missing values: " + m_HasMissing);
             m_TargetWeights = m_Class.getStatManager().getClusteringWeights();
             // Find optimal F-test value
             findBestSize(train);
-            System.out.println();
+            ClusLogger.info();
             // Induce final model
             m_Class.induceAll(cr);
             getSettings().getConstraints().setSizeConstraintPruning(m_OrigSize);
             long time = (System.currentTimeMillis() - start_time);
             if (getSettings().getGeneral().getVerbose() > 0)
-                System.out.println("Time: " + (double) time / 1000 + " sec");
+                ClusLogger.info("Time: " + (double) time / 1000 + " sec");
             cr.setInductionTime(time);
         }
         catch (ClusException e) {

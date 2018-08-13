@@ -22,6 +22,7 @@
 
 package si.ijs.kt.clus.main;
 
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.jeans.io.MyFile;
 
@@ -122,14 +123,14 @@ public class ClusStat {
     public static void show() {
         double sum = m_TTimeStat + m_TTimeTest + m_TTimeSplit + m_TTimeSort + m_TTimeHeur;
 
-        System.out.println("Mem usage (KB) [initial, loaded, max]: [" + m_InitialMemory + "," + m_LoadedMemory + "," + m_FinalMemory + "]");
-        System.out.println("Total estimate: " + m_TTimeTotal);
-        System.out.println("Total induction time: " + sum);
-        System.out.println("Time for stats: " + m_TTimeStat);
-        System.out.println("Time for evaluating: " + m_TTimeTest);
-        System.out.println("Time for splitting: " + m_TTimeSplit);
-        System.out.println("Time for sorting: " + m_TTimeSort);
-        System.out.println("Time for heuristics: " + m_TTimeHeur);
+        ClusLogger.info("Mem usage (KB) [initial, loaded, max]: [" + m_InitialMemory + "," + m_LoadedMemory + "," + m_FinalMemory + "]");
+        ClusLogger.info("Total estimate: " + m_TTimeTotal);
+        ClusLogger.info("Total induction time: " + sum);
+        ClusLogger.info("Time for stats: " + m_TTimeStat);
+        ClusLogger.info("Time for evaluating: " + m_TTimeTest);
+        ClusLogger.info("Time for splitting: " + m_TTimeSplit);
+        ClusLogger.info("Time for sorting: " + m_TTimeSort);
+        ClusLogger.info("Time for heuristics: " + m_TTimeHeur);
 
         MyFile file = new MyFile("stats.txt");
         file.log("Mem usage (KB) [initial, loaded, max]: [" + m_InitialMemory + "," + m_LoadedMemory + "," + m_FinalMemory + "]");

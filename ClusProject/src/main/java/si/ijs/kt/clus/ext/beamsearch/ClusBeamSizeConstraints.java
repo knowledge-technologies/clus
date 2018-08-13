@@ -123,10 +123,10 @@ public class ClusBeamSizeConstraints {
     public void pruneUsingConstraints(ClusNode node, int l, double b) {
         ClusBeamSizeConstraintInfo info = (ClusBeamSizeConstraintInfo) node.getVisitor();
         info.marked = true;
-        // if (m_Debug) System.out.println("Bound: "+b);
-        // if (m_Debug) System.out.println("Node: "+node+" Stat: "+node.getTotalStat());
+        // if (m_Debug) ClusLogger.info("Bound: "+b);
+        // if (m_Debug) ClusLogger.info("Node: "+node+" Stat: "+node.getTotalStat());
         if (b <= info.bound[l]) {
-            // if (m_Debug) System.out.println("b <= info.bound[l]: "+b+" <= "+info.bound[l]);
+            // if (m_Debug) ClusLogger.info("b <= info.bound[l]: "+b+" <= "+info.bound[l]);
             return;
         }
         for (int i = 1; i <= l; i++) {
@@ -134,7 +134,7 @@ public class ClusBeamSizeConstraints {
                 info.bound[i] = b;
         }
         if (info.lowcost[l] > b || Math.abs(info.lowcost[l] - node.getClusteringStat().getError()) < 1e-12) {
-            // if (m_Debug) System.out.println("info.lowcost[l] > b || info.lowcost[l] ==
+            // if (m_Debug) ClusLogger.info("info.lowcost[l] > b || info.lowcost[l] ==
             // node.getTotalStat().getError()"+info.lowcost[l]+" > b = "+b+" err = "+node.getTotalStat().getError());
             return;
         }

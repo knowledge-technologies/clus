@@ -98,14 +98,14 @@ public class ClusRulesRandom {
          * } else {
          * rule.computePrediction();
          * rule.printModel();
-         * System.out.println();
+         * ClusLogger.info();
          * rset.add(rule);
          * data = rule.removeCovered(data);
          * }
          * }
          * ClusStatistic left_over = m_Induce.createTotalTargetStat(data);
          * left_over.calcMean();
-         * System.out.println("Left Over: "+left_over);
+         * ClusLogger.info("Left Over: "+left_over);
          * rset.setTargetStat(left_over);
          * }
          */

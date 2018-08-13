@@ -225,7 +225,7 @@ public class ClusRulesFromTree {
     public ClusRuleSet constructRules(ClusNode node, ClusStatManager mgr) {
         ClusRuleSet ruleSet = new ClusRuleSet(mgr);
         ClusRule init = new ClusRule(mgr);
-        // System.out.println("Constructing rules from a tree.");
+        // ClusLogger.info("Constructing rules from a tree.");
         constructRecursive(node, init, ruleSet);
         ruleSet.removeEmptyRules();
         ruleSet.simplifyRules();
@@ -238,7 +238,7 @@ public class ClusRulesFromTree {
     public ClusRuleSet constructOptionRules(MyNode node, ClusStatManager mgr) {
         ClusRuleSet ruleSet = new ClusRuleSet(mgr);
         ClusRule init = new ClusRule(mgr);
-        // System.out.println("Constructing rules from an option tree.");
+        // ClusLogger.info("Constructing rules from an option tree.");
         constructRecursiveOption(node, init, ruleSet);
         ruleSet.removeEmptyRules();
         ruleSet.simplifyRules();

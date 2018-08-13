@@ -211,7 +211,7 @@ public class CallExternGD {
 //// The last one is so called intercept. Should be added to all predictions
 //// Because of this we add a rule with prediction 1 and always true condition.
 //// Thus the last weight will be for this.
-// if (getSettings().getGeneral().getVerbose() > 0) System.out.println("Adding intercept rule created by binary
+// if (getSettings().getGeneral().getVerbose() > 0) ClusLogger.info("Adding intercept rule created by binary
 // explicitly to rule set.");
 // ClusRule interceptRule = new ClusRule(m_StatManager);
 // interceptRule.m_TargetStat = getStatManager().createTargetStat();
@@ -367,10 +367,10 @@ public class CallExternGD {
 // InputStreamReader(psProcess.getErrorStream()));
 //
 //
-// System.out.println("\nHere is the standard output of the external command:\n");
+// ClusLogger.info("\nHere is the standard output of the external command:\n");
 // String s = null;
 // while ((s = stdInput.readLine()) != null) {
-// System.out.println(s);
+// ClusLogger.info(s);
 // s = stdInput.readLine();
 // }
 //

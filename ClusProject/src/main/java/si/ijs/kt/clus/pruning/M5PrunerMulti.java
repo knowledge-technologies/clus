@@ -56,7 +56,7 @@ public class M5PrunerMulti extends PruneTree {
         RegressionStat stat = (RegressionStat) node.getClusteringStat();
         m_GlobalRMSE = stat.getRootScaledVariances(m_TargetWeights);
         pruneRecursive(node);
-        // System.out.println("Performing test of M5 pruning");
+        // ClusLogger.info("Performing test of M5 pruning");
         // TestM5PruningRuleNode.performTest(orig, node, m_GlobalDeviation, m_TargetWeights, m_TrainingData);
     }
 

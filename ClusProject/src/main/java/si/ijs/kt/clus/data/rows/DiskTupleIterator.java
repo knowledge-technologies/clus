@@ -29,6 +29,7 @@ import si.ijs.kt.clus.data.ClusSchemaInitializer;
 import si.ijs.kt.clus.data.io.ARFFFile;
 import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 public class DiskTupleIterator extends FileTupleIterator {
@@ -51,7 +52,7 @@ public class DiskTupleIterator extends FileTupleIterator {
 
 	@Override
 	public void init() throws IOException, ClusException {
-		System.out.println("Loading '" + m_File + "'");
+		ClusLogger.info("Loading '" + m_File + "'");
 		m_Reader = new ClusReader(m_File, m_Sett);
 		ARFFFile arff = new ARFFFile(m_Reader);
 		ClusSchema schema = arff.read(m_Sett);

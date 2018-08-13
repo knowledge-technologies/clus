@@ -129,11 +129,11 @@ public class ClusBeam {
     public void addModel(ClusBeamModel model) {
         double value = model.getValue();
         if (m_MaxWidth == -1) { // the size ot the beam is infinite
-            // System.out.println("try to add model :");
+            // ClusLogger.info("try to add model :");
             // ClusNode tree = (ClusNode)model.getModel();
             // tree.printTree();
             m_CrWidth += addIfNotIn(model);
-            // if (addIfNotIn(model) == 1){System.out.println("we add a model");m_CrWidth +=1;}
+            // if (addIfNotIn(model) == 1){ClusLogger.info("we add a model");m_CrWidth +=1;}
         }
         else {
             if (m_CrWidth < m_MaxWidth) {
@@ -146,7 +146,7 @@ public class ClusBeam {
                 if (addIfNotIn(model) == 1) {
                     removeMin();
                     double min = computeMinValue();
-                    // System.out.println("*** Removing model: "+min);
+                    // ClusLogger.info("*** Removing model: "+min);
                     m_MinValue = min;
                 }
             }
@@ -201,11 +201,11 @@ public class ClusBeam {
 
     public void print() {
         /*
-         * System.out.println("Beam:");
+         * ClusLogger.info("Beam:");
          * m_Tree.printStructure();
-         * System.out.println("All:");
+         * ClusLogger.info("All:");
          * m_Tree.printTree();
-         * System.out.println("Done");
+         * ClusLogger.info("Done");
          */
     }
 

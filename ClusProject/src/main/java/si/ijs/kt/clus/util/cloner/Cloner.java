@@ -25,6 +25,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 
+import si.ijs.kt.clus.util.ClusLogger;
+
 
 /**
  * Cloner: deep clone objects.
@@ -679,13 +681,13 @@ public class Cloner {
 
                 @Override
                 public void startCloning(Class<?> clz) {
-                    System.out.println("clone>" + clz);
+                    ClusLogger.info("clone>" + clz);
                 }
 
 
                 @Override
                 public void cloning(Field field, Class<?> clz) {
-                    System.out.println("cloned field>" + field + "  -- of class " + clz);
+                    ClusLogger.info("cloned field>" + field + "  -- of class " + clz);
                 }
             };
         }

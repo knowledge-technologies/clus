@@ -31,6 +31,7 @@ import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class ILevelCRandIndex extends ClusError {
@@ -68,7 +69,7 @@ public class ILevelCRandIndex extends ClusError {
             }
         }
         double rand = 1.0 * (a + b) / (nbex * (nbex - 1) / 2);
-        System.out.println("Rand = " + rand + " (nbex = " + nbex + ")");
+        ClusLogger.info("Rand = " + rand + " (nbex = " + nbex + ")");
         return rand;
     }
 

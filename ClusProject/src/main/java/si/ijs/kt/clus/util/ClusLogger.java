@@ -3,7 +3,9 @@ package si.ijs.kt.clus.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.util.logging.*;
+import java.util.logging.LogManager;
+import java.util.logging.Logger;
+
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 
 
@@ -39,7 +41,7 @@ public class ClusLogger {
         }
         catch (IOException ex) {
             // Could not open configuration file, logging only to console
-            System.out.println(String.format("Logging properties file %s not found! Console output only.", lpath));
+            System.err.println(String.format("Logging properties file %s not found! Console output only.", lpath));
         }
 
         m_MainLogger = Logger.getLogger(ClusLogger.class.getSimpleName());
@@ -49,7 +51,14 @@ public class ClusLogger {
     public static final void info(String msg) {
         m_MainLogger.info(msg);
     }
+    
+    public static final void info(double d) {
+        m_MainLogger.info(Double.toString(d));
+    }
 
+    public static final void info() {
+        m_MainLogger.info("");;
+    }
 
     public static final void severe(String msg) {
         m_MainLogger.severe(msg);

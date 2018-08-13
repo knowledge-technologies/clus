@@ -104,11 +104,11 @@ public class ClusExhaustive {
 
     public void print() {
         /*
-         * System.out.println("Beam:");
+         * ClusLogger.info("Beam:");
          * m_Tree.printStructure();
-         * System.out.println("All:");
+         * ClusLogger.info("All:");
          * m_Tree.printTree();
-         * System.out.println("Done");
+         * ClusLogger.info("Done");
          */
     }
 }

@@ -427,7 +427,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         boolean hasLabel = false;
         for (int i = 0; i < m_NbTarget; i++) {
             int val = m_Attrs[i].getNominal(tuple);
-            // System.out.println("val: "+ val);
+            // ClusLogger.info("val: "+ val);
             if (val != m_Attrs[i].getNbValues()) {
                 m_ClassCounts[i][val] += weight;
                 m_SumWeights[i] += weight;
@@ -816,8 +816,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     @Override
     public double getErrorRel() {
-        // System.out.println("ClassificationStat getErrorRel");
-        // System.out.println("ClassificationStat nb example in the leaf "+m_SumWeight);
+        // ClusLogger.info("ClassificationStat getErrorRel");
+        // ClusLogger.info("ClassificationStat nb example in the leaf "+m_SumWeight);
         return getError() / getTotalWeight();
     }
 
@@ -1266,7 +1266,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             if (shouldNormalize[idx]) {
                 double var = gini(i);
                 double norm = var > 0 ? 1 / var : 1; // No normalization if variance = 0;
-                // if (m_NbTarget < 15) System.out.println(" Normalization for:
+                // if (m_NbTarget < 15) ClusLogger.info(" Normalization for:
                 // "+m_Attrs[i].getName()+" = "+norm);
                 weights.setWeight(m_Attrs[i], norm);
             }
@@ -1686,7 +1686,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 avgik = 1; // Double.NEGATIVE_INFINITY;
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+" means: "+means[0]);
+        // ClusLogger.info("Left Moran I: "+avgik+"ex: "+(N-M)+" means: "+means[0]);
         double IL = avgik * (N - M);
 
         // right side
@@ -1740,10 +1740,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 avgikR = 1; // Double.NEGATIVE_INFINITY;
         }
         avgikR /= schema.getNbTargetAttributes();
-        // System.out.println("Right Moran I: "+avgikR+"ex: "+(N-M)+" means:
+        // ClusLogger.info("Right Moran I: "+avgikR+"ex: "+(N-M)+" means:
         // "+meansR[0]);
         double IR = avgikR; // end right side
-        double I = (IL + IR * (N - M)) / m_data.getNbRows();// System.out.println("Join Moran I: "+I);
+        double I = (IL + IR * (N - M)) / m_data.getNbRows();// ClusLogger.info("Join Moran I: "+I);
         double scaledI = 1 + I;
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return scaledI;
@@ -1808,7 +1808,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 avgik = 1; // Double.NEGATIVE_INFINITY;
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+" means: "+means[0]);
+        // ClusLogger.info("Left Moran I: "+avgik+"ex: "+(N-M)+" means: "+means[0]);
         double IL = avgik * (N - M);
 
         // right side
@@ -1860,10 +1860,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 avgikR = 1; // Double.NEGATIVE_INFINITY;
         }
         avgikR /= schema.getNbTargetAttributes();
-        // System.out.println("Right Moran I: "+avgikR+"ex: "+(N-M)+" means:
+        // ClusLogger.info("Right Moran I: "+avgikR+"ex: "+(N-M)+" means:
         // "+meansR[0]);
         double IR = avgikR; // end right side
-        double I = (IL + IR * (N - M)) / m_data.getNbRows();// System.out.println("Join Moran I: "+I);
+        double I = (IL + IR * (N - M)) / m_data.getNbRows();// ClusLogger.info("Join Moran I: "+I);
         double scaledI = 1 + I;
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return scaledI;
@@ -1990,7 +1990,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Moran Left I:"+avgik+" up "+upsum[0]+" down
+        // ClusLogger.info("Moran Left I:"+avgik+" up "+upsum[0]+" down
         // "+downsum[0]+" MN "+(N-M)); //I for each target
         double IL = avgik * (N - M);
 
@@ -2106,14 +2106,14 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             else
                 avgikR = 1; // Double.NEGATIVE_INFINITY;
         }
-        // System.out.println("Moran Right I:"+ikkR[0]+" up "+upsumR[0]+" down
+        // ClusLogger.info("Moran Right I:"+ikkR[0]+" up "+upsumR[0]+" down
         // "+downsumR[0]+" MN "+(N-M)); //I for each target
         avgikR /= schema.getNbTargetAttributes();
         double IR = avgikR;
         // end right side
 
         double I = (IL + IR * (N - M)) / m_data.getNbRows();
-        // System.out.println("Join Moran I: "+I);
+        // ClusLogger.info("Join Moran I: "+I);
 
         double scaledI = 1 + I; // scale I [0,2]
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
@@ -2205,7 +2205,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             avgik = ((N - M + 0.0) * upsum0 * upsum1) / (WL * Math.sqrt(downsum0 * downsum1));
         else
             avgik = 0;
-        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" means:
+        // ClusLogger.info("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+W+" means:
         // "+means[0]);
         double IL = avgik * (N - M);
 
@@ -2277,11 +2277,11 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             IR = ((N - M + 0.0) * upsumR0 * upsumR1) / (WRR * Math.sqrt(downsumR0 * downsumR1));
         else
             IR = 0;
-        // System.out.println("Right Moran I: "+IR+"ex: "+(N-M)+"WR "+WR+" means:
+        // ClusLogger.info("Right Moran I: "+IR+"ex: "+(N-M)+"WR "+WR+" means:
         // "+meansR[0]);
 
         double I = (IL + IR * (N - M)) / NR;
-        // System.out.println("Join Moran I: "+I);
+        // ClusLogger.info("Join Moran I: "+I);
         double scaledI = 1 + I; // scale I [0,2]
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return scaledI;
@@ -2420,7 +2420,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             avgik = ((N - M + 0.0) * upsum0 * upsum1) / (WL * Math.sqrt(downsum0 * downsum1));
         else
             avgik = 0;
-        // System.out.println("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+WL+" means:
+        // ClusLogger.info("Left Moran I: "+avgik+"ex: "+(N-M)+"W "+WL+" means:
         // "+means[0]);
         double IL = avgik * (N - M);
 
@@ -2545,11 +2545,11 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             avgikR = ((N - M + 0.0) * upsumR0 * upsumR1) / (WRR * Math.sqrt(downsumR0 * downsumR1));
         else
             avgikR = 0;
-        // System.out.println("Right Moran I: "+avgikR+"ex: "+(N-M)+"WR "+WRR+" means:
+        // ClusLogger.info("Right Moran I: "+avgikR+"ex: "+(N-M)+"WR "+WRR+" means:
         // "+meansR[0]);
         double IR = avgikR * (N - M);
         double I = (IL + IR * (N - M)) / m_data.getNbRows();
-        // System.out.println("Join Moran I: "+I);
+        // ClusLogger.info("Join Moran I: "+I);
 
         double scaledI = 1 + I; // scale I [0,2]
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
@@ -2628,7 +2628,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         else
             ikk = 0; // Double.NEGATIVE_INFINITY;
-        // System.out.println("Moran Left I:"+ikk+" up "+upsum+" d "+downsumAll+" MN
+        // ClusLogger.info("Moran Left I:"+ikk+" up "+upsum+" d "+downsumAll+" MN
         // "+(N-M)); //I for each target
         double IL = ikk * (N - M);
 
@@ -2692,11 +2692,11 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         else
             ikkR = 0; // Double.NEGATIVE_INFINITY;
-        // System.out.println("Moran R I:"+ikkR+" up "+upsumR+" d "+downsumAllR+" MN
+        // ClusLogger.info("Moran R I:"+ikkR+" up "+upsumR+" d "+downsumAllR+" MN
         // "+(N-M)); //I for each target
         double IR = ikkR; // end right side
         double I = (IL + IR * (N - M)) / N;
-        // System.out.println("Join Moran I: "+I);
+        // ClusLogger.info("Join Moran I: "+I);
         // if (I>1) I=1;
         // if (I<-1) I=-1;
         // scale I [0,2]
@@ -2761,7 +2761,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             avgik += ikk[k]; // average of the all targets
         }
         avgik /= m_NbAttrs;
-        // System.out.println("Left Moran I: "+ikk[0]+"ex: "+(N-M));
+        // ClusLogger.info("Left Moran I: "+ikk[0]+"ex: "+(N-M));
         double IL = avgik; // *(N-M);
         if (Double.isNaN(IL))
             IL = 0.0;
@@ -2810,9 +2810,9 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         IR /= m_NbAttrs;
         if (Double.isNaN(IR))
             IR = 0.0;
-        // System.out.println("Right Moran I: "+IR+"ex: "+(N-M));
+        // ClusLogger.info("Right Moran I: "+IR+"ex: "+(N-M));
         double I = (IL + IR) / m_data.getNbRows();
-        // System.out.println("Join Moran I: "+I+" eLeft: "+(NR-(N-M))+" eRight:
+        // ClusLogger.info("Join Moran I: "+I+" eLeft: "+(NR-(N-M))+" eRight:
         // "+(N-M)+" "+IL+" "+IR);
         double scaledI = 1 + I;
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
@@ -2870,7 +2870,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             avgik += ikk[k]; // average of the all targets
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Left Moran I: "+ikk[0]+"ex: "+(N-M));
+        // ClusLogger.info("Left Moran I: "+ikk[0]+"ex: "+(N-M));
         double IL = avgik; // *(N-M);
         if (Double.isNaN(IL))
             IL = 0.0;
@@ -2914,9 +2914,9 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         IR /= schema.getNbTargetAttributes();
         if (Double.isNaN(IR))
             IR = 0.0;
-        // System.out.println("Right Moran I: "+IR+"ex: "+(N-M));
+        // ClusLogger.info("Right Moran I: "+IR+"ex: "+(N-M));
         double I = (IL + IR) / m_data.getNbRows();
-        // System.out.println("Join Moran I: "+I+" eLeft: "+(NR-(N-M))+" eRight:
+        // ClusLogger.info("Join Moran I: "+I+" eLeft: "+(NR-(N-M))+" eRight:
         // "+(N-M)+" "+IL+" "+IR);
 
         // if (I>1) I=1;
@@ -3020,7 +3020,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                     }
                 }
                 for (int i = M; i < N; i++) {
-                    // System.out.println(i+" end "+D[i]);
+                    // ClusLogger.info(i+" end "+D[i]);
                     for (int j = M; j < NN; j++) {
                         if (distances[j].distance == 0.0)
                             w[permutation[i]][permutation[j]] = 1;
@@ -3051,7 +3051,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             avgik += ikk[k];
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Left CI:"+degree[0]+" MN "+(N-M)); //I for each target
+        // ClusLogger.info("Left CI:"+degree[0]+" MN "+(N-M)); //I for each target
         double IL = avgik * (N - M);
 
         // right side
@@ -3168,10 +3168,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         avgikR /= schema.getNbTargetAttributes();
         double IR = avgikR;
-        // System.out.println("Right CI:"+avgikR+" MN "+(N-M)); //I for each target
+        // ClusLogger.info("Right CI:"+avgikR+" MN "+(N-M)); //I for each target
         // end right side
         double I = (IL + IR * (N - M)) / m_data.getNbRows();
-        // System.out.println("Join CI: "+I);
+        // ClusLogger.info("Join CI: "+I);
 
         double scaledI = 1 + I; // scale I [0,2]
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
@@ -3297,7 +3297,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Geary Left I:"+avgik+" up "+upsum[0]+" down
+        // ClusLogger.info("Geary Left I:"+avgik+" up "+upsum[0]+" down
         // "+downsum[0]+" MN "+(N-M)); //I for each target
         double IL = avgik * (N - M);
 
@@ -3412,13 +3412,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             else
                 avgikR = 1; // Double.NEGATIVE_INFINITY;
         }
-        // System.out.println("Geary Right I:"+ikkR[0]+" up "+upsumR[0]+" down
+        // ClusLogger.info("Geary Right I:"+ikkR[0]+" up "+upsumR[0]+" down
         // "+downsumR[0]+" MN "+(N-M)); //I for each target
         avgikR /= schema.getNbTargetAttributes();
         double IR = avgikR;
 
         double I = 2 - ((IL + IR * (N - M)) / m_data.getNbRows());// scaledG=2-G [0,2]
-        // System.out.println("Join Geary G: "+I);
+        // ClusLogger.info("Join Geary G: "+I);
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
     }
@@ -3545,7 +3545,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Moran Left I:"+avgik+" up "+upsum[0]+" down
+        // ClusLogger.info("Moran Left I:"+avgik+" up "+upsum[0]+" down
         // "+downsum[0]+" MN "+(N-M)); //I for each target
         double IL = avgik * (N - M);
 
@@ -3661,14 +3661,14 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             else
                 avgikR = 1; // Double.NEGATIVE_INFINITY;
         }
-        // System.out.println("Moran Right I:"+ikkR[0]+" up "+upsumR[0]+" down
+        // ClusLogger.info("Moran Right I:"+ikkR[0]+" up "+upsumR[0]+" down
         // "+downsumR[0]+" MN "+(N-M)); //I for each target
         avgikR /= schema.getNbTargetAttributes();
         double IR = avgikR;
         // end right side
 
         double I = (IL + IR * (N - M)) / m_data.getNbRows();
-        // System.out.println("Join Moran I: "+I);
+        // ClusLogger.info("Join Moran I: "+I);
 
         double scaledI = 1 + I; // scale I [0,2]
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
@@ -3729,7 +3729,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
          * {biggestd = distances[aa].distance; biggestindex = aa; } if (tempd <
          * biggestd) { distances[biggestindex].index = j; distances[biggestindex].target
          * = tj; distances[biggestindex].distance = tempd; } }
-         * //System.out.println("index,dist: "+j+", "+d); } } int spatialMatrix =
+         * //ClusLogger.info("index,dist: "+j+", "+d); } } int spatialMatrix =
          * schema.getSettings().getSpatialMatrix(); for (int j = M; j <N; j++) {
          * DataTuple exj = m_data.getTuple(j); double tj = type.getNumeric(exj); if
          * (i==j) w[i][j]=0; else if ((distances[j].distance==0.0) && (i!=j)) w[i][j]=1;
@@ -3755,7 +3755,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             I = -1;
         // scale I [0,2]
         double scaledI = 1 - I;
-        // System.out.println("scaledI: "+scaledI+"I: "+I);
+        // ClusLogger.info("scaledI: "+scaledI+"I: "+I);
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return scaledI;
     }
@@ -4056,10 +4056,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 }
             }
 
-            // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2
+            // ClusLogger.info("Update SumLeft : sumX "+previousSumX[0]+" sumX2
             // "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+"
             // sumXW"+previousSumWX[0]);
-            // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2
+            // ClusLogger.info("Update SumRight : sumX "+previousSumXR[0]+" sumX2
             // "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+"
             // sumXW"+previousSumWXR[0]);
 
@@ -4081,10 +4081,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
             avgikR += ikkR[k];
             avgik += ikk[k];
-            // System.out.println("Left Geary C: "+ikk[0]+"num "+num[0]+"den "+den[0]+" "+"
+            // ClusLogger.info("Left Geary C: "+ikk[0]+"num "+num[0]+"den "+den[0]+" "+"
             // NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+"
             // wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-            // System.out.println("Right Geary C: "+ikkR[0]+"numR "+numR[0]+"denR
+            // ClusLogger.info("Right Geary C: "+ikkR[0]+"numR "+numR[0]+"denR
             // "+denR[0]+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR:
             // "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
 
@@ -4097,7 +4097,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         N = splitIndex;
         double scaledI = 2 - I;
         if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
-        // System.out.println(scaledI);
+        // ClusLogger.info(scaledI);
         return scaledI;
     }
 
@@ -4157,13 +4157,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                         previousSumWR[k] += w;
                         previousSumWXXR[k] += w * xi * xj;
                         previousSumWXR[k] += w * xj;
-                        // System.out.println(previousSumWR[0]+" "+w+" "+xi);
+                        // ClusLogger.info(previousSumWR[0]+" "+w+" "+xi);
                     }
                 }
-                // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2
+                // ClusLogger.info("Init SumLeft : sumX "+previousSumX[0]+" sumX2
                 // "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+"
                 // sumXW"+previousSumWX[0]);
-                // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2
+                // ClusLogger.info("Init SumRight : sumX "+previousSumXR[0]+" sumX2
                 // "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+"
                 // sumXW"+previousSumWXR[0]);
             }
@@ -4367,10 +4367,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 }
             }
 
-            // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2
+            // ClusLogger.info("Update SumLeft : sumX "+previousSumX[0]+" sumX2
             // "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+"
             // sumXW"+previousSumWX[0]);
-            // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2
+            // ClusLogger.info("Update SumRight : sumX "+previousSumXR[0]+" sumX2
             // "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+"
             // sumXW"+previousSumWXR[0]);
 
@@ -4392,10 +4392,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
             avgikR += ikkR[k];
             avgik += ikk[k];
-            // System.out.println("Left Moran I: "+ikk[0]+"num "+num[0]+"den "+den[0]+" "+"
+            // ClusLogger.info("Left Moran I: "+ikk[0]+"num "+num[0]+"den "+den[0]+" "+"
             // NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+"
             // wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-            // System.out.println("Right Moran I: "+ikkR[0]+"numR "+numR[0]+"denR
+            // ClusLogger.info("Right Moran I: "+ikkR[0]+"numR "+numR[0]+"denR
             // "+denR[0]+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR:
             // "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
 
@@ -4462,10 +4462,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                         previousSumWXXR[k] += w * (xi - xj) * (xi - xj);
                     }
                 }
-                // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2
+                // ClusLogger.info("Init SumLeft : sumX "+previousSumX[0]+" sumX2
                 // "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+"
                 // sumXW"+previousSumWX[0]);
-                // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2
+                // ClusLogger.info("Init SumRight : sumX "+previousSumXR[0]+" sumX2
                 // "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+"
                 // sumXW"+previousSumWXR[0]);
             }
@@ -4639,10 +4639,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                     }
                 }
             }
-            // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2
+            // ClusLogger.info("Update SumLeft : sumX "+previousSumX[0]+" sumX2
             // "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+"
             // sumXW"+previousSumWX[0]);
-            // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2
+            // ClusLogger.info("Update SumRight : sumX "+previousSumXR[0]+" sumX2
             // "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+"
             // sumXW"+previousSumWXR[0]);
 
@@ -4664,10 +4664,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
             avgikR += ikkR[k];
             avgik += ikk[k];
-            // System.out.println("Left Geary C: "+ikk[0]+"num "+num[0]+"den "+den[0]+" "+"
+            // ClusLogger.info("Left Geary C: "+ikk[0]+"num "+num[0]+"den "+den[0]+" "+"
             // NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+"
             // wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-            // System.out.println("Right Geary C: "+ikkR[0]+"numR "+numR[0]+"denR
+            // ClusLogger.info("Right Geary C: "+ikkR[0]+"numR "+numR[0]+"denR
             // "+denR[0]+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR:
             // "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
 
@@ -4680,7 +4680,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         N = splitIndex;
         double scaledI = 2 - I;
         if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
-        // System.out.println(scaledI);
+        // ClusLogger.info(scaledI);
         return scaledI;
     }
 
@@ -4733,13 +4733,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                         previousSumWR[k] += w;
                         previousSumWXXR[k] += w * xi * xj;
                         previousSumWXR[k] += w * xj;
-                        // System.out.println(previousSumWR[0]+" "+w+" "+xi);
+                        // ClusLogger.info(previousSumWR[0]+" "+w+" "+xi);
                     }
                 }
-                // System.out.println("Init SumLeft : sumX "+previousSumX[0]+" sumX2
+                // ClusLogger.info("Init SumLeft : sumX "+previousSumX[0]+" sumX2
                 // "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+"
                 // sumXW"+previousSumWX[0]);
-                // System.out.println("Init SumRight : sumX "+previousSumXR[0]+" sumX2
+                // ClusLogger.info("Init SumRight : sumX "+previousSumXR[0]+" sumX2
                 // "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+"
                 // sumXW"+previousSumWXR[0]);
             }
@@ -4920,10 +4920,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 }
             }
 
-            // System.out.println("Update SumLeft : sumX "+previousSumX[0]+" sumX2
+            // ClusLogger.info("Update SumLeft : sumX "+previousSumX[0]+" sumX2
             // "+previousSumX2[0]+" sumW "+previousSumW[0]+" sumX2W "+previousSumWXX[0]+"
             // sumXW"+previousSumWX[0]);
-            // System.out.println("Update SumRight : sumX "+previousSumXR[0]+" sumX2
+            // ClusLogger.info("Update SumRight : sumX "+previousSumXR[0]+" sumX2
             // "+previousSumX2R[0]+" sumW "+previousSumWR[0]+" sumX2W "+previousSumWXXR[0]+"
             // sumXW"+previousSumWXR[0]);
 
@@ -4945,10 +4945,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
             avgikR += ikkR[k];
             avgik += ikk[k];
-            // System.out.println("Left Moran I: "+ikk[0]+"num "+num[0]+"den "+den[0]+" "+"
+            // ClusLogger.info("Left Moran I: "+ikk[0]+"num "+num[0]+"den "+den[0]+" "+"
             // NM: "+(splitIndex)+" W: "+previousSumW[0]+" wx:"+previousSumWX[0]+"
             // wxx:"+previousSumWXX[0]+" xx:"+previousSumX2[0]);
-            // System.out.println("Right Moran I: "+ikkR[0]+"numR "+numR[0]+"denR
+            // ClusLogger.info("Right Moran I: "+ikkR[0]+"numR "+numR[0]+"denR
             // "+denR[0]+" "+" NM: "+(NR-splitIndex)+" WR "+previousSumWR[0]+" wxR:
             // "+previousSumWXR[0]+" wxx "+previousSumWXXR[0]+" xx:"+previousSumX2R[0]);
 
@@ -4960,7 +4960,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         M = prevIndex;
         N = splitIndex;
         double scaledI = 1 + I;
-        // System.out.println(scaledI);
+        // ClusLogger.info(scaledI);
         if (Double.isNaN(scaledI)) { throw new ClusException("err!"); }
         return scaledI;
     }
@@ -5036,7 +5036,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 ikk[k] = 0;
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Left Geary C:"+ikk[0]+"examples "+(N-M)+"W: "+W+"up
+        // ClusLogger.info("Left Geary C:"+ikk[0]+"examples "+(N-M)+"W: "+W+"up
         // "+upsum[0]+"down: "+downsum[0]);
         double IL = (N - M) * avgik;
 
@@ -5100,13 +5100,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         avgikR /= schema.getNbTargetAttributes();
         double IR = avgikR;
-        // System.out.println("R Geary C:"+ikkR[0]+"examples "+(N-M)+"WR: "+WR+"up
+        // ClusLogger.info("R Geary C:"+ikkR[0]+"examples "+(N-M)+"WR: "+WR+"up
         // "+upsumR[0]+"downR: "+downsumR[0]);
         // end right side
 
         // scaledG=2-G [0,2]
         double I = 2 - ((IL + IR * (N - M)) / NR);
-        // System.out.println("Join Geary G: "+I);
+        // ClusLogger.info("Join Geary G: "+I);
 
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
@@ -5191,7 +5191,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             avgik += ikk[k]; // average of the both targets
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("w: "+W+"means: "+means[0]+"Left Moran I: "+avgik+"ex:
+        // ClusLogger.info("w: "+W+"means: "+means[0]+"Left Moran I: "+avgik+"ex:
         // "+((N-M)));
         double IL = avgik * (N - M);
 
@@ -5262,7 +5262,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         avgikR /= schema.getNbTargetAttributes();
         double IR = avgikR;
-        // System.out.println("w: "+WR+"means: "+meansR[0]+"Right Moran I: "+avgikR+"ex:
+        // ClusLogger.info("w: "+WR+"means: "+meansR[0]+"Right Moran I: "+avgikR+"ex:
         // "+((N-M)));
         double I = (IL + IR * (N - M)) / m_data.getNbRows();
         double scaledI = 1 + I;
@@ -5347,7 +5347,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 ikk[k] = 1;
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Left Geary C:"+ikk[0]+"examples "+(N-M)+"W: "+W+"up
+        // ClusLogger.info("Left Geary C:"+ikk[0]+"examples "+(N-M)+"W: "+W+"up
         // "+upsum[0]+"down: "+downsum[0]);
         double IL = (N - M) * avgik;
 
@@ -5414,13 +5414,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         avgikR /= schema.getNbTargetAttributes();
         double IR = avgikR;
-        // System.out.println("R Geary C:"+ikkR[0]+"examples "+(N-M)+"WR: "+WR+"up
+        // ClusLogger.info("R Geary C:"+ikkR[0]+"examples "+(N-M)+"WR: "+WR+"up
         // "+upsumR[0]+"downR: "+downsumR[0]);
         // end right side
 
         // scaledG=2-G [0,2]
         double I = 1 + ((IL + IR * (N - M)) / NR);
-        // System.out.println("Join Geary G: "+I);
+        // ClusLogger.info("Join Geary G: "+I);
 
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
@@ -5505,7 +5505,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 ikk[k] = 0;
         }
         avgik /= schema.getNbTargetAttributes();
-        // System.out.println("Left Geary C:"+avgik+"examples "+(N-M));
+        // ClusLogger.info("Left Geary C:"+avgik+"examples "+(N-M));
         double IL = (N - M) * avgik;
 
         // right side G
@@ -5575,12 +5575,12 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         avgikR /= schema.getNbTargetAttributes();
         double IR = avgikR;
-        // System.out.println("Right Geary C:"+IR+"exaples: "+(N-M));
+        // ClusLogger.info("Right Geary C:"+IR+"exaples: "+(N-M));
         // end right side
 
         // scaledG=2-G [0,2]
         double I = 2 - ((IL + IR * (N - M)) / NR);
-        // System.out.println("Join Geary G: "+I);
+        // ClusLogger.info("Join Geary G: "+I);
 
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
@@ -5641,10 +5641,10 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             else
                 avgik = 1;
         }
-        // System.out.println("i:"+avgik);
+        // ClusLogger.info("i:"+avgik);
         avgik /= schema.getNbTargetAttributes();
         double I = avgik;
-        // System.out.println("Moran I:"+ikk[0]+" "+means[0]); //I for each target
+        // ClusLogger.info("Moran I:"+ikk[0]+" "+means[0]); //I for each target
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
     }
@@ -5681,7 +5681,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             means[k] /= (N - M);
         }
 
-        // System.out.println("mean 0:"+means[0]+". Split was on "+(N+",M:"+M)+"
+        // ClusLogger.info("mean 0:"+means[0]+". Split was on "+(N+",M:"+M)+"
         // examples out of "+N +" examples. ");
         double avgik = 0; // Double.NEGATIVE_INFINITY;
         for (int k = 0; k < schema.getNbTargetAttributes(); k++) {
@@ -5708,7 +5708,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                             w = 0;
                         }
                         upsum1[k][permutation[i]] += w * (xj - means[k]);
-                        // System.out.println(upsum[k][permutation[i]]);
+                        // ClusLogger.info(upsum[k][permutation[i]]);
                     }
                 }
             }
@@ -5724,7 +5724,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 if (downsum[k] != 0.0 && upsum[k][i] != 0.0) {
                     ik[k][permutation[i]] = (upsum[k][permutation[i]]) / (downsum[k]); // I for each point
                     ikk[k] += ik[k][permutation[i]]; // average of all points for each targets
-                    // System.out.println("LISA0: "+ik[k][i]);
+                    // ClusLogger.info("LISA0: "+ik[k][i]);
                 }
                 else
                     ikk[k] = 0;
@@ -5734,8 +5734,8 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         avgik /= schema.getNbTargetAttributes(); // average of all targets
         double I = avgik;
 
-        // System.out.println("Moran I:"+ikk[0]+" "+ikk[1]); //I for each target
-        // System.out.println(W+" I1: "+upsum[0]+" "+downsum[0]+" "+ikk[0]+"
+        // ClusLogger.info("Moran I:"+ikk[0]+" "+ikk[1]); //I for each target
+        // ClusLogger.info(W+" I1: "+upsum[0]+" "+downsum[0]+" "+ikk[0]+"
         // "+means[0]);
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
@@ -5771,7 +5771,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             }
             means[k] /= (N - M);
         }
-        // System.out.println("G1:"+means[0]+". Split was on "+(N+",M:"+M)+" examples
+        // ClusLogger.info("G1:"+means[0]+". Split was on "+(N+",M:"+M)+" examples
         // out of "+N +" examples. ");
         double avgik = 0;
         // double W = 0.0;
@@ -5799,12 +5799,12 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                             w = 0;
                         }
                         upsum[k][permutation[i]] += w * (xi - xj) * (xi - xj);
-                        // System.out.println("Upsum:"+xi+" "+xj+","+upsum[k][permutation[i]]);
+                        // ClusLogger.info("Upsum:"+xi+" "+xj+","+upsum[k][permutation[i]]);
                         // W += w;
                     }
 
                 }
-                // System.out.println("Geary C:"+k+"
+                // ClusLogger.info("Geary C:"+k+"
                 // "+permutation[i]+","+upsum[k][permutation[i]]);
                 downsum[k] += ((xi - means[k]) * (xi - means[k]));
             }
@@ -5812,7 +5812,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             for (int i = M; i < N; i++) {
                 if (downsum[k] != 0.0 && upsum[k][permutation[i]] != 0.0) {
                     ik[k][permutation[i]] = ((N - M) * upsum[k][permutation[i]]) / (downsum[k]); // C for each point
-                    // System.out.println("Geary C:"+k+"
+                    // ClusLogger.info("Geary C:"+k+"
                     // "+permutation[i]+","+upsum[k][permutation[i]]+"/"+(N-M)/downsum[k]);
                     ikk[k] += ik[k][permutation[i]]; // average of all points for each targets
                 }
@@ -5823,7 +5823,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         avgik /= schema.getNbTargetAttributes(); // average of all targets
         double I = avgik;
-        // System.out.println("Geary C:"+ikk[0]+","+ikk[1]);
+        // ClusLogger.info("Geary C:"+ikk[0]+","+ikk[1]);
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
 
@@ -5859,7 +5859,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             }
             means[k] /= (N - M);
         }
-        // System.out.println("G1:"+means[0]+". Split was on "+(N+",M:"+M)+" examples
+        // ClusLogger.info("G1:"+means[0]+". Split was on "+(N+",M:"+M)+" examples
         // out of "+N +" examples. ");
         double avgik = 0;
         // double W = 0.0;
@@ -5903,7 +5903,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         avgik /= schema.getNbTargetAttributes(); // average of all targets
         double I = avgik;
-        // System.out.println("Local Getis:"+ikk[0]+","+ikk[1]);
+        // ClusLogger.info("Local Getis:"+ikk[0]+","+ikk[1]);
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
 
@@ -5942,7 +5942,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             }
             means[k] /= (N - M);
         }
-        // System.out.println("G1:"+means[0]+". Split was on "+(N+",M:"+M)+" examples
+        // ClusLogger.info("G1:"+means[0]+". Split was on "+(N+",M:"+M)+" examples
         // out of "+N +" examples. ");
         double avgik = 0;
         double[] W = new double[N];
@@ -5977,19 +5977,19 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 upsum[k][permutation[i]] = upsum1[k][permutation[i]] - means[k] * W[permutation[i]];
                 downsum[k] += ((xi - means[k]) * (xi - means[k])); // downsum the same as geary's C
                 downsum2[k][permutation[i]] = (N - M) * downsum1[k][permutation[i]] - W[permutation[i]] * W[permutation[i]];
-                // System.out.println("downsum2:"+downsum2[k][permutation[i]]);
+                // ClusLogger.info("downsum2:"+downsum2[k][permutation[i]]);
             }
 
             for (int i = M; i < N; i++) {
                 if (downsum[k] != 0.0 && upsum[k][permutation[i]] != 0.0 && downsum2[k][permutation[i]] != 0.0) {
                     // double im = downsum2[k][permutation[i]];
-                    // System.out.println(im);
+                    // ClusLogger.info(im);
                     ik[k][permutation[i]] = upsum[k][permutation[i]] / (Math.sqrt((downsum[k] / ((N - M) * (N - M - 1))) * downsum2[k][permutation[i]])); // I
                                                                                                                                                           // for
                                                                                                                                                           // each
                                                                                                                                                           // point
                     ikk[k] += ik[k][permutation[i]]; // average of all points for each targets
-                    // System.out.println(k+" : "+downsum1[k][permutation[i]]+" ,
+                    // ClusLogger.info(k+" : "+downsum1[k][permutation[i]]+" ,
                     // "+W[permutation[i]]+" , "+downsum2[k][permutation[i]]+" rez:
                     // "+ik[k][permutation[i]]+" br: "+(N-M));
                 }
@@ -6001,7 +6001,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         avgik /= schema.getNbTargetAttributes(); // average of all targets
         double I = avgik;
 
-        // System.out.println("Geary C:"+ikk[0]+","+ikk[1]);
+        // ClusLogger.info("Geary C:"+ikk[0]+","+ikk[1]);
         if (Double.isNaN(I)) { throw new ClusException("err!"); }
         return I;
 

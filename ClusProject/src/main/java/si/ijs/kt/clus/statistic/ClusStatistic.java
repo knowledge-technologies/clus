@@ -332,7 +332,7 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public double getError(ClusAttributeWeights scale) {
-        // System.out.println("ClusStatistic :getError");
+        // ClusLogger.info("ClusStatistic :getError");
         throw new NotImplementedException();
     }
 

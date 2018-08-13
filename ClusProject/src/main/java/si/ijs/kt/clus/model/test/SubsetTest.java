@@ -29,6 +29,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 
 
@@ -280,8 +281,8 @@ public class SubsetTest extends NodeTest {
                     values[i++] = j;
         }
         catch (Exception e) {
-            System.out.println("nb: " + nb);
-            System.out.println("isin: " + Arrays.toString(isin));
+            ClusLogger.info("nb: " + nb);
+            ClusLogger.info("isin: " + Arrays.toString(isin));
         }
         return values;
     }

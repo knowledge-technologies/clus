@@ -58,6 +58,7 @@ import si.ijs.kt.clus.model.test.NumericTest;
 import si.ijs.kt.clus.model.test.SubsetTest;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MStreamTokenizer;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -111,7 +112,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
             if (token.equalsIgnoreCase("RULE")) {
                 String number = tokens.getToken();
                 if (StringUtils.isInteger(number) && tokens.isNextToken(':')) {
-                    System.out.println("Reading rule: " + number);
+                    ClusLogger.info("Reading rule: " + number);
                     ClusRule rule = loadRule(tokens, number);
                     set.add(rule);
                     rule.printModel();
@@ -241,19 +242,19 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
     public void showValuesForGene(ClusRun cr, ClusRuleSet rules, String gene) throws IOException, ClusException, InterruptedException {
         DataTuple tuple = null;
         if (cr.getTrainingSet() != null) {
-            System.out.println("Searching for gene in training set");
+            ClusLogger.info("Searching for gene in training set");
             tuple = ((RowData) cr.getTrainingSet()).findTupleByKey(gene);
         }
         if (tuple == null && cr.getPruneSet() != null) {
-            System.out.println("Searching for gene in validation set");
+            ClusLogger.info("Searching for gene in validation set");
             tuple = ((RowData) cr.getPruneSet()).findTupleByKey(gene);
         }
         if (tuple == null && cr.getTestSet() != null) {
-            System.out.println("Searching for gene in test set");
+            ClusLogger.info("Searching for gene in test set");
             tuple = cr.getTestSet().findTupleByKey(gene);
         }
         if (tuple == null) {
-            System.out.println("Can't find gene in data set");
+            ClusLogger.info("Can't find gene in data set");
         }
         else {
             Settings sett = m_Clus.getSettings();
@@ -308,7 +309,7 @@ public class ClusAmandaRules implements CMDLineArgsProvider {
             rules.run(args);
         }
         catch (Exception io) {
-            System.out.println(io.toString());
+            ClusLogger.info(io.toString());
         }
     }
 }

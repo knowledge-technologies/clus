@@ -8,6 +8,7 @@ import org.apache.commons.math3.special.Gamma;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class EncodingCost {
@@ -109,7 +110,7 @@ public class EncodingCost {
         for (int i = 0; i < m_Duration.length; i++) {
             System.out.print(m_Duration[i] + " ");
         }
-        System.out.println();
+        ClusLogger.info();
     }
 
 

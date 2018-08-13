@@ -37,6 +37,7 @@ import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.jeans.util.DisjointSetForest;
 
@@ -272,7 +273,7 @@ public class COPKMeans {
             }
         }
         double rand = 1.0 * (a + b) / (nbex * (nbex - 1) / 2);
-        System.out.println("Rand = " + rand + " (nbex = " + nbex + ")");
+        ClusLogger.info("Rand = " + rand + " (nbex = " + nbex + ")");
         return rand;
     }
 
@@ -280,9 +281,9 @@ public class COPKMeans {
     public ClusModel induce(RowData data, ArrayList constr) {
         COPKMeansModel model = new COPKMeansModel();
         model.setK(m_K);
-        // System.out.println("Creating initial clusters...");
+        // ClusLogger.info("Creating initial clusters...");
         createInitialClusters(data, constr);
-        // System.out.println("Number clusters...");
+        // ClusLogger.info("Number clusters...");
         numberClusters();
         int[] prev_assign = null;
         int[] assign = new int[m_Data.getNbRows()];

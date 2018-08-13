@@ -28,6 +28,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.model.test.NodeTest;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -112,7 +113,7 @@ public class SizeConstraintPruning extends PruneTree {
         if (m_MaxError == null) {
             int size = m_MaxSize[result];
             int orig = node.getNbNodes();
-            System.out.println("Pruning to size (" + orig + "): " + size);
+            ClusLogger.info("Pruning to size (" + orig + "): " + size);
             pruneInitialize(node, size);
             pruneExecute(node, size);
         }
@@ -182,7 +183,7 @@ public class SizeConstraintPruning extends PruneTree {
             cr_err.setNbExamples(m_Data.getNbRows());
             if (m_MaxError.length == 1) {
                 double max_err = m_MaxError[0];
-                // System.out.println("dans SizeConstraintPruning, maxError = "+max_err);
+                // ClusLogger.info("dans SizeConstraintPruning, maxError = "+max_err);
                 if (err.getModelError() <= max_err) {
                     constr_ok_size = crsize;
                     break;
@@ -272,14 +273,14 @@ public class SizeConstraintPruning extends PruneTree {
             for (int k1 = 1; k1 <= l - 2; k1++) {
                 int k2 = l - k1 - 1;
                 double cost = computeCosts(ch1, k1) + computeCosts(ch2, k2);
-                // System.out.println("cost "+cost+" "+arr[l].cost);
+                // ClusLogger.info("cost "+cost+" "+arr[l].cost);
                 if (cost < visitor.cost[l]) {
                     visitor.cost[l] = cost;
                     visitor.left[l] = k1;
                 }
             }
         }
-        // System.out.println("Node: "+node+" cost "+l+" = "+arr[l]);
+        // ClusLogger.info("Node: "+node+" cost "+l+" = "+arr[l]);
         visitor.computed[l] = true;
         return visitor.cost[l];
     }

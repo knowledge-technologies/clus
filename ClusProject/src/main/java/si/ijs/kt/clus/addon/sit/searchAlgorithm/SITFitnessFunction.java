@@ -46,7 +46,7 @@ public class SITFitnessFunction extends FitnessFunction {
 
         int errorIdx = tset.getIndex(mainTarget);
         if (errorIdx == -1) {
-            // System.out.println("main target not in targetset");
+            // ClusLogger.info("main target not in targetset");
             return 0;
         }
 
@@ -71,8 +71,8 @@ public class SITFitnessFunction extends FitnessFunction {
             return Double.POSITIVE_INFINITY;
         }
 
-        // System.out.println(tset);
-        // System.out.println(10-error);
+        // ClusLogger.info(tset);
+        // ClusLogger.info(10-error);
         
     }
 

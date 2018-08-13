@@ -41,6 +41,7 @@ import si.ijs.kt.clus.ext.ensemble.ClusOOBWeights;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
@@ -596,7 +597,7 @@ public class CombStat extends ClusStatistic {
                 e.printStackTrace();
             }
         }
-        System.out.println("Nb.sig.atts: " + sign_diff);
+        ClusLogger.info("Nb.sig.atts: " + sign_diff);
         return sign_diff;
     }
 
@@ -627,7 +628,7 @@ public class CombStat extends ClusStatistic {
                     break; // TODO: If one target att significant, the whole rule significant!?
                 }
             }
-            // System.out.println("Target sign. testing: " + res);
+            // ClusLogger.info("Target sign. testing: " + res);
             return res;
         }
         else if (targetStat instanceof RegressionStat) {
@@ -871,7 +872,7 @@ public class CombStat extends ClusStatistic {
     // TODO: This error assessment should be changed, I guess.
     @Override
     public double getError(ClusAttributeWeights scale) {
-        System.out.println("CombStat :getError");
+        ClusLogger.info("CombStat :getError");
         switch (m_StatManager.getMode()) {
             case ClusStatManager.MODE_CLASSIFY:
                 return m_ClassStat.getError(scale);

@@ -27,6 +27,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.LineNumberReader;
 
+import si.ijs.kt.clus.util.ClusLogger;
+
 
 public class MultiDelimStringTokenizer {
 
@@ -134,16 +136,16 @@ public class MultiDelimStringTokenizer {
             while ((line = reader.readLine()) != null) {
                 token.setLine(line);
                 while (token.hasMoreTokens()) {
-                    System.out.println(token.nextToken());
+                    ClusLogger.info(token.nextToken());
                 }
             }
             reader.close();
         }
         catch (NullPointerException e) {
-            System.out.println("You must supply a file name!");
+            ClusLogger.info("You must supply a file name!");
         }
         catch (IOException e) {
-            System.out.println("IO Error: " + e);
+            ClusLogger.info("IO Error: " + e);
         }
     }
 }

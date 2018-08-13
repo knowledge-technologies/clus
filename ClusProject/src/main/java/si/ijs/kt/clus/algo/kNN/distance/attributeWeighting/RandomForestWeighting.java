@@ -35,6 +35,7 @@ import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 
 
@@ -67,7 +68,7 @@ public class RandomForestWeighting extends AttributeWeighting {
                 public void write(int arg0) throws IOException {
                 }
             });
-            System.out.println("Ignoring RandomForest output.");
+            ClusLogger.info("Ignoring RandomForest output.");
             System.setOut(ps);
             Settings orig_sett = run.getStatManager().getSettings();
             Clus new_clus = new Clus();
@@ -124,14 +125,14 @@ public class RandomForestWeighting extends AttributeWeighting {
                 dsum += d;
             }
             for (int i = 0; i < m_Weights.length; i++)
-                System.out.println(m_Weights[i]);
+                ClusLogger.info(m_Weights[i]);
             // normalize and "inverse" ranks (ranks to weights)
             for (int i = 0; i < m_Weights.length; i++)
                 m_Weights[i] = 1 - m_Weights[i] / dsum;
 
         }
         catch (Exception e) {
-            System.out.println("RandomForest weighting failed.");
+            ClusLogger.info("RandomForest weighting failed.");
             e.printStackTrace();
         }
     }

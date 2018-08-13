@@ -30,6 +30,7 @@ import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 
 
 public class ClusRuleHeuristicMEstimate extends ClusHeuristic {
@@ -60,7 +61,7 @@ public class ClusRuleHeuristicMEstimate extends ClusHeuristic {
     @Override
     public void setRootStatistic(ClusStatistic stat) {
         m_Prior = (stat.getTotalWeight() - stat.getError()) / stat.getTotalWeight();
-        System.out.println("Setting prior: " + m_Prior);
+        ClusLogger.info("Setting prior: " + m_Prior);
     }
 
 

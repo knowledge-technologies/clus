@@ -25,6 +25,8 @@ package si.ijs.kt.clus.util.jeans.math;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import si.ijs.kt.clus.util.ClusLogger;
+
 
 public class MathUtil {
 
@@ -91,12 +93,12 @@ public class MathUtil {
         for (int i = 0; i < blackBoxTestInterpolateX.length; i++) {
             fct.add(new double[] { blackBoxTestInterpolateX[i], blackBoxTestInterpolateY[i] });
         }
-        System.out.println("Interpolate x = 0   -> y = 3.5: " + MathUtil.interpolate(0, fct));
-        System.out.println("Interpolate x = 4   -> y = 3.5: " + MathUtil.interpolate(4, fct));
-        System.out.println("Interpolate x = 5   -> y = 4.5: " + MathUtil.interpolate(5, fct));
-        System.out.println("Interpolate x = 7   -> y = 3.8: " + MathUtil.interpolate(7, fct));
-        System.out.println("Interpolate x = 9.5 -> y = 1.5: " + MathUtil.interpolate(9.5, fct));
-        System.out.println("Interpolate x = 10  -> y = 1.5: " + MathUtil.interpolate(10, fct));
+        ClusLogger.info("Interpolate x = 0   -> y = 3.5: " + MathUtil.interpolate(0, fct));
+        ClusLogger.info("Interpolate x = 4   -> y = 3.5: " + MathUtil.interpolate(4, fct));
+        ClusLogger.info("Interpolate x = 5   -> y = 4.5: " + MathUtil.interpolate(5, fct));
+        ClusLogger.info("Interpolate x = 7   -> y = 3.8: " + MathUtil.interpolate(7, fct));
+        ClusLogger.info("Interpolate x = 9.5 -> y = 1.5: " + MathUtil.interpolate(9.5, fct));
+        ClusLogger.info("Interpolate x = 10  -> y = 1.5: " + MathUtil.interpolate(10, fct));
     }
 
 

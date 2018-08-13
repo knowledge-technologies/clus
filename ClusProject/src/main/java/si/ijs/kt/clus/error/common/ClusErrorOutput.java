@@ -110,7 +110,7 @@ public class ClusErrorOutput extends ClusOutput {
 
                     ClusError err2 = parent.getError(i);
                     // System.out.print(inf.getName()+": ");
-                    // System.out.println(err2.getName());
+                    // ClusLogger.info(err2.getName());
                     m_Writer.print("," + err2.getModelErrorComponent(mt_idx));
                 }
             }

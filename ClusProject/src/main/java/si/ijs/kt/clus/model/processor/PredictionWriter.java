@@ -37,6 +37,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -105,7 +106,7 @@ public class PredictionWriter extends ClusModelProcessor {
         if (!m_Global)
             doInitialize(schema);
         addTargetAttributesForEachModel();
-        System.out.println("PredictionWriter is writing the ARFF header");
+        ClusLogger.info("PredictionWriter is writing the ARFF header");
         ARFFFile.writeArffHeader(m_Writer, m_OutSchema);
         m_Writer.println("@DATA");
         if (m_ToPrint != null) {

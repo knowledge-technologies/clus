@@ -26,6 +26,7 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.FTest;
 import si.ijs.kt.clus.util.exception.ClusException;
 
@@ -70,10 +71,10 @@ public class VarianceReductionHeuristic extends ClusHeuristic {
         double ss_neg = m_NegStat.getSVarS(m_ClusteringWeights, m_Data);
         double value = FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
         if (getSettings().getGeneral().getVerbose() >= 10) {
-            System.out.println("TOT: " + tstat.getDebugString());
-            System.out.println("POS: " + pstat.getDebugString());
-            System.out.println("NEG: " + m_NegStat.getDebugString());
-            System.out.println("-> (" + ss_tot + ", " + ss_pos + ", " + ss_neg + ") " + value);
+            ClusLogger.info("TOT: " + tstat.getDebugString());
+            ClusLogger.info("POS: " + pstat.getDebugString());
+            ClusLogger.info("NEG: " + m_NegStat.getDebugString());
+            ClusLogger.info("-> (" + ss_tot + ", " + ss_pos + ", " + ss_neg + ") " + value);
         }
         return value;
     }

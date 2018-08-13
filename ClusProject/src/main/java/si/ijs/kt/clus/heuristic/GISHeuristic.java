@@ -22,6 +22,7 @@ import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.FTest;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 
@@ -86,7 +87,7 @@ public class GISHeuristic extends ClusHeuristic {
         for (int i = 0; i < nb; i++) {
             int index = data.getTuple(i).getIndex();
             resultvector[i] = index;
-            // System.out.println(index);
+            // ClusLogger.info(index);
         }
         return resultvector;
     }
@@ -144,7 +145,7 @@ public class GISHeuristic extends ClusHeuristic {
         }
         double bandwidth = schema.getSettings().getTree().getBandwidth();
         double b = bandwidth * maxdist;
-        // System.out.println(maxdist);
+        // ClusLogger.info(maxdist);
         if (maxOnMinDistLine != Double.POSITIVE_INFINITY && b < maxOnMinDistLine)
             b = maxOnMinDistLine;
         // calculate the weights
@@ -205,7 +206,7 @@ public class GISHeuristic extends ClusHeuristic {
                                 break;
                         }
                         // W += w[tupleI][tupleJ];
-                        // //System.out.println(i+"\t"+j+"\t"+exi+"\t"+exj+"\t"+(long)(i*N+j)+"\t"+w[i][j]);
+                        // //ClusLogger.info(i+"\t"+j+"\t"+exi+"\t"+exj+"\t"+(long)(i*N+j)+"\t"+w[i][j]);
                     }
                     m_distances.put((long) (tupleI * N + tupleJ), w[tupleI][tupleJ]); // write to hasp map only, not in
                                                                                       // file
@@ -214,7 +215,7 @@ public class GISHeuristic extends ClusHeuristic {
                 }
             }
         }
-        // System.out.println("spatialMatrix end: "+ System.currentTimeMillis());
+        // ClusLogger.info("spatialMatrix end: "+ System.currentTimeMillis());
         // pw.close();
     }
 
@@ -292,7 +293,7 @@ public class GISHeuristic extends ClusHeuristic {
                         }
                     }
                     m_distancesS.put((i), w); // write to hasp map non-zero only, not in file
-                    // System.out.println((i)+" "+w);
+                    // ClusLogger.info((i)+" "+w);
                 }
             }
         }
@@ -483,9 +484,9 @@ public class GISHeuristic extends ClusHeuristic {
                 double ss_neg = tstat.getSVarSDiff(m_ClusteringWeights, pstat);
                 value = FTest.calcVarianceReductionHeuristic(tstat.getTotalWeight(), ss_tot, ss_pos + ss_neg);
                 if (getSettings().getGeneral().getVerbose() >= 10) {
-                    System.out.println("TOT: " + tstat.getDebugString());
-                    System.out.println("POS: " + pstat.getDebugString());
-                    System.out.println("-> (" + ss_tot + ", " + ss_pos + ", " + ss_neg + ") " + value);
+                    ClusLogger.info("TOT: " + tstat.getDebugString());
+                    ClusLogger.info("POS: " + pstat.getDebugString());
+                    ClusLogger.info("-> (" + ss_tot + ", " + ss_pos + ", " + ss_neg + ") " + value);
                 }
             }
         }

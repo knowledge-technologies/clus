@@ -12,6 +12,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.GeneticDistanceStat;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.list.BitList;
 import si.ijs.kt.clus.util.jeans.math.matrix.MSymMatrix;
 
@@ -58,7 +59,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         }
         catch (IOException e) {
             m_DistMatrix = new MSymMatrix(m_RootData.getNbRows());
-            System.out.println("  Calculating Distance Matrix (Size: " + m_RootData.getNbRows() + ")");
+            ClusLogger.info("  Calculating Distance Matrix (Size: " + m_RootData.getNbRows() + ")");
             GeneticDistanceStat gstat = (GeneticDistanceStat) stat;
             m_Sequences = new String[m_RootData.getNbRows()][gstat.m_NbTarget];
             for (int i = 0; i < m_RootData.getNbRows(); i++) {
@@ -69,7 +70,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
                     int nomvalue1 = gstat.m_Attrs[t].getNominal(tuple1);
                     str1[t] = gstat.m_Attrs[t].getValueOrMissing(nomvalue1);
                     m_Sequences[i][t] = str1[t];
-                    // System.out.println(str1[t] + " " + str1[t].hashCode());
+                    // ClusLogger.info(str1[t] + " " + str1[t].hashCode());
                 }
 
                 for (int j = i + 1; j < m_RootData.getNbRows(); j++) {
@@ -86,12 +87,12 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             }
         }
         /*
-         * System.out.println("Distance matrix: ");
+         * ClusLogger.info("Distance matrix: ");
          * for (int i=0; i<m_RootData.getNbRows(); i++) {
          * for (int j=0; j<=i; j++) {
          * System.out.print(m_DistMatrix.get(i, j) + "  ");
          * }
-         * System.out.println();
+         * ClusLogger.info();
          * }
          */
     }
@@ -102,7 +103,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         String filename = sett.getPhylogeny().getPhylogenyDistanceMatrix();
         ClusReader reader = new ClusReader(filename, sett);
         int nb = (int) reader.readFloat();
-        System.out.println("  Loading Distance Matrix: " + filename + " (Size: " + nb + ")");
+        ClusLogger.info("  Loading Distance Matrix: " + filename + " (Size: " + nb + ")");
         MSymMatrix matrix = new MSymMatrix(nb);
         for (int i = 0; i < nb; i++) {
             reader.readName();
@@ -115,7 +116,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             // if (!reader.isEol()) throw new IOException("Distance Matrix is not square");
         }
         reader.close();
-        System.out.println("  Matrix loaded");
+        ClusLogger.info("  Matrix loaded");
 
         // if entropy stopcriterion will be used, we need to know the sequence information
         if ((m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsRootStop() > 0) || (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsParentStop() > 0)) {
@@ -275,12 +276,12 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
                     double p = (double) counters[i] / nbnongaps;
                     double log = log2(p);
                     double product = p * log;
-                    // System.out.println("counters " + counters[i] + " nbnongaps " + nbnongaps + " p " + p + " log " +
+                    // ClusLogger.info("counters " + counters[i] + " nbnongaps " + nbnongaps + " p " + p + " log " +
                     // log + " product: " + product);
                     columnentropy -= product;
                 }
             }
-            // System.out.println("colentr: " + columnentropy);
+            // ClusLogger.info("colentr: " + columnentropy);
             entropy += columnentropy;
         }
         return entropy;
@@ -395,7 +396,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
      * We make use of the previous results for p14=A and p14=C, which have been calculated and hashed before.
      */
     public double[] effcalculate(GeneticDistanceStat pstat, GeneticDistanceStat partition, int[] negindices) {
-        // System.out.println("efficient");
+        // ClusLogger.info("efficient");
         String part1bits = partition.getBits().toString();
 
         double part1poswithin = -100000.0;
@@ -407,7 +408,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             part1negwithin = ((Double) ResAl.get(2)).doubleValue();
         }
         else {
-            System.out.println("------- Partition not found ------");
+            ClusLogger.info("------- Partition not found ------");
         }
 
         int[] part1posindices = constructIndexVector(m_Data, partition);
@@ -424,7 +425,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             part2poswithin = ((Double) ResAl2.get(1)).doubleValue();
         }
         else {
-            System.out.println("------- Partition2 not found ------");
+            ClusLogger.info("------- Partition2 not found ------");
         }
 
         int[] part2posindices = constructIndexVector(m_Data, p2stat);
@@ -591,7 +592,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         if (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsRootStop() > 0) {
             if (m_SumEntropyWithin / m_RootSumEntropyWithin < m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsRootStop()) {
                 if (m_RootData.getSchema().getSettings().getGeneral().getVerbose() > 2) {
-                    System.out.println("STOP: entropy at current node = " + m_SumEntropyWithin + ", at root = " + m_RootSumEntropyWithin);
+                    ClusLogger.info("STOP: entropy at current node = " + m_SumEntropyWithin + ", at root = " + m_RootSumEntropyWithin);
                 }
                 return false;
             }
@@ -602,7 +603,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
         if (m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsRootStop() > 0) {
             if (m_AvgAllDistances / m_RootAvgAllDistances < m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsRootStop()) {
                 if (m_RootData.getSchema().getSettings().getGeneral().getVerbose() > 2) {
-                    System.out.println("STOP: AvgPWDistance at current node = " + m_AvgAllDistances + ", at root = " + m_RootAvgAllDistances);
+                    ClusLogger.info("STOP: AvgPWDistance at current node = " + m_AvgAllDistances + ", at root = " + m_RootAvgAllDistances);
                 }
                 return false;
             }
@@ -618,7 +619,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             double negwithin = getAvgPWDistancesWithin(negindices);
             if ((((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) / m_AvgAllDistances) > m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyDistancesVsParentStop()) {
                 if (m_RootData.getSchema().getSettings().getGeneral().getVerbose() > 2) {
-                    System.out.println("STOP: weighted sum of AvgPWDistances in children = " + ((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) + ", AvgPWDistance at node = " + m_AvgAllDistances);
+                    ClusLogger.info("STOP: weighted sum of AvgPWDistances in children = " + ((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) + ", AvgPWDistance at node = " + m_AvgAllDistances);
                 }
                 return false;
             }
@@ -634,7 +635,7 @@ public class GeneticDistanceHeuristicMatrix extends GeneticDistanceHeuristic {
             double negwithin = getSumOfEntropyWithin(negindices);
             if ((((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) / m_SumEntropyWithin) > m_RootData.getSchema().getSettings().getPhylogeny().getPhylogenyEntropyVsParentStop()) {
                 if (m_RootData.getSchema().getSettings().getGeneral().getVerbose() > 2) {
-                    System.out.println("STOP: weighted sum of SumEntropies in children = " + ((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) + ", SumEntropies at node = " + m_SumEntropyWithin);
+                    ClusLogger.info("STOP: weighted sum of SumEntropies in children = " + ((n_pos * poswithin + n_neg * negwithin) / (n_pos + n_neg)) + ", SumEntropies at node = " + m_SumEntropyWithin);
                 }
                 return false;
             }

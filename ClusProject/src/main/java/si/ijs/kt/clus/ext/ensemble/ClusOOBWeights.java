@@ -1,12 +1,9 @@
 
 package si.ijs.kt.clus.ext.ensemble;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 
 import si.ijs.kt.clus.error.common.ClusError;
-import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 
 
 /**

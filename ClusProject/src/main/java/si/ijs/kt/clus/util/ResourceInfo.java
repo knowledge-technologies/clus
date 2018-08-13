@@ -61,8 +61,8 @@ public class ResourceInfo {
         }
         catch (UnsatisfiedLinkError e) {
             if (test) {
-                System.out.println("Error loading resource info: " + e.getMessage());
-                System.out.println("Value of java.library.path: " + System.getProperty("java.library.path"));
+                ClusLogger.info("Error loading resource info: " + e.getMessage());
+                ClusLogger.info("Value of java.library.path: " + System.getProperty("java.library.path"));
             }
         }
     }

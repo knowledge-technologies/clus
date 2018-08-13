@@ -37,6 +37,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesPrototy
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.StatisticPrintInfo;
 import si.ijs.kt.clus.statistic.SumPairwiseDistancesStat;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
@@ -231,7 +232,7 @@ public class TimeSeriesStat extends SumPairwiseDistancesStat {
         for (int j = 0; j < m_TimeSeriesStack.size(); j++) {
             if (m_TimeSeriesStack.get(j).length() != mean.length()) {
                 if (m_Settings.getGeneral().getVerbose() > 1) {
-                    System.out.println("TSs should be of the same length, returning null as the mean value.");
+                    ClusLogger.info("TSs should be of the same length, returning null as the mean value.");
                 }
                 return null;
             }

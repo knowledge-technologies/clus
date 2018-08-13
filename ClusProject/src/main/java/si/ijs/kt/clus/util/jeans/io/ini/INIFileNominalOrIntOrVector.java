@@ -231,7 +231,7 @@ public class INIFileNominalOrIntOrVector extends INIFileEntry {
             }
             else {
                 try {
-                    // System.out.println("Setting int value: "+token+" for "+getName());
+                    // ClusLogger.info("Setting int value: "+token+" for "+getName());
                     setInt(Integer.parseInt(token));
                 }
                 catch (NumberFormatException e) {

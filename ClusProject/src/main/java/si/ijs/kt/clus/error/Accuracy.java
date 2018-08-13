@@ -92,7 +92,7 @@ public class Accuracy extends ClusNominalError implements ComponentError {
 
     @Override
     public double getModelErrorComponent(int i) {
-        // System.out.println("Correct: "+m_NbCorrect[i]+" known: "+m_NbKnown[i]+" nbex: "+getNbExamples());
+        // ClusLogger.info("Correct: "+m_NbCorrect[i]+" known: "+m_NbKnown[i]+" nbex: "+getNbExamples());
         return ((double) m_NbCorrect[i]) / m_NbKnown[i];
     }
 
@@ -103,7 +103,7 @@ public class Accuracy extends ClusNominalError implements ComponentError {
         for (int i = 0; i < m_Dim; i++) {
             avg += getModelErrorComponent(i);
         }
-        // System.out.println("in ACCURACY class, error = "+(avg / m_Dim));
+        // ClusLogger.info("in ACCURACY class, error = "+(avg / m_Dim));
         return avg / m_Dim;
     }
 

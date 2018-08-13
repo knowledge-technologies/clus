@@ -16,6 +16,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -73,9 +74,9 @@ public class ClusSelfTrainingFTFInduce extends ClusSemiSupervisedInduce {
 
             iterations++;
 
-            System.out.println();
-            System.out.println("SelfTrainingFTF iteration: " + iterations);
-            System.out.println();
+            ClusLogger.info();
+            ClusLogger.info("SelfTrainingFTF iteration: " + iterations);
+            ClusLogger.info();
 
             m_Model = m_Induce.induceSingleUnpruned(myClusRun);
 

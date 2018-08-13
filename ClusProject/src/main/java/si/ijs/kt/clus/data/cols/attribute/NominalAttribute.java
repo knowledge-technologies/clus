@@ -183,6 +183,6 @@ public class NominalAttribute extends NominalAttrBase {
  * System.out.print(m_Type.getValue(k));
  * }
  * }
- * System.out.println("} = "+mheur+" t="+mstat.m_SumWeight+" p="+cstat.m_SumWeight);
+ * ClusLogger.info("} = "+mheur+" t="+mstat.m_SumWeight+" p="+cstat.m_SumWeight);
  * }
  */

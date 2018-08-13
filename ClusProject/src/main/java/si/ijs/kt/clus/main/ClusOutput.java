@@ -26,7 +26,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.nio.file.Files;
@@ -34,12 +33,8 @@ import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.text.DateFormat;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
-
-import org.apache.maven.model.Model;
-import org.apache.maven.model.io.xpp3.MavenXpp3Reader;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -308,7 +303,7 @@ public class ClusOutput {
                     m_Writer.println();
                     if (m_Sett.getOutput().isPrintModelAndExamples()) {
                         RowData pex = (RowData) cr.getTrainingSet();
-                        // System.out.println(te_err);
+                        // ClusLogger.info(te_err);
                         if (te_err != null)
                             pex = cr.getTestSet();
                         root.printModelAndExamples(m_Writer, info, pex);
@@ -360,7 +355,7 @@ public class ClusOutput {
                         ((ClusForest) root).writePythonEnsembleFile(wrtr, treeFile, pyModelType);
                     }
                 }
-                System.out.println(String.format("Python ensemble aggregation code written to: %s", pyName));
+                ClusLogger.info(String.format("Python ensemble aggregation code written to: %s", pyName));
                 // print only max sized forest trees, since it contains the other forests
                 ClusForest root = (ClusForest) models.get(maxSizedForest);
                 if (getSettings().getEnsemble().shouldOptimizeEnsemble()) {
@@ -414,7 +409,7 @@ public class ClusOutput {
             PrintWriter database_writer = m_Sett2.getGeneric().getFileAbsoluteWriter(out_database_name);
             root.printModelToQuery(database_writer, cr, starttree, startitem, getSettings().getExhaustiveSearch().isExhaustiveSearch());
             database_writer.close();
-            System.out.println("The queries are in " + out_database_name);
+            ClusLogger.info("The queries are in " + out_database_name);
         }
 
         if (!ClusOOBErrorEstimate.isOOBCalculation() && getSettings().getOutput().isOutputClowdFlowsJSON()) {
@@ -433,7 +428,7 @@ public class ClusOutput {
                     JsonObject currentModel = new JsonObject();
                     currentModel.addProperty("name", modelname);
                     RowData pex = (RowData) cr.getTrainingSet();
-                    // System.out.println(te_err);
+                    // ClusLogger.info(te_err);
                     if (te_err != null)
                         pex = cr.getTestSet();
                     currentModel.add("representation", root.getModelJSON(info, pex));
@@ -522,68 +517,14 @@ public class ClusOutput {
 
     public void close() {
         if (m_Fname != null && getSettings().getGeneral().getVerbose() >= 1) {
-        	System.out.println("Output written to: " + m_Fname);
+            ClusLogger.info("Output written to: " + m_Fname);
         }
         m_Writer.close();
     }
 
 
-    private static String getClusVersion() {
-        MavenXpp3Reader reader = new MavenXpp3Reader();
-        Model model = null;
-
-        try {
-            try (InputStreamReader isr = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/pom.xml"))) {
-                model = reader.read(isr);
-            }
-
-            return model.getVersion();
-        }
-        catch (Exception ex) {
-            return "DEVELOPMENT";
-        }
-    }
+  
 
 
-    public static void printHeader() {
-        System.out.println("Clus v" + getClusVersion() + " - Software for Predictive Clustering");
-        System.out.println();
-        System.out.println(String.format("Copyright (C) 2007 - %s", Calendar.getInstance().get(Calendar.YEAR)));
-        System.out.println("   Katholieke Universiteit Leuven, Leuven, Belgium");
-        System.out.println("   Jozef Stefan Institute, Ljubljana, Slovenia");
-        System.out.println();
-        System.out.println("This program is free software and comes with ABSOLUTELY NO");
-        System.out.println("WARRANTY. You are welcome to redistribute it under certain");
-        System.out.println("conditions. Type 'clus -copying' for distribution details.");
-        System.out.println();
-    }
-
-
-    public static void showHelp() {
-        System.out.println("Usage: clus appname");
-        System.out.println("Database: appname.arff");
-        System.out.println("Settings: appname.s");
-        System.out.println("Output:   appname.out");
-        System.out.println();
-    }
-
-
-    public static void printGPL() {
-        try {
-
-            char[] buffer = new char[4096];
-            StringBuilder sb = new StringBuilder();
-
-            try (InputStreamReader br = new InputStreamReader(si.ijs.kt.clus.Clus.class.getResourceAsStream("/CLUS_LICENSE.txt"))) {
-                for (int len; (len = br.read(buffer)) > 0;) {
-                    sb.append(buffer, 0, len);
-                }
-            }
-
-            System.out.println(sb.toString());
-        }
-        catch (Exception ex) {
-            throw new RuntimeException("Unable to get LICENSE information.");
-        }
-    }
+   
 }

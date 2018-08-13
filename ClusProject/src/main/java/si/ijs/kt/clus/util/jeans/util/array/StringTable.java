@@ -25,6 +25,8 @@ package si.ijs.kt.clus.util.jeans.util.array;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
+import si.ijs.kt.clus.util.ClusLogger;
+
 
 public class StringTable {
 
@@ -44,7 +46,7 @@ public class StringTable {
     public void print() {
         for (Enumeration e = table.elements(); e.hasMoreElements();) {
             String str = (String) e.nextElement();
-            System.out.println(str);
+            ClusLogger.info(str);
         }
     }
 

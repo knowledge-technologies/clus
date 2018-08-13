@@ -23,6 +23,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyMeasures;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.RandomSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -72,13 +73,13 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
                 }
             }
             else {
-                System.out.println("UnlabeledData not set. Unlabeled examples will be selected from training set (Percentage labeled = " + m_PercentageLabeled + ")");
+                ClusLogger.info("UnlabeledData not set. Unlabeled examples will be selected from training set (Percentage labeled = " + m_PercentageLabeled + ")");
 
                 RandomSelection randomSelection = new RandomSelection(tempTrainingSet.getNbRows(), m_PercentageLabeled, cr.getStatManager().getSettings().getGeneral().getRandomSeed());
 
                 //add selected instances from training set to unlabeled set
                 //we have to remove from training set instances which will be in the unlabeled set, 
-                //because if we just set their weights to 0, they will anyway be selected in bagging process
+                //because if we just set their weights to 0, they will anyway be selected in bootstrapping process
                 for (int i = 0; i < tempTrainingSet.getNbRows(); i++) {
                     if (!randomSelection.isSelected(i)) {
                         m_UnlabeledData.add(tempTrainingSet.getTuple(i).deepCloneTuple());
@@ -107,7 +108,7 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
         RowData testSet = cr.getTestSet();
 
         if (testSet == null) {
-            System.out.println("Testing data not set. Semi-supervised learning will be evaluated on unlabeled data.");
+            ClusLogger.info("Testing data not set. Semi-supervised learning will be evaluated on unlabeled data.");
             testSet = new RowData(cr.getStatManager().getSchema());
 
             for (int i = 0; i < m_UnlabeledData.getNbRows(); i++) {

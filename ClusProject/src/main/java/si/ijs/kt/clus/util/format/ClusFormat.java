@@ -28,6 +28,7 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.text.NumberFormat;
 
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
 
 
@@ -93,7 +94,7 @@ public class ClusFormat {
     	String[] xsStr = new String[] {"9", "9.0", "9876.6", "0.0098766", "0.0000000098766", "9876543.456789", "0.987654"};
     	NumberFormat dff = makeNAfterDot(n);
     	for(int i = 0; i < xs.length; i++) {
-    		System.out.println("Representation of " + xsStr[i] + ": " + df.format(xs[i]) + " : " + dff.format(xs[i]));
+    		ClusLogger.info("Representation of " + xsStr[i] + ": " + df.format(xs[i]) + " : " + dff.format(xs[i]));
     	}
     }
 }

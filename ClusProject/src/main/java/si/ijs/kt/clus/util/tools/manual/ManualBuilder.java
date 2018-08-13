@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.TreeMap;
 
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEntry;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNode;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
@@ -20,7 +21,7 @@ public class ManualBuilder {
         for(String section : default_values.keySet()) {
             writeLatexSectionSettingsFile(section, settingsTablesFolder, default_values.get(section), false);
         }
-        System.out.println("Done.");
+        ClusLogger.info("Done.");
         
     }
     

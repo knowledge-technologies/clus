@@ -71,6 +71,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsMLC.MultiLabelMeasures;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -144,7 +145,7 @@ public class ClusFeatureRanking {
     public void initializeAttributes(ClusAttrType[] descriptive, int nbRankings) {
         int num = -1;
         int nom = -1;
-        // System.out.println("NB = "+descriptive.length);
+        // ClusLogger.info("NB = "+descriptive.length);
         int[] attributeDatasetIndices = descriptive[0].getSchema().getDescriptive().toIndices();
         for (int i = 0; i < descriptive.length; i++) {
             ClusAttrType type = descriptive[i];
@@ -201,7 +202,7 @@ public class ClusFeatureRanking {
         wrtr.flush();
         wrtr.close();
         if (getSettings().getGeneral().getVerbose() >= 1) {
-        	System.out.println(String.format("Feature importances written to: %s.fimp", fname));
+        	ClusLogger.info(String.format("Feature importances written to: %s.fimp", fname));
         }
     }
 
@@ -330,7 +331,7 @@ public class ClusFeatureRanking {
         json.write(jsonBuilder.toJson(functionOutputJSON));
         json.flush();
         json.close();
-        System.out.println("JSON model written to: " + getSettings().getGeneric().getAppName() + ".json");
+        ClusLogger.info("JSON model written to: " + getSettings().getGeneric().getAppName() + ".json");
 
     }
 

@@ -82,7 +82,7 @@ public class DTWTimeSeriesDist extends TimeSeriesDist {
             }
         }
         // if ( wrappingPathMatrix[m-1][n-1] == Double.POSITIVE_INFINITY){
-        // System.out.println("SD");
+        // ClusLogger.info("SD");
         // }
         return wrappingPathMatrix[m - 1][n - 1] / (m + n);
     }

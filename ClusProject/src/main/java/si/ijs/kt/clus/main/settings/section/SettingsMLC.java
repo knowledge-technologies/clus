@@ -6,6 +6,7 @@ import java.util.List;
 
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnumList;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
@@ -34,6 +35,7 @@ public class SettingsMLC extends SettingsBase {
     protected INIFileNominalOrDoubleOrVector m_MultiLabelThreshold;
     protected INIFileEnum<MultiLabelThresholdOptimization> m_MultiLabelOptimizeThreshold;
     protected INIFileEnumList<MultiLabelMeasures> m_MultiLabelRankingMeasure;
+    protected INIFileBool m_ShowThresholds;
 
     public enum MultiLabelThresholdOptimization {
         Yes, No
@@ -101,7 +103,10 @@ public class SettingsMLC extends SettingsBase {
 
 
     public boolean shouldShowThresholds() {
-        if (m_SettRelief.isRelief()) {
+    	if (!m_ShowThresholds.getValue()) {
+    		return false;
+    	}
+    	else if (m_SettRelief.isRelief()) {
             return false;
         }
         else if (shouldRunThresholdOptimization()) {
@@ -136,5 +141,6 @@ public class SettingsMLC extends SettingsBase {
 
         m_Section.addNode(m_MultiLabelOptimizeThreshold = new INIFileEnum<>("OptimizeThresholds", MultiLabelThresholdOptimization.No));
         m_Section.addNode(m_MultiLabelRankingMeasure = new INIFileEnumList<>("MultiLabelRankingMeasure", MultiLabelMeasures.HammingLoss));
+        m_Section.addNode(m_ShowThresholds = new INIFileBool("ShowThresholds", true));
     }
 }

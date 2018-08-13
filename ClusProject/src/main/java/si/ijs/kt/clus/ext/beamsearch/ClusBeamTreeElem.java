@@ -113,7 +113,7 @@ public class ClusBeamTreeElem {
     public int addIfNotIn(Comparable cmp) {
         if (m_Others == null) {
             if (cmp.equals(m_Object)) {
-                // System.out.println("Already in the Beam 1");
+                // ClusLogger.info("Already in the Beam 1");
                 return 0;
             }
             else {
@@ -128,7 +128,7 @@ public class ClusBeamTreeElem {
             for (int i = 0; i < m_Others.size(); i++) {
                 Comparable cmp_other = (Comparable) m_Others.get(i);
                 if (cmp.equals(cmp_other)) {
-                    // System.out.println("Already in the Beam 2");
+                    // ClusLogger.info("Already in the Beam 2");
                     return 0;
                 }
             }

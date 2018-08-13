@@ -40,9 +40,9 @@ public class Ranking implements Normalization {
 
         //sort
         for (int i = 0; i < indValPairs.length; i++) {
-            //System.out.println("Orig:" + Helper.arrayToString(indValPairs[i], ","));
+            //ClusLogger.info("Orig:" + Helper.arrayToString(indValPairs[i], ","));
             Arrays.sort(indValPairs[i]);
-            //System.out.println("Sorted:" + Helper.arrayToString(indValPairs[i], ","));
+            //ClusLogger.info("Sorted:" + Helper.arrayToString(indValPairs[i], ","));
         }
 
         double maxRank = indValPairs[0].length - 1; //we get the highest rank, i.e., the number of instances

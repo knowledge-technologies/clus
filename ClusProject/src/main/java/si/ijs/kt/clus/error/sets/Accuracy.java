@@ -41,6 +41,7 @@ import si.ijs.kt.clus.ext.structuredTypes.SetStatistic;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.RegressionStat;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
@@ -106,7 +107,7 @@ public class Accuracy extends ClusSetError {
         //int nb = getNbExamples();
         int nb = m_nbEx[i];
 
-        //System.out.println(m_SumErr[i]);
+        //ClusLogger.info(m_SumErr[i]);
         double err = nb != 0.0 ? m_SumErr[i] / nb : 0.0;
         if (m_Weights != null)
             err *= m_Weights.getWeight(getAttr(i));
@@ -176,7 +177,7 @@ public class Accuracy extends ClusSetError {
     public void addExample(double[] real, double[] predicted) {
         for (int i = 0; i < m_Dim; i++) {
             double err = sqr(real[i] - predicted[i]);
-            System.out.println(err);
+            ClusLogger.info(err);
             if (!Double.isInfinite(err) && !Double.isNaN(err)) {
                 m_SumErr[i] += err;
                 m_SumSqErr[i] += sqr(err);

@@ -240,11 +240,11 @@ public class ClusRule implements ClusModel, Serializable {
             // System.out.print(tuple.m_Index);
             if (!covers(tuple)) {
                 res.setTuple(tuple, idx++);
-                // System.out.println(tuple.m_Index);
+                // ClusLogger.info(tuple.m_Index);
             }
         }
         // Iterator<DataTuple> ires = res.toArrayList().iterator();
-        // System.out.println("remaining data:");
+        // ClusLogger.info("remaining data:");
         // while(ires.hasNext()){
         // DataTuple dt = ires.next();
         // System.out.print(dt.m_Index);

@@ -80,16 +80,16 @@ public class ClusUtil {
         double d5 = 2.23E-13;
         double d6 = 0.0000000012345;
         int n = 3;
-        System.out.println(roundToSignificantFigures(d1, n));
-        System.out.println(roundToSignificantFigures(d2, n));
-        System.out.println(roundToSignificantFigures(d3, n));
-        System.out.println(roundToSignificantFigures(d4, n));
-        System.out.println(roundToSignificantFigures(d5, n));
-        System.out.println(roundToSignificantFigures(d6, n));
+        ClusLogger.info(roundToSignificantFigures(d1, n));
+        ClusLogger.info(roundToSignificantFigures(d2, n));
+        ClusLogger.info(roundToSignificantFigures(d3, n));
+        ClusLogger.info(roundToSignificantFigures(d4, n));
+        ClusLogger.info(roundToSignificantFigures(d5, n));
+        ClusLogger.info(roundToSignificantFigures(d6, n));
 
         String[] tests = new String[] { "dsa", "sdaaa/dsa", "a/a/a/dsa", "s\\c\\dsa" };
         for (String test : tests) {
-            System.out.println(fileName(test));
+            ClusLogger.info(fileName(test));
         }
     }
 

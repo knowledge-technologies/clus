@@ -40,6 +40,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.model.ClusModel;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 
@@ -65,7 +66,7 @@ public class MPCKMeansWrapper {
         while ((ch = in.read()) != -1) {
             sb.append((char) ch);
         }
-        System.out.println(sb.toString());
+        ClusLogger.info(sb.toString());
     }
 
 
@@ -90,7 +91,7 @@ public class MPCKMeansWrapper {
             }
         }
         double rand = 1.0 * (a + b) / (nbex * (nbex - 1) / 2);
-        System.out.println(tpe + "Rand = " + rand + " (nbex = " + nbex + ")");
+        ClusLogger.info(tpe + "Rand = " + rand + " (nbex = " + nbex + ")");
         return rand;
     }
 
@@ -100,7 +101,7 @@ public class MPCKMeansWrapper {
         String datf = main + "-temp-MPCKMeans.arff";
         String cons = main + "-temp-MPCKMeans.cons";
         String outf = main + "-temp-MPCKMeans.assign";
-        System.out.println("Calling MPCKMeans: " + main);
+        ClusLogger.info("Calling MPCKMeans: " + main);
         // Make sure files don't exist
         FileUtil.delete(datf);
         FileUtil.delete(cons);
@@ -125,7 +126,7 @@ public class MPCKMeansWrapper {
         }
         wrt.close();
         String script = System.getenv("MPCKMEANS_SCRIPT");
-        System.out.println("Running script: " + script);
+        ClusLogger.info("Running script: " + script);
         if (script == null)
             return new SimpleClusterModel(null, getStatManager());
         try {
@@ -150,7 +151,7 @@ public class MPCKMeansWrapper {
                 }
             }
 
-            System.out.println("--------the file" + cons + "is not deleted !!!");
+            ClusLogger.info("--------the file" + cons + "is not deleted !!!");
             // Make sure files don't exist
             // FileUtil.delete(datf);
             // FileUtil.delete(cons);

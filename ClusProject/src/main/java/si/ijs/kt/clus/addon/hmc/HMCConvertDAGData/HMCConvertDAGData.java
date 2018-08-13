@@ -37,6 +37,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.util.FileUtil;
 
 
@@ -58,7 +59,7 @@ public class HMCConvertDAGData {
             stats[0] = mgr.createClusteringStat();
             data.calcTotalStats(stats);
             if (!sett.getData().isNullTestFile()) {
-                System.out.println("Loading: " + sett.getData().getTestFile());
+                ClusLogger.info("Loading: " + sett.getData().getTestFile());
                 if (minfreq != 0.0) {
                     RowData test = run.getTestSet();
                     test.calcTotalStats(stats);
@@ -68,7 +69,7 @@ public class HMCConvertDAGData {
                 }
             }
             if (!sett.getData().isNullPruneFile()) {
-                System.out.println("Loading: " + sett.getData().getPruneFile());
+                ClusLogger.info("Loading: " + sett.getData().getPruneFile());
                 if (minfreq != 0.0) {
                     RowData tune = (RowData) run.getPruneSet();
                     tune.calcTotalStats(stats);
@@ -145,7 +146,7 @@ public class HMCConvertDAGData {
 
     public static void main(String[] args) {
         if (args.length != 2 && args.length != 4) {
-            System.out.println("Usage: HMCConvertDAGData [-minfreq f] input.arff output.arff");
+            ClusLogger.info("Usage: HMCConvertDAGData [-minfreq f] input.arff output.arff");
             System.exit(0);
         }
         double minfreq = 0;

@@ -24,6 +24,7 @@ package si.ijs.kt.clus.selection;
 
 import java.util.Random;
 
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.util.array.MyIntArray;
@@ -65,7 +66,7 @@ public class XValRandomSelection extends XValMainSelection {
 
 
     public void printDebug() {
-        System.out.println("XVAL: " + MyIntArray.print(m_Selection));
+        ClusLogger.info("XVAL: " + MyIntArray.print(m_Selection));
     }
 
 

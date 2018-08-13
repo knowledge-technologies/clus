@@ -33,6 +33,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.statistic.ClusStatistic;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 
@@ -197,7 +198,7 @@ public abstract class ClusError implements Serializable {
      * @return the error NOT divided by the number of examples
      */
     public double getModelErrorAdditive() {
-        System.out.println(getClass().getName() + "::getModelErrorAdditive() not implemented!");
+        ClusLogger.info(getClass().getName() + "::getModelErrorAdditive() not implemented!");
         return 0.0;
     }
 
@@ -372,7 +373,7 @@ public abstract class ClusError implements Serializable {
 
 
     public double computeLeafError(ClusStatistic stat) {
-        System.out.println(getClass().getName() + "::computeLeafError() not yet implemented");
+        ClusLogger.info(getClass().getName() + "::computeLeafError() not yet implemented");
         return 0;
     }
 
