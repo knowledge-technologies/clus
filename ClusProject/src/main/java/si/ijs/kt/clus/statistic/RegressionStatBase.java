@@ -34,10 +34,12 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
+import si.ijs.kt.clus.ext.ensemble.ClusOOBWeights;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.util.StringUtils;
@@ -418,6 +420,37 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
 
     @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights) {
+        reset();
+        EnsembleVotingType evt = getSettings().getEnsemble().getEnsembleVotingType();
+
+        m_Means = new double[m_NbAttrs];
+        int nb_votes = votes.size();
+        for (int j = 0; j < nb_votes; j++) {
+            RegressionStatBase vote = (RegressionStatBase) votes.get(j);
+            switch (evt) {
+                case OOBModelWeighted:
+                    for (int i = 0; i < m_NbAttrs; i++) {
+                        m_Means[i] += vote.m_Means[i] * weights.getModelWeight(j);
+                    }
+                    break;
+
+                case OOBTargetWeighted:
+                    for (int i = 0; i < m_NbAttrs; i++) {
+                        m_Means[i] += vote.m_Means[i] * weights.getComponentWeight(j, i);
+                    }
+
+                    break;
+
+                default:
+                    throw new RuntimeException("OOB voting not defined! si.ijs.kt.clus.statistic.RegressionStatBase.vote(ArrayList<ClusStatistic>, ClusOOBWeights)");
+            }
+
+        }
+    }
+
+
+    @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusROSForestInfo ROSForestInfo) {
         reset();
         m_Means = new double[m_NbAttrs];
@@ -430,6 +463,36 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
             for (Integer i : info.getTargets()) {
                 m_Means[i] += vote.m_Means[i] / coverage[i];
+            }
+        }
+    }
+
+
+    @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights, ClusROSForestInfo ROSForestInfo) {
+        reset();
+        m_Means = new double[m_NbAttrs];
+        double[] coverage = ROSForestInfo.getCoverage();
+        EnsembleVotingType evt = getSettings().getEnsemble().getEnsembleVotingType();
+
+        for (int j = 0; j < votes.size(); j++) {
+            RegressionStatBase vote = (RegressionStatBase) votes.get(j);
+
+            ClusROSModelInfo info = ROSForestInfo.getROSModelInfo(j);
+            switch (evt) {
+                case OOBModelWeighted:
+                    for (Integer i : info.getTargets()) {
+                        m_Means[i] += vote.m_Means[i] * weights.getModelWeight(j);
+                    }
+                    break;
+                case OOBTargetWeighted:
+                    for (Integer i : info.getTargets()) {
+                        m_Means[i] += vote.m_Means[i] * weights.getComponentWeight(j, i);
+                    }
+                    break;
+                default:
+                    throw new RuntimeException("OOB voting not defined! si.ijs.kt.clus.statistic.RegressionStatBase.vote(ArrayList<ClusStatistic>, ClusOOBWeights, ClusROSForestInfo)");
+
             }
         }
     }

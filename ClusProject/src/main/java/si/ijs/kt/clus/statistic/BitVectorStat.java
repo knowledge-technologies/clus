@@ -26,6 +26,7 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.cols.ColTarget;
 import si.ijs.kt.clus.data.rows.DataTuple;
+import si.ijs.kt.clus.ext.ensemble.ClusOOBWeights;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -43,10 +44,10 @@ public class BitVectorStat extends ClusStatistic {
 
     public BitVectorStat(Settings sett) {
         super(sett);
-        
+
     }
 
-    
+
     @Override
     public ClusStatistic cloneStat() {
         BitVectorStat stat = new BitVectorStat(this.m_Settings);
@@ -180,35 +181,52 @@ public class BitVectorStat extends ClusStatistic {
 
     @Override
     public void vote(ArrayList<ClusStatistic> votes) {
-        System.err.println(getClass().getName() + "BitVectorStat: vote not implemented");
+        throw new RuntimeException("si.ijs.kt.clus.statistic.BitVectorStat.vote(ArrayList<ClusStatistic>) not implemented");
     }
 
 
     @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusROSForestInfo ROSForestInfo) {
-        System.err.println(getClass().getName() + "BitVectorStat: vote not implemented");
+        throw new RuntimeException("si.ijs.kt.clus.statistic.BitVectorStat.vote(ArrayList<ClusStatistic>, ClusROSForestInfo) not implemented");
     }
 
 
-	@Override
-	public int getNbStatisticComponents() {
-		throw new RuntimeException("BitVectorStat: getNbStatisticComponents() not implemented.");
-	}
-	
-	@Override
-	public void setParentStat(ClusStatistic parent) {
-		// throw new UnsupportedOperationException("Not supported yet.");
-		m_ParentStat = (BitVectorStat) parent;
-	}
+    @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights) {
+        throw new RuntimeException("si.ijs.kt.clus.statistic.BitVectorStat.vote(ArrayList<ClusStatistic>, ArrayList<Double>) not implemented");
+    }
 
-	@Override
-	public ClusStatistic getParentStat() {
-		// throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-		return m_ParentStat;
-	}
-	
-	@Override
-	public double getTargetSumWeights() { // TODO: missing values
-		return getTotalWeight();
-	}
+
+    @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights, ClusROSForestInfo ROSForestInfo) {
+        throw new RuntimeException("si.ijs.kt.clus.statistic.BitVectorStat.vote(ArrayList<ClusStatistic>, ArrayList<Double>, ClusROSForestInfo) not implemented");
+    }
+
+
+    @Override
+    public int getNbStatisticComponents() {
+        throw new RuntimeException("BitVectorStat: getNbStatisticComponents() not implemented.");
+    }
+
+
+    @Override
+    public void setParentStat(ClusStatistic parent) {
+        // throw new UnsupportedOperationException("Not supported yet.");
+        m_ParentStat = (BitVectorStat) parent;
+    }
+
+
+    @Override
+    public ClusStatistic getParentStat() {
+        // throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose
+        // Tools | Templates.
+        return m_ParentStat;
+    }
+
+
+    @Override
+    public double getTargetSumWeights() { // TODO: missing values
+        return getTotalWeight();
+    }
+
 }

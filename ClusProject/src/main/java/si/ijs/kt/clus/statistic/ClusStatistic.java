@@ -36,6 +36,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
+import si.ijs.kt.clus.ext.ensemble.ClusOOBWeights;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -466,10 +467,12 @@ public abstract class ClusStatistic implements Serializable {
 
     public abstract void vote(ArrayList<ClusStatistic> votes);
 
-
+    public abstract void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights);
+    
     public abstract void vote(ArrayList<ClusStatistic> votes, ClusROSForestInfo ROSForestInfo);
 
-
+    public abstract void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights, ClusROSForestInfo ROSForestInfo);
+    
     public ClusStatistic normalizedCopy() {
         return null;
     }

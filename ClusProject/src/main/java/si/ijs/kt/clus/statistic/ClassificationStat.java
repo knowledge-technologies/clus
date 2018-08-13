@@ -37,6 +37,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
+import si.ijs.kt.clus.ext.ensemble.ClusOOBWeights;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.heuristic.GISHeuristic;
@@ -1332,7 +1333,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
     @Override
     public void vote(ArrayList<ClusStatistic> votes) {
 
-        switch (getSettings().getEnsemble().getClassificationVoteType()) {
+        switch (getSettings().getEnsemble().getEnsembleVotingType()) {
             case Majority:
                 voteMajority(votes);
                 break;
@@ -1346,7 +1347,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusROSForestInfo ROSForestInfo) {
-        switch (getSettings().getEnsemble().getClassificationVoteType()) {
+        switch (getSettings().getEnsemble().getEnsembleVotingType()) {
             case Majority:
                 voteMajority(votes, ROSForestInfo);
                 break;
@@ -1355,6 +1356,18 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
                 voteProbDistr(votes, ROSForestInfo);
                 break;
         }
+    }
+
+
+    @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights) {
+        throw new RuntimeException("si.ijs.kt.clus.statistic.ClassificationStat.vote(ArrayList<ClusStatistic>, ArrayList<Double>) not implemented");
+    }
+
+
+    @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights, ClusROSForestInfo ROSForestInfo) {
+        throw new RuntimeException("si.ijs.kt.clus.statistic.ClusStatistic not implemented");
     }
 
 

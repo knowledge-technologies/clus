@@ -15,7 +15,9 @@ import si.ijs.kt.clus.main.ClusOutput;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.VotingType;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSAlgorithmType;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL.SSLUnlabeledCriteria;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -30,7 +32,7 @@ import si.ijs.kt.clus.util.exception.ClusException;
 
 public class ClusOOBErrorEstimate {
 
-    static HashMap m_OOBPredictions;
+    static HashMap<Integer, Object> m_OOBPredictions;
     static HashMap<Integer, Integer> m_OOBUsage;
     static boolean m_OOBCalculation;
     int m_Mode;
@@ -44,7 +46,7 @@ public class ClusOOBErrorEstimate {
 
 
     public ClusOOBErrorEstimate(int mode, Settings sett) {
-        m_OOBPredictions = new HashMap();
+        m_OOBPredictions = new HashMap<>();
         m_OOBUsage = new HashMap<Integer, Integer>();
         m_OOBCalculation = false;
         m_Mode = mode;
@@ -108,16 +110,15 @@ public class ClusOOBErrorEstimate {
         // allmi.addModelProcessor(ClusModelInfo.TRAIN_ERR, wrt);
         // cr.copyAllModelsMIs();
         // wrt.initializeAll(schema);
-        if (sett.getOutput().isWriteOOBFile()) {
+        
+        if (sett.getOutput().isWriteOOBFile() || sett.getEnsemble().shouldEstimateOOB()) {
             calcOOBError(oob_total, all_data, ClusModelInfo.TRAIN_ERR, cr);
             cl.calcExtraTrainingSetErrors(cr);
             output.writeHeader();
             output.writeOutput(cr, true, cl.getSettings().getOutput().isOutTrainError());
             output.close();
-            // wrt.close();
         }
         setOOBCalculation(false);
-        // m_OOBCalculation = false;
     }
 
 
@@ -199,7 +200,7 @@ public class ClusOOBErrorEstimate {
                 // this should have a [][].for each attribute we store: Majority: the winning class, for Probability
                 // distribution, the class distribution
 
-                if (getSettings().getEnsemble().getClassificationVoteType().equals(VotingType.ProbabilityDistribution)) {
+                if (getSettings().getEnsemble().getEnsembleVotingType().equals(EnsembleVotingType.ProbabilityDistribution)) {
                     // m_OOBPredictions.put(tuple.hashCode(),
                     // ClusEnsembleInduceOptimization.transformToProbabilityDistribution(stat.m_ClassCounts));
                     put2DArrayToOOBPredictions(tuple, ClusEnsembleInduceOptimization.transformToProbabilityDistribution(((ClassificationStat) stat).m_ClassCounts));
@@ -255,7 +256,7 @@ public class ClusOOBErrorEstimate {
                 ClassificationStat statc = (ClassificationStat) stat;
                 double[][] preds = statc.m_ClassCounts.clone();
 
-                if (getSettings().getEnsemble().getClassificationVoteType().equals(VotingType.ProbabilityDistribution)) {
+                if (getSettings().getEnsemble().getEnsembleVotingType().equals(EnsembleVotingType.ProbabilityDistribution)) {
                     preds = ClusEnsembleInduceOptimization.transformToProbabilityDistribution(preds);
                 }
                 else {
@@ -293,6 +294,7 @@ public class ClusOOBErrorEstimate {
                 for (int i = 0; i < cr.getNbModels(); i++) {
                     ClusModelInfo mi = cr.getModelInfo(i);
                     ClusModel model = mi.getModel();
+
                     if (model != null) {
                         ClusStatistic pred = model.predictWeighted(tuple);
                         ClusErrorList err = mi.getError(type);
@@ -320,7 +322,7 @@ public class ClusOOBErrorEstimate {
      * specified number
      *
      * @param treeNumber
-
+     * 
      * @throws InterruptedException
      */
     public static boolean isOOBForTree(DataTuple tuple, int treeNumber) throws InterruptedException {

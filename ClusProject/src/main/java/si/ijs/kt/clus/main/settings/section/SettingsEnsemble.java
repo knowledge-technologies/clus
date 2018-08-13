@@ -37,8 +37,8 @@ public class SettingsEnsemble extends SettingsBase {
         Bagging, RForest, RSubspaces, BagSubspaces, Boosting, RFeatSelection, Pert, ExtraTrees
     };
 
-    public enum VotingType {
-        Majority, ProbabilityDistribution
+    public enum EnsembleVotingType {
+        Majority, ProbabilityDistribution, OOBModelWeighted, OOBTargetWeighted
     };
 
     public enum EnsembleRanking {
@@ -70,25 +70,14 @@ public class SettingsEnsemble extends SettingsBase {
          * When used with {@code EnsembleROSAlgorithmType.FixedSubspaces},
          * When used with {@code EnsembleROSAlgorithmType.DynamicSubspaces},
          */
-        SubspaceAveraging,
-
-        /**
-         * Vote only with ...TBD
-         */
-        MaxDepthSubspaceAveraging,
-
-        /** */
-        MinDepthSubspaceAveraging,
-
-        /** TBD */
-        SmarterWay
+        SubspaceAveraging
     };
 
     private INIFileNominalOrIntOrVector m_NbBags;
     /** Used ensemble method */
     private INIFileEnum<EnsembleMethod> m_EnsembleMethod;
     /** Voting type, for regression mean is always used, the options are for classification */
-    private INIFileEnum<VotingType> m_ClassificationVoteType;
+    private INIFileEnum<EnsembleVotingType> m_EnsembleVotingType;
     /**
      * Size of the feature set used during tree induction. Used for random forests, random
      * subspaces and bagging of subspaces. If left to default 0, floor(log_2 #DescAttr) + 1 is used.
@@ -389,6 +378,11 @@ public class SettingsEnsemble extends SettingsBase {
     }
 
 
+    public boolean isVotingOOBWeighted() {
+        return getEnsembleVotingType().equals(EnsembleVotingType.OOBModelWeighted) || getEnsembleVotingType().equals(EnsembleVotingType.OOBTargetWeighted);
+    }
+
+
     public void setOOBestimate(boolean value) {
         m_EnsembleOOBestimate.setValue(value);
     }
@@ -434,8 +428,8 @@ public class SettingsEnsemble extends SettingsBase {
     }
 
 
-    public VotingType getClassificationVoteType() {
-        return m_ClassificationVoteType.getValue();
+    public EnsembleVotingType getEnsembleVotingType() {
+        return m_EnsembleVotingType.getValue();
     }
 
 
@@ -449,7 +443,7 @@ public class SettingsEnsemble extends SettingsBase {
 
         m_Section.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
         m_Section.addNode(m_EnsembleMethod = new INIFileEnum<>("EnsembleMethod", EnsembleMethod.Bagging));
-        m_Section.addNode(m_ClassificationVoteType = new INIFileEnum<>("VotingType", VotingType.ProbabilityDistribution));
+        m_Section.addNode(m_EnsembleVotingType = new INIFileEnum<>("VotingType", EnsembleVotingType.ProbabilityDistribution));
         m_Section.addNode(m_RandomAttrSelected = new INIFileString("SelectRandomSubspaces", "0"));
         m_Section.addNode(m_RandomTargetAttrSelected = new INIFileString("ROSTargetSubspaceSize", "SQRT"));
         m_Section.addNode(m_EnsembleROSAlgorithmType = new INIFileEnum<>("ROSAlgorithmType", EnsembleROSAlgorithmType.Disabled));
@@ -480,6 +474,11 @@ public class SettingsEnsemble extends SettingsBase {
         m_NumberOfThreads.setValueCheck(new IntRangeCheck(0, 200));// Runtime.getRuntime().availableProcessors()));
 
         m_Section.setEnabled(false);
+
+        /*if (getEnsembleVotingType().equals(EnsembleVotingType.OOBModelWeighted)) {
+            m_EnsembleOOBestimate.setEnabled(true);
+        */
+
     }
 
 

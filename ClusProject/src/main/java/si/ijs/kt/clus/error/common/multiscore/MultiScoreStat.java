@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import si.ijs.kt.clus.data.cols.ColTarget;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.SparseDataTuple;
+import si.ijs.kt.clus.ext.ensemble.ClusOOBWeights;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -46,7 +47,7 @@ public class MultiScoreStat extends ClusStatistic {
 
     public MultiScoreStat(Settings sett, ClusStatistic stat, MultiScore score) {
         super(sett);
-        
+
         m_MeanValues = stat.getNumericPred();
         m_NbTarget = m_MeanValues.length;
         m_Score = score.multiScore(m_MeanValues);
@@ -61,7 +62,7 @@ public class MultiScoreStat extends ClusStatistic {
 
     @Override
     public String getString(StatisticPrintInfo info) {
-    	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+        ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("[");
         for (int i = 0; i < m_NbTarget; i++) {
@@ -165,17 +166,30 @@ public class MultiScoreStat extends ClusStatistic {
     public void subtractFromOther(ClusStatistic other) {
     }
 
- 
 
     @Override
-    public void vote(ArrayList votes) {
-        System.err.println(getClass().getName() + "vote (): Not implemented");
+    public void vote(ArrayList<ClusStatistic> votes) {
+        throw new RuntimeException("si.ijs.kt.clus.error.common.multiscore.MultiScoreStat.vote(ArrayList) not implemented");
     }
 
 
     @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusROSForestInfo ROSForestInfo) {
-        System.err.println(getClass().getName() + "vote (): Not implemented");
+        throw new RuntimeException("si.ijs.kt.clus.error.common.multiscore.MultiScoreStat.vote(ArrayList<ClusStatistic>, ClusROSForestInfo) not implemented");
+    }
+
+
+    @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights) {
+        throw new RuntimeException("si.ijs.kt.clus.error.common.multiscore.MultiScoreStat.vote(ArrayList<ClusStatistic>, ArrayList<Double>) not implemented");
+
+    }
+
+
+    @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights, ClusROSForestInfo ROSForestInfo) {
+        throw new RuntimeException("si.ijs.kt.clus.error.common.multiscore.MultiScoreStat.vote(ArrayList<ClusStatistic>, ArrayList<Double>, ClusROSForestInfo) not implemented");
+
     }
 
 
@@ -197,7 +211,8 @@ public class MultiScoreStat extends ClusStatistic {
 
     @Override
     public ClusStatistic getParentStat() {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        throw new UnsupportedOperationException("Not supported yet."); // To change body of generated methods, choose
+                                                                       // Tools | Templates.
     }
 
 }

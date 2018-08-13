@@ -441,8 +441,8 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
 
                     ClusROSModelInfo nodeROSModelInfo = node.getROSModelInfo();
 
-                    int sizeOfSubspace = nodeROSModelInfo.getSizeOfSubspace(); // take as many attributes as in current
-                                                                               // node for the child node
+                    int sizeOfSubspace = nodeROSModelInfo.getSizeOfSubspace(); // take as many attributes in child node
+                                                                               // as in current node
 
                     if (nodeROSModelInfo.isRandom() && !nodeROSModelInfo.isRandomPerTree()) {
                         sizeOfSubspace = -1; // random number of attributes at child node! (this overrides the default

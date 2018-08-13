@@ -37,6 +37,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
+import si.ijs.kt.clus.ext.ensemble.ClusOOBWeights;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -114,7 +115,7 @@ public class CombStat extends ClusStatistic {
 
     @Override
     public void setTrainingStat(ClusStatistic train) {
-        //CombStat ctrain = (CombStat) train;
+        // CombStat ctrain = (CombStat) train;
         m_RegStat.setTrainingStat(train.getRegressionStat());
         m_ClassStat.setTrainingStat(train.getClassificationStat());
     }
@@ -262,14 +263,14 @@ public class CombStat extends ClusStatistic {
         // double comp = 1.0 + dispersion(IN_HEURISTIC);
         double offset = getSettings().getRules().getHeurDispOffset();
         double disp = dispersion(IN_HEURISTIC) + offset;
-        //double dis1 = disp;
+        // double dis1 = disp;
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat().getTotalWeight();
         double cov_par = getSettings().getRules().getHeurCoveragePar();
         // comp *= (1.0 + cov_par*train_sum_w/m_SumWeight);
         // comp *= cov_par*m_SumWeight/train_sum_w;
         disp *= Math.pow(m_SumWeight / train_sum_w, cov_par);
-        //double dis2 = disp;
+        // double dis2 = disp;
         // Prototype distance part
         // Prefers rules that predict different class than the default rule
         if (getSettings().getRules().isHeurPrototypeDistPar()) {
@@ -316,10 +317,10 @@ public class CombStat extends ClusStatistic {
          */
         double offset = getSettings().getRules().getHeurDispOffset();
         double disp = dispersion(IN_HEURISTIC) + offset;
-        //double dis1 = disp;
+        // double dis1 = disp;
         double def_disp = ((CombStat) m_StatManager.getTrainSetStat()).dispersion(IN_HEURISTIC);
         disp = disp - def_disp; // This should be < 0 most of the time
-        //double dis2 = disp;
+        // double dis2 = disp;
         // Coverage part
         double train_sum_w = m_StatManager.getTrainSetStat().getTotalWeight();
         double cov_par = getSettings().getRules().getHeurCoveragePar();
@@ -327,7 +328,7 @@ public class CombStat extends ClusStatistic {
         // comp *= cov_par*train_sum_w/m_SumWeight;
         // comp *= cov_par*m_SumWeight/train_sum_w;
         disp *= Math.pow(m_SumWeight / train_sum_w, cov_par);
-        //double dis3 = disp;
+        // double dis3 = disp;
         // Prototype distance part
         // Prefers rules that predict different class than the default rule
         if (getSettings().getRules().isHeurPrototypeDistPar()) {
@@ -603,7 +604,7 @@ public class CombStat extends ClusStatistic {
     /**
      * Checks weather values of a target attribute are significantly different
      * 
-
+     * 
      */
     public boolean targetSignDifferent() {
         boolean res = false;
@@ -893,13 +894,25 @@ public class CombStat extends ClusStatistic {
 
     @Override
     public void vote(ArrayList<ClusStatistic> votes) {
-        System.err.println(getClass().getName() + "vote (): Not implemented");
+        throw new RuntimeException("si.ijs.kt.clus.statistic.CombStat.vote(ArrayList<ClusStatistic>) not implemented");
     }
 
 
     @Override
     public void vote(ArrayList<ClusStatistic> votes, ClusROSForestInfo ROSForestInfo) {
-        System.err.println(getClass().getName() + "vote (): Not implemented");
+        throw new RuntimeException("si.ijs.kt.clus.statistic.CombStat.vote(ArrayList<ClusStatistic>, ClusROSForestInfo) not implemented");
+    }
+
+
+    @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights) {
+        throw new RuntimeException("si.ijs.kt.clus.statistic.CombStat.vote(ArrayList<ClusStatistic>, ArrayList<Double>) not implemented");
+    }
+
+
+    @Override
+    public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights, ClusROSForestInfo ROSForestInfo) {
+        throw new RuntimeException("si.ijs.kt.clus.statistic.CombStat.vote(ArrayList<ClusStatistic>, ArrayList<Double>, ClusROSForestInfo) not implemented");
     }
 
 
@@ -942,4 +955,5 @@ public class CombStat extends ClusStatistic {
     public ClusStatistic getParentStat() {
         return new CombStat(m_StatManager, (RegressionStat) m_RegStat.getParentStat(), (ClassificationStat) m_ClassStat.getParentStat());
     }
+
 }

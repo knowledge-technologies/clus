@@ -49,6 +49,7 @@ import si.ijs.kt.clus.ext.hierarchical.HierClassTresholdPruner;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.PythonModelType;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -86,7 +87,8 @@ public class ClusForest implements ClusModel, Serializable {
     private int m_SumDepths;
     /** ROS ensembles (info about target subspaces) */
     private ClusROSForestInfo m_ROSForestInfo = null;
-
+    /** Out-of-bag error estimates for all ensemble members */
+    private ClusOOBWeights m_OOBWeights = null;
 
     // added 13/1/2014 by Jurica Levatic
     /** Individual votes of trees in ensemble, used for calculation of confidence of predictions in self-training */
@@ -198,6 +200,11 @@ public class ClusForest implements ClusModel, Serializable {
 
     public void setEnsembleROSForestInfo(ClusROSForestInfo info) {
         m_ROSForestInfo = info;
+    }
+
+
+    public ClusROSForestInfo getEnsembleROSForestInfo() {
+        return m_ROSForestInfo;
     }
 
 
@@ -339,6 +346,14 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
+    /**
+     * OOB estimates for all ensemble members. Used for making OOB-weighted predictions of the ensemble.
+     */
+    public void setOOBWeightsEstimates(ClusOOBWeights estimates) {
+        m_OOBWeights = estimates;
+    }
+
+
     @Override
     public String getModelInfo() throws InterruptedException {
         String targetSubspaces = "";
@@ -374,25 +389,25 @@ public class ClusForest implements ClusModel, Serializable {
 
     @Override
     public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException, InterruptedException {
-        if (getSettings().getEnsemble().isEnsembleROSEnabled()) {
+        if (getSettings().getEnsemble().isEnsembleROSEnabled() && !ClusOOBErrorEstimate.isOOBCalculation()) {
             switch (getSettings().getEnsemble().getEnsembleROSVotingType()) {
                 case SubspaceAveraging: // only use subspaces for prediction averaging
                     return ClusEnsembleInduce.isOptimized() ? predictWeightedStandardSubspaceAveragingOpt(tuple) : predictWeightedStandardSubspaceAveraging(tuple);
 
-                case SmarterWay:
-                    throw new RuntimeException("NOT YET IMPLEMENTED!");
+                // case OOBWeighted:
+                // throw new RuntimeException("NOT YET IMPLEMENTED!");
 
                 case TotalAveraging:
                 default:
                     return ClusEnsembleInduce.isOptimized() ? predictWeightedOpt(tuple) : predictWeightedStandard(tuple);
             }
         }
-        if (ClusOOBErrorEstimate.isOOBCalculation())
+        else if (ClusOOBErrorEstimate.isOOBCalculation())
             return predictWeightedOOB(tuple);
-        if (!ClusEnsembleInduce.isOptimized())
-            return predictWeightedStandard(tuple);
-        else
+        else if (ClusEnsembleInduce.isOptimized())
             return predictWeightedOpt(tuple);
+        else
+            return predictWeightedStandard(tuple);
     }
 
 
@@ -400,13 +415,20 @@ public class ClusForest implements ClusModel, Serializable {
         ArrayList<ClusStatistic> votes = new ArrayList<ClusStatistic>();
         for (int i = 0; i < m_Trees.size(); i++) {
             votes.add(m_Trees.get(i).predictWeighted(tuple));
-            // if (tuple.getWeight() != 1.0) System.out.println("Tuple "+tuple.getIndex()+" = "+tuple.getWeight());
+
         }
 
         m_Stat.reset();
         // remember votes
         m_Votes = votes;
-        m_Stat.vote(votes);
+
+        if (getSettings().getEnsemble().isVotingOOBWeighted()) {
+            m_Stat.vote(votes, m_OOBWeights);
+        }
+        else {
+            m_Stat.vote(votes);
+        }
+
         ClusEnsemblePredictionWriter.setVotes(votes);
         return m_Stat;
     }
@@ -644,7 +666,13 @@ public class ClusForest implements ClusModel, Serializable {
         for (int i = 0; i < m_Trees.size(); i++) {
             votes.add(m_Trees.get(i).predictWeighted(tuple));
         }
-        m_Stat.vote(votes, m_ROSForestInfo);
+
+        if (getSettings().getEnsemble().isVotingOOBWeighted()) {
+            m_Stat.vote(votes, m_OOBWeights, m_ROSForestInfo);
+        }
+        else {
+            m_Stat.vote(votes, m_ROSForestInfo);
+        }
 
         ClusEnsemblePredictionWriter.setVotes(votes);
         return m_Stat;

@@ -129,7 +129,7 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
 
                 ClassificationStat stat = (ClassificationStat) model.predictWeighted(tuple);
                 double[][] counts = stat.getClassCounts().clone();
-                switch (getSettings().getEnsemble().getClassificationVoteType()) {// default is Probability distribution vote
+                switch (getSettings().getEnsemble().getEnsembleVotingType()) {// default is Probability distribution vote
                     case Majority:
                         counts = transformToMajority(counts);
                         break;

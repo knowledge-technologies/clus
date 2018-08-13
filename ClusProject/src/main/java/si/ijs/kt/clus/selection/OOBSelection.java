@@ -54,7 +54,10 @@ public class OOBSelection extends ClusSelection {
         return m_OOBCounts[row];
     }
 
-
+    public int[] getOOBCounts() {
+        return m_OOBCounts;
+    }
+    
     @Override
     public int getNbSelected() {
         return m_OOBNbSel;

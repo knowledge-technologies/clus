@@ -46,10 +46,14 @@ import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.algo.tdidt.DepthFirstInduce;
 import si.ijs.kt.clus.algo.tdidt.DepthFirstInduceSparse;
 import si.ijs.kt.clus.data.ClusSchema;
+import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.data.rows.TupleIterator;
 import si.ijs.kt.clus.data.type.ClusAttrType;
 import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
+import si.ijs.kt.clus.error.Accuracy;
+import si.ijs.kt.clus.error.RMSError;
+import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
 import si.ijs.kt.clus.error.common.ComponentError;
 import si.ijs.kt.clus.ext.ensemble.callable.InduceExtraTreeCallable;
@@ -58,6 +62,7 @@ import si.ijs.kt.clus.ext.ensemble.container.OneBagResults;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSHelpers;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSOOBWeights;
 import si.ijs.kt.clus.ext.featureRanking.ClusEnsembleFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
@@ -67,7 +72,9 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.RandomAttributeTypeSelection;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
@@ -115,6 +122,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     private Integer m_EnsembleROSSubspaceSize = null; // -1 = Random, -2 = RandomPerTree, >0 = actual number of
                                                       // attributes
     private ClusROSForestInfo m_ROSForestInfo = null;
+
+    private ClusOOBWeights m_OOBWeights = null; // OOB estimates for all trees; useful for making
+                                                // OOB-weighted predictions
 
     // Out-Of-Bag Error Estimate
     private ClusOOBErrorEstimate m_OOBEstimation;
@@ -689,8 +699,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
 
                 if (sett.shouldEstimateOOB()) { // OOB estimate is on
-
-                    // TODO: synchronisation
                     oob_sel = new OOBSelection(msel);
                     if (i == 1) { // initialization
                         oob_total = new OOBSelection(msel);
@@ -699,11 +707,20 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                         oob_total.addToThis(oob_sel);
                     }
                 }
-                OOBSelection current_oob_total = cloner.deepClone(oob_total);
+
+                if (sett.isVotingOOBWeighted() && !sett.shouldEstimateOOB()) {
+                    // find oob selection only if OOB is not turned on already
+                    oob_sel = new OOBSelection(msel);
+                }
+
+                // OOBSelection current_oob_total = cloner.deepClone(oob_total);
                 // induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, current_oob_total, train_iterator, test_iterator, msel, rnd, clonedStatManager); // statManagerClones[i
-                                                                                                                                                                                            // -
-                                                                                                                                                                                            // 1]
+                // InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel,
+                // current_oob_total, train_iterator, test_iterator, msel, rnd, clonedStatManager); //
+                // statManagerClones[i
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, train_iterator, test_iterator, msel, rnd, clonedStatManager); // statManagerClones[i
+                                                                                                                                                                         // -
+                                                                                                                                                                         // 1]
                 Future<OneBagResults> submit = executor.submit(worker);
                 bagResults.add(submit);
             }
@@ -734,7 +751,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     oob_sel = new OOBSelection(msel);
                 }
                 // induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
-                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd, clonedStatManager); // cloner.deepClone(cr.getStatManager())
+                // InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, oob_total,
+                // train_iterator, test_iterator, msel, rnd, clonedStatManager); //
+                // cloner.deepClone(cr.getStatManager())
+                InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, train_iterator, test_iterator, msel, rnd, clonedStatManager); // cloner.deepClone(cr.getStatManager())
                 Future<OneBagResults> submit = executor.submit(worker);
                 bagResults.add(submit);
             }
@@ -815,7 +835,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     }
 
 
-    public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, OOBSelection oob_total, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager unmodifiedManager) throws Exception {
+    public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, TupleIterator train_iterator, TupleIterator test_iterator, BaggingSelection msel, ClusRandomNonstatic rnd, ClusStatManager unmodifiedManager) throws Exception {
         long one_bag_time = ResourceInfo.getTime();
         SettingsEnsemble sett = cr.getStatManager().getSettings().getEnsemble();
         SettingsOutput seto = cr.getStatManager().getSettings().getOutput();
@@ -857,6 +877,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         // old parallelisation
         if (sett.shouldEstimateOOB() && (sett.getBagSelection().getIntVectorSorted()[0] == -1)) {
             m_OOBEstimation.updateOOBTuples(oob_sel, (RowData) cr.getTrainingSet(), model, i);
+        }
+
+        // Calculation of OOB for EnsembleVotingType.OOBModelWeighted/OOBTargetWeighted predictions; we do it
+        // independently of original OOB calculations above
+        if (sett.isVotingOOBWeighted()) {
+            saveOOBEstimates(model, oob_sel, (RowData) cr.getTrainingSet(), i);
         }
 
         HashMap<String, double[][]> fimportances = new HashMap<String, double[][]>();
@@ -936,7 +962,68 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             crSingle.setModels(new ArrayList<ClusModelInfo>());
         }
 
-        return new OneBagResults(model, fimportances, crSingle, oob_total, one_bag_time);
+        return new OneBagResults(model, fimportances, crSingle, one_bag_time);
+    }
+
+
+    private void saveOOBEstimates(ClusModel model, OOBSelection oob_sel, RowData data, int i) throws ClusException, InterruptedException {
+        ClusError error = calculateOOBWeights(model, oob_sel, data);
+
+        if (m_OOBWeights == null) {
+            if (getSettings().getEnsemble().isEnsembleROSEnabled()) {
+                m_OOBWeights = new ClusROSOOBWeights();
+            }
+            else {
+                m_OOBWeights = new ClusOOBWeights();
+            }
+        }
+
+        m_OOBWeights.setErrors(i - 1, error); // tree indices are zero-based!
+    }
+
+
+    private ClusError calculateOOBWeights(ClusModel model, OOBSelection oob_sel, RowData data) throws ClusException, InterruptedException {
+        ClusError error = null;
+        ClusErrorList OOBErrorList = new ClusErrorList();
+
+        switch (getStatManager().getMode()) {
+            case ClusStatManager.MODE_REGRESSION:
+                // RMSE (less is better)
+                error = new RMSError(OOBErrorList, this.getSchema().getNumericAttrUse(AttributeUseType.Target));
+                break;
+
+            case ClusStatManager.MODE_CLASSIFY:
+                // Accuracy (more is better)
+                error = new Accuracy(OOBErrorList, this.getSchema().getNominalAttrUse(AttributeUseType.Target));
+                break;
+
+            case ClusStatManager.MODE_HIERARCHICAL:
+                // Pooled AUPRC (more is better)
+                // error = new HierErrorMeasures(OOBErrorList, m_StatManager.getHier(),
+                // m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(),
+                // HierarchyMeasures.PooledAUPRC, m_StatManager.getSettings().getOutput().isWriteCurves(),
+                // getSettings().getOutput().isGzipOutput());
+                break;
+
+            default:
+                String msg = "Unable to calculate OOB estimates!";
+                ClusLogger.severe(msg);
+                throw new RuntimeException(msg);
+        }
+
+        OOBErrorList.addError(error);
+        DataTuple tuple;
+
+        for (int example = 0; example < data.getNbRows(); example++) {
+            if (oob_sel.isSelected(example)) {
+                tuple = data.getTuple(example);
+
+                ClusStatistic pred = model.predictWeighted(tuple);
+                OOBErrorList.addExample(tuple, pred);
+            }
+        }
+
+        return error;
     }
 
 
@@ -1266,7 +1353,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         crSingle.deleteData();
         crSingle.setModels(new ArrayList<ClusModelInfo>());
 
-        return new OneBagResults(model, fimportances, crSingle, null, one_bag_time);
+        // return new OneBagResults(model, fimportances, crSingle, null, one_bag_time);
+        return new OneBagResults(model, fimportances, crSingle, one_bag_time);
     }
 
 
@@ -1280,15 +1368,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     public void postProcessForest(ClusRun cr) throws ClusException, InterruptedException {
-        // ClusModelInfo def_info = cr.addModelInfo("Default");
-        // if (m_OptMode)
-        // m_DForest = null;
-
-        // def_info.setModel(ClusDecisionTree.induceDefault(cr));
-
-        // ClusModelInfo orig_info = cr.addModelInfo("Original");
-        // orig_info.setModel(m_OForest);
-
         String partialForestName = "Forest with %d trees";
 
         for (int i = 0; i < m_OForests.length; i++) {
@@ -1302,7 +1381,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             double[] thresholds = getSettings().getHMLC().getClassificationThresholds().getDoubleVector();
             // setting the printing preferences in the HMC mode
 
-            // m_OForest.setPrintModels(getSettings().getEnsemble().isPrintEnsembleModels());
             for (int i = 0; i < m_OForests.length; i++) {
                 m_OForests[i].setPrintModels(getSettings().getEnsemble().isPrintEnsembleModels());
             }
@@ -1337,6 +1415,22 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (getSettings().getEnsemble().isEnsembleROSEnabled()) {
             for (int i = 0; i < m_OForests.length; i++) {
                 m_OForests[i].setEnsembleROSForestInfo(m_ROSForestInfo.getNew(m_OutEnsembleAt[i]));
+            }
+        }
+
+        // used for OOB weighted ensemble voting
+        if (getSettings().getEnsemble().isVotingOOBWeighted()) {
+            for (int i = 0; i < m_OForests.length; i++) {
+                ClusOOBWeights weights = m_OOBWeights.getNew(m_OutEnsembleAt[i]);
+
+                if (getSettings().getEnsemble().isEnsembleROSEnabled() &&
+                /**/getSettings().getEnsemble().getEnsembleROSVotingType().equals(EnsembleROSVotingType.SubspaceAveraging)) {
+                    
+                    ((ClusROSOOBWeights)weights).setROSForestInfo(m_OForests[i].getEnsembleROSForestInfo());
+                    
+                    weights.calculateWeights(); // we dont have this info before, so we have to do it manually
+                }
+                m_OForests[i].setOOBWeightsEstimates(weights);
             }
         }
     }
