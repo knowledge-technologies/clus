@@ -393,9 +393,11 @@ public class SubsetSplit extends NominalSplit {
             }
 
             if (count == nbTries || card == nbvalues || card == 0) {
-                System.out.println("Due to the randomness in split search, a usefull split was not found in " + count + " tries:");
-                System.out.println("   Cardinality = " + card);
-                System.out.println("   nb values = " + nbvalues);
+            	if (getStatManager().getSettings().getGeneral().getVerbose() >= 2) {
+            		System.err.println("Due to the randomness in split search, a usefull split was not found in " + count + " tries:");
+            		System.err.println("   Cardinality = " + card);
+                    System.err.println("   nb values = " + nbvalues);
+            	}                
             }
             if (found_test) {
                 bheur = node.calcHeuristic(m_MStat, node.m_TestStat[0]);

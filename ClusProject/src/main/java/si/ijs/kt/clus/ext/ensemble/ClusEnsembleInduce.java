@@ -832,7 +832,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         ClusStatManager mgr = cloneStatManager(unmodifiedManager);
 
         DepthFirstInduce ind;
-        // ordinary bagging run
         if (getSchema().isSparse()) {
             ind = new DepthFirstInduceSparse(this, mgr, true);
         }
@@ -841,9 +840,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         ind.initialize();
-
         crSingle.getStatManager().initClusteringWeights();
-
         ind.getStatManager().initClusteringWeights();
 
         initializeROSModel(ind, i);
@@ -861,9 +858,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         HashMap<String, double[][]> fimportances = new HashMap<String, double[][]>();
         if (m_FeatRank) {// franking
-            // this suffices even in the case when we grow more than one forest
-            // if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST) {
-
             switch (sett.getRankingMethod()) {
                 case RForest:
                     fimportances = m_FeatureRankings[0].calculateRFimportance(model, cr, oob_sel, rnd, ind.getStatManager());
@@ -880,8 +874,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     break;
 
                 case Genie3:
+                	fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model, ind.getStatManager());
+                	break;
+                	
                 default:
-                    fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model, ind.getStatManager());
+                	System.err.println("The following feature ranking scores can be used: Genie3, Symbolic, RForest");
+                    System.err.println("You have chosen ranking method " + getSettings().getEnsemble().getRankingMethodName());
+                    System.err.println("No ranking will be computed.");
+                    m_FeatRank = false;
                     break;
             }
         }
@@ -1173,10 +1173,12 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     public OneBagResults induceOneExtraTree(ClusRun cr, int i, TupleIterator train_iterator, TupleIterator test_iterator, ClusRandomNonstatic rnd, ClusStatManager unmodifiedManager) throws Exception {
         long one_bag_time = ResourceInfo.getTime();
-        if (getSettings().getGeneral().getVerbose() > 0)
-            System.out.println("Bag: " + i);
+        
+        ClusLogger.info("Bag: " + i);
 
         ClusRun crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());
+        // Bagging:  ClusRun crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(), msel, cr.getSummary(), i);
+        
         // ClusEnsembleInduce.setRandomSubspaces(cr.getStatManager().getSchema().getDescriptiveAttributes(),
         // cr.getStatManager().getSettings().getNbRandomAttrSelected());
         ClusStatManager mgr = cloneStatManager(unmodifiedManager);
@@ -1198,45 +1200,34 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         one_bag_time = ResourceInfo.getTime() - one_bag_time;
 
-        // int[] additionalModelsNodesLeaves = m_OForest.updateCounts((ClusNode) model);
-        // for(int ii = m_OForests.length - 1; ii >= 0; ii--){
-        // if (getNbTrees(ii) >= i){
-        // m_OForests[ii].updateCounts(additionalModelsNodesLeaves[0], additionalModelsNodesLeaves[1],
-        // additionalModelsNodesLeaves[2]);
-        // } else{
-        // break;
-        // }
-        // }
         updateCounts((ClusNode) model, i);
+        
+//        if (sett.shouldEstimateOOB() && (sett.getBagSelection().getIntVectorSorted()[0] == -1)) {
+//            m_OOBEstimation.updateOOBTuples(oob_sel, (RowData) cr.getTrainingSet(), model, i);
+//        }
 
         HashMap<String, double[][]> fimportances = new HashMap<String, double[][]>();
-        if (m_FeatRank) {// franking genie3
-            // if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_RFOREST)
-            // m_FeatureRanking.calculateRFimportance(model, cr, oob_sel);
-            // if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_GENIE3) {
-            if (getSettings().getEnsemble().getRankingMethod() == EnsembleRanking.Genie3) {
-                // m_FeatureRanking.calculateGENIE3importance((ClusNode)model, cr);
-                fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model, ind.getStatManager());
-            }
-            // else if (m_BagClus.getSettings().getRankingMethod() == Settings.RANKING_SYMBOLIC) {
-            else if (getSettings().getEnsemble().getRankingMethod() == EnsembleRanking.Symbolic) {
-                double[] weights = getSettings().getEnsemble().getSymbolicWeights(); // m_BagClus.getSettings().getSymbolicWeights();
-                if (weights == null) {
-                    weights = new double[] { getSettings().getEnsemble().getSymbolicWeight() }; // m_BagClus.getSettings().getSymbolicWeight()
-                                                                                                // };
-                }
-                // m_FeatureRanking.calculateSYMBOLICimportance((ClusNode)model, weights, 0);
-                fimportances = m_FeatureRankings[0].calculateSYMBOLICimportanceIteratively((ClusNode) model, weights);
-            }
-            else {
-                System.err.println("The following feature ranking methods are implemented for Extra trees:");
-                System.err.println("Genie3");
-                System.err.println("Symbolic");
-                System.err.println("But you have chosen ranking method " + getSettings().getEnsemble().getRankingMethodName());
-                System.err.println("No ranking will be computed.");
-                m_FeatRank = false;
-
-            }
+        if (m_FeatRank) {
+        	switch (cr.getStatManager().getSettings().getEnsemble().getRankingMethod()) {
+	        	case Symbolic:
+	        		double[] weights = getSettings().getEnsemble().getSymbolicWeights(); // m_BagClus.getSettings().getSymbolicWeights();
+	                if (weights == null) {
+	                    weights = new double[] { getSettings().getEnsemble().getSymbolicWeight() }; // m_BagClus.getSettings().getSymbolicWeight()
+	                                                                                                // };
+	                }
+	                fimportances = m_FeatureRankings[0].calculateSYMBOLICimportanceIteratively((ClusNode) model, weights);
+	                break;
+	            
+	        	case Genie3:
+	        		fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model, ind.getStatManager());
+	        		break;
+	        	default:
+	        		System.err.println("The following feature ranking methods are implemented for Extra trees: Genie3, Symbolic");
+	                System.err.println("You have chosen ranking method " + getSettings().getEnsemble().getRankingMethodName());
+	                System.err.println("No ranking will be computed.");
+	                m_FeatRank = false;
+	                break;
+        	}
         }
 
         if (m_OptMode) {

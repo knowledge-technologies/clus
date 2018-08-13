@@ -499,7 +499,18 @@ public class SettingsEnsemble extends SettingsBase {
 
             incompatible.add(formatInvalid(m_EnsembleROSAlgorithmType, getEnsembleROSAlgorithmType(), String.format("Cannot be used with %s = %s", m_EnsembleROSVotingType.getName(), getEnsembleROSVotingType())));
         }
-
+        
+        /* RANKING */
+        if (isEnsembleMode()) {
+        	EnsembleMethod m = getEnsembleMethod();
+        	EnsembleRanking r = getRankingMethod();
+        	if (!r.equals(EnsembleRanking.None)) {
+        		if ((!m.equals(EnsembleMethod.Bagging) && !m.equals(EnsembleMethod.RForest) && !m.equals(EnsembleMethod.ExtraTrees)) ||
+        			(m.equals(EnsembleMethod.ExtraTrees) && r.equals(EnsembleRanking.RForest))) {
+        				incompatible.add(String.format("Ranking %s not implemented for %s", r.name(), m.name()));
+        		}
+        	}
+        }
         return incompatible;
     }
 }
