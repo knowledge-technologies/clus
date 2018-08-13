@@ -28,7 +28,7 @@ public class OOBSelection extends ClusSelection {
     protected int m_OOBNbSel;
 
 
-    public OOBSelection(BaggingSelection bsel) {
+    public OOBSelection(BagSelection bsel) {
         super(bsel.getNbRows());
         m_OOBCounts = new int[bsel.getNbRows()];
         m_OOBNbSel = 0;

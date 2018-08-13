@@ -110,7 +110,7 @@ import si.ijs.kt.clus.model.processor.ClusEnsemblePredictionWriter;
 import si.ijs.kt.clus.model.processor.ModelProcessorCollection;
 import si.ijs.kt.clus.model.processor.PredictionWriter;
 import si.ijs.kt.clus.pruning.PruneTree;
-import si.ijs.kt.clus.selection.BaggingSelection;
+import si.ijs.kt.clus.selection.BagSelection;
 import si.ijs.kt.clus.selection.ClusSelection;
 import si.ijs.kt.clus.selection.CriterionBasedSelection;
 import si.ijs.kt.clus.selection.OverSample;
@@ -1626,7 +1626,7 @@ public class Clus implements CMDLineArgsProvider {
         int nbsets = m_Sett.getExperimental().getBaggingSets();
         int nbrows = m_Data.getNbRows();
         for (int i = 0; i < nbsets; i++) {
-            BaggingSelection msel = new BaggingSelection(nbrows, getSettings().getEnsemble().getEnsembleBagSize(), null);
+            BagSelection msel = new BagSelection(nbrows, getSettings().getEnsemble().getEnsembleBagSize(), null);
             ClusRun cr = partitionData(msel, i + 1);
             ClusModelInfo mi = cr.getModelInfo(ClusModel.PRUNED);
             mi.addModelProcessor(ClusModelInfo.TEST_ERR, wrt);
@@ -1937,11 +1937,7 @@ public class Clus implements CMDLineArgsProvider {
 
                 /**
                  * The second group of command line parameters is for
-                 * miscellaneous action. The options are corrmatrix, info,
-                 * writetargets, out2model, test, normalize, debug, xval (test
-                 * error estimation via K-fold cross validation), fold, bag
-                 * (originally bagging, may not be used) show, gui, tseries TODO
-                 * What do these mean?
+                 * miscellaneous action.
                  */
                 if (cargs.hasOption("corrmatrix")) {
                     clus.initialize(cargs, clss);

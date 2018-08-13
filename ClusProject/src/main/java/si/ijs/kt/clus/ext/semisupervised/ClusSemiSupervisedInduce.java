@@ -78,7 +78,7 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
 
                 //add selected instances from training set to unlabeled set
                 //we have to remove from training set instances which will be in the unlabeled set, 
-                //because if we just set their weights to 0, they will anyway be selected in bagging process
+                //because if we just set their weights to 0, they will anyway be selected in bootstrapping process
                 for (int i = 0; i < tempTrainingSet.getNbRows(); i++) {
                     if (!randomSelection.isSelected(i)) {
                         m_UnlabeledData.add(tempTrainingSet.getTuple(i).deepCloneTuple());

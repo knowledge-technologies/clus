@@ -55,7 +55,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
 import si.ijs.kt.clus.model.test.NodeTest;
-import si.ijs.kt.clus.selection.BaggingSelection;
+import si.ijs.kt.clus.selection.BagSelection;
 import si.ijs.kt.clus.statistic.ClassificationStat;
 import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -554,7 +554,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 
 
     /**
-     * separateAndConquor method that induces rules on several bootstraped data subsets
+     * separateAndConquor method that induces rules on several bootstrapped data subsets
      * 
      * @param rset
      * @param data
@@ -569,7 +569,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         for (int z = 0; z < nb_sets; z++) {
             // Select the data using bootstrap
             RowData data_sel = (RowData) data.cloneData();
-            BaggingSelection msel = new BaggingSelection(nb_rows, getSettings().getEnsemble().getEnsembleBagSize(), null);
+            BagSelection msel = new BagSelection(nb_rows, getSettings().getEnsemble().getEnsembleBagSize(), null);
             data_sel.update(msel);
             // Reset tuple indexes used in heuristic
             if (getSettings().getRules().isHeurRuleDist()) {

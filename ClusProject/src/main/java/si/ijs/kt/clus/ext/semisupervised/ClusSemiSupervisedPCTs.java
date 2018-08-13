@@ -273,7 +273,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 			// we have to remove from training set instances which will be
 			// in the unlabeled set,
 			// because if we just set their weights to 0, they will anyway
-			// be selected in bagging process		
+			// be selected in bootstrapping process		
 			if(m_ParameterValues.length > 1) { //we should do parameter optimization, we need unlabeled data in a separate set
 				for (int i = 0; i < tempTrainingSet.getNbRows(); i++) {
 					if (!randomSelection.isSelected(i)) {
