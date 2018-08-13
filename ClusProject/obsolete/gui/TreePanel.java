@@ -77,7 +77,7 @@ public class TreePanel extends JPanel {
 
 
     public TreePanel(ClusNode root, String[] info) {
-        System.out.println("Setting node settings");
+        ClusLogger.info("Setting node settings");
         m_Sett.NODE_COLOR = new Color(228, 186, 143);
         m_Sett.LEAF_COLOR = new Color(172, 193, 232);
         m_Sett.NODE_BORDER_COLOR = Color.red;
@@ -108,7 +108,7 @@ public class TreePanel extends JPanel {
 
 
     public void setHorzVert(boolean toggle) {
-        System.out.println("Set horz/vert: " + toggle);
+        ClusLogger.info("Set horz/vert: " + toggle);
         DrawableCanvas cnv = m_Canvas.getCanvas();
         TreeRenderer rend = (TreeRenderer) cnv.getRenderer();
         if (rend != null) {

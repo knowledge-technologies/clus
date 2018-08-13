@@ -351,7 +351,7 @@ public class TreeFrame extends JFrame {
         }
         File dir_file = new File(dir);
         ArrayList files = new ArrayList();
-        System.out.println("Searching for models in: " + dir);
+        ClusLogger.info("Searching for models in: " + dir);
         FileUtil.recursiveFindAll(dir_file, ".model", files);
         FileUtil.recursiveFindAll(dir_file, ".tree", files);
         for (int i = 0; i < files.size(); i++) {
@@ -361,7 +361,7 @@ public class TreeFrame extends JFrame {
         for (int i = 0; i < m_Root.getChildCount(); i++) {
             DefaultMutableTreeNode ch = (DefaultMutableTreeNode) m_Root.getChildAt(i);
             m_Tree.expandPath(new TreePath(ch.getPath()));
-            System.out.println("Expanding: " + ch);
+            ClusLogger.info("Expanding: " + ch);
         }
     }
 
@@ -446,7 +446,7 @@ public class TreeFrame extends JFrame {
                 loadModelType(elem, node);
                 return;
             }
-            System.out.println("Name: " + elem.getFullName());
+            ClusLogger.info("Name: " + elem.getFullName());
             ClusModelCollectionIO io = ClusModelCollectionIO.load(elem.getFullName());
             addModelList(io, elem, node);
             loadModelType2(elem);
@@ -519,7 +519,7 @@ public class TreeFrame extends JFrame {
      * protected MySplitListener(int which) {
      * }
      * public void propertyChange(PropertyChangeEvent evt) {
-     * System.out.println(evt.getNewValue());
+     * ClusLogger.info(evt.getNewValue());
      * }
      * }
      */
@@ -575,14 +575,14 @@ public class TreeFrame extends JFrame {
             if (res == JFileChooser.APPROVE_OPTION) {
                 try {
                     File file = m_FileChoose.getSelectedFile();
-                    System.out.println("Opening: " + file.getName());
+                    ClusLogger.info("Opening: " + file.getName());
                     ArrayList list = FileUtil.recursiveFind(file, ".s");
                     for (int i = 0; i < list.size(); i++) {
                         String full = (String) list.get(i);
                         String dsname = FileUtil.getName(FileUtil.removePath(full));
                         String dspath = FileUtil.getPath(full);
                         m_Files.put(dsname, dspath);
-                        System.out.println("Name = " + dsname);
+                        ClusLogger.info("Name = " + dsname);
                     }
                     m_DSListModel.clear();
                     Iterator iter = m_Files.keySet().iterator();

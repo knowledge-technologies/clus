@@ -53,7 +53,7 @@ public class OldPredictionWriter {
             inst.init(fname, schema);
         }
         catch (IOException e) {
-            System.out.println(">>> IO ERROR <<<<<");
+            ClusLogger.info(">>> IO ERROR <<<<<");
         }
     }
 

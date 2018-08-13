@@ -32,10 +32,10 @@ public class ShowTree {
             SimpleTreeFrame.showTree(args[0]);
         }
         catch (IOException e) {
-            System.out.println("IO Error: " + e.getMessage());
+            ClusLogger.info("IO Error: " + e.getMessage());
         }
         catch (ClassNotFoundException e) {
-            System.out.println("Class Not Found: " + e.getMessage());
+            ClusLogger.info("Class Not Found: " + e.getMessage());
         }
     }
 }

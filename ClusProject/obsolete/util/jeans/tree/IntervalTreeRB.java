@@ -669,7 +669,7 @@ public class IntervalTreeRB {
         if (x != nil) {
             checkMaxHighFields(x.left);
             if (!(checkMaxHighFieldsHelper(x, x.maxHigh, 0) > 0)) {
-                System.out.println("Error found in CheckMaxHighFields.");
+                ClusLogger.info("Error found in CheckMaxHighFields.");
             }
             checkMaxHighFields(x.right);
         }
@@ -678,7 +678,7 @@ public class IntervalTreeRB {
 
     public void VERIFY(String descr, boolean val) {
         if (!val) {
-            System.out.println("Assertion: '" + descr + "' fails.");
+            ClusLogger.info("Assertion: '" + descr + "' fails.");
         }
     }
 

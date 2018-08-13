@@ -131,7 +131,7 @@ public class TestKnnModel implements ClusModel, Serializable {
         else {
             // Probably file name.. try to load weighting.
             attrWe = AttributeWeighting.loadFromFile(fName + ".weight");
-            System.out.println(attrWe.toString());
+            ClusLogger.info(attrWe.toString());
             if (attrWe != null)
                 loadedWeighting = true;
             else
@@ -182,12 +182,12 @@ public class TestKnnModel implements ClusModel, Serializable {
             watches.get(alg + "B").pause();
         }
         // debug info
-        System.out.println("------------------------------------------------");
-        System.out.println("Method comparison mode..");
-        System.out.println(searchDistance.getBasicDistance().getClass());
-        System.out.println(m_NbNeighbors);
-        System.out.println(m_Settings.getKNN().getKNNAttrWeight());
-        System.out.println("------------------------------------------------");
+        ClusLogger.info("------------------------------------------------");
+        ClusLogger.info("Method comparison mode..");
+        ClusLogger.info(searchDistance.getBasicDistance().getClass());
+        ClusLogger.info(m_NbNeighbors);
+        ClusLogger.info(m_Settings.getKNN().getKNNAttrWeight());
+        ClusLogger.info("------------------------------------------------");
 
         // save prediction template
         // @todo : should all this be repalced with:
@@ -206,17 +206,17 @@ public class TestKnnModel implements ClusModel, Serializable {
             // TimeSeriesAttrType attr =
             // this.cr.getDataSet(ClusRun.TRAINSET).m_Schema.getTimeSeriesAttrUse(AttributeUseType.Target)[0];
             // statTemplate = new TimeSeriesStat(attxr, new DTWTimeSeriesDist(attr), 0 );
-            System.out.println("-------------");
+            ClusLogger.info("-------------");
             m_StatTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
-            System.out.println(m_StatTemplate.getDistanceName());
-            System.out.println("----------------");
+            ClusLogger.info(m_StatTemplate.getDistanceName());
+            ClusLogger.info("----------------");
         }
         else if (cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
             m_StatTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
-            System.out.println("----------------------");
-            System.out.println(m_StatTemplate.getDistanceName());
-            System.out.println(m_StatTemplate.getClass());
-            System.out.println("----------------------");
+            ClusLogger.info("----------------------");
+            ClusLogger.info(m_StatTemplate.getDistanceName());
+            ClusLogger.info(m_StatTemplate.getClass());
+            ClusLogger.info("----------------------");
         }
     }
 
@@ -238,7 +238,7 @@ public class TestKnnModel implements ClusModel, Serializable {
             for (DataTuple t : nearest)
                 results[i] += m_Algorithms.get(alg).getDistance().calcDistance(t, tuple);
             results[i] /= nearest.size();
-            System.out.println(alg + ": " + i + " " + results[i]);
+            ClusLogger.info(alg + ": " + i + " " + results[i]);
             mean += results[i];
             i++;
         }
@@ -246,12 +246,12 @@ public class TestKnnModel implements ClusModel, Serializable {
         mean /= results.length;
         for (i = 0; i < m_Algorithms.size(); i++) {
             if (results[i] - mean > 1e-8) {
-                System.out.println(this.getClass().getName() + ":predictWeighted() - Something went wrong!");
-                System.out.println(results[i] - mean);
-                System.out.println(results[i]);
-                System.out.println(results[0]);
-                System.out.println();
-                System.out.println();
+                ClusLogger.info(this.getClass().getName() + ":predictWeighted() - Something went wrong!");
+                ClusLogger.info(results[i] - mean);
+                ClusLogger.info(results[i]);
+                ClusLogger.info(results[0]);
+                ClusLogger.info();
+                ClusLogger.info();
                 System.exit(1);
             }
         }
@@ -371,11 +371,11 @@ public class TestKnnModel implements ClusModel, Serializable {
 
     public static void debugInfo(Clus clus) {
         try {
-            System.out.println("--------------");
-            System.out.println("K = " + clus.getStatManager().getSettings().getKNN().getKNNk());
-            System.out.println(clus.getSchema().getNbDescriptiveAttributes() + " " + clus.getData().getData().length); // clus.getData().m_Data.length
+            ClusLogger.info("--------------");
+            ClusLogger.info("K = " + clus.getStatManager().getSettings().getKNN().getKNNk());
+            ClusLogger.info(clus.getSchema().getNbDescriptiveAttributes() + " " + clus.getData().getData().length); // clus.getData().m_Data.length
             for (String key : TestKnnModel.watches.keySet()) {
-                System.out.println(key + " - " + TestKnnModel.watches.get(key).readValue());
+                ClusLogger.info(key + " - " + TestKnnModel.watches.get(key).readValue());
             }
             FileWriter f = new FileWriter("output.data", true);
             f.write(clus.getSchema().getRelationName() + "\t\t");

@@ -172,7 +172,7 @@ public class MFileDialog extends JDialog implements MCallback {
     public void dispose() {
         for (int i = 0; i < 5; i++) {
             TableColumn column = m_hFileTable.getColumnModel().getColumn(i);
-            System.out.println("Column width " + i + ": " + column.getWidth());
+            ClusLogger.info("Column width " + i + ": " + column.getWidth());
         }
         super.dispose();
     }

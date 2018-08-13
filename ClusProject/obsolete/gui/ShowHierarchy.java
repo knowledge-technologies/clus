@@ -217,7 +217,7 @@ public class ShowHierarchy extends JPanel {
      * token = tokens.getToken();
      * }
      * } catch (IOException e) {
-     * System.out.println("IO error: "+e.getMessage());
+     * ClusLogger.info("IO error: "+e.getMessage());
      * }
      * return tooltips;
      * }
@@ -260,8 +260,8 @@ public class ShowHierarchy extends JPanel {
 
     private double zValue(ClassTerm child) {
         int index = child.getIndex();
-        // System.out.println("------------------");
-        // System.out.println(child.toString());
+        // ClusLogger.info("------------------");
+        // ClusLogger.info(child.toString());
         double zValue = 0.0;
         if (m_RVars != null) {
             zValue = Math.abs(((m_RCnts[index] / m_RWeight) - (m_NCnts[index] / m_NWeight)) / Math.sqrt(m_RVars[index]));
@@ -269,7 +269,7 @@ public class ShowHierarchy extends JPanel {
         else {
             zValue = Double.MAX_VALUE;
         }
-        // System.out.println(zValue);
+        // ClusLogger.info(zValue);
         return zValue;
     }
 

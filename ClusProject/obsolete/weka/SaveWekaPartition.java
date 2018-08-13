@@ -51,11 +51,11 @@ public class SaveWekaPartition extends Evaluation {
         }
         PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname + ".folds")));
         for (int i = 0; i < numFolds; i++) {
-            System.out.println("Fold: " + i);
+            ClusLogger.info("Fold: " + i);
             Instances test_cv = data.testCV(numFolds, i);
             for (int j = 0; j < test_cv.numInstances(); j++) {
                 Instance in = test_cv.instance(j);
-                // System.out.println(i + ":" + in.toString());
+                // ClusLogger.info(i + ":" + in.toString());
                 if (j != 0)
                     wrt.print(",");
                 wrt.print(in.toString(0));

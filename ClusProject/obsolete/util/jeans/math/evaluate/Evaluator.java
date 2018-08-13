@@ -100,20 +100,20 @@ public class Evaluator {
          * } else {
          * ExpressionPrototype proto = getPrototype(token);
          * if (proto != null) {
-         * //System.out.println("Prototype found for: "+token);
+         * //ClusLogger.info("Prototype found for: "+token);
          * int protoType = proto.getType();
          * int protoLevel = proto.getLevel();
-         * //System.out.println("Number: "+expectNumberOrPrefix+" Type: "+protoType);
+         * //ClusLogger.info("Number: "+expectNumberOrPrefix+" Type: "+protoType);
          * if (expectNumberOrPrefix && protoType != PREFIX) {
-         * //System.out.println("Expected number");
+         * //ClusLogger.info("Expected number");
          * if (protoType == INFIX || protoType == POSTFIX) {
          * proto = null;
          * } else {
-         * //System.out.println("No infix or postfix");
+         * //ClusLogger.info("No infix or postfix");
          * if (protoType == CONSTANT) {
          * crResult = proto.getPrototype();
          * expectNumberOrPrefix = false;
-         * System.out.println("Constant: "+crResult);
+         * ClusLogger.info("Constant: "+crResult);
          * }
          * }
          * } else {

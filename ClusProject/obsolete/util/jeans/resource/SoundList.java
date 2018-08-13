@@ -85,7 +85,7 @@ public class SoundList {
             audioClip = applet.getAudioClip(baseURL, relativeURL);
         }
         if (audioClip == null) {
-            System.out.println("Error loading audio clip: " + relativeURL);
+            ClusLogger.info("Error loading audio clip: " + relativeURL);
         }
         putClip(audioClip, relativeURL);
     }

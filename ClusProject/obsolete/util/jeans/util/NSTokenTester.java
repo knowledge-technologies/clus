@@ -30,16 +30,16 @@ public class NSTokenTester {
 
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("Illegal number of arguments.");
+            ClusLogger.info("Illegal number of arguments.");
             return;
         }
-        System.out.println("Reading file: " + args[0]);
+        ClusLogger.info("Reading file: " + args[0]);
         try {
             NStreamTokenizer tokens = new NStreamTokenizer(new FileReader(args[0]));
             /*
              * String token = "-------------";
              * while (token != null) {
-             * System.out.println(token);
+             * ClusLogger.info(token);
              * token = tokens.readTillEol();
              * }
              */
@@ -48,11 +48,11 @@ public class NSTokenTester {
                 System.out.print(ch);
                 ch = tokens.readChar();
             }
-            System.out.println();
+            ClusLogger.info();
             tokens.close();
         }
         catch (IOException e) {
-            System.out.println("Error: " + e);
+            ClusLogger.info("Error: " + e);
         }
 
     }

@@ -84,7 +84,7 @@ public class ComponentWrapper {
 
 
     public void output() {
-        System.out.println("Component: " + comp + " Count: " + enable_cnt);
+        ClusLogger.info("Component: " + comp + " Count: " + enable_cnt);
     }
 
 }

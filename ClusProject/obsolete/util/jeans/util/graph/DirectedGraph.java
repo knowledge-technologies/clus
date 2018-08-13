@@ -77,7 +77,7 @@ public class DirectedGraph {
                     elem = iter.getNext();
                     idx++;
                 }
-                System.out.println();
+                ClusLogger.info();
             }
         }
     }

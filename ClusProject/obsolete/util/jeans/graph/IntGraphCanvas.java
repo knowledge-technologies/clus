@@ -62,7 +62,7 @@ public class IntGraphCanvas extends BufferCanvas {
             System.arraycopy(m_datatypes, 0, newtypes, 0, m_datatypes.length);
             m_datatypes = newtypes;
         }
-        System.out.println("Adding data type: " + type + " " + name + " " + color);
+        ClusLogger.info("Adding data type: " + type + " " + name + " " + color);
         m_datatypes[type] = new IntGraphType(name, color);
     }
 

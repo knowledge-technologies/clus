@@ -107,7 +107,7 @@ public class MWorkerThread extends Thread {
             job.run();
         }
         catch (Exception e) {
-            System.out.println("Exception: " + e);
+            ClusLogger.info("Exception: " + e);
             e.printStackTrace();
         }
     }

@@ -46,7 +46,7 @@ public abstract class SearchDistance {
         else if (attr instanceof NominalAttrType)
             return attr.getNominal(t1);
         else {
-            System.out.println(attr);
+            ClusLogger.info(attr);
             throw new IllegalArgumentException("Attribute type is not supported.");
         }
     }

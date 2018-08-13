@@ -103,7 +103,7 @@ public class Tilde2PMMLv2 {
         }
 
         catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            ClusLogger.info("Error: " + e.getMessage());
         }
 
     } // main
@@ -134,14 +134,14 @@ public class Tilde2PMMLv2 {
             String test = $currentNode.getTest().toString();
             MStreamTokenizer tokens = MStreamTokenizer.createStringParser(test);
             tokens.setCharTokens(",[]():=><");
-            System.out.println("Line = " + test);
+            ClusLogger.info("Line = " + test);
             CompoundPredicate pred = new CompoundPredicate();
             $currentNode.setVisitor(pred);
             while (tokens.hasMoreTokens()) {
                 String token1 = tokens.readToken();
                 String token2 = tokens.readToken();
-                System.out.println("token1 = " + token1);
-                System.out.println("token2 = " + token2);
+                ClusLogger.info("token1 = " + token1);
+                ClusLogger.info("token2 = " + token2);
 
                 if (token2.equals("(")) {
 
@@ -195,7 +195,7 @@ public class Tilde2PMMLv2 {
 
         }
         catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            ClusLogger.info("Error: " + e.getMessage());
         }
 
     } // depthFirstInit
@@ -263,7 +263,7 @@ public class Tilde2PMMLv2 {
         } // try
 
         catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            ClusLogger.info("Error: " + e.getMessage());
         }
     }
 

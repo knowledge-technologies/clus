@@ -240,15 +240,15 @@ public class TestM5PruningRuleNode extends Classifier {
         cnv.setTargetWeights(tweights);
         TestM5PruningRuleNode tree = createM5RuleNode(original, data, cnv);
         if (Math.abs(tree.m_globalDeviation - globaldev) > 1e-6) {
-            System.out.println("Global deviation computed by Clus: " + globaldev);
-            System.out.println("Global deviation computed by Weka: " + tree.m_globalDeviation);
+            ClusLogger.info("Global deviation computed by Clus: " + globaldev);
+            ClusLogger.info("Global deviation computed by Weka: " + tree.m_globalDeviation);
         }
-        // System.out.println("Original tree:");
-        // System.out.println(tree.treeToString(0));
+        // ClusLogger.info("Original tree:");
+        // ClusLogger.info(tree.treeToString(0));
         try {
             tree.prune();
             tree.numLeaves(0);
-            System.out.println(tree.treeToString(0));
+            ClusLogger.info(tree.treeToString(0));
         }
         catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());
@@ -641,7 +641,7 @@ public class TestM5PruningRuleNode extends Classifier {
     public String nodeToString() {
         StringBuffer text = new StringBuffer();
 
-        System.out.println("In to string");
+        ClusLogger.info("In to string");
         text.append("Node:\n\tnum inst: " + m_numInstances);
 
         if (m_isLeaf) {
@@ -878,8 +878,8 @@ public class TestM5PruningRuleNode extends Classifier {
 
             adjustedErrorNode = rmsSubTree * pruningFactor(m_numInstances, (l_params + r_params + 1));
 
-            System.out.println("mode: " + rmsModel + " tree: " + rmsSubTree);
-            System.out.println("modeadj: " + adjustedErrorModel + " treeadj: " + adjustedErrorNode);
+            ClusLogger.info("mode: " + rmsModel + " tree: " + rmsSubTree);
+            ClusLogger.info("modeadj: " + adjustedErrorModel + " treeadj: " + adjustedErrorNode);
 
             if ((adjustedErrorModel <= adjustedErrorNode) || (adjustedErrorModel < (m_globalDeviation * 0.00001))) {
 
@@ -1137,10 +1137,10 @@ public class TestM5PruningRuleNode extends Classifier {
      */
     public void printAllModels() {
         if (m_isLeaf) {
-            System.out.println(m_nodeModel.toString());
+            ClusLogger.info(m_nodeModel.toString());
         }
         else {
-            System.out.println(m_nodeModel.toString());
+            ClusLogger.info(m_nodeModel.toString());
             m_left.printAllModels();
             m_right.printAllModels();
         }

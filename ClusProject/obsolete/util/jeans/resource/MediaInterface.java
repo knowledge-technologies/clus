@@ -93,8 +93,8 @@ public class MediaInterface {
         if (soundBase == null)
             initSoundBase();
         if (inApplet()) {
-            System.out.println("Sound base: " + soundBase);
-            System.out.println("Name: " + name);
+            ClusLogger.info("Sound base: " + soundBase);
+            ClusLogger.info("Name: " + name);
             return applet.getAudioClip(soundBase, name);
         }
         else {
@@ -156,13 +156,13 @@ public class MediaInterface {
         if (imageBase != null)
             fname = imageBase + File.separator + name;
         if (inApplet()) {
-            System.out.println("[APPLET] " + fname);
+            ClusLogger.info("[APPLET] " + fname);
         }
         else if (inJar()) {
-            System.out.println("[JAR] " + fname);
+            ClusLogger.info("[JAR] " + fname);
         }
         else {
-            System.out.println(fname);
+            ClusLogger.info(fname);
         }
     }
 

@@ -124,7 +124,7 @@ public class oTestKnnModel implements ClusModel, Serializable {
                     results[i] += m_Algorithms.get(alg).getDistance().calcDistance(t, tuple);
 
                 results[i] /= tmpNearest.size();
-                // System.out.println("\t"+results[i]);
+                // ClusLogger.info("\t"+results[i]);
                 mean += results[i];
                 i++;
             }
@@ -133,12 +133,12 @@ public class oTestKnnModel implements ClusModel, Serializable {
             // double diff = 0;
             for (i = 0; i < m_Algorithms.size(); i++) {
                 if (results[i] - mean > 1e-8) {
-                    System.out.println(this.getClass().getName() + ": Something went wrong!!!");
-                    System.out.println(results[i] - mean);
-                    System.out.println(results[i]);
-                    System.out.println(results[0]);
-                    System.out.println("");
-                    System.out.println("");
+                    ClusLogger.info(this.getClass().getName() + ": Something went wrong!!!");
+                    ClusLogger.info(results[i] - mean);
+                    ClusLogger.info(results[i]);
+                    ClusLogger.info(results[0]);
+                    ClusLogger.info("");
+                    ClusLogger.info("");
                     System.exit(1);
                 }
             }
@@ -162,7 +162,7 @@ public class oTestKnnModel implements ClusModel, Serializable {
 
 
     public int getModelSize() {
-        System.out.println("No specific model size for kNN model.");
+        ClusLogger.info("No specific model size for kNN model.");
         return -1;
     }
 

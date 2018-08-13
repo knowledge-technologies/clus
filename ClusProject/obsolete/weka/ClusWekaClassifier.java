@@ -61,7 +61,7 @@ public class ClusWekaClassifier extends ClusInductionAlgorithmType {
         String[] options = new String[split.length - 1];
         System.arraycopy(split, 1, options, 0, options.length);
         try {
-            System.out.println("Loading classifier: " + split[0]);
+            ClusLogger.info("Loading classifier: " + split[0]);
             m_Classifier = AbstractClassifier.forName(split[0], options);
         }
         catch (Exception e) {
@@ -76,7 +76,7 @@ public class ClusWekaClassifier extends ClusInductionAlgorithmType {
 
 
     public void printInfo() {
-        System.out.println("Weka Classifier: " + m_Options);
+        ClusLogger.info("Weka Classifier: " + m_Options);
     }
 
 

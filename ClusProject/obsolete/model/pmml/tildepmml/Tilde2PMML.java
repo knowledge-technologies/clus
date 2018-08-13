@@ -83,7 +83,7 @@ public class Tilde2PMML {
         }
 
         catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            ClusLogger.info("Error: " + e.getMessage());
         }
 
     } // main
@@ -162,7 +162,7 @@ public class Tilde2PMML {
         } // try
 
         catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            ClusLogger.info("Error: " + e.getMessage());
         }
 
     } // depthFirstInit
@@ -231,7 +231,7 @@ public class Tilde2PMML {
      * }
      * } //try
      * catch (IOException e) {
-     * System.out.println("Error: "+e.getMessage());
+     * ClusLogger.info("Error: "+e.getMessage());
      * }
      * } //depthFirstPrint
      */

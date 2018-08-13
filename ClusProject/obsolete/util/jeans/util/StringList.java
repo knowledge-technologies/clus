@@ -53,6 +53,6 @@ public class StringList {
 
     public void print() {
         for (int ctr = 0; ctr < getSize(); ctr++)
-            System.out.println(getLine(ctr));
+            ClusLogger.info(getLine(ctr));
     }
 }

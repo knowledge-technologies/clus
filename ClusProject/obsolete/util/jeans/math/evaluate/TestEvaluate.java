@@ -26,20 +26,20 @@ public class TestEvaluate {
 
     public static void main(String[] args) {
         if (args.length != 1) {
-            System.out.println("Usage: TestEvaluate [expression]");
+            ClusLogger.info("Usage: TestEvaluate [expression]");
         }
         else {
             String strg = args[0];
-            System.out.println("Expression: " + strg);
+            ClusLogger.info("Expression: " + strg);
             Evaluator evaluator = EvaluatorBuilder.getEvaluator();
             try {
                 Expression expr = evaluator.evaluate(strg);
-                System.out.println("Evaluated to: " + expr);
-                System.out.println("Value: " + expr.getValue());
-                System.out.println("Double: " + expr.getValue().getDouble());
+                ClusLogger.info("Evaluated to: " + expr);
+                ClusLogger.info("Value: " + expr.getValue());
+                ClusLogger.info("Double: " + expr.getValue().getDouble());
             }
             catch (EvaluateException exp) {
-                System.out.println("Exception: " + exp);
+                ClusLogger.info("Exception: " + exp);
             }
         }
     }

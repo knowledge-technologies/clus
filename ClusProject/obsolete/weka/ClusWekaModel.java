@@ -65,7 +65,7 @@ public class ClusWekaModel implements ClusModel {
             return stat;
         }
         catch (Exception e) {
-            System.out.println("Weka Error: " + e.getClass().getName() + ": " + e.getMessage());
+            ClusLogger.info("Weka Error: " + e.getClass().getName() + ": " + e.getMessage());
         }
         return null;
     }

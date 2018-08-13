@@ -102,7 +102,7 @@ public class MLocalFileSystem extends MFileSystem {
                         int len = path.length();
                         if (len <= 3 && len >= 2 && path.charAt(1) == ':') {
                             m_bIsRoot = true;
-                            System.out.println("CD: ROOT");
+                            ClusLogger.info("CD: ROOT");
                             doLoad();
                             return;
                         }
@@ -110,7 +110,7 @@ public class MLocalFileSystem extends MFileSystem {
                     }
                     else {
                         m_bIsRoot = true;
-                        System.out.println("CD: ROOT");
+                        ClusLogger.info("CD: ROOT");
                         doLoad();
                     }
                 }
@@ -128,7 +128,7 @@ public class MLocalFileSystem extends MFileSystem {
                 if (newDir.exists()) {
                     m_bIsRoot = false;
                     m_hDir = newDir;
-                    System.out.println("CD: " + newPath + sep);
+                    ClusLogger.info("CD: " + newPath + sep);
                     doLoad();
                 }
             }

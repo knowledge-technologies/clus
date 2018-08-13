@@ -253,7 +253,7 @@ public class MDouble {
     public static void main(String[] args) {
         MDouble fl = new MDouble();
         for (int i = 0; i < vb.length; i++)
-            System.out.println("double " + vb[i] + " " + fl.double2String(vb[i]));
+            ClusLogger.info("double " + vb[i] + " " + fl.double2String(vb[i]));
 
     }
 }

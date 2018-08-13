@@ -44,7 +44,7 @@ public class TildeTreeReader {
     public ClusNode readTree() throws IOException {
         String head = getTillEOL();
         if (m_Parent.getDebug())
-            System.out.println("Head: " + head);
+            ClusLogger.info("Head: " + head);
         ClusNode node = doReadTree(head);
         return node;
     }
@@ -83,7 +83,7 @@ public class TildeTreeReader {
                 if (i != 0)
                     tokens.readChar(',');
                 propvec[i] = (double) tokens.readFloat();
-                System.out.println("Found = " + propvec[i]);
+                ClusLogger.info("Found = " + propvec[i]);
             }
             tokens.readChar(']');
             double count = (double) tokens.readFloat();
@@ -162,14 +162,14 @@ public class TildeTreeReader {
         }
         if (!isleaf) {
             if (m_Parent.getDebug())
-                System.out.println("Test: " + res);
+                ClusLogger.info("Test: " + res);
             if (result.length() > 0)
                 test.addLine(result.toString());
             node.setTest(test);
         }
         else {
             if (m_Parent.getDebug())
-                System.out.println("Leaf: " + node.getClusteringStat());
+                ClusLogger.info("Leaf: " + node.getClusteringStat());
 
         }
         return isleaf;
@@ -182,7 +182,7 @@ public class TildeTreeReader {
             ;
         String token = tokens.readToken();
         if (!token.equals(which)) {
-            System.out.println("Error token: " + token + " must be " + which);
+            ClusLogger.info("Error token: " + token + " must be " + which);
         }
         tokens.readChar(':');
     }

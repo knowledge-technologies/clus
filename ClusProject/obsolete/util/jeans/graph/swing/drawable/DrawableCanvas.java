@@ -211,7 +211,7 @@ public class DrawableCanvas extends JComponent {
 
     @Override
     public void setBackground(Color col) {
-        System.out.println("Background: " + col);
+        ClusLogger.info("Background: " + col);
         m_BackColor = col;
     }
 

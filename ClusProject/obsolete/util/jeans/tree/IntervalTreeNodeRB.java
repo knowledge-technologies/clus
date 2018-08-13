@@ -41,27 +41,27 @@ public class IntervalTreeNodeRB {
 
 
     public void print(IntervalTreeNodeRB nil, IntervalTreeNodeRB root) {
-        System.out.println("k = " + key + " h = " + high + " maxhigh = " + maxHigh);
+        ClusLogger.info("k = " + key + " h = " + high + " maxhigh = " + maxHigh);
         System.out.print("l.key = ");
         if (left == nil)
-            System.out.println("NULL");
+            ClusLogger.info("NULL");
         else
-            System.out.println(left.key);
+            ClusLogger.info(left.key);
         System.out.print("r.key = ");
         if (right == nil)
-            System.out.println("NULL");
+            ClusLogger.info("NULL");
         else
-            System.out.println(right.key);
+            ClusLogger.info(right.key);
         System.out.print("p.key = ");
         if (parent == root)
-            System.out.println("NULL");
+            ClusLogger.info("NULL");
         else
-            System.out.println(parent.key);
+            ClusLogger.info(parent.key);
     }
 
 
     public void print() {
-        System.out.println("[" + key + "," + high + " (" + maxHigh + ")]: " + value);
+        ClusLogger.info("[" + key + "," + high + " (" + maxHigh + ")]: " + value);
     }
 
 

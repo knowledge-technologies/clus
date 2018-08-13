@@ -89,7 +89,7 @@ public class Tilde2PMMLv1 {
         }
 
         catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            ClusLogger.info("Error: " + e.getMessage());
         }
 
     } // main
@@ -144,7 +144,7 @@ public class Tilde2PMMLv1 {
         } // try
 
         catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            ClusLogger.info("Error: " + e.getMessage());
         }
 
     } // depthFirstInit
@@ -202,7 +202,7 @@ public class Tilde2PMMLv1 {
                 }
 
                 ClassificationStat stat = (ClassificationStat) $currentNode.getClusteringStat();
-                System.out.println(stat);
+                ClusLogger.info(stat);
                 $outStream.write("<Node recordCount=\"" + (int) stat.getTotalWeight() + "\" score=\"" + stat.getPredictedClassName(0) + "\">\n");
 
                 for (int idx = 0; idx < stat.getNbClasses(0); idx++) {
@@ -269,7 +269,7 @@ public class Tilde2PMMLv1 {
         } // try
 
         catch (IOException e) {
-            System.out.println("Error: " + e.getMessage());
+            ClusLogger.info("Error: " + e.getMessage());
         }
 
     }

@@ -99,14 +99,14 @@ public class TestC45PruningRuleNode extends C45PruneableClassifierTree {
         ClusToWekaData cnv = new ClusToWekaData(data.getSchema());
         try {
             TestC45PruningRuleNode tree = createC45RuleNode(original, data, cnv);
-            System.out.println("Original tree:");
-            System.out.println(tree.toString());
-            System.out.println("***");
+            ClusLogger.info("Original tree:");
+            ClusLogger.info(tree.toString());
+            ClusLogger.info("***");
             tree.collapse();
             tree.prune();
-            System.out.println("Resulting tree:");
-            System.out.println(tree.toString());
-            System.out.println("***");
+            ClusLogger.info("Resulting tree:");
+            ClusLogger.info(tree.toString());
+            ClusLogger.info("***");
         }
         catch (Exception e) {
             System.err.println("Exception: " + e.getMessage());

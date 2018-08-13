@@ -73,7 +73,7 @@ public class TildeOutReader {
             m_Root = treer.readTree();
             m_Root.addChildStats();
             m_Schema.showDebug();
-            System.out.println("Total Root Node: " + m_Root.getClusteringStat());
+            ClusLogger.info("Total Root Node: " + m_Root.getClusteringStat());
         }
         catch (ClusException e) {
             throw new IOException(e.getMessage());
@@ -165,9 +165,9 @@ public class TildeOutReader {
 
     public void readSetting(String setting) throws IOException {
         if (m_Debug)
-            System.out.println("Setting: " + setting);
+            ClusLogger.info("Setting: " + setting);
         if (setting.equals("classes")) {
-            System.out.println("Do classes ***********");
+            ClusLogger.info("Do classes ***********");
             int count = 0;
             Vector values = new Vector();
             m_Tokens.readChar('[');
@@ -191,7 +191,7 @@ public class TildeOutReader {
                 m_Mode = MULTI_CLASSIFY;
             else
                 m_Mode = REGRESSION;
-            System.out.println("Tilde mode: " + mode);
+            ClusLogger.info("Tilde mode: " + mode);
         }
         else {
             m_Tokens.readTillEol();
@@ -212,12 +212,12 @@ public class TildeOutReader {
                 m_Tokens.readTillEol();
             }
             else {
-                System.out.println("Error: " + token);
+                ClusLogger.info("Error: " + token);
                 done = true;
             }
         }
         if (m_Mode == REGRESSION) {
-            System.out.println("Dimension = " + getDim());
+            ClusLogger.info("Dimension = " + getDim());
             for (int i = 0; i < getDim(); i++) {
                 NominalAttrType target = new NominalAttrType("Target", 2);
                 target.setStatus(ClusAttrType.STATUS_TARGET);

@@ -55,10 +55,10 @@ public class NodePainterSettings extends MyVisitorParent {
 
 
     public void print() {
-        System.out.println("YTOP  = " + YTOP);
-        System.out.println("XLEFT = " + XLEFT);
-        System.out.println("XGAP  = " + XGAP);
-        System.out.println("YGAP  = " + YGAP);
+        ClusLogger.info("YTOP  = " + YTOP);
+        ClusLogger.info("XLEFT = " + XLEFT);
+        ClusLogger.info("XGAP  = " + XGAP);
+        ClusLogger.info("YGAP  = " + YGAP);
     }
 
 }

@@ -78,7 +78,7 @@ public class DrawableScrollableCanvas extends JPanel {
     @Override
     public void setBackground(Color col) {
         super.setBackground(col);
-        System.out.println("Setting background: " + m_hCanvas);
+        ClusLogger.info("Setting background: " + m_hCanvas);
         if (m_hCanvas != null)
             m_hCanvas.setBackground(col);
     }
