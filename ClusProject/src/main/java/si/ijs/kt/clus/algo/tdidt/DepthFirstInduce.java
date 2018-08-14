@@ -301,12 +301,12 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         // ROS
         if (getSettings().getEnsemble().getEnsembleROSAlgorithmType().equals(EnsembleROSAlgorithmType.DynamicSubspaces)) {
             ClusROSModelInfo info = m_FindBestTest.getStatManager().getHeuristic().getClusteringAttributeWeights().getROSModelInfo();
-            ClusLogger.info(String.format("  ROS dynamic (Bag %s): %s => Node level: %s", info.getTreeNumber() + 1, info.getSubspaceString(), node.getLevel()));
+            ClusLogger.fine(String.format("  ROS dynamic (Bag %s): %s => Node level: %s", info.getTreeNumber() + 1, info.getSubspaceString(), node.getLevel()));
             node.setROSModelInfo(info);
         }
 
         if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
-            ClusLogger.info("Depth " + node.getLevel() + ": inducing new node: " + data.getNbRows() + " examples");
+            ClusLogger.fine("Depth " + node.getLevel() + ": inducing new node: " + data.getNbRows() + " examples");
         }
         if (rnd == null) {
             // rnd may be null due to some calls of induce that do not support

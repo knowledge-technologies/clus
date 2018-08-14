@@ -4,6 +4,7 @@ package si.ijs.kt.clus.ext.ensemble;
 import java.util.HashMap;
 
 import si.ijs.kt.clus.error.common.ClusError;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
 
 
 /**
@@ -11,7 +12,6 @@ import si.ijs.kt.clus.error.common.ClusError;
  * Used for ensemble voting.
  * 
  * @author martinb
- *
  */
 public class ClusOOBWeights {
 
@@ -26,8 +26,15 @@ public class ClusOOBWeights {
     /* Weights calculated from component-wise errors */
     protected HashMap<Integer, double[]> m_ComponentWeights;
 
+    /* Selected voting type */
+    protected EnsembleVotingType m_EnsembleVotingType = null;
 
-    public ClusOOBWeights() {
+    /* Alpha parameter. Used to add additional weight to attributes. */
+    protected double m_Alpha = 1d;
+
+
+    public ClusOOBWeights(EnsembleVotingType et) {
+        m_EnsembleVotingType = et;
         m_AggregatedError = new HashMap<>();
         m_ComponentErrors = new HashMap<>();
     }
@@ -41,7 +48,7 @@ public class ClusOOBWeights {
             return this;
         }
 
-        ClusOOBWeights weights = new ClusOOBWeights();
+        ClusOOBWeights weights = new ClusOOBWeights(m_EnsembleVotingType);
         for (int i = 0; i < numberOfModels; i++) {
             weights.setErrors(i, m_AggregatedError.get(i), m_ComponentErrors.get(i));
         }
@@ -75,12 +82,22 @@ public class ClusOOBWeights {
      * => RMSE for regression
      * => 1-CA for classification
      * 
-     * Weights should therefore be proportionate to the loss function: 1/error
+     * Weights are proportionate to the loss function: 1/error
      */
     public void calculateWeights() {
-        calculateAggregateWeights();
+        switch (m_EnsembleVotingType) {
+            case OOBModelWeighted:
+                calculateAggregateWeights();
+                break;
 
-        calculateComponentWeights();
+            case OOBTargetWeighted:
+                calculateComponentWeights();
+                break;
+
+            default:
+                throw new RuntimeException("Selected voting scheme is not OOB-based.");
+        }
+
     }
 
 
