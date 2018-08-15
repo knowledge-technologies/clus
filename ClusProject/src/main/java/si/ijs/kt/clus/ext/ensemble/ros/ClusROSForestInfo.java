@@ -84,23 +84,31 @@ public class ClusROSForestInfo {
                     for (Integer enabled : mi.getTargets()) {
                         m_Coverage[enabled]++;
                     }
-                    
+
                     break;
 
                 case DynamicSubspaces:
-                    /**
-                     * Count number of nodes that use a certain target and then normalize with number of all
-                     * nodes in the tree.
-                     */
-                    
-                    
-                    
-                    int allPossibleNodes = countNbNodesWithoutLeaf(mi);
-                    double[] counts = countCoverageWithoutLeaf(mi);
-
-                    for (int i = 0; i < counts.length; i++) {
-                        m_Coverage[i] += (counts[i] / allPossibleNodes);
+                   
+                    /** Do the same as with Fixed subspaces - can this be smarter? 
+                     * 
+                     * The current implementation only considers the subspace of root node...
+                     * */
+                    for (Integer enabled : mi.getTargets()) {
+                        m_Coverage[enabled]++;
                     }
+                    
+                   
+                    ///**
+                    // * Count number of nodes that use a certain target and then normalize with number of all
+                    // * nodes in the tree.
+                    // */
+                    /*
+                     * int allPossibleNodes = countNbNodesWithoutLeaf(mi);
+                     * double[] counts = countCoverageWithoutLeaf(mi);
+                     * for (int i = 0; i < counts.length; i++) {
+                     * m_Coverage[i] += (counts[i] / allPossibleNodes);
+                     * }
+                     */
 
                     break;
                 default:
@@ -117,6 +125,33 @@ public class ClusROSForestInfo {
 
         m_AverageTargetsUsedPercentage = ClusUtil.roundDouble(m_AverageTargetsUsed / m_Trees.size() / m_NbTargetAttributes * 100, 3);
         m_AverageTargetsUsed = ClusUtil.roundDouble(m_AverageTargetsUsed / m_Trees.size(), 3);
+    }
+
+
+    
+    
+    
+    
+    
+    private int[] getCounts(ClusROSModelInfo mi) {
+
+        int[] counts = new int[m_NbTargetAttributes];
+        Arrays.fill(counts, 0);
+
+        for (ClusROSModelInfo info : mi.getChildren()) {
+            int[] ret = getCounts(info);
+
+            for (int i = 0; i < ret.length; i++) {
+
+                counts[i] += ret[i];
+            }
+        }
+
+        for (Integer enabled : mi.getTargets()) {
+            counts[enabled]++;
+        }
+
+        return counts;
     }
 
 

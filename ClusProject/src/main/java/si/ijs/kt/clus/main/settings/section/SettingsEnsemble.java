@@ -540,7 +540,7 @@ public class SettingsEnsemble extends SettingsBase {
         /* ROS */
         HashMap<EnsembleROSAlgorithmType, List<EnsembleROSVotingType>> validROSCombinations = new HashMap<>();
         validROSCombinations.put(EnsembleROSAlgorithmType.FixedSubspaces, Arrays.asList(EnsembleROSVotingType.TotalAveraging, EnsembleROSVotingType.SubspaceAveraging));
-        validROSCombinations.put(EnsembleROSAlgorithmType.DynamicSubspaces, Arrays.asList(EnsembleROSVotingType.TotalAveraging));
+        validROSCombinations.put(EnsembleROSAlgorithmType.DynamicSubspaces, Arrays.asList(EnsembleROSVotingType.TotalAveraging, EnsembleROSVotingType.SubspaceAveraging));
 
         if (
         /* is ROS is not disabled */ !getEnsembleROSAlgorithmType().equals(EnsembleROSAlgorithmType.Disabled) &&
