@@ -952,6 +952,7 @@ public class SettingsRules extends SettingsBase {
         m_Section.addNode(m_RuleWiseErrors = new INIFileBool("PrintRuleWiseErrors", false));
         m_Section.addNode(m_PrintAllRules = new INIFileBool("PrintAllRules", true));
         m_Section.addNode(m_constrainedToFirstAttVal = new INIFileBool("ConstrainedToFirstAttVal", false));
+        
         m_Section.addNode(m_OptDEPopSize = new INIFileInt("OptDEPopSize", 500));
         m_Section.addNode(m_OptDENumEval = new INIFileInt("OptDENumEval", 10000));
         m_Section.addNode(m_OptDECrossProb = new INIFileDouble("OptDECrossProb", 0.3));
@@ -971,11 +972,9 @@ public class SettingsRules extends SettingsBase {
         m_Section.addNode(m_OptLinearTermsTruncate = new INIFileBool("OptLinearTermsTruncate", true));
         m_Section.addNode(m_OptOmitRulePredictions = new INIFileBool("OptOmitRulePredictions", true));
         m_Section.addNode(m_OptWeightGenerality = new INIFileBool("OptWeightGenerality", false));
-        // m_SectionRules.addNode(m_OptNormalization = new INIFileBool("OptNormalization", true));
         m_Section.addNode(m_OptNormalization = new INIFileEnum<>("OptNormalization", OptimizationNormalization.Yes));
         m_Section.addNode(m_OptHuberAlpha = new INIFileDouble("OptHuberAlpha", 0.9));
         m_Section.addNode(m_OptGDMaxIter = new INIFileInt("OptGDMaxIter", 1000));
-        // m_SectionRules.addNode(m_OptGDLossFunction = new INIFileNominal("OptGDLossFunction", GD_LOSS_FUNCTIONS, 0));
         m_Section.addNode(m_OptGDGradTreshold = new INIFileDouble("OptGDGradTreshold", 1));
         m_Section.addNode(m_OptGDStepSize = new INIFileDouble("OptGDStepSize", 0.1));
         m_Section.addNode(m_OptGDIsDynStepsize = new INIFileBool("OptGDIsDynStepsize", true));
