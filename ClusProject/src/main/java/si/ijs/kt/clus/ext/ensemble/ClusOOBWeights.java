@@ -3,7 +3,9 @@ package si.ijs.kt.clus.ext.ensemble;
 
 import java.util.HashMap;
 
+import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.error.common.ClusError;
+import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
 
 
@@ -124,7 +126,12 @@ public class ClusOOBWeights {
         for (int j = 0; j < m_ComponentErrors.size(); j++) {
             components = m_ComponentErrors.get(j);
             for (int i = 0; i < components.length; i++) {
-                componentSums[i] += 1 / components[i];
+                if (components[i] > 0d) {
+                    componentSums[i] += 1 / components[i];
+                }
+                else {
+                    componentSums[i] += 1 / ClusHeuristic.DELTA; // if model error is zero (good) then give a large weight to that model on that target
+                }
             }
         }
 
@@ -132,7 +139,13 @@ public class ClusOOBWeights {
             vals = new double[m_ComponentErrors.get(j).length];
             components = m_ComponentErrors.get(j);
             for (int i = 0; i < vals.length; i++) {
-                vals[i] = 1 / components[i] / componentSums[i];
+                if (components[i] > 0d) {
+                    vals[i] = 1 / components[i] / componentSums[i];
+                }
+                else {
+                    vals[i] = 1 / ClusHeuristic.DELTA / componentSums[i];
+                }
+
             }
             m_ComponentWeights.put(j, vals);
         }
