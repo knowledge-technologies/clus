@@ -865,7 +865,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param run
      *        The information about this run. Parameters etc.
-
+     * 
      * @throws ClusException
      * @throws IOException
      * @throws InterruptedException
@@ -956,30 +956,39 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * @throws IOException
      */
     public ClusRuleSet optimizeRuleSet(ClusRuleSet rset, RowData data) throws ClusException, IOException {
-        //String fname = getSettings().getData().getDataFile();
+        // String fname = getSettings().getData().getDataFile();
         // PrintWriter wrt_pred = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname+".r-pred")));
         PrintWriter wrt_pred = null;
 
         OptAlg optAlg = null;
         OptProbl.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
-        ArrayList weights = null;
+        ArrayList<Double> weights = null;
 
         if (getSettings().getGeneral().getVerbose() > 0)
             ClusLogger.info("Preparing for optimization.");
 
         // Find the rule weights with optimization algorithm.
-        if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized)) {
-            optAlg = new GDAlg(getStatManager(), param, rset);
-        }
-        else if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.Optimized)) {
-            optAlg = new DeAlg(getStatManager(), param, rset);
-        }
-        else if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
-            weights = CallExternGD.main(getStatManager(), param, rset);
+        switch (getSettings().getRules().getRulePredictionMethod()) {
+            case GDOptimized:
+                optAlg = new GDAlg(getStatManager(), param, rset);
+                break;
+
+            case Optimized:
+                optAlg = new DeAlg(getStatManager(), param, rset);
+                break;
+
+            case GDOptimizedBinary:
+                weights = CallExternGD.main(getStatManager(), param, rset);
+                break;
+
+            default: // do nothing
+                break;
         }
 
         if (getSettings().getGeneral().getVerbose() > 0 && !getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary))
+        {
             ClusLogger.info("Preparations ended. Starting optimization.");
+        }
 
         if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
             // If using external binary, optimization is already done.
@@ -1157,7 +1166,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param data
      * @param rn
-
+     * 
      * @throws ClusException
      */
     private ClusRule generateOneRandomRule(RowData data, Random rn) throws ClusException {
