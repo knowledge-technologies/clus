@@ -47,8 +47,8 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    private double[] m_SumValues;
-    private double[] m_SumWeights;
+    public double[] m_SumValues;
+    public double[] m_SumWeights;
     private double[] m_SumSqValues;
     private RegressionStat m_Training;
 
@@ -119,9 +119,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
 
 
-    public void setSumValues(int index, double value) {
-        m_SumValues[index] = value;
-    }
+    //public void setSumValues(int index, double value) {
+    //    m_SumValues[index] = value;
+   // }
 
 
     public void resetSumValues(int length) {
@@ -129,9 +129,9 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
 
 
-    public void setSumWeights(int index, double value) {
-        m_SumWeights[index] = value;
-    }
+//    public void setSumWeights(int index, double value) {
+//        m_SumWeights[index] = value;
+//    }
 
 
     public void resetSumWeights(int length) {

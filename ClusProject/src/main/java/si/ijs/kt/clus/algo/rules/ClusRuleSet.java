@@ -505,9 +505,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
         for (int iTarget = 0; iTarget < firstRuleStat.getNbAttributes(); iTarget++) {
             firstRuleStat.m_Means[iTarget] += addToDefaultPred[iTarget];
-            firstRuleStat.setSumValues(iTarget, firstRuleStat.m_Means[iTarget]); // firstRuleStat.m_SumValues[iTarget] =
-                                                                                 // firstRuleStat.m_Means[iTarget];
-            firstRuleStat.setSumWeights(iTarget, 1); // firstRuleStat.m_SumWeights[iTarget] = 1;
+            firstRuleStat.m_SumValues[iTarget] = firstRuleStat.m_Means[iTarget];
+            firstRuleStat.m_SumWeights[iTarget] = 1;
         }
     }
 
@@ -1309,9 +1308,9 @@ public class ClusRuleSet implements ClusModel, Serializable {
                 for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
 
                     stat.m_Means[iTarget] -= defaultPred[iTarget];
-                    stat.setSumValues(iTarget, stat.m_Means[iTarget]); // stat.m_SumValues[iTarget] =
-                                                                       // stat.m_Means[iTarget];
-                    stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;
+
+                    stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
+                    stat.m_SumWeights[iTarget] = 1;
                 }
             }
         }
@@ -1334,9 +1333,11 @@ public class ClusRuleSet implements ClusModel, Serializable {
         // If normalization is done in such a way that x-avg for all the targets, do not omit because it will be omitted
         // later anyway.
         int iRule = 0;
-        if (!getSettings().getRules().isOptNormalization() && getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling)) {
+        if (getSettings().getRules().isOptNormalization() && !getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling)) {
             iRule = 1;
         }
+
+        double tmp;
 
         for (; iRule < getModelSize(); iRule++) {
             ClusRule rule = getRule(iRule);
@@ -1356,21 +1357,22 @@ public class ClusRuleSet implements ClusModel, Serializable {
                     for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
                         // if (Math.abs(stat.m_Means[iTarget]) < Math.abs(scalingValue)) {
                         // if (Math.abs(stat.m_Means[iTarget]) > Math.abs(scalingValue)) {
-                        if (Math.abs(stat.m_Means[iTarget] / (2 * getTargStd(iTarget))) > Math.abs(maxCompareValue)) {
+                        tmp = stat.m_Means[iTarget] / (2 * getTargStd(iTarget));
+                        if (Math.abs(tmp) > Math.abs(maxCompareValue)) {
 
-                            maxCompareValue = stat.m_Means[iTarget] / (2 * getTargStd(iTarget));
-
+                            maxCompareValue = tmp;
                             scalingValue = stat.m_Means[iTarget]; // Scales values to abs(x)<=1
 
-                            if (getSettings().getRules().isOptNormalization())
+                            if (getSettings().getRules().isOptNormalization()) {
                                 // After normalization, the greatest value is 1
                                 scalingValue /= 2 * getTargStd(iTarget);
-
+                            }
                         }
                     }
 
-                    if (scalingValue == 0.0)
+                    if (scalingValue == 0.0) {
                         scalingValue = 1.0; // Do not scale
+                    }
 
                     for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
                         // means[i] = m_SumWeights[i] != 0.0 ? m_SumValues[i] / m_SumWeights[i] : 0.0;
@@ -1379,9 +1381,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
                         stat.m_Means[iTarget] /= scalingValue;
                         // Bigger one (on absolute value) is 1
-                        stat.setSumValues(iTarget, stat.m_Means[iTarget]); // stat.m_SumValues[iTarget] =
-                                                                           // stat.m_Means[iTarget];
-                        stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;
+                        stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
+                        stat.m_SumWeights[iTarget] = 1;
 
                         // ClusLogger.info(stat.m_Means[iTarget]/(2*getTargStd(iTarget)));
                     }
@@ -1393,8 +1394,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
                         stat.m_Means[0] = 2 * getTargStd(0);
                     else
                         stat.m_Means[0] = 1;
-                    stat.setSumValues(0, stat.m_Means[0]); // stat.m_SumValues[0] = stat.m_Means[0];
-                    stat.setSumWeights(0, 1); // stat.m_SumWeights[0] = 1;
+                    stat.m_SumValues[0] = stat.m_Means[0];
+                    stat.m_SumWeights[0] = 1;
                 }
 
             }
@@ -1425,9 +1426,8 @@ public class ClusRuleSet implements ClusModel, Serializable {
                 double scalingFactor = stat.getTotalWeight() / nbOfExamples;
                 for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
                     stat.m_Means[iTarget] *= scalingFactor;
-                    stat.setSumValues(iTarget, stat.m_Means[iTarget]); // stat.m_SumValues[iTarget] =
-                                                                       // stat.m_Means[iTarget];
-                    stat.setSumWeights(iTarget, 1); // stat.m_SumWeights[iTarget] = 1;
+                    stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
+                    stat.m_SumWeights[iTarget] = 1;
                 }
             }
         }
@@ -1505,8 +1505,10 @@ public class ClusRuleSet implements ClusModel, Serializable {
      * return Default prediction. This may be removed from other base predictors.
      */
     public double[] addDefaultRuleToRuleSet() {
-        if (getSettings().getGeneral().getVerbose() > 0)
+        if (getSettings().getGeneral().getVerbose() > 0) {
             ClusLogger.info("Adding default rule explicitly to rule set.");
+        }
+
         ClusRule defaultRuleForEnsembles = new ClusRule(m_StatManager);
 
         defaultRuleForEnsembles.m_TargetStat = m_TargetStat;
@@ -1639,7 +1641,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      * Calculate a BitSet vector of uncovered examples with respect to the input data
      * 
      * @param trainingData
-
+     * 
      */
     public BitSet getUncovered(int numberOfExamples) {
 

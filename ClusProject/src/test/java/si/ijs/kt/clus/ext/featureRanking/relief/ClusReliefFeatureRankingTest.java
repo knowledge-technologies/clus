@@ -20,10 +20,11 @@ import si.ijs.kt.clus.ext.featureRanking.Fimp;
 import si.ijs.kt.clus.util.tuple.Pair;
 import si.ijs.kt.clus.util.tuple.Quadruple;
 
+
 public class ClusReliefFeatureRankingTest extends BaseTestCase {
 
-  static String m_Subfolder = m_DataFolder + "/ensembleAndRankingData";
-  static HashSet<String> m_OldFiles;
+    static String m_Subfolder = m_DataFolder + "/ensembleAndRankingData";
+    static HashSet<String> m_OldFiles;
 
   @BeforeAll
   public static void filesBeforeTests() {

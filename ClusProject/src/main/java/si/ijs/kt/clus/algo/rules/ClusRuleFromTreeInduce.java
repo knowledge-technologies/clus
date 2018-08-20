@@ -46,7 +46,8 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
 
     /**
      * Induces rules from ensemble tree, similar to ClusRuleInduce.induce
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
@@ -82,7 +83,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
          * The class for transforming single trees to rules
          */
         ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, getSettings().getTree().rulesFromTree()); // Parameter
-                                                                                                      // always true
+        // always true
         ClusRuleSet ruleSet = new ClusRuleSet(getStatManager()); // Manager from super class
 
         // ClusRuleSet ruleSet = new ClusRuleSet(m_Clus.getStatManager());
@@ -99,7 +100,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
         }
 
         if (getSettings().getGeneral().getVerbose() > 0)
-            ClusLogger.info("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules.\n\tCreated " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
+            ClusLogger.info("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules. Created " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
 
         RowData trainingData = (RowData) cr.getTrainingSet();
 
@@ -111,6 +112,7 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
         if (trainingData.getNbRows() > 0) {
             left_over = createTotalTargetStat(trainingData);
             left_over.calcMean();
+            ClusLogger.info("Left over: " + left_over);
         }
         else {
             if (getSettings().getGeneral().getVerbose() > 0)
@@ -120,9 +122,10 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
             left_over.copy(getStatManager().getTrainSetStat(AttributeUseType.Target));
             left_over.calcMean();
             // left_over.setSumWeight(0);
-            System.err.println(left_over.toString());
+            // System.err.println(left_over.toString());
+            ClusLogger.info("Mean: " + left_over);
         }
-        ClusLogger.info("Left Over: " + left_over);
+
         ruleSet.setTargetStat(left_over);
 
         // ************************** The following are copied from ClusRuleInduce.induce
@@ -159,26 +162,13 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
     /**
      * Induces the rule models. ClusModel.PRUNED = the optimized rule model
      * ClusModel.DEFAULT = the ensemble tree model.
-     * @throws Exception 
+     * 
+     * @throws Exception
      */
     @Override
     public void induceAll(ClusRun cr) throws Exception {
         RowData trainData = (RowData) cr.getTrainingSet();
         getStatManager().getHeuristic().setTrainData(trainData);
-        // ClusStatistic trainStat = getStatManager().getTrainSetStat(ClusAttrType.ATTR_USE_CLUSTERING);
-        // double value = trainStat.getDispersion(getStatManager().getClusteringWeights(), trainData);
-        // getStatManager().getHeuristic().setTrainDataHeurValue(value);
-
-        // Adds a single default predictor, however forest automatically adds a
-        // forest of stumps as a default predictor.
-        // ClusModelInfo default_model = cr.addModelInfo(ClusModel.DEFAULT);
-        // ClusModel def = ClusDecisionTree.induceDefault(cr);
-        // default_model.setModel(def);
-        // default_model.setName("Default");
-
-        // ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL);
-        // model_info.setName("Original");
-        // model_info.setModel(model);
 
         // Only pruned used for rules.
         ClusModel model = induceSingleUnpruned(cr);

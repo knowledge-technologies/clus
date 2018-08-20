@@ -975,7 +975,7 @@ public class OptProbl {
      * that it does not use member functions.
      * OBSOLETE, does not take into account target avg even if it should!
      * 
-
+     * 
      */
     final private TrueValues[] getTrueValues() {
         return m_TrueVal;
@@ -1075,7 +1075,7 @@ public class OptProbl {
      * Returns target dimension for linear term with this index.
      * 
      * @param iLinTerm
-
+     * 
      */
     final protected int getLinTargetDim(int iLinTerm) {
         return (iLinTerm - m_RulePred.length) % getNbOfTargets();
@@ -1086,7 +1086,7 @@ public class OptProbl {
      * Returns descriptive dimension for linear term with this index.
      * 
      * @param iLinTerm
-
+     * 
      */
     final protected int getLinDescrDim(int iLinTerm) {
         return (int) Math.floor((double) (iLinTerm - m_RulePred.length) / getNbOfTargets());
@@ -1103,6 +1103,7 @@ public class OptProbl {
         // Change only the first rule, this changes the overall average of predictions
         // The first rule should now include the averages in practice, check this
         for (int iTarg = 0; iTarg < getNbOfTargets(); iTarg++) {
+            
             if (getPredictionsWhenCovered(0, 0, iTarg) != getMean(iTarg)) {
                 System.err.println("Error: Difference in preparePredictionsForNormalization for target nb " + iTarg + ". The values are " + getPredictionsWhenCovered(0, 0, iTarg) + " and " + getMean(iTarg));
                 System.exit(1);
