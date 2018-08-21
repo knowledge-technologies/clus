@@ -129,7 +129,7 @@ public class AbsoluteError extends ClusNumericError {
             ss_tree += m_AbsError[i];
             ss_def += m_AbsDefError[i];
         }
-        double re = ss_def != 0.0 ? ss_tree / ss_def : 0.0;
+        double re = ss_def != 0d ? ss_tree / ss_def : 0d;
         out.println(getPrefix() + "Sum over components RE: " + fr.format(re) + " = " + fr.format(ss_tree) + " / " + fr.format(ss_def));
     }
 
