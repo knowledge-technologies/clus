@@ -437,10 +437,10 @@ public abstract class RegressionStatBase extends ClusStatistic {
                     break;
 
                 case OOBTargetWeighted:
+                    
                     for (int target = 0; target < m_NbAttrs; target++) {
                         m_Means[target] += vote.getMean(target) * weights.getComponentWeight(model, target);
                     }
-
                     break;
 
                 default:

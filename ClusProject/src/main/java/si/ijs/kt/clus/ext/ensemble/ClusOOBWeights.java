@@ -114,17 +114,9 @@ public class ClusOOBWeights {
         m_AggregatedWeight = new HashMap<>();
 
         double sum = m_AggregatedError.values().parallelStream().mapToDouble(d -> 1 / d).sum();
-        double error;
 
         for (int i = 0; i < m_AggregatedError.size(); i++) {
-            error = m_AggregatedError.get(i);
-
-            if (error > 0d) {
-                m_AggregatedWeight.put(i, 1 / error / sum);
-            }
-            else {
-                m_AggregatedWeight.put(i, 1 / SMALL_BUT_MORE_THAN_ZERO / sum);
-            }
+            m_AggregatedWeight.put(i, 1 / m_AggregatedError.get(i) / sum);
         }
     }
 

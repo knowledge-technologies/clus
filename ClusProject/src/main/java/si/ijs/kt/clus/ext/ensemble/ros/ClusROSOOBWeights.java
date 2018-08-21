@@ -75,49 +75,52 @@ public class ClusROSOOBWeights extends ClusOOBWeights {
     protected void calculateComponentWeights() {
         // component-wise errors
 
-        m_ComponentWeights = new HashMap<>();
-
-        double[] componentSums = new double[m_ComponentErrors.get(0).length];
-        double[] components = null, vals = null;
-
-        for (int model = 0; model < m_ComponentErrors.size(); model++) {
-            components = m_ComponentErrors.get(model);
-
-            ClusROSModelInfo info = m_ROSForestInfo.getROSModelInfo(model);
-            for (int target : info.getTargets()) {
-                if (components[target] > 0d) {
-                    componentSums[target] += 1 / components[target];
-                }
-                else {
-                    componentSums[target] += 1 / SMALL_BUT_MORE_THAN_ZERO;
-                }
-            }
-            
-            // if we did not learn certain target, we still need to weight the predictions
-            for (Integer target : m_ROSForestInfo.getTargetsNotLearned())
-            {
-                if (components[target] > 0d) {
-                    componentSums[target] += 1 / components[target];
-                }
-                else {
-                    componentSums[target] += 1 / SMALL_BUT_MORE_THAN_ZERO;
-                }
-            }
+        if (m_ROSVotingType.equals(EnsembleROSVotingType.TotalAveraging)) {
+            super.calculateComponentWeights();
         }
-   
-        
-        for (int j = 0; j < m_ComponentErrors.size(); j++) {
-            vals = new double[m_ComponentErrors.get(j).length];
-            components = m_ComponentErrors.get(j);
-            for (int i = 0; i < vals.length; i++) {
-                if (components[i] > 0d) {
-                    vals[i] = 1 / components[i] / componentSums[i];
+        else {
+            m_ComponentWeights = new HashMap<>();
+
+            double[] componentSums = new double[m_ComponentErrors.get(0).length];
+            double[] components = null, vals = null;
+
+            for (int model = 0; model < m_ComponentErrors.size(); model++) {
+                components = m_ComponentErrors.get(model);
+
+                ClusROSModelInfo info = m_ROSForestInfo.getROSModelInfo(model);
+                for (int target : info.getTargets()) {
+                    if (components[target] > 0d) {
+                        componentSums[target] += 1 / components[target];
+                    }
+                    else {
+                        componentSums[target] += 1 / SMALL_BUT_MORE_THAN_ZERO;
+                    }
                 }
-                else {
-                    vals[i] = 1 / SMALL_BUT_MORE_THAN_ZERO / componentSums[i];
+
+                // if we did not learn certain target, we still need to weight the predictions
+                for (Integer target : m_ROSForestInfo.getTargetsNotLearned()) {
+                    if (components[target] > 0d) {
+                        componentSums[target] += 1 / components[target];
+                    }
+                    else {
+                        componentSums[target] += 1 / SMALL_BUT_MORE_THAN_ZERO;
+                    }
                 }
             }
-            m_ComponentWeights.put(j, vals);
+
+            for (int j = 0; j < m_ComponentErrors.size(); j++) {
+                vals = new double[m_ComponentErrors.get(j).length];
+                components = m_ComponentErrors.get(j);
+                for (int i = 0; i < vals.length; i++) {
+                    if (components[i] > 0d) {
+                        vals[i] = 1 / components[i] / componentSums[i];
+                    }
+                    else {
+                        vals[i] = 1 / SMALL_BUT_MORE_THAN_ZERO / componentSums[i];
+                    }
+                }
+                m_ComponentWeights.put(j, vals);
+            }
         }
     }
 
