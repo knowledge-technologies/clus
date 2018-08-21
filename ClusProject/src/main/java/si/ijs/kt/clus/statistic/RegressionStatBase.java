@@ -469,12 +469,23 @@ public abstract class RegressionStatBase extends ClusStatistic {
                     for (Integer target : info.getTargets()) {
                         m_Means[target] += vote.getMean(target) / coverage[target];
                     }
+
+                    /*
+                     * If we do not have a model that predicts a certain target, we cannot make predictions for that
+                     * target.
+                     * In those cases, we predict the mean value of all predictions that target (i.e., normal voting)
+                     */
+                    for (Integer target : ROSForestInfo.getTargetsNotLearned()) {
+                        m_Means[target] += vote.getMean(target) / votes.size();
+                    }
+
                     break;
 
                 default:
                     throw new RuntimeException("ROS algorithm type not defined! si.ijs.kt.clus.statistic.RegressionStatBase.vote(ArrayList<ClusStatistic>, ClusROSForestInfo)");
             }
         }
+
     }
 
 
@@ -489,6 +500,15 @@ public abstract class RegressionStatBase extends ClusStatistic {
             ClusROSModelInfo info = ROSForestInfo.getROSModelInfo(model);
 
             for (Integer target : info.getTargets()) {
+                m_Means[target] += vote.getMean(target) * weights.getComponentWeight(model, target);
+            }
+
+            /*
+             * If we do not have a model that predicts a certain target, we cannot make predictions for that target.
+             * In those cases, we predict the mean value of all predictions that target (i.e., normal voting)
+             */
+            for (Integer target : ROSForestInfo.getTargetsNotLearned()) {
+                /* here, we use all models */
                 m_Means[target] += vote.getMean(target) * weights.getComponentWeight(model, target);
             }
         }

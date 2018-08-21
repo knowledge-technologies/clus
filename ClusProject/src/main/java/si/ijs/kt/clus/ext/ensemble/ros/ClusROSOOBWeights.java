@@ -4,7 +4,6 @@ package si.ijs.kt.clus.ext.ensemble.ros;
 import java.util.HashMap;
 
 import si.ijs.kt.clus.ext.ensemble.ClusOOBWeights;
-import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
 
@@ -49,7 +48,7 @@ public class ClusROSOOBWeights extends ClusOOBWeights {
                         componentSums[i] += 1 / m_AggregatedError.get(j);
                     }
                     else {
-                        componentSums[i] += 1 / ClusHeuristic.DELTA;
+                        componentSums[i] += 1 / SMALL_BUT_MORE_THAN_ZERO;
                     }
                 }
             }
@@ -63,7 +62,7 @@ public class ClusROSOOBWeights extends ClusOOBWeights {
                         vals[i] = 1 / m_AggregatedError.get(j) / componentSums[i];
                     }
                     else {
-                        vals[i] = 1 / ClusHeuristic.DELTA / componentSums[i];
+                        vals[i] = 1 / SMALL_BUT_MORE_THAN_ZERO / componentSums[i];
                     }
                 }
                 m_ComponentWeights.put(j, vals);
@@ -81,20 +80,32 @@ public class ClusROSOOBWeights extends ClusOOBWeights {
         double[] componentSums = new double[m_ComponentErrors.get(0).length];
         double[] components = null, vals = null;
 
-        for (int j = 0; j < m_ComponentErrors.size(); j++) {
-            components = m_ComponentErrors.get(j);
+        for (int model = 0; model < m_ComponentErrors.size(); model++) {
+            components = m_ComponentErrors.get(model);
 
-            ClusROSModelInfo info = m_ROSForestInfo.getROSModelInfo(j);
-            for (int i : info.getTargets()) {
-                if (components[i] > 0d) {
-                    componentSums[i] += 1 / components[i];
+            ClusROSModelInfo info = m_ROSForestInfo.getROSModelInfo(model);
+            for (int target : info.getTargets()) {
+                if (components[target] > 0d) {
+                    componentSums[target] += 1 / components[target];
                 }
                 else {
-                    componentSums[i] += 1 / ClusHeuristic.DELTA;
+                    componentSums[target] += 1 / SMALL_BUT_MORE_THAN_ZERO;
+                }
+            }
+            
+            // if we did not learn certain target, we still need to weight the predictions
+            for (Integer target : m_ROSForestInfo.getTargetsNotLearned())
+            {
+                if (components[target] > 0d) {
+                    componentSums[target] += 1 / components[target];
+                }
+                else {
+                    componentSums[target] += 1 / SMALL_BUT_MORE_THAN_ZERO;
                 }
             }
         }
-
+   
+        
         for (int j = 0; j < m_ComponentErrors.size(); j++) {
             vals = new double[m_ComponentErrors.get(j).length];
             components = m_ComponentErrors.get(j);
@@ -103,7 +114,7 @@ public class ClusROSOOBWeights extends ClusOOBWeights {
                     vals[i] = 1 / components[i] / componentSums[i];
                 }
                 else {
-                    vals[i] = 1 / ClusHeuristic.DELTA / componentSums[i];
+                    vals[i] = 1 / SMALL_BUT_MORE_THAN_ZERO / componentSums[i];
                 }
             }
             m_ComponentWeights.put(j, vals);

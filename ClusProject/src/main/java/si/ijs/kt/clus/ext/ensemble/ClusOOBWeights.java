@@ -3,7 +3,6 @@ package si.ijs.kt.clus.ext.ensemble;
 
 import java.util.HashMap;
 
-import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
@@ -16,6 +15,12 @@ import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
  * @author martinb
  */
 public class ClusOOBWeights {
+
+    /*
+     * Small value. Used when the error of a given model (aggregated or per-component) is zero. Division by zero is
+     * not what we want, so we use a small value to indicate small error
+     */
+    protected final double SMALL_BUT_MORE_THAN_ZERO = ClusHeuristic.DELTA; // Double.MIN_NORMAL;
 
     /* Error averaged over all component errors */
     protected HashMap<Integer, Double> m_AggregatedError;
@@ -109,8 +114,17 @@ public class ClusOOBWeights {
         m_AggregatedWeight = new HashMap<>();
 
         double sum = m_AggregatedError.values().parallelStream().mapToDouble(d -> 1 / d).sum();
+        double error;
+
         for (int i = 0; i < m_AggregatedError.size(); i++) {
-            m_AggregatedWeight.put(i, 1 / m_AggregatedError.get(i) / sum);
+            error = m_AggregatedError.get(i);
+
+            if (error > 0d) {
+                m_AggregatedWeight.put(i, 1 / error / sum);
+            }
+            else {
+                m_AggregatedWeight.put(i, 1 / SMALL_BUT_MORE_THAN_ZERO / sum);
+            }
         }
     }
 
@@ -126,11 +140,12 @@ public class ClusOOBWeights {
         for (int j = 0; j < m_ComponentErrors.size(); j++) {
             components = m_ComponentErrors.get(j);
             for (int i = 0; i < components.length; i++) {
+                /* if model error is zero (good) then give a large weight to that model on that target */
                 if (components[i] > 0d) {
                     componentSums[i] += 1 / components[i];
                 }
                 else {
-                    componentSums[i] += 1 / ClusHeuristic.DELTA; // if model error is zero (good) then give a large weight to that model on that target
+                    componentSums[i] += 1 / SMALL_BUT_MORE_THAN_ZERO;
                 }
             }
         }
@@ -143,7 +158,7 @@ public class ClusOOBWeights {
                     vals[i] = 1 / components[i] / componentSums[i];
                 }
                 else {
-                    vals[i] = 1 / ClusHeuristic.DELTA / componentSums[i];
+                    vals[i] = 1 / SMALL_BUT_MORE_THAN_ZERO / componentSums[i];
                 }
 
             }

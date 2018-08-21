@@ -99,17 +99,7 @@ public class SettingsEnsemble extends SettingsBase {
          * When used with {@code EnsembleROSAlgorithmType.FixedSubspaces}, When used
          * with {@code EnsembleROSAlgorithmType.DynamicSubspaces},
          */
-        SubspaceAveraging,
-
-        /**
-         * Vote only with ...TBD
-         */
-        MaxDepthSubspaceAveraging,
-        /** */
-        MinDepthSubspaceAveraging,
-        /** TBD */
-        SmarterWay
-
+        SubspaceAveraging
     };
 
     private INIFileNominalOrIntOrVector m_NbBags;

@@ -14,6 +14,7 @@ public class ClusROSForestInfo {
     private final ArrayList<ClusROSModelInfo> m_Trees;
 
     private double[] m_Coverage; // how many times a certain target was used
+    private ArrayList<Integer> m_Uncovered; // targets, that were not learned in the ensemble
     private int[] m_CoverageOpt; // used when running in optimization mode
     private double[] m_CoverageNormalized; // coverage of each target, normalized with number of trees
 
@@ -63,6 +64,7 @@ public class ClusROSForestInfo {
      */
     private void calculateCoverage() {
         m_Coverage = new double[m_NbTargetAttributes];
+        m_Uncovered = new ArrayList<>();
         m_CoverageNormalized = new double[m_Coverage.length];
         m_AverageTargetsUsed = 0d;
         m_AverageTargetsUsedPercentage = 0d;
@@ -88,17 +90,17 @@ public class ClusROSForestInfo {
                     break;
 
                 case DynamicSubspaces:
-                   
-                    /** Do the same as with Fixed subspaces - can this be smarter? 
+
+                    /**
+                     * Do the same as with Fixed subspaces - can this be smarter?
                      * 
                      * The current implementation only considers the subspace of root node...
-                     * */
+                     */
                     for (Integer enabled : mi.getTargets()) {
                         m_Coverage[enabled]++;
                     }
-                    
-                   
-                    ///**
+
+                    /// **
                     // * Count number of nodes that use a certain target and then normalize with number of all
                     // * nodes in the tree.
                     // */
@@ -125,79 +127,84 @@ public class ClusROSForestInfo {
 
         m_AverageTargetsUsedPercentage = ClusUtil.roundDouble(m_AverageTargetsUsed / m_Trees.size() / m_NbTargetAttributes * 100, 3);
         m_AverageTargetsUsed = ClusUtil.roundDouble(m_AverageTargetsUsed / m_Trees.size(), 3);
-    }
 
-
-    
-    
-    
-    
-    
-    private int[] getCounts(ClusROSModelInfo mi) {
-
-        int[] counts = new int[m_NbTargetAttributes];
-        Arrays.fill(counts, 0);
-
-        for (ClusROSModelInfo info : mi.getChildren()) {
-            int[] ret = getCounts(info);
-
-            for (int i = 0; i < ret.length; i++) {
-
-                counts[i] += ret[i];
+        for (int i = 0; i < m_Coverage.length; i++) {
+            if (m_Coverage[i] == 0) {
+                m_Uncovered.add(i);
             }
         }
-
-        for (Integer enabled : mi.getTargets()) {
-            counts[enabled]++;
-        }
-
-        return counts;
     }
 
 
-    /**
-     * Counts all nodes except leaf nodes in a tree
-     */
-    private int countNbNodesWithoutLeaf(ClusROSModelInfo info) {
-        if (info.getNbChildren() == 0) { return 0; }
-
-        int count = 0;
-        for (ClusROSModelInfo child : info.getChildren()) {
-            count += countNbNodesWithoutLeaf(child);
-        }
-        return count + 1;
+    public ArrayList<Integer> getTargetsNotLearned() {
+        return m_Uncovered;
     }
 
 
-    /**
-     * Calculates coverage when using {@code EnsembleROSAlgorithmType.DynamicSubspaces}.
-     */
-    private double[] countCoverageWithoutLeaf(ClusROSModelInfo info) {
-        if (info.getNbChildren() == 0) {
-            double[] x = new double[m_NbTargetAttributes];
-            Arrays.fill(x, 0d);
-            return x;
-        }
-
-        double[] x = new double[m_NbTargetAttributes];
-        Arrays.fill(x, 0d);
-
-        for (ClusROSModelInfo child : info.getChildren()) {
-            double[] y = countCoverageWithoutLeaf(child);
-
-            for (int i = 0; i < x.length; i++) {
-                x[i] += y[i];
-            }
-        }
-
-        // actual coverage
-        for (Integer i : info.getTargets()) {
-            x[i]++;
-        }
-
-        return x;
-    }
-
+    // private int[] getCounts(ClusROSModelInfo mi) {
+    //
+    // int[] counts = new int[m_NbTargetAttributes];
+    // Arrays.fill(counts, 0);
+    //
+    // for (ClusROSModelInfo info : mi.getChildren()) {
+    // int[] ret = getCounts(info);
+    //
+    // for (int i = 0; i < ret.length; i++) {
+    //
+    // counts[i] += ret[i];
+    // }
+    // }
+    //
+    // for (Integer enabled : mi.getTargets()) {
+    // counts[enabled]++;
+    // }
+    //
+    // return counts;
+    // }
+    //
+    //
+    // /**
+    // * Counts all nodes except leaf nodes in a tree
+    // */
+    // private int countNbNodesWithoutLeaf(ClusROSModelInfo info) {
+    // if (info.getNbChildren() == 0) { return 0; }
+    //
+    // int count = 0;
+    // for (ClusROSModelInfo child : info.getChildren()) {
+    // count += countNbNodesWithoutLeaf(child);
+    // }
+    // return count + 1;
+    // }
+    //
+    //
+    // /**
+    // * Calculates coverage when using {@code EnsembleROSAlgorithmType.DynamicSubspaces}.
+    // */
+    // private double[] countCoverageWithoutLeaf(ClusROSModelInfo info) {
+    // if (info.getNbChildren() == 0) {
+    // double[] x = new double[m_NbTargetAttributes];
+    // Arrays.fill(x, 0d);
+    // return x;
+    // }
+    //
+    // double[] x = new double[m_NbTargetAttributes];
+    // Arrays.fill(x, 0d);
+    //
+    // for (ClusROSModelInfo child : info.getChildren()) {
+    // double[] y = countCoverageWithoutLeaf(child);
+    //
+    // for (int i = 0; i < x.length; i++) {
+    // x[i] += y[i];
+    // }
+    // }
+    //
+    // // actual coverage
+    // for (Integer i : info.getTargets()) {
+    // x[i]++;
+    // }
+    //
+    // return x;
+    // }
 
     public String getCoverageInfo() {
         return String.format("Target coverage: %s", Arrays.toString(m_Coverage).replace(",", " "));

@@ -147,7 +147,6 @@ public class ClusROSHelpers {
 
 
     private static HashMap<Integer, Integer> populateMap(ClusAttrType[] selected, ClusSchema schema) {
-
         HashMap<Integer, Integer> selectedClusteringAttributes = new HashMap<>();
         ClusAttrType[] all = schema.getClusteringAttributes();
 
