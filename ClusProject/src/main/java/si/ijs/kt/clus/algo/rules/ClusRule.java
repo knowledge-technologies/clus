@@ -37,7 +37,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.error.common.ClusErrorList;
-// import si.ijs.kt.clus.ext.ilevelc.ILevelCStatistic;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.ext.ilevelc.ILevelConstraint;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
@@ -92,6 +92,9 @@ public class ClusRule implements ClusModel, Serializable {
 
     /** Optimized weight of the rule */
     protected double m_OptWeight;
+
+    /** ROS model info */
+    private ClusROSModelInfo m_ROSModelInfo;
 
 
     public ClusRule(ClusStatManager statManager) {
@@ -821,7 +824,7 @@ public class ClusRule implements ClusModel, Serializable {
 
         for (int iTarget = 0; iTarget < stat.getNbAttributes(); iTarget++) {
             stat.m_Means[iTarget] = newPred[iTarget];
-            
+
             stat.m_SumValues[iTarget] = stat.m_Means[iTarget];
             stat.m_SumWeights[iTarget] = 1;
         }
@@ -843,6 +846,19 @@ public class ClusRule implements ClusModel, Serializable {
      */
     public void postProc() throws ClusException {
         m_TargetStat.calcMean();
+
+        if (m_ROSModelInfo != null) {
+            if (m_TargetStat instanceof RegressionStat) {
+                for (int target = 0; target < m_TargetStat.getNbAttributes(); target++) {
+                    if (!m_ROSModelInfo.isTargetEnabled(target)) {
+                        ((RegressionStat) m_TargetStat).m_Means[target] = Double.NaN; // do not use this target!
+                    }
+                }
+            }
+            else {
+                throw new RuntimeException("si.ijs.kt.clus.algo.rules.ClusRule.postProc(): ROS only implemented for RegressionStat");
+            }
+        }
     }
 
 
@@ -1098,5 +1114,10 @@ public class ClusRule implements ClusModel, Serializable {
         tmp.and(m_CoverageCorrectBits);
 
         return tmp.cardinality();
+    }
+
+
+    public void setROSModelInfo(ClusROSModelInfo info) {
+        this.m_ROSModelInfo = info;
     }
 }

@@ -31,11 +31,13 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.ext.optiontree.ClusOptionNode;
 import si.ijs.kt.clus.ext.optiontree.ClusSplitNode;
 import si.ijs.kt.clus.ext.optiontree.MyNode;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;
@@ -225,8 +227,16 @@ public class ClusRulesFromTree {
     public ClusRuleSet constructRules(ClusNode node, ClusStatManager mgr) {
         ClusRuleSet ruleSet = new ClusRuleSet(mgr);
         ClusRule init = new ClusRule(mgr);
-        // ClusLogger.info("Constructing rules from a tree.");
+
         constructRecursive(node, init, ruleSet);
+
+        if (mgr.getSettings().getEnsemble().isEnsembleROSEnabled() && mgr.getSettings().getEnsemble().getEnsembleROSVotingType().equals(EnsembleROSVotingType.SubspaceAveraging)) {
+            ClusROSModelInfo info = node.getROSModelInfo();
+            for (ClusRule rule : ruleSet.getRules()) {
+                rule.setROSModelInfo(info);
+            }
+        }
+
         ruleSet.removeEmptyRules();
         ruleSet.simplifyRules();
         ruleSet.setTargetStat(node.getTargetStat());

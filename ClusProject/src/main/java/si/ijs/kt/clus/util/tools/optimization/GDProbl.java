@@ -229,8 +229,9 @@ public class GDProbl extends OptProbl {
             sum += getWeightCov(dimension, dimension);
         }
         m_dynStepLowerBound = 1.0 / sum;
-        if (m_printGDDebugInformation)
+        if (m_printGDDebugInformation) {
             ClusLogger.info("DEBUG: DynStepSize lower bound is " + m_dynStepLowerBound);
+        }
 
         // getSettings().getOptGDMaxIter()/m_earlyStopStep = nb of drops
         // TODO 100 Change to variable m_earlyStopStep
@@ -283,9 +284,16 @@ public class GDProbl extends OptProbl {
         for (int iTarget = 0; iTarget < nbOfTargets; iTarget++) {
             for (int iInstance = 0; iInstance < getNbOfInstances(); iInstance++) {
                 double trueVal = getTrueValue(iInstance, iTarget);
-                if (isValidValue(trueVal)) // Not a valid true value, rare but happens. Can happen for linear terms.
-                    // covs[iTarget] += trueVal*predictWithRule(iPred, iInstance,iTarget);
-                    covs[iTarget] += trueVal * predictWithRule(iPred, iInstance, iTarget);
+                if (isValidValue(trueVal)) { // Not a valid true value, rare but happens. Can happen for linear terms.
+                    double stuff = predictWithRule(iPred, iInstance, iTarget);
+                    if (Double.isNaN(stuff)) {
+                        System.err.println(String.format("Not predicting target %d for instance %d with rule %d", iTarget, iInstance, iPred));
+                        covs[iTarget] += 0d;
+                    }
+                    else {
+                        covs[iTarget] += trueVal * stuff;
+                    }
+                }
             }
 
             covs[iTarget] /= getNbOfInstances();
@@ -359,7 +367,7 @@ public class GDProbl extends OptProbl {
      *        Base learner index
      * @param iLatter
      *        Base learner index. NOTE: iLatter >= iPrevious
-
+     * 
      */
     // private double[] computeCovFor2Preds(int iFirstRule, int iSecondRule) {
     private double computeCovFor2Preds(int iPrevious, int iLatter) {
@@ -421,7 +429,7 @@ public class GDProbl extends OptProbl {
      * @param iPrevious
      * @param iLatter
      *        Rule index. NOTE: iLatter >= iPrevious
-
+     * 
      */
     private double computeCovFor2Lin(int iPrevious, int iLatter) {
         int nbOfInstances = getNbOfInstances();
@@ -459,7 +467,7 @@ public class GDProbl extends OptProbl {
      *        Rule index.
      * @param iLinear
      *        Linear term index. NOTE: iLinear >= iRule
-
+     * 
      */
     private double computeCovForRuleAndLin(int iRule, int iLinear) {
         int nbOfTargets = getNbOfTargets();
@@ -493,7 +501,7 @@ public class GDProbl extends OptProbl {
      * @param iPrevious
      * @param iLatter
      *        Rule index. NOTE: iLatter >= iPrevious
-
+     * 
      */
     private double computeCovFor2Rules(int iPrevious, int iLatter) {
         BitSet prev = (BitSet) (getRuleCovers(iPrevious).clone());
@@ -502,15 +510,23 @@ public class GDProbl extends OptProbl {
 
         int nbOfTargets = getNbOfTargets();
         double avgCov = 0;
+        double p1, p2, cov;
 
         for (int iTarget = 0; iTarget < nbOfTargets; iTarget++) {
-            double cov = 0;
-            cov += getPredictionsWhenCovered(iPrevious, 0, iTarget) * getPredictionsWhenCovered(iLatter, 0, iTarget);
+            cov = 0;
 
-            if (getSettings().getRules().isOptNormalization()) {
-                cov /= getNormFactor(iTarget);
+            p1 = getPredictionsWhenCovered(iPrevious, 0, iTarget);
+            p2 = getPredictionsWhenCovered(iLatter, 0, iTarget);
+
+            // ROS makes NaN predictions, so we have to check this here
+            if (!Double.isNaN(p1) && !Double.isNaN(p2)) {
+                cov += p1 * p2;
+
+                if (getSettings().getRules().isOptNormalization()) {
+                    cov /= getNormFactor(iTarget);
+                }
+                avgCov += cov / nbOfTargets;
             }
-            avgCov += cov / nbOfTargets;
         }
         avgCov *= ((double) prev.cardinality()) / getNbOfInstances();
 

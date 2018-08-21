@@ -2,17 +2,17 @@
 package si.ijs.kt.clus.algo.rules;
 
 import java.io.IOException;
-// import java.util.ArrayList;
 
 import si.ijs.kt.clus.Clus;
-// import si.ijs.kt.clus.algo.tdidt.ClusDecisionTree;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
-import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.ext.ensemble.ClusForest;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.main.ClusRun;
+import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.ClusModelInfo;
@@ -81,55 +81,45 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
 
         /**
          * The class for transforming single trees to rules
+         * Parameter always true
          */
-        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, getSettings().getTree().rulesFromTree()); // Parameter
-        // always true
+        ClusRulesFromTree treeTransform = new ClusRulesFromTree(true, getSettings().getTree().rulesFromTree());
         ClusRuleSet ruleSet = new ClusRuleSet(getStatManager()); // Manager from super class
-
-        // ClusRuleSet ruleSet = new ClusRuleSet(m_Clus.getStatManager());
 
         // Get the trees and transform to rules
         int numberOfUniqueRules = 0;
-
-        for (int iTree = 0; iTree < forestModel.getNbModels(); iTree++) {
+        ClusStatManager sm = getStatManager();
+        
+        /** if ROS enabled */
+        ClusROSForestInfo rosForestInfo = forestModel.getEnsembleROSForestInfo();
+        ClusROSModelInfo info = null;
+        
+        for (int tree = 0; tree < forestModel.getNbModels(); tree++) {
             // Take the root node of the tree
-            ClusNode treeRootNode = (ClusNode) forestModel.getModel(iTree);
+            ClusNode treeRootNode = (ClusNode) forestModel.getModel(tree);
 
+            switch (getSettings().getEnsemble().getEnsembleROSAlgorithmType()) {
+                case FixedSubspaces:
+                case DynamicSubspaces:
+                    info = rosForestInfo.getROSModelInfo(tree);
+                    treeRootNode.setROSModelInfo(info);
+                    break;
+                default:
+                    break;    
+            }
+            
             // Transform the tree into rules and add them to current rule set
-            numberOfUniqueRules += ruleSet.addRuleSet(treeTransform.constructRules(treeRootNode, getStatManager()));
+            ClusRuleSet rs = treeTransform.constructRules(treeRootNode, sm);
+            numberOfUniqueRules += ruleSet.addRuleSet(rs);
         }
+        ClusLogger.info("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules. Created " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
 
-        if (getSettings().getGeneral().getVerbose() > 0)
-            ClusLogger.info("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules. Created " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
-
+        // The default rule, which will later be explicitly added to the rule set (i.e., will be equal to other rules)
+        // in order to properly optimize the rule set
         RowData trainingData = (RowData) cr.getTrainingSet();
-
-        // ************************** The following copied from ClusRuleInduce.separateAndConquor
-        // Do not have any idea what it is about
-
-        // The default rule
-        ClusStatistic left_over;
-        if (trainingData.getNbRows() > 0) {
-            left_over = createTotalTargetStat(trainingData);
-            left_over.calcMean();
-            ClusLogger.info("Left over: " + left_over);
-        }
-        else {
-            if (getSettings().getGeneral().getVerbose() > 0)
-                ClusLogger.info("All training examples covered - default rule on entire training set!");
-            ruleSet.m_Comment = new String(" (on entire training set)");
-            left_over = getStatManager().getTrainSetStat(AttributeUseType.Target).cloneStat();
-            left_over.copy(getStatManager().getTrainSetStat(AttributeUseType.Target));
-            left_over.calcMean();
-            // left_over.setSumWeight(0);
-            // System.err.println(left_over.toString());
-            ClusLogger.info("Mean: " + left_over);
-        }
-
+        ClusLogger.info("Calculating the default rule predictions");
+        ClusStatistic left_over = createTotalTargetStat(trainingData);
         ruleSet.setTargetStat(left_over);
-
-        // ************************** The following are copied from ClusRuleInduce.induce
-        // Do not have much idea what it is about. However, optimization is needed
 
         // The rule set was altered. Compute the means (predictions?) for rules again.
         ruleSet.postProc();
@@ -138,8 +128,6 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
         if (getSettings().getRules().isRulePredictionOptimized()) {
             ruleSet = optimizeRuleSet(ruleSet, (RowData) cr.getTrainingSet());
         }
-        // ruleSet.setTrainErrorScore(); // Seems to be needed only for some other covering method. Not always needed?
-        // ruleSet.addDataToRules(trainingData); // May take huge amount of memory
 
         // Computing dispersion
         if (getSettings().getRules().computeDispersion()) {
