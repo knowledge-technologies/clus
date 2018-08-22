@@ -43,10 +43,10 @@ import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.util.exception.ClusException;
-import si.ijs.kt.clus.util.tools.optimization.GDAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptProbl;
-import si.ijs.kt.clus.util.tools.optimization.de.DeAlg;
+import si.ijs.kt.clus.util.tools.optimization.GDAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
+import si.ijs.kt.clus.util.tools.optimization.de.DEAlgorithm;
 
 
 /**
@@ -107,16 +107,16 @@ public class ClusRulesFromTree {
 
         // Optimizing rule set if needed
         if (optimizeRuleWeights.equals(RulePredictionMethod.Optimized) || optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
-            OptAlg optAlg = null;
+            OptimizationAlgorithm optAlg = null;
 
-            OptProbl.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
+            OptimizationProblem.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
 
             // Find the rule weights with optimization algorithm.
             if (optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
-                optAlg = new GDAlg(mgr, param, ruleSet);
+                optAlg = new GDAlgorithm(mgr, param, ruleSet);
             }
             else {
-                optAlg = new DeAlg(mgr, param, ruleSet);
+                optAlg = new DEAlgorithm(mgr, param, ruleSet);
             }
 
             ArrayList<Double> weights = optAlg.optimize();
@@ -164,16 +164,16 @@ public class ClusRulesFromTree {
 
         // Optimizing rule set if needed
         if (optimizeRuleWeights.equals(RulePredictionMethod.Optimized) || optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
-            OptAlg optAlg = null;
+            OptimizationAlgorithm optAlg = null;
 
-            OptProbl.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
+            OptimizationProblem.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
 
             // Find the rule weights with optimization algorithm.
             if (optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
-                optAlg = new GDAlg(mgr, param, ruleSet);
+                optAlg = new GDAlgorithm(mgr, param, ruleSet);
             }
             else {
-                optAlg = new DeAlg(mgr, param, ruleSet);
+                optAlg = new DEAlgorithm(mgr, param, ruleSet);
             }
 
             ArrayList<Double> weights = optAlg.optimize();

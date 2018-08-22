@@ -38,7 +38,7 @@ import si.ijs.kt.clus.main.settings.Settings;
  * 
  * @author Timo Aho
  */
-public abstract class OptAlg {
+public abstract class OptimizationAlgorithm {
 
     private ClusStatManager m_StatMgr;
 
@@ -52,7 +52,7 @@ public abstract class OptAlg {
      *        The true values and predictions for the instances. These are used by OptimProbl.
      *        The optimization procedure is based on this data information
      */
-    public OptAlg(ClusStatManager stat_mgr) {
+    public OptimizationAlgorithm(ClusStatManager stat_mgr) {
         m_StatMgr = stat_mgr;
         // m_Probl = new DeProbl(stat_mgr, dataInformation);
     }

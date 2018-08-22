@@ -95,7 +95,7 @@ import si.ijs.kt.clus.util.ClusRandomNonstatic;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.cloner.Cloner;
 import si.ijs.kt.clus.util.exception.ClusException;
-import si.ijs.kt.clus.util.tools.optimization.GDProbl;
+import si.ijs.kt.clus.util.tools.optimization.GDProblem;
 
 
 public class ClusEnsembleInduce extends ClusInductionAlgorithm {
@@ -835,7 +835,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         if (sett.isEnsembleRandomDepth()) {
             // Set random tree max depth
-            getSettings().getConstraints().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(rnd.nextDouble(ClusRandomNonstatic.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
+            getSettings().getConstraints().setTreeMaxDepth(GDProblem.randDepthWighExponentialDistribution(rnd.nextDouble(ClusRandomNonstatic.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
         }
 
         if (sett.getEnsembleBootstrapping().equals(EnsembleBootstrapping.No)) {

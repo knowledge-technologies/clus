@@ -61,10 +61,10 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.tools.optimization.CallExternGD;
-import si.ijs.kt.clus.util.tools.optimization.GDAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptProbl;
-import si.ijs.kt.clus.util.tools.optimization.de.DeAlg;
+import si.ijs.kt.clus.util.tools.optimization.GDAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
+import si.ijs.kt.clus.util.tools.optimization.de.DEAlgorithm;
 
 
 public class ClusRuleInduce extends ClusInductionAlgorithm {
@@ -958,8 +958,8 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
     public ClusRuleSet optimizeRuleSet(ClusRuleSet rset, RowData data) throws ClusException, IOException {
         PrintWriter wrt_pred = null;
 
-        OptAlg optAlg = null;
-        OptProbl.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
+        OptimizationAlgorithm optAlg = null;
+        OptimizationProblem.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
         ArrayList<Double> weights = null;
 
         ClusLogger.info("Preparing for optimization.");
@@ -967,11 +967,11 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         // Find the rule weights with optimization algorithm.
         switch (getSettings().getRules().getRulePredictionMethod()) {
             case GDOptimized:
-                optAlg = new GDAlg(getStatManager(), param, rset);
+                optAlg = new GDAlgorithm(getStatManager(), param, rset);
                 break;
 
             case Optimized:
-                optAlg = new DeAlg(getStatManager(), param, rset);
+                optAlg = new DEAlgorithm(getStatManager(), param, rset);
                 break;
 
             case GDOptimizedBinary:
@@ -992,7 +992,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized) && getSettings().getRules().getOptGDNbOfTParameterTry() > 1) {
 
                 // Running optimization multiple times and selecting the best one.
-                GDAlg gdalg = (GDAlg) optAlg;
+                GDAlgorithm gdalg = (GDAlgorithm) optAlg;
                 double firstTVal = 1.0;
                 double lastTVal = getSettings().getRules().getOptGDGradTreshold();
                 // What is the difference for intervals so that we get enough runs

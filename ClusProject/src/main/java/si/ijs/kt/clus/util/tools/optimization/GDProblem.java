@@ -47,7 +47,7 @@ import si.ijs.kt.clus.util.format.ClusNumberFormat;
  * 
  * @author Timo Aho
  */
-public class GDProbl extends OptProbl {
+public class GDProblem extends OptimizationProblem {
 
     /** Do we print debugging information. */
     static protected boolean m_printGDDebugInformation = false;
@@ -118,7 +118,7 @@ public class GDProbl extends OptProbl {
     // protected OptParam m_dataEarlyStop;
 
     /** New problem for computing fitness function with the early stop data */
-    protected OptProbl m_earlyStopProbl;
+    protected OptimizationProblem m_earlyStopProbl;
 
 
     /**
@@ -132,7 +132,7 @@ public class GDProbl extends OptProbl {
      * @param isClassification
      *        Is it classification or regression?
      */
-    public GDProbl(ClusStatManager stat_mgr, OptParam optInfo) {
+    public GDProblem(ClusStatManager stat_mgr, OptParam optInfo) {
         super(stat_mgr, optInfo);
 
         // If needed, prepares for norm. Has to be done after normalization computation and before covariance computing.
@@ -151,7 +151,7 @@ public class GDProbl extends OptProbl {
             splitDataIntoValAndTrainSet(stat_mgr, optInfo, dataEarlyStop, trainingSet);
 
             changeData(trainingSet); // Change data for super class
-            m_earlyStopProbl = new OptProbl(stat_mgr, dataEarlyStop);
+            m_earlyStopProbl = new OptimizationProblem(stat_mgr, dataEarlyStop);
         }
 
         int nbWeights = getNumVar();

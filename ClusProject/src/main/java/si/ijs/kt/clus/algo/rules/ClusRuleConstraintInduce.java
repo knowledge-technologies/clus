@@ -69,10 +69,10 @@ import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
-import si.ijs.kt.clus.util.tools.optimization.GDAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptProbl;
-import si.ijs.kt.clus.util.tools.optimization.de.DeAlg;
+import si.ijs.kt.clus.util.tools.optimization.GDAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
+import si.ijs.kt.clus.util.tools.optimization.de.DEAlgorithm;
 
 
 public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
@@ -460,16 +460,16 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
         String fname = getSettings().getData().getDataFile();
         PrintWriter wrt_pred = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname + ".r-pred")));
 
-        OptAlg optAlg = null;
+        OptimizationAlgorithm optAlg = null;
 
-        OptProbl.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
+        OptimizationProblem.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
 
         // Find the rule weights with optimization algorithm.
         if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized)) {
-            optAlg = new GDAlg(getStatManager(), param, rset);
+            optAlg = new GDAlgorithm(getStatManager(), param, rset);
         }
         else {
-            optAlg = new DeAlg(getStatManager(), param, rset);
+            optAlg = new DEAlgorithm(getStatManager(), param, rset);
         }
 
         ArrayList weights = optAlg.optimize();

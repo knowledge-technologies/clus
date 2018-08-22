@@ -37,7 +37,7 @@ import si.ijs.kt.clus.util.format.ClusNumberFormat;
  * 
  * @author Tea Tusar
  */
-public class DeInd {
+public class DEIndividual {
 
     private ArrayList<Double> m_Genes;
     /**
@@ -46,7 +46,7 @@ public class DeInd {
     public double m_Fitness;
 
 
-    public DeInd() {
+    public DEIndividual() {
         m_Genes = new ArrayList<Double>();
     }
 
@@ -70,7 +70,7 @@ public class DeInd {
      *        Tail recursive parameter for how many individuals evaluated.
      * @return Return num_eval+1 as in tail recursion.
      */
-    public int evaluate(DeProbl probl, int num_eval) {
+    public int evaluate(DEProblem probl, int num_eval) {
         m_Fitness = probl.calcFitness(m_Genes);
         return (num_eval + 1);
     }
@@ -88,7 +88,7 @@ public class DeInd {
     }
 
 
-    public DeInd copy(DeInd original) {
+    public DEIndividual copy(DEIndividual original) {
         m_Fitness = original.m_Fitness;
         m_Genes = original.m_Genes;
         return this;

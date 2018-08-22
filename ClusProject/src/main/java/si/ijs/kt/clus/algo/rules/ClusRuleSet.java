@@ -66,7 +66,7 @@ import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
 import si.ijs.kt.clus.util.jeans.util.MyArray;
-import si.ijs.kt.clus.util.tools.optimization.OptProbl;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
 
 
 /**
@@ -998,7 +998,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      * @return Parameters for optimization. Include true values and predictions for each of the data instances.
      * @throws ClusException
      */
-    public OptProbl.OptParam giveFormForWeightOptimization(PrintWriter outLogFile, RowData data) throws ClusException {
+    public OptimizationProblem.OptParam giveFormForWeightOptimization(PrintWriter outLogFile, RowData data) throws ClusException {
         // data = Clus.returnNormalizedData(data);
 
         ClusSchema schema = data.getSchema();
@@ -1068,18 +1068,18 @@ public class ClusRuleSet implements ClusModel, Serializable {
          * True values for each target and instance
          */
         // double[][] trueValues = new double[nb_rows][nb_target];
-        OptProbl.TrueValues[] trueValues = new OptProbl.TrueValues[nb_rows];
+        OptimizationProblem.TrueValues[] trueValues = new OptimizationProblem.TrueValues[nb_rows];
         // Index over the instances of data
         for (int iRows = 0; iRows < nb_rows; iRows++) {
             DataTuple tuple = data.getTuple(iRows);
 
-            OptProbl.TrueValues newTrueTargets = null;
+            OptimizationProblem.TrueValues newTrueTargets = null;
             // Give the tuple to attribute line only if it is needed for implicit linear prediction.
             if (getSettings().getRules().getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory)) {
-                newTrueTargets = new OptProbl.TrueValues(nb_target, tuple);
+                newTrueTargets = new OptimizationProblem.TrueValues(nb_target, tuple);
             }
             else {
-                newTrueTargets = new OptProbl.TrueValues(nb_target, null);
+                newTrueTargets = new OptimizationProblem.TrueValues(nb_target, null);
             }
 
             trueValues[iRows] = newTrueTargets;
@@ -1139,9 +1139,9 @@ public class ClusRuleSet implements ClusModel, Serializable {
         double[][][][] nonrule_pred = new double[nb_baseFunctions - nbOfRegularRules][nb_rows][nb_target][];
 
         // Rule predictions.
-        OptProbl.RulePred[] rule_pred = new OptProbl.RulePred[nbOfRegularRules];
+        OptimizationProblem.RulePred[] rule_pred = new OptimizationProblem.RulePred[nbOfRegularRules];
         for (int jRules = 0; jRules < nbOfRegularRules; jRules++) {
-            rule_pred[jRules] = new OptProbl.RulePred(nb_rows, nb_target);
+            rule_pred[jRules] = new OptimizationProblem.RulePred(nb_rows, nb_target);
 
             ClusRule rule = getRule(jRules);
 
@@ -1242,7 +1242,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
             outLogFile.flush();
         }
 
-        OptProbl.OptParam param = new OptProbl.OptParam(rule_pred, nonrule_pred, trueValues, ClusRuleLinearTerm.returnImplicitLinearTermsIfNeeded(data));
+        OptimizationProblem.OptParam param = new OptimizationProblem.OptParam(rule_pred, nonrule_pred, trueValues, ClusRuleLinearTerm.returnImplicitLinearTermsIfNeeded(data));
         return param;
     }
 

@@ -8,7 +8,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
-import si.ijs.kt.clus.util.tools.optimization.OptProbl.OptParam;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem.OptParam;
 
 
 /**
@@ -33,7 +33,7 @@ public class CallExternGD {
      * @param rset
      * @param clusData
      */
-    public static ArrayList<Double> main(ClusStatManager clusStatManager, OptProbl.OptParam optInfo, ClusRuleSet rset) {
+    public static ArrayList<Double> main(ClusStatManager clusStatManager, OptimizationProblem.OptParam optInfo, ClusRuleSet rset) {
         int nbOfWeights = optInfo.m_rulePredictions.length;
         int nbOfRules = nbOfWeights; // Only rules
         // We are ignoring any other base functions than rules here
@@ -52,8 +52,8 @@ public class CallExternGD {
         }
 
         // Optimization normalization
-        double[] normFactors = OptProbl.initNormFactors(nbTargs, clusStatManager.getSettings());
-        double[] targetAvg = OptProbl.initMeans(nbTargs);
+        double[] normFactors = OptimizationProblem.initNormFactors(nbTargs, clusStatManager.getSettings());
+        double[] targetAvg = OptimizationProblem.initMeans(nbTargs);
 
         // Change the default prediction - it will otherwise be set to zero
         for (int iTarg = 0; iTarg < nbTargs; iTarg++) {
@@ -74,7 +74,7 @@ public class CallExternGD {
             // Create the early stopping data variables.
             validationSet = new OptParam(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbDataTest, nbTargs, optInfo.m_implicitLinearTerms);
             trainingSet = new OptParam(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbRows - nbDataTest, nbTargs, optInfo.m_implicitLinearTerms);
-            OptProbl.splitDataIntoValAndTrainSet(clusStatManager, optInfo, validationSet, trainingSet);
+            OptimizationProblem.splitDataIntoValAndTrainSet(clusStatManager, optInfo, validationSet, trainingSet);
         }
 
         double[] weights = new double[nbOfWeights];

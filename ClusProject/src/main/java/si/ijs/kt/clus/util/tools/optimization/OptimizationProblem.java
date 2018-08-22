@@ -60,7 +60,7 @@ import si.ijs.kt.clus.util.format.ClusNumberFormat;
  * @author Timo Aho
  * @author Tea Tusar
  */
-public class OptProbl {
+public class OptimizationProblem {
 
     /**
      * A regression prediction for initialization.
@@ -81,7 +81,7 @@ public class OptProbl {
         public OptParam(int nbRule, int nbOtherBaseFunc, int nbInst, int nbTarg, ImplicitLinearTerms implicitLinTerms) {
             m_rulePredictions = new RulePred[nbRule];
             for (int jRul = 0; jRul < nbRule; jRul++) {
-                m_rulePredictions[jRul] = new OptProbl.RulePred(nbInst, nbTarg);
+                m_rulePredictions[jRul] = new OptimizationProblem.RulePred(nbInst, nbTarg);
             }
             // m_baseFuncPredictions = new double[nbOtherBaseFunc][nbInst][nbTarg][1]; m_trueValues = new
             // double[nbInst][nbTarg];}
@@ -221,7 +221,7 @@ public class OptProbl {
      * @param isClassification
      *        Is it classification or regression?
      */
-    public OptProbl(ClusStatManager stat_mgr, OptParam optInfo) {
+    public OptimizationProblem(ClusStatManager stat_mgr, OptParam optInfo) {
         m_StatMgr = stat_mgr;
 
         m_saveMemoryLinears = getSettings().getRules().getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory);
@@ -1113,7 +1113,7 @@ public class OptProbl {
 
         // DEBUG, after the changes, print these again!
         // If you want to check these, put early stop amount to 0
-        if (GDProbl.m_printGDDebugInformation) {
+        if (GDProblem.m_printGDDebugInformation) {
             String fname = getSettings().getData().getDataFile();
 
             PrintWriter wrt_pred = null;

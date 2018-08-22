@@ -46,10 +46,10 @@ import si.ijs.kt.clus.util.format.ClusNumberFormat;
  * @author Timo Aho
  *
  */
-public class GDAlg extends OptAlg {
+public class GDAlgorithm extends OptimizationAlgorithm {
 
     /** Includes the information about settings of optimization. Has all the helping functions and variables. */
-    private GDProbl m_GDProbl;
+    private GDProblem m_GDProbl;
 
     /** Current weights */
     protected ArrayList<Double> m_weights;
@@ -71,14 +71,14 @@ public class GDAlg extends OptAlg {
      *        The optimization procedure is based on this data information.
      *        Warning: The parameter may be modified!
      */
-    public GDAlg(ClusStatManager stat_mgr, OptProbl.OptParam dataInformation, ClusRuleSet rset) {
+    public GDAlgorithm(ClusStatManager stat_mgr, OptimizationProblem.OptParam dataInformation, ClusRuleSet rset) {
         super(stat_mgr);
-        m_GDProbl = new GDProbl(stat_mgr, dataInformation);
+        m_GDProbl = new GDProblem(stat_mgr, dataInformation);
         initGDForNewRunWithSamePredictions();
         m_earlyStopStep = 100;
 
         // If you want to check these, put early stop amount to 0
-        if (GDProbl.m_printGDDebugInformation) {
+        if (GDProblem.m_printGDDebugInformation) {
             String fname = getSettings().getData().getDataFile();
 
             PrintWriter wrt_pred = null;
@@ -143,7 +143,7 @@ public class GDAlg extends OptAlg {
 
         PrintWriter wrt_log = null;
 
-        if (GDProbl.m_printGDDebugInformation) {
+        if (GDProblem.m_printGDDebugInformation) {
             try {
                 wrt_log = new PrintWriter(new OutputStreamWriter(new FileOutputStream("gradDesc.log")));
             }
@@ -173,7 +173,7 @@ public class GDAlg extends OptAlg {
             if (nbOfIterations % m_earlyStopStep == 0) {
 
                 if (getSettings().getRules().getOptGDEarlyStopAmount() > 0 && m_GDProbl.isEarlyStop(m_weights)) {
-                    if (GDProbl.m_printGDDebugInformation)
+                    if (GDProblem.m_printGDDebugInformation)
                         wrt_log.println("Increase in test fitness. Reducing step size or stopping.");
 
                     if (getSettings().getGeneral().getVerbose() > 0)
@@ -190,7 +190,7 @@ public class GDAlg extends OptAlg {
                     else { // If dynamic step size, stop always
                         if (getSettings().getGeneral().getVerbose() > 0)
                             System.out.print(" Stopping.\n");
-                        if (GDProbl.m_printGDDebugInformation)
+                        if (GDProblem.m_printGDDebugInformation)
                             wrt_log.println("Early stopping detected after " + nbOfIterations + " iterations.");
                         break;
                     }
@@ -241,7 +241,7 @@ public class GDAlg extends OptAlg {
             // It should be smaller because otherwise we are going even further from the optimal point.
             if (oscillation && !getSettings().getRules().isOptGDIsDynStepsize()) {
 
-                if (GDProbl.m_printGDDebugInformation)
+                if (GDProblem.m_printGDDebugInformation)
                     wrt_log.println("Detected oscillation, reducing step size of: " + m_GDProbl.m_stepSize);
 
                 if (debugPrint)
@@ -289,10 +289,10 @@ public class GDAlg extends OptAlg {
             m_GDProbl.restoreBestWeight(m_weights); // Result are the weights with best fitness
         }
 
-        if (GDProbl.m_printGDDebugInformation)
+        if (GDProblem.m_printGDDebugInformation)
             wrt_log.println("The result of optimization");
         OutputLog(nbOfIterations, wrt_log);
-        if (GDProbl.m_printGDDebugInformation)
+        if (GDProblem.m_printGDDebugInformation)
             wrt_log.close();
         // System.err.println("CHANGING THE WEIGHTS< REMOVE THISE");
         // for (int i=0; i< m_weights.size(); i++)
@@ -444,7 +444,7 @@ public class GDAlg extends OptAlg {
 
     /** Print the current weights output file. */
     public void OutputLog(int iterNro, PrintWriter wrt) {
-        if (!GDProbl.m_printGDDebugInformation)
+        if (!GDProblem.m_printGDDebugInformation)
             return;
 
         ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
