@@ -462,7 +462,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
 
         OptimizationAlgorithm optAlg = null;
 
-        OptimizationProblem.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
+        OptimizationProblem.OptimizationParameter param = rset.giveFormForWeightOptimization(wrt_pred, data);
 
         // Find the rule weights with optimization algorithm.
         if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized)) {

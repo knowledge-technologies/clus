@@ -8,7 +8,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
-import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem.OptParam;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem.OptimizationParameter;
 
 
 /**
@@ -33,7 +33,7 @@ public class CallExternGD {
      * @param rset
      * @param clusData
      */
-    public static ArrayList<Double> main(ClusStatManager clusStatManager, OptimizationProblem.OptParam optInfo, ClusRuleSet rset) {
+    public static ArrayList<Double> main(ClusStatManager clusStatManager, OptimizationProblem.OptimizationParameter optInfo, ClusRuleSet rset) {
         int nbOfWeights = optInfo.m_rulePredictions.length;
         int nbOfRules = nbOfWeights; // Only rules
         // We are ignoring any other base functions than rules here
@@ -64,16 +64,16 @@ public class CallExternGD {
             optInfo.m_rulePredictions[0].m_prediction[iTarg][0] = Math.sqrt(normFactors[iTarg]); // e.g. 2* std dev
         }
 
-        OptParam trainingSet = optInfo;
-        OptParam validationSet = null;
+        OptimizationParameter trainingSet = optInfo;
+        OptimizationParameter validationSet = null;
         // If early stopping criteria is chosen, reserve part of the training set for early stop testing.
         if (set.getOptGDEarlyStopAmount() > 0) {
 
             int nbDataTest = (int) Math.ceil(nbRows * set.getOptGDEarlyStopAmount());
 
             // Create the early stopping data variables.
-            validationSet = new OptParam(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbDataTest, nbTargs, optInfo.m_implicitLinearTerms);
-            trainingSet = new OptParam(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbRows - nbDataTest, nbTargs, optInfo.m_implicitLinearTerms);
+            validationSet = new OptimizationParameter(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbDataTest, nbTargs, optInfo.m_implicitLinearTerms);
+            trainingSet = new OptimizationParameter(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbRows - nbDataTest, nbTargs, optInfo.m_implicitLinearTerms);
             OptimizationProblem.splitDataIntoValAndTrainSet(clusStatManager, optInfo, validationSet, trainingSet);
         }
 
@@ -99,7 +99,7 @@ public class CallExternGD {
             // index for TrainingSet and validationSet
             int iInst = 0;
             int iMaxInst = nbInstTrain;
-            OptParam targetData = trainingSet;
+            OptimizationParameter targetData = trainingSet;
 
             // We first go trhough training set, then validation set
             for (; iInst < iMaxInst; iInst++, iIndex++) {
@@ -120,7 +120,7 @@ public class CallExternGD {
         // index for TrainingSet and validationSet
         int iInst = 0;
         int iMaxInst = nbInstTrain;
-        OptParam targetData = trainingSet;
+        OptimizationParameter targetData = trainingSet;
 
         for (; iInst < iMaxInst; iInst++, iIndex++) {
 

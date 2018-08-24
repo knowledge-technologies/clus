@@ -959,7 +959,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         PrintWriter wrt_pred = null;
 
         OptimizationAlgorithm optAlg = null;
-        OptimizationProblem.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
+        OptimizationProblem.OptimizationParameter param = rset.giveFormForWeightOptimization(wrt_pred, data);
         ArrayList<Double> weights = null;
 
         ClusLogger.info("Preparing for optimization.");
@@ -1045,8 +1045,9 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         }
 
         // Postprocessing if needed. -- Undo inside normalization on rule set if needed
-        if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary))
+        if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
             optAlg.postProcess(rset);
+        }
 
         // Print weights of all terms
         if (getSettings().getGeneral().getVerbose() > 0) {
@@ -1054,7 +1055,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             for (int j = 0; j < weights.size(); j++) {
                 System.out.print(((Double) weights.get(j)).doubleValue() + "; ");
             }
-            System.out.print("\n");
+            System.out.println();
         }
         int indexOfLastHandledWeight = rset.removeLowWeightRules() + 1;
 

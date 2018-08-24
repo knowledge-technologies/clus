@@ -75,10 +75,10 @@ public class OptimizationProblem {
      * The default prediction is used, if no other rule covers the instance.
      * See m_RulePred and m_TrueVal for what the indices mean.
      */
-    static public class OptParam {
+    static public class OptimizationParameter {
 
         /** An empty class */
-        public OptParam(int nbRule, int nbOtherBaseFunc, int nbInst, int nbTarg, ImplicitLinearTerms implicitLinTerms) {
+        public OptimizationParameter(int nbRule, int nbOtherBaseFunc, int nbInst, int nbTarg, ImplicitLinearTerms implicitLinTerms) {
             m_rulePredictions = new RulePred[nbRule];
             for (int jRul = 0; jRul < nbRule; jRul++) {
                 m_rulePredictions[jRul] = new OptimizationProblem.RulePred(nbInst, nbTarg);
@@ -91,7 +91,7 @@ public class OptimizationProblem {
         }
 
 
-        public OptParam(RulePred[] rulePredictions, double[][][][] predictions, TrueValues[] trueValues, ImplicitLinearTerms implicitLinTerms) {
+        public OptimizationParameter(RulePred[] rulePredictions, double[][][][] predictions, TrueValues[] trueValues, ImplicitLinearTerms implicitLinTerms) {
             m_rulePredictions = rulePredictions;
             m_baseFuncPredictions = predictions;
             m_trueValues = trueValues;
@@ -221,7 +221,7 @@ public class OptimizationProblem {
      * @param isClassification
      *        Is it classification or regression?
      */
-    public OptimizationProblem(ClusStatManager stat_mgr, OptParam optInfo) {
+    public OptimizationProblem(ClusStatManager stat_mgr, OptimizationParameter optInfo) {
         m_StatMgr = stat_mgr;
 
         m_saveMemoryLinears = getSettings().getRules().getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory);
@@ -231,8 +231,9 @@ public class OptimizationProblem {
             int nbOfDescrAtts = m_StatMgr.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
             m_NumVar = (optInfo.m_baseFuncPredictions).length + (optInfo.m_rulePredictions).length + nbOfTargetAtts * nbOfDescrAtts;
         }
-        else
+        else {
             m_NumVar = (optInfo.m_baseFuncPredictions).length + (optInfo.m_rulePredictions).length;
+        }
 
         // May be null if not used
         m_LinTermMemSavePred = optInfo.m_implicitLinearTerms;
@@ -262,15 +263,16 @@ public class OptimizationProblem {
                 // double[] means = computeMeans(varIsNonZero, valuesFor0Variance);
                 // m_TargetNormFactor = computeOptNormFactors(means, varIsNonZero, valuesFor0Variance);
                 m_TargetNormFactor = initNormFactors(getNbOfTargets(), getSettings());
-                if (!getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling))
+                if (!getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling)) {
                     m_TargetAvg = initMeans(getNbOfTargets());
+                }
             }
         }
     }
 
 
     /** Splits data into validation and training sets randomly */
-    static protected void splitDataIntoValAndTrainSet(ClusStatManager stat_mgr, OptParam origData, OptParam valData, OptParam trainData) {
+    static protected void splitDataIntoValAndTrainSet(ClusStatManager stat_mgr, OptimizationParameter origData, OptimizationParameter valData, OptimizationParameter trainData) {
 
         Settings set = stat_mgr.getSettings();
         int nbRows = origData.m_trueValues.length;
@@ -296,13 +298,14 @@ public class OptimizationProblem {
             // Search for the real index when duplicates are not taken into account
             // Thus skip the instance in indexOfUnUsedInstance if it is already taken
             for (int indexOfUnUsedInstance = 0; indexOfUnUsedInstance < newIndex; iNewTestInstance++) {
-                if (!selectedInstances[iNewTestInstance])
-
+                if (!selectedInstances[iNewTestInstance]) {
                     indexOfUnUsedInstance++;
+                }
             }
             // Still if we ended up to selected index, skip all the selected
-            while (selectedInstances[iNewTestInstance])
+            while (selectedInstances[iNewTestInstance]) {
                 iNewTestInstance++;
+            }
 
             // Here we should have in iNewTestInstance the 'newIndex'th unused instance
             selectedInstances[iNewTestInstance] = true;
@@ -319,11 +322,10 @@ public class OptimizationProblem {
             }
 
             for (int iRule = 0; iRule < origData.m_rulePredictions.length; iRule++) {
-                if (origData.m_rulePredictions[iRule].m_cover.get(iNewTestInstance))
+                if (origData.m_rulePredictions[iRule].m_cover.get(iNewTestInstance)) {
                     valData.m_rulePredictions[iRule].m_cover.set(iTestSetInstance);
-
+                }
             }
-
         }
 
         /** Index for the rest array */
@@ -340,7 +342,6 @@ public class OptimizationProblem {
                 }
 
                 for (int iRule = 0; iRule < origData.m_rulePredictions.length; iRule++) {
-
                     if (origData.m_rulePredictions[iRule].m_cover.get(iInstance))
                         trainData.m_rulePredictions[iRule].m_cover.set(iInstanceRestIndex);
                 }
@@ -365,7 +366,6 @@ public class OptimizationProblem {
         // want to use it
         set.getRules().setOptRegPar(0);
         set.getRules().setOptNbZeroesPar(0);
-
     }
 
 
@@ -1001,7 +1001,7 @@ public class OptimizationProblem {
      * Change the data used for learning. This is used if part of the data
      * is used for e.g. testing.
      */
-    final protected void changeData(OptParam newData) {
+    final protected void changeData(OptimizationParameter newData) {
         m_BaseFuncPred = newData.m_baseFuncPredictions;
         m_RulePred = newData.m_rulePredictions;
         // m_defaultPred = newData.m_defaultPrediction;
@@ -1103,7 +1103,7 @@ public class OptimizationProblem {
         // Change only the first rule, this changes the overall average of predictions
         // The first rule should now include the averages in practice, check this
         for (int iTarg = 0; iTarg < getNbOfTargets(); iTarg++) {
-            
+
             if (getPredictionsWhenCovered(0, 0, iTarg) != getMean(iTarg)) {
                 System.err.println("Error: Difference in preparePredictionsForNormalization for target nb " + iTarg + ". The values are " + getPredictionsWhenCovered(0, 0, iTarg) + " and " + getMean(iTarg));
                 System.exit(1);

@@ -109,7 +109,7 @@ public class ClusRulesFromTree {
         if (optimizeRuleWeights.equals(RulePredictionMethod.Optimized) || optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
             OptimizationAlgorithm optAlg = null;
 
-            OptimizationProblem.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
+            OptimizationProblem.OptimizationParameter param = ruleSet.giveFormForWeightOptimization(null, data);
 
             // Find the rule weights with optimization algorithm.
             if (optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
@@ -166,7 +166,7 @@ public class ClusRulesFromTree {
         if (optimizeRuleWeights.equals(RulePredictionMethod.Optimized) || optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
             OptimizationAlgorithm optAlg = null;
 
-            OptimizationProblem.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
+            OptimizationProblem.OptimizationParameter param = ruleSet.giveFormForWeightOptimization(null, data);
 
             // Find the rule weights with optimization algorithm.
             if (optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {

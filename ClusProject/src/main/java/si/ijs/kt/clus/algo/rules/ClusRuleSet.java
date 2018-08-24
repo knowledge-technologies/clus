@@ -998,7 +998,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
      * @return Parameters for optimization. Include true values and predictions for each of the data instances.
      * @throws ClusException
      */
-    public OptimizationProblem.OptParam giveFormForWeightOptimization(PrintWriter outLogFile, RowData data) throws ClusException {
+    public OptimizationProblem.OptimizationParameter giveFormForWeightOptimization(PrintWriter outLogFile, RowData data) throws ClusException {
         // data = Clus.returnNormalizedData(data);
 
         ClusSchema schema = data.getSchema();
@@ -1242,7 +1242,7 @@ public class ClusRuleSet implements ClusModel, Serializable {
             outLogFile.flush();
         }
 
-        OptimizationProblem.OptParam param = new OptimizationProblem.OptParam(rule_pred, nonrule_pred, trueValues, ClusRuleLinearTerm.returnImplicitLinearTermsIfNeeded(data));
+        OptimizationProblem.OptimizationParameter param = new OptimizationProblem.OptimizationParameter(rule_pred, nonrule_pred, trueValues, ClusRuleLinearTerm.returnImplicitLinearTermsIfNeeded(data));
         return param;
     }
 

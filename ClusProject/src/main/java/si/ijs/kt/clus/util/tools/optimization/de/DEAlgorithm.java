@@ -64,7 +64,7 @@ public class DEAlgorithm extends OptimizationAlgorithm {
      *        The optimization procedure is based on this data information
      *
      */
-    public DEAlgorithm(ClusStatManager stat_mgr, OptimizationProblem.OptParam dataInformation, ClusRuleSet rset) {
+    public DEAlgorithm(ClusStatManager stat_mgr, OptimizationProblem.OptimizationParameter dataInformation, ClusRuleSet rset) {
         super(stat_mgr);
         m_DeProbl = new DEProblem(stat_mgr, dataInformation, rset);
         m_Pop = new DEPopulation(stat_mgr, m_DeProbl);

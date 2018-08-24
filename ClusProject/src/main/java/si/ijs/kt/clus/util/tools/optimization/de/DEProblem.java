@@ -45,7 +45,7 @@ public class DEProblem extends si.ijs.kt.clus.util.tools.optimization.Optimizati
    * @param dataInformation The true values and predictions for the instances. These are used by
    *     OptimProbl. The optimization procedure is based on this data information
    */
-  public DEProblem(ClusStatManager stat_mgr, OptParam optInfo, ClusRuleSet rset) {
+  public DEProblem(ClusStatManager stat_mgr, OptimizationParameter optInfo, ClusRuleSet rset) {
     super(stat_mgr, optInfo);
 
     m_VarMin = new ArrayList<Double>(getNumVar());

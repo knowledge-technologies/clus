@@ -96,7 +96,9 @@ public abstract class RegressionStatBase extends ClusStatistic {
     public void addPrediction(ClusStatistic other, double weight) {
         RegressionStatBase or = (RegressionStatBase) other;
         for (int i = 0; i < m_NbAttrs; i++) {
-            m_Means[i] += weight * or.m_Means[i];
+            if (!Double.isNaN(or.m_Means[i])) {
+                m_Means[i] += weight * or.m_Means[i];
+            }
         }
     }
 
@@ -437,7 +439,7 @@ public abstract class RegressionStatBase extends ClusStatistic {
                     break;
 
                 case OOBTargetWeighted:
-                    
+
                     for (int target = 0; target < m_NbAttrs; target++) {
                         m_Means[target] += vote.getMean(target) * weights.getComponentWeight(model, target);
                     }

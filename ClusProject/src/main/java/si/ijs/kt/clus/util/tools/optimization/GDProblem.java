@@ -132,7 +132,7 @@ public class GDProblem extends OptimizationProblem {
      * @param isClassification
      *        Is it classification or regression?
      */
-    public GDProblem(ClusStatManager stat_mgr, OptParam optInfo) {
+    public GDProblem(ClusStatManager stat_mgr, OptimizationParameter optInfo) {
         super(stat_mgr, optInfo);
 
         // If needed, prepares for norm. Has to be done after normalization computation and before covariance computing.
@@ -146,8 +146,8 @@ public class GDProblem extends OptimizationProblem {
             int nbDataTest = (int) Math.ceil(getNbOfInstances() * getSettings().getRules().getOptGDEarlyStopAmount());
 
             // Create the early stopping data variables.
-            OptParam dataEarlyStop = new OptParam(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbDataTest, getNbOfTargets(), optInfo.m_implicitLinearTerms);
-            OptParam trainingSet = new OptParam(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, getNbOfInstances() - nbDataTest, getNbOfTargets(), optInfo.m_implicitLinearTerms);
+            OptimizationParameter dataEarlyStop = new OptimizationParameter(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbDataTest, getNbOfTargets(), optInfo.m_implicitLinearTerms);
+            OptimizationParameter trainingSet = new OptimizationParameter(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, getNbOfInstances() - nbDataTest, getNbOfTargets(), optInfo.m_implicitLinearTerms);
             splitDataIntoValAndTrainSet(stat_mgr, optInfo, dataEarlyStop, trainingSet);
 
             changeData(trainingSet); // Change data for super class
