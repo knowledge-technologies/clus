@@ -47,7 +47,7 @@ import si.ijs.kt.clus.util.ClusLogger;
 public class ImplicitLinearTerms {
 
     /** Data for implicit linear term predictions */
-    //private RowData m_linearTermPredictions = null;
+    // private RowData m_linearTermPredictions = null;
     private ClusStatManager m_StatManager = null;
 
 
@@ -65,50 +65,19 @@ public class ImplicitLinearTerms {
      *        Scaling values and truncate values for the linear terms.
      */
     public ImplicitLinearTerms(RowData data, ClusStatManager statMgr) {
-        // , double[][] values) {
-        //m_linearTermPredictions = data;
         m_StatManager = statMgr;
 
-        // m_offSetValues = values[0];
-        // m_stdDevValues = values[1];
-        // m_targetStdDevs = values[2];
-        // m_maxValues = values[0];
-        // m_minValues = values[1];
+        int nbTargets = (m_StatManager.getStatistic(AttributeUseType.Target)).getNbAttributes();
+        int nbDescrAttr = statMgr.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
 
-        if (getSettings().getGeneral().getVerbose() > 0) {
-            int nbTargets = (m_StatManager.getStatistic(AttributeUseType.Target)).getNbAttributes();
-            int nbDescrAttr = statMgr.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
-
-            ClusLogger.info("\tIn optimization using implicitly the predictions of " + nbDescrAttr + " linear terms for each target, total " + nbDescrAttr * nbTargets + " terms.");
-        }
+        ClusLogger.info("\tIn optimization using implicitly the predictions of " + nbDescrAttr + " linear terms for each target, total " + nbDescrAttr * nbTargets + " terms.");
     }
 
 
     public void DeleteImplicitLinearTerms() {
-        //m_linearTermPredictions = null;
         m_StatManager = null;
-        // m_maxValues = null;
-        // m_minValues = null;
     }
 
-
-    // /** Offset values (means of descriptive attributes) for all the linear terms.
-    // */
-    // private static double getOffSetValue(int iDescAttr) {
-    // return RuleNormalization.getDescMean(iDescAttr);
-    // }
-    //
-    // /** Standard deviation values (of descriptive attributes) for all the linear terms
-    // */
-    // private static double getDescStdDev(int iDescAttr) {
-    // return RuleNormalization.getDescStdDev(iDescAttr);
-    // }
-    //
-    // /** Standard deviation values of TARGET attributes for all the linear terms
-    // */
-    // private static double getTargStdDev(int iTargAttr) {
-    // return RuleNormalization.getTargStdDev(iTargAttr);
-    // }
 
     /**
      * If linear terms are not added excplicitly to the rule set (to save memory), this function
@@ -135,13 +104,8 @@ public class ImplicitLinearTerms {
         /** Which descriptive attribute value will be the target */
         int iDescriptiveAttr = (int) Math.floor((double) iLinTerm / nbOfTargets);
 
-        // double value = (m_linearTermPredictions.getSchema().
-        // getNumericAttrUse(AttributeUseType.Descriptive))[iDescriptiveAttr].getNumeric(instance);
-
-        double pred = ClusRuleLinearTerm.attributeToLinTermPrediction(getSettings(), instance, iDescriptiveAttr, iLinTermTargetAttr, nbOfTargets, true); // Always
-                                                                                                                                                         // scale
-                                                                                                                                                         // linear
-                                                                                                                                                         // terms
+        /* Always scale linear terms */
+        double pred = ClusRuleLinearTerm.attributeToLinTermPrediction(getSettings(), instance, iDescriptiveAttr, iLinTermTargetAttr, nbOfTargets, true);
 
         return !Double.isNaN(pred) ? pred : 0;
     }

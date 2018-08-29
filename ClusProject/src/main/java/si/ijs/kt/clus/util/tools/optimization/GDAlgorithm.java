@@ -74,7 +74,9 @@ public class GDAlgorithm extends OptimizationAlgorithm {
      */
     public GDAlgorithm(ClusStatManager stat_mgr, OptimizationProblem.OptimizationParameter dataInformation, ClusRuleSet rset) {
         super(stat_mgr);
-        m_GDProbl = new GDProblem(stat_mgr, dataInformation);
+        m_GDProbl = new GDProblem(stat_mgr, dataInformation, rset);
+        
+        
         initGDForNewRunWithSamePredictions();
         m_earlyStopStep = 100;
 

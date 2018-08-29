@@ -21,6 +21,7 @@ package si.ijs.kt.clus.algo.rules;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.HashMap;
@@ -68,12 +69,12 @@ public class ClusRule implements ClusModel, Serializable {
     /** Clustering statistics of examples covered by the rule. */
     protected ClusStatistic m_ClusteringStat;
 
-    protected ArrayList m_Tests = new ArrayList();
+    protected ArrayList<NodeTest> m_Tests = new ArrayList<>();
     protected ClusStatManager m_StatManager;
     protected ClusErrorList[] m_Errors;
 
     /** Array of tuples covered by this rule */
-    protected ArrayList m_Data = new ArrayList();
+    protected ArrayList<DataTuple> m_Data = new ArrayList<>();
 
     /** Combined statistics for training and testing data */
     protected CombStat[] m_CombStat = new CombStat[2];
@@ -112,6 +113,11 @@ public class ClusRule implements ClusModel, Serializable {
 
     public void setID(int id) {
         m_ID = id;
+    }
+
+
+    public ClusROSModelInfo getROSModelInfo() {
+        return m_ROSModelInfo;
     }
 
 
@@ -163,16 +169,16 @@ public class ClusRule implements ClusModel, Serializable {
     /** Equality is based on the tests AND the targets. */
     public boolean equalsDeeply(Object other) {
         ClusRule o = (ClusRule) other;
-        if (o.getModelSize() != getModelSize())
-            return false;
+        if (o.getModelSize() != getModelSize()) { return false; }
+
         for (int i = 0; i < getModelSize(); i++) {
             boolean has_test = false;
             for (int j = 0; j < getModelSize() && !has_test; j++) {
-                if (getTest(i).equals(o.getTest(j)))
+                if (getTest(i).equals(o.getTest(j))) {
                     has_test = true;
+                }
             }
-            if (!has_test)
-                return false;
+            if (!has_test) { return false; }
         }
 
         // Tests are similar -- let us check the target
@@ -181,8 +187,9 @@ public class ClusRule implements ClusModel, Serializable {
         // Let us check if the targets are different
         boolean targetsAreSimilar = true;
         for (int iTarget = 0; iTarget < ruleTarget.length && targetsAreSimilar; iTarget++) {
-            if (Math.abs(ruleTarget[iTarget] - ((RegressionStat) m_TargetStat).m_Means[iTarget]) >= EQUAL_MAX_DIFFER)
+            if (Math.abs(ruleTarget[iTarget] - ((RegressionStat) m_TargetStat).m_Means[iTarget]) >= EQUAL_MAX_DIFFER) {
                 targetsAreSimilar = false;
+            }
         }
 
         return targetsAreSimilar;
@@ -223,8 +230,9 @@ public class ClusRule implements ClusModel, Serializable {
                     found = true;
                 }
             }
-            if (found)
+            if (found) {
                 removeTest(i);
+            }
         }
     }
 
@@ -608,7 +616,7 @@ public class ClusRule implements ClusModel, Serializable {
     @Override
     public void attachModel(HashMap table) throws ClusException {
         for (int i = 0; i < m_Tests.size(); i++) {
-            NodeTest test = (NodeTest) m_Tests.get(i);
+            NodeTest test = m_Tests.get(i);
             test.attachModel(table);
         }
     }
@@ -635,9 +643,9 @@ public class ClusRule implements ClusModel, Serializable {
 
 
     public ArrayList<NodeTest> getModelTests() {
-        ArrayList<NodeTest> tests = new ArrayList<NodeTest>();
+        ArrayList<NodeTest> tests = new ArrayList<>();
         for (int i = 0; i < m_Tests.size(); i++) {
-            NodeTest test = (NodeTest) m_Tests.get(i);
+            NodeTest test = m_Tests.get(i);
             tests.add(test);
         }
         return tests;
@@ -652,7 +660,7 @@ public class ClusRule implements ClusModel, Serializable {
         }
         else {
             for (int i = 0; i < m_Tests.size(); i++) {
-                NodeTest test = (NodeTest) m_Tests.get(i);
+                NodeTest test = m_Tests.get(i);
                 if (i != 0) {
                     wrt.println(" AND");
                     wrt.print("   ");
@@ -849,10 +857,8 @@ public class ClusRule implements ClusModel, Serializable {
 
         if (m_ROSModelInfo != null) {
             if (m_TargetStat instanceof RegressionStat) {
-                for (int target = 0; target < m_TargetStat.getNbAttributes(); target++) {
-                    if (!m_ROSModelInfo.isTargetEnabled(target)) {
-                        ((RegressionStat) m_TargetStat).m_Means[target] = Double.NaN; // do not use this target!
-                    }
+                for (Integer target : m_ROSModelInfo.getTargetsDisabled()) {
+                    ((RegressionStat) m_TargetStat).m_Means[target] = Double.NaN; // do not use this target!
                 }
             }
             else {
@@ -893,7 +899,7 @@ public class ClusRule implements ClusModel, Serializable {
             int[] true_counts = new int[nb_tar];
             NominalAttrType[] targetAttrs = m_StatManager.getSchema().getNominalAttrUse(AttributeUseType.Target);
             for (int i = 0; i < nb_rows; i++) {
-                DataTuple tuple = (DataTuple) m_Data.get(i);
+                DataTuple tuple = m_Data.get(i);
                 int[] prediction = predictWeighted(tuple).getNominalPred();
                 for (int j = 0; j < nb_tar; j++) {
                     if (prediction[j] == targetAttrs[j].getNominal(tuple)) { // predicted == true
@@ -971,7 +977,7 @@ public class ClusRule implements ClusModel, Serializable {
             return m_OptWeight;
         }
         else {
-            System.err.println("Warning: Optimal rule weight not initialized!");
+            // System.err.println("Warning: Optimal rule weight not initialized!");
             return -1.0;
         }
     }
@@ -991,7 +997,7 @@ public class ClusRule implements ClusModel, Serializable {
     public void computeDispersion(int mode) {
         CombStat combStat = (CombStat) m_StatManager.createStatistic(AttributeUseType.All);
         for (int i = 0; i < m_Data.size(); i++) {
-            combStat.updateWeighted((DataTuple) m_Data.get(i), 0); // second parameter does nothing!
+            combStat.updateWeighted(m_Data.get(i), 0); // second parameter does nothing!
         }
         combStat.calcMean();
         m_CombStat[mode] = combStat;
@@ -1119,5 +1125,19 @@ public class ClusRule implements ClusModel, Serializable {
 
     public void setROSModelInfo(ClusROSModelInfo info) {
         this.m_ROSModelInfo = info;
+    }
+
+
+    @Override
+    public String toString() {
+        StringWriter out = new StringWriter();
+        PrintWriter pw = new PrintWriter(out);
+
+        printModel(pw);
+        String s = out.toString();
+        out = null;
+        pw = null;
+
+        return s;
     }
 }

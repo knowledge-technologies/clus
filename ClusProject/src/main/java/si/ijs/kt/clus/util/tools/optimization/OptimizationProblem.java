@@ -133,11 +133,12 @@ public class OptimizationProblem {
             m_prediction = new double[nbTarg][1];
         }
 
-
-        public RulePred(BitSet cover, double[][] prediction) {
-            m_cover = cover;
-            m_prediction = prediction;
-        }
+        /*
+         * public RulePred(BitSet cover, double[][] prediction) {
+         * m_cover = cover;
+         * m_prediction = prediction;
+         * }
+         */
 
         // public boolean[] m_cover; // [instance] that are covered
         public BitSet m_cover; // [instance] that are covered
@@ -449,31 +450,38 @@ public class OptimizationProblem {
                 }
                 else {
                     // For regression initialize to zero.
-                    pred[iInstance][iTarget] = 0;
-                    pred_sum[iTarget][0] = 0;
+                    pred[iInstance][iTarget] = 0d;
+                    pred_sum[iTarget][0] = 0d;
                 }
             }
 
             boolean covered = false; // Is the instance covered
 
             // An index over the weights for the rules (variables to optimize)
+            double px;
+
             for (int iRule = 0; iRule < getNumVar(); iRule++) {
-                if (genes.get(iRule).doubleValue() != 0) {
-                    // An index over the targets of an instance (for multi targeted environments)
-                    for (int iTarget = indFirstTarget; iTarget <= indLastTarget; iTarget++) {
-                        // An index over the possible values of nominal attribute. 1 for regression
-                        for (int iClass = 0; iClass < nb_values[iTarget]; iClass++) {
-                            if (isCovered(iRule, iInstance)) {
-                                covered = true;
+                if (genes.get(iRule).doubleValue() != 0d) {
+
+                    if (isCovered(iRule, iInstance)) {
+                        
+                        // An index over the targets of an instance (for multi targeted environments)
+                        for (int iTarget = indFirstTarget; iTarget <= indLastTarget; iTarget++) {
+                            // An index over the possible values of nominal attribute. 1 for regression
+                            for (int iClass = 0; iClass < nb_values[iTarget]; iClass++) {
 
                                 // For each nominal value and target, add variable
                                 // <current optimized parameter value>*<strenght of nominal value> OR
                                 // <current optimized parameter value>*<regression prediction for rule>
                                 // I.e. this is the real prediction function - weighted sum over the rules
-                                pred_sum[iTarget][iClass] += genes.get(iRule).doubleValue()
-                                        // * m_RulePred[iRule][iInstance][iTarget][iClass];
-                                        * getPredictionsWhenCovered(iRule, iInstance, iTarget, iClass);
+                                px = getPredictionsWhenCovered(iRule, iInstance, iTarget, iClass);
 
+                                covered = true;
+
+                                // When using ROS with SubspaceAveraging, some targets are not predicted
+                                if (!Double.isNaN(px)) {
+                                    pred_sum[iTarget][iClass] += genes.get(iRule).doubleValue() * px;
+                                }
                             }
                         }
                     }
@@ -515,6 +523,10 @@ public class OptimizationProblem {
         }
         else { // For regression
             loss = loss(pred, iFitnessTarget);
+
+            if (Double.isNaN(loss)) {
+                int a = 3;
+            }
         }
 
         // Regularization for getting the weights as small as possible
@@ -533,7 +545,6 @@ public class OptimizationProblem {
         // TODO: regularization penalty should include dispersion, coverage?
 
         return loss + reg_penalty + nbOfZeroes_penalty;
-
     }
 
 
@@ -686,22 +697,20 @@ public class OptimizationProblem {
 
         // If one target given
         if (indTarget != -1) {
-
             for (int iInstance = 0; iInstance < numberOfInstances; iInstance++) {
                 loss += Math.pow(getTrueValue(iInstance, indTarget) - prediction[iInstance][indTarget], 2);
             }
-
         }
         else {
             int numberOfTargets = prediction[0].length;
+            double attributeLoss;
+
             for (int jTarget = 0; jTarget < numberOfTargets; jTarget++) {
-                double attributeLoss = 0; // Loss for one attribute.
+
+                // Loss for one attribute
+                attributeLoss = 0d;
+
                 for (int iInstance = 0; iInstance < numberOfInstances; iInstance++) {
-                    // Missing values? if (!Double.isNaN(trueValue[iInstance][jTarget])) {
-                    // if (iInstance == 68) {
-                    // boolean debug = false;
-                    // debug = true;
-                    // }
                     attributeLoss += Math.pow(getTrueValue(iInstance, jTarget) - prediction[iInstance][jTarget], 2);
                 }
 
@@ -709,7 +718,7 @@ public class OptimizationProblem {
                     attributeLoss /= getNormFactor(jTarget);
                 }
 
-                loss += ((double) 1) / (2 * numberOfTargets) * attributeLoss;
+                loss += 1d / (2d * numberOfTargets) * attributeLoss;
             }
         }
         return loss / numberOfInstances; // Average loss over instances
@@ -929,14 +938,13 @@ public class OptimizationProblem {
     /**
      * Value of base function prediction. Can be used also for nominal attributes
      * when we already know that instance is covered! Use isCovered for this.
-     * If used right, gives always prediction.
+     * If used right, always gives prediction.
      */
     final protected double getPredictionsWhenCovered(int iRule, int iInstance, int iTarget, int iClass) {
         if (!isRuleTerm(iRule)) {
             if (m_saveMemoryLinears) {
-                return m_LinTermMemSavePred.predict(iRule - m_RulePred.length, m_TrueVal[iInstance].m_dataExample, iTarget, m_RulePred[0].m_prediction.length); // Nb
-                                                                                                                                                                // of
-                                                                                                                                                                // targets.
+                /* Nb of targets */
+                return m_LinTermMemSavePred.predict(iRule - m_RulePred.length, m_TrueVal[iInstance].m_dataExample, iTarget, m_RulePred[0].m_prediction.length);
             }
             else {
                 return m_BaseFuncPred[iRule - m_RulePred.length][iInstance][iTarget][iClass];
@@ -1035,10 +1043,12 @@ public class OptimizationProblem {
     static protected double[] initNormFactors(int nbTargs, Settings sett) {
         double[] scaleFactor = new double[nbTargs];
         for (int iTarget = 0; iTarget < nbTargs; iTarget++) {
-            if (sett.getRules().getOptNormalization().equals(OptimizationNormalization.YesVariance))
+            if (sett.getRules().getOptNormalization().equals(OptimizationNormalization.YesVariance)) {
                 scaleFactor[iTarget] = Math.pow(RuleNormalization.getTargStdDev(iTarget), 4); // Math.pow(variance,2.0);
-            else // std dev
+            }
+            else {// std dev
                 scaleFactor[iTarget] = 4 * Math.pow(RuleNormalization.getTargStdDev(iTarget), 2); // 4*variance;
+            }
         }
         return scaleFactor;
     }

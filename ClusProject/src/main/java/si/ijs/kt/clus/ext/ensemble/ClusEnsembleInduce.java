@@ -811,7 +811,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
             HashMap<Integer, Integer> enabled = ClusROSHelpers.generateSubspace(mgr.getSchema(), m_EnsembleROSSubspaceSize.intValue(), sett.getEnsembleROSAlgorithmType(), bagNo - 1);
 
-            ClusROSModelInfo info = new ClusROSModelInfo(bagNo - 1, m_EnsembleROSSubspaceSize.intValue(), enabled);
+            ClusROSModelInfo info = new ClusROSModelInfo(bagNo - 1, m_EnsembleROSSubspaceSize.intValue(), enabled, mgr.getSchema().getNbTargetAttributes());
             h.getClusteringAttributeWeights().setROSModelInfo(info);
 
             m_ROSForestInfo.addROSModelInfo(info);

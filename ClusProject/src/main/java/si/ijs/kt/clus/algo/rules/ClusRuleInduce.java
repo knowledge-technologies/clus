@@ -1024,9 +1024,9 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 
                         ClusLogger.finer(s + " - best so far!");
 
-                        // If fitness increasing, check if we are stopping early
                     }
                     else if (getSettings().getRules().getOptGDEarlyTTryStop() && gdalg.getBestFitness() > getSettings().getRules().getOptGDEarlyStopTreshold() * minFitness) {
+                        // If fitness increasing, check if we are stopping early
                         ClusLogger.finer(s + " - early T value stop reached.");
                         break;
                     }
@@ -1041,7 +1041,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         }
 
         for (int j = 0; j < rset.getModelSize(); j++) {
-            rset.getRule(j).setOptWeight(((Double) weights.get(j)).doubleValue()); // Set the RULE weights
+            rset.getRule(j).setOptWeight(weights.get(j).doubleValue()); // Set the RULE weights
         }
 
         // Postprocessing if needed. -- Undo inside normalization on rule set if needed
@@ -1050,13 +1050,20 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         }
 
         // Print weights of all terms
-        if (getSettings().getGeneral().getVerbose() > 0) {
-            System.out.print("\nThe weights for rules:");
-            for (int j = 0; j < weights.size(); j++) {
-                System.out.print(((Double) weights.get(j)).doubleValue() + "; ");
+        StringBuffer buf = new StringBuffer();
+
+        int cnt = 0;
+        for (int j = 0; j < weights.size(); j++) {
+            if (weights.get(j).doubleValue() > 0d) {
+                buf.append(weights.get(j).doubleValue() + ", ");
+                cnt++;
             }
-            System.out.println();
         }
+
+        buf.insert(0, String.format("The weights for rules (%d rules): ", cnt));
+
+        ClusLogger.info(buf.toString());
+
         int indexOfLastHandledWeight = rset.removeLowWeightRules() + 1;
 
         // if needed, add implicit linear terms explicitly. this has to be done after removing low weight rules

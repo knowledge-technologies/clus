@@ -89,11 +89,11 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
         // Get the trees and transform to rules
         int numberOfUniqueRules = 0;
         ClusStatManager sm = getStatManager();
-        
+
         /** if ROS enabled */
         ClusROSForestInfo rosForestInfo = forestModel.getEnsembleROSForestInfo();
         ClusROSModelInfo info = null;
-        
+
         for (int tree = 0; tree < forestModel.getNbModels(); tree++) {
             // Take the root node of the tree
             ClusNode treeRootNode = (ClusNode) forestModel.getModel(tree);
@@ -105,14 +105,16 @@ public class ClusRuleFromTreeInduce extends ClusRuleInduce {
                     treeRootNode.setROSModelInfo(info);
                     break;
                 default:
-                    break;    
+                    break;
             }
-            
+
             // Transform the tree into rules and add them to current rule set
             ClusRuleSet rs = treeTransform.constructRules(treeRootNode, sm);
+
             numberOfUniqueRules += ruleSet.addRuleSet(rs);
+
         }
-        ClusLogger.info("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules. Created " + +ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
+        ClusLogger.info("Transformed " + forestModel.getNbModels() + " trees in ensemble into rules. Created " + ruleSet.getModelSize() + " rules. (" + numberOfUniqueRules + " of them are unique.)");
 
         // The default rule, which will later be explicitly added to the rule set (i.e., will be equal to other rules)
         // in order to properly optimize the rule set
