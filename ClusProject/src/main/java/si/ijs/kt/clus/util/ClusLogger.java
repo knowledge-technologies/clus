@@ -57,7 +57,7 @@ public class ClusLogger {
     }
 
     public static final void info() {
-        m_MainLogger.info("");;
+        m_MainLogger.info("");
     }
 
     public static final void severe(String msg) {

@@ -4,24 +4,19 @@ Created on Mon Mar 26 14:30:05 2018
 
 @author: matej
 """
-import random
-
-
-random.seed(123)
-print("This is a randomized version of predictions for missing values ...")
 
 
 class Statistics:
     """
     Superclass for the statistics that correspond to different learning tasks, e.g., (multi-target) regression.
     
-    For a concrete implemenation of the methods listed below, see `RegressionStat`.
+    For a concrete implementation of the methods listed below, see `RegressionStat`.
     
     Methods
     -------
     fresh_stats(number_targets)
         Creates a new objects with neutral values of fields, i.e., the values that this statistic would have
-        if the correspodning leaf node was empty.
+        if the corresponding leaf node was empty.
     add_another_stats(other, other_weight)
         Adds up or somehow joins two different predictions into one.
     stats_to_predictions()
@@ -188,8 +183,6 @@ class TreeNode:
         assert len(self.children) == len(self.branch_frequencies)
         assert int(self.test is None) + int(self.prediction_statistics is None) == 1
         
-        self.was_here = None
-        
         # Statistics that are used in the internal nodes for predictions of a current tuple.
         # The value of this field should always be None, except for the time when the predictions
         # are made from the tree which the self belongs to.
@@ -270,11 +263,8 @@ class Tree:
                     # known value
                     children_to_process = [current.children[the_branch]]
                 else:
-                    # missing value --> randomized with respect to branch frequencies
-                    if current.was_here is None:
-                        current.was_here = int(random.random() > current.branch_frequencies[0])
-                    the_branch = current.was_here
-                    children_to_process = [current.children[the_branch]]
+                    # missing value
+                    children_to_process = current.children
                 all_children_processed = True
                 for child in children_to_process:
                     if child.temp_statistics is None:
@@ -293,7 +283,6 @@ class Tree:
                     for child in children_to_process:
                         child.reset_temp_statistics()
                     has_been_processed = True
-                    current.was_here = None
                 else:
                     # go deeper in the tree
                     for child in children_to_process:
