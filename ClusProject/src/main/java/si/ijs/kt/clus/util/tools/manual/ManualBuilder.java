@@ -1,133 +1,194 @@
+
 package si.ijs.kt.clus.util.tools.manual;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
+import java.io.Reader;
+import java.util.ArrayList;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.TreeMap;
 
 import si.ijs.kt.clus.main.settings.Settings;
-import si.ijs.kt.clus.util.ClusLogger;
+import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEntry;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNode;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileSection;
 
+
 public class ManualBuilder {
 
-    
+    private void createFolder(String f) {
+        File folder = new File(f);
+        try {
+            folder.mkdirs(); // the procedure "if not exists: folder.mkdirs()" is considered dangerous
+        }
+        catch (SecurityException e) {
+            if (!folder.exists()) { throw e; // something went wrong with the creation
+            }
+        }
+    }
+
+
     public void buildSettingsTables(String settingsTablesFolder) {
-    	HashMap<String, TreeMap<Integer, String[]>> default_values = listAllSettings();
-        for(String section : default_values.keySet()) {
+        HashMap<String, TreeMap<Integer, String[]>> default_values = listAllSettings();
+
+        // create folders in the path if necessary
+        createFolder(settingsTablesFolder);
+
+        for (String section : default_values.keySet()) {
             writeLatexSectionSettingsFile(section, settingsTablesFolder, default_values.get(section), false);
         }
-        ClusLogger.info("Done.");
-        
+        System.out.println("Done.");
     }
-    
-    
+
+
     private HashMap<String, TreeMap<Integer, String[]>> listAllSettings() {
-    	HashMap<String, TreeMap<Integer, String[]>> default_values = new HashMap<String, TreeMap<Integer, String[]>>(); // {section: {option: value, ...}, ...}
+        HashMap<String, TreeMap<Integer, String[]>> default_values = new HashMap<String, TreeMap<Integer, String[]>>(); // {section:
+                                                                                                                        // {option:
+                                                                                                                        // value,
+                                                                                                                        // ...},
+                                                                                                                        // ...}
         Settings defaultSett = Settings.getDefaultSettings();
         for (Enumeration<INIFileNode> sectionEnum = defaultSett.getSectionsIterator(); sectionEnum.hasMoreElements();) {
             INIFileSection section = (INIFileSection) sectionEnum.nextElement();
             String secName = section.getName();
-            if(!default_values.containsKey(secName)) {
+            if (!default_values.containsKey(secName)) {
                 default_values.put(secName, new TreeMap<Integer, String[]>());
             }
             Integer count = 0;
             for (Enumeration<INIFileNode> e = section.getNodes(); e.hasMoreElements();) {
                 INIFileEntry entry = (INIFileEntry) e.nextElement();
-                default_values.get(secName).put(count, new String[] {entry.getName(), entry.getStringValue()});
+                default_values.get(secName).put(count, new String[] { entry.getName(), entry.getStringValue() });
                 count = new Integer(count.intValue() + 1);
-            }          
+            }
         }
         return default_values;
     }
-    
-    
+
+
     private void writeLatexSectionSettingsFile(String sectionName, String settingsTablesFolder, TreeMap<Integer, String[]> sectionDefaults, boolean selfstandingTex) {
-    	// create folders in the path if necessary
-    	File folder = new File(settingsTablesFolder);
-    	try {
-    		folder.mkdirs(); // the procedure "if not exists: folder.mkdirs()" is considered dangerous
-    	} catch(SecurityException e) {
-    		if(!folder.exists()) {
-    			throw e; // something went wrong with the creation
-    		}
-    	}
-        try{
-        	// write to file
-        	String fileName = String.format("%s/options-%s.tex", settingsTablesFolder, sectionName);
-        	
+        try {
+            // write to file
+            String fileName = String.format("%s/options-%s.tex", settingsTablesFolder, sectionName);
+
             PrintWriter writer = new PrintWriter(fileName, "UTF-8");
-            
-            if(selfstandingTex) {
-            	String[] preamble = new String[] {"\\documentclass{article}", "\\usepackage[utf8]{inputenc}"};
-            	for(String line : preamble) {
+
+            if (selfstandingTex) {
+                String[] preamble = new String[] { "\\documentclass{article}", "\\usepackage[utf8]{inputenc}" };
+                for (String line : preamble) {
                     writer.println(line);
                 }
                 writer.println("\\begin{document}");
                 writer.println();
             }
-            
+
             writer.println(String.format("\\section{%s}", sectionName));
             writer.println("\\begin{itemize}");
-            
-            
-            for(Integer key : sectionDefaults.keySet()) {
-            	String[] option_default = sectionDefaults.get(key); // option name and its default value
-            	String name = option_default[0];
-            	String[] defaults = nicifyDefaultValue(option_default[1]);
-            	for(int i = 0; i < defaults.length; i++) {
-            		defaults[i] = String.format("\\optionDefaultValueStyle{%s}", defaults[i]);
-            	}
-            	String default_value = String.join(", ", defaults);
-            	writer.println(String.format("    \\item \\optionNameStyle{%s}:%n"
-            			                   + "           \\begin{itemize}%n"
-            			                   + "                \\item \\optionPossibleValues{}: ???%n"
-            			                   + "                \\item \\optionDefaultValue{}: %s%n"
-            			                   + "                \\item \\optionDescrption{}: ???%n"
-            			                   + "           \\end{itemize}", name, default_value));
+
+            for (Integer key : sectionDefaults.keySet()) {
+                String[] option_default = sectionDefaults.get(key); // option name and its default value
+                String name = option_default[0];
+                String[] defaults = nicifyDefaultValue(option_default[1]);
+                for (int i = 0; i < defaults.length; i++) {
+                    defaults[i] = String.format("\\optionDefaultValueStyle{%s}", defaults[i]);
+                }
+                String defaultValue = String.join(", ", defaults);
+
+                writer.println(ManualEntry.getLatex(name, defaultValue));
             }
-            
+
             writer.println("\\end{itemize}");
-            
-            if(selfstandingTex) {
-            	writer.println();
-            	writer.println("\\end{document}");
+
+            if (selfstandingTex) {
+                writer.println();
+                writer.println("\\end{document}");
             }
-                        
-            writer.close();            
-        } catch (IOException e) {
-           
+
+            writer.close();
+        }
+        catch (IOException e) {
+
         }
     }
-    
-    
+
+
     private static String[] nicifyDefaultValue(String default_value) {
-    	String result = default_value;
-    	result = result.trim();
-    	// EOL ---> comma
-    	result = result.replaceAll("\r\n", ","); // Windows
-    	result = result.replaceAll("\n", ",");   // Unix
-    	result = result.replaceAll("\r", ",");   // Mac
-    	result = result.replaceAll(",+", ",");
-    	// tabs ---> space
-    	result = result.replaceAll("\t", " ");
-    	result = result.replaceAll(" +", " ");
-    	// special Latex chars
-    	String[] results;
-    	if (result.startsWith("{")) {
-    		result = result.replaceAll("\\{", "\\\\{");
-    		result = result.replaceAll("\\}", "\\\\}");
-    		results = new String[] {result}; // keep lists intact
-    	} else {
-    		results = result.split(",");
-    	}
-    	for(int i = 0; i < results.length; i++) {
-    		results[i] = results[i].trim();
-    	}
-    	return results;
+        String result = default_value;
+        result = result.trim();
+        // EOL ---> comma
+        result = result.replaceAll("\r\n", ","); // Windows
+        result = result.replaceAll("\n", ","); // Unix
+        result = result.replaceAll("\r", ","); // Mac
+        result = result.replaceAll(",+", ",");
+        // tabs ---> space
+        result = result.replaceAll("\t", " ");
+        result = result.replaceAll(" +", " ");
+        // special Latex chars
+        String[] results;
+        if (result.startsWith("{")) {
+            result = result.replaceAll("\\{", "\\\\{");
+            result = result.replaceAll("\\}", "\\\\}");
+            results = new String[] { result }; // keep lists intact
+        }
+        else {
+            results = result.split(",");
+        }
+        for (int i = 0; i < results.length; i++) {
+            results[i] = results[i].trim();
+        }
+        return results;
     }
-}
+
+
+    public void mergeExistingTables(String manualOptionsListsDir, String manualOptionsListsDirExisting) {
+
+        Settings defaultSett = Settings.getDefaultSettings();
+        File f1, f2;
+        int changes;
+
+        try {
+            // File[] original = new File(manualOptionsListsDir).listFiles();
+            // File[] updated = new File(manualOptionsListsDirExisting).listFiles();
+
+            for (Enumeration<INIFileNode> sectionEnum = defaultSett.getSectionsIterator(); sectionEnum.hasMoreElements();) {
+                INIFileSection section = (INIFileSection) sectionEnum.nextElement();
+                String secName = section.getName();
+
+                f1 = new File(manualOptionsListsDir + "\\options-" + secName + ".tex");
+                f2 = new File(manualOptionsListsDirExisting + "\\options-" + secName + ".tex");
+
+                if (f1.exists() && f2.exists()) {
+                    changes = mergeFiles(f1, f2);
+                    System.out.println("Merged " + secName + ": " + changes + " changes found");
+                }
+            }
+        }
+        catch (Exception ex) {
+            System.err.println("Error while merging files.");
+        }
+    }
+
+
+    private int mergeFiles(File original, File updated) throws FileNotFoundException {
+        // read original and updated files
+        FileInputStream fsOriginal = new FileInputStream(original);
+        FileInputStream fsUpdated = new FileInputStream(updated);
+
+        String org = ClusUtil.readStream(fsOriginal);
+        String upd = ClusUtil.readStream(fsUpdated);
+
+        // discover all entries in both files
+        ArrayList<ManualEntry> mOrg = ManualSectionEntry.parse(org);
+        ArrayList<ManualEntry> mUpd = ManualSectionEntry.parse(upd);
+
+        // compare entry-per-entry and refresh the "updated" version with the already
+        // existing information from the manual
+
+        return 0;
+    }}

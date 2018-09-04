@@ -130,36 +130,52 @@ public class Settings implements Serializable {
         m_Sections = new ArrayList<SettingsBase>();
 
         // Initialize individual settings. Order of initialization is important (see dependencies in the constructors).
-        m_SettOutput = new SettingsOutput(27);
-        m_SettGeneric = new SettingsGeneric(m_SettOutput);
         m_SettGeneral = new SettingsGeneral(1);
         m_SettData = new SettingsData(2);
         m_SettAttribute = new SettingsAttribute(3);
+
+        m_SettConstraints = new SettingsConstraints(5);
+
         m_SettNominal = new SettingsNominal(7);
+        m_SettTimeSeries = new SettingsTimeSeries(8);
         m_SettModel = new SettingsModel(9);
         m_SettTree = new SettingsTree(10);
         m_SettRules = new SettingsRules(11);
+
         m_SettHMLC = new SettingsHMLC(13);
+        m_SettHMTR = new SettingsHMTR(14, m_SettAttribute, m_SettGeneral);
+        m_SettOptionTree = new SettingsOptionTree(15);
         m_SettILevelC = new SettingsILevelC(16);
         m_SettBeamSearch = new SettingsBeamSearch(17);
         m_SettExhaustiveSearch = new SettingsExhaustiveSearch(18);
-        m_SettTimeSeries = new SettingsTimeSeries(8);
         m_SettPhylogeny = new SettingsPhylogeny(19);
         m_SettRelief = new SettingsRelief(20);
         m_SettEnsemble = new SettingsEnsemble(21);
         m_SettKNN = new SettingsKNN(22);
         m_SettKNNTree = new SettingsKNNTree(23);
-        m_SettOptionTree = new SettingsOptionTree(15);
         m_SettSIT = new SettingsSIT(24);
-        m_SettExperimental = new SettingsExperimental(26);
-        m_SettConstraints = new SettingsConstraints(5);
-        m_SettMLC = new SettingsMLC(12, m_SettHMLC, m_SettRelief);
-        m_SettHMTR = new SettingsHMTR(14, m_SettAttribute, m_SettGeneral);
         m_SettSSL = new SettingsSSL(25);
+        m_SettExperimental = new SettingsExperimental(26);
+        m_SettOutput = new SettingsOutput(27);
+
+        m_SettMLC = new SettingsMLC(12, m_SettHMLC, m_SettRelief);
+
+        m_SettGeneric = new SettingsGeneric(m_SettOutput);
 
         // store all settings classes in m_Sections
-        Collections.addAll(m_Sections, m_SettGeneral, m_SettData, m_SettAttribute, m_SettConstraints, m_SettOutput, m_SettNominal, m_SettModel, m_SettTree, m_SettRules, m_SettMLC, m_SettHMLC, m_SettHMTR, m_SettILevelC, m_SettBeamSearch, m_SettExhaustiveSearch, m_SettTimeSeries, m_SettPhylogeny, m_SettRelief, m_SettEnsemble, m_SettKNN, m_SettKNNTree, m_SettOptionTree, m_SettExperimental, m_SettSIT, m_SettSSL);
-
+        Collections.addAll(
+                /* */
+                m_Sections, m_SettGeneral, m_SettData, m_SettAttribute, m_SettConstraints,
+                /* */
+                m_SettOutput, m_SettNominal, m_SettModel, m_SettTree, m_SettRules,
+                /* */
+                m_SettMLC, m_SettHMLC, m_SettHMTR, m_SettILevelC, m_SettBeamSearch,
+                /* */
+                m_SettExhaustiveSearch, m_SettTimeSeries, m_SettPhylogeny, m_SettRelief, m_SettEnsemble,
+                /* */
+                m_SettKNN, m_SettKNNTree, m_SettOptionTree, m_SettExperimental, m_SettSIT,
+                /* */
+                m_SettSSL);
     }
 
 
@@ -346,7 +362,7 @@ public class Settings implements Serializable {
                 m_Ini.load(fname, '%');
             }
             catch (FileNotFoundException e) {
-                ClusLogger.info("No settings file found");
+                System.err.println("No settings file found");
             }
         }
         if (cargs != null) {
@@ -390,7 +406,7 @@ public class Settings implements Serializable {
 
         tmpList = validateSettingsCombined(schema);
         if (tmpList != null && !tmpList.isEmpty()) {
-            incompatibilities.add("COMBINED INCOMPATIBILITIES");
+            incompatibilities.add("COMBINED INCOMPATIBILITIES IN SETTINGS");
             incompatibilities.addAll(tmpList);
         }
 
