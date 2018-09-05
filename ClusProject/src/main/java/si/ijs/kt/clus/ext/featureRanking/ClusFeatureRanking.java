@@ -636,12 +636,12 @@ public class ClusFeatureRanking {
     }
 
 
-    public void createFimp(ClusRun cr, int numberOfTrees) throws IOException {
-        createFimp(cr, "", numberOfTrees);
+    public void createFimp(ClusRun cr) throws IOException {
+        createFimp(cr, "");
     }
 
 
-    public void createFimp(ClusRun cr, String appendixToFimpName, int numberOfTrees) throws IOException {
+    public void createFimp(ClusRun cr, String appendixToFimpName) throws IOException {
         if (cr.getStatManager().getSettings().getEnsemble().shouldSortRankingByRelevance()) {
             m_Order = FimpOrdering.BY_RELEVANCE;
         }

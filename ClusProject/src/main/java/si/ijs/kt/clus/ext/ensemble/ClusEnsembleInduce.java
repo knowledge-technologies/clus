@@ -321,7 +321,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 throw new RuntimeException("Wrong feature ranking method: " + sett.getRankingMethod().toString());
         }
         franking.setNbFeatureRankings(nbRankings);
-        franking.setEnsembleRankigDescription(nbTrees);
     }
 
 
@@ -463,7 +462,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (m_FeatRank) {
             // m_FeatureRanking.createFimp(cr);
             for (int forest = 0; forest < m_FeatureRankings.length; forest++) {
-                m_FeatureRankings[forest].createFimp(cr, String.format("Trees%d", m_OForests[forest].getNbModels()), getNbTrees(forest));
+            	m_FeatureRankings[forest].setEnsembleRankigDescription(m_OForests[forest].getNbModels());
+                m_FeatureRankings[forest].createFimp(cr, String.format("Trees%d", getNbTrees(forest)));
             }
         }
         if (m_OptMode) {
