@@ -462,8 +462,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (m_FeatRank) {
             // m_FeatureRanking.createFimp(cr);
             for (int forest = 0; forest < m_FeatureRankings.length; forest++) {
-            	m_FeatureRankings[forest].setEnsembleRankigDescription(m_OForests[forest].getNbModels());
-                m_FeatureRankings[forest].createFimp(cr, String.format("Trees%d", getNbTrees(forest)));
+            	int expectedTrees = getNbTrees(forest);
+            	int realTrees = m_OForests[forest].getNbModels();
+            	m_FeatureRankings[forest].setEnsembleRankigDescription(realTrees);
+                m_FeatureRankings[forest].createFimp(cr, String.format("Trees%d", expectedTrees), expectedTrees, realTrees);
             }
         }
         if (m_OptMode) {

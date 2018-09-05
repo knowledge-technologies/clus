@@ -4,7 +4,10 @@ package si.ijs.kt.clus.ext.featureRanking;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -637,11 +640,25 @@ public class ClusFeatureRanking {
 
 
     public void createFimp(ClusRun cr) throws IOException {
-        createFimp(cr, "");
+        createFimp(cr, "", -1, -1);
     }
 
 
-    public void createFimp(ClusRun cr, String appendixToFimpName) throws IOException {
+    public void createFimp(ClusRun cr, String appendixToFimpName, int expectedNumberTrees, int realNumberOfTrees) throws IOException {
+    	if (expectedNumberTrees != realNumberOfTrees) {
+	        // copy the file from resources
+	        String fileName = "fimp_manipulation.py";
+	        try {
+	            InputStream is = si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + fileName);
+	            String fullFileName = getSettings().getGeneric().getFileAbsolute(fileName);
+	            Files.copy(is, Paths.get(fullFileName), StandardCopyOption.REPLACE_EXISTING);
+	        }
+	        catch (IOException ex) {
+	            System.err.println("Error while copying " + fileName + " to the output folder.");
+	            ex.printStackTrace();
+	        }
+    	}
+    	
         if (cr.getStatManager().getSettings().getEnsemble().shouldSortRankingByRelevance()) {
             m_Order = FimpOrdering.BY_RELEVANCE;
         }
