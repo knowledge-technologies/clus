@@ -38,21 +38,21 @@ import si.ijs.kt.clus.main.settings.Settings;
  * 
  * @author Tea Tusar
  */
-public class DePop {
+public class DEPopulation {
 
-    public ArrayList<DeInd> m_Inds;
-    private DeProbl m_Probl;
+    public ArrayList<DEIndividual> m_Inds;
+    private DEProblem m_Probl;
     private Random m_Rand;
     private ClusStatManager m_StatMgr;
 
 
-    public DePop(ClusStatManager stat_mgr, DeProbl probl) {
+    public DEPopulation(ClusStatManager stat_mgr, DEProblem probl) {
         m_Probl = probl;
         m_StatMgr = stat_mgr;
         m_Rand = new Random(getSettings().getRules().getOptDESeed());
-        m_Inds = new ArrayList<DeInd>(getSettings().getRules().getOptDEPopSize());
+        m_Inds = new ArrayList<DEIndividual>(getSettings().getRules().getOptDEPopSize());
         for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
-            DeInd ind = new DeInd();
+            DEIndividual ind = new DEIndividual();
             m_Inds.add(ind);
         }
     }
@@ -149,12 +149,12 @@ public class DePop {
     public void sortPopRandom() {
         int i;
         /** The result: Array of individuals with random permutation. */
-        ArrayList<DeInd> inds = new ArrayList<DeInd>(getSettings().getRules().getOptDEPopSize());
+        ArrayList<DEIndividual> inds = new ArrayList<DEIndividual>(getSettings().getRules().getOptDEPopSize());
         /** Array of old indexes of these individuals */
         ArrayList<Integer> indexes = new ArrayList<Integer>(getSettings().getRules().getOptDEPopSize());
 
         for (i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
-            inds.add(new DeInd());
+            inds.add(new DEIndividual());
             indexes.add(new Integer(i));
         }
 

@@ -61,10 +61,10 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.tools.optimization.CallExternGD;
-import si.ijs.kt.clus.util.tools.optimization.GDAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptProbl;
-import si.ijs.kt.clus.util.tools.optimization.de.DeAlg;
+import si.ijs.kt.clus.util.tools.optimization.GDAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
+import si.ijs.kt.clus.util.tools.optimization.de.DEAlgorithm;
 
 
 public class ClusRuleInduce extends ClusInductionAlgorithm {
@@ -342,7 +342,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         int max_rules = getSettings().getRules().getMaxRulesNb();
         int i = 0;
         RowData data_copy = data.deepCloneData(); // Taking copy of data. Probably not nice
-        ArrayList bit_vect_array = new ArrayList();
+        ArrayList<boolean[]> bit_vect_array = new ArrayList<>();
         // Learn the rules
         while ((data.getNbRows() > 0) && (i < max_rules)) {
             ClusRule rule = learnOneRule(data);
@@ -865,7 +865,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param run
      *        The information about this run. Parameters etc.
-
+     * 
      * @throws ClusException
      * @throws IOException
      * @throws InterruptedException
@@ -956,30 +956,35 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * @throws IOException
      */
     public ClusRuleSet optimizeRuleSet(ClusRuleSet rset, RowData data) throws ClusException, IOException {
-        //String fname = getSettings().getData().getDataFile();
-        // PrintWriter wrt_pred = new PrintWriter(new OutputStreamWriter(new FileOutputStream(fname+".r-pred")));
         PrintWriter wrt_pred = null;
 
-        OptAlg optAlg = null;
-        OptProbl.OptParam param = rset.giveFormForWeightOptimization(wrt_pred, data);
-        ArrayList weights = null;
+        OptimizationAlgorithm optAlg = null;
+        OptimizationProblem.OptimizationParameter param = rset.giveFormForWeightOptimization(wrt_pred, data);
+        ArrayList<Double> weights = null;
 
-        if (getSettings().getGeneral().getVerbose() > 0)
-            ClusLogger.info("Preparing for optimization.");
+        ClusLogger.info("Preparing for optimization.");
 
         // Find the rule weights with optimization algorithm.
-        if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized)) {
-            optAlg = new GDAlg(getStatManager(), param, rset);
-        }
-        else if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.Optimized)) {
-            optAlg = new DeAlg(getStatManager(), param, rset);
-        }
-        else if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
-            weights = CallExternGD.main(getStatManager(), param, rset);
+        switch (getSettings().getRules().getRulePredictionMethod()) {
+            case GDOptimized:
+                optAlg = new GDAlgorithm(getStatManager(), param, rset);
+                break;
+
+            case Optimized:
+                optAlg = new DEAlgorithm(getStatManager(), param, rset);
+                break;
+
+            case GDOptimizedBinary:
+                weights = CallExternGD.main(getStatManager(), param, rset);
+                break;
+
+            default: // do nothing
+                break;
         }
 
-        if (getSettings().getGeneral().getVerbose() > 0 && !getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary))
+        if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
             ClusLogger.info("Preparations ended. Starting optimization.");
+        }
 
         if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
             // If using external binary, optimization is already done.
@@ -987,7 +992,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
             if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized) && getSettings().getRules().getOptGDNbOfTParameterTry() > 1) {
 
                 // Running optimization multiple times and selecting the best one.
-                GDAlg gdalg = (GDAlg) optAlg;
+                GDAlgorithm gdalg = (GDAlgorithm) optAlg;
                 double firstTVal = 1.0;
                 double lastTVal = getSettings().getRules().getOptGDGradTreshold();
                 // What is the difference for intervals so that we get enough runs
@@ -1008,9 +1013,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 
                     ArrayList<Double> newWeights = gdalg.optimize();
 
-                    if (getSettings().getGeneral().getVerbose() > 0)
-                        System.err.print("\nThe T value " + (firstTVal + iRun * interTVal) + " has a test fitness: " + gdalg.getBestFitness());
-
+                    String s = "The T value " + (firstTVal + iRun * interTVal) + " has a test fitness: " + gdalg.getBestFitness();
                     if (gdalg.getBestFitness() < minFitness) {
                         // Fitness is smaller than previously, store these weights
                         weights = newWeights;
@@ -1019,16 +1022,12 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                         rset.m_optWeightBestTValue = firstTVal + iRun * interTVal;
                         rset.m_optWeightBestFitness = minFitness;
 
-                        if (getSettings().getGeneral().getVerbose() > 0)
-                            System.err.print(" - best so far!");
+                        ClusLogger.finer(s + " - best so far!");
 
-                        // If fitness increasing, check if we are stopping early
                     }
                     else if (getSettings().getRules().getOptGDEarlyTTryStop() && gdalg.getBestFitness() > getSettings().getRules().getOptGDEarlyStopTreshold() * minFitness) {
-
-                        if (getSettings().getGeneral().getVerbose() > 0)
-                            System.err.print(" - early T value stop reached.");
-
+                        // If fitness increasing, check if we are stopping early
+                        ClusLogger.finer(s + " - early T value stop reached.");
                         break;
                     }
                 }
@@ -1042,21 +1041,29 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
         }
 
         for (int j = 0; j < rset.getModelSize(); j++) {
-            rset.getRule(j).setOptWeight(((Double) weights.get(j)).doubleValue()); // Set the RULE weights
+            rset.getRule(j).setOptWeight(weights.get(j).doubleValue()); // Set the RULE weights
         }
 
         // Postprocessing if needed. -- Undo inside normalization on rule set if needed
-        if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary))
+        if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
             optAlg.postProcess(rset);
+        }
 
         // Print weights of all terms
-        if (getSettings().getGeneral().getVerbose() > 0) {
-            System.out.print("\nThe weights for rules:");
-            for (int j = 0; j < weights.size(); j++) {
-                System.out.print(((Double) weights.get(j)).doubleValue() + "; ");
+        StringBuffer buf = new StringBuffer();
+
+        int cnt = 0;
+        for (int j = 0; j < weights.size(); j++) {
+            if (weights.get(j).doubleValue() > 0d) {
+                buf.append(weights.get(j).doubleValue() + ", ");
+                cnt++;
             }
-            System.out.print("\n");
         }
+
+        buf.insert(0, String.format("The weights for rules (%d rules): ", cnt));
+
+        ClusLogger.info(buf.toString());
+
         int indexOfLastHandledWeight = rset.removeLowWeightRules() + 1;
 
         // if needed, add implicit linear terms explicitly. this has to be done after removing low weight rules
@@ -1157,7 +1164,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * 
      * @param data
      * @param rn
-
+     * 
      * @throws ClusException
      */
     private ClusRule generateOneRandomRule(RowData data, Random rn) throws ClusException {

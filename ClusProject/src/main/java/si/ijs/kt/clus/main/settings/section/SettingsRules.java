@@ -385,6 +385,14 @@ public class SettingsRules extends SettingsBase {
      * a lot faster, but may decrease the accuracy. Default Yes.
      */
     private INIFileBool m_OptGDEarlyTTryStop;
+    
+    /**
+     * When building rule ensemble with FIRE, we need an initial bag of rules.
+     * The original method (Timo Aho, 2012) transcribes a random forest ensemble to rules.
+     * If we use ROS with subspace averaging (Breskvar, 2018) we can choose to only use rules that predict subsets or 
+     * also rules, that predict all targets. The default is to use both types. 
+     */
+    private INIFileBool m_ROSAddRulesWithTotalAveraging;
 
     // Probabilistic Rule sampling
     /** Expected cardinality (excluding default rule) */
@@ -926,6 +934,9 @@ public class SettingsRules extends SettingsBase {
         return IS_RULE_SIG_TESTING;
     }
 
+    public boolean getROSAddRulesWithTotalAveraging() {
+        return m_ROSAddRulesWithTotalAveraging.getValue();
+    }
 
     @Override
     public void create() {
@@ -952,6 +963,7 @@ public class SettingsRules extends SettingsBase {
         m_Section.addNode(m_RuleWiseErrors = new INIFileBool("PrintRuleWiseErrors", false));
         m_Section.addNode(m_PrintAllRules = new INIFileBool("PrintAllRules", true));
         m_Section.addNode(m_constrainedToFirstAttVal = new INIFileBool("ConstrainedToFirstAttVal", false));
+        
         m_Section.addNode(m_OptDEPopSize = new INIFileInt("OptDEPopSize", 500));
         m_Section.addNode(m_OptDENumEval = new INIFileInt("OptDENumEval", 10000));
         m_Section.addNode(m_OptDECrossProb = new INIFileDouble("OptDECrossProb", 0.3));
@@ -971,11 +983,9 @@ public class SettingsRules extends SettingsBase {
         m_Section.addNode(m_OptLinearTermsTruncate = new INIFileBool("OptLinearTermsTruncate", true));
         m_Section.addNode(m_OptOmitRulePredictions = new INIFileBool("OptOmitRulePredictions", true));
         m_Section.addNode(m_OptWeightGenerality = new INIFileBool("OptWeightGenerality", false));
-        // m_SectionRules.addNode(m_OptNormalization = new INIFileBool("OptNormalization", true));
         m_Section.addNode(m_OptNormalization = new INIFileEnum<>("OptNormalization", OptimizationNormalization.Yes));
         m_Section.addNode(m_OptHuberAlpha = new INIFileDouble("OptHuberAlpha", 0.9));
         m_Section.addNode(m_OptGDMaxIter = new INIFileInt("OptGDMaxIter", 1000));
-        // m_SectionRules.addNode(m_OptGDLossFunction = new INIFileNominal("OptGDLossFunction", GD_LOSS_FUNCTIONS, 0));
         m_Section.addNode(m_OptGDGradTreshold = new INIFileDouble("OptGDGradTreshold", 1));
         m_Section.addNode(m_OptGDStepSize = new INIFileDouble("OptGDStepSize", 0.1));
         m_Section.addNode(m_OptGDIsDynStepsize = new INIFileBool("OptGDIsDynStepsize", true));
@@ -987,6 +997,7 @@ public class SettingsRules extends SettingsBase {
         m_Section.addNode(m_OptGDMTGradientCombine = new INIFileEnum<>("OptGDMTGradientCombine", OptimizationGDMTCombineGradient.Avg));
         m_Section.addNode(m_OptGDNbOfTParameterTry = new INIFileInt("OptGDNbOfTParameterTry", 1));
         m_Section.addNode(m_OptGDEarlyTTryStop = new INIFileBool("OptGDEarlyTTryStop", true));
+        m_Section.addNode(m_ROSAddRulesWithTotalAveraging = new INIFileBool("ROSAddRulesWithTotalAveraging", true));
 
         m_Section.addNode(m_MaxRuleCardinality = new INIFileInt("MaxRuleCardinality", 30));
         m_Section.addNode(m_MaxPoissonIterations = new INIFileInt("MaxPoissonIterations", 1000));

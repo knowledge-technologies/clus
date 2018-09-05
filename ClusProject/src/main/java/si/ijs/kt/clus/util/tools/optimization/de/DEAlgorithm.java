@@ -37,8 +37,8 @@ import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
-import si.ijs.kt.clus.util.tools.optimization.OptAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptProbl;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
 
 
 /**
@@ -47,11 +47,11 @@ import si.ijs.kt.clus.util.tools.optimization.OptProbl;
  * @author Tea Tusar
  * @author Timo Aho Modified for multi target use 10.11.2008
  */
-public class DeAlg extends OptAlg {
+public class DEAlgorithm extends OptimizationAlgorithm {
 
-    private DeProbl m_DeProbl;
-    private DePop m_Pop;
-    private DeInd m_Best;
+    private DEProblem m_DeProbl;
+    private DEPopulation m_Pop;
+    private DEIndividual m_Best;
 
 
     /**
@@ -64,10 +64,10 @@ public class DeAlg extends OptAlg {
      *        The optimization procedure is based on this data information
      *
      */
-    public DeAlg(ClusStatManager stat_mgr, OptProbl.OptParam dataInformation, ClusRuleSet rset) {
+    public DEAlgorithm(ClusStatManager stat_mgr, OptimizationProblem.OptimizationParameter dataInformation, ClusRuleSet rset) {
         super(stat_mgr);
-        m_DeProbl = new DeProbl(stat_mgr, dataInformation, rset);
-        m_Pop = new DePop(stat_mgr, m_DeProbl);
+        m_DeProbl = new DEProblem(stat_mgr, dataInformation, rset);
+        m_Pop = new DEPopulation(stat_mgr, m_DeProbl);
         // m_StatMgr = stat_mgr;
         // m_Probl = new OptimProbl(stat_mgr, parameters);
         // ClusStatistic tar_stat = m_StatMgr.getStatistic(AttributeUseType.Target);
@@ -84,7 +84,7 @@ public class DeAlg extends OptAlg {
             // (new FileOutputStream("evol.pop")));
             m_Pop.createFirstPop();
             num_eval = m_Pop.evaluatePop(0);
-            m_Best = new DeInd();
+            m_Best = new DEIndividual();
             m_Best.copy(m_Pop.m_Inds.get(0));
             for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
                 checkIfBest(m_Pop.m_Inds.get(i));
@@ -95,7 +95,7 @@ public class DeAlg extends OptAlg {
             while (num_eval < getSettings().getRules().getOptDENumEval()) {
                 System.out.print(".");
                 m_Pop.sortPopRandom();
-                DeInd candidate = new DeInd();
+                DEIndividual candidate = new DEIndividual();
 
                 // Go trough all the population and try to find a candidate with crossing over.
                 for (int i = 0; i < getSettings().getRules().getOptDEPopSize(); i++) {
@@ -135,7 +135,7 @@ public class DeAlg extends OptAlg {
      * Checks if the individual is the new best. Replaces
      * if this is the case.
      */
-    public void checkIfBest(DeInd ind) {
+    public void checkIfBest(DEIndividual ind) {
         if (m_Best.m_Fitness > ind.m_Fitness) {
             m_Best.copy(ind);
         }
@@ -143,7 +143,7 @@ public class DeAlg extends OptAlg {
 
 
     /** Print the gene to output file. */
-    public void OutputLog(DeInd ind, int index, PrintWriter wrt) {
+    public void OutputLog(DEIndividual ind, int index, PrintWriter wrt) {
     	ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         wrt.print("" + fr.format(index));
         wrt.print("\t");

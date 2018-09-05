@@ -106,7 +106,7 @@ public class AbsoluteError extends ClusNumericError {
 
     @Override
     public void showModelError(PrintWriter out, int detail) {
-    	ClusNumberFormat fr = getFormat();
+        ClusNumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
         buf.append(showDoubleArray(m_AbsError, getNbExamples()));
         if (m_Dim > 1) {
@@ -122,14 +122,14 @@ public class AbsoluteError extends ClusNumericError {
 
 
     public void showSummaryError(PrintWriter out, boolean detail) {
-    	ClusNumberFormat fr = getFormat();
+        ClusNumberFormat fr = getFormat();
         double ss_def = 0.0;
         double ss_tree = 0.0;
         for (int i = 0; i < m_Dim; i++) {
             ss_tree += m_AbsError[i];
             ss_def += m_AbsDefError[i];
         }
-        double re = ss_def != 0.0 ? ss_tree / ss_def : 0.0;
+        double re = ss_def != 0d ? ss_tree / ss_def : 0d;
         out.println(getPrefix() + "Sum over components RE: " + fr.format(re) + " = " + fr.format(ss_tree) + " / " + fr.format(ss_def));
     }
 

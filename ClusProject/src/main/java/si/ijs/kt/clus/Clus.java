@@ -280,17 +280,15 @@ public class Clus implements CMDLineArgsProvider {
         loadConstraintFile();
         initializeSummary(clss);
 
-        if (m_Sett.getGeneral().getVerbose() > 0)
-            ClusLogger.info();
-
         // Sample data
         if (cargs.hasOption("sample")) {
             String svalue = cargs.getOptionValue("sample");
             sample(svalue);
         }
 
-        if (m_Sett.getGeneral().getVerbose() > 0)
+        if (m_Sett.getGeneral().getVerbose() > 0) {
             ClusLogger.info("Has missing values: " + m_Schema.hasMissing());
+        }
 
         if (ResourceInfo.isLibLoaded()) {
             ClusLogger.info("Memory usage: loading data took " + (ClusStat.m_LoadedMemory - ClusStat.m_InitialMemory) + " kB");
@@ -480,7 +478,6 @@ public class Clus implements CMDLineArgsProvider {
         ClusLogger.info("Time: " + (new SimpleDateFormat("dd. MM. yyyy HH:mm:ss")).format(Calendar.getInstance().getTime()));
         ClusLogger.info("Run: " + cr.getIndexString());
         clss.printInfo();
-        ClusLogger.info("");
 
         clss.induceAll(cr);
     }
@@ -874,7 +871,6 @@ public class Clus implements CMDLineArgsProvider {
                 if (mi != null && mi.getModel() != null) {
                     ClusModel model = mi.getModel();
                     ClusStatistic pred = model.predictWeighted(tuple);
-
                     ClusErrorList err = mi.getError(type);
                     if (err != null)
                         err.addExample(tuple, pred);
@@ -1052,8 +1048,9 @@ public class Clus implements CMDLineArgsProvider {
         // Check if variance = 0 i.e. all values are the same
         double[] prevAcceptedValue = new double[numTypes.length];
 
-        for (int i = 0; i < prevAcceptedValue.length; i++)
+        for (int i = 0; i < prevAcceptedValue.length; i++) {
             prevAcceptedValue[i] = Double.NaN;
+        }
 
         // Computing the means
         for (int iRow = 0; iRow < data.getNbRows(); iRow++) {
@@ -1064,8 +1061,9 @@ public class Clus implements CMDLineArgsProvider {
                 if (!Double.isNaN(value) && !Double.isInfinite(value)) { // Value not given
 
                     // Check if variance is zero
-                    if (!Double.isNaN(prevAcceptedValue[jNumAttrib]) && prevAcceptedValue[jNumAttrib] != value)
+                    if (!Double.isNaN(prevAcceptedValue[jNumAttrib]) && prevAcceptedValue[jNumAttrib] != value) {
                         varIsNonZero[jNumAttrib] = true;
+                    }
 
                     prevAcceptedValue[jNumAttrib] = value;
                     means[jNumAttrib] += value;
@@ -1079,10 +1077,13 @@ public class Clus implements CMDLineArgsProvider {
             if (nbOfValidValues[jNumAttrib] == 0) {
                 nbOfValidValues[jNumAttrib] = 1; // Do not divide with zero
             }
-            if (!varIsNonZero[jNumAttrib]) // if variance = 0, do not do any floating point computation
+
+            if (!varIsNonZero[jNumAttrib]) {// if variance = 0, do not do any floating point computation
                 means[jNumAttrib] = prevAcceptedValue[jNumAttrib];
-            else
+            }
+            else {
                 means[jNumAttrib] /= nbOfValidValues[jNumAttrib];
+            }
         }
 
         /** Variance for each of the attributes */
@@ -1094,8 +1095,9 @@ public class Clus implements CMDLineArgsProvider {
 
             for (int jNumAttrib = 0; jNumAttrib < numTypes.length; jNumAttrib++) {
                 double value = numTypes[jNumAttrib].getNumeric(tuple);
-                if (!Double.isNaN(value) && !Double.isInfinite(value)) // Value not given
+                if (!Double.isNaN(value) && !Double.isInfinite(value)) { // Value not given
                     variance[jNumAttrib] += Math.pow(value - means[jNumAttrib], 2.0);
+                }
             }
         }
 
@@ -1810,24 +1812,23 @@ public class Clus implements CMDLineArgsProvider {
 
     public static void main(String[] args) {
         try {
-       
+
             Clus clus = new Clus();
             Settings sett = clus.getSettings();
             CMDLineArgs cargs = new CMDLineArgs(clus);
             cargs.process(args);
 
-        	if (cargs.hasOption("copying")) {
-        	    ClusMisc.printGPL();
+            if (cargs.hasOption("copying")) {
+                ClusMisc.printGPL();
                 System.exit(0);
             }
             else if (cargs.getNbMainArgs() == 0) {
                 clus.showHelp();
                 System.exit(0);
             }
-            
+
             ClusMisc.printHeader(cargs.hasOption("silent"));
 
-            
             if (cargs.allOK()) {
                 sett.getGeneric().setDate(new Date());
                 sett.getGeneric().setAppName(cargs.getMainArg(0));
@@ -1852,7 +1853,8 @@ public class Clus implements CMDLineArgsProvider {
                  */
                 if (cargs.hasOption("relief")) {
                     clus.getSettings().getRelief().setSectionReliefEnabled(true);
-                    clus.getSettings().getKNN().setSectionKNNEnabled(true); // Relief and kNN settings have a non-empty intersection
+                    clus.getSettings().getKNN().setSectionKNNEnabled(true); // Relief and kNN settings have a non-empty
+                                                                            // intersection
                     clus.getSettings().getOutput().setOutValidError(false);
                     clus.getSettings().getOutput().setOutTrainError(false);
                     clus.getSettings().getOutput().setOutTestError(false);

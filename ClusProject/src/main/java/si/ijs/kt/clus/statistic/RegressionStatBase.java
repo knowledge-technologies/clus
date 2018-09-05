@@ -39,6 +39,7 @@ import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSAlgorithmType;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleVotingType;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
@@ -95,7 +96,9 @@ public abstract class RegressionStatBase extends ClusStatistic {
     public void addPrediction(ClusStatistic other, double weight) {
         RegressionStatBase or = (RegressionStatBase) other;
         for (int i = 0; i < m_NbAttrs; i++) {
-            m_Means[i] += weight * or.m_Means[i];
+            if (!Double.isNaN(or.m_Means[i])) {
+                m_Means[i] += weight * or.m_Means[i];
+            }
         }
     }
 
@@ -410,10 +413,10 @@ public abstract class RegressionStatBase extends ClusStatistic {
         reset();
         m_Means = new double[m_NbAttrs];
         int nb_votes = votes.size();
-        for (int j = 0; j < nb_votes; j++) {
-            RegressionStatBase vote = (RegressionStatBase) votes.get(j);
-            for (int i = 0; i < m_NbAttrs; i++) {
-                m_Means[i] += vote.getMean(i) / nb_votes;
+        for (int model = 0; model < nb_votes; model++) {
+            RegressionStatBase vote = (RegressionStatBase) votes.get(model);
+            for (int target = 0; target < m_NbAttrs; target++) {
+                m_Means[target] += vote.getMean(target) / nb_votes;
             }
         }
     }
@@ -426,20 +429,20 @@ public abstract class RegressionStatBase extends ClusStatistic {
 
         m_Means = new double[m_NbAttrs];
         int nb_votes = votes.size();
-        for (int j = 0; j < nb_votes; j++) {
-            RegressionStatBase vote = (RegressionStatBase) votes.get(j);
+        for (int model = 0; model < nb_votes; model++) {
+            RegressionStatBase vote = (RegressionStatBase) votes.get(model);
             switch (evt) {
                 case OOBModelWeighted:
-                    for (int i = 0; i < m_NbAttrs; i++) {
-                        m_Means[i] += vote.m_Means[i] * weights.getModelWeight(j);
+                    for (int target = 0; target < m_NbAttrs; target++) {
+                        m_Means[target] += vote.getMean(target) * weights.getModelWeight(model);
                     }
                     break;
 
                 case OOBTargetWeighted:
-                    for (int i = 0; i < m_NbAttrs; i++) {
-                        m_Means[i] += vote.m_Means[i] * weights.getComponentWeight(j, i);
-                    }
 
+                    for (int target = 0; target < m_NbAttrs; target++) {
+                        m_Means[target] += vote.getMean(target) * weights.getComponentWeight(model, target);
+                    }
                     break;
 
                 default:
@@ -455,16 +458,36 @@ public abstract class RegressionStatBase extends ClusStatistic {
         reset();
         m_Means = new double[m_NbAttrs];
         double[] coverage = ROSForestInfo.getCoverage();
+        EnsembleROSAlgorithmType at = getSettings().getEnsemble().getEnsembleROSAlgorithmType();
 
-        for (int j = 0; j < votes.size(); j++) {
-            RegressionStatBase vote = (RegressionStatBase) votes.get(j);
+        for (int model = 0; model < votes.size(); model++) {
+            RegressionStatBase vote = (RegressionStatBase) votes.get(model);
 
-            ClusROSModelInfo info = ROSForestInfo.getROSModelInfo(j);
+            ClusROSModelInfo info = ROSForestInfo.getROSModelInfo(model);
 
-            for (Integer i : info.getTargets()) {
-                m_Means[i] += vote.m_Means[i] / coverage[i];
+            switch (at) {
+                case FixedSubspaces:
+                case DynamicSubspaces:
+                    for (Integer target : info.getTargets()) {
+                        m_Means[target] += vote.getMean(target) / coverage[target];
+                    }
+
+                    /*
+                     * If we do not have a model that predicts a certain target, we cannot make predictions for that
+                     * target.
+                     * In those cases, we predict the mean value of all predictions that target (i.e., normal voting)
+                     */
+                    for (Integer target : ROSForestInfo.getTargetsNotLearned()) {
+                        m_Means[target] += vote.getMean(target) / votes.size();
+                    }
+
+                    break;
+
+                default:
+                    throw new RuntimeException("ROS algorithm type not defined! si.ijs.kt.clus.statistic.RegressionStatBase.vote(ArrayList<ClusStatistic>, ClusROSForestInfo)");
             }
         }
+
     }
 
 
@@ -472,27 +495,23 @@ public abstract class RegressionStatBase extends ClusStatistic {
     public void vote(ArrayList<ClusStatistic> votes, ClusOOBWeights weights, ClusROSForestInfo ROSForestInfo) {
         reset();
         m_Means = new double[m_NbAttrs];
-        double[] coverage = ROSForestInfo.getCoverage();
-        EnsembleVotingType evt = getSettings().getEnsemble().getEnsembleVotingType();
 
-        for (int j = 0; j < votes.size(); j++) {
-            RegressionStatBase vote = (RegressionStatBase) votes.get(j);
+        for (int model = 0; model < votes.size(); model++) {
+            RegressionStatBase vote = (RegressionStatBase) votes.get(model);
 
-            ClusROSModelInfo info = ROSForestInfo.getROSModelInfo(j);
-            switch (evt) {
-                case OOBModelWeighted:
-                    for (Integer i : info.getTargets()) {
-                        m_Means[i] += vote.m_Means[i] * weights.getModelWeight(j);
-                    }
-                    break;
-                case OOBTargetWeighted:
-                    for (Integer i : info.getTargets()) {
-                        m_Means[i] += vote.m_Means[i] * weights.getComponentWeight(j, i);
-                    }
-                    break;
-                default:
-                    throw new RuntimeException("OOB voting not defined! si.ijs.kt.clus.statistic.RegressionStatBase.vote(ArrayList<ClusStatistic>, ClusOOBWeights, ClusROSForestInfo)");
+            ClusROSModelInfo info = ROSForestInfo.getROSModelInfo(model);
 
+            for (Integer target : info.getTargets()) {
+                m_Means[target] += vote.getMean(target) * weights.getComponentWeight(model, target);
+            }
+
+            /*
+             * If we do not have a model that predicts a certain target, we cannot make predictions for that target.
+             * In those cases, we predict the mean value of all predictions that target (i.e., normal voting)
+             */
+            for (Integer target : ROSForestInfo.getTargetsNotLearned()) {
+                /* here, we use all models */
+                m_Means[target] += vote.getMean(target) * weights.getComponentWeight(model, target);
             }
         }
     }

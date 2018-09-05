@@ -60,7 +60,7 @@ import si.ijs.kt.clus.util.format.ClusNumberFormat;
  * @author Timo Aho
  * @author Tea Tusar
  */
-public class OptProbl {
+public class OptimizationProblem {
 
     /**
      * A regression prediction for initialization.
@@ -75,13 +75,13 @@ public class OptProbl {
      * The default prediction is used, if no other rule covers the instance.
      * See m_RulePred and m_TrueVal for what the indices mean.
      */
-    static public class OptParam {
+    static public class OptimizationParameter {
 
         /** An empty class */
-        public OptParam(int nbRule, int nbOtherBaseFunc, int nbInst, int nbTarg, ImplicitLinearTerms implicitLinTerms) {
+        public OptimizationParameter(int nbRule, int nbOtherBaseFunc, int nbInst, int nbTarg, ImplicitLinearTerms implicitLinTerms) {
             m_rulePredictions = new RulePred[nbRule];
             for (int jRul = 0; jRul < nbRule; jRul++) {
-                m_rulePredictions[jRul] = new OptProbl.RulePred(nbInst, nbTarg);
+                m_rulePredictions[jRul] = new OptimizationProblem.RulePred(nbInst, nbTarg);
             }
             // m_baseFuncPredictions = new double[nbOtherBaseFunc][nbInst][nbTarg][1]; m_trueValues = new
             // double[nbInst][nbTarg];}
@@ -91,7 +91,7 @@ public class OptProbl {
         }
 
 
-        public OptParam(RulePred[] rulePredictions, double[][][][] predictions, TrueValues[] trueValues, ImplicitLinearTerms implicitLinTerms) {
+        public OptimizationParameter(RulePred[] rulePredictions, double[][][][] predictions, TrueValues[] trueValues, ImplicitLinearTerms implicitLinTerms) {
             m_rulePredictions = rulePredictions;
             m_baseFuncPredictions = predictions;
             m_trueValues = trueValues;
@@ -133,11 +133,12 @@ public class OptProbl {
             m_prediction = new double[nbTarg][1];
         }
 
-
-        public RulePred(BitSet cover, double[][] prediction) {
-            m_cover = cover;
-            m_prediction = prediction;
-        }
+        /*
+         * public RulePred(BitSet cover, double[][] prediction) {
+         * m_cover = cover;
+         * m_prediction = prediction;
+         * }
+         */
 
         // public boolean[] m_cover; // [instance] that are covered
         public BitSet m_cover; // [instance] that are covered
@@ -221,7 +222,7 @@ public class OptProbl {
      * @param isClassification
      *        Is it classification or regression?
      */
-    public OptProbl(ClusStatManager stat_mgr, OptParam optInfo) {
+    public OptimizationProblem(ClusStatManager stat_mgr, OptimizationParameter optInfo) {
         m_StatMgr = stat_mgr;
 
         m_saveMemoryLinears = getSettings().getRules().getOptAddLinearTerms().equals(OptimizationGDAddLinearTerms.YesSaveMemory);
@@ -231,8 +232,9 @@ public class OptProbl {
             int nbOfDescrAtts = m_StatMgr.getSchema().getNumericAttrUse(AttributeUseType.Descriptive).length;
             m_NumVar = (optInfo.m_baseFuncPredictions).length + (optInfo.m_rulePredictions).length + nbOfTargetAtts * nbOfDescrAtts;
         }
-        else
+        else {
             m_NumVar = (optInfo.m_baseFuncPredictions).length + (optInfo.m_rulePredictions).length;
+        }
 
         // May be null if not used
         m_LinTermMemSavePred = optInfo.m_implicitLinearTerms;
@@ -262,15 +264,16 @@ public class OptProbl {
                 // double[] means = computeMeans(varIsNonZero, valuesFor0Variance);
                 // m_TargetNormFactor = computeOptNormFactors(means, varIsNonZero, valuesFor0Variance);
                 m_TargetNormFactor = initNormFactors(getNbOfTargets(), getSettings());
-                if (!getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling))
+                if (!getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling)) {
                     m_TargetAvg = initMeans(getNbOfTargets());
+                }
             }
         }
     }
 
 
     /** Splits data into validation and training sets randomly */
-    static protected void splitDataIntoValAndTrainSet(ClusStatManager stat_mgr, OptParam origData, OptParam valData, OptParam trainData) {
+    static protected void splitDataIntoValAndTrainSet(ClusStatManager stat_mgr, OptimizationParameter origData, OptimizationParameter valData, OptimizationParameter trainData) {
 
         Settings set = stat_mgr.getSettings();
         int nbRows = origData.m_trueValues.length;
@@ -296,13 +299,14 @@ public class OptProbl {
             // Search for the real index when duplicates are not taken into account
             // Thus skip the instance in indexOfUnUsedInstance if it is already taken
             for (int indexOfUnUsedInstance = 0; indexOfUnUsedInstance < newIndex; iNewTestInstance++) {
-                if (!selectedInstances[iNewTestInstance])
-
+                if (!selectedInstances[iNewTestInstance]) {
                     indexOfUnUsedInstance++;
+                }
             }
             // Still if we ended up to selected index, skip all the selected
-            while (selectedInstances[iNewTestInstance])
+            while (selectedInstances[iNewTestInstance]) {
                 iNewTestInstance++;
+            }
 
             // Here we should have in iNewTestInstance the 'newIndex'th unused instance
             selectedInstances[iNewTestInstance] = true;
@@ -319,11 +323,10 @@ public class OptProbl {
             }
 
             for (int iRule = 0; iRule < origData.m_rulePredictions.length; iRule++) {
-                if (origData.m_rulePredictions[iRule].m_cover.get(iNewTestInstance))
+                if (origData.m_rulePredictions[iRule].m_cover.get(iNewTestInstance)) {
                     valData.m_rulePredictions[iRule].m_cover.set(iTestSetInstance);
-
+                }
             }
-
         }
 
         /** Index for the rest array */
@@ -340,7 +343,6 @@ public class OptProbl {
                 }
 
                 for (int iRule = 0; iRule < origData.m_rulePredictions.length; iRule++) {
-
                     if (origData.m_rulePredictions[iRule].m_cover.get(iInstance))
                         trainData.m_rulePredictions[iRule].m_cover.set(iInstanceRestIndex);
                 }
@@ -365,7 +367,6 @@ public class OptProbl {
         // want to use it
         set.getRules().setOptRegPar(0);
         set.getRules().setOptNbZeroesPar(0);
-
     }
 
 
@@ -449,31 +450,38 @@ public class OptProbl {
                 }
                 else {
                     // For regression initialize to zero.
-                    pred[iInstance][iTarget] = 0;
-                    pred_sum[iTarget][0] = 0;
+                    pred[iInstance][iTarget] = 0d;
+                    pred_sum[iTarget][0] = 0d;
                 }
             }
 
             boolean covered = false; // Is the instance covered
 
             // An index over the weights for the rules (variables to optimize)
+            double px;
+
             for (int iRule = 0; iRule < getNumVar(); iRule++) {
-                if (genes.get(iRule).doubleValue() != 0) {
-                    // An index over the targets of an instance (for multi targeted environments)
-                    for (int iTarget = indFirstTarget; iTarget <= indLastTarget; iTarget++) {
-                        // An index over the possible values of nominal attribute. 1 for regression
-                        for (int iClass = 0; iClass < nb_values[iTarget]; iClass++) {
-                            if (isCovered(iRule, iInstance)) {
-                                covered = true;
+                if (genes.get(iRule).doubleValue() != 0d) {
+
+                    if (isCovered(iRule, iInstance)) {
+                        
+                        // An index over the targets of an instance (for multi targeted environments)
+                        for (int iTarget = indFirstTarget; iTarget <= indLastTarget; iTarget++) {
+                            // An index over the possible values of nominal attribute. 1 for regression
+                            for (int iClass = 0; iClass < nb_values[iTarget]; iClass++) {
 
                                 // For each nominal value and target, add variable
                                 // <current optimized parameter value>*<strenght of nominal value> OR
                                 // <current optimized parameter value>*<regression prediction for rule>
                                 // I.e. this is the real prediction function - weighted sum over the rules
-                                pred_sum[iTarget][iClass] += genes.get(iRule).doubleValue()
-                                        // * m_RulePred[iRule][iInstance][iTarget][iClass];
-                                        * getPredictionsWhenCovered(iRule, iInstance, iTarget, iClass);
+                                px = getPredictionsWhenCovered(iRule, iInstance, iTarget, iClass);
 
+                                covered = true;
+
+                                // When using ROS with SubspaceAveraging, some targets are not predicted
+                                if (!Double.isNaN(px)) {
+                                    pred_sum[iTarget][iClass] += genes.get(iRule).doubleValue() * px;
+                                }
                             }
                         }
                     }
@@ -515,6 +523,10 @@ public class OptProbl {
         }
         else { // For regression
             loss = loss(pred, iFitnessTarget);
+
+            if (Double.isNaN(loss)) {
+                int a = 3;
+            }
         }
 
         // Regularization for getting the weights as small as possible
@@ -533,7 +545,6 @@ public class OptProbl {
         // TODO: regularization penalty should include dispersion, coverage?
 
         return loss + reg_penalty + nbOfZeroes_penalty;
-
     }
 
 
@@ -686,22 +697,20 @@ public class OptProbl {
 
         // If one target given
         if (indTarget != -1) {
-
             for (int iInstance = 0; iInstance < numberOfInstances; iInstance++) {
                 loss += Math.pow(getTrueValue(iInstance, indTarget) - prediction[iInstance][indTarget], 2);
             }
-
         }
         else {
             int numberOfTargets = prediction[0].length;
+            double attributeLoss;
+
             for (int jTarget = 0; jTarget < numberOfTargets; jTarget++) {
-                double attributeLoss = 0; // Loss for one attribute.
+
+                // Loss for one attribute
+                attributeLoss = 0d;
+
                 for (int iInstance = 0; iInstance < numberOfInstances; iInstance++) {
-                    // Missing values? if (!Double.isNaN(trueValue[iInstance][jTarget])) {
-                    // if (iInstance == 68) {
-                    // boolean debug = false;
-                    // debug = true;
-                    // }
                     attributeLoss += Math.pow(getTrueValue(iInstance, jTarget) - prediction[iInstance][jTarget], 2);
                 }
 
@@ -709,7 +718,7 @@ public class OptProbl {
                     attributeLoss /= getNormFactor(jTarget);
                 }
 
-                loss += ((double) 1) / (2 * numberOfTargets) * attributeLoss;
+                loss += 1d / (2d * numberOfTargets) * attributeLoss;
             }
         }
         return loss / numberOfInstances; // Average loss over instances
@@ -929,14 +938,13 @@ public class OptProbl {
     /**
      * Value of base function prediction. Can be used also for nominal attributes
      * when we already know that instance is covered! Use isCovered for this.
-     * If used right, gives always prediction.
+     * If used right, always gives prediction.
      */
     final protected double getPredictionsWhenCovered(int iRule, int iInstance, int iTarget, int iClass) {
         if (!isRuleTerm(iRule)) {
             if (m_saveMemoryLinears) {
-                return m_LinTermMemSavePred.predict(iRule - m_RulePred.length, m_TrueVal[iInstance].m_dataExample, iTarget, m_RulePred[0].m_prediction.length); // Nb
-                                                                                                                                                                // of
-                                                                                                                                                                // targets.
+                /* Nb of targets */
+                return m_LinTermMemSavePred.predict(iRule - m_RulePred.length, m_TrueVal[iInstance].m_dataExample, iTarget, m_RulePred[0].m_prediction.length);
             }
             else {
                 return m_BaseFuncPred[iRule - m_RulePred.length][iInstance][iTarget][iClass];
@@ -975,7 +983,7 @@ public class OptProbl {
      * that it does not use member functions.
      * OBSOLETE, does not take into account target avg even if it should!
      * 
-
+     * 
      */
     final private TrueValues[] getTrueValues() {
         return m_TrueVal;
@@ -1001,7 +1009,7 @@ public class OptProbl {
      * Change the data used for learning. This is used if part of the data
      * is used for e.g. testing.
      */
-    final protected void changeData(OptParam newData) {
+    final protected void changeData(OptimizationParameter newData) {
         m_BaseFuncPred = newData.m_baseFuncPredictions;
         m_RulePred = newData.m_rulePredictions;
         // m_defaultPred = newData.m_defaultPrediction;
@@ -1035,10 +1043,12 @@ public class OptProbl {
     static protected double[] initNormFactors(int nbTargs, Settings sett) {
         double[] scaleFactor = new double[nbTargs];
         for (int iTarget = 0; iTarget < nbTargs; iTarget++) {
-            if (sett.getRules().getOptNormalization().equals(OptimizationNormalization.YesVariance))
+            if (sett.getRules().getOptNormalization().equals(OptimizationNormalization.YesVariance)) {
                 scaleFactor[iTarget] = Math.pow(RuleNormalization.getTargStdDev(iTarget), 4); // Math.pow(variance,2.0);
-            else // std dev
+            }
+            else {// std dev
                 scaleFactor[iTarget] = 4 * Math.pow(RuleNormalization.getTargStdDev(iTarget), 2); // 4*variance;
+            }
         }
         return scaleFactor;
     }
@@ -1075,7 +1085,7 @@ public class OptProbl {
      * Returns target dimension for linear term with this index.
      * 
      * @param iLinTerm
-
+     * 
      */
     final protected int getLinTargetDim(int iLinTerm) {
         return (iLinTerm - m_RulePred.length) % getNbOfTargets();
@@ -1086,7 +1096,7 @@ public class OptProbl {
      * Returns descriptive dimension for linear term with this index.
      * 
      * @param iLinTerm
-
+     * 
      */
     final protected int getLinDescrDim(int iLinTerm) {
         return (int) Math.floor((double) (iLinTerm - m_RulePred.length) / getNbOfTargets());
@@ -1103,6 +1113,7 @@ public class OptProbl {
         // Change only the first rule, this changes the overall average of predictions
         // The first rule should now include the averages in practice, check this
         for (int iTarg = 0; iTarg < getNbOfTargets(); iTarg++) {
+
             if (getPredictionsWhenCovered(0, 0, iTarg) != getMean(iTarg)) {
                 System.err.println("Error: Difference in preparePredictionsForNormalization for target nb " + iTarg + ". The values are " + getPredictionsWhenCovered(0, 0, iTarg) + " and " + getMean(iTarg));
                 System.exit(1);
@@ -1112,7 +1123,7 @@ public class OptProbl {
 
         // DEBUG, after the changes, print these again!
         // If you want to check these, put early stop amount to 0
-        if (GDProbl.m_printGDDebugInformation) {
+        if (GDProblem.m_printGDDebugInformation) {
             String fname = getSettings().getData().getDataFile();
 
             PrintWriter wrt_pred = null;

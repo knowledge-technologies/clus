@@ -30,7 +30,7 @@ import si.ijs.kt.clus.main.ClusStatManager;
  * @author Tea Tusar
  * @author Timo Aho modified for multi target use 10.11.2008.
  */
-public class DeProbl extends si.ijs.kt.clus.util.tools.optimization.OptProbl {
+public class DEProblem extends si.ijs.kt.clus.util.tools.optimization.OptimizationProblem {
 
   /** Min value of each variable range */
   private ArrayList<Double> m_VarMin;
@@ -45,7 +45,7 @@ public class DeProbl extends si.ijs.kt.clus.util.tools.optimization.OptProbl {
    * @param dataInformation The true values and predictions for the instances. These are used by
    *     OptimProbl. The optimization procedure is based on this data information
    */
-  public DeProbl(ClusStatManager stat_mgr, OptParam optInfo, ClusRuleSet rset) {
+  public DEProblem(ClusStatManager stat_mgr, OptimizationParameter optInfo, ClusRuleSet rset) {
     super(stat_mgr, optInfo);
 
     m_VarMin = new ArrayList<Double>(getNumVar());

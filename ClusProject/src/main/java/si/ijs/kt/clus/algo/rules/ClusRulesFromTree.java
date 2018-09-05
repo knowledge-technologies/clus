@@ -31,20 +31,22 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.ext.optiontree.ClusOptionNode;
 import si.ijs.kt.clus.ext.optiontree.ClusSplitNode;
 import si.ijs.kt.clus.ext.optiontree.MyNode;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.RulePredictionMethod;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.model.test.NodeTest;
 import si.ijs.kt.clus.util.exception.ClusException;
-import si.ijs.kt.clus.util.tools.optimization.GDAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptAlg;
-import si.ijs.kt.clus.util.tools.optimization.OptProbl;
-import si.ijs.kt.clus.util.tools.optimization.de.DeAlg;
+import si.ijs.kt.clus.util.tools.optimization.GDAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
+import si.ijs.kt.clus.util.tools.optimization.de.DEAlgorithm;
 
 
 /**
@@ -105,30 +107,33 @@ public class ClusRulesFromTree {
 
         // Optimizing rule set if needed
         if (optimizeRuleWeights.equals(RulePredictionMethod.Optimized) || optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
-            OptAlg optAlg = null;
+            OptimizationAlgorithm optAlg = null;
 
-            OptProbl.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
+            OptimizationProblem.OptimizationParameter param = ruleSet.giveFormForWeightOptimization(null, data);
 
             // Find the rule weights with optimization algorithm.
             if (optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
-                optAlg = new GDAlg(mgr, param, ruleSet);
+                optAlg = new GDAlgorithm(mgr, param, ruleSet);
             }
             else {
-                optAlg = new DeAlg(mgr, param, ruleSet);
+                optAlg = new DEAlgorithm(mgr, param, ruleSet);
             }
 
             ArrayList<Double> weights = optAlg.optimize();
 
-            // Print weights of rules
-            System.out.print("The weights for rules from trees:");
             for (int j = 0; j < ruleSet.getModelSize(); j++) {
                 ruleSet.getRule(j).setOptWeight(weights.get(j).doubleValue());
-                System.out.print(weights.get(j).doubleValue() + "; ");
             }
-            System.out.print(System.lineSeparator());
+
+            /*
+             * // Print weights of rules
+             * for (int j = 0; j < ruleSet.getModelSize(); j++) {
+             * ruleSet.getRule(j).setOptWeight(weights.get(j).doubleValue());
+             * System.out.print(weights.get(j).doubleValue() + "; ");
+             * }
+             */
+
             ruleSet.removeLowWeightRules();
-            // RowData data_copy = (RowData)data.cloneData();
-            // updateDefaultRule(rset, data_copy);
         }
 
         if (computeDispersion) {
@@ -162,16 +167,16 @@ public class ClusRulesFromTree {
 
         // Optimizing rule set if needed
         if (optimizeRuleWeights.equals(RulePredictionMethod.Optimized) || optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
-            OptAlg optAlg = null;
+            OptimizationAlgorithm optAlg = null;
 
-            OptProbl.OptParam param = ruleSet.giveFormForWeightOptimization(null, data);
+            OptimizationProblem.OptimizationParameter param = ruleSet.giveFormForWeightOptimization(null, data);
 
             // Find the rule weights with optimization algorithm.
             if (optimizeRuleWeights.equals(RulePredictionMethod.GDOptimized)) {
-                optAlg = new GDAlg(mgr, param, ruleSet);
+                optAlg = new GDAlgorithm(mgr, param, ruleSet);
             }
             else {
-                optAlg = new DeAlg(mgr, param, ruleSet);
+                optAlg = new DEAlgorithm(mgr, param, ruleSet);
             }
 
             ArrayList<Double> weights = optAlg.optimize();
@@ -221,12 +226,38 @@ public class ClusRulesFromTree {
      * @param mgr
      *        The data in statistics manager may be used
      * @return Rule set.
+     * @throws ClusException
      */
-    public ClusRuleSet constructRules(ClusNode node, ClusStatManager mgr) {
+    public ClusRuleSet constructRules(ClusNode node, ClusStatManager mgr) throws ClusException {
         ClusRuleSet ruleSet = new ClusRuleSet(mgr);
         ClusRule init = new ClusRule(mgr);
-        // ClusLogger.info("Constructing rules from a tree.");
+
         constructRecursive(node, init, ruleSet);
+
+        boolean useRulesWithTotalAveraging = mgr.getSettings().getRules().getROSAddRulesWithTotalAveraging(); 
+
+        // ROS
+        if (mgr.getSettings().getEnsemble().isEnsembleROSEnabled() && mgr.getSettings().getEnsemble().getEnsembleROSVotingType().equals(EnsembleROSVotingType.SubspaceAveraging)) {
+            ClusROSModelInfo info = node.getROSModelInfo();
+            ClusRuleSet rsOriginal = null;
+
+            // if ROSVotingType=SubspaceAveraging AND ROSAlgorithmType=Fixed, then first bag takes all attributes
+            // we dont want duplicates
+            if (useRulesWithTotalAveraging && info.getTargets().size() != node.getTargetStat().getNbAttributes()) {
+                rsOriginal = ruleSet.cloneDeep();
+            }
+
+            // set ROS info for rules that predict only subset of targets
+            for (ClusRule rule : ruleSet.getRules()) {
+                rule.setROSModelInfo(info);
+                rule.postProc();
+            }
+
+            if (rsOriginal != null) {
+                ruleSet.addRuleSet(rsOriginal);
+            }
+        }
+
         ruleSet.removeEmptyRules();
         ruleSet.simplifyRules();
         ruleSet.setTargetStat(node.getTargetStat());
@@ -238,7 +269,7 @@ public class ClusRulesFromTree {
     public ClusRuleSet constructOptionRules(MyNode node, ClusStatManager mgr) {
         ClusRuleSet ruleSet = new ClusRuleSet(mgr);
         ClusRule init = new ClusRule(mgr);
-        // ClusLogger.info("Constructing rules from an option tree.");
+
         constructRecursiveOption(node, init, ruleSet);
         ruleSet.removeEmptyRules();
         ruleSet.simplifyRules();

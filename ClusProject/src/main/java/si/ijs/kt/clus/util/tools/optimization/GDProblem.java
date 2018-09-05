@@ -32,7 +32,10 @@ import java.util.BitSet;
 import java.util.LinkedList;
 import java.util.ListIterator;
 
+import si.ijs.kt.clus.algo.rules.ClusRuleSet;
+import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.main.ClusStatManager;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDMTCombineGradient;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
@@ -47,7 +50,7 @@ import si.ijs.kt.clus.util.format.ClusNumberFormat;
  * 
  * @author Timo Aho
  */
-public class GDProbl extends OptProbl {
+public class GDProblem extends OptimizationProblem {
 
     /** Do we print debugging information. */
     static protected boolean m_printGDDebugInformation = false;
@@ -118,7 +121,9 @@ public class GDProbl extends OptProbl {
     // protected OptParam m_dataEarlyStop;
 
     /** New problem for computing fitness function with the early stop data */
-    protected OptProbl m_earlyStopProbl;
+    protected OptimizationProblem m_earlyStopProbl;
+
+    protected ClusRuleSet m_ruleSet = null;
 
 
     /**
@@ -132,8 +137,10 @@ public class GDProbl extends OptProbl {
      * @param isClassification
      *        Is it classification or regression?
      */
-    public GDProbl(ClusStatManager stat_mgr, OptParam optInfo) {
+    public GDProblem(ClusStatManager stat_mgr, OptimizationParameter optInfo, ClusRuleSet rset) {
         super(stat_mgr, optInfo);
+
+        this.m_ruleSet = rset;
 
         // If needed, prepares for norm. Has to be done after normalization computation and before covariance computing.
         // May be safe to do this before splitting validation set (if default rule is used stored/used in validation set
@@ -146,23 +153,19 @@ public class GDProbl extends OptProbl {
             int nbDataTest = (int) Math.ceil(getNbOfInstances() * getSettings().getRules().getOptGDEarlyStopAmount());
 
             // Create the early stopping data variables.
-            OptParam dataEarlyStop = new OptParam(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbDataTest, getNbOfTargets(), optInfo.m_implicitLinearTerms);
-            OptParam trainingSet = new OptParam(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, getNbOfInstances() - nbDataTest, getNbOfTargets(), optInfo.m_implicitLinearTerms);
+            OptimizationParameter dataEarlyStop = new OptimizationParameter(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, nbDataTest, getNbOfTargets(), optInfo.m_implicitLinearTerms);
+            OptimizationParameter trainingSet = new OptimizationParameter(optInfo.m_rulePredictions.length, optInfo.m_baseFuncPredictions.length, getNbOfInstances() - nbDataTest, getNbOfTargets(), optInfo.m_implicitLinearTerms);
             splitDataIntoValAndTrainSet(stat_mgr, optInfo, dataEarlyStop, trainingSet);
 
             changeData(trainingSet); // Change data for super class
-            m_earlyStopProbl = new OptProbl(stat_mgr, dataEarlyStop);
+            m_earlyStopProbl = new OptimizationProblem(stat_mgr, dataEarlyStop);
         }
 
         int nbWeights = getNumVar();
-        // int nbTargets = getNbOfTargets();
 
-        // m_covariances = new double[nbWeights][nbWeights][nbTargets];
         m_covariances = new double[nbWeights][nbWeights];
         for (int i = 0; i < nbWeights; i++) {
             for (int j = 0; j < nbWeights; j++) {
-                // for (int k = 0; k < nbTargets; k++)
-                // m_covariances[i][j][k] = Double.NaN;
                 m_covariances[i][j] = Double.NaN;
             }
         }
@@ -229,8 +232,9 @@ public class GDProbl extends OptProbl {
             sum += getWeightCov(dimension, dimension);
         }
         m_dynStepLowerBound = 1.0 / sum;
-        if (m_printGDDebugInformation)
+        if (m_printGDDebugInformation) {
             ClusLogger.info("DEBUG: DynStepSize lower bound is " + m_dynStepLowerBound);
+        }
 
         // getSettings().getOptGDMaxIter()/m_earlyStopStep = nb of drops
         // TODO 100 Change to variable m_earlyStopStep
@@ -280,12 +284,19 @@ public class GDProbl extends OptProbl {
     private double computePredVsTrueValueCov(int iPred) {
         double[] covs = new double[getNbOfTargets()];
         int nbOfTargets = getNbOfTargets();
+
+        BitSet b = new BitSet(nbOfTargets);
+
         for (int iTarget = 0; iTarget < nbOfTargets; iTarget++) {
             for (int iInstance = 0; iInstance < getNbOfInstances(); iInstance++) {
                 double trueVal = getTrueValue(iInstance, iTarget);
-                if (isValidValue(trueVal)) // Not a valid true value, rare but happens. Can happen for linear terms.
-                    // covs[iTarget] += trueVal*predictWithRule(iPred, iInstance,iTarget);
-                    covs[iTarget] += trueVal * predictWithRule(iPred, iInstance, iTarget);
+                if (isValidValue(trueVal)) { // Not a valid true value, rare but happens. Can happen for linear terms.
+                    double pred = predictWithRule(iPred, iInstance, iTarget);
+                    if (!Double.isNaN(pred)) {
+                        covs[iTarget] += (trueVal * pred);
+                        b.set(iTarget);
+                    }
+                }
             }
 
             covs[iTarget] /= getNbOfInstances();
@@ -295,8 +306,10 @@ public class GDProbl extends OptProbl {
         }
 
         double avgCov = 0;
+
         for (int iTarget = 0; iTarget < nbOfTargets; iTarget++) {
-            avgCov += covs[iTarget] / nbOfTargets;
+            // avgCov += covs[iTarget] / nbOfTargets;
+            avgCov += covs[iTarget] / b.cardinality();
         }
         return avgCov;
     }
@@ -310,8 +323,8 @@ public class GDProbl extends OptProbl {
         int min = Math.min(iFirst, iSecond);
         int max = Math.max(iFirst, iSecond);
         // if (Double.isNaN(m_covariances[min][max][0]))
-        if (Double.isNaN(m_covariances[min][max]))
-            throw new Error("Asked covariance not yet computed. Something wrong in the covariances in GDProbl.");
+        if (Double.isNaN(m_covariances[min][max])) { throw new Error("Asked covariance not yet computed. Something wrong in the covariances in GDProbl."); }
+
         return m_covariances[min][max];
     }
 
@@ -359,7 +372,7 @@ public class GDProbl extends OptProbl {
      *        Base learner index
      * @param iLatter
      *        Base learner index. NOTE: iLatter >= iPrevious
-
+     * 
      */
     // private double[] computeCovFor2Preds(int iFirstRule, int iSecondRule) {
     private double computeCovFor2Preds(int iPrevious, int iLatter) {
@@ -377,42 +390,7 @@ public class GDProbl extends OptProbl {
             // Covariance for 2 linear terms
             return computeCovFor2Lin(iPrevious, iLatter);
         }
-
-        /*
-         * // General computation
-         * int nbOfTargets = getNbOfTargets();
-         * int nbOfInstances = getNbOfInstances();
-         * double[] covs = new double[nbOfTargets];
-         * //TODO first instances, then targets. CHECK if instance is covered, if not, skip
-         * for (int iTarget = 0; iTarget < nbOfTargets; iTarget++) {
-         * for (int iInstance = 0; iInstance < nbOfInstances; iInstance++) {
-         * covs[iTarget] += predictWithRule(iPrevious,iInstance,iTarget) *
-         * predictWithRule(iLatter,iInstance,iTarget);
-         * // The following is commented out because I think it is only a property of resource
-         * // tracking software. This can't take so much memory.
-         * // We optimize this function because this is the one that takes most of the time (70%).
-         * // We should use "predictWithRule" method, but this is slightly faster
-         * // double firstPred = getPredictions(iFirstRule,iInstance,iTarget);
-         * // double secondPred = getPredictions(iSecondRule,iInstance,iTarget);
-         * //
-         * // // Is valid prediction or is not covered?
-         * // firstPred = Double.isNaN(firstPred) ? 0 : firstPred;
-         * // secondPred = Double.isNaN(secondPred) ? 0 : secondPred;
-         * //
-         * // covs[iTarget] += firstPred * secondPred;
-         * }
-         * covs[iTarget] /= getNbOfInstances();
-         * if (getSettings().isOptNormalization()) {
-         * covs[iTarget] /= getNormFactor(iTarget);
-         * }
-         * }
-         * double avgCov = 0;
-         * for (int iTarget = 0; iTarget < nbOfTargets; iTarget++) {
-         * avgCov += covs[iTarget]/nbOfTargets;
-         * }
-         * return avgCov;
-         * // return covs;
-         */ }
+    }
 
 
     /**
@@ -421,7 +399,7 @@ public class GDProbl extends OptProbl {
      * @param iPrevious
      * @param iLatter
      *        Rule index. NOTE: iLatter >= iPrevious
-
+     * 
      */
     private double computeCovFor2Lin(int iPrevious, int iLatter) {
         int nbOfInstances = getNbOfInstances();
@@ -430,14 +408,17 @@ public class GDProbl extends OptProbl {
         // Go through only those dimensions that linear term is not always zero for
         int iTarget = getLinTargetDim(iPrevious);
 
-        if (iTarget != getLinTargetDim(iLatter))
-            return 0;
+        if (iTarget != getLinTargetDim(iLatter)) { return 0; }
 
         // Compute value
         double avgCov = 0;
 
         for (int iInstance = 0; iInstance < nbOfInstances; iInstance++) {
             avgCov += predictWithRule(iPrevious, iInstance, iTarget) * predictWithRule(iLatter, iInstance, iTarget);
+
+            if (Double.isNaN(avgCov)) {
+                System.err.println("TEST");
+            }
         }
         avgCov /= (nbOfTargets * getNbOfInstances());
 
@@ -459,13 +440,18 @@ public class GDProbl extends OptProbl {
      *        Rule index.
      * @param iLinear
      *        Linear term index. NOTE: iLinear >= iRule
-
+     * 
      */
     private double computeCovForRuleAndLin(int iRule, int iLinear) {
-        int nbOfTargets = getNbOfTargets();
-
         // Go through only those dimensions that linear term is not always zero for
         int iTarget = getLinTargetDim(iLinear);
+
+        double predRule = getPredictionsWhenCovered(iRule, 0, iTarget);
+
+        // if rule does not cover target iTarget, then covariance is zero
+        if (Double.isNaN(predRule)) { return 0d; }
+
+        int nbOfTargets = getRuleEnabledTargets(iRule);
 
         double avgCov = 0;
 
@@ -474,14 +460,28 @@ public class GDProbl extends OptProbl {
             avgCov += getPredictionsWhenCovered(iLinear, iInstance, iTarget);
         }
 
-        avgCov *= getPredictionsWhenCovered(iRule, 0, iTarget);
+        avgCov *= predRule;
 
         avgCov /= (nbOfTargets * getNbOfInstances());
 
         if (getSettings().getRules().isOptNormalization()) {
             avgCov /= getNormFactor(iTarget);
         }
+
+        if (Double.isNaN(avgCov)) {
+            System.err.println("TEST");
+        }
         return avgCov;
+    }
+
+
+    private int getRuleEnabledTargets(int iRule) {
+
+        if (getSettings().getEnsemble().isEnsembleROSEnabled() && getSettings().getEnsemble().getEnsembleROSVotingType().equals(EnsembleROSVotingType.SubspaceAveraging)) {
+            ClusROSModelInfo info = this.m_ruleSet.getRule(iRule).getROSModelInfo();
+            if (info != null) { return info.getTargets().size(); }
+        }
+        return getNbOfTargets();
     }
 
 
@@ -493,7 +493,7 @@ public class GDProbl extends OptProbl {
      * @param iPrevious
      * @param iLatter
      *        Rule index. NOTE: iLatter >= iPrevious
-
+     * 
      */
     private double computeCovFor2Rules(int iPrevious, int iLatter) {
         BitSet prev = (BitSet) (getRuleCovers(iPrevious).clone());
@@ -501,18 +501,34 @@ public class GDProbl extends OptProbl {
         prev.and(latter); // prev is now a AND bitset of both of these
 
         int nbOfTargets = getNbOfTargets();
-        double avgCov = 0;
+        double p1, p2, cov, avgCov = 0d, omitted = 0d;
 
         for (int iTarget = 0; iTarget < nbOfTargets; iTarget++) {
-            double cov = 0;
-            cov += getPredictionsWhenCovered(iPrevious, 0, iTarget) * getPredictionsWhenCovered(iLatter, 0, iTarget);
+            cov = 0d;
 
-            if (getSettings().getRules().isOptNormalization()) {
-                cov /= getNormFactor(iTarget);
+            p1 = getPredictionsWhenCovered(iPrevious, 0, iTarget);
+            p2 = getPredictionsWhenCovered(iLatter, 0, iTarget);
+
+            // if p1/p2=NaN then this is ROS SubsetAveraging
+            if (!Double.isNaN(p1) && !Double.isNaN(p2)) {
+                cov += p1 * p2;
+
+                if (getSettings().getRules().isOptNormalization()) {
+                    cov /= getNormFactor(iTarget);
+                }
+                avgCov += cov;
             }
-            avgCov += cov / nbOfTargets;
+            else {
+                omitted++;
+            }
         }
-        avgCov *= ((double) prev.cardinality()) / getNbOfInstances();
+
+        // if rules predict a disjunct set of targets, covariance is zero
+        if (omitted == nbOfTargets) { return 0d; }
+
+        avgCov /= (nbOfTargets - omitted);
+
+        avgCov *= (double) prev.cardinality() / getNbOfInstances();
 
         return avgCov;
     }
@@ -524,7 +540,16 @@ public class GDProbl extends OptProbl {
      * ONLY FOR REGRESSION! Classification not implemented.
      */
     final protected double predictWithRule(int iRule, int iInstance, int iTarget) {
-        return isCovered(iRule, iInstance) ? getPredictionsWhenCovered(iRule, iInstance, iTarget) : 0;
+        // return isCovered(iRule, iInstance) ? getPredictionsWhenCovered(iRule, iInstance, iTarget) : 0d;
+        return isCovered(iRule, iInstance) ? getPredictionsWhenCovered(iRule, iInstance, iTarget) : Double.NaN; // if
+                                                                                                                // covered,
+                                                                                                                // give
+                                                                                                                // prediction,
+                                                                                                                // else
+                                                                                                                // no
+                                                                                                                // prediction
+                                                                                                                // (!=
+                                                                                                                // zero);
     }
 
 

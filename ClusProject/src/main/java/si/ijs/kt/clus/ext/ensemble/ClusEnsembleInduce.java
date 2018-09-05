@@ -72,7 +72,6 @@ import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleBootstrapping;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleROSVotingType;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.RandomAttributeTypeSelection;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
@@ -96,7 +95,7 @@ import si.ijs.kt.clus.util.ClusRandomNonstatic;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.cloner.Cloner;
 import si.ijs.kt.clus.util.exception.ClusException;
-import si.ijs.kt.clus.util.tools.optimization.GDProbl;
+import si.ijs.kt.clus.util.tools.optimization.GDProblem;
 
 
 public class ClusEnsembleInduce extends ClusInductionAlgorithm {
@@ -712,7 +711,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 // OOBSelection current_oob_total = cloner.deepClone(oob_total);
                 // induceOneBag(cr, i, origMaxDepth, oob_sel, oob_total, train_iterator, test_iterator, msel, rnd);
                 // InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel,
-                // current_oob_total, train_iterator, test_iterator, msel, rnd, clonedStatManager); 
+                // current_oob_total, train_iterator, test_iterator, msel, rnd, clonedStatManager);
                 InduceOneBagCallable worker = new InduceOneBagCallable(this, cr, i, origMaxDepth, oob_sel, train_iterator, test_iterator, msel, rnd, clonedStatManager); // statManagerClones[i
                                                                                                                                                                          // -
                                                                                                                                                                          // 1]
@@ -782,7 +781,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                         else {
                             m_OOBEstimation.postProcessForestForOOBEstimate(crSingle, oob_total, (RowData) cr.getTrainingSet(), m_BagClus, "_" + i + "_");
                         }
-                    } 
+                    }
                 }
 
             }
@@ -814,7 +813,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
             HashMap<Integer, Integer> enabled = ClusROSHelpers.generateSubspace(mgr.getSchema(), m_EnsembleROSSubspaceSize.intValue(), sett.getEnsembleROSAlgorithmType(), bagNo - 1);
 
-            ClusROSModelInfo info = new ClusROSModelInfo(bagNo - 1, m_EnsembleROSSubspaceSize.intValue(), enabled);
+            ClusROSModelInfo info = new ClusROSModelInfo(bagNo - 1, m_EnsembleROSSubspaceSize.intValue(), enabled, mgr.getSchema().getNbTargetAttributes());
             h.getClusteringAttributeWeights().setROSModelInfo(info);
 
             m_ROSForestInfo.addROSModelInfo(info);
@@ -829,26 +828,25 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         SettingsEnsemble sett = cr.getStatManager().getSettings().getEnsemble();
         SettingsOutput seto = cr.getStatManager().getSettings().getOutput();
         boolean canForgetTheRun = true;
-        
+
         ClusRun crSingle = null;
         DepthFirstInduce ind = null;
         ClusStatManager mgr = cloneStatManager(unmodifiedManager);
 
-        
         ClusLogger.info("Bag: " + i);
 
         if (sett.isEnsembleRandomDepth()) {
             // Set random tree max depth
-            getSettings().getConstraints().setTreeMaxDepth(GDProbl.randDepthWighExponentialDistribution(rnd.nextDouble(ClusRandomNonstatic.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
+            getSettings().getConstraints().setTreeMaxDepth(GDProblem.randDepthWighExponentialDistribution(rnd.nextDouble(ClusRandomNonstatic.RANDOM_INT_RANFOR_TREE_DEPTH), origMaxDepth));
         }
 
         if (sett.getEnsembleBootstrapping().equals(EnsembleBootstrapping.No)) {
             crSingle = new ClusRun(cr.getTrainingSet(), cr.getSummary());
-        }else {
+        }
+        else {
             crSingle = m_BagClus.partitionDataBasic(cr.getTrainingSet(), msel, cr.getSummary(), i);
         }
-        
-        
+
         if (getSchema().isSparse()) {
             ind = new DepthFirstInduceSparse(this, mgr, true);
         }
@@ -884,30 +882,27 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         HashMap<String, double[][]> fimportances = new HashMap<String, double[][]>();
         if (m_FeatRank) {
             switch (sett.getRankingMethod()) {
-            case RForest:
-                fimportances = m_FeatureRankings[0].calculateRFimportance(model, cr, oob_sel, rnd,
-                        ind.getStatManager());
-                break;
+                case RForest:
+                    fimportances = m_FeatureRankings[0].calculateRFimportance(model, cr, oob_sel, rnd, ind.getStatManager());
+                    break;
 
-            case Symbolic:
-                double[] weights = sett.getSymbolicWeights();
-                if (weights == null) {
-                    weights = new double[] { sett.getSymbolicWeight() };
-                }
-                fimportances = m_FeatureRankings[0].calculateSYMBOLICimportanceIteratively((ClusNode) model, weights);
-                break;
+                case Symbolic:
+                    double[] weights = sett.getSymbolicWeights();
+                    if (weights == null) {
+                        weights = new double[] { sett.getSymbolicWeight() };
+                    }
+                    fimportances = m_FeatureRankings[0].calculateSYMBOLICimportanceIteratively((ClusNode) model, weights);
+                    break;
 
-            case Genie3:
-                fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model,
-                        ind.getStatManager());
-                break;
+                case Genie3:
+                    fimportances = m_FeatureRankings[0].calculateGENIE3importanceIteratively((ClusNode) model, ind.getStatManager());
+                    break;
 
-            default:
-                throw new RuntimeException("Unknown ranking method: " + sett.getRankingMethodName());
+                default:
+                    throw new RuntimeException("Unknown ranking method: " + sett.getRankingMethodName());
             }
         }
-        
-       
+
         if (m_OptMode) {
             // m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
             updatePredictionsForTuples(model, train_iterator, test_iterator, i);
@@ -967,10 +962,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         if (m_OOBWeights == null) {
             if (getSettings().getEnsemble().isEnsembleROSEnabled()) {
-                m_OOBWeights = new ClusROSOOBWeights();
+                m_OOBWeights = new ClusROSOOBWeights(getSettings().getEnsemble().getEnsembleVotingType(), getSettings().getEnsemble().getEnsembleROSVotingType());
             }
             else {
-                m_OOBWeights = new ClusOOBWeights();
+                m_OOBWeights = new ClusOOBWeights(getSettings().getEnsemble().getEnsembleVotingType());
             }
         }
 
@@ -1246,15 +1241,21 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         // used for OOB weighted ensemble voting
         if (getSettings().getEnsemble().isVotingOOBWeighted()) {
             for (int i = 0; i < m_OForests.length; i++) {
-                ClusOOBWeights weights = m_OOBWeights.getNew(m_OutEnsembleAt[i]);
 
-                if (getSettings().getEnsemble().isEnsembleROSEnabled() &&
-                /**/getSettings().getEnsemble().getEnsembleROSVotingType().equals(EnsembleROSVotingType.SubspaceAveraging)) {
+                ClusOOBWeights weights = null;
 
-                    ((ClusROSOOBWeights) weights).setROSForestInfo(m_OForests[i].getEnsembleROSForestInfo());
+                if (getSettings().getEnsemble().isEnsembleROSEnabled()) {
+                    ClusROSOOBWeights w = (ClusROSOOBWeights) m_OOBWeights;
+                    w = w.getNew(m_OutEnsembleAt[i], m_OForests[i].getEnsembleROSForestInfo());
 
-                    weights.calculateWeights(); // we dont have this info before, so we have to do it manually
+                    weights = w;
                 }
+                else {
+                    weights = m_OOBWeights.getNew(m_OutEnsembleAt[i]);
+                }
+
+                // weights.calculateWeights(); // we dont have this info before, so we have to do it manually
+
                 m_OForests[i].setOOBWeightsEstimates(weights);
             }
         }

@@ -1,8 +1,10 @@
-
 package si.ijs.kt.clus.util;
 
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.logging.ConsoleHandler;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
 
@@ -43,8 +45,14 @@ public class ClusLogger {
             // Could not open configuration file, logging only to console
             System.err.println(String.format("Logging properties file %s not found! Console output only.", lpath));
         }
+        
+        m_MainLogger = Logger.getLogger("");
+        Handler[] handlers = m_MainLogger.getHandlers();
+        if (handlers[0] instanceof ConsoleHandler) {
+            handlers[0].setLevel(Level.ALL);
+        }
 
-        m_MainLogger = Logger.getLogger(ClusLogger.class.getSimpleName());
+        m_MainLogger.setLevel(Level.ALL);
     }
 
 
@@ -74,3 +82,4 @@ public class ClusLogger {
         m_MainLogger.finer(msg);
     }
 }
+

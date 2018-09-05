@@ -47,8 +47,8 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    private double[] m_SumValues;
-    private double[] m_SumWeights;
+    public double[] m_SumValues;
+    public double[] m_SumWeights;
     private double[] m_SumSqValues;
     private RegressionStat m_Training;
 
@@ -119,20 +119,18 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     }
 
 
-    public void setSumValues(int index, double value) {
-        m_SumValues[index] = value;
-    }
-
+    // public void setSumValues(int index, double value) {
+    // m_SumValues[index] = value;
+    // }
 
     public void resetSumValues(int length) {
         m_SumValues = new double[length];
     }
 
 
-    public void setSumWeights(int index, double value) {
-        m_SumWeights[index] = value;
-    }
-
+    // public void setSumWeights(int index, double value) {
+    // m_SumWeights[index] = value;
+    // }
 
     public void resetSumWeights(int length) {
         m_SumWeights = new double[length];
@@ -597,21 +595,34 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
         ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
         StringBuffer buf = new StringBuffer();
         buf.append("[");
+        double val;
+
         for (int i = 0; i < m_NbAttrs; i++) {
-            if (i != 0)
+            if (i != 0) {
                 buf.append(",");
+            }
             double tot = getSumWeights(i);
-            if (tot == 0)
+            if (tot == 0) {
                 buf.append("?");
-            else
-                buf.append(fr.format(getSumValues(i) / tot));
+            }
+            else {
+                val = getSumValues(i);
+                if (!Double.isNaN(val)) {
+                    buf.append(fr.format(val / tot));
+                }
+                else {
+                    buf.append("Not predicted");
+                }
+
+            }
         }
         buf.append("]");
         if (info.SHOW_EXAMPLE_COUNT_BYTARGET) {
             buf.append(": [");
             for (int i = 0; i < m_NbAttrs; i++) {
-                if (i != 0)
+                if (i != 0) {
                     buf.append(",");
+                }
                 buf.append(fr.format(m_SumWeights[i]));
             }
             buf.append("]");
