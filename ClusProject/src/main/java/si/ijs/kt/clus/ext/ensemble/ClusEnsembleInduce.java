@@ -414,7 +414,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 // ClusEnsembleROSInfo trimmed_info = set.isEnsembleROSEnabled() ?
                 // m_EnsembleROSInfo.getTrimmedInfo(m_OutEnsembleAt[i]) : null;
                 // m_Optimizations[i].initPredictions(m_OForests[i].getStat(), trimmed_info);
-
+                
+                m_Optimizations[i].initPredictions(m_OForests[i].getStat(), null);
                 m_OForests[i].setOptimization(m_Optimizations[i]);
             }
         }
