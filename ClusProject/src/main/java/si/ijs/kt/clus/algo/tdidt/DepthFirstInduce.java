@@ -473,8 +473,9 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         else {
             makeLeaf(node);
         }
-
-        ClusLogger.finer("Depth " + node.getLevel() + ": node finished.");
+        if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
+            ClusLogger.finer("Depth " + node.getLevel() + ": node finished.");
+        }
     }
 
 
