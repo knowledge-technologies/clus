@@ -36,7 +36,7 @@ public class SettingsHMLC extends SettingsBase {
     };
 
     public enum HierarchyDistance {
-        WeightedEuclidean, Jaccard, NoDistance
+        WeightedEuclidean, Jaccard, PooledAUPRC
     };
 
     public enum HierarchyMeasures {

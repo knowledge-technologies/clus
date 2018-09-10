@@ -653,37 +653,32 @@ public class ClusStatManager implements Serializable {
             case MODE_HIERARCHICAL:
 
                 WHTDStatistic clustering;
-                if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.NoDistance)) { // poolAUPRC
-                                                                                                      // induction
+                HierarchyDistance hd = getSettings().getHMLC().getHierDistance();
+                if (hd.equals(HierarchyDistance.PooledAUPRC) || hd.equals(HierarchyDistance.WeightedEuclidean)) {
                     // setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier,
                     // getSettings().getHMLC().getHierDistance()));
-                    clustering = new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance());
-                    setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance()));
+//                    clustering = new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance());
+//                    setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance()));
+                	if (getSettings().getHMLC().getHierSingleLabel() && hd.equals(HierarchyDistance.WeightedEuclidean)) {
+                		// setClusteringStatistic(new HierSingleLabelStat(getSettings(), m_Hier,
+                        clustering = new HierSingleLabelStat(getSettings(), m_Hier);
+                        setTargetStatistic(new HierSingleLabelStat(getSettings(), m_Hier));
+                	} else {
+                		clustering = new WHTDStatistic(getSettings(), m_Hier);
+                        setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier));
+                	}
                 }
                 else {
-                    if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.WeightedEuclidean)) {
-                        if (getSettings().getHMLC().getHierSingleLabel()) {
-                            // setClusteringStatistic(new HierSingleLabelStat(getSettings(), m_Hier,
-                            clustering = new HierSingleLabelStat(getSettings(), m_Hier);
-                            setTargetStatistic(new HierSingleLabelStat(getSettings(), m_Hier));
-                        }
-                        else {
-                            // setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier,
-                            clustering = new WHTDStatistic(getSettings(), m_Hier);
-                            setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier));
-                        }
+                    ClusDistance dist = null;
+                    if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.Jaccard)) {
+                        dist = new HierJaccardDistance(m_Hier.getType());
                     }
-                    else {
-                        ClusDistance dist = null;
-                        if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.Jaccard)) {
-                            dist = new HierJaccardDistance(m_Hier.getType());
-                        }
 
-                        // setClusteringStatistic(new HierSumPairwiseDistancesStat(getSettings(),
-                        // m_Hier, dist,
-                        clustering = new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist);
-                        setTargetStatistic(new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist));
-                    }
+                    // setClusteringStatistic(new HierSumPairwiseDistancesStat(getSettings(),
+                    // m_Hier, dist,
+                    clustering = new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist);
+                    setTargetStatistic(new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist));
+
                 }
                 if (getSettings().getHMLC().isHierAndClassAndReg()) {
                     setClusteringStatistic(new CombStatClassRegHier(this, num3, nom3, clustering));
