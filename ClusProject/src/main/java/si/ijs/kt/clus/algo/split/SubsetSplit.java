@@ -37,7 +37,9 @@ import si.ijs.kt.clus.util.exception.ClusException;
 
 public class SubsetSplit extends NominalSplit {
 
-    ClusStatistic m_PStat, m_CStat, m_MStat;
+    ClusStatistic m_PStat;  // positive in ET ?
+    ClusStatistic m_CStat;  // positive in RF?
+    ClusStatistic m_MStat;  // total minus unknown
     ClusStatManager m_StatManager;
 
 
@@ -317,7 +319,7 @@ public class SubsetSplit extends NominalSplit {
             card = 1;
             isin[0] = true;
             m_PStat.reset();
-            for (int j = 0; j < nbvalues; j++) { // for loop in not really necessary, we simply follow the style from
+            for (int j = 0; j < nbvalues; j++) { // for loop is not really necessary, we simply follow the style from
                                                  // the else case
                 if (isin[j]) {// if selected
                     m_PStat.add(node.m_TestStat[j]);
@@ -325,7 +327,7 @@ public class SubsetSplit extends NominalSplit {
             }
             // <--- ClusStatistic CStat = node.m_TestStat[0];
             bheur = node.calcHeuristic(m_MStat, m_PStat); // <--- bheur = node.calcHeuristic(m_MStat, CStat);
-            showTest(type, isin, -1, bheur, m_MStat, m_PStat); // <--- showTest(type, isin, -1, bheur, m_MStat, CStat);
+//            showTest(type, isin, -1, bheur, m_MStat, m_PStat); // <--- showTest(type, isin, -1, bheur, m_MStat, CStat);
             pos_freq = m_PStat.getTotalWeight() / m_MStat.getTotalWeight(); // <--- CStat.m_SumWeight /
                                                                             // m_MStat.m_SumWeight;
 
@@ -406,7 +408,7 @@ public class SubsetSplit extends NominalSplit {
 
         boolean valid_test = node.m_IsAcceptable && (m_MStat.getTotalWeight() >= 4.0) && (m_PStat.getTotalWeight() >= 2.0) && ((m_MStat.getTotalWeight() - m_PStat.getTotalWeight()) >= 2.0) && (pos_freq > minAllowedFrequency) && (pos_freq < 1.0 - minAllowedFrequency);
 
-        showTest(type, isin, -1, bheur, m_MStat, m_CStat);
+//        showTest(type, isin, -1, bheur, m_MStat, m_CStat);  // Why is this here? Maybe showTest(type, isin, -1, bheur, m_MStat, m_MStat); lol
         if (found_test && valid_test) {
             node.m_UnknownFreq = unk_freq;
             node.m_BestHeur = bheur;
