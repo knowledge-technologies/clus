@@ -60,7 +60,7 @@ public class ClusView {
     }
 
 
-    public RowData readData(ClusReader reader, ClusSchema schema) throws IOException, ClusException {
+    public RowData readData(ClusReader reader, ClusSchema schema, boolean isTest) throws IOException, ClusException {
         schema.setReader(true);
         ArrayList<DataTuple> items = new ArrayList<DataTuple>();
         DataTuple tuple = readDataTupleFirst(reader, schema);
@@ -73,7 +73,11 @@ public class ClusView {
             attr.term(schema);
         }
         schema.setReader(false);
-        return new RowData(items, schema);
+        return new RowData(items, schema, isTest);
+    }
+    
+    public RowData readData(ClusReader reader, ClusSchema schema) throws IOException, ClusException {
+    	return readData(reader, schema, false);
     }
 
 

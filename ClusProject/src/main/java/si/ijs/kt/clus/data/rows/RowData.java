@@ -90,7 +90,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
         this(data.m_Data, data.getNbRows());
         m_Schema = data.m_Schema;
         setIndices();
-        checkData();
+        checkData(false);
     }
 
 
@@ -99,15 +99,19 @@ public class RowData extends ClusData implements MSortable, Serializable {
         System.arraycopy(data, 0, m_Data, 0, size);
         setNbRows(size);
         setIndices();
-        checkData();
+        checkData(false);
     }
 
 
     public RowData(ArrayList list, ClusSchema schema) {
+        this(list, schema, false);
+    }
+    
+    public RowData(ArrayList list, ClusSchema schema, boolean isTest) {
         m_Schema = schema;
         setFromList(list);
         setIndices();
-        checkData();
+        checkData(isTest);
     }
 
 
@@ -854,7 +858,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     }
 
 
-    public void checkData() {
+    public void checkData(boolean isForTest) {
     	// check whether all dense or all sparse 
     	boolean[] denseAndSparse = new boolean[2];
     	int indDense = 0;
@@ -876,19 +880,21 @@ public class RowData extends ClusData implements MSortable, Serializable {
         		}
         	}
         }
-        // check whether no numeric values are negative if sparse data
-        if (denseAndSparse[indSparse]) {
-        	for (DataTuple tuple : m_Data) {
-        		SparseDataTuple sdt = (SparseDataTuple) tuple;
-        		for (Integer i: sdt.getAttributeIndices()) {
-        			if (sdt.getDoubleValueSparse(i) < 0) {
-        				throw new RuntimeException("Sparse attribute with negative value!");
-        			}
-        		}
-        	}
+        if (!isForTest) {
+	        // check whether no numeric values are negative if sparse data
+	        if (denseAndSparse[indSparse]) {
+	        	for (DataTuple tuple : m_Data) {
+	        		SparseDataTuple sdt = (SparseDataTuple) tuple;
+	        		for (Integer i: sdt.getAttributeIndices()) {
+	        			if (sdt.getDoubleValueSparse(i) < 0) {
+	        				throw new RuntimeException("Sparse attribute with negative value!");
+	        			}
+	        		}
+	        	}
+	        }
         }
     }
-    
+        
     
     public final boolean isSparse() {
     	// This works since checkData assures that all data tuples are of the same type

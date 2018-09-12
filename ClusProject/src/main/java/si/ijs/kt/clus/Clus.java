@@ -155,9 +155,9 @@ public class Clus implements CMDLineArgsProvider {
     // exhaustive was added the 1/08/2006
     // ssl was added 10/12/2013, Jurica Levatic
     // relief was added 29/08/2016
-    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc", "ssl", "clowdflows", "option" };
+    public final static String[] OPTION_ARGS = { "relief", "exhaustive", "xval", "oxval", "target", "disable", "silent", "lwise", "c45", "info", "sample", "debug", "tuneftest", "load", "soxval", "bag", "obag", "show", "knn", "knnTEST", "knnTree", "beam", "gui", "fillin", "rules", "weka", "corrmatrix", "tunesize", "out2model", "test", "normalize", "tseries", "writetargets", "fold", "forest", "copying", "sit", "tc", "ssl", "clowdflows", "option", "unittest"};
 
-    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0 };
+    public final static int[] OPTION_ARITIES = { 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
 
     private Settings m_Sett = new Settings();
     private ClusSummary m_Summary = new ClusSummary();
@@ -350,7 +350,7 @@ public class Clus implements CMDLineArgsProvider {
             ClusStat.m_InitialMemory = ResourceInfo.getMemory();
         }
         ClusView view = m_Schema.createNormalView();
-        m_Data = view.readData(reader, m_Schema);
+        m_Data = view.readData(reader, m_Schema, cargs.hasOption("unittest"));
         reader.close();
 
         if (!getSettings().getData().getNormalizeData().equals(NormalizeDataValues.None)) {

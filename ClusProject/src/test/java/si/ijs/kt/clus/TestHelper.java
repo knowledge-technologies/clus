@@ -26,7 +26,7 @@ public class TestHelper {
       clus = new Clus();
       Settings sett = clus.getSettings();
       CMDLineArgs cargs = new CMDLineArgs(clus);
-      cargs.process(new String[] {"-silent", settingsFile});
+      cargs.process(new String[] {"-silent", "-unittest", settingsFile});
       sett.getGeneric().setAppName(cargs.getMainArg(0));
 
       clus.initSettings(cargs);
