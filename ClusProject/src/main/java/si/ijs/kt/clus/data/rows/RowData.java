@@ -876,6 +876,17 @@ public class RowData extends ClusData implements MSortable, Serializable {
         		}
         	}
         }
+        // check whether no numeric values are negative if sparse data
+        if (denseAndSparse[indSparse]) {
+        	for (DataTuple tuple : m_Data) {
+        		SparseDataTuple sdt = (SparseDataTuple) tuple;
+        		for (Integer i: sdt.getAttributeIndices()) {
+        			if (sdt.getDoubleValueSparse(i) < 0) {
+        				throw new RuntimeException("Sparse attribute with negative value!");
+        			}
+        		}
+        	}
+        }
     }
     
     

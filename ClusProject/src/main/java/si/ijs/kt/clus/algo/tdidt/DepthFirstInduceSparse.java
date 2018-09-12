@@ -137,17 +137,22 @@ public class DepthFirstInduceSparse extends DepthFirstInduce {
             return;
         }
         // Find best test
+        boolean isExtraTreesEnsemble = getSettings().getEnsemble().isEnsembleMode() && getSettings().getEnsemble().getEnsembleMethod().equals(EnsembleMethod.ExtraTrees);
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = (ClusAttrType) attrs[i];
-            // ArrayList examplelist = (ArrayList) examplelists[i];
-            if (at.isNominal()) { // at instanceof NominalAttrType
+            if (isExtraTreesEnsemble) {
+                if (at.isNominal()) {
+                    m_FindBestTest.findNominalExtraTree((NominalAttrType) at, data, rnd);
+                }
+                else {
+                    m_FindBestTest.findNumericExtraTree((NumericAttrType) at, data, rnd);
+                }
+            }
+            else if (at.isNominal()) {
                 m_FindBestTest.findNominal((NominalAttrType) at, data, rnd);
             }
-            // else if (examplelist == null) {
-            // m_FindBestTest.findNumeric((NumericAttrType) at, data, null);
-            // }
             else {
-                m_FindBestTest.findNumeric((NumericAttrType) at, data, rnd);// examplelist);
+                m_FindBestTest.findNumeric((NumericAttrType) at, data, rnd);
             }
         }
 
