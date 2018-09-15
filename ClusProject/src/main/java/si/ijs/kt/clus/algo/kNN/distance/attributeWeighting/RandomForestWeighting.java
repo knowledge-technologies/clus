@@ -35,6 +35,7 @@ import si.ijs.kt.clus.ext.ensemble.ClusEnsembleInduce;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 
@@ -83,7 +84,7 @@ public class RandomForestWeighting extends AttributeWeighting {
             new_sett.getEnsemble().setNbBags(nbBags); // TO-DO User Defined!
             new_sett.getEnsemble().setNbRandomAttrSelected(0); // Selects LOG of number of descriptive attributes
             new_sett.getEnsemble().setOOBestimate(true);
-            new_sett.getEnsemble().setFeatureRankingMethod(orig_sett.getEnsemble().getRankingMethod().toString());
+            new_sett.getEnsemble().setFeatureRankingMethod(EnsembleRanking.Genie3.toString());
             ClusRandom.initialize(new_sett);
 
             RowData trainData = (RowData) run.getTrainingSet().cloneData();

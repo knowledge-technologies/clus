@@ -63,6 +63,7 @@ import si.ijs.kt.clus.ext.ensemble.ros.ClusROSHelpers;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSOOBWeights;
 import si.ijs.kt.clus.ext.featureRanking.ClusEnsembleFeatureRanking;
+import si.ijs.kt.clus.ext.featureRanking.ClusEnsembleFeatureRankings;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusOutput;
@@ -129,7 +130,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     // Feature Ranking via Random Forests OR via Genie3 etc.
     boolean m_FeatRank;
-    ClusEnsembleFeatureRanking[] m_FeatureRankings;
+    ClusEnsembleFeatureRankings[] m_FeatureRankings;
 
     /** Number of the threads when growing the trees. */
     private int m_NbThreads;
