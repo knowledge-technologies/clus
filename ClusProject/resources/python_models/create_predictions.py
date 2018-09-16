@@ -88,7 +88,7 @@ def instances_generator(arff_file, from_inst=0, to_inst=float("inf")):
                         found += 1
                         if from_inst <= instance:
                             if instance <= to_inst:
-                            	candidate = [my_eval(i, t) for i, t in enumerate(x.strip().split(","))]
+                                candidate = [my_eval(i, t) for i, t in enumerate(x.strip().split(","))]
                                 yield candidate
                             else:
                                 break
