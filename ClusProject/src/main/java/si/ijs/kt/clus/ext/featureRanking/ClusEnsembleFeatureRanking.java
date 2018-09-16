@@ -9,6 +9,7 @@ import si.ijs.kt.clus.ext.ensemble.container.NodeDepthPair;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.OOBSelection;
 import si.ijs.kt.clus.statistic.ClusStatistic;
@@ -17,8 +18,13 @@ import si.ijs.kt.clus.util.ClusRandomNonstatic;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
-	public ClusEnsembleFeatureRanking(Settings sett){
-		super(sett);
+    private ClusEnsembleFeatureRankings m_Parent;
+    private EnsembleRanking m_RankingType;
+    
+	public ClusEnsembleFeatureRanking(Settings sett, EnsembleRanking type, ClusEnsembleFeatureRankings parent){
+	    super(sett);
+	    m_RankingType = type;
+        m_Parent = parent;
 	}
 	
 	

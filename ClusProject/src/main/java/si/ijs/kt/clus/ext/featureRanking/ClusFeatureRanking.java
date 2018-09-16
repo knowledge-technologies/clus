@@ -134,15 +134,16 @@ public class ClusFeatureRanking {
     public ClusFeatureRanking(Settings sett) {
         m_AllAttributes = new HashMap<String, double[]>();
         m_Lock = new ClusReadWriteLock();
-        m_Settings = sett;
         m_AttributeDatasetIndices = new HashMap<String, Double>();
         m_OutputRanking = new TreeMap<Double, ArrayList<Triple<String, int[], double[]>>>();
+        m_Settings = sett;
     }
 
 
     public final Settings getSettings() {
         return m_Settings;
     }
+    
 
 
     public void initializeAttributes(ClusAttrType[] descriptive, int nbRankings) {
@@ -276,7 +277,7 @@ public class ClusFeatureRanking {
         JsonObject algorithmSpec = new JsonObject();
         JsonElement algorithmName;
         EnsembleMethod ens_method = getSettings().getEnsemble().getEnsembleMethod();
-        EnsembleRanking fr_method = getSettings().getEnsemble().getRankingMethod();
+        EnsembleRanking fr_method = getSettings().getEnsemble().getRankingMethods().get(0); // FIXME never ...
         if (ens_method == EnsembleMethod.ExtraTrees) {
             algorithmName = new JsonPrimitive("ExtraTrees/GENIE3");
         }

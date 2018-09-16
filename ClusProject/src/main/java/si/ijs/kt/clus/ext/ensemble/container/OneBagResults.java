@@ -4,6 +4,7 @@ package si.ijs.kt.clus.ext.ensemble.container;
 import java.util.HashMap;
 
 import si.ijs.kt.clus.main.ClusRun;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.model.ClusModel;
 //import si.ijs.kt.clus.selection.OOBSelection;
 
@@ -11,13 +12,13 @@ import si.ijs.kt.clus.model.ClusModel;
 public class OneBagResults {
 
     private ClusModel m_Model;
-    private HashMap<String, double[][]> m_Fimportances;
+    private HashMap<EnsembleRanking, HashMap<String, double[][]>> m_Fimportances;
     private ClusRun m_SingleRun;
     //private OOBSelection m_OOBTotal;
     private long m_InductionTime;
 
     //public OneBagResults(ClusModel model, HashMap<String, double[][]> fimportances, ClusRun crSingle, OOBSelection oob_total, long inductionTime) {
-    public OneBagResults(ClusModel model, HashMap<String, double[][]> fimportances, ClusRun crSingle, long inductionTime) {
+    public OneBagResults(ClusModel model, HashMap<EnsembleRanking, HashMap<String, double[][]>> fimportances, ClusRun crSingle, long inductionTime) {
         m_Model = model;
         m_Fimportances = fimportances;
         m_SingleRun = crSingle;
@@ -31,7 +32,7 @@ public class OneBagResults {
     }
 
 
-    public HashMap<String, double[][]> getFimportances() {
+    public HashMap<EnsembleRanking, HashMap<String, double[][]>> getFimportances() {
         return m_Fimportances;
     }
 
