@@ -111,7 +111,7 @@ public class RandomForestWeighting extends AttributeWeighting {
             // matejp was here
             ensemble.induceBagging(run);
             int forestIndex = 0;
-            ClusFeatureRanking franking = ensemble.getEnsembleFeatureRanking(forestIndex);
+            ClusFeatureRanking franking = ensemble.getEnsembleFeatureRanking(forestIndex, EnsembleRanking.Genie3);
             franking.computeFinalScores();
             System.setOut(oldOut);
 

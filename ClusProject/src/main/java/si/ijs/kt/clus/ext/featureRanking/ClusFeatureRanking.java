@@ -277,7 +277,7 @@ public class ClusFeatureRanking {
         JsonObject algorithmSpec = new JsonObject();
         JsonElement algorithmName;
         EnsembleMethod ens_method = getSettings().getEnsemble().getEnsembleMethod();
-        EnsembleRanking fr_method = getSettings().getEnsemble().getRankingMethods().get(0); // FIXME matej
+        EnsembleRanking fr_method = getSettings().getEnsemble().getRankingMethods().get(0); // FIXME never ...
         if (ens_method == EnsembleMethod.ExtraTrees) {
             algorithmName = new JsonPrimitive("ExtraTrees/GENIE3");
         }
