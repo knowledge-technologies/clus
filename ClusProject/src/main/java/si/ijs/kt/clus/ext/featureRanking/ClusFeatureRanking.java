@@ -121,6 +121,8 @@ public class ClusFeatureRanking {
     private Settings m_Settings;
 
     private boolean m_ScoresNormalized = false;
+    
+    protected boolean m_IsEnsembleRanking = false;
 
     /**
      * Separator that separates different blocks of columns in fimp file. Must not be equal to "," (see parsing in the
@@ -721,11 +723,8 @@ public class ClusFeatureRanking {
                                                                                        // case of ensemble rankings
             for (int j = 0; j < m_NbFeatureRankings; j++) {
                 // normalisation
-                if (!m_ScoresNormalized) {
-                    possiblyNonnormalizedScores[2 + j] /= Math.max(1.0, ClusEnsembleInduce.getMaxNbBags()); // Relief
-                                                                                                            // has 0
-                                                                                                            // number of
-                                                                                                            // bags ...
+                if (!m_ScoresNormalized && m_IsEnsembleRanking) {
+                    possiblyNonnormalizedScores[2 + j] /= ClusEnsembleInduce.getMaxNbBags();
                 }
                 // rounding: done implicitly only in ranks computation
                 // possiblyNonnormalizedScores[2 + j] = ClusUtil.roundToSignificantFigures(possiblyNonnormalizedScores[2

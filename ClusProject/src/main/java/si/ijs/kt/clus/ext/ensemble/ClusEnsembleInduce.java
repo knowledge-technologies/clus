@@ -116,7 +116,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     // Output ensemble at different values
     int[] m_OutEnsembleAt;// sorted values (ascending)!
-    static int m_NbMaxBags;
+    private static int m_NbMaxBags;
 
     // ROS
     private Integer m_EnsembleROSSubspaceSize = null; // -1 = Random, -2 = RandomPerTree, >0 = actual number of
@@ -1310,7 +1310,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * Maximum number of bags for memory optimization
      */
     public static int getMaxNbBags() {
-        return ClusEnsembleInduce.m_NbMaxBags;
+        return m_NbMaxBags;
     }
 
 

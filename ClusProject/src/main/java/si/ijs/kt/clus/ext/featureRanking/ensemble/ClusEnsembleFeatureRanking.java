@@ -26,6 +26,7 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
 	    super(sett);
 	    m_RankingType = type;
         m_Parent = parent;
+        m_IsEnsembleRanking = true;
 	}
 	
 	
