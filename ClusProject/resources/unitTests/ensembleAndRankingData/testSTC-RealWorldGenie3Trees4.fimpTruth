@@ -1,0 +1,9 @@
+Ensemble method: RForest
+Ranking method: Genie3
+Ensemble size: 4
+attributeDatasetIndex	attributeName	[overAllRank]	[overAll]
+-----------------------------------------------------------
+3	petallength	[1]	[70.06942545062645]
+4	petalwidth	[2]	[14.151368517103808]
+1	sepallength	[3]	[9.64211221675611]
+2	sepalwidth	[4]	[2.3480734767025093]

@@ -62,9 +62,9 @@ import si.ijs.kt.clus.ext.ensemble.ros.ClusROSForestInfo;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSHelpers;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSModelInfo;
 import si.ijs.kt.clus.ext.ensemble.ros.ClusROSOOBWeights;
-import si.ijs.kt.clus.ext.featureRanking.ClusEnsembleFeatureRanking;
-import si.ijs.kt.clus.ext.featureRanking.ClusEnsembleFeatureRankings;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
+import si.ijs.kt.clus.ext.featureRanking.ensemble.ClusEnsembleFeatureRanking;
+import si.ijs.kt.clus.ext.featureRanking.ensemble.ClusEnsembleFeatureRankings;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.ClusOutput;
 import si.ijs.kt.clus.main.ClusRun;
@@ -248,9 +248,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 if (nbRankings.containsKey(r)){
                     if (nbRankings.get(r).intValue() != nb){
                         throw new RuntimeException("Wrong number of rankings.");
-                    } else {
-                        nbRankings.put(r, nb);
-                    }
+                    } 
+                } else {
+                    nbRankings.put(r, nb);
                 }
             }
         }
@@ -395,7 +395,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (setg.getVerbose() > 0) {
             ClusLogger.info("Number of feature rankings computed:");
             for (EnsembleRanking r : nbRankings.keySet()){
-                System.out.println(String.format("  - %s: %d", r.toString(), nbRankings.get(r).toString()));
+            	ClusLogger.info(String.format("  - %s: %s", r.toString(), nbRankings.get(r).toString()));
             }
         }
 

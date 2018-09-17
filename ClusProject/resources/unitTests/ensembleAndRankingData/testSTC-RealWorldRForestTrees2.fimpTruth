@@ -1,0 +1,9 @@
+Ensemble method: RForest
+Ranking method: RForest
+Ensemble size: 2
+attributeDatasetIndex	attributeName	[Accuracy:overallRank]	[Accuracy:overall]
+-----------------------------------------------------------------------------
+4	petalwidth	[1]	[0.2909163665466186]
+2	sepalwidth	[1]	[0.2909163665466186]
+3	petallength	[3]	[0.27130852340936373]
+1	sepallength	[4]	[0.1926770708283313]
