@@ -6,9 +6,9 @@ import java.util.ArrayList;
 
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRankingTest;
-import si.ijs.kt.clus.util.tuple.Pair;
 import si.ijs.kt.clus.util.tuple.Triple;
 
 public class ClusReliefFeatureRankingTest {
@@ -24,7 +24,7 @@ public class ClusReliefFeatureRankingTest {
 		m_Parent.cleanNewFiles();
 	}
 
-//	@Test
+	@Test
 	public void computeReliefImportance() throws IOException {
 		String format = m_Parent.getSubfolder() + "/test%s.%s";
 		String[] tasks = new String[] { "Mixed", "MLCHammingLoss", "MTR", "TreeHMLC", "DagHMLC-RealWorld",
