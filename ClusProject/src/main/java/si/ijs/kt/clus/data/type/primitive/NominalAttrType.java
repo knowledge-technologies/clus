@@ -54,8 +54,8 @@ public class NominalAttrType extends ClusAttrType {
     /**
      * Number of possible values for nominal type.
      */
-    public int m_NbValues;
-    public String[] m_Values;
+    private int m_NbValues;
+    protected String[] m_Values;
     protected transient Hashtable<String, Integer> m_Hash;
 
 
@@ -83,7 +83,7 @@ public class NominalAttrType extends ClusAttrType {
         }
         createHash();
     }
-
+    
 
     // new for knn
 

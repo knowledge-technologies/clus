@@ -532,7 +532,7 @@ public class ClusStatManager implements Serializable {
             String[] twoLabels = new String[] { "1", "0" }; // Clus saves the values of @attribute atrName {1,0}/{0,1}
                                                             // to {"1", "0"}.
             for (int attr = 0; attr < nom.length; attr++) {
-                if (!Arrays.equals(nom[attr].m_Values, twoLabels)) {
+                if (!Arrays.equals(nom[attr].getValues(), twoLabels)) {
                     is_multilabel = false;
                     break;
                 }
@@ -1094,8 +1094,8 @@ public class ClusStatManager implements Serializable {
         int max_nom_val = 0;
         int num_nom_atts = m_Schema.getNbNominalAttrUse(AttributeUseType.All);
         for (int i = 0; i < num_nom_atts; i++) {
-            if (m_Schema.getNominalAttrUse(AttributeUseType.All)[i].m_NbValues > max_nom_val) {
-                max_nom_val = m_Schema.getNominalAttrUse(AttributeUseType.All)[i].m_NbValues;
+            if (m_Schema.getNominalAttrUse(AttributeUseType.All)[i].getNbValues() > max_nom_val) {
+                max_nom_val = m_Schema.getNominalAttrUse(AttributeUseType.All)[i].getNbValues();
             }
         }
         if (max_nom_val == 0) { // If no nominal attributes in data set
@@ -1130,6 +1130,11 @@ public class ClusStatManager implements Serializable {
         if (nom.length != 0) {
             parent.addError(new ContingencyTable(parent, nom));
             parent.addError(new MSNominalError(parent, nom, m_NormalizationWeights));
+            boolean isBinaryZeroOneClassification = nom.length == 1 && Arrays.equals(nom[0].getValues(), new String[] {"1", "0"});
+            if (isBinaryZeroOneClassification) {
+            	parent.addError(new si.ijs.kt.clus.error.mlc.MLaverageAUROC(parent, nom));
+                parent.addError(new si.ijs.kt.clus.error.mlc.MLaverageAUPRC(parent, nom));
+            }
         }
         if (getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
             parent.addError(new si.ijs.kt.clus.error.mlc.HammingLoss(parent, nom));
