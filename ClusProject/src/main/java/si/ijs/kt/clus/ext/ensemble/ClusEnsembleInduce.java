@@ -778,7 +778,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     addModelToForests(results.getModel(), i);
                 }
                 if (sett.shouldPerformRanking()) {
-                    updateFeatureRankings(i, results.getFimportances());
+                    updateFeatureRankings(results.getModelIndex(), results.getFimportances());
                 }
 
                 ClusRun crSingle = results.getSingleRun();
@@ -969,7 +969,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             crSingle.setModels(new ArrayList<ClusModelInfo>());
         }
 
-        return new OneBagResults(model, fimportances, crSingle, one_bag_time);
+        return new OneBagResults(model, fimportances, crSingle, one_bag_time, i);
     }
 
 
