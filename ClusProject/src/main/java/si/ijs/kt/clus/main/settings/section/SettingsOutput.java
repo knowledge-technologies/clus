@@ -255,7 +255,7 @@ public class SettingsOutput extends SettingsBase {
      ***********************************************************************/
 
     public enum WritePredictions {
-        None, Test, Train
+        Test, Train
     };
 
 
@@ -278,7 +278,7 @@ public class SettingsOutput extends SettingsBase {
         m_Section.addNode(m_WriteModelFile = new INIFileBool("WriteModelFile", false));
         m_Section.addNode(m_WritePerBagModelFiles = new INIFileBool("WritePerBagModelFile", true));
         m_Section.addNode(m_WriteOOBFile = new INIFileBool("WriteOOBFile", false));
-        m_Section.addNode(m_WritePredictions = new INIFileEnumList<>("WritePredictions", Arrays.asList(WritePredictions.None), WritePredictions.class));
+        m_Section.addNode(m_WritePredictions = new INIFileEnumList<>("WritePredictions", Arrays.asList(), WritePredictions.class));
         //m_Section.addNode(m_WritePredictions = new INIFileEnumList<>("WritePredictions", WritePredictions.None));
         
         
