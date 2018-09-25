@@ -73,7 +73,6 @@ import si.ijs.kt.clus.main.ClusSummary;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleBootstrapping;
-import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleMethod;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.RandomAttributeTypeSelection;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
@@ -327,8 +326,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
                 nbRankings = weights.length;
                 franking.setSymbolicFimpHeader(weights);
-                break;
-            case None:
                 break;
             default:
                 throw new RuntimeException("Wrong feature ranking method: " + rankingType.toString());

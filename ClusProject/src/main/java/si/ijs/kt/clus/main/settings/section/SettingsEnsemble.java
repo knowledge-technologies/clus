@@ -69,7 +69,7 @@ public class SettingsEnsemble extends SettingsBase {
     };
 
     public enum EnsembleRanking {
-        None, RForest, Genie3, Symbolic
+        RForest, Genie3, Symbolic
     };
 
     public enum EnsembleROSAlgorithmType {

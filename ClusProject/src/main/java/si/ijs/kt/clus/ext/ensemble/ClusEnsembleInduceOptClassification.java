@@ -32,9 +32,11 @@ public class ClusEnsembleInduceOptClassification extends ClusEnsembleInduceOptim
     @Override
     public void initPredictions(ClusStatistic stat, ClusEnsembleROSInfo ensembleROSInfo) {
         ClassificationStat nstat = (ClassificationStat) stat;
-        m_AvgPredictions = new double[m_TuplePositions.size()][nstat.getNbAttributes()][]; // m_HashCodeTuple.length
-        for (int i = 0; i < nstat.getNbAttributes(); i++) {
-            m_AvgPredictions[m_TuplePositions.size() - 1][i] = new double[nstat.getNbClasses(i)]; // m_HashCodeTuple.length - 1
+        m_AvgPredictions = new double[m_TuplePositions.size()][nstat.getNbAttributes()][];
+        for (int tuple = 0; tuple < m_AvgPredictions.length; tuple++) {
+	        for (int i = 0; i < nstat.getNbAttributes(); i++) {
+	            m_AvgPredictions[tuple][i] = new double[nstat.getNbClasses(i)];
+	        }
         }
 
         super.m_EnsembleROSInfo = ensembleROSInfo;
