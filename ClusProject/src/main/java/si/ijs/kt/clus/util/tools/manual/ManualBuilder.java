@@ -4,6 +4,8 @@ package si.ijs.kt.clus.util.tools.manual;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -49,11 +51,13 @@ public class ManualBuilder {
 
 
     private HashMap<String, TreeMap<Integer, String[]>> listAllSettings() {
-        HashMap<String, TreeMap<Integer, String[]>> default_values = new HashMap<String, TreeMap<Integer, String[]>>(); // {section:
-                                                                                                                        // {option:
-                                                                                                                        // value,
-                                                                                                                        // ...},
-                                                                                                                        // ...}
+        /*
+         * {section:
+         * {option:value, ...},
+         * ...}
+         */
+
+        HashMap<String, TreeMap<Integer, String[]>> default_values = new HashMap<String, TreeMap<Integer, String[]>>();
         Settings defaultSett = Settings.getDefaultSettings();
         for (Enumeration<INIFileNode> sectionEnum = defaultSett.getSectionsIterator(); sectionEnum.hasMoreElements();) {
             INIFileSection section = (INIFileSection) sectionEnum.nextElement();
@@ -149,7 +153,7 @@ public class ManualBuilder {
     public void mergeExistingTables(String manualOptionsListsDir, String manualOptionsListsDirExisting) {
 
         Settings defaultSett = Settings.getDefaultSettings();
-        File f1, f2;
+        File fUpdated, fExisting;
         int changes;
 
         try {
@@ -160,12 +164,15 @@ public class ManualBuilder {
                 INIFileSection section = (INIFileSection) sectionEnum.nextElement();
                 String secName = section.getName();
 
-                f1 = new File(manualOptionsListsDir + "\\options-" + secName + ".tex");
-                f2 = new File(manualOptionsListsDirExisting + "\\options-" + secName + ".tex");
+                fUpdated = new File(manualOptionsListsDir + "\\options-" + secName + ".tex");
+                fExisting = new File(manualOptionsListsDirExisting + "\\options-" + secName + ".tex");
 
-                if (f1.exists() && f2.exists()) {
-                    changes = mergeFiles(f1, f2);
-                    System.out.println("Merged " + secName + ": " + changes + " changes found");
+                if (fUpdated.exists() && fExisting.exists()) {
+                    System.out.print("Merging section " + secName + ": ");
+
+                    changes = mergeFiles(fExisting, fUpdated);
+
+                    System.out.println(changes + " differences found");
                 }
             }
         }
@@ -175,20 +182,28 @@ public class ManualBuilder {
     }
 
 
-    private int mergeFiles(File original, File updated) throws FileNotFoundException {
+    private int mergeFiles(File existing, File updated) throws IOException {
         // read original and updated files
-        FileInputStream fsOriginal = new FileInputStream(original);
-        FileInputStream fsUpdated = new FileInputStream(updated);
-
-        String org = ClusUtil.readStream(fsOriginal);
-        String upd = ClusUtil.readStream(fsUpdated);
+        String ext = "", upd = "";
+        try (FileInputStream fsExisting = new FileInputStream(existing); FileInputStream fsUpdated = new FileInputStream(updated)) {
+            ext = ClusUtil.readStream(fsExisting);
+            upd = ClusUtil.readStream(fsUpdated);
+        }
 
         // discover all entries in both files
-        ArrayList<ManualEntry> mOrg = ManualSectionEntry.parse(org);
-        ArrayList<ManualEntry> mUpd = ManualSectionEntry.parse(upd);
+        ManualSectionEntry mExt = new ManualSectionEntry(ext);
+        ManualSectionEntry mUpd = new ManualSectionEntry(upd);
 
         // compare entry-per-entry and refresh the "updated" version with the already
         // existing information from the manual
+        int changes = mUpd.merge(mExt);
 
-        return 0;
-    }}
+        // write updated back to file
+        try(FileWriter fw = new FileWriter(updated))
+        {            
+            fw.write(mUpd.toString());
+        }
+
+        return changes;
+    }
+}

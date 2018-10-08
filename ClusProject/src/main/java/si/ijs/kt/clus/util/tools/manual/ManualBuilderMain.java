@@ -17,6 +17,9 @@ public class ManualBuilderMain {
         mb.buildSettingsTables(MANUAL_OPTIONS_LISTS_DIR);
 
         mb.mergeExistingTables(MANUAL_OPTIONS_LISTS_DIR, MANUAL_OPTIONS_LISTS_DIR_EXISTING);
+        
+        
+        System.out.println(String.format("Look inside %s for merged files", MANUAL_OPTIONS_LISTS_DIR));
     }
 
 }
