@@ -9,45 +9,30 @@ import java.util.regex.Pattern;
 
 public class ManualSectionEntry {
 
-    private String m_SectionName;
     private List<ManualEntry> m_Entries;
-
-    private String sectionPattern = "\\\\section\\{(.*?)\\}";
+    private String m_Original;
     private String whateverPattern = "\\\\item \\\\optionNameStyle\\{(.*?){1,}\\\\end\\{itemize\\}";
-    private Pattern pSection = Pattern.compile(sectionPattern);
     private Pattern pElement = Pattern.compile(whateverPattern, Pattern.MULTILINE | Pattern.DOTALL);
+    private final String REPLACEMENT = "It was me. I let the dogs out.";
 
 
     public ManualSectionEntry(String contents) {
+        m_Original = contents;
         parse(contents);
     }
 
 
     private void parse(String contents) {
-        String[] splitted = contents.split(System.lineSeparator());
-        String line;
-
-        for (int i = 0; i < splitted.length; i++) {
-            line = splitted[i];
-
-            // disregard empty rows
-            if (line.startsWith("")) {
-                splitted[i] = "";
-            }
-        }
-
-        // find section name
-        Matcher m = pSection.matcher(contents);
-        if (m.find()) {
-            m_SectionName = m.group(1);
-        }
-
         // find individual section items
-        m = pElement.matcher(contents);
+        Matcher m = pElement.matcher(contents);
         List<ManualEntry> entries = new ArrayList<ManualEntry>();
+
         while (m.find()) {
             entries.add(new ManualEntry(m.group(0)));
         }
+
+        m_Original = m.replaceAll(REPLACEMENT);
+
         m_Entries = entries;
     }
 
@@ -60,10 +45,23 @@ public class ManualSectionEntry {
         int count = 0;
         for (ManualEntry me : m_Entries) {
             for (ManualEntry ome : other.m_Entries) {
-                // try to merge
-                count += me.merge(ome);
+                if (me.getName().equals(ome.getName())) {
+                    // try to merge
+                    count += me.merge(ome);
+                }
             }
         }
         return count;
+    }
+
+
+    @Override
+    public String toString() {
+        String s = m_Original;
+        for (ManualEntry me : m_Entries) {
+            s = s.replaceFirst(REPLACEMENT, Matcher.quoteReplacement(me.toString()));
+        }
+
+        return s;
     }
 }

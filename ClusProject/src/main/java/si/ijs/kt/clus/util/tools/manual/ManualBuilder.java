@@ -46,7 +46,6 @@ public class ManualBuilder {
         for (String section : default_values.keySet()) {
             writeLatexSectionSettingsFile(section, settingsTablesFolder, default_values.get(section), false);
         }
-        System.out.println("Done.");
     }
 
 
@@ -104,7 +103,7 @@ public class ManualBuilder {
                 }
                 String defaultValue = String.join(", ", defaults);
 
-                writer.println(ManualEntry.getLatex(name, defaultValue));
+                writer.println(ManualEntry.getLatexЕmpty(name, defaultValue));
             }
 
             writer.println("\\end{itemize}");
@@ -199,11 +198,16 @@ public class ManualBuilder {
         int changes = mUpd.merge(mExt);
 
         // write updated back to file
-        try(FileWriter fw = new FileWriter(updated))
-        {            
-            fw.write(mUpd.toString());
+        try {
+        if (changes > 0) {
+            try (FileWriter fw = new FileWriter(updated)) {
+                fw.write(mUpd.toString());
+            }
         }
-
+        }
+        catch(Exception ex) {
+            ex.printStackTrace();
+        }
         return changes;
     }
 }

@@ -7,17 +7,17 @@ import java.util.regex.Pattern;
 
 public class ManualEntry {
 
-    private static final String m_OptionNameTemplate = "\\optionNameStyle{%s}:%n";
-    private static final String m_PossibleValuesTemplate = "\\optionPossibleValues{}: ???%n";
-    private static final String m_DefaultValueTemplate = "\\optionDefaultValue{}: %s%n";
-    private static final String m_DescriptionTemplate = "\\optionDescription{}: ???%n";
+    private static final String m_OptionNameTemplate = "\\optionNameStyle{%s}:";
+    private static final String m_PossibleValuesTemplate = "\\optionPossibleValues{}: %s";
+    private static final String m_DefaultValueTemplate = "\\optionDefaultValue{}: %s";
+    private static final String m_DescriptionTemplate = "\\optionDescription{}: %s";
 
     private static final String optionPattern = "\\\\optionNameStyle\\{(.*?)\\}";
-    private static final String whateverPattern = "(?<=\\\\item \\\\%s\\{\\}\\:)(.*?){1,}(?=(\\\\item)|(\\\\end\\{itemize))";
+    private static final String miscPattern = "(?<=\\\\item \\\\%s\\{\\}\\:)(.*?){1,}(?=(\\\\item)|(\\\\end\\{itemize))";
     private static final Pattern pOption = Pattern.compile(optionPattern);
-    private static final Pattern pPossible = Pattern.compile(String.format(whateverPattern, "optionPossibleValues"), Pattern.MULTILINE | Pattern.DOTALL);
-    private static final Pattern pDefault = Pattern.compile(String.format(whateverPattern, "optionDefaultValue"), Pattern.MULTILINE | Pattern.DOTALL);
-    private static final Pattern pDescription = Pattern.compile(String.format(whateverPattern, "optionDescri?ption"), Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern pPossible = Pattern.compile(String.format(miscPattern, "optionPossibleValues"), Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern pDefault = Pattern.compile(String.format(miscPattern, "optionDefaultValue"), Pattern.MULTILINE | Pattern.DOTALL);
+    private static final Pattern pDescription = Pattern.compile(String.format(miscPattern, "optionDescri?ption"), Pattern.MULTILINE | Pattern.DOTALL);
 
     private String m_Name;
     private String m_Possible;
@@ -54,42 +54,52 @@ public class ManualEntry {
         // find option name
         Matcher m = pOption.matcher(contents);
         if (m.find()) {
-            m_Name = m.group(1);
+            m_Name = m.group(1).trim();
         }
 
         // possible
         m = pPossible.matcher(contents);
         if (m.find()) {
-            m_Possible = m.group(0);
+            m_Possible = m.group(0).trim();
         }
 
         // default
         m = pDefault.matcher(contents);
         if (m.find()) {
-            m_Default = m.group(0);
+            m_Default = m.group(0).trim();
         }
 
         // description
         m = pDescription.matcher(contents);
         if (m.find()) {
-            m_Description = m.group(0);
+            m_Description = m.group(0).trim();
         }
     }
 
 
-    public static String getLatex(String name, String defaultValue) {
-        return String.format(getEmpty(), name, defaultValue);
+    public static String getLatexЕmpty(String name, String defaultValue) {
+        String none = "???";
+        String s = /* */ "    \\item " + String.format(m_OptionNameTemplate, name) + System.lineSeparator() +
+        /* */ "           \\begin{itemize}" + System.lineSeparator() +
+        /* */ "                \\item " + String.format(m_PossibleValuesTemplate, none) + System.lineSeparator() +
+        /* */ "                \\item " + String.format(m_DefaultValueTemplate, defaultValue) + System.lineSeparator() +
+        /* */ "                \\item " + String.format(m_DescriptionTemplate, none) + System.lineSeparator() +
+        /* */ "           \\end{itemize}";
+
+        return s;
     }
 
 
-    private static String getEmpty() {
-        return
-        /* */ "    \\item " + m_OptionNameTemplate +
-        /* */ "           \\begin{itemize}%n" +
-        /* */ "                \\item " + m_PossibleValuesTemplate +
-        /* */ "                \\item " + m_DefaultValueTemplate +
-        /* */ "                \\item " + m_DescriptionTemplate +
+    @Override
+    public String toString() {
+        String s = /* */ "    \\item " + String.format(m_OptionNameTemplate, getName()) + System.lineSeparator() +
+        /* */ "           \\begin{itemize}" + System.lineSeparator() +
+        /* */ "                \\item " + String.format(m_PossibleValuesTemplate, getPossible()) + System.lineSeparator() +
+        /* */ "                \\item " + String.format(m_DefaultValueTemplate, getDefault()) + System.lineSeparator() +
+        /* */ "                \\item " + String.format(m_DescriptionTemplate, getDescription()) + System.lineSeparator() +
         /* */ "           \\end{itemize}";
+
+        return s;
     }
 
 
