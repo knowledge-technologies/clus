@@ -10,9 +10,11 @@ import java.util.List;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
+import si.ijs.kt.clus.main.settings.section.SettingsOutput.WritePredictions;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
+import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnumList;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
@@ -138,7 +140,7 @@ public class SettingsEnsemble extends SettingsBase {
     private INIFileBool m_EnsembleOOBestimate;
     // protected INIFileBool m_FeatureRanking;
     // private INIFileNominal m_FeatureRanking;
-    private INIFileEnum<EnsembleRanking> m_FeatureRanking;
+    private INIFileEnumList<EnsembleRanking> m_FeatureRanking;
     private INIFileNominalOrDoubleOrVector m_SymbolicWeight;
     private INIFileBool m_SortFeaturesByRelevance;
     private INIFileBool m_WriteEnsemblePredictions;
@@ -219,7 +221,7 @@ public class SettingsEnsemble extends SettingsBase {
     }
 
 
-    public EnsembleRanking getRankingMethod() {
+    public List<EnsembleRanking> getRankingMethods() {
         return m_FeatureRanking.getValue();
     }
 
@@ -240,7 +242,7 @@ public class SettingsEnsemble extends SettingsBase {
 
 
     public boolean shouldPerformRanking() {
-        return m_FeatureRanking.getValue() != EnsembleRanking.None;
+        return m_FeatureRanking.getVectorSize() > 0;
     }
 
 
@@ -500,7 +502,7 @@ public class SettingsEnsemble extends SettingsBase {
         m_Section.addNode(m_PrintPaths = new INIFileBool("PrintPaths", false));
         m_Section.addNode(m_EnsembleShouldOpt = new INIFileBool("Optimize", false));
         m_Section.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
-        m_Section.addNode(m_FeatureRanking = new INIFileEnum<>("FeatureRanking", EnsembleRanking.None));
+        m_Section.addNode(m_FeatureRanking = new INIFileEnumList<>("FeatureRanking", Arrays.asList(), EnsembleRanking.class));
         m_Section.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
         m_Section.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
         m_SymbolicWeight.setDouble(0.5);
@@ -542,11 +544,10 @@ public class SettingsEnsemble extends SettingsBase {
         /* RANKING */
         if (isEnsembleMode()) {
             EnsembleMethod m = getEnsembleMethod();
-            EnsembleRanking r = getRankingMethod();
-            if (!r.equals(EnsembleRanking.None)) {
-                if ((!m.equals(EnsembleMethod.Bagging) && !m.equals(EnsembleMethod.RForest) && !m.equals(EnsembleMethod.ExtraTrees)) || (m.equals(EnsembleMethod.ExtraTrees) && r.equals(EnsembleRanking.RForest))) {
-                    incompatible.add(String.format("Ranking %s not implemented for %s", r.name(), m.name()));
-                }
+            //EnsembleRanking r = getRankingMethod();
+            List<EnsembleMethod> allowed = Arrays.asList(EnsembleMethod.Bagging, EnsembleMethod.RForest, EnsembleMethod.ExtraTrees);
+            if (shouldPerformRanking() && !allowed.contains(m)){
+                incompatible.add(String.format("Feature Ranking not implemented for %s", m.name()));
             }
         }
 

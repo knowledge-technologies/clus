@@ -18,3 +18,4 @@ __pycache__
 /resources/unitTests/**/*.xval
 /resources/unitTests/**/*.model
 /resources/unitTests/**/*.oob
+/docs/javadoc/

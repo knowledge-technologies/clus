@@ -1,4 +1,3 @@
-
 package si.ijs.kt.clus.util;
 
 import java.io.FileInputStream;
@@ -66,7 +65,7 @@ public class ClusLogger {
     }
 
     public static final void info() {
-        m_MainLogger.info("");;
+        m_MainLogger.info("");
     }
 
     public static final void severe(String msg) {
@@ -83,3 +82,4 @@ public class ClusLogger {
         m_MainLogger.finer(msg);
     }
 }
+

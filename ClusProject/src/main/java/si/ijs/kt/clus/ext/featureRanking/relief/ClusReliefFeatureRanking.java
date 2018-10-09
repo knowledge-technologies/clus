@@ -998,8 +998,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     public double computeNominalDist1D(DataTuple t1, DataTuple t2, NominalAttrType attr) {
         int v1 = attr.getNominal(t1);
         int v2 = attr.getNominal(t2);
-        if (v1 >= attr.m_NbValues || v2 >= attr.m_NbValues) { // at least one missing
-            return 1.0 - 1.0 / attr.m_NbValues;
+        if (v1 >= attr.getNbValues() || v2 >= attr.getNbValues()) { // at least one missing
+            return 1.0 - 1.0 / attr.getNbValues();
         }
         else {
             return v1 == v2 ? 0.0 : 1.0;

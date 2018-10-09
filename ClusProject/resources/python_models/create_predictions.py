@@ -58,7 +58,7 @@ def parse_index_intervals(intervals):
     return sorted([i for interval in intervals.split(",") for i in parse_index_interval(interval)])
 
 
-def instances_generator(arff_file):
+def instances_generator(arff_file, from_inst=0, to_inst=float("inf")):
     def my_eval(attr_ind, attr_value):
         if attributes[attr_ind][1] == "numeric":
             try:
@@ -85,9 +85,13 @@ def instances_generator(arff_file):
                     if x.strip():
                         if (instance + 1) % instances_step == 0:
                             print("Instances generated:", instance + 1)
-                        candidate = [my_eval(i, t) for i, t in enumerate(x.strip().split(","))]
                         found += 1
-                        yield candidate
+                        if from_inst <= instance:
+                            if instance <= to_inst:
+                                candidate = [my_eval(i, t) for i, t in enumerate(x.strip().split(","))]
+                                yield candidate
+                            else:
+                                break
 
 
 def create_predictions(python_ensemble_dir, python_ensemble_file,
@@ -96,7 +100,9 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
                        key_attribute,
                        target_attributes_string,
                        num_trees,
-                       out_files):
+                       out_files,
+                       first_instance,
+                       last_instance):
     """
     Computes predictions of the examples and writes everything to a file.
 
@@ -118,8 +124,11 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
         The analogue of descriptive_attributes_string for target attributes
     num_trees : int
         Number of trees in the ensemble
-    out_file : string
+    out_files : string
         Path to the file where predictions are written to, e.g., 'C:/Users/matej/predictions/experiment1.txt'
+    first_instance, last_instance : int
+        Predictions are made for the instances with the 0-based indices
+        from the interval [first_instance, last_instance].
     """
 
     def get_sublist(indices, whole_list, one_based=True):
@@ -132,7 +141,7 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
     descriptive_indices = parse_index_intervals(descriptive_attributes_string)
     target_indices = parse_index_intervals(target_attributes_string)
 
-    examples_generator = instances_generator(arff_file)
+    examples_generator = instances_generator(arff_file, first_instance, last_instance)
     _, attributes, _ = load_nonsparse_arff(arff_file, False)
     target_attributes = [attr[0] for attr in get_sublist(target_indices, attributes)]
     key_header = [] if key_attribute is None else [attributes[key_attribute - 1][0]]
@@ -183,21 +192,33 @@ if __name__ == "__main__":
                         help="Comma separated strings of paths to the output files where predictions are saved to, e.g., C:/Experiments/results/predicted100.pred,C:/Experiments/results/predicted200.pred")
     parser.add_argument("-s", "--instances_step", default=1000,
                         help="The 'frequency' of the notifications, how many instances were generated, e.g., 10. If set to 10, you will be notified on the 10th, 20th, 30th, ... instance.")
+    parser.add_argument("-fi", "--first_instance", default=0,
+                        help="0-based index of the first instance that predictions are made for.")
+    parser.add_argument("-li", "--last_instance", default=float("inf"),
+                        help="0-based index of the last instance that predictions are made for.")
 
     parser.print_help()
     arguments = parser.parse_args(sys.argv[1:])
 
     ensemble_directory = arguments.ensemble_dir
     ensemble_script = arguments.ensemble_file
-    arff_file = arguments.arff_file
+    arff_path = arguments.arff_file
     descriptive_attributes = arguments.descriptive_attributes
-    key_attribute = arguments.key_attribute
-    if key_attribute is not None:
-        key_attribute = int(key_attribute)
-    target_attributes = arguments.target_attributes
+    key_attribute_index = arguments.key_attribute
+    if key_attribute_index is not None:
+        key_attribute_index = int(key_attribute_index)
+    target_attributes_str = arguments.target_attributes
     number_of_trees = int(arguments.trees)
     output_files = arguments.output_file.split(",")
     instances_step = int(arguments.instances_step)
+
+    first_inst = arguments.first_instance
+    last_inst = arguments.last_instance
+    if first_inst != 0:
+        first_inst = int(first_inst)
+    if last_inst != float("inf"):
+        last_inst = int(last_inst)
+
     print("Starting ...")
-    create_predictions(ensemble_directory, ensemble_script, arff_file, descriptive_attributes, key_attribute,
-                       target_attributes, number_of_trees, output_files)
+    create_predictions(ensemble_directory, ensemble_script, arff_path, descriptive_attributes, key_attribute_index,
+                       target_attributes_str, number_of_trees, output_files, first_inst, last_inst)

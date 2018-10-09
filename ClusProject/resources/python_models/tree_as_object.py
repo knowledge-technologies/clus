@@ -4,6 +4,10 @@ Created on Mon Mar 26 14:30:05 2018
 
 @author: matej
 """
+import random
+
+
+random.seed(123)
 
 
 class Statistics:
@@ -20,7 +24,8 @@ class Statistics:
     add_another_stats(other, other_weight)
         Adds up or somehow joins two different predictions into one.
     stats_to_predictions()
-        Converts statistics to predictions, e.g., in the classification case, this would compute the most frequent class from the class counts.
+        Converts statistics to predictions, e.g., in the classification case,
+        this would compute the most frequent class from the class counts.
         In the regression case, this simply returns current averages.
     get_nb_targets()
         Returns the number of targets.
@@ -69,8 +74,8 @@ class RegressionStat(Statistics):
 
     def add_another_stats(self, other, other_weight):
         """
-        Adds the prediction :math:`o_i` of the other `RegressionStat` object to the current prediction :math:`c_i`, for all
-        i, :math:`0\leq i < n`, where :math:`n` is the number of targets. New predictions are defined as
+        Adds the prediction :math:`o_i` of the other `RegressionStat` object to the current prediction :math:`c_i`,
+        for all i, :math:`0\leq i < n`, where :math:`n` is the number of targets. New predictions are defined as
         :math:`w\; o_i + c_i`, where :math:`i` is given as parameter `other_weight`.
         
         Parameters
@@ -134,7 +139,8 @@ class BinaryNodeTest:
         Parameters
         ----------
         xs : list
-            List of descriptive values, whose `self.descriptive_index`-th component is used in the evaluation of the `self.test_function`.
+            List of descriptive values, whose `self.descriptive_index`-th component
+            is used in the evaluation of the `self.test_function`.
         missing_value :
             Something that represents missing value, e.g., `"?"`.
         
@@ -151,6 +157,8 @@ class BinaryNodeTest:
 
 
 class TreeNode:
+    unknown_branch = -1
+
     def __init__(self,
                  children=[],
                  branch_frequencies=[],
@@ -183,6 +191,8 @@ class TreeNode:
         assert len(self.children) == len(self.branch_frequencies)
         assert int(self.test is None) + int(self.prediction_statistics is None) == 1
         
+        self.the_branch = TreeNode.unknown_branch  # Which branch to follow when predicting
+        
         # Statistics that are used in the internal nodes for predictions of a current tuple.
         # The value of this field should always be None, except for the time when the predictions
         # are made from the tree which the self belongs to.
@@ -197,7 +207,7 @@ class TreeNode:
         
     def is_leaf(self):
         """
-        Tells whether the list of children is empty (self is a leaf) or not (self is an internal node): checks wheter
+        Tells whether the list of children is empty (self is a leaf) or not (self is an internal node): checks whether
         `self.children` is empty.
         
         Returns
@@ -226,7 +236,7 @@ class Tree:
         """
         self.root = root
         
-    def predict(self, xs, missing_value="?"):
+    def predict(self, xs, missing_value="?", randomize_unknown=False):
         """
         Predicts the target value(s) that correspond to the descriptive values `xs`.
         If the value of the attribute that is needed by a test in the tree is missing,
@@ -238,8 +248,10 @@ class Tree:
         ----------
         xs : list
             A data example which predictions are made for, e.g., `[31.0, "male", 31459.2, "brown"]`.
-        missing_value :
+        missing_value : str
             A thing that represents the missing value, `"?"` by default.
+        randomize_unknown : bool
+            Whether a random branch should be chosen or not when the value of the attribute in test is missing.
             
         Returns
         -------
@@ -258,13 +270,21 @@ class Tree:
                 has_been_processed = True
             else:
                 # find branch
-                the_branch = current.test.which_branch(xs, missing_value)
-                if the_branch is not None:
-                    # known value
-                    children_to_process = [current.children[the_branch]]
+                if current.the_branch == TreeNode.unknown_branch:
+                    the_branch = current.test.which_branch(xs, missing_value)
+                    current.the_branch = the_branch
                 else:
-                    # missing value
-                    children_to_process = current.children
+                    the_branch = current.the_branch
+                # missing values corrections
+                if the_branch is not None:  # known value
+                    children_to_process = [current.children[the_branch]]
+                else:  # missing value --> average of children or randomized with respect to branch frequencies
+                    if randomize_unknown:
+                        the_branch = int(random.random() > current.branch_frequencies[0])
+                        current.the_branch = the_branch
+                        children_to_process = [current.children[the_branch]]
+                    else:
+                        children_to_process = current.children
                 all_children_processed = True
                 for child in children_to_process:
                     if child.temp_statistics is None:
@@ -283,6 +303,7 @@ class Tree:
                     for child in children_to_process:
                         child.reset_temp_statistics()
                     has_been_processed = True
+                    current.the_branch = TreeNode.unknown_branch
                 else:
                     # go deeper in the tree
                     for child in children_to_process:

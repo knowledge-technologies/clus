@@ -456,13 +456,15 @@ public class FindBestTest {
 		if (pos == nb_rows) {// this can prevent illegal tests;
 			m_BestTest.m_BestHeur = Double.NEGATIVE_INFINITY;
 		} else {
-			double min_value = data.getTuple(indicesSorted[nb_rows - 1]).getDoubleVal(idx);
-			double max_value = data.getTuple(indicesSorted[pos]).getDoubleVal(idx);
+			// double value = at.getNumeric(tuple);
+			double min_value = at.getNumeric(data.getTuple(indicesSorted[nb_rows - 1]));  // data.getTuple(indicesSorted[nb_rows - 1]).getDoubleVal(idx);
+			double max_value = at.getNumeric(data.getTuple(indicesSorted[pos]));  // data.getTuple(indicesSorted[pos]).getDoubleVal(idx);
 			double split_value = (max_value - min_value) * rn.nextDouble() + min_value;
 			for (int i = pos; i < nb_rows; i++) {
 				tuple = data.getTuple(indicesSorted[i]);
-				if (tuple.getDoubleVal(idx) <= split_value)
+				if (at.getNumeric(tuple) <= split_value) {  // (tuple.getDoubleVal(idx) <= split_value)
 					break;
+				}
 				m_BestTest.m_PosStat.updateWeighted(tuple, indicesSorted[i]);
 			}
 

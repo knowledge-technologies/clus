@@ -1,0 +1,9 @@
+Ensemble method: RForest
+Ranking method: Symbolic
+Ensemble size: 2
+attributeDatasetIndex	attributeName	[w=0.5Rank]	[w=0.5]
+-------------------------------------------------------
+3	petallength	[1]	[0.71875]
+1	sepallength	[2]	[0.28125]
+2	sepalwidth	[3]	[0.078125]
+4	petalwidth	[4]	[0.0703125]

@@ -31,6 +31,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
+import org.apache.log4j.Hierarchy;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
@@ -67,7 +68,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     protected double m_Threshold = -1.0;
     // Hackishe Porzion des Codes fuer die pooled AUPRC: all other parts of the code that serve this purpose will be
     // simply denoted by poolAUPRC case
-    protected HierarchyDistance m_Distance = HierarchyDistance.NoDistance;
+    protected HierarchyDistance m_Distance;
     protected double[] m_P;
 
     // Thresholds used in making predictions in multi-label classification
@@ -99,9 +100,9 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
      * @param comp
      * @param distance
      */
-    public WHTDStatistic(Settings sett, ClassHierarchy hier, HierarchyDistance distance) {
-        this(sett, hier, false, distance);
-    }
+//    public WHTDStatistic(Settings sett, ClassHierarchy hier, HierarchyDistance distance) {
+//        this(sett, hier, false, distance);
+//    }
 
 
     /**
@@ -112,13 +113,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
      * @param comp
      * @param distance
      */
-    public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean,  HierarchyDistance distance) {
-        // super(hier.getDummyAttrs(), onlymean);
-        this(sett, hier, onlymean);
-
-        m_Distance = distance;
-        m_P = new double[m_Hier.getTotal()];
-    }
+//    public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean,  HierarchyDistance distance) {
+//        // super(hier.getDummyAttrs(), onlymean);
+//        this(sett, hier, onlymean);
+//
+//        m_Distance = distance;
+//        m_P = new double[m_Hier.getTotal()];
+//    }
 
 
     public WHTDStatistic(Settings sett, ClassHierarchy hier) {
@@ -144,6 +145,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         previousSumWXR = new double[1];
         previousSumX2R = new double[1];
         // daniela end
+        
+        // pooledAUPRC
+        m_Distance = sett.getHMLC().getHierDistance();
+        if (m_Distance.equals(HierarchyDistance.PooledAUPRC)) {
+        	m_P = new double[m_Hier.getTotal()];
+        }
+        
     }
 
 
@@ -180,25 +188,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     @Override
     public ClusStatistic cloneStat() {
-
-        if (m_Distance.equals(HierarchyDistance.NoDistance)) {// poolAUPRC case
-            WHTDStatistic res = new WHTDStatistic(this.m_Settings, m_Hier, false, m_Distance);
-            res.m_Training = m_Training;
-            res.m_ParentStat = m_ParentStat;
-            return res;
-        }
-        else {
-            WHTDStatistic res = new WHTDStatistic(this.m_Settings, m_Hier, false);
-            res.m_Training = m_Training;
-            res.m_ParentStat = m_ParentStat;
-            return res;
-        }
+        WHTDStatistic res = new WHTDStatistic(this.m_Settings, m_Hier, false);
+        res.m_Training = m_Training;
+        res.m_ParentStat = m_ParentStat;
+        return res;
     }
 
 
     @Override
     public ClusStatistic cloneSimple() {
-        WHTDStatistic res = (m_Distance.equals(HierarchyDistance.NoDistance)) ? new WHTDStatistic(this.m_Settings, m_Hier, true, m_Distance) : new WHTDStatistic(this.m_Settings, m_Hier, true);
+        WHTDStatistic res = new WHTDStatistic(this.m_Settings, m_Hier, true);
         /* poolAUPRC case : normal case */
         res.m_Threshold = m_Threshold;
         res.m_Thresholds = m_Thresholds;
@@ -245,7 +244,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 int idx = val.getIndex();
                 // if (Settings.VERBOSE > 10) ClusLogger.info("idx = "+idx+" weight = "+weight);
                 m_SumValues[idx] += weight;
-                if (m_Distance.equals(HierarchyDistance.NoDistance)) {// poolAUPRC case
+                if (m_Distance.equals(HierarchyDistance.PooledAUPRC)) {// poolAUPRC case
                     m_P[idx] += weight;
                 }
             }
@@ -2709,7 +2708,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     @Override
     public void showRootInfo() {
         try {
-            String hierarchyFile = m_Hier.getSettings().getGeneric().getAppName() + ".hierarchy";
+            String hierarchyFile = m_Hier.getSettings().getGeneric().getFileAbsolute(m_Hier.getSettings().getGeneric().getAppName()) + ".hierarchy";
             PrintWriter wrt = new PrintWriter(new OutputStreamWriter(new FileOutputStream(hierarchyFile)));
             wrt.println("Hier #nodes: " + m_Hier.getTotal());
             wrt.println("Hier classes by level: " + MIntArray.toString(m_Hier.getClassesByLevel()));
@@ -2865,7 +2864,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     @Override
     public double getSVarS(ClusAttributeWeights scale) {
-        if (m_Distance.equals(HierarchyDistance.NoDistance)) { // poolAUPRC case
+        if (m_Distance.equals(HierarchyDistance.PooledAUPRC)) { // poolAUPRC case
             ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
             for (int i = 0; i < m_NbAttrs; i++) {
                 classInd.add(i, i);
@@ -2919,7 +2918,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     @Override
     public double getSVarSDiff(ClusAttributeWeights scale, ClusStatistic other) {
-        if (m_Distance.equals(HierarchyDistance.NoDistance)) { // poolAUPRC case
+        if (m_Distance.equals(HierarchyDistance.PooledAUPRC)) { // poolAUPRC case
             ArrayList<Integer> classInd = new ArrayList<Integer>(m_NbAttrs);
             for (int i = 0; i < m_NbAttrs; i++) {
                 classInd.add(i, i);
@@ -2997,7 +2996,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     @Override
     public void copy(ClusStatistic other) {
-        if (m_Distance.equals(HierarchyDistance.NoDistance)) { // poolAUPRC case
+        if (m_Distance.equals(HierarchyDistance.PooledAUPRC)) { // poolAUPRC case
             WHTDStatistic or = (WHTDStatistic) other;
             m_SumWeight = or.m_SumWeight;
             m_NbExamples = or.m_NbExamples;

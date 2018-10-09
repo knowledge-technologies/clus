@@ -362,7 +362,7 @@ public class Settings implements Serializable {
                 m_Ini.load(fname, '%');
             }
             catch (FileNotFoundException e) {
-                System.err.println("No settings file found");
+            	System.err.println("No settings file found");
             }
         }
         if (cargs != null) {

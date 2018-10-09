@@ -1,0 +1,7 @@
+Ensemble method: RForest
+Ranking method: Genie3
+Ensemble size: 2
+attributeDatasetIndex	attributeName	[o1, o2, o3]	[r1, r2, r3]
+--------------------------------------------------------------------
+3	atr3	[1, 1, 2]	[1.5, 2.5, 3.5]
+10	atr10	[1, 2, 1]	[1.5, 2.0, 4.0]

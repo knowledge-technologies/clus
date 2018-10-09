@@ -532,7 +532,7 @@ public class ClusStatManager implements Serializable {
             String[] twoLabels = new String[] { "1", "0" }; // Clus saves the values of @attribute atrName {1,0}/{0,1}
                                                             // to {"1", "0"}.
             for (int attr = 0; attr < nom.length; attr++) {
-                if (!Arrays.equals(nom[attr].m_Values, twoLabels)) {
+                if (!Arrays.equals(nom[attr].getValues(), twoLabels)) {
                     is_multilabel = false;
                     break;
                 }
@@ -653,37 +653,32 @@ public class ClusStatManager implements Serializable {
             case MODE_HIERARCHICAL:
 
                 WHTDStatistic clustering;
-                if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.NoDistance)) { // poolAUPRC
-                                                                                                      // induction
+                HierarchyDistance hd = getSettings().getHMLC().getHierDistance();
+                if (hd.equals(HierarchyDistance.PooledAUPRC) || hd.equals(HierarchyDistance.WeightedEuclidean)) {
                     // setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier,
                     // getSettings().getHMLC().getHierDistance()));
-                    clustering = new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance());
-                    setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance()));
+//                    clustering = new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance());
+//                    setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance()));
+                	if (getSettings().getHMLC().getHierSingleLabel() && hd.equals(HierarchyDistance.WeightedEuclidean)) {
+                		// setClusteringStatistic(new HierSingleLabelStat(getSettings(), m_Hier,
+                        clustering = new HierSingleLabelStat(getSettings(), m_Hier);
+                        setTargetStatistic(new HierSingleLabelStat(getSettings(), m_Hier));
+                	} else {
+                		clustering = new WHTDStatistic(getSettings(), m_Hier);
+                        setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier));
+                	}
                 }
                 else {
-                    if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.WeightedEuclidean)) {
-                        if (getSettings().getHMLC().getHierSingleLabel()) {
-                            // setClusteringStatistic(new HierSingleLabelStat(getSettings(), m_Hier,
-                            clustering = new HierSingleLabelStat(getSettings(), m_Hier);
-                            setTargetStatistic(new HierSingleLabelStat(getSettings(), m_Hier));
-                        }
-                        else {
-                            // setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier,
-                            clustering = new WHTDStatistic(getSettings(), m_Hier);
-                            setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier));
-                        }
+                    ClusDistance dist = null;
+                    if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.Jaccard)) {
+                        dist = new HierJaccardDistance(m_Hier.getType());
                     }
-                    else {
-                        ClusDistance dist = null;
-                        if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.Jaccard)) {
-                            dist = new HierJaccardDistance(m_Hier.getType());
-                        }
 
-                        // setClusteringStatistic(new HierSumPairwiseDistancesStat(getSettings(),
-                        // m_Hier, dist,
-                        clustering = new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist);
-                        setTargetStatistic(new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist));
-                    }
+                    // setClusteringStatistic(new HierSumPairwiseDistancesStat(getSettings(),
+                    // m_Hier, dist,
+                    clustering = new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist);
+                    setTargetStatistic(new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist));
+
                 }
                 if (getSettings().getHMLC().isHierAndClassAndReg()) {
                     setClusteringStatistic(new CombStatClassRegHier(this, num3, nom3, clustering));
@@ -1099,8 +1094,8 @@ public class ClusStatManager implements Serializable {
         int max_nom_val = 0;
         int num_nom_atts = m_Schema.getNbNominalAttrUse(AttributeUseType.All);
         for (int i = 0; i < num_nom_atts; i++) {
-            if (m_Schema.getNominalAttrUse(AttributeUseType.All)[i].m_NbValues > max_nom_val) {
-                max_nom_val = m_Schema.getNominalAttrUse(AttributeUseType.All)[i].m_NbValues;
+            if (m_Schema.getNominalAttrUse(AttributeUseType.All)[i].getNbValues() > max_nom_val) {
+                max_nom_val = m_Schema.getNominalAttrUse(AttributeUseType.All)[i].getNbValues();
             }
         }
         if (max_nom_val == 0) { // If no nominal attributes in data set
@@ -1135,6 +1130,11 @@ public class ClusStatManager implements Serializable {
         if (nom.length != 0) {
             parent.addError(new ContingencyTable(parent, nom));
             parent.addError(new MSNominalError(parent, nom, m_NormalizationWeights));
+            boolean isBinaryZeroOneClassification = nom.length == 1 && Arrays.equals(nom[0].getValues(), new String[] {"1", "0"});
+            if (isBinaryZeroOneClassification) {
+            	parent.addError(new si.ijs.kt.clus.error.mlc.MLaverageAUROC(parent, nom));
+                parent.addError(new si.ijs.kt.clus.error.mlc.MLaverageAUPRC(parent, nom));
+            }
         }
         if (getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
             parent.addError(new si.ijs.kt.clus.error.mlc.HammingLoss(parent, nom));

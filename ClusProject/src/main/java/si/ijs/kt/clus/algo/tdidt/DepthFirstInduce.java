@@ -355,6 +355,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
             // daniela end
         }
 
+        boolean isExtraTreesEnsemble = getSettings().getEnsemble().isEnsembleMode() && getSettings().getEnsemble().getEnsembleMethod().equals(EnsembleMethod.ExtraTrees);
         for (int i = 0; i < attrs.length; i++) {
             ClusAttrType at = attrs[i];
             if (isGIS) {
@@ -365,8 +366,7 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
                 WHTDStatistic.INITIALIZEPARTIALSUM = true; // Optimized Moran I would be computed
                 // daniela end
             }
-
-            if ((getSettings().getEnsemble().isEnsembleMode()) && (getSettings().getEnsemble().getEnsembleMethod().equals(EnsembleMethod.ExtraTrees))) {
+            if (isExtraTreesEnsemble) {
                 if (at.isNominal()) { // at instanceof NominalAttrType
                     m_FindBestTest.findNominalExtraTree((NominalAttrType) at, data, rnd);
                 }
@@ -473,8 +473,9 @@ public class DepthFirstInduce extends ClusInductionAlgorithm {
         else {
             makeLeaf(node);
         }
-
-        ClusLogger.finer("Depth " + node.getLevel() + ": node finished.");
+        if (getSettings().getGeneral().getVerbose() >= SHOW_INDUCE_PROGRESS) {
+            ClusLogger.finer("Depth " + node.getLevel() + ": node finished.");
+        }
     }
 
 

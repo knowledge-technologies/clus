@@ -77,7 +77,7 @@ public class ClusForest implements ClusModel, Serializable {
 
     /** A list of decision trees in the forest (or empty if memory optimisation is used). */
     ArrayList<ClusModel> m_Trees;
-    /** Number of threes in the forest, may not be equal to {@code m_Forest.size()} because of memory optimisation. */
+    /** Number of threes in the forest, may not be equal to {@code m_Trees.size()} because of memory optimisation. */
     private ArrayList<Integer> m_TreeIndices = new ArrayList<>();
     /** The sum of nodes over the trees in the forest */
     private int m_NbNodes = 0;
@@ -383,7 +383,7 @@ public class ClusForest implements ClusModel, Serializable {
 
     @Override
     public int getModelSize() {
-        return m_Trees.size();
+        return m_Trees.size(); // TODO This is probably potentially dangerous? Use m_TreeIndices.size()?
     }
 
 

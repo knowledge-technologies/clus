@@ -60,7 +60,7 @@ public class ClusView {
     }
 
 
-    public RowData readData(ClusReader reader, ClusSchema schema) throws IOException, ClusException {
+    public RowData readData(ClusReader reader, ClusSchema schema, boolean isTest) throws IOException, ClusException {
         schema.setReader(true);
         ArrayList<DataTuple> items = new ArrayList<DataTuple>();
         DataTuple tuple = readDataTupleFirst(reader, schema);
@@ -73,7 +73,11 @@ public class ClusView {
             attr.term(schema);
         }
         schema.setReader(false);
-        return new RowData(items, schema);
+        return new RowData(items, schema, isTest);
+    }
+    
+    public RowData readData(ClusReader reader, ClusSchema schema) throws IOException, ClusException {
+    	return readData(reader, schema, false);
     }
 
 
@@ -124,7 +128,9 @@ public class ClusView {
                     return null;
                 for (int j = 1; j < m_Attr.size(); j++) {
                     ClusSerializable attr = m_Attr.get(j);
-                    if (!attr.read(reader, tuple)) { throw new IOException("Error reading attribute with index " + j + " (" + m_Attr.get(j) + "), at row " + (reader.getRow() + 1)); }
+                    if (!attr.read(reader, tuple)) { 
+                    	throw new IOException("Error reading attribute with index " + j + " (" + m_Attr.get(j) + "), at row " + (reader.getRow() + 1));
+                    }
                 }
             }
         }

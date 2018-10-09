@@ -4,7 +4,10 @@ package si.ijs.kt.clus.ext.featureRanking;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -118,6 +121,8 @@ public class ClusFeatureRanking {
     private Settings m_Settings;
 
     private boolean m_ScoresNormalized = false;
+    
+    protected boolean m_IsEnsembleRanking = false;
 
     /**
      * Separator that separates different blocks of columns in fimp file. Must not be equal to "," (see parsing in the
@@ -131,15 +136,16 @@ public class ClusFeatureRanking {
     public ClusFeatureRanking(Settings sett) {
         m_AllAttributes = new HashMap<String, double[]>();
         m_Lock = new ClusReadWriteLock();
-        m_Settings = sett;
         m_AttributeDatasetIndices = new HashMap<String, Double>();
         m_OutputRanking = new TreeMap<Double, ArrayList<Triple<String, int[], double[]>>>();
+        m_Settings = sett;
     }
 
 
     public final Settings getSettings() {
         return m_Settings;
     }
+    
 
 
     public void initializeAttributes(ClusAttrType[] descriptive, int nbRankings) {
@@ -273,7 +279,7 @@ public class ClusFeatureRanking {
         JsonObject algorithmSpec = new JsonObject();
         JsonElement algorithmName;
         EnsembleMethod ens_method = getSettings().getEnsemble().getEnsembleMethod();
-        EnsembleRanking fr_method = getSettings().getEnsemble().getRankingMethod();
+        EnsembleRanking fr_method = getSettings().getEnsemble().getRankingMethods().get(0); // FIXME never ...
         if (ens_method == EnsembleMethod.ExtraTrees) {
             algorithmName = new JsonPrimitive("ExtraTrees/GENIE3");
         }
@@ -636,12 +642,26 @@ public class ClusFeatureRanking {
     }
 
 
-    public void createFimp(ClusRun cr, int numberOfTrees) throws IOException {
-        createFimp(cr, "", numberOfTrees);
+    public void createFimp(ClusRun cr) throws IOException {
+        createFimp(cr, "", -1, -1);
     }
 
 
-    public void createFimp(ClusRun cr, String appendixToFimpName, int numberOfTrees) throws IOException {
+    public void createFimp(ClusRun cr, String appendixToFimpName, int expectedNumberTrees, int realNumberOfTrees) throws IOException {
+    	if (expectedNumberTrees != realNumberOfTrees) {
+	        // copy the file from resources
+	        String fileName = "fimp_manipulation.py";
+	        try {
+	            InputStream is = si.ijs.kt.clus.Clus.class.getResourceAsStream("/" + fileName);
+	            String fullFileName = getSettings().getGeneric().getFileAbsolute(fileName);
+	            Files.copy(is, Paths.get(fullFileName), StandardCopyOption.REPLACE_EXISTING);
+	        }
+	        catch (IOException ex) {
+	            System.err.println("Error while copying " + fileName + " to the output folder.");
+	            ex.printStackTrace();
+	        }
+    	}
+    	
         if (cr.getStatManager().getSettings().getEnsemble().shouldSortRankingByRelevance()) {
             m_Order = FimpOrdering.BY_RELEVANCE;
         }
@@ -703,11 +723,8 @@ public class ClusFeatureRanking {
                                                                                        // case of ensemble rankings
             for (int j = 0; j < m_NbFeatureRankings; j++) {
                 // normalisation
-                if (!m_ScoresNormalized) {
-                    possiblyNonnormalizedScores[2 + j] /= Math.max(1.0, ClusEnsembleInduce.getMaxNbBags()); // Relief
-                                                                                                            // has 0
-                                                                                                            // number of
-                                                                                                            // bags ...
+                if (!m_ScoresNormalized && m_IsEnsembleRanking) {
+                    possiblyNonnormalizedScores[2 + j] /= ClusEnsembleInduce.getMaxNbBags();
                 }
                 // rounding: done implicitly only in ranks computation
                 // possiblyNonnormalizedScores[2 + j] = ClusUtil.roundToSignificantFigures(possiblyNonnormalizedScores[2

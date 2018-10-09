@@ -26,6 +26,7 @@ Created on Mon Mar 26 16:12:01 2018
 #
 # [1.0, 21.21]
 
+
 from tree_as_object import *
 import unittest
 
@@ -37,6 +38,11 @@ class TestTreeStuff(unittest.TestCase):
                     [[1.88, 3.36], [1.0, 21.21]],
                     [[3.3, 2.8], [1.0, 21.21]],
                     [[2.84, 3.84], [1.0, 21.21]]]
+
+        self.yss_rnd = [[[1.0, 8.0], [1.0, 21.21]],
+                        [[1.0, 8.0], [1.0, 21.21]],
+                        [[4.1, 3.2], [1.0, 21.21]],
+                        [[4.1, 3.2], [1.0, 21.21]]]
 
         # leaves
         self.node0_yes = TreeNode(prediction_statistics=RegressionStat([1.0, 8.0]))
@@ -66,5 +72,12 @@ class TestTreeStuff(unittest.TestCase):
         for xs, ys in zip(self.xss, self.yss):
             true_vals = ys[0]
             predicted = self.a_tree.predict(xs)
+            for i in range(len(predicted)):
+                self.assertAlmostEqual(predicted[i], true_vals[i], delta=10**-10)
+
+    def test_some_tree_randomized(self):
+        for xs, ys in zip(self.xss, self.yss_rnd):
+            true_vals = ys[0]
+            predicted = self.a_tree.predict(xs, randomize_unknown=True)
             for i in range(len(predicted)):
                 self.assertAlmostEqual(predicted[i], true_vals[i], delta=10**-10)
