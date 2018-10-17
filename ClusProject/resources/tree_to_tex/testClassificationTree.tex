@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage[a0paper]{geometry}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usetikzlibrary{positioning,shapes}
+
+\begin{document}
+\tikzset{
+    treenode/.style = {rounded corners, ellipse,
+        draw, align=center,
+        top color=white,
+        bottom color=blue!20,
+        font=\Large},
+    internal/.style = {treenode, bottom color=red!30},
+    leaf/.style     = {treenode, shape=rectangle}
+}
+
+\begin{tikzpicture}%[thick,scale=0.7, every node/.style={scale=0.7}, every edge/.style={scale=0.7}]
+[
+grow                    = down,
+level distance          = 7em,
+edge from parent/.style = {draw, -latex},
+every node/.style       = {font=\Large},
+sloped
+]
+\Tree [.\node[internal]{gene\_AAA-AAA $>$ 2.0}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{NoMS (17/17)};  ] \edge node[auto=left,pos=.6]{N};[.\node[internal]{gene\_BBB $>$ 0.0}; \edge node[auto=right,pos=.6]{Y};[.\node[internal]{gene\_CCCC $>$ 0.0}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{MS (4/4)};  ] \edge node[auto=left,pos=.6]{N};[.\node[internal]{gene\_DDDD $>$ 0.0}; \edge node[auto=right,pos=.6]{Y};[.\node[internal]{gene\_EEEEE $>$ 0.0}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{NoMS (3/3)};  ] \edge node[auto=left,pos=.6]{N};[.\node[leaf]{MS (4/4)};  ] ] \edge node[auto=left,pos=.6]{N};[.\node[leaf]{NoMS (25/25)};  ] ] ] \edge node[auto=left,pos=.6]{N};[.\node[internal]{gene\_FFFFF $>$ 0.0}; \edge node[auto=right,pos=.6]{Y};[.\node[internal]{gene\_GGGGGGG $>$ 0.0}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{MS (5/5)};  ] \edge node[auto=left,pos=.6]{N};[.\node[internal]{gene\_HHHHHHH $>$ 0.0}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{MS (3/3)};  ] \edge node[auto=left,pos=.6]{N};[.\node[internal]{gene\_IIIIIII $>$ 0.0}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{MS (2/2)};  ] \edge node[auto=left,pos=.6]{N};[.\node[leaf]{NoMS (24/24)};  ] ] ] ] \edge node[auto=left,pos=.6]{N};[.\node[leaf]{NoMS (6/6)};  ] ] ] ] 
+\end{tikzpicture}
+
+\end{document} 

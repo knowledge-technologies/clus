@@ -2,26 +2,25 @@ import tex_tree
 import sys
 
 
-class ClassificationTree(tex_tree.Tree):
+class RegressionTree(tex_tree.Tree):
     def __init__(self, *args):
         super().__init__(*args)
 
     def create_empty_tree(self):
-        return ClassificationTree()
+        return RegressionTree()
 
     def prediction_latex_string(self):
         val = self.prediction[0]
-        with_val_ex = int(float(self.prediction[1]))
-        all_ex = int(self.prediction[2])
-        return "{} ({}/{})".format(val, with_val_ex, all_ex)
+        number_examples_leaf = int(float(self.prediction[1]))
+        return "[{}] ({})".format(val, number_examples_leaf)
 
     def set_prediction(self, match_object):
-        self.prediction = (match_object.group(1), match_object.group(2), match_object.group(3))
+        self.prediction = (match_object.group(1), match_object.group(2))
 
 
 def create_tex_file(clus_tree_file, out_tex_file):
-    classification_pattern = "\[(.+)\] \[(.+)\]: (.+)"
-    tex_tree.create_tex_file(clus_tree_file, out_tex_file, classification_pattern, ClassificationTree())
+    regression_prediction_pattern = "\[(.+)\]: (.+)"
+    tex_tree.create_tex_file(clus_tree_file, out_tex_file, regression_prediction_pattern, RegressionTree())
 
 # A test for ClassificationTree
 # create_tex_file("testClassificationTree.txt", "testClassificationTree.tex")

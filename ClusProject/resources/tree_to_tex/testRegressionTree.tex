@@ -1,0 +1,29 @@
+\documentclass{article}
+\usepackage[a1paper]{geometry}
+\usepackage{tikz}
+\usepackage{tikz-qtree}
+\usetikzlibrary{positioning,shapes}
+
+\begin{document}
+\tikzset{
+    treenode/.style = {rounded corners, ellipse,
+        draw, align=center,
+        top color=white,
+        bottom color=blue!20,
+        font=\Large},
+    internal/.style = {treenode, bottom color=red!30},
+    leaf/.style     = {treenode, shape=rectangle}
+}
+
+\begin{tikzpicture}%[thick,scale=0.7, every node/.style={scale=0.7}, every edge/.style={scale=0.7}]
+[
+grow                    = down,
+level distance          = 7em,
+edge from parent/.style = {draw, -latex},
+every node/.style       = {font=\Large},
+sloped
+]
+\Tree [.\node[internal]{Ni $>$ 15.84}; \edge node[auto=right,pos=.6]{Y};[.\node[internal]{Pb $>$ 66.0}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{[1.572033,11.1538,56.395333] (60)};  ] \edge node[auto=left,pos=.6]{N};[.\node[internal]{Zn $>$ 86.0}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{[2.288925,11.501887,23.732453] (53)};  ] \edge node[auto=left,pos=.6]{N};[.\node[internal]{Zn $>$ 70.8}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{[1.352394,11.544789,19.775775] (71)};  ] \edge node[auto=left,pos=.6]{N};[.\node[leaf]{[1.081423,10.090704,11.569521] (71)};  ] ] ] ] \edge node[auto=left,pos=.6]{N};[.\node[internal]{Ni $>$ 10.12}; \edge node[auto=right,pos=.6]{Y};[.\node[leaf]{[8.951800E-1,7.26304,13.86952] (50)};  ] \edge node[auto=left,pos=.6]{N};[.\node[leaf]{[5.422593E-1,3.898741,16.789852] (54)};  ] ] ] 
+\end{tikzpicture}
+
+\end{document} 

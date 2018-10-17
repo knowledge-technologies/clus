@@ -4,7 +4,7 @@ import re
 class Tree:
     def __init__(self, test=None, value=None, left=None, right=None):
         self.test = test
-        self.prediction = value  # depents on the target type probably
+        self.prediction = value  # depends on the target type probably
         self.left = None  # yes branch
         self.right = None  # no branch
         self.parent = None
