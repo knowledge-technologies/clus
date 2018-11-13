@@ -10,7 +10,6 @@ import java.util.List;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
-import si.ijs.kt.clus.main.settings.section.SettingsOutput.WritePredictions;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
