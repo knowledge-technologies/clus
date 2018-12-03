@@ -62,11 +62,6 @@ import si.ijs.kt.clus.util.jeans.io.MyFile;
 import si.ijs.kt.clus.util.jeans.math.SingleStatList;
 
 
-/*
- * import org.apache.commons.math.distribution.*;
- * import org.apache.commons.math.*;
- */
-
 public class CDTuneSizeConstrPruning extends ClusDecisionTree {
 
     protected ClusInductionAlgorithmType m_Class;
@@ -74,7 +69,6 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
     protected ClusStatistic m_TotalStat;
     protected boolean m_HasMissing;
     protected int m_NbExamples;
-    // protected TDistribution m_Distribution;
     protected int m_OrigSize;
     protected double m_RelErrAcc = 0.01;
     protected ArrayList<SingleStatList> m_Graph;

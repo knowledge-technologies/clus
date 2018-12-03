@@ -71,7 +71,7 @@ public class DEIndividual {
      * @return Return num_eval+1 as in tail recursion.
      */
     public int evaluate(DEProblem probl, int num_eval) {
-        m_Fitness = probl.calcFitness(m_Genes);
+        m_Fitness = probl.calcFitness(m_Genes, null);
         return (num_eval + 1);
     }
 

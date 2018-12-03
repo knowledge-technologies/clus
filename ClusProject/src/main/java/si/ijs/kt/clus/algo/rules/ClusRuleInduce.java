@@ -984,9 +984,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
 
         if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
             ClusLogger.info("Preparations ended. Starting optimization.");
-        }
-
-        if (!getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimizedBinary)) {
+        
             // If using external binary, optimization is already done.
 
             if (getSettings().getRules().getRulePredictionMethod().equals(RulePredictionMethod.GDOptimized) && getSettings().getRules().getOptGDNbOfTParameterTry() > 1) {
@@ -999,27 +997,27 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
                 double interTVal = (lastTVal - firstTVal) / (getSettings().getRules().getOptGDNbOfTParameterTry() - 1);
 
                 double minFitness = Double.POSITIVE_INFINITY;
-                for (int iRun = 0; iRun < getSettings().getRules().getOptGDNbOfTParameterTry(); iRun++) {
+                for (int tau = 0; tau < getSettings().getRules().getOptGDNbOfTParameterTry(); tau++) {
 
                     // To make sure the last value is accurate (not rounded imprecisely)
-                    if (iRun == getSettings().getRules().getOptGDNbOfTParameterTry() - 1) {
+                    if (tau == getSettings().getRules().getOptGDNbOfTParameterTry() - 1) {
                         getSettings().getRules().setOptGDGradTreshold(lastTVal);
                     }
                     else {
-                        getSettings().getRules().setOptGDGradTreshold(firstTVal + iRun * interTVal);
+                        getSettings().getRules().setOptGDGradTreshold(firstTVal + tau * interTVal);
                     }
 
                     gdalg.initGDForNewRunWithSamePredictions();
 
                     ArrayList<Double> newWeights = gdalg.optimize();
 
-                    String s = "The T value " + (firstTVal + iRun * interTVal) + " has a test fitness: " + gdalg.getBestFitness();
+                    String s = "The T value " + (firstTVal + tau * interTVal) + " has a test fitness: " + gdalg.getBestFitness();
                     if (gdalg.getBestFitness() < minFitness) {
                         // Fitness is smaller than previously, store these weights
                         weights = newWeights;
                         minFitness = gdalg.getBestFitness();
 
-                        rset.m_optWeightBestTValue = firstTVal + iRun * interTVal;
+                        rset.m_optWeightBestTValue = firstTVal + tau * interTVal;
                         rset.m_optWeightBestFitness = minFitness;
 
                         ClusLogger.finer(s + " - best so far!");

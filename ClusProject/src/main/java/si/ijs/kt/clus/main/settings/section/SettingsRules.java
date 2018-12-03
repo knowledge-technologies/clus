@@ -265,7 +265,7 @@ public class SettingsRules extends SettingsBase {
     /** How many random rules are wanted. If &gt; 0 only random rules are generated */
     private INIFileInt m_RandomRules;
     private INIFileBool m_RuleWiseErrors;
-
+    
     // Rule tests are constrained to the first possible attribute value
     private INIFileBool m_constrainedToFirstAttVal;
 
@@ -394,6 +394,11 @@ public class SettingsRules extends SettingsBase {
      */
     private INIFileBool m_ROSAddRulesWithTotalAveraging;
 
+    /**
+     * ROS parameters (subset size and voting type) can be autotuned. Off by default.
+     */
+    private INIFileBool m_ROSParameterAutoTune;
+    
     // Probabilistic Rule sampling
     /** Expected cardinality (excluding default rule) */
     private INIFileInt m_MaxRuleCardinality;
@@ -794,6 +799,10 @@ public class SettingsRules extends SettingsBase {
     public int getOptGDMaxIter() {
         return m_OptGDMaxIter.getValue();
     }
+    
+    public void setOptGDMaxIter(int value) {
+    	m_OptGDMaxIter.setValue(value);
+    }
 
 
     /** GD The used loss function */
@@ -938,6 +947,10 @@ public class SettingsRules extends SettingsBase {
         return m_ROSAddRulesWithTotalAveraging.getValue();
     }
 
+    public boolean isROSParameterAutoTune() {
+    	return m_ROSParameterAutoTune.getValue();
+    }
+    
     @Override
     public void create() {
         m_Section.addNode(m_CoveringMethod = new INIFileEnum<>("CoveringMethod", CoveringMethod.Standard));
@@ -998,7 +1011,8 @@ public class SettingsRules extends SettingsBase {
         m_Section.addNode(m_OptGDNbOfTParameterTry = new INIFileInt("OptGDNbOfTParameterTry", 1));
         m_Section.addNode(m_OptGDEarlyTTryStop = new INIFileBool("OptGDEarlyTTryStop", true));
         m_Section.addNode(m_ROSAddRulesWithTotalAveraging = new INIFileBool("ROSAddRulesWithTotalAveraging", true));
-
+        m_Section.addNode(m_ROSParameterAutoTune = new INIFileBool("ROSParameterAutoTune", false));
+        
         m_Section.addNode(m_MaxRuleCardinality = new INIFileInt("MaxRuleCardinality", 30));
         m_Section.addNode(m_MaxPoissonIterations = new INIFileInt("MaxPoissonIterations", 1000));
         m_Section.addNode(m_NumberOfSampledRuleSets = new INIFileInt("NumberOfSampledRuleSets", 100));

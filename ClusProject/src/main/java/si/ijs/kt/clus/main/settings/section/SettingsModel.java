@@ -64,7 +64,7 @@ public class SettingsModel extends SettingsBase {
         m_Section.addNode(m_MinW = new INIFileDouble("MinimalWeight", 2.0));
         m_Section.addNode(m_MinNbEx = new INIFileInt("MinimalNumberExamples", 0));
         m_Section.addNode(m_MinKnownW = new INIFileDouble("MinimalKnownWeight", 0));
-        m_Section.addNode(m_TuneFolds = new INIFileString("ParamTuneNumberFolds", "10"));
+        m_Section.addNode(m_TuneFolds = new INIFileString("ParamTuneNumberFolds", "3"));
         m_Section.addNode(m_NominalSubsetTests = new INIFileBool("NominalSubsetTests", true));
     }
 }

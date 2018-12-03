@@ -76,6 +76,10 @@ public class ClusLogger {
     public static final void fine(String msg) {
         m_MainLogger.fine(msg);
     }
+    
+    public static final void fine() {
+    	m_MainLogger.fine("");
+    }
 
 
     public static final void finer(String msg) {
