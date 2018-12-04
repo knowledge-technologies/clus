@@ -1,15 +1,7 @@
 package si.ijs.kt.clus.algo.rules.tune;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.ArrayList;
 import java.util.Random;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 import si.ijs.kt.clus.algo.ClusInductionAlgorithm;
 import si.ijs.kt.clus.algo.ClusInductionAlgorithmType;
@@ -25,8 +17,6 @@ import si.ijs.kt.clus.error.Accuracy;
 import si.ijs.kt.clus.error.RMSError;
 import si.ijs.kt.clus.error.common.ClusError;
 import si.ijs.kt.clus.error.common.ClusErrorList;
-import si.ijs.kt.clus.ext.ensemble.callable.InduceOneBagCallable;
-import si.ijs.kt.clus.ext.ensemble.container.OneBagResults;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.ClusSummary;
@@ -129,12 +119,20 @@ public class FIREROSTune extends ClusRuleClassifier {
 			Random random = new Random(0);
 			int nbfolds = Integer.parseInt(getSettings().getModel().getTuneFolds());
 			XValMainSelection sel = new XValRandomSelection(trset.getNbRows(), nbfolds, random);
+
+			ClusModel dummy = null;
+
 			for (int i = 0; i < nbfolds; i++) {
 				showFold(i);
 				XValSelection msel = new XValSelection(sel, i);
 				ClusRun cr = partitionDataBasic(trset, msel, summ, i + 1);
 				ClusModelInfo def_info = cr.addModelInfo(ClusModel.DEFAULT);
-				def_info.setModel(ClusDecisionTree.induceDefault(cr));
+
+				// this is needed just to fill the placeholder for ClusModel.DEFAULT
+				if (dummy == null) {
+					dummy = ClusDecisionTree.induceDefault(cr);
+				}
+				def_info.setModel(dummy);
 
 				ClusModel model = m_Class.induceSingleUnpruned(cr);
 				cr.addModelInfo(ClusModel.ORIGINAL).setModel(model);

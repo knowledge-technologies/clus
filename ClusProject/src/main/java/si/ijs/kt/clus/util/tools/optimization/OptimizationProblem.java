@@ -26,7 +26,6 @@
 
 package si.ijs.kt.clus.util.tools.optimization;
 
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
@@ -35,7 +34,6 @@ import java.util.Arrays;
 import java.util.BitSet;
 import java.util.Random;
 
-import si.ijs.kt.clus.algo.rules.ClusRule;
 import si.ijs.kt.clus.algo.rules.ClusRuleSet;
 import si.ijs.kt.clus.algo.rules.RuleNormalization;
 import si.ijs.kt.clus.data.rows.DataTuple;

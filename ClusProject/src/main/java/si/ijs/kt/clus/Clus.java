@@ -183,25 +183,26 @@ public class Clus implements CMDLineArgsProvider {
 		// Load settings file
 		initializeHMTRHierarchy(); // creates the hierarchy for hierarchical MTR if the section HMTR is present
 		ARFFFile arff = null;
-		if (m_Sett.getGeneral().getVerbose() > 0)
+		if (m_Sett.getGeneral().getVerbose() > 0) {
 			ClusLogger.info("Loading '" + m_Sett.getGeneric().getAppName() + "'");
+		}
+
 		ClusRandom.initialize(m_Sett);
 
 		ClusReader reader = new ClusReader(m_Sett.getData().getDataFile(), m_Sett);
-		if (m_Sett.getGeneral().getVerbose() > 0)
-			ClusLogger.info();
 		if (cargs.hasOption("c45")) {
-			if (m_Sett.getGeneral().getVerbose() > 0)
+			if (m_Sett.getGeneral().getVerbose() > 0) {
 				ClusLogger.info("Reading C45 .names/.data");
+			}
 		} else {
-			if (m_Sett.getGeneral().getVerbose() > 0)
+			if (m_Sett.getGeneral().getVerbose() > 0) {
 				ClusLogger.info("Reading ARFF Header");
+			}
 			arff = new ARFFFile(reader);
 			m_Schema = arff.read(m_Sett);
 		}
 		// Count rows and move to data segment
 		if (m_Sett.getGeneral().getVerbose() > 0) {
-			ClusLogger.info();
 			ClusLogger.info("Reading CSV Data");
 		}
 
@@ -227,12 +228,14 @@ public class Clus implements CMDLineArgsProvider {
 		}
 
 		reader.close();
-		if (m_Sett.getGeneral().getVerbose() > 0)
+		if (m_Sett.getGeneral().getVerbose() > 0) {
 			ClusLogger.info("Found " + m_Data.getNbRows() + " rows");
+		}
 
 		if (!getSettings().getData().getNormalizeData().equals(NormalizeDataValues.None)) {
-			if (m_Sett.getGeneral().getVerbose() > 0)
+			if (m_Sett.getGeneral().getVerbose() > 0) {
 				ClusLogger.info("Normalizing numerical data");
+			}
 			m_Data = returnNormalizedData(m_Data);
 		}
 
@@ -255,18 +258,22 @@ public class Clus implements CMDLineArgsProvider {
 
 		// Preprocess and initialize induce
 		m_Sett.update(m_Schema);
-		// If not rule induction, reset some settings just to be sure
-		// in case rules from trees are used.
-		// I.e. this is used if the command line parameter is for decision trees
-		// but the transformation for rules is used.
-		// It is also possible to use command line parameter -rules and use
-		// trees as a covering method.
-		if (!m_Induce.getStatManager().isRuleInduceOnly())
-			getSettings().getRules().disableRuleInduceParams();
 
-		preprocess(); // necessary in order to link the labels to the class
-						// hierarchy in HMC (needs to be before
-						// m_Induce.initialize())
+		/**
+		 * If not rule induction, reset some settings just to be sure in case rules from
+		 * trees are used. I.e. this is used if the command line parameter is for
+		 * decision trees but the transformation for rules is used. It is also possible
+		 * to use command line parameter -rules and use trees as a covering method.
+		 */
+		if (!m_Induce.getStatManager().isRuleInduceOnly()) {
+			getSettings().getRules().disableRuleInduceParams();
+		}
+
+		/**
+		 * Necessary in order to link the labels to the class hierarchy in HMC.
+		 * This needs to be before m_Induce.initialize().
+		 */
+		preprocess();
 
 		// TODO: does this really need to be here? martinb
 		m_Schema.setHMTRHierarchy(m_HMTRHierarchy);

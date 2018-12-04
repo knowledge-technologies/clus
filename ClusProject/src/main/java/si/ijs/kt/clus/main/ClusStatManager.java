@@ -630,15 +630,18 @@ public class ClusStatManager implements Serializable {
 
     public synchronized void initStatistic() throws ClusException {
         m_StatisticAttrUse = new ClusStatistic[AttributeUseType.values().length];
-        // Statistic over all attributes
+        
+        /* Statistic over all attributes */
         NumericAttrType[] num1 = m_Schema.getNumericAttrUse(AttributeUseType.All);
         NominalAttrType[] nom1 = m_Schema.getNominalAttrUse(AttributeUseType.All);
         m_StatisticAttrUse[AttributeUseType.All.getIndex()] = new CombStat(this, num1, nom1);
-        // Statistic over all target attributes
+        
+        /* Statistic over all target attributes */
         NumericAttrType[] num2 = m_Schema.getNumericAttrUse(AttributeUseType.Target);
         NominalAttrType[] nom2 = m_Schema.getNominalAttrUse(AttributeUseType.Target);
         m_StatisticAttrUse[AttributeUseType.Target.getIndex()] = createSuitableStat(num2, nom2);
-        // Statistic over clustering attributes
+        
+        /* Statistic over clustering attributes */
         NumericAttrType[] num3 = m_Schema.getNumericAttrUse(AttributeUseType.Clustering);
         NominalAttrType[] nom3 = m_Schema.getNominalAttrUse(AttributeUseType.Clustering);
         if (num3.length != 0 || nom3.length != 0) {
@@ -649,6 +652,7 @@ public class ClusStatManager implements Serializable {
                 m_StatisticAttrUse[AttributeUseType.Clustering.getIndex()] = createSuitableStat(num3, nom3);
             }
         }
+        
         switch (m_Mode) {
             case MODE_HIERARCHICAL:
 
