@@ -22,8 +22,8 @@ def create_tex_file(clus_tree_file, out_tex_file):
     regression_prediction_pattern = "\[(.+)\]: (.+)"
     tex_tree.create_tex_file(clus_tree_file, out_tex_file, regression_prediction_pattern, RegressionTree())
 
-# A test for ClassificationTree
-# create_tex_file("testClassificationTree.txt", "testClassificationTree.tex")
+# A test for RegressionTree
+# create_tex_file("testRegressionTree.txt", "testRegressionTree.tex")
 
 try:
     in_file = sys.argv[1]
