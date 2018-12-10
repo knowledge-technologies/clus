@@ -320,10 +320,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 franking.setGenie3FimpHeader(rankingNames);
                 break;
             case Symbolic:
-                double[] weights = sett.getSymbolicWeights();
-                if (weights == null) {
-                    weights = new double[] { sett.getSymbolicWeight() };
-                }
+                String[] weights = sett.getSymbolicWeights();
                 nbRankings = weights.length;
                 franking.setSymbolicFimpHeader(weights);
                 break;
@@ -899,10 +896,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                         break;
     
                     case Symbolic:
-                        double[] weights = sett.getSymbolicWeights();
-                        if (weights == null) {
-                            weights = new double[] { sett.getSymbolicWeight() };
-                        }
+                        String[] weights = sett.getSymbolicWeights();
                         fimportances.put(r, aRanking.calculateSYMBOLICimportanceIteratively((ClusNode) model, weights));
                         break;
     

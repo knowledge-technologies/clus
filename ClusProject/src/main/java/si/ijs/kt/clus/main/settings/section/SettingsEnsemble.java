@@ -141,7 +141,8 @@ public class SettingsEnsemble extends SettingsBase {
     // protected INIFileBool m_FeatureRanking;
     // private INIFileNominal m_FeatureRanking;
     private INIFileEnumList<EnsembleRanking> m_FeatureRanking;
-    private INIFileNominalOrDoubleOrVector m_SymbolicWeight;
+    private INIFileString m_SymbolicWeight;
+    public static final String DYNAMIC_WEIGHT = "Dynamic";
     private INIFileBool m_SortFeaturesByRelevance;
     private INIFileBool m_WriteEnsemblePredictions;
     private INIFileNominalOrIntOrVector m_BagSelection;
@@ -231,16 +232,6 @@ public class SettingsEnsemble extends SettingsBase {
     }
 
 
-    public double[] getSymbolicWeights() {
-        return m_SymbolicWeight.getDoubleVector();
-    }
-
-
-    public double getSymbolicWeight() {
-        return m_SymbolicWeight.getDouble();
-    }
-
-
     public boolean shouldPerformRanking() {
         return m_FeatureRanking.getVectorSize() > 0;
     }
@@ -285,6 +276,21 @@ public class SettingsEnsemble extends SettingsBase {
     public enum RandomAttributeTypeSelection {
         Descriptive, Clustering
     };
+    
+    
+    public String[] getSymbolicWeights() {
+    	String s = m_SymbolicWeight.getValue();
+    	String[] values;
+    	if (s.startsWith("[") && s.endsWith("]")) {
+    		values = s.substring(1, s.length() - 1).split(",");
+    	} else {
+    		values = new String[] {s};
+    	}
+    	for (int i = 0; i < values.length; i++) {
+    		values[i] = values[i].trim();
+    	}
+    	return values;    	
+    }
 
 
     public int calculateNbRandomAttrSelected(ClusSchema schema, RandomAttributeTypeSelection type) {
@@ -504,8 +510,7 @@ public class SettingsEnsemble extends SettingsBase {
         m_Section.addNode(m_EnsembleOOBestimate = new INIFileBool("OOBestimate", false));
         m_Section.addNode(m_FeatureRanking = new INIFileEnumList<>("FeatureRanking", Arrays.asList(), EnsembleRanking.class));
         m_Section.addNode(m_FeatureRankingPerTarget = new INIFileBool("FeatureRankingPerTarget", false));
-        m_Section.addNode(m_SymbolicWeight = new INIFileNominalOrDoubleOrVector("SymbolicWeight", NONELIST));
-        m_SymbolicWeight.setDouble(0.5);
+        m_Section.addNode(m_SymbolicWeight = new INIFileString("SymbolicWeight", "0.5"));
 
         m_Section.addNode(m_SortFeaturesByRelevance = new INIFileBool("SortRankingByRelevance", true));
         m_Section.addNode(m_WriteEnsemblePredictions = new INIFileBool("WriteEnsemblePredictions", false));

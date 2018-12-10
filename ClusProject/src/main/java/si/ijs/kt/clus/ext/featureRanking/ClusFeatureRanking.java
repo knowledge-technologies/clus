@@ -674,7 +674,7 @@ public class ClusFeatureRanking {
         	}
             m_Order = FimpOrdering.AS_IN_DATASET;
         }
-        computeFinalScores();
+        computeFinalScores(realNumberOfTrees);
         computeRanks();
         prepareFeatureRankingForOutput();
 
@@ -717,14 +717,14 @@ public class ClusFeatureRanking {
     /**
      * Normalizes the feature importance scores.
      */
-    public void computeFinalScores() {
+    public void computeFinalScores(int nb_trees) {
         for (String attributeName : m_AllAttributes.keySet()) {
             double[] possiblyNonnormalizedScores = m_AllAttributes.get(attributeName); // indeed not normalised in the
                                                                                        // case of ensemble rankings
             for (int j = 0; j < m_NbFeatureRankings; j++) {
                 // normalisation
                 if (!m_ScoresNormalized && m_IsEnsembleRanking) {
-                    possiblyNonnormalizedScores[2 + j] /= ClusEnsembleInduce.getMaxNbBags();
+                    possiblyNonnormalizedScores[2 + j] /= ClusEnsembleInduce.getMaxNbBags();  // TODO: matejp /nb_trees - makes more sense:) 
                 }
                 // rounding: done implicitly only in ranks computation
                 // possiblyNonnormalizedScores[2 + j] = ClusUtil.roundToSignificantFigures(possiblyNonnormalizedScores[2

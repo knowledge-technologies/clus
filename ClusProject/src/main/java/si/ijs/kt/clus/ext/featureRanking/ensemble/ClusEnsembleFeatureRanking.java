@@ -10,6 +10,7 @@ import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleRanking;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.selection.OOBSelection;
@@ -154,49 +155,33 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
     }
     
     /**
-     * Recursively computes the symbolic importance of attributes, importance(attribute) = importance(attribute,
-     * {@code node}), where
+     * Computes partial symbolic importances for all attributes. These are combined later into the final score. The partial importance
+     * of {@code attribute} is sum of the values
      * <p>
-     * importance({@code attribute}, {@code node}) = (0.0 : 1.0 ? {@code node} has {@code attribute} as a test) +
-     * sum_subnodes {@code weight} * importance({@code attribute}, subnode),
+     * 0.0 : w^({@code depth of the node})? {@code node} has {@code attribute} as a test
      * <p>
-     * for all weights in {@code weights}.
-     * 
-     * @param depth
-     *        Depth of {@code node}, root's depth is 0
+     * over the {@code node}s in the tree, where parameter {@code 0 < w <= 1}. If {@code w = SettingsEnsemble.DYNAMIC},
+     * then we add either 0 or {@code weight of examples in node / weight of examples in root}.
+     * The final score is the sum of partial importances.
+     * @param root Root of the tree
+     * @param weights string representation of the weights, e.g., ["0.4", "DYNAMIC"].
+     * @return Partial importances
      */
-    @Deprecated
-    public void calculateSYMBOLICimportance(ClusNode node, double[] weights, double depth) throws InterruptedException {
-        if (m_FimpTableHeader == null) {
-            setSymbolicFimpHeader(weights);
-        }
-
-        if (!node.atBottomLevel()) {
-            String attribute = node.getTest().getType().getName();
-            double[] info = getAttributeInfo(attribute);
-            for (int ranking = 0; ranking < weights.length; ranking++) {
-                info[2 + ranking] += Math.pow(weights[ranking], depth);// variable importance
-            }
-            putAttributeInfo(attribute, info);
-            for (int i = 0; i < node.getNbChildren(); i++)
-                calculateSYMBOLICimportance((ClusNode) node.getChild(i), weights, depth + 1.0);
-        } // if it is a leaf - do nothing
-    }
-
-
-    /**
-     * An iterative version of {@link calculateSYMBOLICimportance}, which does not update feature importances in place.
-     * Rather, it returns the partial importances for all attributes. These are combined later.
-     */
-    public synchronized HashMap<String, double[][]> calculateSYMBOLICimportanceIteratively(ClusNode root, double[] weights) throws InterruptedException {
-//        if (m_FimpTableHeader == null) {
-//            setSymbolicDescription(weights);
-//        }
+    public synchronized HashMap<String, double[][]> calculateSYMBOLICimportanceIteratively(ClusNode root, String[] weights) throws InterruptedException {
         ArrayList<NodeDepthPair> nodes = getInternalNodesWithDepth(root);
         // it would suffice to have String --> double[], but we need to allow for
         // double[][] in the Genie3 and RForest methods for feature ranking.
         HashMap<String, double[][]> partialImportances = new HashMap<String, double[][]>();
-
+        int dynamic = -1;
+        double[] ws = new double[weights.length];
+        for (int i = 0; i < weights.length; i++) {
+        	if (weights[i].equals(SettingsEnsemble.DYNAMIC_WEIGHT)) {
+        		dynamic = i;
+        	} else {
+        		ws[i] = Double.parseDouble(weights[i]);
+        	}
+        }
+        double root_weight = root.getTotWeight();
         for (NodeDepthPair pair : nodes) {
             String attribute = pair.getNode().getTest().getType().getName();
             if (!partialImportances.containsKey(attribute)) {
@@ -204,12 +189,14 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
             }
             double[][] info = partialImportances.get(attribute);
             for (int ranking = 0; ranking < weights.length; ranking++) {
-                info[ranking][0] += Math.pow(weights[ranking], pair.getDepth());
+            	if (dynamic == ranking) {
+            		info[ranking][0] += pair.getNode().getTotWeight() / root_weight;
+            	} else {
+            		info[ranking][0] += Math.pow(ws[ranking], pair.getDepth());
+            	}
             }
         }
-
         return partialImportances;
-
     }
     
 
@@ -249,12 +236,11 @@ public class ClusEnsembleFeatureRanking extends ClusFeatureRanking{
     }
 
 
-    public void setSymbolicFimpHeader(double[] weights) {
+    public void setSymbolicFimpHeader(String[] weights) {
         String[] names = new String[weights.length];
-        for(int i = 0; i < names.length; i++){
-        	names[i] = "w=" + Double.toString(weights[i]);
+        for(int i = 0; i < weights.length; i++){
+        	names[i] = "w=" + weights[i];
         }
-        String.join("", names);
         setFimpHeader(fimpTableHeader(names)); 
     }
     
