@@ -135,6 +135,9 @@ public class HierarchicalMultiLabelDistance {
     	for(int i = 0; i < data.getNbRows(); i++){ //  && nbPresent < hierarchySize
     		ClassesTuple tp = (ClassesTuple) data.getTuple(i).getObjVal(sidx);
     		int nbClasses = tp.getNbClasses();
+    		if (nbClasses == 0) {
+    			continue; // no classes
+    		}
     		int lastClassIndex = -123;
     		if(isTree){
     			lastClassIndex = tp.getClass(nbClasses - 1).getIndex();
@@ -351,7 +354,7 @@ public class HierarchicalMultiLabelDistance {
     }
     
     /**
-     * Finds the most specific label among the ones given in ClassesTuple. 
+     * Finds the most specific label among the ones given in ClassesTuple. Assumes that the argument contains at least one class.
      * @param tp
 
      */
