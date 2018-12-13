@@ -42,6 +42,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.data.type.hierarchies.ClassesAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyType;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyWeight;
 import si.ijs.kt.clus.statistic.WHTDStatistic;
 import si.ijs.kt.clus.util.ClusLogger;
@@ -58,6 +59,7 @@ public class ClassHierarchy implements Serializable {
     public final static int TEST = 0;
     public final static int ERROR = 1;
 
+    public final static int UNKNOWN = -1;
     public final static int TREE = 0;
     public final static int DAG = 1;
 
@@ -703,6 +705,16 @@ public class ClassHierarchy implements Serializable {
 
     public void setHierType(int type) {
         m_HierType = type;
+    }
+    
+    public void setHierTypeFromSettings(HierarchyType t) {
+    	if (t.equals(HierarchyType.DAG)) {
+    		m_HierType = ClassHierarchy.DAG;
+    	} else if (t.equals(HierarchyType.Tree)) {
+    		m_HierType = ClassHierarchy.TREE;
+    	} else {
+    		m_HierType = ClassHierarchy.UNKNOWN;
+    	}
     }
 
 

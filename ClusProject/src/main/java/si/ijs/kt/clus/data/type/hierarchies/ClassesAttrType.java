@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
+import org.apache.commons.lang.StringUtils;
+
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.io.ClusReader;
 import si.ijs.kt.clus.data.rows.DataPreprocs;
@@ -41,6 +43,7 @@ import si.ijs.kt.clus.ext.hierarchical.ClassesValue;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC;
 import si.ijs.kt.clus.main.settings.section.SettingsHMLC.HierarchyType;
+import si.ijs.kt.clus.main.settings.section.SettingsHMTR.HierarchyAggregationsHMTR;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.io.ClusSerializable;
 import si.ijs.kt.clus.util.jeans.util.array.StringTable;
@@ -204,26 +207,52 @@ public class ClassesAttrType extends ClusAttrType {
         }
 
         SettingsHMLC sett = getSettings().getHMLC();
-        if (sett.hasDefinitionFile()) {
+        if (sett.hasDefinitionFile()) { // matejp: No idea, what this is
             // Load hierarchy definition from a file
             m_Hier.loadDAG(sett.getDefinitionFile());
             m_Hier.initialize();
         }
+        
+        HierarchyType t = sett.getHierType();
+        if (t.equals(HierarchyType.Unknown)) {
+        	t = ClassesAttrType.guessHierarhcyType(m_Labels);
+        	m_Hier.setHierTypeFromSettings(t);
+        }
         if (m_Labels != null) {
             // Load definition from labels in type specification in .arff
-            if (sett.getHierType().equals(HierarchyType.DAG)) {
+            if (t.equals(HierarchyType.DAG)) {
                 m_Hier.loadDAG(m_Labels);
             }
-            else {
+            else if (t.equals(HierarchyType.Tree)) {
                 for (int i = 0; i < m_Labels.length; i++) {
                     if (!m_Labels[i].equals(ClassesValue.EMPTY_SET_INDICATOR)) {
                         ClassesValue val = new ClassesValue(m_Labels[i], m_Table);
                         m_Hier.addClass(val);
                     }
                 }
+            } else {
+            	throw new RuntimeException("Wrong hierarchy type");
             }
             m_Hier.initialize();
         }
+    }
+    
+    /**
+     * Guesses hierarchy type if the current type from the label names. The first rule that fires, wins.
+     * <ul>
+     * <li> If there is a label "L1/.../Ln", n >= 3 ---> we return Tree <il>
+     * <li> We return DAG <il> 
+     * </ul>
+     * @param labels
+     * @return
+     */
+    private static HierarchyType guessHierarhcyType(String[] labels) {
+    	for (String label: labels) {
+    		if (StringUtils.countMatches(label, ClassesValue.HIERARCY_SEPARATOR) > 1) {
+    			return HierarchyType.Tree;
+    		}
+    	}
+    	return HierarchyType.DAG;
     }
 
 
@@ -237,12 +266,10 @@ public class ClassesAttrType extends ClusAttrType {
     // Some attributes initialize differently based on some user settings
     // For HMC, this is whether it uses a tree or DAG representation
     public void initSettings(Settings sett) {
-
-        if (sett.getHMLC().getHierType().equals(HierarchyType.DAG)) {
-            getHier().setHierType(ClassHierarchy.DAG);
-        }
+    	HierarchyType t = sett.getHMLC().getHierType();
+    	getHier().setHierTypeFromSettings(t);
     }
-
+    
 
     @Override
     public void writeARFFType(PrintWriter wrt) throws ClusException {

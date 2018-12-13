@@ -28,7 +28,7 @@ public class SettingsHMLC extends SettingsBase {
     // Hierarchical multi-classification now supports both trees and DAGS
     // This was required because Gene Ontology terms are organized in a partial order
     public enum HierarchyType {
-        Tree, DAG
+        Tree, DAG, Unknown
     };
 
     public enum HierarchyWeight {
@@ -183,7 +183,7 @@ public class SettingsHMLC extends SettingsBase {
 
     @Override
     public void create() {
-        m_Section.addNode(m_HierType = new INIFileEnum<>("Type", HierarchyType.DAG));
+        m_Section.addNode(m_HierType = new INIFileEnum<>("Type", HierarchyType.Unknown));
         m_Section.addNode(m_HierDistance = new INIFileEnum<HierarchyDistance>("Distance", HierarchyDistance.WeightedEuclidean));
         m_Section.addNode(m_HierWType = new INIFileEnum<>("WType", HierarchyWeight.ExpSumParentWeight));
         m_Section.addNode(m_HierWParam = new INIFileDouble("WParam", 0.75));
