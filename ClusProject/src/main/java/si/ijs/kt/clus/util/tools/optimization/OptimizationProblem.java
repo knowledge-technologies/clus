@@ -48,6 +48,7 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
+import si.ijs.kt.clus.util.tools.optimization.gd.GDProblem;
 
 // Created 28.11.2008 from previous DeProbl class
 
@@ -284,7 +285,7 @@ public class OptimizationProblem {
 	}
 
 	/** Splits data into validation and training sets randomly */
-	static protected void splitDataIntoValAndTrainSet(ClusStatManager stat_mgr, OptimizationParameter origData,
+	public static void splitDataIntoValAndTrainSet(ClusStatManager stat_mgr, OptimizationParameter origData,
 			OptimizationParameter valData, OptimizationParameter trainData) {
 
 		Settings set = stat_mgr.getSettings();
@@ -976,7 +977,7 @@ public class OptimizationProblem {
 		return m_TrueVal;
 	}
 
-	final protected boolean isClassifTask() {
+	public final boolean isClassifTask() {
 		return m_ClssTask;
 	}
 
@@ -1010,7 +1011,7 @@ public class OptimizationProblem {
 	 * Initializes means with global means, this is not always done, sometimes mean
 	 * = 0
 	 */
-	static protected double[] initMeans(int nbTargs) {
+	public static double[] initMeans(int nbTargs) {
 		double[] means = new double[nbTargs];
 		for (int iTarget = 0; iTarget < nbTargs; iTarget++) {
 			means[iTarget] = RuleNormalization.getTargMean(iTarget);
@@ -1023,7 +1024,7 @@ public class OptimizationProblem {
 	 * always a square of normalization factor of SINGLE term (because this is used
 	 * for normalizing product of two terms)
 	 */
-	static protected double[] initNormFactors(int nbTargs, Settings sett) {
+	public static double[] initNormFactors(int nbTargs, Settings sett) {
 		double[] scaleFactor = new double[nbTargs];
 		for (int iTarget = 0; iTarget < nbTargs; iTarget++) {
 			if (sett.getRules().getOptNormalization().equals(OptimizationNormalization.YesVariance)) {
@@ -1128,7 +1129,7 @@ public class OptimizationProblem {
 	}
 
 	/** Changes rule set to undo the changes done to predictions */
-	protected void changeRuleSetToUndoNormNormalization(ClusRuleSet rset) {
+	public void changeRuleSetToUndoNormNormalization(ClusRuleSet rset) {
 		// These are needed only if some normalization with average shifting is needed.
 		if (!getSettings().getRules().isOptNormalization()
 				|| getSettings().getRules().getOptNormalization().equals(OptimizationNormalization.OnlyScaling))
@@ -1160,7 +1161,7 @@ public class OptimizationProblem {
 	}
 
 	/** Print predictions to output file. */
-	protected void printPredictionsToFile(PrintWriter wrt) {
+	public void printPredictionsToFile(PrintWriter wrt) {
 		if (getSettings().getRules().isOptNormalization()) {
 			wrt.print("Norm factors: [");
 			for (int iTarget = 0; iTarget < getNbOfTargets(); iTarget++) {
@@ -1187,7 +1188,7 @@ public class OptimizationProblem {
 	}
 
 	/** Print true values to output file. */
-	protected void printTrueValuesToFile(PrintWriter wrt) {
+	public void printTrueValuesToFile(PrintWriter wrt) {
 		ClusNumberFormat fr = ClusFormat.THREE_AFTER_DOT;
 		for (int iTrueVal = 0; iTrueVal < getNbOfInstances(); iTrueVal++) {
 

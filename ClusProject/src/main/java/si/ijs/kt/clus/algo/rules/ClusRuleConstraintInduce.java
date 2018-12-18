@@ -69,10 +69,10 @@ import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ClusRandom;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
-import si.ijs.kt.clus.util.tools.optimization.GDAlgorithm;
 import si.ijs.kt.clus.util.tools.optimization.OptimizationAlgorithm;
 import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
 import si.ijs.kt.clus.util.tools.optimization.de.DEAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.gd.GDAlgorithm;
 
 
 public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {

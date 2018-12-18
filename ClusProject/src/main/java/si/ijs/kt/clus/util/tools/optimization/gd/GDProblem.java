@@ -24,7 +24,7 @@
  * Created on 2006.3.29
  */
 
-package si.ijs.kt.clus.util.tools.optimization;
+package si.ijs.kt.clus.util.tools.optimization.gd;
 
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -41,6 +41,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDMTCombin
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
 
 // Created 28.11.2008 from previous DeProbl class
 
@@ -53,7 +54,7 @@ import si.ijs.kt.clus.util.format.ClusNumberFormat;
 public class GDProblem extends OptimizationProblem {
 
 	/** Do we print debugging information. */
-	static protected boolean m_printGDDebugInformation = false;
+	public static boolean m_printGDDebugInformation = false;
 
 	/**
 	 * Covariances between weights. Are computed only if needed.

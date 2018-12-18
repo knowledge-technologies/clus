@@ -96,7 +96,7 @@ import si.ijs.kt.clus.util.ClusRandomNonstatic;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.cloner.Cloner;
 import si.ijs.kt.clus.util.exception.ClusException;
-import si.ijs.kt.clus.util.tools.optimization.GDProblem;
+import si.ijs.kt.clus.util.tools.optimization.gd.GDProblem;
 
 
 public class ClusEnsembleInduce extends ClusInductionAlgorithm {

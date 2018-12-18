@@ -24,7 +24,7 @@
  * Created on 27.11.2008
  */
 
-package si.ijs.kt.clus.util.tools.optimization;
+package si.ijs.kt.clus.util.tools.optimization.gd;
 
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -39,6 +39,9 @@ import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.format.ClusFormat;
 import si.ijs.kt.clus.util.format.ClusNumberFormat;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationAlgorithm;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem.OptimizationParameter;
 
 /**
  * Class for gradient descent optimization.
