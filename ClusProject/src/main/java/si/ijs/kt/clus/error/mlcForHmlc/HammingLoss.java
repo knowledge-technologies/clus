@@ -1,9 +1,11 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class HammingLoss implements MlcHmlcSubError {
+public class HammingLoss implements MlcHmlcSubError, Serializable {
 
 	private int m_NbWrong;
 	private int m_NbKnown;

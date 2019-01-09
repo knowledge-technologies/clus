@@ -1,9 +1,11 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class SubsetAccuracy implements MlcHmlcSubError {
+public class SubsetAccuracy implements MlcHmlcSubError, Serializable {
 
 	private int m_NbCorrect;
 	private int m_NbKnown;

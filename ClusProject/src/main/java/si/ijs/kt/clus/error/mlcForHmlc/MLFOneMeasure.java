@@ -1,9 +1,11 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class MLFOneMeasure implements MlcHmlcSubError {
+public class MLFOneMeasure implements MlcHmlcSubError, Serializable {
 
 	private double m_F1Sum;
 	private int m_NbKnown;

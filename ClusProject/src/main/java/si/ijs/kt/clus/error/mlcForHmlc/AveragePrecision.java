@@ -1,12 +1,13 @@
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class AveragePrecision implements MlcHmlcSubError {
+public class AveragePrecision implements MlcHmlcSubError, Serializable {
 
 	private double m_NonnormalisedPrec;
 	private int m_NbKnown;

@@ -1,9 +1,11 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class MicroRecall implements MlcHmlcSubError {
+public class MicroRecall implements MlcHmlcSubError, Serializable {
 
 	protected int[] m_NbTruePositives, m_NbFalseNegatives;
 

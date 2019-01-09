@@ -1,9 +1,11 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class MLRecall implements MlcHmlcSubError {
+public class MLRecall implements MlcHmlcSubError, Serializable {
 
 	private double m_RecallSum;
 	private int m_NbKnown;

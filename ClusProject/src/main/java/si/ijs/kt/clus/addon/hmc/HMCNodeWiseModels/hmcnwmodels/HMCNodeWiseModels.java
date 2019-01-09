@@ -318,13 +318,24 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
     }
 
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
+    	Clus clus = new Clus();
+        Settings sett = clus.getSettings();
+        CMDLineArgs cargs = new CMDLineArgs(clus);
+        cargs.process(args);
+        sett.getGeneric().setDate(new Date());
+        sett.getGeneric().setAppName(cargs.getMainArg(0));
+
+        clus.initSettings(cargs);
+
+        ClusLogger.initialize(sett.getGeneral());
         try {
             HMCNodeWiseModels m = new HMCNodeWiseModels();
             m.run(args);
         }
         catch (IOException io) {
             ClusLogger.info("IO Error: " + io.getMessage());
+            io.printStackTrace();
         }
         catch (ClusException cl) {
             ClusLogger.info("Error: " + cl.getMessage());
@@ -341,6 +352,7 @@ public class HMCNodeWiseModels implements CMDLineArgsProvider {
             
             e.printStackTrace();
         }
+        ClusLogger.info("Finished. Have a nice day, Stevanche.");
     }
 
 }

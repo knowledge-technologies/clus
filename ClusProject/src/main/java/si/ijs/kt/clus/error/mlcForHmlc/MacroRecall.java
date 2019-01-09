@@ -1,10 +1,12 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.error.common.ComponentError;
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class MacroRecall implements ComponentError, MlcHmlcSubError {
+public class MacroRecall implements ComponentError, MlcHmlcSubError, Serializable {
 
 	protected int[] m_NbTruePositives, m_NbFalseNegatives;
 

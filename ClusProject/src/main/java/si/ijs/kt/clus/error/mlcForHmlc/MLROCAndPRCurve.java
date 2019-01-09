@@ -1,11 +1,13 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.error.BinaryPredictionList;
 import si.ijs.kt.clus.error.ROCAndPRCurve;
 
 
-public abstract class MLROCAndPRCurve {
+public abstract class MLROCAndPRCurve implements MlcHmlcSubError, Serializable {
 
     public enum CurveType {
         averageAUROC, averageAUPRC, weightedAUPRC, pooledAUPRC

@@ -1,6 +1,8 @@
 package si.ijs.kt.clus.error.mlcForHmlc;
 
-public class MLaverageAUROC extends MLROCAndPRCurve implements MlcHmlcSubError {
+import java.io.Serializable;
+
+public class MLaverageAUROC extends MLROCAndPRCurve implements MlcHmlcSubError, Serializable {
     private final CurveType m_Measure = CurveType.averageAUROC;
 
     public MLaverageAUROC(int dim) {

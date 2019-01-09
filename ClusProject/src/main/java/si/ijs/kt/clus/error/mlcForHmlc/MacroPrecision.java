@@ -1,10 +1,12 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.error.common.ComponentError;
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class MacroPrecision implements MlcHmlcSubError, ComponentError {
+public class MacroPrecision implements MlcHmlcSubError, ComponentError, Serializable {
 
 	protected int[] m_NbTruePositives, m_NbFalsePositives;
 

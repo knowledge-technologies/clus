@@ -1,13 +1,14 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class RankingLoss implements MlcHmlcSubError {
+public class RankingLoss implements MlcHmlcSubError, Serializable {
 
 	private double m_NonnormalisedLoss;
 	private int m_NbKnown;

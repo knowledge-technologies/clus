@@ -1,9 +1,11 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class Coverage implements MlcHmlcSubError {
+public class Coverage implements MlcHmlcSubError, Serializable {
 
 	protected int m_RankSum;
 	protected int m_NbKnown;

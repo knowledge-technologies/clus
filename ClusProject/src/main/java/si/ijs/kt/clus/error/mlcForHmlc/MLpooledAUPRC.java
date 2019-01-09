@@ -1,6 +1,8 @@
 package si.ijs.kt.clus.error.mlcForHmlc;
 
-public class MLpooledAUPRC extends MLROCAndPRCurve implements MlcHmlcSubError {
+import java.io.Serializable;
+
+public class MLpooledAUPRC extends MLROCAndPRCurve implements MlcHmlcSubError, Serializable {
     private final CurveType m_Measure = CurveType.pooledAUPRC;
 
     public MLpooledAUPRC(int dim) {

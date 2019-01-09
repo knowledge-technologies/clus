@@ -52,7 +52,7 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
 
     // DO NOT CHANGE THE NAME!!!
     public static String DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS = "Default 1-nn model with " + DistanceWeights.Constant.toString() + " weights";
-    private final String modelNameTemplate = "Original %s -nn model with %s weighting";
+    private final String modelNameTemplate = "Original %s-nn model with %s weighting";
 
 
     public KnnClassifier(Clus clus) {

@@ -1,9 +1,11 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class MLPrecision implements MlcHmlcSubError {
+public class MLPrecision implements MlcHmlcSubError, Serializable {
 
 	private double m_PrecisionSum;
 	private int m_NbKnown;

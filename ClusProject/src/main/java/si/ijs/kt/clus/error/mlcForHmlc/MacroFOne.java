@@ -1,10 +1,12 @@
 
 package si.ijs.kt.clus.error.mlcForHmlc;
 
+import java.io.Serializable;
+
 import si.ijs.kt.clus.error.common.ComponentError;
 import si.ijs.kt.clus.util.ClusUtil;
 
-public class MacroFOne implements MlcHmlcSubError, ComponentError {
+public class MacroFOne implements MlcHmlcSubError, ComponentError, Serializable {
 
 	protected int[] m_NbTruePositives, m_NbFalsePositives, m_NbFalseNegatives;
 
