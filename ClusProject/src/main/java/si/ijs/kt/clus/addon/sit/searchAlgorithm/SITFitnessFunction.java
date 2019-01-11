@@ -83,7 +83,7 @@ public class SITFitnessFunction extends FitnessFunction {
     // ClusErrorList parent = new ClusErrorList();
     // NumericAttrType[] num = schema.getNumericAttrUse(ClusAttrType.ATTR_USE_ALL);
     // PearsonCorrelation error = new PearsonCorrelation(parent, num);
-    // //SpearmanRankCorrelation error = new SpearmanRankCorrelation(parent,num);
+    // //SpearmanRankCorrelationPerExample error = new SpearmanRankCorrelationPerExample(parent,num);
     // parent.addError(error);
     //
     // for(int f=0;f<folds.size();f++){

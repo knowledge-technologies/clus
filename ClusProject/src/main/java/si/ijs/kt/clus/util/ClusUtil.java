@@ -22,6 +22,8 @@
 
 package si.ijs.kt.clus.util;
 
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 
 import si.ijs.kt.clus.data.ClusSchema;
@@ -91,6 +93,8 @@ public class ClusUtil {
         for (String test : tests) {
             ClusLogger.info(fileName(test));
         }
+        ClusLogger.info(ClusUtil.correlation(new double[] {1,  2, 3, 4}, new double[] {1, 2, 3, 4}));
+        ClusLogger.info(ClusUtil.correlation(new double[] {2,  1, 3, 4}, new double[] {-4, -2, -6, -8}));
     }
 
 
@@ -148,6 +152,97 @@ public class ClusUtil {
             indices.put(cat[ii].getName(), ii);
         }
         return indices;
+    }
+    
+    /**
+     * Computes the rank of each value in the given array
+     * 
+     * @param values
+     * @return an array with the corresponding ranking
+     */
+    public static double[] getRanks(double[] values) {
+        double[] result = new double[values.length];
+        final double[] scores = values;
+        Integer[] indices = new Integer[values.length];
+        for (int i = 0; i < values.length; i++) {
+            indices[i] = i;
+        }
+        Arrays.sort(indices, new Comparator<Integer>() {
+
+            @Override
+            public int compare(Integer ind1, Integer ind2) {
+                return Double.compare(scores[ind1], scores[ind2]);
+            }
+        });
+
+        result[indices[0]] = values.length;
+        for (int i = 1; i < values.length; i++) {
+            int index = indices[i];
+            int previous = indices[i - 1];
+            if (scores[previous] < scores[index]) { // precisely all previous elements are strictly smaller
+                result[index] = values.length - i;
+            }
+            else { // i.e. >= hence == hence the same result
+                result[index] = result[previous];
+            }
+        }
+        return result;
+    }
+    
+    public static double correlation(double[] a, double[] b) {
+    	double max_a = ClusUtil.max_abs(a);
+    	double max_b = ClusUtil.max_abs(b);
+    	double var_a = ClusUtil.variance(a);
+    	double var_b = ClusUtil.variance(b);
+    	if (Math.min(var_a, var_b) < ClusUtil.PICO * Math.min(max_a, max_b)) { // better condition?
+    		return 1.0;  // Something ... It is not really defined ...
+    	}
+    	double denominator = Math.pow(var_a * var_b, 0.5); 
+    	double avg_a = ClusUtil.average(a);
+    	double avg_b = ClusUtil.average(b);
+    	double numerator = 0.0;
+    	int n = a.length;
+    	for (int i = 0; i < n; i++) {
+    		numerator += (a[i] - avg_a) * (b[i] - avg_b);
+    	}
+    	numerator /= n;
+    	double f = numerator / denominator;
+    	// silently take care of floating point errors :)
+    	if (f > 1.0) {
+    		return 1.0;
+    	} else if (f < -1.0) {
+    		return -1.0;
+    	} else {
+    		return f;
+    	}
+    }
+    
+    public static double average(double[] a) {
+    	double s = 0.0;
+    	for (int i = 0; i < a.length; i++) {
+    		s += a[i];
+    	}
+    	return s / a.length;
+    }
+    
+    public static double variance(double[] a) {
+    	double avg = ClusUtil.average(a);
+    	double s = 0.0;
+    	for(int i = 0; i < a.length; i++) {
+    		s += Math.pow(a[i] - avg, 2.0);
+    	}
+    	return s / a.length;
+    }
+    
+    public static double max_abs(double[] a) {
+    	double m = Double.NEGATIVE_INFINITY;
+    	for (double x : a) {
+    		double y = Math.abs(x);
+    		if (y > m) {
+    			m = y;
+    		}
+    	}
+    	return m;
     }
 
 }

@@ -1168,6 +1168,9 @@ public class ClusStatManager implements Serializable {
             }
             parent.addError(new si.ijs.kt.clus.error.RRMSError(parent, num));
             parent.addError(new si.ijs.kt.clus.error.PearsonCorrelation(parent, num));
+            if (getSettings().getOutput().shouldComputeSpearman()) {
+            	parent.addError(new si.ijs.kt.clus.error.SpearmanRankCorrelation(parent, num));
+            }
         }
         if (ts.length != 0) {
             ClusStatistic stat = createTargetStat();

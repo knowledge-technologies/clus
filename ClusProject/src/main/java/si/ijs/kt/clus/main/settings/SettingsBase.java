@@ -25,6 +25,10 @@ public abstract class SettingsBase implements Serializable {
     public final static int INFINITY_VALUE = 0;
     public final static double[] FOUR_ONES = { 1.0, 1.0, 1.0, 1.0 };
     public final static Charset CHARSET = StandardCharsets.UTF_8;
+    
+    public enum YesNo {
+        Yes, No;
+    };
 
     protected int m_Position = 1; // position in the INI file
 

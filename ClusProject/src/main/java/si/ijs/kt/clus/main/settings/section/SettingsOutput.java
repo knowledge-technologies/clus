@@ -56,7 +56,8 @@ public class SettingsOutput extends SettingsBase {
     protected INIFileBool m_WriteCurves;
     protected INIFileBool m_OutputClowdFlowsJSON;
     protected INIFileBool m_OutputROSSubspaces;
-
+    protected INIFileEnum<YesNo> m_ComputeSpearman;
+    
 
     public SettingsOutput(int position) {
         super(position, "Output");
@@ -65,6 +66,10 @@ public class SettingsOutput extends SettingsBase {
 
     public boolean shouldWritePerBagModelFiles() {
         return m_WritePerBagModelFiles.getValue();
+    }
+    
+    public boolean shouldComputeSpearman() {
+    	return m_ComputeSpearman.getValue().equals(YesNo.Yes);
     }
 
 
@@ -291,6 +296,7 @@ public class SettingsOutput extends SettingsBase {
         m_Section.addNode(m_OutputJSONModel = new INIFileBool("OutputJSONModel", false));
         m_Section.addNode(m_OutputDatabaseQueries = new INIFileBool("OutputDatabaseQueries", false));
         m_Section.addNode(m_OutputClowdFlowsJSON = new INIFileBool("OutputClowdFlowsJSON", false));
+        m_Section.addNode(m_ComputeSpearman = new INIFileEnum<>("ComputeSpearman", YesNo.No));
     }
 
 
