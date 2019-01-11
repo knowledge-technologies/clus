@@ -670,9 +670,9 @@ public class ClusFeatureRanking {
         }
         if (m_Order == FimpOrdering.BY_RELEVANCE && getNbFeatureRankings() > 1) {
         	if(getSettings().getGeneral().getVerbose() >= 1) {
-        		System.err.println("More than one feature ranking will be output. The attributes will appear as in ARFF\nand will not be sorted by relevance, although SortRankingByRelevance = Yes.");
+        		System.err.println("More than one feature ranking will be output. The attributes will be sorted with respect to the first ranking.");
         	}
-            m_Order = FimpOrdering.AS_IN_DATASET;
+//            m_Order = FimpOrdering.AS_IN_DATASET;
         }
         computeFinalScores(realNumberOfTrees);
         computeRanks();
@@ -699,7 +699,7 @@ public class ClusFeatureRanking {
                 key = m_AttributeDatasetIndices.get(attributeName);
             }
             else {
-                key = scores[0]; // the only relevance
+                key = scores[0]; // the only relevance or the first ranking if more than one is computed
             }
             if (!m_OutputRanking.containsKey(key)) {
                 m_OutputRanking.put(key, new ArrayList<Triple<String, int[], double[]>>());

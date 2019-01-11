@@ -11,7 +11,7 @@ __pycache__
 /src/META-INF/
 /target/
 /.settings/
-.project
+#.project
 .classpath
 /resources/unitTests/**/*.fimp
 /resources/unitTests/**/*.out
