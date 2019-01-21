@@ -18,6 +18,7 @@ EnsembleMethod = RForest
 Iterations = [2, 4]
 FeatureRanking = [Symbolic,RForest]
 FeatureRankingPerTarget = Yes
+SortRankingByRelevance = No
 
 [Relief]
 Iterations = [0.2,0.5,1]

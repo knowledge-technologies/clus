@@ -20,3 +20,6 @@ Neighbours = [1,5,10]
 WeightNeighbours = Yes
 WeightingSigma = 0.4
 MultilabelDistance = HammingLoss
+
+[Ensemble]
+SortRankingByRelevance = No

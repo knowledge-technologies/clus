@@ -154,7 +154,6 @@ public class AveragePrecision extends ClusNominalError {
             m_NonnormalisedPrec += u / nbOfRelevant;
             m_NbKnown++;
         }
-
     }
 
 
@@ -174,5 +173,4 @@ public class AveragePrecision extends ClusNominalError {
     @Override
     public void addInvalid(DataTuple tuple) {
     }
-
 }

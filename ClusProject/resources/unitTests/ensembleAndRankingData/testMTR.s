@@ -15,6 +15,7 @@ ConvertToRules = No
 
 [Ensemble]
 FeatureRankingPerTarget = Yes
+SortRankingByRelevance = No
 
 [Relief]
 Neighbours = [3,1]

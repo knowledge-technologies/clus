@@ -133,13 +133,13 @@ public class ClusFeatureRankingTest extends BaseTestCase {
 					double[] relevs2 = contents2.get(i).getFourth();
 
 					assertEquals(ind1, ind2, String
-					        .format("Error for %s:\n1st components of quadruple do not match (line index: %d)", sFile, i));
+					        .format("Error for %s (%s, %s):\n1st components of quadruple do not match (line index: %d)", sFile, fimpFileTrue, fimpFileNew, i));
 					assertEquals(attr1, attr2, String
-					        .format("Error for %s:\n:2nd components of quadruple do not match (line index: %d)", sFile, i));
+					        .format("Error for %s (%s, %s):\n:2nd components of quadruple do not match (line index: %d)", sFile, fimpFileTrue, fimpFileNew, i));
 					assertArrayEquals(ranks1, ranks2, String
-					        .format("Error for %s:\n3rd components of quadruple do not match (line index: %d)", sFile, i));
+					        .format("Error for %s (%s, %s):\n3rd components of quadruple do not match (line index: %d)", sFile, fimpFileTrue, fimpFileNew, i));
 					assertArrayEquals(relevs1, relevs2, precision, String
-					        .format("Error for %s:\n4th components of quadruple do not match (line index: %d)", sFile, i));
+					        .format("Error for %s (%s, %s):\n4th components of quadruple do not match (line index: %d)", sFile, fimpFileTrue, fimpFileNew, i));
 				}
 			}
 		}
