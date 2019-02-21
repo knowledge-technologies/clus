@@ -14,13 +14,13 @@ class Statistics:
     """
     Superclass for the statistics that correspond to different learning tasks, e.g., (multi-target) regression.
     
-    For a concrete implemenation of the methods listed below, see `RegressionStat`.
+    For a concrete implementation of the methods listed below, see `RegressionStat`.
     
     Methods
     -------
     fresh_stats(number_targets)
         Creates a new objects with neutral values of fields, i.e., the values that this statistic would have
-        if the correspodning leaf node was empty.
+        if the corresponding leaf node was empty.
     add_another_stats(other, other_weight)
         Adds up or somehow joins two different predictions into one.
     stats_to_predictions()
@@ -160,8 +160,8 @@ class TreeNode:
     unknown_branch = -1
 
     def __init__(self,
-                 children=[],
-                 branch_frequencies=[],
+                 children=None,
+                 branch_frequencies=None,
                  test=None,
                  prediction_statistics=None):
         """
@@ -170,7 +170,7 @@ class TreeNode:
         children : a list of `TreeNode`
             a (possibly empty) list of children nodes
         branch_frequencies : a list of `float`
-            A list of the same lenght as children. The i-th element tells what proportion of the instances
+            A list of the same length as children. The i-th element tells what proportion of the instances
             from self go to the i-the child, hence sum(branch_frequencies) = 1  if the list is not empty.
         test : `BinaryNodeTest` or None
             Used when making predictions. For the leaves, this should be `None`.
@@ -183,8 +183,8 @@ class TreeNode:
             when `children` and `branch_frequencies` are not of the same length, or
             when `not XOR(self.test is None, self.prediction_statistics is None)`
         """
-        self.children = children
-        self.branch_frequencies = branch_frequencies
+        self.children = children if children is not None else []
+        self.branch_frequencies = branch_frequencies if branch_frequencies is not None else []
         self.test = test
         self.prediction_statistics = prediction_statistics
         
@@ -199,11 +199,11 @@ class TreeNode:
         self.temp_statistics = None
 
     def __repr__(self):
-        def pomo(x):
+        def helper(x):
             return "None" if x is None else str(x)
-        return "Node(test: {}, stat: {}, temp_stat: {})".format(pomo(self.test),
-                                                                pomo(self.prediction_statistics),
-                                                                pomo(self.temp_statistics))
+        return "Node(test: {}, stat: {}, temp_stat: {})".format(helper(self.test),
+                                                                helper(self.prediction_statistics),
+                                                                helper(self.temp_statistics))
         
     def is_leaf(self):
         """
@@ -242,7 +242,7 @@ class Tree:
         If the value of the attribute that is needed by a test in the tree is missing,
         prediction for this example would be the average of predictions of the branches
         that go from this node. The predictions of different branches are weighted with
-        `BinaryTreeNode.branch_frequences`.
+        `TreeNode.branch_frequencies`.
         
         Parameters
         ----------

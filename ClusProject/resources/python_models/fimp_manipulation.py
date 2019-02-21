@@ -1,3 +1,7 @@
+import scipy.stats.stats as stats
+import math
+
+
 class Fimp:
     def __init__(self, f_name=None, num_feat=float("inf"), attr_dict=None, header=None):
         self.f_name = f_name
@@ -140,3 +144,59 @@ def fimp_aggregation(partial_fimp_files, out=None):
     if out is not None:
         fimp_out.write_to_file(out)
     return fimp_out
+
+
+def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_measure: str):
+    def jaccard(f1: Fimp, f2: Fimp):
+        for f in [f1, f2]:
+            f.sort_by_relevance(ranking_index)
+        attributes1 = f1.get_attr_names()
+        attributes2 = f2.get_attr_names()
+        results = [-1.0] * len(attributes1)
+        current_set1 = set()
+        current_set2 = set()
+        for i in range(len(attributes1)):
+            current_set1.add(attributes1[i])
+            current_set2.add(attributes2[i])
+            results[i] = len(current_set1 & current_set2) / len(current_set1 | current_set2)
+        return results
+
+    def correlation(f1: Fimp, f2: Fimp):
+        for f in [f1, f2]:
+            f.sort_by_attr_index()
+        scores1 = f1.get_relevances(ranking_index)
+        scores2 = f2.get_relevances(ranking_index)
+        return stats.pearsonr(scores1, scores2)
+
+    def canberra(f1: Fimp, f2: Fimp):
+        def expected_canberra(n, k):
+            return (k + 1) * (2 * n - k) / n * log(4) + k * (k + 1) / n + 2 * k - 3
+
+        for f in [f1, f2]:
+            f.sort_by_attr_index()
+        ranks1 = f1.get_attr_indices()
+        ranks2 = f2.get_attr_indices()
+        results = [-1.0] * len(ranks1)
+        for i in range(1, 1 + len(ranks1)):
+            distance = 0.0
+            for j in range(i):
+                r1 = min(ranks1[j], i + 1)
+                r2 = min(ranks2[j], i + 1)
+                distance += abs(r1 - r2) / (r1 + r2)
+            distance /= expected_canberra(len(ranks1), i)
+            results[i - 1] = distance
+        return results
+
+    # sanity check
+    for fimp in [fimp1, fimp2]:
+        fimp.sort_by_attr_index()
+    if fimp1.get_attr_names() != fimp2.get_attr_names():
+        raise ValueError("Names of the attributes are not the same")
+    if similarity_measure == "jaccard":
+        return jaccard(f1, f2)
+    elif similarity_measure == "correlation":
+        return correlation(f1, f2)
+    elif similarity_measure == "canberra":
+        return canberra(f1, f2)
+    else:
+        raise ValueError("Wrong Error measure")
