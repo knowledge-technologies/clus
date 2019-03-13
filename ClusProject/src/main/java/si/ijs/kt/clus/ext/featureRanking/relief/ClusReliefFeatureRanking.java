@@ -37,6 +37,7 @@ import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.FindNeighboursC
 import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.NearestNeighbour;
 import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.SaveLoadNeighbours;
 import si.ijs.kt.clus.ext.featureRanking.relief.statistics.Classic;
+import si.ijs.kt.clus.ext.featureRanking.relief.statistics.DistanceSimplified;
 import si.ijs.kt.clus.ext.featureRanking.relief.statistics.Statistics;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -373,6 +374,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         switch (statType) {
 		case DistanceClassic:
 			mStats = new Classic(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs);
+			break;
+		case DistanceSimplified:
+			mStats = new DistanceSimplified(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs);
 			break;
 		default:
 			throw new RuntimeException("Wrong value for statistics type: " + statType);

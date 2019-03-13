@@ -11,9 +11,6 @@ import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.NearestNeighbou
 import si.ijs.kt.clus.util.exception.ClusException;
 
 public class Classic extends Statistics {
-	ClusReliefFeatureRanking mRelief;
-	int m_NbDescriptiveAttrs;
-
 	/**
 	 * m_SumDistAttr[target index][number of neighbours][attribute]: current sum of
 	 * distances between attribute values, for the given number of neighbours and
@@ -44,8 +41,7 @@ public class Classic extends Statistics {
 
 	public Classic(ClusReliefFeatureRanking relief, int nbTargets, int nbDiffNbNeighbours,
 	        int nbDescriptiveAttributes) {
-		mRelief = relief;
-		m_NbDescriptiveAttrs = nbDescriptiveAttributes;
+		initializeSuperFields(relief, nbDescriptiveAttributes);
 		m_SumDistAttr = new double[nbTargets][nbDiffNbNeighbours][nbDescriptiveAttributes];
 		m_SumDistTarget = new double[nbTargets][nbDiffNbNeighbours];
 		m_SumDistAttrTarget = new double[nbTargets][nbDiffNbNeighbours][nbDescriptiveAttributes];
