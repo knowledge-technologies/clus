@@ -1,5 +1,8 @@
 import scipy.stats.stats as stats
 import math
+import matplotlib.pyplot as plt
+import numpy as np
+from typing import List
 
 
 class Fimp:
@@ -38,6 +41,12 @@ class Fimp:
     def sort_by_relevance(self, ranking_index=0):
         self.table.sort(key=lambda row: row[2][ranking_index])
 
+    def sort_by_outer_relevance(self, outer_ranks):
+        self.sort_by_attr_index()
+        table_extended = [(rank, row) for rank, row in zip(outer_ranks, self.table)]
+        table_extended.sort()
+        self.table = [pair[1] for pair in table_extended]
+
     def get_attr_indices(self):
         return [row[0] for row in self.table]
 
@@ -46,6 +55,10 @@ class Fimp:
 
     def get_relevances(self, ranking_index=None):
         return [row[-1] if ranking_index is None else row[-1][ranking_index] for row in self.table]
+
+    def get_relevance(self, feature_name, ranking_index=None):
+        i = 0 if ranking_index is None else ranking_index
+        return self.attrs[feature_name][-1][i]
 
     def get_ranks(self, ranking_index=None):
         return [row[-2] if ranking_index is None else row[-2][ranking_index] for row in self.table]
@@ -161,6 +174,41 @@ def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_
             results[i] = len(current_set1 & current_set2) / len(current_set1 | current_set2)
         return results
 
+    def fuzzy_jaccard(f1: Fimp, f2: Fimp):
+        def relative_score(absolute_score, normalisation_factor):
+            if normalisation_factor == 0.0:
+                return 1.0
+            else:
+                return absolute_score / normalisation_factor
+        for f in [f1, f2]:
+            f.sort_by_relevance(ranking_index)
+        attributes = [f1.get_attr_names(), f2.get_attr_names()]
+        n = len(attributes[0])
+        results = [-1.0] * n
+        current_sets = [set(), set()]
+        min_scores = [float("inf")] * 2
+        union_set = set()
+        for i in range(n):
+            for j, (current_set, attributes_ranking, f) in enumerate(zip(current_sets, attributes, [f1, f2])):
+                feature = attributes_ranking[i]
+                s = f.get_relevance(feature, ranking_index)
+                min_scores[j] = min(min_scores[j], s)
+                current_set.add(feature)
+                union_set.add(feature)
+            union = sorted(union_set)
+            scores = [[-1.0, -1.0] for _ in union]
+            for i1, feature in enumerate(union):
+                for j1, f in enumerate([f1, f2]):
+                    scores[i1][j1] = min(1.0, relative_score(f.get_relevance(feature, ranking_index),
+                                                             min_scores[j1]))
+            fuzzy_intersection = 0.0
+            fuzzy_union = 0.0
+            for pair in scores:
+                fuzzy_intersection += min(pair)
+                fuzzy_union += max(pair)  # should always equal 1.0
+            results[i] = fuzzy_intersection / fuzzy_union
+        return results
+
     def correlation(f1: Fimp, f2: Fimp):
         for f in [f1, f2]:
             f.sort_by_attr_index()
@@ -170,12 +218,12 @@ def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_
 
     def canberra(f1: Fimp, f2: Fimp):
         def expected_canberra(n, k):
-            return (k + 1) * (2 * n - k) / n * log(4) + k * (k + 1) / n + 2 * k - 3
+            return (k + 1) * (2 * n - k) / n * math.log(4) + k * (k + 1) / n + 2 * k - 3
 
         for f in [f1, f2]:
             f.sort_by_attr_index()
-        ranks1 = f1.get_attr_indices()
-        ranks2 = f2.get_attr_indices()
+        ranks1 = f1.get_ranks(ranking_index)
+        ranks2 = f2.get_ranks(ranking_index)
         results = [-1.0] * len(ranks1)
         for i in range(1, 1 + len(ranks1)):
             distance = 0.0
@@ -193,10 +241,113 @@ def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_
     if fimp1.get_attr_names() != fimp2.get_attr_names():
         raise ValueError("Names of the attributes are not the same")
     if similarity_measure == "jaccard":
-        return jaccard(f1, f2)
+        return jaccard(fimp1, fimp2)
+    elif similarity_measure == "fuzzy_jaccard":
+        return fuzzy_jaccard(fimp1, fimp2)
     elif similarity_measure == "correlation":
-        return correlation(f1, f2)
+        return correlation(fimp1, fimp2)
     elif similarity_measure == "canberra":
-        return canberra(f1, f2)
+        return canberra(fimp1, fimp2)
     else:
         raise ValueError("Wrong Error measure")
+
+
+def feature_importances_side_by_side(fimps: List[Fimp], labels, colours, ranking_index=0, sort_by="rank",
+                                     sort_by_difference=False, normalize=False):
+    """
+    Shows side-by-side bar chart of importances. The features are sorted by the ranks from the first ranking,
+    or by their dataset index.
+    :param fimps:
+    :param labels:
+    :param colours:
+    :param ranking_index:
+    :param sort_by: "rank" or "dataset_index"
+    :return:
+    """
+    rank = "rank"
+    dataset_index = "dataset_index"
+    allowed = [rank, dataset_index]
+    if sort_by not in allowed:
+        raise ValueError("Wrong sorter: {} not in {}".format(sort_by, allowed))
+    n = len(fimps)
+    assert n == len(labels) == len(colours)
+    width = 1 / (n + 1)
+    subgroup_offsets = width * (np.array(range(n)) - (n - 1) / 2)
+    if sort_by == rank:
+        fimps[0].sort_by_relevance(ranking_index)
+        order = [pair for pair in enumerate(fimps[0].get_attr_indices())]
+        order.sort(key=lambda pair: pair[1])
+        for fimp in fimps[1:]:
+            fimp.sort_by_outer_relevance([pair[0] for pair in order])
+    elif sort_by == dataset_index:
+        for fimp in fimps:
+            fimp.sort_by_attr_index()
+    else:
+        raise ValueError("Wrong sorter")
+    for fimp in fimps[1:]:
+        assert fimp.get_attr_names() == fimps[0].get_attr_names()
+    if normalize:
+        scores = [normalize_by_max(fimp.get_relevances(ranking_index)) for fimp in fimps]
+    else:
+        scores = [fimp.get_relevances(ranking_index) for fimp in fimps]
+    if sort_by_difference:
+        assert len(scores) == 2
+        d = [abs(x - y) for x, y in zip(*scores)]
+        for i in range(len(scores)):
+            temp = list(enumerate(scores[i]))
+            temp.sort(key=lambda x: d[x[0]], reverse=True)
+            scores[i] = [x[1] for x in temp]
+    m = len(scores[0])
+    group_centres = np.array(range(m))
+    for i in range(n):
+        plt.bar(group_centres + subgroup_offsets[i], scores[i], width, color=colours[i], label=labels[i])
+    plt.xticks(group_centres, fimps[0].get_attr_names(), rotation='vertical')
+    plt.ylabel("Normalized feature importance")
+    plt.legend()
+    plt.show()
+
+
+def feature_importances_superimposed(fimps: List[Fimp], labels, colours, ranking_index=0, sort_by="rank"):
+    width = 0.8
+
+    highPower = [1184.53, 1523.48, 1521.05, 1517.88, 1519.88, 1414.98,
+                 1419.34, 1415.13, 1182.70, 1165.17]
+    lowPower = [1000.95, 1233.37, 1198.97, 1198.01, 1214.29, 1130.86,
+                1138.70, 1104.12, 1012.95, 1000.36]
+
+    indices = np.arange(len(highPower))
+
+    plt.bar(indices, highPower, width=width,
+            color='b', label='Max Power in mW')
+    plt.bar([i + 0.25 * width for i in indices], lowPower,
+            width=0.5 * width, color='r', alpha=0.5, label='Min Power in mW')
+
+    plt.xticks(indices + width / 2.,
+               ['T{}'.format(i) for i in range(len(highPower))])
+
+    plt.legend()
+
+    plt.show()
+
+
+def normalize_by_max(scores):
+    s = np.array(scores)
+    m = np.max(s)
+    if m < 0:
+        raise ValueError("Max is negative")
+    elif m == 0:
+        return scores
+    return list(s / np.max(s))
+
+
+if __name__ == "__main__":
+    target = 12
+    fs = [r"D:\Matej\gyros\experiments\concept_drift\runs\clus\target{}\gyrosTrees200Genie3.fimp".format(target),
+          r"D:\Matej\gyros\experiments\concept_drift\runs\test1_ranking_no_leak\target{}\gyrosTrees200Genie3.fimp".format(target),
+          r"D:\Matej\gyros\experiments\concept_drift\runs\test2_ranking_no_leak\target{}\gyrosTrees200Genie3.fimp".format(target)][1:]
+    cs = ['pink', 'lightblue', 'lightgreen'][:-1]  # "rgbm"
+    ls = ["training", "with gyroscopes", "without gyroscopes"][1:]
+    index = 0
+    feature_importances_side_by_side([Fimp(f_name=f) for f in fs], ls, cs, 0, sort_by_difference=False, normalize=False)
+    # feature_importances_superimposed([Fimp(f_name=f) for f in fs], ls, cs[:2], 0)
+# feature_importances_stacked(123)
