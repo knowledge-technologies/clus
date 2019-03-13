@@ -8,17 +8,15 @@
 \usepackage{amsmath, amsthm, amssymb}
 \usepackage{graphicx}
 \usepackage{tikz}
-
-\ifpdf
-\pdfinfo{
-  /Title    (Clus: User's Manual)
-  /Author   (Jan Struyf, Bernard Zenko, Hendrik Blockeel, Celine Vens, Matej Petkovic, Tomaz Stepisnik Perdih, Vanja Mileski, Martin Breskvar, Jurica Levatic, Dragi Kocev, Saso Dzeroski)
+\usepackage{hyperref}
+\definecolor{links}{HTML}{2a60f1}
+\hypersetup{
+	colorlinks,
+	citecolor=black,
+	filecolor=black,
+	linkcolor=links,
+	urlcolor=black
 }
-\usepackage[pdftex,colorlinks=true,pdfstartview=FitV,linkcolor=black,citecolor=black,urlcolor=black]{hyperref}
-\else
-\usepackage{url}
-\newcommand{\phantomsection}[1]{}
-\fi
 
 % geometry makes sure page size is correct in .pdf files
 \geometry{a4paper,
@@ -34,7 +32,7 @@
 
 \newcommand{\clus}{\textsc{Clus}}
 \newcommand{\clusphy}{\textsc{Clus}-$\varphi$}
-\newcommand{\clusgit}{http://source.ijs.si/mpetkovic/clusproject.git}
+\newcommand{\clusgit}{http://source.ijs.si/ktclus/clusproject.git}
 %\newcommand{\comment}[1]{{\color{red}\textbf{COMMENT:} #1}}
 \newcommand{\comment}[1]{} % off
 
