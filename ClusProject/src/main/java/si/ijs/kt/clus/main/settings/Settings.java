@@ -67,7 +67,6 @@ import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries;
 import si.ijs.kt.clus.main.settings.section.SettingsTree;
 import si.ijs.kt.clus.main.settings.section.SettingsTree.Heuristic;
 import si.ijs.kt.clus.main.settings.section.SettingsTree.PruningMethod;
-import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.ResourceInfo;
 import si.ijs.kt.clus.util.exception.ClusInvalidSettingsException;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFile;

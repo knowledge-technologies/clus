@@ -139,7 +139,7 @@ public class ClusROSHelpers {
             subspaceCount = ClusRandom.nextInt(ClusRandom.RANDOM_ENSEMBLE_ROS_SUBSPACE_SIZE_SELECTION, 1, clustering.length);
         }
 
-        // Randomly select targets with ClusRandom.RANDOM_ENSEMBLE_TARGET_SUBSPACING randomizer
+        // Randomly select targets with ClusRandom.RANDOM_ENSEMBLE_ROS randomizer
         ClusAttrType[] selected = ClusEnsembleInduce.selectRandomSubspaces(clustering, subspaceCount, ClusRandom.RANDOM_ENSEMBLE_ROS, null);
 
         return populateMap(selected, schema);

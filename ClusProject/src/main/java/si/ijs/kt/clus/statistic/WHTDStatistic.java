@@ -31,7 +31,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 import org.apache.commons.math3.distribution.HypergeometricDistribution;
-import org.apache.log4j.Hierarchy;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;

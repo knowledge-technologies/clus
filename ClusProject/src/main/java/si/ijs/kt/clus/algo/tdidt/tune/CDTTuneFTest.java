@@ -60,7 +60,6 @@ import si.ijs.kt.clus.util.jeans.util.cmdline.CMDLineArgs;
 
 
 // added 18-05-06
-// import si.ijs.kt.clus.ext.hierarchical.*;
 
 public class CDTTuneFTest extends ClusDecisionTree {
 
@@ -75,8 +74,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
 
 
     public CDTTuneFTest(ClusInductionAlgorithmType clss, double[] ftests) {
-        super(clss.getClus());
-        m_Class = clss;
+        this(clss);
         m_FTests = ftests;
     }
 
@@ -250,18 +248,8 @@ public class CDTTuneFTest extends ClusDecisionTree {
             ClusRandom.initialize(getSettings());
             m_Class.induceAll(cr);
         }
-        catch (ClusException e) {
-            System.err.println("Error: " + e);
-        }
-        catch (IOException e) {
-            System.err.println("IO Error: " + e);
-        }
-        catch (InterruptedException e) {
-            System.err.println("InterruptedException: " + e);
-        }
         catch (Exception e) {
-            
-            e.printStackTrace();
-        }
+            ClusLogger.severe(e.toString());
+        }        
     }
 }

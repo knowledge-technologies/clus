@@ -1,5 +1,5 @@
 
-package si.ijs.kt.clus.util.tools.optimization;
+package si.ijs.kt.clus.util.tools.optimization.gd;
 
 import java.util.ArrayList;
 
@@ -8,6 +8,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.AttributeUseType;
 import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.section.SettingsRules;
 import si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDAddLinearTerms;
+import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
 import si.ijs.kt.clus.util.tools.optimization.OptimizationProblem.OptimizationParameter;
 
 

@@ -10,7 +10,6 @@ import java.util.List;
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
-import si.ijs.kt.clus.main.settings.section.SettingsOutput.WritePredictions;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
@@ -216,6 +215,9 @@ public class SettingsEnsemble extends SettingsBase {
         return m_EnsembleROSVotingType.getValue();
     }
 
+    public void setEnsembleROSVotingType(EnsembleROSVotingType value) {
+    	m_EnsembleROSVotingType.setValue(value);
+    }
 
     public boolean isEnsembleROSEnabled() {
         return !getEnsembleROSAlgorithmType().equals(EnsembleROSAlgorithmType.Disabled) && isEnsembleMode();
@@ -266,6 +268,10 @@ public class SettingsEnsemble extends SettingsBase {
 
     public String getNbRandomTargetAttrString() {
         return m_RandomTargetAttrSelected.getValue();
+    }
+
+    public void setNbRandomTargetAttrString(String nbTargets) {
+        m_RandomTargetAttrSelected.setValue(nbTargets);
     }
 
 
@@ -563,8 +569,6 @@ public class SettingsEnsemble extends SettingsBase {
     /**
      * If bootstrapping is not defined, choose the appropriate default value for
      * the selected ensemble method.
-     * 
-     * @author Du-Weisst-Schon-Wer
      */
     public void determineBoostrapping() {
         EnsembleMethod ens = getEnsembleMethod();

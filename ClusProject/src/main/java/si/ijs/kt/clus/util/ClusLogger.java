@@ -58,30 +58,6 @@ public class ClusLogger {
 		m_MainLogger.setLevel(Level.ALL);
 	}
 
-	public static final void info(String msg) {
-		m_MainLogger.info(msg);
-	}
-
-	public static final void info(double d) {
-		m_MainLogger.info(Double.toString(d));
-	}
-
-	public static final void info() {
-		m_MainLogger.info("");
-	}
-
-	public static final void severe(String msg) {
-		m_MainLogger.severe(msg);
-	}
-
-	public static final void fine(String msg) {
-		m_MainLogger.fine(msg);
-	}
-
-	public static final void finer(String msg) {
-		m_MainLogger.finer(msg);
-	}
-
 	private static Logger initialize_simple() {
 		System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$s] %5$s %n");
 		Logger l = Logger.getLogger("");
@@ -93,4 +69,34 @@ public class ClusLogger {
 		l.setLevel(Level.ALL);
 		return l;
 	}
+
+    public static final void info(String msg) {
+        m_MainLogger.info(msg);
+    }
+    
+    public static final void info(double d) {
+        m_MainLogger.info(Double.toString(d));
+    }
+
+    public static final void info() {
+        m_MainLogger.info("");
+    }
+
+    public static final void severe(String msg) {
+        m_MainLogger.severe(msg);
+    }
+
+
+    public static final void fine(String msg) {
+        m_MainLogger.fine(msg);
+    }
+    
+    public static final void fine() {
+    	m_MainLogger.fine("");
+    }
+
+
+    public static final void finer(String msg) {
+        m_MainLogger.finer(msg);
+    }
 }
