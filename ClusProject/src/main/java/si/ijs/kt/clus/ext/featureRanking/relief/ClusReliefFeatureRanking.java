@@ -36,10 +36,13 @@ import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.FindNeighboursCallable;
 import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.NearestNeighbour;
 import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.SaveLoadNeighbours;
+import si.ijs.kt.clus.ext.featureRanking.relief.statistics.Classic;
+import si.ijs.kt.clus.ext.featureRanking.relief.statistics.Statistics;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief.MultilabelDistance;
+import si.ijs.kt.clus.main.settings.section.SettingsRelief.ReliefStatisticsType;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesDistanceMeasure;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -54,9 +57,9 @@ import si.ijs.kt.clus.util.tuple.Triple;
  */
 public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
-    private static final int DESCRIPTIVE_SPACE = 0;
-    private static final int TARGET_SPACE = 1;
-    private static final int[] SPACE_TYPES = new int[] { DESCRIPTIVE_SPACE, TARGET_SPACE };
+    public static final int DESCRIPTIVE_SPACE = 0;
+    public static final int TARGET_SPACE = 1;
+    public static final int[] SPACE_TYPES = new int[] { DESCRIPTIVE_SPACE, TARGET_SPACE };
 
     /**
      * The dataset used.
@@ -148,28 +151,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
     /** tells, whether to perform per-target rankings also */
     private boolean m_PerformPerTargetRanking;
-
-    /**
-     * m_SumDistAttr[target index][number of neighbours][attribute]: current sum of distances between attribute values,
-     * for the given number of neighbours and attribute.
-     * If {@code target index} is 0, this is for overall ranking(s). Otherwise, this is for the ranking(s) for the
-     * target with the index {@code target index - 1}.
-     */
-    private double[][][] m_SumDistAttr;
-
-    /**
-     * m_SumDistAttr[target index][number of neighbours]: for the given number of neighbours , this is an analogue of
-     * {@link #m_SumDistAttr} for
-     * the distances between target values.
-     */
-    private double[][] m_SumDistTarget;
-
-    /**
-     * m_SumDistAttr[target index][number of neighbours][attribute]: the analogue of {@link #m_SumDistAttr}, for the
-     * products of
-     * distances between attribute values and distances between target values
-     */
-    private double[][][] m_SumDistAttrTarget;
+    
+    private Statistics mStats;
 
     /** Hierarchical multi-label distance handler */
     private HierarchicalMultiLabelDistance m_HierarMLCDist = new HierarchicalMultiLabelDistance();
@@ -386,9 +369,14 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         }
 
         // attribute relevance estimation: current statistics
-        m_SumDistAttr = new double[m_NbGeneralisedTargetAttrs][m_NbNeighbours.length][m_NbDescriptiveAttrs];
-        m_SumDistTarget = new double[m_NbGeneralisedTargetAttrs][m_NbNeighbours.length];
-        m_SumDistAttrTarget = new double[m_NbGeneralisedTargetAttrs][m_NbNeighbours.length][m_NbDescriptiveAttrs];
+        ReliefStatisticsType statType = getSettings().getRelief().getReliefStatisticsType();
+        switch (statType) {
+		case DistanceClassic:
+			mStats = new Classic(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs);
+			break;
+		default:
+			throw new RuntimeException("Wrong value for statistics type: " + statType);
+		}
         // nearest neighbours
         m_NearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
         // number of threads
@@ -531,19 +519,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                     boolean isStdClassification = m_IsStandardClassification[targetIndex + 1];
                     for (int nbNeighInd = 0; nbNeighInd < m_NbNeighbours.length; nbNeighInd++) {
                         int rankingInd = rankingIndex(numIterInd, nbNeighInd, targetIndex);
-
-                        double sumDistAttr = m_SumDistAttr[targetIndex + 1][nbNeighInd][attrInd];
-                        double sumDistTarget = m_SumDistTarget[targetIndex + 1][nbNeighInd];
-                        double sumDistAttrTarget = m_SumDistAttrTarget[targetIndex + 1][nbNeighInd][attrInd];
-
-                        if (isStdClassification) {
-                            info[2 + rankingInd] += sumDistAttr / successfulItearions[targetIndex + 1];
-                        }
-                        else {
-                            double p1 = sumDistAttrTarget / sumDistTarget;
-                            double p2 = (sumDistAttr - sumDistAttrTarget) / (successfulItearions[targetIndex + 1] - sumDistTarget);
-                            info[2 + rankingInd] += p1 - p2;
-                        }
+                        info[2 + rankingInd] += mStats.computeImportances(targetIndex, nbNeighInd, attrInd, isStdClassification, successfulItearions);
                     }
                 }
             }
@@ -568,10 +544,8 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         for (int targetValue = 0; targetValue < nbTargetValues; targetValue++) {
             // The sums sum_neigh w_neigh * d, where w is non-normalised weight and d is d_class * d_attr or d_class
             // etc.
-            double tempSumDistTarget = 0.0;
-            double[] tempSumDistAttr = new double[m_NbDescriptiveAttrs];
-            double[] tempSumDistAttrTarget = new double[m_NbDescriptiveAttrs];
-            double sumNeighbourWeights = 0.0;
+        	mStats.resetTempFields();
+        	double sumNeighbourWeights = 0.0;
 
             boolean isStdClassification = m_IsStandardClassification[targetIndex + 1];
             int trueIndex = getTrueTargetIndex(targetIndex);
@@ -584,48 +558,10 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                 sumNeighbourWeights += m_NeighbourWeights[neighbour];
                 double neighWeightNonnormalized = m_NeighbourWeights[neighbour];
                 NearestNeighbour neigh = nearestNeighbours[targetValue][neighbour];
-                double targetDistance = 0.0;
-                if (targetIndex >= 0 && !isStdClassification) {
-                    // regression per-target case: we took the neighbours from overall ranking, but need d_target(tuple,
-                    // neigh).
-                    targetDistance = computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]);
-                }
-                else {
-                    targetDistance = computeDistance(tuple, data.getTuple(neigh.getIndexInDataset()), TARGET_SPACE); // neigh.getTargetDistance();
-                }
-
-                if (!isStdClassification) {
-                    tempSumDistTarget += targetDistance * neighWeightNonnormalized;
-                }
-                for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
-                    ClusAttrType attr = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE][attrInd];
-                    double distAttr = computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), attr) * neighWeightNonnormalized;
-                    if (isStdClassification) {
-                        int tupleTarget = ((NominalAttrType) m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]).getNominal(tuple);
-                        if (targetValue == tupleTarget) {
-                            tempSumDistAttr[attrInd] -= distAttr;
-                        }
-                        else {
-                            double pTupleTarget = m_TargetProbabilities[targetIndex + 1][tupleTarget];
-                            double pNeighTarget = m_TargetProbabilities[targetIndex + 1][targetValue];
-                            tempSumDistAttr[attrInd] += pNeighTarget / (1.0 - pTupleTarget) * distAttr;
-                        }
-                    }
-                    else {
-                        tempSumDistAttr[attrInd] += distAttr;
-                        tempSumDistAttrTarget[attrInd] += distAttr * targetDistance;
-                    }
-                }
+                mStats.updateTempStatistics(targetIndex, isStdClassification, tuple, data, neigh, neighWeightNonnormalized, trueIndex, targetValue);
 
                 if (neighbour + 1 == m_NbNeighbours[numNeighInd]) {
-                    double normalizedTempDistTarget = tempSumDistTarget / sumNeighbourWeights;
-                    m_SumDistTarget[targetIndex + 1][numNeighInd] += normalizedTempDistTarget;
-                    for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
-                        double normalizedTempDistAttr = tempSumDistAttr[attrInd] / sumNeighbourWeights;
-                        double normalizedTempTistAttrTarget = tempSumDistAttrTarget[attrInd] / sumNeighbourWeights;
-                        m_SumDistAttr[targetIndex + 1][numNeighInd][attrInd] += normalizedTempDistAttr;
-                        m_SumDistAttrTarget[targetIndex + 1][numNeighInd][attrInd] += normalizedTempTistAttrTarget;
-                    }
+                    mStats.updateStatistics(targetIndex, numNeighInd, sumNeighbourWeights);
                     numNeighInd++; // if numNeighInd == m_NbNeighbours.lenght, the neighbour for-loop has ended just now
                                    // ... no index out of range
                 }
@@ -910,7 +846,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      * @return Distance between {@code t1} and {@code t2} in the given subspace.
      * @throws ClusException
      */
-    private double computeDistance(DataTuple t1, DataTuple t2, int space) throws ClusException {
+    public double computeDistance(DataTuple t1, DataTuple t2, int space) throws ClusException {
         double dist = 0.0;
         if (m_IsMLC && space == TARGET_SPACE) {
             return m_MLCDist.calculateDist(t1, t2);
@@ -1349,5 +1285,17 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     
     private static boolean isMissing(double val) {
     	return val == Double.POSITIVE_INFINITY;
+    }
+    
+    public ClusAttrType getDescriptiveAttribute(int attrInd) {
+    	return m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE][attrInd];
+    }
+    
+    public ClusAttrType getTargetAttribute(int attrInd) {
+    	return m_DescriptiveTargetAttr[TARGET_SPACE][attrInd];
+    }
+    
+    public double getTargetProbability(int targetIndex, int targetValue) {
+    	return m_TargetProbabilities[targetIndex + 1][targetValue];
     }
 }

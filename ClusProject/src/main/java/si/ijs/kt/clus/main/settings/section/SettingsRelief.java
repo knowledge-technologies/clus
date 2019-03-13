@@ -40,6 +40,11 @@ public class SettingsRelief extends SettingsBase {
 
     private INIFileEnum<MultilabelDistance> m_MultilabelDistance;
 
+    public enum ReliefStatisticsType {
+    	DistanceClassic, Variance, DistanceSimplified
+    }
+    private INIFileEnum<ReliefStatisticsType> mReliefStatistics;
+    
 
     public void setSectionReliefEnabled(boolean value) {
         m_Section.setEnabled(value);
@@ -134,6 +139,10 @@ public class SettingsRelief extends SettingsBase {
     public MultilabelDistance getMultilabelDistance() {
         return m_MultilabelDistance.getValue();
     }
+    
+    public ReliefStatisticsType getReliefStatisticsType() {
+    	return mReliefStatistics.getValue();
+    }
 
 
     @Override
@@ -150,6 +159,7 @@ public class SettingsRelief extends SettingsBase {
         m_Section.addNode(m_ChosenInstances = new INIFileNominalOrIntOrVector("ChosenInstances", NONELIST));
         m_ChosenInstances.setIntVector(DUMMY_INSTANCES);
         m_Section.addNode(m_MultilabelDistance = new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.HammingLoss));
+        m_Section.addNode(mReliefStatistics = new INIFileEnum<ReliefStatisticsType>("ReliefStatisticsType", ReliefStatisticsType.DistanceClassic));
         m_Section.setEnabled(false);
     }
 }
