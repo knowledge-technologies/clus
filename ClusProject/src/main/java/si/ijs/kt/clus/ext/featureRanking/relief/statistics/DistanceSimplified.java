@@ -43,8 +43,8 @@ public class DistanceSimplified extends Statistics {
 		}
 		for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
 			ClusAttrType attr = mRelief.getDescriptiveAttribute(attrInd);
-			double distAttr = mRelief.computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), attr) * neighWeightNonnormalized;
-			tempSumDistAttrTarget[attrInd] += (1.0 - distAttr) * targetDistance;
+			double distAttr = mRelief.computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), attr);
+			tempSumDistAttrTarget[attrInd] += (1.0 - distAttr) * targetDistance * neighWeightNonnormalized;
 			}
 	}
 

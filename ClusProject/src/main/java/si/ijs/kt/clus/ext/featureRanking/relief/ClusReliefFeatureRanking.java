@@ -97,7 +97,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     /** {array of descriptive attributes, array of target attributes} */
     private ClusAttrType[][] m_DescriptiveTargetAttr = new ClusAttrType[2][];
     
-    /** An analog of {@link m_DescriptiveTargetAttr}: indices of the attributes which are used in distance computations:
+    /** An analogue of {@link m_DescriptiveTargetAttr}: indices of the attributes which are used in distance computations:
      * if data tuples are sparse, the two elements of this list may be shorted than the elements of {@link m_DescriptiveTargetAttr} */
     private int[][] m_DistanceDescriptiveTargetAttr = new int[2][];
     
@@ -576,6 +576,10 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
 
     private boolean[] computeStandardClassification() {
+    	if (getSettings().getRelief().getReliefStatisticsType().equals(ReliefStatisticsType.DistanceSimplified)) {
+    		return new boolean[m_NbGeneralisedTargetAttrs];
+    	} 	
+    	
         boolean[] isPerTarget = new boolean[m_NbGeneralisedTargetAttrs];
         isPerTarget[0] = m_NbTargetAttrs == 1 && m_DescriptiveTargetAttr[TARGET_SPACE][0] instanceof NominalAttrType; // overall
                                                                                                                       // ranking
