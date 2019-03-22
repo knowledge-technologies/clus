@@ -17,10 +17,14 @@ public class DistanceSimplified extends Statistics {
 	 * If {@code target index} is 0, this is for overall ranking(s).
 	 * Otherwise, this is for the ranking(s) for the target with the index
 	 * {@code target index - 1}.
+	 * 
+	 * Problem of this method is that everything seems to be the same ...
 	 */
 	private double[][][] m_SumDistAttrTarget;
 	
 	private double[] tempSumDistAttrTarget;
+	
+	private double m_NumberOfBorderline;
 
 	public DistanceSimplified(ClusReliefFeatureRanking relief, int nbTargets, int nbDiffNbNeighbours,
 	        int nbDescriptiveAttributes) {
@@ -41,11 +45,12 @@ public class DistanceSimplified extends Statistics {
 			targetDistance = mRelief.computeDistance(tuple, data.getTuple(neigh.getIndexInDataset()),
 			        ClusReliefFeatureRanking.TARGET_SPACE);
 		}
+		m_NumberOfBorderline += 1.0;
 		for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
 			ClusAttrType attr = mRelief.getDescriptiveAttribute(attrInd);
 			double distAttr = mRelief.computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), attr);
 			tempSumDistAttrTarget[attrInd] += (1.0 - distAttr) * targetDistance * neighWeightNonnormalized;
-			}
+		}
 	}
 
 	@Override

@@ -41,7 +41,7 @@ public class SettingsRelief extends SettingsBase {
     private INIFileEnum<MultilabelDistance> m_MultilabelDistance;
 
     public enum ReliefStatisticsType {
-    	DistanceClassic, Variance, DistanceSimplified
+    	DistanceClassic, Variance, DistanceSimplified, Steepness
     }
     private INIFileEnum<ReliefStatisticsType> mReliefStatistics;
     

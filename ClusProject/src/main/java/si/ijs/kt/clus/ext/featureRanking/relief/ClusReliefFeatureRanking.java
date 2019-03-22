@@ -39,6 +39,8 @@ import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.SaveLoadNeighbo
 import si.ijs.kt.clus.ext.featureRanking.relief.statistics.Classic;
 import si.ijs.kt.clus.ext.featureRanking.relief.statistics.DistanceSimplified;
 import si.ijs.kt.clus.ext.featureRanking.relief.statistics.Statistics;
+import si.ijs.kt.clus.ext.featureRanking.relief.statistics.Steepness;
+import si.ijs.kt.clus.ext.featureRanking.relief.statistics.Variance;
 import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief;
@@ -378,6 +380,12 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 		case DistanceSimplified:
 			mStats = new DistanceSimplified(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs);
 			break;
+		case Steepness:
+			mStats = new Steepness(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs, m_MaxNbNeighbours, false);  // TODO un-hardcode false
+			break;
+		case Variance:
+			mStats = new Variance(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs);
+			break;
 		default:
 			throw new RuntimeException("Wrong value for statistics type: " + statType);
 		}
@@ -478,7 +486,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
                     shouldUpdate[targetIndex + 1] = true;
                 }
             }
-
             // IMPORTANCE UPDATE
             if (iteration + 1 == m_NbIterations[numIterInd]) {
                 updateImportances(data, numIterInd, successfulIterations, shouldUpdate);
@@ -576,11 +583,12 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
 
     private boolean[] computeStandardClassification() {
-    	if (getSettings().getRelief().getReliefStatisticsType().equals(ReliefStatisticsType.DistanceSimplified)) {
-    		return new boolean[m_NbGeneralisedTargetAttrs];
-    	} 	
+    	boolean[] isPerTarget = new boolean[m_NbGeneralisedTargetAttrs];
     	
-        boolean[] isPerTarget = new boolean[m_NbGeneralisedTargetAttrs];
+    	ReliefStatisticsType s = getSettings().getRelief().getReliefStatisticsType();
+    	if (!s.equals(ReliefStatisticsType.DistanceClassic)) {
+    		return isPerTarget;
+    	}
         isPerTarget[0] = m_NbTargetAttrs == 1 && m_DescriptiveTargetAttr[TARGET_SPACE][0] instanceof NominalAttrType; // overall
                                                                                                                       // ranking
         for (int targetIndex = 1; targetIndex < m_NbGeneralisedTargetAttrs; targetIndex++) {
