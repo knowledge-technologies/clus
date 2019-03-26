@@ -23,13 +23,14 @@
 package si.ijs.kt.clus.util;
 
 
-import java.util.Arrays;
-import java.util.Comparator;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.stream.DoubleStream;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.type.ClusAttrType;
@@ -76,6 +77,10 @@ public class ClusUtil {
         final double magnitude = Math.pow(10, power);
         final long shifted = Math.round(num * magnitude);
         return shifted / magnitude;
+    }
+    
+    public static double mean(double[] xs) {
+    	 return DoubleStream.of(xs).sum() / xs.length;
     }
 
 

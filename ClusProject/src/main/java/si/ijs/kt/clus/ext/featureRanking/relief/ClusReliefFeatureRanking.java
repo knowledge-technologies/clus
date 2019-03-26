@@ -381,7 +381,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 			mStats = new DistanceSimplified(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs);
 			break;
 		case Steepness:
-			mStats = new Steepness(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs, m_MaxNbNeighbours, false);  // TODO un-hardcode false
+			mStats = new Steepness(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs, m_MaxNbNeighbours, false, true);  // TODO un-hardcode false
 			break;
 		case Variance:
 			mStats = new Variance(this, m_NbGeneralisedTargetAttrs, m_NbNeighbours.length, m_NbDescriptiveAttrs);
@@ -1313,5 +1313,9 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
     
     public double getTargetProbability(int targetIndex, int targetValue) {
     	return m_TargetProbabilities[targetIndex + 1][targetValue];
+    }
+    
+    public int getMaxNbIterations() {
+    	return m_MaxNbIterations;
     }
 }

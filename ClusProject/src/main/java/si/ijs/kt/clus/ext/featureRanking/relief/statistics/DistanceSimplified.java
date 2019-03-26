@@ -24,7 +24,8 @@ public class DistanceSimplified extends Statistics {
 	
 	private double[] tempSumDistAttrTarget;
 	
-	private double m_NumberOfBorderline;
+	private static double EPS = 0.01;
+//	private double m_NumberOfBorderline;
 
 	public DistanceSimplified(ClusReliefFeatureRanking relief, int nbTargets, int nbDiffNbNeighbours,
 	        int nbDescriptiveAttributes) {
@@ -45,11 +46,11 @@ public class DistanceSimplified extends Statistics {
 			targetDistance = mRelief.computeDistance(tuple, data.getTuple(neigh.getIndexInDataset()),
 			        ClusReliefFeatureRanking.TARGET_SPACE);
 		}
-		m_NumberOfBorderline += 1.0;
+//		m_NumberOfBorderline += 1.0;
 		for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
 			ClusAttrType attr = mRelief.getDescriptiveAttribute(attrInd);
 			double distAttr = mRelief.computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), attr);
-			tempSumDistAttrTarget[attrInd] += (1.0 - distAttr) * targetDistance * neighWeightNonnormalized;
+			tempSumDistAttrTarget[attrInd] += (1.0 / (targetDistance + EPS)) * (-distAttr) * neighWeightNonnormalized;
 		}
 	}
 
