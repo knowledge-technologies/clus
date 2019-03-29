@@ -48,6 +48,7 @@ import si.ijs.kt.clus.main.settings.section.SettingsRelief.MultilabelDistance;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief.ReliefStatisticsType;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesDistanceMeasure;
 import si.ijs.kt.clus.util.ClusLogger;
+import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 import si.ijs.kt.clus.util.tuple.Triple;
@@ -500,6 +501,45 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
         	String message2 = "Number of cases when we could not find that many neighbours: " + insufficientNbNeighbours;
         	printMessage(message1 + "\n" + message2, 1, ver);
         }
+        
+        // NORMALISATION IF NECESSARY
+        ReliefStatisticsType s = getSettings().getRelief().getReliefStatisticsType();
+        if (!s.equals(ReliefStatisticsType.DistanceClassic)) {
+        	normalizeImportances();
+        }
+
+    }
+        
+    private void normalizeImportances() throws InterruptedException {
+    	printMessage("Normalising importances ...", 1, getSettings().getGeneral().getVerbose());
+    	double[][] importanceSpans = new double[getNbFeatureRankings()][2];
+    	for (int r = 0; r < getNbFeatureRankings(); r++) {
+    		for (int a = 0; a < m_NbDescriptiveAttrs; a++) {        		
+    			importanceSpans[r][0] = Double.POSITIVE_INFINITY;
+    			importanceSpans[r][1] = Double.NEGATIVE_INFINITY;
+    		}
+    	}
+    	for (int a = 0; a < m_NbDescriptiveAttrs; a++) {
+    		ClusAttrType attr = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE][a];
+            double[] info = getAttributeInfo(attr.getName());
+    		for (int r = 0; r < getNbFeatureRankings(); r++) {
+    			double v = info[2 + r];        			
+    			importanceSpans[r][0] = Math.min(importanceSpans[r][0], v);
+    			importanceSpans[r][1] = Math.max(importanceSpans[r][1], v);
+    		}
+    	}
+    	for (int a = 0; a < m_NbDescriptiveAttrs; a++) {
+    		ClusAttrType attr = m_DescriptiveTargetAttr[DESCRIPTIVE_SPACE][a];
+            double[] info = getAttributeInfo(attr.getName());
+    		for (int r = 0; r < getNbFeatureRankings(); r++) {
+    			double minImpo = importanceSpans[r][0];
+    			double maxImpo = importanceSpans[r][1];
+    			if (Math.abs(maxImpo - minImpo) > ClusUtil.NANO) {
+    				info[2 + r] = (info[2 + r] - minImpo);  // / (maxImpo - minImpo);
+    			}
+    		}
+    		putAttributeInfo(attr.getName(), info);
+    	}
     }
 
 
