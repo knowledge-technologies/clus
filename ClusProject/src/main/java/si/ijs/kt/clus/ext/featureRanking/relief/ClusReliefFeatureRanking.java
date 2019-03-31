@@ -48,7 +48,6 @@ import si.ijs.kt.clus.main.settings.section.SettingsRelief.MultilabelDistance;
 import si.ijs.kt.clus.main.settings.section.SettingsRelief.ReliefStatisticsType;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesDistanceMeasure;
 import si.ijs.kt.clus.util.ClusLogger;
-import si.ijs.kt.clus.util.ClusUtil;
 import si.ijs.kt.clus.util.exception.ClusException;
 import si.ijs.kt.clus.util.jeans.math.MathUtil;
 import si.ijs.kt.clus.util.tuple.Triple;
@@ -510,7 +509,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
     }
         
-    private void normalizeImportances() throws InterruptedException {
+    private void normalizeImportances() throws InterruptedException { // TODO
     	printMessage("Normalising importances ... (x --> -1 / x)", 1, getSettings().getGeneral().getVerbose());
 //    	double[][] importanceSpans = new double[getNbFeatureRankings()][2];
 //    	for (int r = 0; r < getNbFeatureRankings(); r++) {
