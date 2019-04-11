@@ -361,7 +361,7 @@ public class HierErrorMeasures extends ClusError {
                 out.println("      P" + rec + "R: " + (100.0 * m_AvgPrecisionAtRecall[i]));
             }
         }
-        if (detail != ClusError.DETAIL_VERY_SMALL) {
+        if (detail != ClusError.DETAIL_SMALL) {
             printResults(fr1, out, m_Hier);
         }
         if (m_PRCurves != null) {

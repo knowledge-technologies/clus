@@ -250,8 +250,8 @@ public class OptimizationProblem {
 		m_RulePred = optInfo.m_rulePredictions;
 		m_TrueVal = optInfo.m_trueValues;
 
-		if (stat_mgr.getMode() != ClusStatManager.MODE_REGRESSION
-				&& stat_mgr.getMode() != ClusStatManager.MODE_CLASSIFY) {
+		if (stat_mgr.getTargetMode() != ClusStatManager.Mode.REGRESSION
+				&& stat_mgr.getTargetMode() != ClusStatManager.Mode.CLASSIFY) {
 			System.err.println(
 					"Weight optimization: Mixed types of targets (reg/clas) not implemented. Assuming regression.\n ");
 			// "The targets are of different kind, i.e. they are not all for regression or
@@ -262,7 +262,7 @@ public class OptimizationProblem {
 			// "The optimization may not work in this case also.\n");
 		}
 
-		m_ClssTask = (stat_mgr.getMode() == ClusStatManager.MODE_CLASSIFY);
+		m_ClssTask = (stat_mgr.getTargetMode() == ClusStatManager.Mode.CLASSIFY);
 
 		// Compute data statistics
 

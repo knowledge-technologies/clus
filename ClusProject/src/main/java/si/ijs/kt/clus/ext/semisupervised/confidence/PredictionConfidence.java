@@ -41,14 +41,14 @@ public abstract class PredictionConfidence {
     public PredictionConfidence(ClusStatManager statManager, SSLNormalization normalizationType, SSLAggregation aggregationType) {
         m_StatManager = statManager;
 
-        switch (m_StatManager.getMode()) {
-            case ClusStatManager.MODE_REGRESSION:
+        switch (m_StatManager.getTargetMode()) {
+            case REGRESSION:
                 m_NbTargets = statManager.getSchema().getNbTargetAttributes();
                 break;
-            case ClusStatManager.MODE_CLASSIFY:
+            case CLASSIFY:
                 m_NbTargets = statManager.getSchema().getNbTargetAttributes();
                 break;
-            case ClusStatManager.MODE_HIERARCHICAL:
+            case HIERARCHICAL:
                 m_NbTargets = statManager.getHier().getTotal();
                 break;
         }
@@ -86,7 +86,7 @@ public abstract class PredictionConfidence {
                 m_Aggregation = new Average();
         }
 
-        if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY && m_StatManager.getSettings().getSSL().getConfidenceMeasure().equals(SSLConfidenceMeasure.Variance)) {
+        if (m_StatManager.getTargetMode() == ClusStatManager.Mode.CLASSIFY && m_StatManager.getSettings().getSSL().getConfidenceMeasure().equals(SSLConfidenceMeasure.Variance)) {
             m_Normalization.setIsLessBetter(false);
         }
     }

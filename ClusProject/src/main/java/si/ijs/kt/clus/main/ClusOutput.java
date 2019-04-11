@@ -341,7 +341,7 @@ public class ClusOutput {
                 // - <app name>_trees.py where the trees are defined
                 String treeFile = ClusForest.getTreeFile(appName);
                 // write ensemble file
-                ClusForest.writePythonAggregation(wrtr, treeFile, cr.getStatManager().getMode());
+                ClusForest.writePythonAggregation(wrtr, treeFile, cr.getStatManager().getTargetMode());
                 int maxSize = -1;
                 int maxSizedForest = -1;
                 for (int i = 0; i < cr.getNbModels(); i++) {

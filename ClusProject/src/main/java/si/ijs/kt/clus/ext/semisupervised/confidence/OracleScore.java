@@ -46,7 +46,7 @@ public class OracleScore extends PredictionConfidence {
 
         ClusStatistic stat = model.predictWeighted(tuple);
 
-        if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
+        if (m_StatManager.getTargetMode() == ClusStatManager.Mode.CLASSIFY) {
             stat.computePrediction();
             ClassificationStat tempStat = (ClassificationStat) stat.cloneStat();
             ClassificationStat tempStat2 = (ClassificationStat) stat;
@@ -61,7 +61,7 @@ public class OracleScore extends PredictionConfidence {
             return distances;
         }
 
-        if (m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        if (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             ((WHTDStatistic) stat).setThreshold(m_HmcThreshold);
             stat.computePrediction();
 
@@ -77,7 +77,7 @@ public class OracleScore extends PredictionConfidence {
             return tempStat.getPointwiseSquaredDistance(tuple);
         }
 
-        if (m_StatManager.getMode() == ClusStatManager.MODE_REGRESSION) {
+        if (m_StatManager.getTargetMode() == ClusStatManager.Mode.REGRESSION) {
             stat.computePrediction();
             return ((RegressionStatBase) stat).getPointwiseSquaredDistance(tuple, m_StatManager.getNormalizationWeights());
         }

@@ -49,7 +49,7 @@ public class ClusSITDecisionTree extends ClusDecisionTree {
 
     public ClusErrorList createTuneError(ClusStatManager mgr) {
         ClusErrorList parent = new ClusErrorList();
-        if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        if (mgr.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             parent.addError(new HierClassWiseAccuracy(parent, mgr.getHier()));
             return parent;
         }

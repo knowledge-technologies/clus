@@ -104,7 +104,7 @@ public class CDTTuneFTest extends ClusDecisionTree {
 
     public ClusErrorList createTuneError(ClusStatManager mgr) {
         ClusErrorList parent = new ClusErrorList();
-        if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        if (mgr.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             HierarchyMeasures optimize = getSettings().getHMLC().getHierOptimizeErrorMeasure();
             parent.addError(new HierErrorMeasures(parent, mgr.getHier(), null, optimize, false, getSettings().getOutput().isGzipOutput()));
             return parent;

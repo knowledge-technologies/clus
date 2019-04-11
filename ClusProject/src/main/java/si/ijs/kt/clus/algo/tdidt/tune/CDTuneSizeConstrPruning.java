@@ -153,7 +153,7 @@ public class CDTuneSizeConstrPruning extends ClusDecisionTree {
                     pruners[i].pruneExecute(tree, size);
                 }
             }
-            if (getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+            if (getStatManager().getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
                 PruneTree pruner = new PruneTree();
                 boolean bonf = getSettings().getHMLC().isUseBonferroni();
                 HierRemoveInsigClasses hierpruner = new HierRemoveInsigClasses(runs[i].getPruneSet(), pruner, bonf, getStatManager().getHier());

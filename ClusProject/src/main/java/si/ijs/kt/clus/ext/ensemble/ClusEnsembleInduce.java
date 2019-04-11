@@ -66,10 +66,7 @@ import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.ensemble.ClusEnsembleFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.ensemble.ClusEnsembleFeatureRankings;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
-import si.ijs.kt.clus.main.ClusOutput;
-import si.ijs.kt.clus.main.ClusRun;
-import si.ijs.kt.clus.main.ClusStatManager;
-import si.ijs.kt.clus.main.ClusSummary;
+import si.ijs.kt.clus.main.*;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble;
 import si.ijs.kt.clus.main.settings.section.SettingsEnsemble.EnsembleBootstrapping;
@@ -105,8 +102,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     static ClusAttrType[] m_RandomSubspaces; // TODO: this field should be removed in the future
 
     private ClusForest[] m_OForests;
-
-    static int m_Mode;
 
     // Memory optimization
     private static boolean m_OptMode;
@@ -182,12 +177,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     public void initialize(ClusSchema schema, Settings settMain, Clus clus) throws ClusException, IOException {
         m_BagClus = clus;
-        m_Mode = getStatManager().getMode();
         // optimize if not XVAL and HMC
 
         SettingsEnsemble sett = settMain.getEnsemble();
 
-        m_OptMode = (sett.shouldOptimizeEnsemble() && (Arrays.asList(ClusStatManager.MODE_HIERARCHICAL, ClusStatManager.MODE_REGRESSION, ClusStatManager.MODE_CLASSIFY).contains(m_Mode)));
+        m_OptMode = sett.shouldOptimizeEnsemble() && (
+                m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL ||
+                m_StatManager.getTargetMode() == ClusStatManager.Mode.REGRESSION ||
+                m_StatManager.getTargetMode() == ClusStatManager.Mode.CLASSIFY);
 
         m_EnsembleROSSubspaceSize = sett.calculateNbRandomAttrSelected(schema, RandomAttributeTypeSelection.Clustering);
 
@@ -202,7 +199,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             sett.setOOBestimate(true);
         }
         if (sett.shouldEstimateOOB())
-            m_OOBEstimation = new ClusOOBErrorEstimate(m_Mode, settMain);
+            m_OOBEstimation = new ClusOOBErrorEstimate(getStatManager().getTargetMode(), settMain);
         settMain.getOutput().setWriteOOBFile(true);
         if (m_FeatRank) {
             if (m_BagClus.getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
@@ -336,7 +333,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
      * Makes new ClusOOBErrorEstimate. This is sometimes needed because ClusOOBErrorEstimate has many static members
      */
     public void resetClusOOBErrorEstimate() {
-        m_OOBEstimation = new ClusOOBErrorEstimate(m_Mode, getSettings());
+        m_OOBEstimation = new ClusOOBErrorEstimate(getStatManager().getTargetMode(), getSettings());
     }
 
 
@@ -984,18 +981,18 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         ClusError error = null;
         ClusErrorList OOBErrorList = new ClusErrorList();
 
-        switch (getStatManager().getMode()) {
-            case ClusStatManager.MODE_REGRESSION:
+        switch (getStatManager().getTargetMode()) {
+            case REGRESSION:
                 // RMSE (less is better)
                 error = new RMSError(OOBErrorList, this.getSchema().getNumericAttrUse(AttributeUseType.Target));
                 break;
 
-            case ClusStatManager.MODE_CLASSIFY:
+            case CLASSIFY:
                 // Accuracy (more is better)
                 error = new Accuracy(OOBErrorList, this.getSchema().getNominalAttrUse(AttributeUseType.Target));
                 break;
 
-            case ClusStatManager.MODE_HIERARCHICAL:
+            case HIERARCHICAL:
                 // Pooled AUPRC (more is better)
                 // error = new HierErrorMeasures(OOBErrorList, m_StatManager.getHier(),
                 // m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(),
@@ -1204,7 +1201,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
 
         // Application of Thresholds for HMC
-        if (getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        if (getStatManager().getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             double[] thresholds = getSettings().getHMLC().getClassificationThresholds().getDoubleVector();
             // setting the printing preferences in the HMC mode
 
@@ -1452,15 +1449,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     private ClusEnsembleInduceOptimization initializeOptimization(TupleIterator train_iterator, TupleIterator test_iterator) throws IOException, ClusException {
-        if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_REGRESSION) {
+        if (getStatManager().getTargetMode() == ClusStatManager.Mode.HIERARCHICAL || getStatManager().getTargetMode() == ClusStatManager.Mode.REGRESSION) {
             return new ClusEnsembleInduceOptRegHMLC(train_iterator, test_iterator, getSettings());
         }
-        else if (m_Mode == ClusStatManager.MODE_CLASSIFY) {
+        else if (getStatManager().getTargetMode() == ClusStatManager.Mode.CLASSIFY) {
             return new ClusEnsembleInduceOptClassification(train_iterator, test_iterator, getSettings());
         }
         else {
-            int[] values = new int[] { ClusStatManager.MODE_HIERARCHICAL, ClusStatManager.MODE_REGRESSION, ClusStatManager.MODE_CLASSIFY, m_Mode };
-            String line1 = "Optimization supported only for the following modes:";
+            ClusStatManager.Mode[] values = new ClusStatManager.Mode[] { ClusStatManager.Mode.HIERARCHICAL, ClusStatManager.Mode.REGRESSION, ClusStatManager.Mode.CLASSIFY, getStatManager().getTargetMode() };
+            String line1 = "Optimization supported only for the following target modes:";
             String line2 = String.format("MODE_HIERARCHICAL = %d, MODE_REGRESSION = %d and MODE_CLASSIFY = %d", values[0], values[1], values[2]);
             String line3 = String.format("Unfortunately: m_Mode = %d", values[3]);
             String message = String.join("\n", line1, line2, line3);

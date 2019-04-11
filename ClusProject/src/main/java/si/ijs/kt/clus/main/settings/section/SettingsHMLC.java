@@ -61,23 +61,6 @@ public class SettingsHMLC extends SettingsBase {
     protected INIFileString m_HierEvalClasses;
     protected static INIFileBool m_HierUseMEstimate;
 
-    /** Denotes if Clustering attributes contain Hierarchy as well as numeric or nominal attributes */
-    protected boolean isHierAndClassAndReg = false;
-
-
-    public void setIsHierAndClassAndReg(boolean value) {
-        isHierAndClassAndReg = value;
-    }
-
-
-    /**
-     * Do Clustering attributes contain Hierarchy as well as numeric or nominal attributes?
-     * 
-
-     */
-    public boolean isHierAndClassAndReg() {
-        return isHierAndClassAndReg;
-    }
 
 
     public void setSectionHierarchicalEnabled(boolean enable) {

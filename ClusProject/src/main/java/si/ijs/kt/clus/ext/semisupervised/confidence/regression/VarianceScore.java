@@ -63,10 +63,10 @@ public class VarianceScore extends PredictionConfidence {
 
      */
     private double[] processVotes(ArrayList votes) {
-        switch (m_StatManager.getMode()) {
-            case ClusStatManager.MODE_REGRESSION:
+        switch (m_StatManager.getTargetMode()) {
+            case REGRESSION:
                 return processVotesRegression(votes);
-            case ClusStatManager.MODE_HIERARCHICAL:
+            case HIERARCHICAL:
                 return processVotesHMC(votes);
         }
 

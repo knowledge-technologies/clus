@@ -873,12 +873,12 @@ public class CombStat extends ClusStatistic {
     @Override
     public double getError(ClusAttributeWeights scale) {
         ClusLogger.info("CombStat :getError");
-        switch (m_StatManager.getMode()) {
-            case ClusStatManager.MODE_CLASSIFY:
+        switch (m_StatManager.getClusterMode()) {
+            case CLASSIFY:
                 return m_ClassStat.getError(scale);
-            case ClusStatManager.MODE_REGRESSION:
+            case REGRESSION:
                 return m_RegStat.getError(scale);
-            case ClusStatManager.MODE_CLASSIFY_AND_REGRESSION:
+            case CLASSIFY_AND_REGRESSION:
                 return m_RegStat.getError(scale) + m_ClassStat.getError(scale);
         }
         System.err.println(getClass().getName() + ": getError(): Invalid mode!");

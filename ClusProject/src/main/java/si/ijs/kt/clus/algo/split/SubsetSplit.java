@@ -112,7 +112,7 @@ public class SubsetSplit extends NominalSplit {
             // showTest(type, isin, -1, bheur, m_MStat, m_CStat);
             pos_freq = CStat.getTotalWeight() / m_MStat.getTotalWeight();
         }
-        else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence().equals(PhylogenySequence.DNA))) {
+        else if ((getStatManager().getClusterMode() == ClusStatManager.Mode.PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence().equals(PhylogenySequence.DNA))) {
             // for phylogenetic trees with DNA sequences, we use an optimization method: tests like pos10={A,t} are
             // based on the results for tests pos10=A and pos10=T
             // we do not do this for protein sequences, since there the alphabet is much larger, which would complicate
@@ -342,7 +342,7 @@ public class SubsetSplit extends NominalSplit {
             }
 
         }
-        else if ((getStatManager().getMode() == ClusStatManager.MODE_PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence().equals(PhylogenySequence.DNA))) {
+        else if ((getStatManager().getClusterMode() == ClusStatManager.Mode.PHYLO) && (getStatManager().getSettings().getPhylogeny().getPhylogenySequence().equals(PhylogenySequence.DNA))) {
             System.err.println("Extra-Tree split selection not implemented for Phylogentic trees.");
             throw new ClusException("Error while searching for a random split in: " + getClass().getName());
         }

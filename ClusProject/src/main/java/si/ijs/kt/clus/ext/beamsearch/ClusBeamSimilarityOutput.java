@@ -30,6 +30,7 @@ import java.util.ArrayList;
 
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.ClusRun;
+import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsExperimental;
 import si.ijs.kt.clus.util.exception.ClusException;
@@ -70,11 +71,11 @@ public class ClusBeamSimilarityOutput {
         // sim[0] - training
         // sim[1] - testing
         ClusNumberFormat outF = ClusFormat.FOUR_AFTER_DOT;
-        if ((run.getStatManager().getMode() != 1) && (run.getStatManager().getMode() != 0)) {
+        if ((run.getStatManager().getTargetMode() != ClusStatManager.Mode.REGRESSION) && (run.getStatManager().getTargetMode() != ClusStatManager.Mode.CLASSIFY)) {
             System.err.println(getClass().getName() + ".appendToFile(): Unhandled Type of Target Attribute");
             throw new ClusException("Unhandled Type of Target Attribute");
         }
-        boolean isNum = (run.getStatManager().getMode() == 1);
+        boolean isNum = (run.getStatManager().getTargetMode() == ClusStatManager.Mode.CLASSIFY);
         sim[0] = ClusBeamModelDistance.calcBeamSimilarity(models, (RowData) run.getTrainingSet(), isNum);
         m_BeamSimTrain.add(Double.valueOf(sim[0]));
 

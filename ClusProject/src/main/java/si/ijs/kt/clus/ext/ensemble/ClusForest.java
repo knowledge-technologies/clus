@@ -136,10 +136,8 @@ public class ClusForest implements ClusModel, Serializable {
     public ClusForest(ClusStatManager statmgr, ClusEnsembleInduceOptimization opt) {
         this(statmgr);
 
-        int mode = statmgr.getMode();
-
-        switch (mode) {
-            case ClusStatManager.MODE_CLASSIFY:
+        switch (statmgr.getTargetMode()) {
+            case CLASSIFY:
                 if (statmgr.getSettings().getMLC().getSectionMultiLabel().isEnabled()) {
                     m_Stat = new ClassificationStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(AttributeUseType.Target), statmgr.getSettings().getMLC().getMultiLabelThreshold());
                 }
@@ -148,17 +146,11 @@ public class ClusForest implements ClusModel, Serializable {
                 }
                 break;
 
-            case ClusStatManager.MODE_REGRESSION:
+            case REGRESSION:
                 m_Stat = new RegressionStat(statmgr.getSettings(), statmgr.getSchema().getNumericAttrUse(AttributeUseType.Target));
                 break;
 
-            case ClusStatManager.MODE_CLASSIFY_AND_REGRESSION:
-                m_Stat = statmgr.getStatistic(AttributeUseType.Target); // FIXME: Probably all statistics could be
-                                                                        // initialized like this? i.e., there is no need
-                                                                        // for checking mode?
-                break;
-
-            case ClusStatManager.MODE_HIERARCHICAL:
+            case HIERARCHICAL:
                 if (statmgr.getSettings().getHMLC().getHierSingleLabel()) {
                     m_Stat = new HierSingleLabelStat(statmgr.getSettings(), statmgr.getHier());
                 }
@@ -167,12 +159,12 @@ public class ClusForest implements ClusModel, Serializable {
                 }
                 break;
 
-            case ClusStatManager.MODE_PHYLO:
+            case PHYLO:
                 m_Stat = new GeneticDistanceStat(statmgr.getSettings(), statmgr.getSchema().getNominalAttrUse(AttributeUseType.Target));
                 break;
 
             default:
-                System.err.println(getClass().getName() + " initForest(): Error initializing the statistic " + statmgr.getMode());
+                System.err.println(getClass().getName() + " initForest(): Error initializing the statistic for target mode " + statmgr.getTargetMode());
                 break;
         }
 
@@ -463,13 +455,16 @@ public class ClusForest implements ClusModel, Serializable {
 
     public ClusStatistic predictWeightedOOB(DataTuple tuple) throws ClusException, InterruptedException {
 
-        if (ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_HIERARCHICAL || ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_REGRESSION)
-            return predictWeightedOOBRegressionHMC(tuple);
-        if (ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_CLASSIFY)
-            return predictWeightedOOBClassification(tuple);
-
-        System.err.println(this.getClass().getName() + ".predictWeightedOOB(DataTuple) - Error in Setting the Mode");
-        return null;
+        switch (m_StatManager.getTargetMode()) {
+            case HIERARCHICAL:
+            case REGRESSION:
+                return predictWeightedOOBRegressionHMC(tuple);
+            case CLASSIFY:
+                return predictWeightedOOBClassification(tuple);
+            default:
+                System.err.println(this.getClass().getName() + ".predictWeightedOOB(DataTuple) - Error in Setting the Mode");
+                return null;
+        }
     }
 
 
@@ -485,7 +480,7 @@ public class ClusForest implements ClusModel, Serializable {
         ((RegressionStatBase) m_Stat).m_Means = new double[predictions.length];
         for (int j = 0; j < predictions.length; j++)
             ((RegressionStatBase) m_Stat).m_Means[j] = predictions[j];
-        if (ClusEnsembleInduce.m_Mode == ClusStatManager.MODE_HIERARCHICAL)
+        if (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL)
             m_Stat = (WHTDStatistic) m_Stat;
         else
             m_Stat = (RegressionStat) m_Stat;
@@ -523,29 +518,30 @@ public class ClusForest implements ClusModel, Serializable {
         int position = m_Optimization.locateTuple(tuple);
         int predlength = m_Optimization.getPredictionLength(position);
         m_Stat.reset();
-        if (m_StatManager.getMode() == ClusStatManager.MODE_REGRESSION || m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
-            ((RegressionStatBase) m_Stat).m_Means = new double[predlength];
-            for (int i = 0; i < predlength; i++) {
-                ((RegressionStatBase) m_Stat).m_Means[i] = ((ClusEnsembleInduceOptRegHMLC) m_Optimization).getPredictionValue(position, i);
-            }
-            m_Stat.computePrediction();
-            return m_Stat;
+        switch (m_StatManager.getTargetMode()) {
+            case REGRESSION:
+            case HIERARCHICAL:
+                ((RegressionStatBase) m_Stat).m_Means = new double[predlength];
+                for (int i = 0; i < predlength; i++) {
+                    ((RegressionStatBase) m_Stat).m_Means[i] = ((ClusEnsembleInduceOptRegHMLC) m_Optimization).getPredictionValue(position, i);
+                }
+                m_Stat.computePrediction();
+                return m_Stat;
+            case CLASSIFY:
+                ((ClassificationStat) m_Stat).m_ClassCounts = new double[predlength][];
+                for (int j = 0; j < predlength; j++) {
+                    ((ClassificationStat) m_Stat).m_ClassCounts[j] = ((ClusEnsembleInduceOptClassification) m_Optimization).getPredictionValueClassification(position, j);
+                }
+                m_Stat.computePrediction();
+                for (int k = 0; k < m_Stat.getNbAttributes(); k++) {
+                    ((ClassificationStat) m_Stat).m_SumWeights[k] = 1.0;// the m_SumWeights variable is not used in mode
+                    // optimize
+                    // m_Stat.setTrainingStat(ClusEnsembleInduceOptClassification.getTrainingStat());
+                }
+                return m_Stat;
+            default:
+                throw new RuntimeException("clus.ext.ensembles.ClusForest.predictWeightedOpt(DataTuple): unhandled ClusStatManager.getMode() case!");
         }
-        if (m_StatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
-            ((ClassificationStat) m_Stat).m_ClassCounts = new double[predlength][];
-            for (int j = 0; j < predlength; j++) {
-                ((ClassificationStat) m_Stat).m_ClassCounts[j] = ((ClusEnsembleInduceOptClassification) m_Optimization).getPredictionValueClassification(position, j);
-            }
-            m_Stat.computePrediction();
-            for (int k = 0; k < m_Stat.getNbAttributes(); k++) {
-                ((ClassificationStat) m_Stat).m_SumWeights[k] = 1.0;// the m_SumWeights variable is not used in mode
-                                                                    // optimize
-                                                                    // m_Stat.setTrainingStat(ClusEnsembleInduceOptClassification.getTrainingStat());
-            }
-            return m_Stat;
-        }
-
-        throw new RuntimeException("clus.ext.ensembles.ClusForest.predictWeightedOpt(DataTuple): unhandled ClusStatManager.getMode() case!");
     }
 
 
@@ -786,12 +782,12 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public static void writePythonAggregation(PrintWriter wrtr, String treeFile, int mode) {
+    public static void writePythonAggregation(PrintWriter wrtr, String treeFile, ClusStatManager.Mode mode) {
         wrtr.println(String.format("import %s", treeFile));
         wrtr.print("\n\n"); // two empty lines
         String aggregation;
         switch (mode) {
-            case ClusStatManager.MODE_CLASSIFY:
+            case CLASSIFY:
                 aggregation =
                 		"def aggregate(predictions, sizes=None):\n" +
                 		"    n = len(predictions)\n" +
@@ -812,7 +808,7 @@ public class ClusForest implements ClusModel, Serializable {
                 		"            size_index += 1\n" + 
             			"    return aggregated";
                 break;
-            case ClusStatManager.MODE_REGRESSION:
+            case REGRESSION:
                 aggregation =
                 		"def aggregate(predictions, sizes=None):\n" + 
                 		"    n = len(predictions)\n" + 

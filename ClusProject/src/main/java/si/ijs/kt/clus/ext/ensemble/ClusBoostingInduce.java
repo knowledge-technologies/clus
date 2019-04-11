@@ -142,7 +142,7 @@ public class ClusBoostingInduce extends ClusInductionAlgorithm {
         ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL);
         model_info.setName("Original");
         model_info.setModel(model);
-        if (cr.getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        if (cr.getStatManager().getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             double[] thresholds = cr.getStatManager().getSettings().getHMLC().getClassificationThresholds().getDoubleVector();
             if (thresholds != null) {
                 for (int i = 0; i < thresholds.length; i++) {

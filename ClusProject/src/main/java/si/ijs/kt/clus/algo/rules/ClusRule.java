@@ -447,7 +447,7 @@ public class ClusRule implements ClusModel, Serializable {
                         }
                     }
                 }
-                else if (m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+                else if (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
                     ClusStatistic prediction = predictWeighted(tuple);
                     ClusAttributeWeights weights = m_StatManager.getClusteringWeights();
                     double coef = cov_w_par * prediction.getAbsoluteDistance(tuple, weights);
@@ -497,7 +497,7 @@ public class ClusRule implements ClusModel, Serializable {
                         new_weight = old_weight * coef;
                     }
                 }
-                else if (m_StatManager.getMode() == ClusStatManager.MODE_TIME_SERIES) {
+                else if (m_StatManager.getTargetMode() == ClusStatManager.Mode.TIME_SERIES) {
                     ClusStatistic prediction = predictWeighted(tuple);
                     ClusAttributeWeights weights = m_StatManager.getClusteringWeights();
                     double coef = cov_w_par * prediction.getAbsoluteDistance(tuple, weights);
@@ -913,7 +913,7 @@ public class ClusRule implements ClusModel, Serializable {
             }
             m_TrainErrorScore = sum_err / nb_tar;
         }
-        else if (m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        else if (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             // This is the same as for time-series. Not sure if it correct.
             double sum_diff = 0.0;
             ClusAttributeWeights weight = m_StatManager.getClusteringWeights();
@@ -955,7 +955,7 @@ public class ClusRule implements ClusModel, Serializable {
                 m_TrainErrorScore = 1;
             }
         }
-        else if (m_StatManager.getMode() == ClusStatManager.MODE_TIME_SERIES) {
+        else if (m_StatManager.getTargetMode() == ClusStatManager.Mode.TIME_SERIES) {
             double sum_diff = 0.0;
             ClusAttributeWeights weight = m_StatManager.getClusteringWeights();
             // TODO: Figure out how should this weight be set ... any normalization etc ...

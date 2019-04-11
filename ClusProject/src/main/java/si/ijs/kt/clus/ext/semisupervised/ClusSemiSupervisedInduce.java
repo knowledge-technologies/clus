@@ -145,7 +145,7 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
         //       if (ClusStatManager.getMode() == ClusStatManager.MODE_CLASSIFY) {
         //           error = new Accuracy(ErrorList, this.getSchema().getNominalAttrUse(AttributeUseType.Target));
         //       }
-        if (getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        if (getStatManager().getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             error = new HierErrorMeasures(ErrorList,
                     m_StatManager.getHier(),
                     m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(),
@@ -210,7 +210,7 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
         if (!getSettings().getEnsemble().shouldEstimateOOB()) { return new Accuracy(OOBErrorList, this.getSchema().getNominalAttrUse(AttributeUseType.Target)); }
 
         //Pooled AUPRC (more is better)
-        if (getStatManager().getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+        if (getStatManager().getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             error = new HierErrorMeasures(OOBErrorList,
                     m_StatManager.getHier(),
                     m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(),
@@ -220,11 +220,11 @@ public abstract class ClusSemiSupervisedInduce extends ClusInductionAlgorithm {
         }
 
         //RMSE (less is better)
-        if (getStatManager().getMode() == ClusStatManager.MODE_REGRESSION) {
+        if (getStatManager().getTargetMode() == ClusStatManager.Mode.REGRESSION) {
             error = new RMSError(OOBErrorList, this.getSchema().getNumericAttrUse(AttributeUseType.Target));
         }
 
-        if (getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY) {
+        if (getStatManager().getTargetMode() == ClusStatManager.Mode.CLASSIFY) {
             error = new Accuracy(OOBErrorList, this.getSchema().getNominalAttrUse(AttributeUseType.Target));
         }
 

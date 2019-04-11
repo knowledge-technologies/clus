@@ -112,16 +112,16 @@ public class ClusOptionNode extends MyNode {
     protected ClusStatistic newClusStatistic() {
         ClusStatistic outStat = null;
 
-        switch (m_StatManager.getMode()) {
-            case ClusStatManager.MODE_CLASSIFY:
+        switch (m_StatManager.getTargetMode()) {
+            case CLASSIFY:
                 outStat = new ClassificationStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNominalAttrUse(AttributeUseType.Target));
                 break;
 
-            case ClusStatManager.MODE_REGRESSION:
+            case REGRESSION:
                 outStat = new RegressionStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNumericAttrUse(AttributeUseType.Target));
                 break;
 
-            case ClusStatManager.MODE_HIERARCHICAL:
+            case HIERARCHICAL:
                 if (m_StatManager.getSettings().getHMLC().getHierSingleLabel()) {
                     outStat = new HierSingleLabelStat(m_StatManager.getSettings(), m_StatManager.getHier());
                 }
@@ -130,12 +130,12 @@ public class ClusOptionNode extends MyNode {
                 }
                 break;
 
-            case ClusStatManager.MODE_PHYLO:
+            case PHYLO:
                 outStat = new GeneticDistanceStat(m_StatManager.getSettings(), m_StatManager.getSchema().getNominalAttrUse(AttributeUseType.Target));
                 break;
 
             default:
-                throw new RuntimeException(getClass().getName() + " newClusStatistic(): Error initializing the statistic " + m_StatManager.getMode());
+                throw new RuntimeException(getClass().getName() + " newClusStatistic(): Error initializing the statistic " + m_StatManager.getTargetMode());
         }
 
         return outStat;

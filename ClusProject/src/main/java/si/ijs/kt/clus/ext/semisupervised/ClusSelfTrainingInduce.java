@@ -59,7 +59,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
     PredictionConfidence m_PredConfidence;
     double m_Threshold; // threshold to instances will be put into training set
     SSLStoppingCriteria m_StoppingCriteria;
-    int m_K, m_Iterations, m_maxAirbagTrials, m_Mode;
+    int m_K, m_Iterations, m_maxAirbagTrials;
     SSLAggregation m_Aggregation;
     SSLNormalization m_Normalization;
     SSLOOBErrorCalculation m_OOBErrorCalculation;
@@ -73,13 +73,12 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
         super(schema, sett);
 
         m_Induce = clss_induce;
-        m_Mode = m_StatManager.getMode();
 
         // maybe initialize settings parameters
         initialize(getSchema(), getSettings());
 
-        switch (m_Mode) {
-            case ClusStatManager.MODE_REGRESSION:
+        switch (m_StatManager.getTargetMode()) {
+            case REGRESSION:
                 switch (sett.getSSL().getConfidenceMeasure()) {
                     case RandomUniform:
                         m_PredConfidence = new RandomScore(m_StatManager, RandomScore.RANDOM_UNIFORM);
@@ -102,7 +101,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                         break;
                 }
                 break;
-            case ClusStatManager.MODE_HIERARCHICAL:
+            case HIERARCHICAL:
                 switch (sett.getSSL().getConfidenceMeasure()) {
                     case ClassesProbabilities:
                         if (m_Aggregation.equals(SSLAggregation.Average)) {
@@ -129,7 +128,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                         break;
                 }
                 break;
-            case ClusStatManager.MODE_CLASSIFY:
+            case CLASSIFY:
                 switch (sett.getSSL().getConfidenceMeasure()) {
                     case ClassesProbabilities:
                         m_PredConfidence = new ClassesProbabilities(m_StatManager, m_Normalization, m_Aggregation);
@@ -191,14 +190,14 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
         double labelCardinalityTrainHMC = 0; // used for threshold calibration in HMC
         PrintWriter writer = null; // with this we write performances at each iterations to a separate file
         String errorType = "";
-        switch (m_Mode) {
-            case ClusStatManager.MODE_HIERARCHICAL:
+        switch (m_StatManager.getTargetMode()) {
+            case HIERARCHICAL:
                 errorType = "AUPRC";
                 break;
-            case ClusStatManager.MODE_REGRESSION:
+            case REGRESSION:
                 errorType = "RMSE";
                 break;
-            case ClusStatManager.MODE_CLASSIFY:
+            case CLASSIFY:
                 errorType = "Accuracy";
                 break;
             default:
@@ -210,12 +209,12 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
         ClusModel oldModel = null;
 
         // initialize OOB error, for HMC and classification more is better
-        if (m_Mode == ClusStatManager.MODE_HIERARCHICAL || m_Mode == ClusStatManager.MODE_CLASSIFY) {
+        if (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL || m_StatManager.getTargetMode() == ClusStatManager.Mode.CLASSIFY) {
             OOBError = Double.MIN_VALUE;
         }
 
         // calculate label cardinality of train set, used to select the threshold for classification
-        if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
+        if (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             for (int i = 0; i < m_TrainingSet.getNbRows(); i++) {
                 DataTuple t = m_TrainingSet.getTuple(i);
                 labelCardinalityTrainHMC += ((ClassesTuple) t.getObjVal(0)).getNbClasses();
@@ -275,7 +274,9 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                 // writer.println(unlabeledAdded + "," + newOOBError);
 
                 // for HMC more is better, for regression less is better
-                if ((m_Mode == ClusStatManager.MODE_CLASSIFY && newOOBError < OOBError) || (m_Mode == ClusStatManager.MODE_HIERARCHICAL && newOOBError < OOBError) || (m_Mode == ClusStatManager.MODE_REGRESSION && newOOBError > OOBError)) {
+                if ((m_StatManager.getTargetMode() == ClusStatManager.Mode.CLASSIFY && newOOBError < OOBError) ||
+                        (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL && newOOBError < OOBError) ||
+                        (m_StatManager.getTargetMode() == ClusStatManager.Mode.REGRESSION && newOOBError > OOBError)) {
                     airBagTrials++;
                     if (airBagTrials > m_maxAirbagTrials) {
                         m_Model = oldModel;
@@ -328,15 +329,15 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
                     ClusErrorList errListOOB = new ClusErrorList();
                     ClusError error = null;
 
-                    if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
+                    if (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
                         error = new HierErrorMeasures(errListOOB, m_StatManager.getHier(), m_StatManager.getSettings().getHMLC().getRecallValues().getDoubleVector(), HierarchyMeasures.PooledAUPRC, m_StatManager.getSettings().getOutput().isWriteCurves(), m_StatManager.getSettings().getOutput().isGzipOutput());
                     }
 
-                    if (m_Mode == ClusStatManager.MODE_REGRESSION) {
+                    if (m_StatManager.getTargetMode() == ClusStatManager.Mode.REGRESSION) {
                         error = new RMSError(errListOOB, this.getSchema().getNumericAttrUse(AttributeUseType.Target));
                     }
 
-                    if (m_Mode == ClusStatManager.MODE_CLASSIFY) {
+                    if (m_StatManager.getTargetMode() == ClusStatManager.Mode.CLASSIFY) {
                         error = new Accuracy(errListOOB, this.getSchema().getNominalAttrUse(AttributeUseType.Target));
                     }
 
@@ -400,7 +401,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
             // BEGIN - find classification threshold such that the difference between label cardinality of labeled
             // examples and predicted unlabeled examples is minimum
             // Applicable only when Hierarchical multi-label classification (HMC) is performed
-            if (m_StatManager.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+            if (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
                 if (cr.getStatManager().getSettings().getSSL().shouldCalibrateHmcThreshold()) {
                     HierThresholdCalibration thCalib = new calibrateByLabelCardinality(5, labelCardinalityTrainHMC);
                     DataTuple tuple;
@@ -720,7 +721,7 @@ public class ClusSelfTrainingInduce extends ClusSemiSupervisedInduce {
 
         ClusStatistic stat = m_Model.predictWeighted(t); // model.predictWeighted(tuple);
 
-        if (m_Mode == ClusStatManager.MODE_HIERARCHICAL) {
+        if (m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
             ((WHTDStatistic) stat).setThreshold(HMCthreshold);
         }
 

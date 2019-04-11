@@ -89,6 +89,7 @@ import si.ijs.kt.clus.ext.semisupervised.ModifiedGainHeuristic;
 import si.ijs.kt.clus.ext.semisupervised.SemiSupMinLabeledWeightStopCrit;
 import si.ijs.kt.clus.ext.structuredTypes.SetStatistic;
 import si.ijs.kt.clus.ext.structuredTypes.TupleStatistic;
+import si.ijs.kt.clus.ext.timeseries.TimeSeries;
 import si.ijs.kt.clus.ext.timeseries.TimeSeriesSignificantChangeTesterXVAL;
 import si.ijs.kt.clus.ext.timeseries.TimeSeriesStat;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
@@ -157,35 +158,29 @@ import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
  * etc. Also if the task is regression or classification.
  */
 
+
+
 public class ClusStatManager implements Serializable {
+
+    public enum Mode {
+        // FIXME: Why is BEAM_SEARCH a mode?
+        NONE, CLASSIFY, REGRESSION, HIERARCHICAL, SSPD, CLASSIFY_AND_REGRESSION, TIME_SERIES, ILEVELC,
+        PHYLO, BEAM_SEARCH, HIERARCHICAL_MTR, STRUCTURED, HIER_CLASS_AND_REG;
+
+        public boolean isClassificationOrRegression() {
+            return this == CLASSIFY || this == REGRESSION || this == CLASSIFY_AND_REGRESSION;
+        }
+
+        public boolean includesHierarchical() {
+            return this == HIERARCHICAL || this == HIER_CLASS_AND_REG;
+        }
+    }
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static int MODE_NONE = -1;
+    protected static Mode m_TargetMode = Mode.NONE;
 
-    public final static int MODE_CLASSIFY = 0;
-
-    public final static int MODE_REGRESSION = 1;
-
-    public final static int MODE_HIERARCHICAL = 2;
-
-    public final static int MODE_SSPD = 3;
-
-    public final static int MODE_CLASSIFY_AND_REGRESSION = 4;
-
-    public final static int MODE_TIME_SERIES = 5;
-
-    public final static int MODE_ILEVELC = 6;
-
-    public final static int MODE_PHYLO = 7;
-
-    public final static int MODE_BEAM_SEARCH = 8;
-
-    public final static int MODE_HIERARCHICAL_MTR = 9;
-
-    public final static int MODE_STRUCTURED = 10;
-
-    protected static int m_Mode = MODE_NONE;
+    protected static Mode m_ClusterMode = Mode.NONE;
 
     protected transient ClusHeuristic m_Heuristic;
 
@@ -229,7 +224,6 @@ public class ClusStatManager implements Serializable {
         m_Settings = sett;
         if (docheck) {
             check();
-            initStructure();
         }
     }
 
@@ -244,28 +238,24 @@ public class ClusStatManager implements Serializable {
     }
 
 
-    public final int getMode() {
-        return m_Mode;
+    public final Mode getTargetMode() {
+        return m_TargetMode;
     }
 
-
-    public boolean isClassificationOrRegression() {
-        return m_Mode == MODE_CLASSIFY || m_Mode == MODE_REGRESSION || m_Mode == MODE_CLASSIFY_AND_REGRESSION;
+    public final Mode getClusterMode() {
+        return m_ClusterMode;
     }
-
 
     public final ClassHierarchy getHier() {
         // ClusLogger.info("ClusStatManager.getHier/0 called");
         return m_Hier;
     }
 
-
     public void initStatisticAndStatManager() throws ClusException, IOException {
         initWeights();
         initStatistic();
         initHierarchySettings();
     }
-
 
     public ClusAttributeWeights getClusteringWeights() {
         return m_ClusteringWeights;
@@ -319,7 +309,7 @@ public class ClusStatManager implements Serializable {
         }
         else if (winfo.isVector()) {
             // Explicit vector of weights given
-            if (getSettings().getHMLC().isHierAndClassAndReg()) {
+            if (getClusterMode() == Mode.HIER_CLASS_AND_REG) {
                 int l = winfo.getVectorLength();
                 if (l + m_Hier.getTotal() != nbattr) { throw new ClusException("Number of attributes is " + (nbattr - m_Hier.getTotal()) + " but weight vector has only " + l + " components"); }
                 for (int i = 0; i < l - 1; i++) { // the last attribute is dummy, i.e., it represents the hierarchy, so
@@ -343,7 +333,7 @@ public class ClusStatManager implements Serializable {
             result.setAllWeights(winfo.getDouble());
         }
         // Normalize the weights for classification/regression rules only
-        if (isRuleInduceOnly() && isClassificationOrRegression()) {
+        if (isRuleInduceOnly() && getClusterMode().isClassificationOrRegression()) {
             double sum = 0;
             for (int i = 0; i < num.length; i++) {
                 NumericAttrType cr_num = num[i];
@@ -377,14 +367,14 @@ public class ClusStatManager implements Serializable {
 
 
     public void initClusteringWeights() throws ClusException {
-        if (getMode() == MODE_HIERARCHICAL) {
+        if (getClusterMode().includesHierarchical()) {
             int nb_attrs = m_Schema.getNbAttributes();
 
             double[] weights = m_Hier.getWeights();
             NumericAttrType[] dummy = m_Hier.getDummyAttrs();
 
             double[] temp = null;
-            if (getSettings().getHMLC().isHierAndClassAndReg()) {
+            if (getClusterMode() == Mode.HIER_CLASS_AND_REG) {
                 temp = ((ClusNormalizedAttributeWeights) m_ClusteringWeights).getNormalizationWeights();
                 double sum = Helper.sum(weights);
                 for (int i = 0; i < weights.length; i++) {
@@ -397,7 +387,7 @@ public class ClusStatManager implements Serializable {
             for (int i = 0; i < weights.length; i++) {
                 m_ClusteringWeights.setWeight(dummy[i], weights[i]);
             }
-            if (getSettings().getHMLC().isHierAndClassAndReg()) {
+            if (getClusterMode() == Mode.HIER_CLASS_AND_REG) {
                 for (int i = 0; i < temp.length - 1; i++) {
                     m_ClusteringWeights.setWeight(i, temp[i]);
                 }
@@ -474,7 +464,7 @@ public class ClusStatManager implements Serializable {
                 ClassificationStat cstat = cmb.getClassificationStat();
                 cstat.initNormalizationWeights(m_NormalizationWeights, shouldNormalize);
             }
-            if (m_Mode == MODE_TIME_SERIES) {
+            if (getClusterMode() == Mode.TIME_SERIES) {
                 TimeSeriesStat tstat = (TimeSeriesStat) createStatistic(AttributeUseType.Target);
                 ((RowData) data).calcTotalStatBitVector(tstat);
                 tstat.initNormalizationWeights(m_NormalizationWeights, shouldNormalize);
@@ -492,41 +482,60 @@ public class ClusStatManager implements Serializable {
     }
 
 
-    public void check() throws ClusException {
+    public void check() throws ClusException, IOException {
         int nb_types = 0;
         int nb_nom = m_Schema.getNbNominalAttrUse(AttributeUseType.Clustering);
         int nb_num = m_Schema.getNbNumericAttrUse(AttributeUseType.Clustering);
+
         if (getSettings().getGeneral().getVerbose() >= 1) {
             ClusLogger.info("Clustering attributes check ==> #nominal: " + nb_nom + " #numeric: " + nb_num);
         }
 
-        if (m_Schema.hasAttributeType(AttributeUseType.Target, AttributeType.Classes)) {
-            m_Mode = MODE_HIERARCHICAL;
-            getSettings().getHMLC().setSectionHierarchicalEnabled(true);
-            nb_types++;
-            if (nb_nom > 0 || nb_num > 0) {
-                getSettings().getHMLC().setIsHierAndClassAndReg(true); // FIXME: maybe new MODE should be introduced
-                                                                       // here?
-            }
+        if (nb_nom > 0 && nb_num > 0) {
+            m_ClusterMode = Mode.CLASSIFY_AND_REGRESSION;
         }
-        else {
-            if (nb_nom > 0 && nb_num > 0) {
-                m_Mode = MODE_CLASSIFY_AND_REGRESSION;
-                nb_types++;
+        else if (nb_nom > 0) {
+            m_ClusterMode = Mode.CLASSIFY;
+        }
+        else if (nb_num > 0) {
+            m_ClusterMode = Mode.REGRESSION;
+        }
+
+        if (m_Schema.hasAttributeType(AttributeUseType.All, AttributeType.Classes)) {
+            getSettings().getHMLC().setSectionHierarchicalEnabled(true);
+            createHierarchy();
+
+            if (m_Schema.hasAttributeType(AttributeUseType.Clustering, AttributeType.Classes)) {
+                if (nb_nom > 0 || nb_num > 0)
+                    m_ClusterMode = Mode.HIER_CLASS_AND_REG;
+                else
+                    m_ClusterMode = Mode.HIERARCHICAL;
             }
-            else if (nb_nom > 0) {
-                m_Mode = MODE_CLASSIFY;
-                nb_types++;
-            }
-            else if (nb_num > 0) {
-                m_Mode = MODE_REGRESSION;
+
+            if (m_Schema.hasAttributeType(AttributeUseType.Target, AttributeType.Classes)) {
+                m_TargetMode = Mode.HIERARCHICAL;
                 nb_types++;
             }
         }
 
+
         NumericAttrType[] num = m_Schema.getNumericAttrUse(AttributeUseType.Target);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(AttributeUseType.Target);
         TimeSeriesAttrType[] ts = m_Schema.getTimeSeriesAttrUse(AttributeUseType.Target);
+
+        if (nom.length > 0 && num.length > 0) {
+            m_TargetMode = Mode.CLASSIFY_AND_REGRESSION;
+            nb_types++;
+        }
+        else if (nom.length > 0) {
+            m_TargetMode = Mode.CLASSIFY;
+            nb_types++;
+        }
+        else if (num.length > 0) {
+            m_TargetMode = Mode.REGRESSION;
+            nb_types++;
+        }
+
         boolean is_multilabel = num.length == 0 && ts.length == 0 && nom.length > 1;
         if (is_multilabel) {
             String[] twoLabels = new String[] { "1", "0" }; // Clus saves the values of @attribute atrName {1,0}/{0,1}
@@ -542,59 +551,55 @@ public class ClusStatManager implements Serializable {
 
         int nb_int = 0;
         if (nb_int > 0 || getSettings().getTree().getHeuristic().equals(Heuristic.SSPD)) {
-            m_Mode = MODE_SSPD;
+            m_TargetMode = Mode.SSPD;
+            m_ClusterMode = Mode.SSPD;
+            m_SSPDMtrx = SSPDMatrix.read(getSettings().getGeneric().getFileAbsolute(getSettings().getGeneric().getAppName() + ".dist"), getSettings());
             nb_types++;
         }
         if (getSettings().getTree().getHeuristic().equals(Heuristic.GeneticDistance)) {
-            m_Mode = MODE_PHYLO;
+            m_TargetMode = Mode.PHYLO;
+            m_ClusterMode = Mode.PHYLO;
         }
         if (getSettings().getTimeSeries().isSectionTimeSeriesEnabled()) {
-            m_Mode = MODE_TIME_SERIES;
+            m_TargetMode = Mode.TIME_SERIES;
+            m_ClusterMode = Mode.TIME_SERIES;
             nb_types++;
         }
 
         if (getSettings().getTree().getHeuristic().equals(Heuristic.StructuredData)) {
-            m_Mode = MODE_STRUCTURED;
+            m_TargetMode = Mode.STRUCTURED;
+            m_ClusterMode = Mode.STRUCTURED;
             nb_types++;
         }
 
         if (getSettings().getILevelC().isSectionILevelCEnabled()) {
-            m_Mode = MODE_ILEVELC;
+            m_TargetMode = Mode.ILEVELC;
+            m_ClusterMode = Mode.ILEVELC;
         }
 
         if (getSettings().getBeamSearch().isBeamSearchMode() && (getSettings().getBeamSearch().getBeamSimilarity() != 0.0)) {
-            m_Mode = MODE_BEAM_SEARCH;
+            m_TargetMode = Mode.BEAM_SEARCH;
+            m_ClusterMode = Mode.BEAM_SEARCH;
         }
 
         if (getSettings().getHMTR().isSectionHMTREnabled()) {
-            m_Mode = MODE_HIERARCHICAL_MTR;
+            m_TargetMode = Mode.HIERARCHICAL_MTR;
+            m_ClusterMode = Mode.HIERARCHICAL_MTR;
         }
 
         if (nb_types == 0) {
             System.err.println("No target value defined");
         }
         if (nb_types > 1) {
-            if (!getSettings().getRelief().isRelief()) { throw new ClusException("Incompatible combination of clustering attribute types"); }
+            if (!getSettings().getRelief().isRelief()) { throw new ClusException("Incompatible combination of target attribute types"); }
 
-        }
-    }
-
-
-    public void initStructure() throws IOException {
-        switch (m_Mode) {
-            case MODE_HIERARCHICAL:
-                createHierarchy();
-                break;
-            case MODE_SSPD:
-                m_SSPDMtrx = SSPDMatrix.read(getSettings().getGeneric().getFileAbsolute(getSettings().getGeneric().getAppName() + ".dist"), getSettings());
-                break;
         }
     }
 
 
     public ClusStatistic createSuitableStat(NumericAttrType[] num, NominalAttrType[] nom) {
         if (num.length == 0) {
-            if (m_Mode == MODE_PHYLO) {
+            if (m_TargetMode == Mode.PHYLO || m_ClusterMode == Mode.PHYLO) {
                 // switch (Settings.m_PhylogenyProtoComlexity.getValue()) {
                 // case Settings.PHYLOGENY_PROTOTYPE_COMPLEXITY_PAIRWISE:
                 return new GeneticDistanceStat(getSettings(), nom);
@@ -630,179 +635,163 @@ public class ClusStatManager implements Serializable {
 
     public synchronized void initStatistic() throws ClusException {
         m_StatisticAttrUse = new ClusStatistic[AttributeUseType.values().length];
-        
+
         /* Statistic over all attributes */
         NumericAttrType[] num1 = m_Schema.getNumericAttrUse(AttributeUseType.All);
         NominalAttrType[] nom1 = m_Schema.getNominalAttrUse(AttributeUseType.All);
-        m_StatisticAttrUse[AttributeUseType.All.getIndex()] = new CombStat(this, num1, nom1);
-        
+        setAllStatistic(new CombStat(this, num1, nom1));
+
         /* Statistic over all target attributes */
         NumericAttrType[] num2 = m_Schema.getNumericAttrUse(AttributeUseType.Target);
         NominalAttrType[] nom2 = m_Schema.getNominalAttrUse(AttributeUseType.Target);
-        m_StatisticAttrUse[AttributeUseType.Target.getIndex()] = createSuitableStat(num2, nom2);
-        
+        setTargetStatistic(createSuitableStat(num2, nom2));
+
         /* Statistic over clustering attributes */
         NumericAttrType[] num3 = m_Schema.getNumericAttrUse(AttributeUseType.Clustering);
         NominalAttrType[] nom3 = m_Schema.getNominalAttrUse(AttributeUseType.Clustering);
         if (num3.length != 0 || nom3.length != 0) {
             if (heuristicNeedsCombStat()) {
-                m_StatisticAttrUse[AttributeUseType.Clustering.getIndex()] = new CombStat(this, num3, nom3);
-            }
-            else {
-                m_StatisticAttrUse[AttributeUseType.Clustering.getIndex()] = createSuitableStat(num3, nom3);
+                setClusteringStatistic(new CombStat(this, num3, nom3));
+            } else {
+                setClusteringStatistic(createSuitableStat(num3, nom3));
             }
         }
-        
-        switch (m_Mode) {
-            case MODE_HIERARCHICAL:
 
-                WHTDStatistic clustering;
-                HierarchyDistance hd = getSettings().getHMLC().getHierDistance();
-                if (hd.equals(HierarchyDistance.PooledAUPRC) || hd.equals(HierarchyDistance.WeightedEuclidean)) {
-                    // setClusteringStatistic(new WHTDStatistic(getSettings(), m_Hier,
-                    // getSettings().getHMLC().getHierDistance()));
-//                    clustering = new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance());
-//                    setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier, getSettings().getHMLC().getHierDistance()));
-                	if (getSettings().getHMLC().getHierSingleLabel() && hd.equals(HierarchyDistance.WeightedEuclidean)) {
-                		// setClusteringStatistic(new HierSingleLabelStat(getSettings(), m_Hier,
-                        clustering = new HierSingleLabelStat(getSettings(), m_Hier);
-                        setTargetStatistic(new HierSingleLabelStat(getSettings(), m_Hier));
-                	} else {
-                		clustering = new WHTDStatistic(getSettings(), m_Hier);
-                        setTargetStatistic(new WHTDStatistic(getSettings(), m_Hier));
-                	}
+
+        if (getClusterMode().includesHierarchical() || getTargetMode().includesHierarchical()) {
+            WHTDStatistic clustering;
+            HierarchyDistance hd = getSettings().getHMLC().getHierDistance();
+
+            if (hd.equals(HierarchyDistance.PooledAUPRC) || hd.equals(HierarchyDistance.WeightedEuclidean)) {
+                if (getSettings().getHMLC().getHierSingleLabel() && hd.equals(HierarchyDistance.WeightedEuclidean)) {
+                    clustering = new HierSingleLabelStat(getSettings(), m_Hier);
+                } else {
+                    clustering = new WHTDStatistic(getSettings(), m_Hier);
                 }
-                else {
-                    ClusDistance dist = null;
-                    if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.Jaccard)) {
-                        dist = new HierJaccardDistance(m_Hier.getType());
+            } else {
+                ClusDistance dist = null;
+                if (getSettings().getHMLC().getHierDistance().equals(HierarchyDistance.Jaccard)) {
+                    dist = new HierJaccardDistance(m_Hier.getType());
+                }
+                clustering = new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist);
+
+            }
+
+            if (getTargetMode() == Mode.HIERARCHICAL)
+                setTargetStatistic(clustering.cloneStat());
+
+            if (getClusterMode() == Mode.HIERARCHICAL)
+                setClusteringStatistic(clustering);
+            else if (getClusterMode() == Mode.HIER_CLASS_AND_REG) {
+                setClusteringStatistic(new CombStatClassRegHier(this, num3, nom3, clustering));
+                setAllStatistic(new CombStatClassRegHier(this, num3, nom3, (WHTDStatistic) clustering.cloneStat()));
+            }
+        }
+        else if (getClusterMode() == Mode.HIERARCHICAL_MTR || getTargetMode() == Mode.HIERARCHICAL_MTR) {
+            if (getSettings().getHMTR().getHMTRDistance().getValue().equals(HierarchyDistanceHMTR.WeightedEuclidean)) {
+                if (getSettings().getGeneral().getVerbose() > 0)
+                    ClusLogger.info("HMTR - Euclidean distance");
+            } else if (getSettings().getHMTR().getHMTRDistance().getValue().equals(HierarchyDistanceHMTR.Jaccard)) {
+                if (getSettings().getGeneral().getVerbose() > 0)
+                    ClusLogger.info("HMTR - Jaccard distance");
+            }
+            m_HMTRHier = m_Schema.getHMTRHierarchy();
+            setTargetStatistic(new RegressionStat(getSettings(), num2, m_HMTRHier));
+            setClusteringStatistic(new RegressionStat(getSettings(), num3, m_HMTRHier));
+
+        }
+        else if (getClusterMode() == Mode.SSPD || getTargetMode() == Mode.SSPD) {
+            ClusAttrType[] target = m_Schema.getAllAttrUse(AttributeUseType.Target);
+            m_SSPDMtrx.setTarget(target);
+            setClusteringStatistic(new SumPairwiseDistancesStat(getSettings(), m_SSPDMtrx, TimeSeriesPrototypeComplexity.NPairs));
+            setTargetStatistic(new SumPairwiseDistancesStat(getSettings(), m_SSPDMtrx, TimeSeriesPrototypeComplexity.NPairs));
+        }
+        else if (getClusterMode() == Mode.TIME_SERIES || getTargetMode() == Mode.TIME_SERIES) {
+            ClusAttrType[] targets = m_Schema.getAllAttrUse(AttributeUseType.Target);
+            TimeSeriesAttrType type = (TimeSeriesAttrType) targets[0];
+            TimeSeriesPrototypeComplexity efficiency = getSettings().getTimeSeries().getTimeSeriesHeuristicSampling();
+            switch (getSettings().getTimeSeries().getTimeSeriesDistance()) {
+                case DTW:
+                    TimeSeriesDist dist = new DTWTimeSeriesDist(type);
+                    setClusteringStatistic(new TimeSeriesStat(getSettings(), type, dist, efficiency));
+                    setTargetStatistic(new TimeSeriesStat(getSettings(), type, dist, efficiency));
+                    break;
+                case QDM:
+                    if (type.isEqualLength()) {
+                        TimeSeriesDist qdm = new QDMTimeSeriesDist(type);
+                        setClusteringStatistic(new TimeSeriesStat(getSettings(), type, qdm, efficiency));
+                        setTargetStatistic(new TimeSeriesStat(getSettings(), type, qdm, efficiency));
+                    } else {
+                        throw new ClusException("QDM Distance is not implemented for time series with different length");
                     }
+                    break;
+                case TSC:
+                    TimeSeriesDist tsc = new TSCTimeSeriesDist(type);
+                    setClusteringStatistic(new TimeSeriesStat(getSettings(), type, tsc, efficiency));
+                    setTargetStatistic(new TimeSeriesStat(getSettings(), type, tsc, efficiency));
+                    break;
+            }
+        }
+        else if (getClusterMode() == Mode.STRUCTURED || getTargetMode() == Mode.STRUCTURED) {
+            TimeSeriesPrototypeComplexity efficiency = getSettings().getTree().getHeuristicComplexity();
+            ClusAttrType[] structured_target = m_Schema.getAllAttrUse(AttributeUseType.Target);
+            try {
+                SetAttrType myType = (SetAttrType) structured_target[0];
 
-                    // setClusteringStatistic(new HierSumPairwiseDistancesStat(getSettings(),
-                    // m_Hier, dist,
-                    clustering = new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist);
-                    setTargetStatistic(new HierSumPairwiseDistancesStat(getSettings(), m_Hier, dist));
-
-                }
-                if (getSettings().getHMLC().isHierAndClassAndReg()) {
-                    setClusteringStatistic(new CombStatClassRegHier(this, num3, nom3, clustering));
-                    m_StatisticAttrUse[AttributeUseType.All.getIndex()] = new CombStatClassRegHier(this, num3, nom3, (WHTDStatistic) clustering.cloneStat());
-                }
-                else {
-                    setClusteringStatistic(clustering);
-                }
-                break;
-            case MODE_HIERARCHICAL_MTR:
-                if (getSettings().getHMTR().getHMTRDistance().getValue().equals(HierarchyDistanceHMTR.WeightedEuclidean)) {
-                    if (getSettings().getGeneral().getVerbose() > 0)
-                        ClusLogger.info("HMTR - Euclidean distance");
-                }
-                else if (getSettings().getHMTR().getHMTRDistance().getValue().equals(HierarchyDistanceHMTR.Jaccard)) {
-                    if (getSettings().getGeneral().getVerbose() > 0)
-                        ClusLogger.info("HMTR - Jaccard distance");
-                }
-                m_HMTRHier = m_Schema.getHMTRHierarchy();
-                setTargetStatistic(new RegressionStat(getSettings(), num2, m_HMTRHier));
-                setClusteringStatistic(new RegressionStat(getSettings(), num3, m_HMTRHier));
-
-                break;
-            case MODE_SSPD:
-                ClusAttrType[] target = m_Schema.getAllAttrUse(AttributeUseType.Target);
-                m_SSPDMtrx.setTarget(target);
-                setClusteringStatistic(new SumPairwiseDistancesStat(getSettings(), m_SSPDMtrx, TimeSeriesPrototypeComplexity.NPairs));
-                setTargetStatistic(new SumPairwiseDistancesStat(getSettings(), m_SSPDMtrx, TimeSeriesPrototypeComplexity.NPairs));
-                break;
-            case MODE_TIME_SERIES:
-                ClusAttrType[] targets = m_Schema.getAllAttrUse(AttributeUseType.Target);
-                TimeSeriesAttrType type = (TimeSeriesAttrType) targets[0];
-                TimeSeriesPrototypeComplexity efficiency = getSettings().getTimeSeries().getTimeSeriesHeuristicSampling();
-                switch (getSettings().getTimeSeries().getTimeSeriesDistance()) {
-                    case DTW:
-                        TimeSeriesDist dist = new DTWTimeSeriesDist(type);
-                        setClusteringStatistic(new TimeSeriesStat(getSettings(), type, dist, efficiency));
-                        setTargetStatistic(new TimeSeriesStat(getSettings(), type, dist, efficiency));
+                ClusDistance d = getInnerDistanceForType(myType.getTypeDefinition());
+                ClusDistance setDistance = null;
+                switch (m_Settings.getTree().getSetDistance()) {
+                    case GSMDistance:
+                        setDistance = new GSMDistance(myType, d, 1);
                         break;
-                    case QDM:
-                        if (type.isEqualLength()) {
-                            TimeSeriesDist qdm = new QDMTimeSeriesDist(type);
-                            setClusteringStatistic(new TimeSeriesStat(getSettings(), type, qdm, efficiency));
-                            setTargetStatistic(new TimeSeriesStat(getSettings(), type, qdm, efficiency));
-                        }
-                        else {
-                            throw new ClusException("QDM Distance is not implemented for time series with different length");
-                        }
+
+                    case Euclidean:
+                        setDistance = new EuclideanDistance(myType, d);
                         break;
-                    case TSC:
-                        TimeSeriesDist tsc = new TSCTimeSeriesDist(type);
-                        setClusteringStatistic(new TimeSeriesStat(getSettings(), type, tsc, efficiency));
-                        setTargetStatistic(new TimeSeriesStat(getSettings(), type, tsc, efficiency));
+
+                    case HammingLoss:
+                        setDistance = new HammingLossDistance(myType, d);
+                        break;
+
+                    case Jaccard:
+                        setDistance = new JaccardDistance(myType, d);
                         break;
                 }
-                break;
-            case MODE_STRUCTURED:
-                efficiency = getSettings().getTree().getHeuristicComplexity();
-                ClusAttrType[] structured_target = m_Schema.getAllAttrUse(AttributeUseType.Target);
+                setClusteringStatistic(new SetStatistic(getSettings(), myType, setDistance, efficiency));
+                setTargetStatistic(new SetStatistic(getSettings(), myType, setDistance, efficiency));
+            } catch (Exception e) {
                 try {
-                    SetAttrType myType = (SetAttrType) structured_target[0];
 
-                    ClusDistance d = getInnerDistanceForType(myType.getTypeDefinition());
-                    ClusDistance setDistance = null;
-                    switch (m_Settings.getTree().getSetDistance()) {
-                        case GSMDistance:
-                            setDistance = new GSMDistance(myType, d, 1);
-                            break;
-
-                        case Euclidean:
-                            setDistance = new EuclideanDistance(myType, d);
-                            break;
-
-                        case HammingLoss:
-                            setDistance = new HammingLossDistance(myType, d);
-                            break;
-
-                        case Jaccard:
-                            setDistance = new JaccardDistance(myType, d);
-                            break;
-                    }
-                    setClusteringStatistic(new SetStatistic(getSettings(), myType, setDistance, efficiency));
-                    setTargetStatistic(new SetStatistic(getSettings(), myType, setDistance, efficiency));
-                }
-                catch (Exception e) {
+                    TupleAttrType myType = (TupleAttrType) structured_target[0];
+                    ClusDistance tupleDistance = ClusAttrType.createDistance(myType, m_Settings);
+                    setClusteringStatistic(new TupleStatistic(getSettings(), myType, tupleDistance, efficiency));
+                    setTargetStatistic(new TupleStatistic(getSettings(), myType, tupleDistance, efficiency));
+                } catch (Exception e1) {
                     try {
-
-                        TupleAttrType myType = (TupleAttrType) structured_target[0];
+                        TimeSeriesAttrType myType = (TimeSeriesAttrType) structured_target[0];
                         ClusDistance tupleDistance = ClusAttrType.createDistance(myType, m_Settings);
-                        setClusteringStatistic(new TupleStatistic(getSettings(), myType, tupleDistance, efficiency));
-                        setTargetStatistic(new TupleStatistic(getSettings(), myType, tupleDistance, efficiency));
-                    }
-                    catch (Exception e1) {
-                        try {
-                            TimeSeriesAttrType myType = (TimeSeriesAttrType) structured_target[0];
-                            ClusDistance tupleDistance = ClusAttrType.createDistance(myType, m_Settings);
-                            setClusteringStatistic(new TimeSeriesStat(getSettings(), myType, tupleDistance, efficiency));
-                            setTargetStatistic(new TimeSeriesStat(getSettings(), myType, tupleDistance, efficiency));
+                        setClusteringStatistic(new TimeSeriesStat(getSettings(), myType, tupleDistance, efficiency));
+                        setTargetStatistic(new TimeSeriesStat(getSettings(), myType, tupleDistance, efficiency));
 
-                        }
-                        catch (Exception e2) {
+                    } catch (Exception e2) {
 
-                            e2.printStackTrace();
-                            throw new ClusException(e2.getMessage());
-                        }
+                        e2.printStackTrace();
+                        throw new ClusException(e2.getMessage());
                     }
                 }
-                // TimeSeriesAttrType type = (TimeSeriesAttrType)structured_tagget[0];
-                // int efficiency = getSettings().m_TimeSeriesHeuristicSampling.getValue();
-                break;
-            case MODE_ILEVELC:
-                setTargetStatistic(new ILevelCStatistic(getSettings(), num2));
-                setClusteringStatistic(new ILevelCStatistic(getSettings(), num3));
-                break;
-            case MODE_BEAM_SEARCH:
-                if (num3.length != 0 && num2.length != 0) {
-                    setTargetStatistic(new ClusBeamSimRegrStat(getSettings(), num2, null));
-                    setClusteringStatistic(new ClusBeamSimRegrStat(getSettings(), num3, null));
-                }
-                break;
+            }
+            // TimeSeriesAttrType type = (TimeSeriesAttrType)structured_tagget[0];
+            // int efficiency = getSettings().m_TimeSeriesHeuristicSampling.getValue();
+        }
+        else if (getClusterMode() == Mode.ILEVELC || getTargetMode() == Mode.ILEVELC) {
+            setTargetStatistic(new ILevelCStatistic(getSettings(), num2));
+            setClusteringStatistic(new ILevelCStatistic(getSettings(), num3));
+        }
+        else if (getClusterMode() == Mode.BEAM_SEARCH || getTargetMode() == Mode.BEAM_SEARCH) {
+            if (num3.length != 0 && num2.length != 0) {
+                setTargetStatistic(new ClusBeamSimRegrStat(getSettings(), num2, null));
+                setClusteringStatistic(new ClusBeamSimRegrStat(getSettings(), num3, null));
+            }
         }
     }
 
@@ -872,7 +861,7 @@ public class ClusStatManager implements Serializable {
 
 
     public void initRuleHeuristic() throws ClusException {
-        if (m_Mode == MODE_CLASSIFY) {
+        if (getClusterMode() == Mode.CLASSIFY) {
             switch (getSettings().getTree().getHeuristic()) {
                 case Default:
                     m_Heuristic = new ClusRuleHeuristicRDispersionMlt(this, getClusteringWeights(), getSettings());
@@ -900,7 +889,7 @@ public class ClusStatManager implements Serializable {
                     throw new ClusException("Unsupported heuristic for single target classification rules!");
             }
         }
-        else if (m_Mode == MODE_REGRESSION || m_Mode == MODE_CLASSIFY_AND_REGRESSION) {
+        else if (getClusterMode() == Mode.REGRESSION || getClusterMode() == Mode.CLASSIFY_AND_REGRESSION) {
             switch (getSettings().getTree().getHeuristic()) {
                 case Default:
                     m_Heuristic = new ClusRuleHeuristicRDispersionMlt(this, getClusteringWeights(), getSettings());
@@ -924,7 +913,7 @@ public class ClusStatManager implements Serializable {
                     throw new ClusException("Unsupported heuristic for multiple target or regression rules!");
             }
         }
-        else if (m_Mode == MODE_HIERARCHICAL) {
+        else if (getClusterMode() == Mode.HIERARCHICAL) {
             m_Heuristic = new ClusRuleHeuristicHierarchical(this, getClusteringWeights(), getSettings());
             return;
             // getSettings().setHeuristic(Settings.HEURISTIC_SS_REDUCTION);
@@ -935,13 +924,13 @@ public class ClusStatManager implements Serializable {
              * getSettings().setHeuristic(Settings.HEURISTIC_SS_REDUCTION); return;
              */
         }
-        else if (m_Mode == MODE_TIME_SERIES) {
+        else if (getClusterMode() == Mode.TIME_SERIES) {
             String name = "Time Series Intra-Cluster Variation Heuristic for Rules";
             m_Heuristic = new ClusRuleHeuristicSSD(this, name, createClusteringStat(), getClusteringWeights(), getSettings());
             getSettings().getTree().setHeuristic(Heuristic.VarianceReduction);
             return;
         }
-        else if (m_Mode == MODE_ILEVELC) {
+        else if (getClusterMode() == Mode.ILEVELC) {
             String name = "Intra-Cluster Variation Heuristic for Rules";
             m_Heuristic = new ClusRuleHeuristicSSD(this, name, createClusteringStat(), getClusteringWeights(), getSettings());
         }
@@ -977,7 +966,7 @@ public class ClusStatManager implements Serializable {
             initBeamSearchHeuristic();
             return;
         }
-        if (m_Mode == MODE_HIERARCHICAL) {
+        if (getClusterMode().includesHierarchical()) {
             // daniela
             if (getSettings().getTree().getHeuristic().equals(Heuristic.VarianceReductionGIS)) {
                 m_Heuristic = new GISHeuristic(getClusteringWeights(), m_Schema.getNumericAttrUse(AttributeUseType.Clustering), getSettings());
@@ -989,24 +978,25 @@ public class ClusStatManager implements Serializable {
 
             return;
         }
-        if (m_Mode == MODE_SSPD) {
+        else if (getClusterMode() == Mode.SSPD) {
             ClusStatistic clusstat = createClusteringStat();
             m_Heuristic = new VarianceReductionHeuristic(clusstat.getDistanceName(), clusstat, getClusteringWeights(), getSettings());
             getSettings().getTree().setHeuristic(Heuristic.SSPD);
             return;
         }
-        if (m_Mode == MODE_TIME_SERIES) {
+        else if (getClusterMode() == Mode.TIME_SERIES){
             ClusStatistic clusstat = createClusteringStat();
             m_Heuristic = new VarianceReductionHeuristic(clusstat.getDistanceName(), clusstat, getClusteringWeights(), getSettings());
             getSettings().getTree().setHeuristic(Heuristic.VarianceReduction);
             return;
         }
-        if (m_Mode == MODE_STRUCTURED) {
+        else if (getClusterMode() == Mode.STRUCTURED) {
             ClusStatistic clusstat = createClusteringStat();
             m_Heuristic = new VarianceReductionHeuristic(clusstat.getDistanceName(), clusstat, getClusteringWeights(), getSettings());
             getSettings().getTree().setHeuristic(Heuristic.VarianceReduction);
             return;
         }
+
         /* Set heuristic for trees */
         NumericAttrType[] num = m_Schema.getNumericAttrUse(AttributeUseType.Clustering);
         NominalAttrType[] nom = m_Schema.getNominalAttrUse(AttributeUseType.Clustering);
@@ -1177,8 +1167,8 @@ public class ClusStatManager implements Serializable {
             ClusStatistic stat = createTargetStat();
             parent.addError(new AvgDistancesError(parent, stat.getDistance()));
         }
-        switch (m_Mode) {
-            case MODE_HIERARCHICAL:
+        switch (getTargetMode()) {
+            case HIERARCHICAL:
                 double[] recalls = getSettings().getHMLC().getRecallValues().getDoubleVector();
                 boolean wrCurves = getSettings().getOutput().isWriteCurves();
                 if (getSettings().getHMLC().isCalError()) {
@@ -1191,7 +1181,7 @@ public class ClusStatManager implements Serializable {
                     parent.addError(new HierClassWiseAccuracy(parent, m_Hier));
                 }
                 break;
-            case MODE_HIERARCHICAL_MTR:
+            case HIERARCHICAL_MTR:
                 int nbHMTR = getSchema().getNbHMTRAttributes();
 
                 NumericAttrType[] numHMTR = new NumericAttrType[num.length - nbHMTR];
@@ -1207,12 +1197,12 @@ public class ClusStatManager implements Serializable {
                 }
                 parent.addError(new si.ijs.kt.clus.error.PearsonCorrelation(parent, numHMTR, SettingsHMTR.HMTR_ERROR_POSTFIX));
                 break;
-            case MODE_ILEVELC:
+            case ILEVELC:
                 NominalAttrType cls = (NominalAttrType) getSchema().getLastNonDisabledType();
                 parent.addError(new ILevelCRandIndex(parent, cls));
                 break;
 
-            case MODE_STRUCTURED:
+            case STRUCTURED:
                 ClusAttrType[] target = m_Schema.getAllAttrUse(AttributeUseType.Target);
                 // @FIXME - hardcoded - how do you know it is a set ... it should be general
                 try {
@@ -1276,8 +1266,8 @@ public class ClusStatManager implements Serializable {
         if (num.length != 0) {
             parent.addError(new RMSError(parent, num));
         }
-        switch (m_Mode) {
-            case MODE_HIERARCHICAL:
+        switch (getTargetMode()) {
+            case HIERARCHICAL:
                 parent.addError(new HierClassWiseAccuracy(parent, m_Hier));
                 break;
         }
@@ -1296,11 +1286,11 @@ public class ClusStatManager implements Serializable {
         if (num.length != 0) {
             parent.addError(new MSError(parent, num, getClusteringWeights()));
         }
-        switch (m_Mode) {
-            case MODE_HIERARCHICAL:
+        switch (getTargetMode()) {
+            case HIERARCHICAL:
                 parent.addError(new HierClassWiseAccuracy(parent, m_Hier));
                 break;
-            case MODE_TIME_SERIES:
+            case TIME_SERIES:
                 ClusStatistic stat = createTargetStat();
                 parent.addError(new AvgDistancesError(parent, stat.getDistance()));
                 break;
@@ -1312,7 +1302,7 @@ public class ClusStatManager implements Serializable {
 
     public ClusErrorList createExtraError(int train_err) {
         ClusErrorList parent = new ClusErrorList();
-        if (m_Mode == MODE_TIME_SERIES) {
+        if (getTargetMode() == Mode.TIME_SERIES) {
             ClusStatistic stat = createTargetStat();
             parent.addError(new ICVPairwiseDistancesError(parent, stat.getDistance()));
             parent.addError(new TimeSeriesSignificantChangeTesterXVAL(parent, (TimeSeriesStat) stat));
@@ -1345,7 +1335,7 @@ public class ClusStatManager implements Serializable {
                     sc_prune.setMaxError(max_err);
                     sc_prune.setErrorMeasure(createDefaultError());
                 }
-                if (m_Mode == MODE_TIME_SERIES) {
+                if (getClusterMode() == Mode.TIME_SERIES) {
                     sc_prune.setAdditiveError(createAdditiveError());
                 }
                 return sc_prune;
@@ -1354,7 +1344,7 @@ public class ClusStatManager implements Serializable {
         INIFileNominalOrDoubleOrVector class_thr = getSettings().getHMLC().getClassificationThresholds();
         if (class_thr.hasVector()) { return new HierClassTresholdPruner(class_thr.getDoubleVector()); }
 
-        if (m_Mode == MODE_REGRESSION || m_Mode == MODE_HIERARCHICAL_MTR) {
+        if (getClusterMode() == Mode.REGRESSION || getClusterMode() == Mode.HIERARCHICAL_MTR) {
             double mult = sett.getM5PruningMult();
             if (sett.getPruningMethod().equals(PruningMethod.M5Multi)) { return new M5PrunerMulti(getClusteringWeights(), mult); }
             if (sett.getPruningMethod().equals(PruningMethod.Default) || sett.getPruningMethod().equals(PruningMethod.M5)) {
@@ -1362,7 +1352,7 @@ public class ClusStatManager implements Serializable {
                 return new M5Pruner(getClusteringWeights(), mult);
             }
         }
-        else if (m_Mode == MODE_CLASSIFY) {
+        else if (getClusterMode() == Mode.CLASSIFY) {
             if (sett.getPruningMethod().equals(PruningMethod.Default) || sett.getPruningMethod().equals(PruningMethod.C45)) {
                 sett.setPruningMethod(PruningMethod.C45);
                 return new C45Pruner();
@@ -1373,16 +1363,16 @@ public class ClusStatManager implements Serializable {
              */
             if (sett.getPruningMethod().equals(PruningMethod.M5)) { return new M5Pruner(getClusteringWeights(), sett.getM5PruningMult()); }
         }
-        else if (m_Mode == MODE_HIERARCHICAL) {
+        else if (getClusterMode().includesHierarchical()) {
             if (sett.getPruningMethod().equals(PruningMethod.M5)) {
                 double mult = sett.getM5PruningMult();
                 return new M5Pruner(m_NormalizationWeights, mult);
             }
         }
-        else if (m_Mode == MODE_PHYLO) {
+        else if (getClusterMode() == Mode.PHYLO) {
             if (sett.getPruningMethod().equals(PruningMethod.EncodingCost)) { return new EncodingCostPruning(); }
         }
-        else if (m_Mode == MODE_CLASSIFY_AND_REGRESSION) {
+        else if (getClusterMode() == Mode.CLASSIFY_AND_REGRESSION) {
             if (sett.getPruningMethod().equals(PruningMethod.M5)) { return new M5Pruner(getClusteringWeights(), sett.getM5PruningMult()); }
             if (sett.getPruningMethod().equals(PruningMethod.C45)) { return new C45Pruner(); }
         }
@@ -1400,7 +1390,7 @@ public class ClusStatManager implements Serializable {
             // set is given
             return new PruneTree();
         }
-        if (m_Mode == MODE_HIERARCHICAL && pruneset != null) {
+        if (getClusterMode().includesHierarchical() && pruneset != null) {
             SettingsHMLC seth = getSettings().getHMLC();
 
             PruneTree pruner = getTreePrunerNoVSB();
@@ -1442,15 +1432,15 @@ public class ClusStatManager implements Serializable {
 
 
     public synchronized void setTargetStatistic(ClusStatistic stat) {
-        // ClusLogger.info("Setting target statistic: " + stat.getClass().getName());
         m_StatisticAttrUse[AttributeUseType.Target.getIndex()] = stat;
     }
 
-
     public synchronized void setClusteringStatistic(ClusStatistic stat) {
-        // ClusLogger.info("Setting clustering statistic: " +
-        // stat.getClass().getName());
         m_StatisticAttrUse[AttributeUseType.Clustering.getIndex()] = stat;
+    }
+
+    public synchronized void setAllStatistic(ClusStatistic stat) {
+        m_StatisticAttrUse[AttributeUseType.All.getIndex()] = stat;
     }
 
 
@@ -1510,7 +1500,7 @@ public class ClusStatManager implements Serializable {
     public void computeTrainSetStat(RowData trainset) throws ClusException {
         m_TrainSetStatAttrUse = new ClusStatistic[AttributeUseType.values().length];
 
-        if (getMode() != MODE_HIERARCHICAL) {
+        if (!getClusterMode().includesHierarchical()){
             computeTrainSetStat(trainset, AttributeUseType.All);
         }
         computeTrainSetStat(trainset, AttributeUseType.Clustering);
@@ -1533,7 +1523,7 @@ public class ClusStatManager implements Serializable {
 
 
     public boolean needsHierarchyProcessors() {
-        if (m_Mode == MODE_SSPD)
+        if (getClusterMode() == Mode.PHYLO || getTargetMode() == Mode.PHYLO)
             return false;
         else
             return true;

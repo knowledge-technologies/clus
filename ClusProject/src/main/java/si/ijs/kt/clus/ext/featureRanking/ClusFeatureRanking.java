@@ -245,9 +245,9 @@ public class ClusFeatureRanking {
 		// taskTypeString +=
 		// (m_Schema.getAllAttrUse(AttributeUseType.Target)[0].getTypeName()) ? "MT" :
 		// "ST";
-		if (cr.getStatManager().getMode() == ClusStatManager.MODE_REGRESSION) {
+		if (cr.getStatManager().getTargetMode() == ClusStatManager.Mode.REGRESSION) {
 			taskTypeString += "Regression";
-		} else if (cr.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY) {
+		} else if (cr.getStatManager().getTargetMode() == ClusStatManager.Mode.CLASSIFY) {
 			taskTypeString += "Classification";
 		}
 		JsonElement taskType = new JsonPrimitive(taskTypeString);
@@ -473,7 +473,7 @@ public class ClusFeatureRanking {
 		boolean hasNominal = nom.length > 0;
 		// Sometimes, instead of operating with modes (which depend on clustering attributes),
 		// we operate with (numbers of) targets directly)
-		if (mgr.getMode() == ClusStatManager.MODE_HIERARCHICAL) {
+		if (mgr.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL) {
 			error.addError(
 			        new HierErrorMeasures(error, mgr.getHier(), sett.getHMLC().getRecallValues().getDoubleVector(),
 			                HierarchyMeasures.PooledAUPRC, false, getSettings().getOutput().isGzipOutput()));

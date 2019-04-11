@@ -18,8 +18,10 @@ public class ClusStopCriterionMinWeight implements ClusStopCriterion {
     public boolean stopCriterion(ClusStatistic tstat, ClusStatistic pstat, ClusStatistic missing) {
         double w_pos = pstat.getTotalWeight();
         double w_neg = tstat.getTotalWeight() - w_pos;
-        double wt_pos = pstat.getTargetSumWeights(); //weight of target atts
-        double wt_neg = tstat.getTargetSumWeights() - wt_pos; //weight of target atts
+//        double wt_pos = pstat.getTargetSumWeights(); //weight of target atts
+//        double wt_neg = tstat.getTargetSumWeights() - wt_pos; //weight of target atts
+        double wt_pos = w_pos;
+        double wt_neg = w_neg;
         // FIXME: Can these conditions be written nicer?
         return w_pos < m_MinWeight || //weight of examples in the positive branch must be >= minWeight
                 w_neg < m_MinWeight || //weight of examples in the negative branch must be >= minWeight

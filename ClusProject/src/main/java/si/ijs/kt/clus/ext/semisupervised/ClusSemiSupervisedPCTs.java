@@ -16,6 +16,7 @@ import si.ijs.kt.clus.data.type.ClusAttrType.Status;
 import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.data.type.primitive.NumericAttrType;
 import si.ijs.kt.clus.main.ClusRun;
+import si.ijs.kt.clus.main.ClusStatManager;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.section.SettingsSSL;
 import si.ijs.kt.clus.model.ClusModel;
@@ -236,7 +237,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 		double nbOther = nbClustering - nbTarget;
 		ClusAttrType attrType;
 
-		if (getSettings().getHMLC().isHierAndClassAndReg()) {
+		if (m_StatManager.getClusterMode() == ClusStatManager.Mode.HIER_CLASS_AND_REG) {
 			int nbHierClasses = m_StatManager.getHier().getTotal();
 
 			for (int i = 0; i < nbClustering; i++) {

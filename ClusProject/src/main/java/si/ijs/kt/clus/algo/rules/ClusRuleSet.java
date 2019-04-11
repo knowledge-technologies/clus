@@ -1017,18 +1017,18 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
 		/** TRUE VALUES */
 		ClusAttrType[] trueValuesTemp = new ClusAttrType[nb_target];
-		switch (m_StatManager.getMode()) {
-		case ClusStatManager.MODE_CLASSIFY:
-			trueValuesTemp = schema.getNominalAttrUse(AttributeUseType.Target);
-			break;
+		switch (m_StatManager.getTargetMode()) {
+			case CLASSIFY:
+                trueValuesTemp = schema.getNominalAttrUse(AttributeUseType.Target);
+                break;
 
-		case ClusStatManager.MODE_REGRESSION:
-			trueValuesTemp = schema.getNumericAttrUse(AttributeUseType.Target);
-			break;
+			case REGRESSION:
+                trueValuesTemp = schema.getNumericAttrUse(AttributeUseType.Target);
+                break;
 
-		default:
-			throw new ClusException(
-					"si.ijs.kt.clus.algo.rules.ClusRuleSet.giveFormForWeightOptimization(PrintWriter, RowData): not implemented");
+            default:
+                throw new ClusException(
+                        "si.ijs.kt.clus.algo.rules.ClusRuleSet.giveFormForWeightOptimization(PrintWriter, RowData): not implemented");
 		}
 
 		/**
@@ -1054,20 +1054,20 @@ public class ClusRuleSet implements ClusModel, Serializable {
 			// Take the true values from the data target by target
 			for (int kTargets = 0; kTargets < nb_target; kTargets++) {
 
-				switch (m_StatManager.getMode()) {
-				case ClusStatManager.MODE_CLASSIFY:
-					trueValues[iRows].m_targets[kTargets] = ((NominalAttrType) trueValuesTemp[kTargets])
-							.getNominal(tuple);
-					break;
+				switch (m_StatManager.getTargetMode()) {
+					case CLASSIFY:
+                        trueValues[iRows].m_targets[kTargets] = ((NominalAttrType) trueValuesTemp[kTargets])
+                                .getNominal(tuple);
+                        break;
 
-				case ClusStatManager.MODE_REGRESSION:
-					trueValues[iRows].m_targets[kTargets] = ((NumericAttrType) trueValuesTemp[kTargets])
-							.getNumeric(tuple);
-					break;
+					case REGRESSION:
+                        trueValues[iRows].m_targets[kTargets] = ((NumericAttrType) trueValuesTemp[kTargets])
+                                .getNumeric(tuple);
+                        break;
 
-				default:
-					throw new ClusException(
-							"si.ijs.kt.clus.algo.rules.ClusRuleSet.giveFormForWeightOptimization(PrintWriter, RowData): not implemented");
+                    default:
+                        throw new ClusException(
+                                "si.ijs.kt.clus.algo.rules.ClusRuleSet.giveFormForWeightOptimization(PrintWriter, RowData): not implemented");
 				}
 			}
 		}
@@ -1101,18 +1101,18 @@ public class ClusRuleSet implements ClusModel, Serializable {
 
 		for (int iTarget = 0; iTarget < nb_target; iTarget++) {
 
-			switch (m_StatManager.getMode()) {
-			case ClusStatManager.MODE_CLASSIFY:
-				nb_values[iTarget] = ((ClassificationStat) m_TargetStat).getAttribute(0).getNbValues();
-				break;
+			switch (m_StatManager.getTargetMode()) {
+				case CLASSIFY:
+                    nb_values[iTarget] = ((ClassificationStat) m_TargetStat).getAttribute(0).getNbValues();
+                    break;
 
-			case ClusStatManager.MODE_REGRESSION:
-				nb_values[iTarget] = 1; // Nominal values not needed
-				break;
+				case REGRESSION:
+                    nb_values[iTarget] = 1; // Nominal values not needed
+                    break;
 
-			default:
-				throw new ClusException(
-						"si.ijs.kt.clus.algo.rules.ClusRuleSet.giveFormForWeightOptimization(PrintWriter, RowData): not implemented");
+                default:
+                    throw new ClusException(
+                            "si.ijs.kt.clus.algo.rules.ClusRuleSet.giveFormForWeightOptimization(PrintWriter, RowData): not implemented");
 			}
 		}
 
@@ -1189,24 +1189,24 @@ public class ClusRuleSet implements ClusModel, Serializable {
 					if (rule.covers(tuple)) {
 						// Returns the prediction for the data
 
-						switch (m_StatManager.getMode()) {
-						case ClusStatManager.MODE_CLASSIFY:
-							nonrule_pred[nonRegIndex][iRows] = ((ClassificationStat) rule.predictWeighted(tuple))
-									.normalizedCopy().getClassCounts();
-							break;
+						switch (m_StatManager.getTargetMode()) {
+							case CLASSIFY:
+                                nonrule_pred[nonRegIndex][iRows] = ((ClassificationStat) rule.predictWeighted(tuple))
+                                        .normalizedCopy().getClassCounts();
+                                break;
 
-						case ClusStatManager.MODE_REGRESSION:
-							// Only one nominal value is used for regression.
-							double[] targets = ((RegressionStat) rule.predictWeighted(tuple)).normalizedCopy()
-									.getNumericPred();
-							for (int kTargets = 0; kTargets < nb_target; kTargets++) {
-								nonrule_pred[nonRegIndex][iRows][kTargets][0] = targets[kTargets];
-							}
-							break;
+							case REGRESSION:
+                                // Only one nominal value is used for regression.
+                                double[] targets = ((RegressionStat) rule.predictWeighted(tuple)).normalizedCopy()
+                                        .getNumericPred();
+                                for (int kTargets = 0; kTargets < nb_target; kTargets++) {
+                                    nonrule_pred[nonRegIndex][iRows][kTargets][0] = targets[kTargets];
+                                }
+                                break;
 
-						default:
-							throw new ClusException(
-									"si.ijs.kt.clus.algo.rules.ClusRuleSet.giveFormForWeightOptimization(PrintWriter, RowData): not implemented");
+                            default:
+                                throw new ClusException(
+                                        "si.ijs.kt.clus.algo.rules.ClusRuleSet.giveFormForWeightOptimization(PrintWriter, RowData): not implemented");
 						}
 					} else { // Rule does not cover the instance. Mark as NaN
 						for (int kTargets = 0; kTargets < nb_target; kTargets++) {

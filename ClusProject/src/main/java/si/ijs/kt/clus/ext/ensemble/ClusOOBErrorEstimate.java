@@ -33,7 +33,7 @@ public class ClusOOBErrorEstimate {
     static HashMap<Integer, Object> m_OOBPredictions;
     static HashMap<Integer, Integer> m_OOBUsage;
     static boolean m_OOBCalculation;
-    int m_Mode;
+    ClusStatManager.Mode m_Mode;
     Settings m_Settings;
     static HashMap m_OOBVotes; // individual votes for the OOB examples (we need this for automatic selection of
                                // threshold for SSL self-training)
@@ -43,7 +43,7 @@ public class ClusOOBErrorEstimate {
     static ClusReadWriteLock m_LockCalculation = new ClusReadWriteLock();
 
 
-    public ClusOOBErrorEstimate(int mode, Settings sett) {
+    public ClusOOBErrorEstimate(ClusStatManager.Mode mode, Settings sett) {
         m_OOBPredictions = new HashMap<>();
         m_OOBUsage = new HashMap<Integer, Integer>();
         m_OOBCalculation = false;
@@ -183,18 +183,18 @@ public class ClusOOBErrorEstimate {
         ClusStatistic stat = model.predictWeighted(tuple);
 
         switch (m_Mode) {
-            case ClusStatManager.MODE_HIERARCHICAL:
+            case HIERARCHICAL:
                 // for HMC we store the averages
                 put1DArrayToOOBPredictions(tuple, ((WHTDStatistic) stat).getNumericPred());// m_OOBPredictions.put(tuple.hashCode(),stat.getNumericPred());
                 break;
 
-            case ClusStatManager.MODE_REGRESSION:
+            case REGRESSION:
                 // for Regression we store the averages
                 put1DArrayToOOBPredictions(tuple, ((RegressionStat) stat).getNumericPred());// m_OOBPredictions.put(tuple.hashCode(),
                 // stat.getNumericPred());
                 break;
 
-            case ClusStatManager.MODE_CLASSIFY:
+            case CLASSIFY:
                 // this should have a [][].for each attribute we store: Majority: the winning class, for Probability
                 // distribution, the class distribution
 
@@ -231,7 +231,7 @@ public class ClusOOBErrorEstimate {
         double[] predictions, avg_predictions;
 
         switch (m_Mode) {
-            case ClusStatManager.MODE_HIERARCHICAL:
+            case HIERARCHICAL:
                 // the HMC and Regression have the same voting scheme: average
                 predictions = ((WHTDStatistic) stat).getNumericPred();
                 avg_predictions = get1DArrayFromOOBPredictions(tuple); // (double[])m_OOBPredictions.get(tuple.hashCode());
@@ -240,7 +240,7 @@ public class ClusOOBErrorEstimate {
                                                                     // avg_predictions);
                 break;
 
-            case ClusStatManager.MODE_REGRESSION:
+            case REGRESSION:
                 // the HMC and Regression have the same voting scheme: average
                 predictions = ((RegressionStat) stat).getNumericPred();
                 avg_predictions = get1DArrayFromOOBPredictions(tuple); // (double[])m_OOBPredictions.get(tuple.hashCode());
@@ -249,7 +249,7 @@ public class ClusOOBErrorEstimate {
                                                                     // avg_predictions);
 
                 break;
-            case ClusStatManager.MODE_CLASSIFY:
+            case CLASSIFY:
                 // implement just addition!!!! and then
                 ClassificationStat statc = (ClassificationStat) stat;
                 double[][] preds = statc.m_ClassCounts.clone();
