@@ -11,13 +11,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.util.ClusLogger;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnum;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileEnumList;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileInt;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrDoubleOrVector;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileNominalOrIntOrVector;
-import si.ijs.kt.clus.util.jeans.io.ini.INIFileString;
+import si.ijs.kt.clus.util.jeans.io.ini.*;
 import si.ijs.kt.clus.util.jeans.io.range.IntRangeCheck;
 
 
@@ -104,6 +98,8 @@ public class SettingsEnsemble extends SettingsBase {
     };
 
     private INIFileNominalOrIntOrVector m_NbBags;
+    // Number of seconds for learning trees
+    private INIFileInt m_TimeBudget;
     /** Ensemble bootstrapping: yes or no */
     private INIFileEnum<EnsembleBootstrapping> m_EnsembleBootstrapping;
     /** Used ensemble method */
@@ -250,10 +246,13 @@ public class SettingsEnsemble extends SettingsBase {
         return m_NbBags;
     }
 
-
     public void setNbBags(int value) {
         m_NbBags.setInt(value);
     }
+
+    public INIFileInt getTimeBudget() { return m_TimeBudget;}
+
+    public void setTimeBudget(int value) {m_TimeBudget.setValue(value);}
 
 
     public int getNbRandomAttrSelected() {
@@ -501,6 +500,7 @@ public class SettingsEnsemble extends SettingsBase {
     public void create() {
 
         m_Section.addNode(m_NbBags = new INIFileNominalOrIntOrVector("Iterations", NONELIST));
+        m_Section.addNode(m_TimeBudget = new INIFileInt("TimeBudget", 0));
         m_Section.addNode(m_EnsembleMethod = new INIFileEnum<>("EnsembleMethod", EnsembleMethod.Bagging));
         m_Section.addNode(m_EnsembleBootstrapping = new INIFileEnum<>("EnsembleBootstrapping", EnsembleBootstrapping.Undefined));
         m_Section.addNode(m_EnsembleVotingType = new INIFileEnum<>("VotingType", EnsembleVotingType.ProbabilityDistribution));

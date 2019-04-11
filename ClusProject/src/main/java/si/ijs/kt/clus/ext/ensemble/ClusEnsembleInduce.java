@@ -29,7 +29,6 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -40,6 +39,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.time.StopWatch;
 import si.ijs.kt.clus.Clus;
 import si.ijs.kt.clus.algo.ClusInductionAlgorithm;
 import si.ijs.kt.clus.algo.tdidt.ClusNode;
@@ -102,6 +102,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     static ClusAttrType[] m_RandomSubspaces; // TODO: this field should be removed in the future
 
     private ClusForest[] m_OForests;
+    private StopWatch m_Timer;
+    private int m_MaxTime;
 
     // Memory optimization
     private static boolean m_OptMode;
@@ -177,9 +179,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     public void initialize(ClusSchema schema, Settings settMain, Clus clus) throws ClusException, IOException {
         m_BagClus = clus;
+        m_Timer = new StopWatch();
         // optimize if not XVAL and HMC
 
         SettingsEnsemble sett = settMain.getEnsemble();
+        m_MaxTime = sett.getTimeBudget().getValue();
 
         m_OptMode = sett.shouldOptimizeEnsemble() && (
                 m_StatManager.getTargetMode() == ClusStatManager.Mode.HIERARCHICAL ||
@@ -687,6 +691,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         if (bagSelections[0] == -1) {
             // normal bagging procedure
+            m_Timer.start();
             for (int i = 1; i <= m_NbMaxBags; i++) {
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
 
@@ -765,6 +770,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             Future<OneBagResults> future = bagResults.get(i - 1);
             try {
                 OneBagResults results = future.get();
+                if (results.getInductionTime() < 0)
+                    continue;
                 if (!m_OptMode) {
                     addModelToForests(results.getModel(), i);
                 }
@@ -828,6 +835,9 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     public OneBagResults induceOneBag(ClusRun cr, int i, int origMaxDepth, OOBSelection oob_sel, TupleIterator train_iterator, TupleIterator test_iterator, BagSelection msel, ClusRandomNonstatic rnd, ClusStatManager unmodifiedManager) throws Exception {
+        if (m_MaxTime > 0 && m_Timer.getTime() / 1000 >= m_MaxTime) {
+            return new OneBagResults(null, null, null, -1, 0);
+        }
         long one_bag_time = ResourceInfo.getTime();
         SettingsEnsemble sett = cr.getStatManager().getSettings().getEnsemble();
         SettingsOutput seto = cr.getStatManager().getSettings().getOutput();
