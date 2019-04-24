@@ -967,6 +967,10 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             crSingle.setModels(new ArrayList<ClusModelInfo>());
         }
 
+
+        if (m_MaxTime > 0 && m_Timer.getTime() / 1000 >= m_MaxTime) {
+            return new OneBagResults(null, null, null, -1, 0);
+        }
         return new OneBagResults(model, fimportances, crSingle, one_bag_time, i);
     }
 
