@@ -691,6 +691,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         if (bagSelections[0] == -1) {
             // normal bagging procedure
+            m_Timer.reset();
             m_Timer.start();
             for (int i = 1; i <= m_NbMaxBags; i++) {
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
@@ -805,7 +806,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         if (origMaxDepth != -1) {
             getSettings().getConstraints().setTreeMaxDepth(origMaxDepth);
         }
-
     }
 
 
