@@ -392,6 +392,19 @@ public class ClusNode extends MyNode implements ClusModel {
     public final ClusStatistic getTargetStat() {
         return m_TargetStat;
     }
+    
+    public final ClusStatistic getSmartTargetStat() {
+    	// matejp introduced the while loop to prevent 0 division in SSL case
+    	ClusStatistic s = m_TargetStat;
+    	while (s.getTargetSumWeights() == 0.0) {
+    		if (s.getParentStat() != null) {
+    			s = s.getParentStat();
+    		} else {
+    			break;
+    		}
+    	}
+        return s;
+    }
 
 
     public final double getTotWeight() {
@@ -764,7 +777,7 @@ public class ClusNode extends MyNode implements ClusModel {
     @Override
     public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException {
         if (atBottomLevel()) {
-            return getTargetStat();
+            return getSmartTargetStat(); // matejp  getTargetStat();
         }
         else {
             int n_idx = m_Test.predictWeighted(tuple);
