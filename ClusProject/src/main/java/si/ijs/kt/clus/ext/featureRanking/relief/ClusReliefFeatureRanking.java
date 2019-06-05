@@ -69,13 +69,13 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
      */
     private RowData m_Data;
 
-    /** Numbers of neighbours in the importances calculation */
+    /** Numbers of neighbours in the importance calculation */
     private int[] m_NbNeighbours;
 
     /** Maximal element of m_NbNeighbours */
     private int m_MaxNbNeighbours;
 
-    /** Numbers of iterations in the importances calculation */
+    /** Numbers of iterations in the importance calculation */
     private int[] m_NbIterations;
 
     /** Maximal element of m_NbIterations */
@@ -1269,7 +1269,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
             		if (shouldUseTuple(targetIndex, tuple)) {
             			appropriateTargets.add(targetIndex);
             		}
-            	}            	
+            	}
         		FindNeighboursCallable task = new FindNeighboursCallable(this, tupleIndex, appropriateTargets);
         		Future<Triple<ArrayList<Integer>, Integer, HashMap<Integer, NearestNeighbour[][]>>> result = executor.submit(task);
         		results.add(result);
