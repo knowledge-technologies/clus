@@ -278,6 +278,8 @@ public class KnnModel implements ClusModel, Serializable {
         } else {
         	m_StatTemplate = cr.getStatManager().getStatistic(AttributeUseType.Target);
         }
+        ClusStatistic trainingStat = cr.getStatManager().getTrainSetStat(AttributeUseType.Target);
+        m_StatTemplate.setTrainingStat(trainingStat);
 
         // if( m_ClusRun.getStatManager().getMode() == ClusStatManager.MODE_CLASSIFY ){
         // if(sett.getSectionMultiLabel().isEnabled()){

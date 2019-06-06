@@ -7,6 +7,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 import si.ijs.kt.clus.main.settings.SettingsBase;
 import si.ijs.kt.clus.main.settings.section.SettingsOutput.ConvertRules;
 import si.ijs.kt.clus.main.settings.section.SettingsTimeSeries.TimeSeriesPrototypeComplexity;
+import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.FTest;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileBool;
 import si.ijs.kt.clus.util.jeans.io.ini.INIFileDouble;
@@ -138,6 +139,26 @@ public class SettingsTree extends SettingsBase {
 
     public MissingTargetAttributeHandlingType getMissingTargetAttrHandling() {
         return m_MissingTargetAttrHandling.getValue();
+    }
+    
+    public void setMissingClusteringAttrHandling(MissingClusteringAttributeHandlingType value) {
+        m_MissingClusteringAttrHandling.setValue(value);
+    }
+    
+    public void setMissingTargetAttrHandling(MissingTargetAttributeHandlingType value) {
+        m_MissingTargetAttrHandling.setValue(value);
+    }
+    
+    public void setMissingAttrHandlingToTrainingSet() {
+    	String warning = "Missing %s attribute handling should base on traning set statistics. Changing the setting accordingly.";
+    	if (!m_MissingClusteringAttrHandling.getValue().equals(MissingClusteringAttributeHandlingType.EstimateFromTrainingSet)) {
+    		ClusLogger.info(String.format(warning, "clustering"));
+    		m_MissingClusteringAttrHandling.setValue(MissingClusteringAttributeHandlingType.EstimateFromTrainingSet);
+    	}
+    	if (!m_MissingTargetAttrHandling.getValue().equals(MissingTargetAttributeHandlingType.DefaultModel)) {
+    		ClusLogger.info(String.format(warning, "target"));
+    		m_MissingTargetAttrHandling.setValue(MissingTargetAttributeHandlingType.DefaultModel);
+    	}
     }
 
 

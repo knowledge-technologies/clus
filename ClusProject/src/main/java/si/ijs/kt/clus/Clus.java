@@ -1795,6 +1795,7 @@ public class Clus implements CMDLineArgsProvider {
 					clss = new Relief(clus);
 				} else if (cargs.hasOption("knn")) {
 					clus.getSettings().getKNN().setSectionKNNEnabled(true);
+					clus.getSettings().getTree().setMissingAttrHandlingToTrainingSet();
 					clss = new KnnClassifier(clus);
 				} else if (cargs.hasOption("rules")) {
 					clus.getSettings().getBeamSearch().setSectionBeamEnabled(true);
