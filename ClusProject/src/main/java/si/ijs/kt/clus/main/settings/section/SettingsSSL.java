@@ -407,7 +407,7 @@ public class SettingsSSL extends SettingsBase {
         m_Section.addNode(m_SSL_aggregation = new INIFileEnum<>("Aggregation", SSLAggregation.Average));
         m_Section.addNode(m_CalibrateHmcThreshold = new INIFileBool("CalibrateHmcThreshold", false));
 
-        // added 25/1/2017, Tomaz Stepisnik Perdih (JSI)
+        // added 25/1/2017, Tomaz Stepisnik Perdih (JSI) (married Stepisnik)
         m_Section.addNode(m_SSL_PruningWhenTuning = new INIFileBool("PruningWhenTuning", false));
         m_Section.addNode(m_SSL_InternalFolds = new INIFileInt("InternalFolds", 5));
         m_Section.addNode(m_SSL_WeightScoresFile = new INIFileString("WeightScoresFile", "NO"));
