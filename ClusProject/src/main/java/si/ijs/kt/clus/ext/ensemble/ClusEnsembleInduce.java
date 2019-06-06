@@ -505,6 +505,16 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     public ClusModel induceSingleUnpruned(ClusRun cr) throws Exception {
         ClusRun myRun = new ClusRun(cr);
         induceAll(myRun);
+        
+        // TODO: Bug! If more than one forest was grown ... This will forget about the others ... Something like that???????????????????????????
+        // We reach this code in the semi-supervised case ...
+//        int n = cr.getNbModels();
+//		ArrayList<ClusModelInfo> a = new ArrayList<>();
+//		for (int i = 0; i < n; i++) {
+//			a.add(cr.getModelInfo(i));
+//		}
+//		crOriginal.setModels(a);
+        
         ClusModelInfo info = myRun.getModelInfo(ClusModel.ORIGINAL);
         return info.getModel();
     }
