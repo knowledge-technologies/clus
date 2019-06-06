@@ -172,6 +172,9 @@ public class KnnModel implements ClusModel, Serializable {
 
         SearchDistance searchDistance = new SearchDistance();
         ClusDistance distance;
+        
+        // descriptive attributes with weight 0 can be safely omitted from distance computation
+        necessaryDescriptiveAttributes = ClusDistance.attributesWithNonZeroWeight(necessaryDescriptiveAttributes, attrWe);
 
         switch(dist) {
 	        case Euclidean:

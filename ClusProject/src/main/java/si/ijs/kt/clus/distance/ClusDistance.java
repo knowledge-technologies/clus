@@ -2,6 +2,7 @@
 package si.ijs.kt.clus.distance;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 import org.apache.commons.lang.NotImplementedException;
 
@@ -55,5 +56,15 @@ public abstract class ClusDistance implements Serializable {
 
     public void setWeighting(AttributeWeighting weighting) {
         m_AttrWeighting = weighting;
+    }
+    
+    public static ClusAttrType[] attributesWithNonZeroWeight(ClusAttrType[] candidates, AttributeWeighting w) {
+    	ArrayList<ClusAttrType> solution = new ArrayList<>();
+    	for (ClusAttrType candidate : candidates) {
+    		if (w.getWeight(candidate) > 0.0) {
+    			solution.add(candidate);
+    		}
+    	}
+    	return solution.toArray(new ClusAttrType[0]);
     }
 }
