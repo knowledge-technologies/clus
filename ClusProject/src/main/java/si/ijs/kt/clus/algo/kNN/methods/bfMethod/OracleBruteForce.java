@@ -68,17 +68,26 @@ public class OracleBruteForce extends BruteForce {
 	   } else {
 		   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours", 1, sett.getGeneral().getVerbose());
 		   int counter = 0;
+		   int nInstances = m_ChosenInstancesTrain.length + m_ChosenInstancesTest.length;
+		   int percentStep = 10;
+		   int percents = percentStep;
 		   for(DataTuple tuple : new ArrayOfArraysIterator<>(new DataTuple[][] {m_ChosenInstancesTrain, m_ChosenInstancesTest})) {
 			   counter++;
-			   if (counter % 10 == 0) {
-				   ClusReliefFeatureRanking.printMessage("Computing nearest neighbours for instance " + counter, 1, sett.getGeneral().getVerbose());
-			   }
 			   NN[] temp = super.returnPureNNs(tuple, k);
 			   NearestNeighbour[] nns = new NearestNeighbour[temp.length];
 			   for(int n = 0; n < nns.length; n++) {
 				   nns[n] = new NearestNeighbour(temp[n].getTuple().getDatasetIndex(), temp[n].getDistance());
 			   }
 			   m_NearestNeighbours.get(SaveLoadNeighbours.DUMMY_TARGET).put(getModifiedIndex(tuple), new NearestNeighbour[][] {nns});
+			   int percentsNow = 100 * counter / nInstances;
+			   if (percentsNow >= percents) {
+				   percentsNow -= Math.floorMod(percentsNow, percentStep);
+				   ClusReliefFeatureRanking.printMessage(String.format("Computed %d percents of nearest neighbours.", percentsNow), 1, sett.getGeneral().getVerbose());
+				   percents = percentsNow + percentStep;
+			   }
+		   }
+		   if (percents <= 100) {
+			   ClusReliefFeatureRanking.printMessage("Computed 100 percents of nearest neighbours.", 1, sett.getGeneral().getVerbose());
 		   }
 	   }
 	   // saving neighbours
