@@ -192,14 +192,14 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
             descriptive_need_conversion = False
             # at this point, descriptive indices are positive and 1-based
         condensed_example = [example[i - 1] for i in descriptive_indices if i <= len(example)]  # base 1 ==> -1
-        eval_triplet_object = (python_ensemble_file, num_trees, condensed_example)
-        eval_triplet_function = (python_ensemble_file, model, condensed_example)
+        eval_triplet_ensemble = (python_ensemble_file, num_trees, condensed_example)
+        eval_triplet_single = (python_ensemble_file, model, condensed_example)
         if model == ENSEMBLE:
-            predictions = eval("{}.ensemble_{}({})".format(*eval_triplet_object))
+            predictions = eval("{}.ensemble_{}({})".format(*eval_triplet_ensemble))
         elif model_type == OBJECT:
-            predictions = [eval("{}.tree_{}.predict({})".format(*eval_triplet_object))]
+            predictions = [eval("{}.tree_{}.predict({})".format(*eval_triplet_single))]
         else:
-            predictions = [eval("{}.{}({})".format(*eval_triplet_function))]
+            predictions = [eval("{}.{}({})".format(*eval_triplet_single))]
         key_string = "" if key_attribute is None else "{},".format(example[key_attribute - 1])
         true_values = get_sublist(target_indices, example)
         for prediction, f in zip(predictions, out_fs):
