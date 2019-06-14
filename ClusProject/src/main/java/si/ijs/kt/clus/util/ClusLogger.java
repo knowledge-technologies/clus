@@ -7,6 +7,8 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 
@@ -50,17 +52,24 @@ public class ClusLogger {
 		}
 
 		m_MainLogger = Logger.getLogger("");
+		
 		Handler[] handlers = m_MainLogger.getHandlers();
-		if (handlers[0] instanceof ConsoleHandler) {
-			handlers[0].setLevel(Level.ALL);
+		for (Handler h : handlers) {
+			m_MainLogger.removeHandler(h);
 		}
+//		if (handlers[0] instanceof ConsoleHandler) {
+//			handlers[0].setLevel(Level.ALL);
+			
+//		}
 
+		m_MainLogger.addHandler(new StreamHandler(System.out, new SimpleFormatter()));
 		m_MainLogger.setLevel(Level.ALL);
 	}
 
 	private static Logger initialize_simple() {
 		System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$s] %5$s %n");
 		Logger l = Logger.getLogger("");
+		l.addHandler(new StreamHandler(System.out, new SimpleFormatter()));
 		Handler[] handlers = l.getHandlers();
 		if (handlers[0] instanceof ConsoleHandler) {
 			handlers[0].setLevel(Level.ALL);
