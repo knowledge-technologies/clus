@@ -108,8 +108,76 @@ class RegressionStat(Statistics):
         The length of `self.stats`.
         """
         return len(self.stats)
-            
-            
+
+
+class ClassificationStat(Statistics):
+    """
+    Implementation of `Statistics` for (multi-target) regression task.
+    """
+
+    def __init__(self, predicted_values):
+        """
+        Constructor for this class. Initializes the only field (stats),
+        which is a list whose i-th element stores the current mean of
+        the i-th target.
+
+        Parameters
+        ----------
+        predicted_values : list
+            List of pairs (majority class, probability) that represent the current means for each target.
+        """
+        self.stats = predicted_values
+
+    def __repr__(self):
+        return str(self.stats)
+
+    def fresh_stats(self, number_targets):
+        """
+        Creates a `RegressionStat` object with zeros as current prediction for each target.
+        """
+        return RegressionStat([(None, 0.0) for _ in range(number_targets)])
+
+    def add_another_stats(self, other, other_weight):
+        """
+        Adds the prediction :math:`o_i` of the other `RegressionStat` object to the current prediction :math:`c_i`,
+        for all i, :math:`0\leq i < n`, where :math:`n` is the number of targets. New predictions are defined as
+        :math:`w\; o_i + c_i`, where :math:`i` is given as parameter `other_weight`.
+
+        Parameters
+        ----------
+        other : RegressionStat
+            Another regression statistic
+        other_weight: float
+            Weight for the other statistic.
+        """
+        for i in range(len(self.stats)):
+            p0 = self.stats[i][1]
+            p1 = other.stats[i][1]
+            if p0 < p1 * other_weight:
+                self.stats[i] += (other.stats[i][0], p1 * other_weight)
+
+    def stats_to_predictions(self):
+        """
+        Computes predictions.
+
+        Returns
+        ------
+        list
+            This method simply returns `self.stat`.
+        """
+        return [pair[0] for pair in self.stats]
+
+    def get_nb_targets(self):
+        """
+        Computes the number of targets.
+
+        Returns
+        -------
+        The length of `self.stats`.
+        """
+        return len(self.stats)
+
+
 class BinaryNodeTest:
     """
     Class that implements tests like

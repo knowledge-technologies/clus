@@ -1778,7 +1778,13 @@ public class ClusNode extends MyNode implements ClusModel {
             else {
                 // leaf
                 if (m_TargetStat != null) {
-                    writer.println(current_prefix + "return " + current.m_TargetStat.getArrayOfStatistic());
+                	String s;
+                	if (current.m_TargetStat instanceof ClassificationStat) {
+                		s = ((ClassificationStat) current.m_TargetStat).getArrayOfStatisticExtended();
+                	} else {
+                		s = current.m_TargetStat.getArrayOfStatistic();
+                	}
+                    writer.println(current_prefix + "return " + s);
                 }
                 else {
                     System.err.println("m_TargetStat == null");
@@ -1883,8 +1889,13 @@ public class ClusNode extends MyNode implements ClusModel {
         if (m_TargetStat instanceof RegressionStat) {
             statArg = String.format("prediction_statistics=RegressionStat(%s)", leaf.m_TargetStat.getArrayOfStatistic());
         }
+        else if (m_TargetStat instanceof ClassificationStat) {
+        	statArg = String.format("prediction_statistics=ClassificationStat(%s)",
+        			((ClassificationStat) leaf.m_TargetStat).getArrayOfStatisticExtended());
+        	
+        }
         else {
-            throw new RuntimeException("Python code for your target-type statistics not implemented.");
+        	throw new RuntimeException("Python code for your target-type statistics not implemented.");
         }
         return String.format("%s = TreeNode(%s)", pythonNodeName(leaf, modelIdentifier), statArg);
     }

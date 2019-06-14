@@ -4,6 +4,8 @@ import argparse
 
 
 ENSEMBLE = "ensemble"
+OBJECT = "object"
+FUNCTION = "function"
 
 
 def load_nonsparse_arff(arff_file, load_data=False):
@@ -79,10 +81,13 @@ def instances_generator(arff_file, from_inst=0, to_inst=float("inf")):
                 if "@data" in x.lower():
                     break
             if walk == 0:  # count the lines after @data
+                instance = -1
                 for instance, _ in enumerate(f):
                     pass
                 found = instance + 1
-                print("Number of instances is approximately", found)
+                if found == 0:
+                    print("Warning:", arff_file, "contains 0 instances.")
+                # print("Number of instances is approximately", found)
             else:  # generate the instances
                 for instance, x in enumerate(f):
                     if x.strip():
@@ -106,7 +111,8 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
                        out_files,
                        first_instance,
                        last_instance,
-                       model):
+                       model,
+                       model_type):
     """
     Computes predictions of the examples and writes everything to a file.
 
@@ -135,6 +141,9 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
         from the interval [first_instance, last_instance].
     model : string
         The name of the model that will be used to make the predictions, e.g., 'ensemble', 'original' und so weiter.
+    model_type : string
+        Tells whether the models are given as functions or objects. Should not have any influence if the model
+        is set to ensemble.
     """
 
     def get_sublist(indices, whole_list, one_based=True):
@@ -143,24 +152,54 @@ def create_predictions(python_ensemble_dir, python_ensemble_file,
     # load ensemble
     sys.path.insert(0, python_ensemble_dir)
     exec("import {}".format(python_ensemble_file))
-    print("Model(s) imported from", python_ensemble_file)
-    descriptive_indices = parse_index_intervals(descriptive_attributes_string)
-    target_indices = parse_index_intervals(target_attributes_string)
+    # print("Model(s) imported from", python_ensemble_file)
+    if descriptive_attributes_string is None:
+        descriptive_indices = None
+        descriptive_need_conversion = True
+    else:
+        descriptive_indices = parse_index_intervals(descriptive_attributes_string)
+        descriptive_need_conversion = False
+    if target_attributes_string is None:
+        target_indices = [-1]
+        is_target_one_based = False
+    else:
+        target_indices = parse_index_intervals(target_attributes_string)
+        is_target_one_based = True
+
+    target_needs_conversion = min(target_indices) < 0
+    if target_needs_conversion and max(target_indices) >= 0:
+        raise ValueError("Target indices contain non-negative and negative numbers. Resolve this.")
 
     examples_generator = instances_generator(arff_file, first_instance, last_instance)
     _, attributes, _ = load_nonsparse_arff(arff_file, False)
-    target_attributes = [attr[0] for attr in get_sublist(target_indices, attributes)]
+    target_attributes = [attr[0] for attr in get_sublist(target_indices, attributes, is_target_one_based)]
     key_header = [] if key_attribute is None else [attributes[key_attribute - 1][0]]
     header = key_header + ["true_" + t for t in target_attributes] + ["predicted_" + t for t in target_attributes]
     out_fs = [open(out_file, "w") for out_file in out_files]
     for f in out_fs:
         print(",".join(header), file=f)
+
     for example in examples_generator:
+        if target_needs_conversion:
+            target_indices = [t if t >= 0 else len(example) + t + 1 for t in target_indices]
+            target_needs_conversion = False
+            # at this point, target indices are positive and 1-based
+        if descriptive_need_conversion:
+            forbidden = target_indices[:]
+            if key_attribute is not None:
+                forbidden.append(key_attribute)
+            descriptive_indices = [d for d in range(1, 1 + len(example)) if d not in forbidden]
+            descriptive_need_conversion = False
+            # at this point, descriptive indices are positive and 1-based
         condensed_example = [example[i - 1] for i in descriptive_indices if i <= len(example)]  # base 1 ==> -1
+        eval_triplet_object = (python_ensemble_file, num_trees, condensed_example)
+        eval_triplet_function = (python_ensemble_file, model, condensed_example)
         if model == ENSEMBLE:
-            predictions = eval("{}.ensemble_{}({})".format(python_ensemble_file, num_trees, condensed_example))
+            predictions = eval("{}.ensemble_{}({})".format(*eval_triplet_object))
+        elif model_type == OBJECT:
+            predictions = [eval("{}.tree_{}.predict({})".format(*eval_triplet_object))]
         else:
-            predictions = [eval("{}.tree_{}.predict({})".format(python_ensemble_file, model, condensed_example))]
+            predictions = [eval("{}.{}({})".format(*eval_triplet_function))]
         key_string = "" if key_attribute is None else "{},".format(example[key_attribute - 1])
         true_values = get_sublist(target_indices, example)
         for prediction, f in zip(predictions, out_fs):
@@ -207,8 +246,11 @@ if __name__ == "__main__":
                         help="The name of the predictive model. Should be probably one of the following: "
                              "ensemble (if ensemble was built), "
                              "or original, pruned or default (if a single tree was built)")
+    parser.add_argument("-mt", "--model_type", default=OBJECT,
+                        help="Tells whether the models are saved as objects or functions. Possible values "
+                             "are {} and {}".format(OBJECT, FUNCTION))
 
-    parser.print_help()
+    # parser.print_help()
     arguments = parser.parse_args(sys.argv[1:])
 
     ensemble_directory = arguments.ensemble_dir
@@ -223,6 +265,7 @@ if __name__ == "__main__":
     output_files = arguments.output_file.split(",")
     instances_step = int(arguments.instances_step)
     model_name = arguments.model_name
+    m_type = arguments.model_type
 
     first_inst = arguments.first_instance
     last_inst = arguments.last_instance
@@ -231,6 +274,7 @@ if __name__ == "__main__":
     if last_inst != float("inf"):
         last_inst = int(last_inst)
 
-    print("Start of creating predictions for", model_name)
+    # print("Start of creating predictions for", model_name)
     create_predictions(ensemble_directory, ensemble_script, arff_path, descriptive_attributes, key_attribute_index,
-                       target_attributes_str, number_of_trees, output_files, first_inst, last_inst, model_name)
+                       target_attributes_str, number_of_trees, output_files, first_inst, last_inst, model_name,
+                       m_type)
