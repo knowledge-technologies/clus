@@ -6,6 +6,7 @@ Created on Mon Mar 26 14:30:05 2018
 """
 import random
 
+
 random.seed(123)
 
 
@@ -28,8 +29,6 @@ class Statistics:
         In the regression case, this simply returns current averages.
     get_nb_targets()
         Returns the number of targets.
-
-
     """
 
     def fresh_stats(self, number_targets):
@@ -112,7 +111,7 @@ class RegressionStat(Statistics):
 
 class ClassificationStat(Statistics):
     """
-    Implementation of `Statistics` for (multi-target) regression task.
+    Implementation of `Statistics` for (multi-target) classification task.
     """
 
     def __init__(self, predicted_values):
