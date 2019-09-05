@@ -2,15 +2,15 @@ import scipy.stats.stats as stats
 import math
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import List
+from typing import List, Union
 
 
 class Fimp:
     def __init__(self, f_name=None, num_feat=float("inf"), attr_dict=None, header=None):
         self.f_name = f_name
-        self.header = []   # list of lines from the start to the --------- line
-        self.table = []    # [[dataset index, name, ranks, relevances], ...]
-        self.attrs = {}    # {name: [dataset index, ranks, relevances], ...}
+        self.header = []  # list of lines from the start to the --------- line
+        self.table = []  # [[dataset index, name, ranks, relevances], ...]
+        self.attrs = {}  # {name: [dataset index, ranks, relevances], ...}
         if f_name is None:
             assert attr_dict is not None
             self.attrs = attr_dict
@@ -18,7 +18,7 @@ class Fimp:
             for attr in attr_dict:
                 row = [attr_dict[attr][0], attr, attr_dict[attr][1], attr_dict[attr][2]]
                 self.table.append(row)
-            # self.sort_by_relevance()
+                # self.sort_by_relevance()
         else:
             with open(self.f_name) as f:
                 for x in f:
@@ -88,11 +88,40 @@ class Fimp:
                 ind, name, ranks, rels = row
                 print("{}\t{}\t{}\t{}".format(ind, name, ranks, rels), file=f)
 
+    @staticmethod
+    def create_fimp_from_relevances(attribute_relevances,
+                                    attribute_names: Union[List[str], None] = None,
+                                    attribute_indices: Union[List[int], None] = None,
+                                    fimp_header: Union[List[str], None] = None):
+        n = len(attribute_relevances)
+        if attribute_indices is None:
+            attribute_indices = [i + 1 for i in range(n)]
+        if attribute_names is None:
+            attribute_names = ["a{}".format(i) for i in attribute_indices]
+        if fimp_header is None:
+            fimp_header = ["Unknown ranking meta-data", "-" * 100]
+        # compute ranks
+        ranks = [-1 for _ in range(n)]
+        relevances_positions = list(zip(attribute_relevances, range(n)))
+        relevances_positions.sort(reverse=True)
+        rank = 0
+        for i, relevance_position in enumerate(relevances_positions):
+            relevance, position = relevance_position
+            if i == 0 or abs(relevance - relevances_positions[i - 1][0]) > 10 ** -12:  # same tolerance as in clus
+                rank = i + 1
+            ranks[position] = rank
+        d = {a: [i, [rank], [relevance]] for a, i, rank, relevance in zip(attribute_names,
+                                                                          attribute_indices,
+                                                                          ranks,
+                                                                          attribute_relevances)}
+        return Fimp(attr_dict=d, header=fimp_header)
+
 
 def fimp_aggregation(partial_fimp_files, out=None):
     """
     Joins partial ensemble fimps into one.
     """
+
     def initialize_importances_matrix(importances):
         num_attrs = len(importances)
         num_rankings = len(importances[0])
@@ -145,7 +174,7 @@ def fimp_aggregation(partial_fimp_files, out=None):
         rank = -1
         for i, impo_attr in enumerate(ranking_impos):
             impo, attr = impo_attr
-            if i == 0 or abs(impo - ranking_impos[i - 1][0]) > 10**-12:  # same tolerance as in clus
+            if i == 0 or abs(impo - ranking_impos[i - 1][0]) > 10 ** -12:  # same tolerance as in clus
                 rank = i + 1
             matrix_ranks[attr][r] = rank
 
@@ -180,6 +209,7 @@ def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_
                 return 1.0
             else:
                 return absolute_score / normalisation_factor
+
         for f in [f1, f2]:
             f.sort_by_relevance(ranking_index)
         attributes = [f1.get_attr_names(), f2.get_attr_names()]
@@ -340,14 +370,13 @@ def normalize_by_max(scores):
     return list(s / np.max(s))
 
 
+def test_create_fimp_from_relevances():
+    s = [0, 1, 2, 3, 2, 1, 0]
+    f = Fimp.create_fimp_from_relevances(s)
+    f.write_to_file("test.txt")
+
+
 if __name__ == "__main__":
-    target = 12
-    fs = [r"D:\Matej\gyros\experiments\concept_drift\runs\clus\target{}\gyrosTrees200Genie3.fimp".format(target),
-          r"D:\Matej\gyros\experiments\concept_drift\runs\test1_ranking_no_leak\target{}\gyrosTrees200Genie3.fimp".format(target),
-          r"D:\Matej\gyros\experiments\concept_drift\runs\test2_ranking_no_leak\target{}\gyrosTrees200Genie3.fimp".format(target)][1:]
-    cs = ['pink', 'lightblue', 'lightgreen'][:-1]  # "rgbm"
-    ls = ["training", "with gyroscopes", "without gyroscopes"][1:]
-    index = 0
-    feature_importances_side_by_side([Fimp(f_name=f) for f in fs], ls, cs, 0, sort_by_difference=False, normalize=False)
-    # feature_importances_superimposed([Fimp(f_name=f) for f in fs], ls, cs[:2], 0)
-# feature_importances_stacked(123)
+    test_create_fimp_from_relevances()
+
+
