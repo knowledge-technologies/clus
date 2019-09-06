@@ -188,7 +188,8 @@ def fimp_aggregation(partial_fimp_files, out=None):
     return fimp_out
 
 
-def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_measure: str, eps: float = 0.0):
+def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_measure: str, eps: float = 0.0,
+                       step:  Union[str, int] = 1):
     def jaccard(f1: Fimp, f2: Fimp):
         for f in [f1, f2]:
             f.sort_by_relevance(ranking_index)
@@ -214,7 +215,29 @@ def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_
             f.sort_by_relevance(ranking_index)
         attributes = [f1.get_attr_names(), f2.get_attr_names()]
         n = len(attributes[0])
-        results = [-1.0] * n
+
+        if isinstance(step, str):
+            feature_subset_sizes = []
+            if step == "exp":
+                i = 1
+                while i <= n:
+                    feature_subset_sizes.append(i - 1)
+                    i *= 2
+            elif step == "squared":
+                i = 1
+                while i ** 2 <= n:
+                    feature_subset_sizes.append(i ** 2 - 1)
+                    i += 1
+            else:
+                raise ValueError("Wrong step specification: {}".format(step))
+        else:
+            feature_subset_sizes = list(range(0, n, step))
+        if feature_subset_sizes[-1] != n - 1:
+            feature_subset_sizes.append(n - 1)
+
+        n_evaluated_subsets = len(feature_subset_sizes)
+        i_subset = 0
+        results = [-1.0] * n_evaluated_subsets
         current_sets = [set(), set()]
         min_scores = [float("inf")] * 2
         union_set = set()
@@ -225,12 +248,14 @@ def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_
                 min_scores[j] = min(min_scores[j], s)
                 if max(min_scores) <= eps:
                     # for every i1 >= i, we have results[i1] = 1
-                    for i1 in range(i, n):
+                    for i1 in range(i_subset, n_evaluated_subsets):
                         results[i1] = 1.0
                     print("Smartly skipping the features with ranks >= {}".format(i))
                     return results
                 current_set.add(feature)
                 union_set.add(feature)
+            if i != feature_subset_sizes[i_subset]:
+                continue
             union = sorted(union_set)
             scores = [[-1.0, -1.0] for _ in union]
             for i1, feature in enumerate(union):
@@ -242,7 +267,8 @@ def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_
             for pair in scores:
                 fuzzy_intersection += min(pair)
                 fuzzy_union += max(pair)  # should always equal 1.0
-            results[i] = fuzzy_intersection / fuzzy_union
+            results[i_subset] = fuzzy_intersection / fuzzy_union
+            i_subset += 1
         return results
 
     def correlation(f1: Fimp, f2: Fimp):
@@ -385,9 +411,9 @@ def test_create_fimp_from_relevances():
 def test_fuzzy_jacard():
     f1 = Fimp.create_fimp_from_relevances([1.0, 0.8, 0.7, 0, 0, 0])
     f2 = Fimp.create_fimp_from_relevances([1.0, 0.7, 0.7, 0.8, 0, 0])
-    fuzzy_jaccard1 = compute_similarity(f1, f2, 0, "fuzzy_jaccard", eps=-1.0)
-    fuzzy_jaccard2 = compute_similarity(f1, f2, 0, "fuzzy_jaccard")
-    # print(fuzzy_jaccard1, fuzzy_jaccard2)
+    fuzzy_jaccard1 = compute_similarity(f1, f2, 0, "fuzzy_jaccard", eps=-1.0, step=3)
+    fuzzy_jaccard2 = compute_similarity(f1, f2, 0, "fuzzy_jaccard", step=3)
+    print(fuzzy_jaccard1, fuzzy_jaccard2)
 
 if __name__ == "__main__":
     test_fuzzy_jacard()
