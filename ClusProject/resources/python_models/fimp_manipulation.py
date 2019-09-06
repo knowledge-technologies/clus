@@ -3,7 +3,7 @@ import math
 import matplotlib.pyplot as plt
 import numpy as np
 from typing import List, Union
-
+from tqdm import trange
 
 class Fimp:
     def __init__(self, f_name=None, num_feat=float("inf"), attr_dict=None, header=None):
@@ -188,7 +188,7 @@ def fimp_aggregation(partial_fimp_files, out=None):
     return fimp_out
 
 
-def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_measure: str):
+def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_measure: str, eps: float = 0.0):
     def jaccard(f1: Fimp, f2: Fimp):
         for f in [f1, f2]:
             f.sort_by_relevance(ranking_index)
@@ -218,11 +218,17 @@ def compute_similarity(fimp1: Fimp, fimp2: Fimp, ranking_index: int, similarity_
         current_sets = [set(), set()]
         min_scores = [float("inf")] * 2
         union_set = set()
-        for i in range(n):
+        for i in trange(n):
             for j, (current_set, attributes_ranking, f) in enumerate(zip(current_sets, attributes, [f1, f2])):
                 feature = attributes_ranking[i]
                 s = f.get_relevance(feature, ranking_index)
                 min_scores[j] = min(min_scores[j], s)
+                if max(min_scores) <= eps:
+                    # for every i1 >= i, we have results[i1] = 1
+                    for i1 in range(i, n):
+                        results[i1] = 1.0
+                    print("Smartly skipping the features with ranks >= {}".format(i))
+                    return results
                 current_set.add(feature)
                 union_set.add(feature)
             union = sorted(union_set)
@@ -376,7 +382,14 @@ def test_create_fimp_from_relevances():
     f.write_to_file("test.txt")
 
 
+def test_fuzzy_jacard():
+    f1 = Fimp.create_fimp_from_relevances([1.0, 0.8, 0.7, 0, 0, 0])
+    f2 = Fimp.create_fimp_from_relevances([1.0, 0.7, 0.7, 0.8, 0, 0])
+    fuzzy_jaccard1 = compute_similarity(f1, f2, 0, "fuzzy_jaccard", eps=-1.0)
+    fuzzy_jaccard2 = compute_similarity(f1, f2, 0, "fuzzy_jaccard")
+    # print(fuzzy_jaccard1, fuzzy_jaccard2)
+
 if __name__ == "__main__":
-    test_create_fimp_from_relevances()
+    test_fuzzy_jacard()
 
 
