@@ -78,9 +78,16 @@ public class ClusLogger {
 		l.setLevel(Level.ALL);
 		return l;
 	}
+	
+	private static void flush() {
+		for (Handler h : m_MainLogger.getHandlers()) {
+        	h.flush();
+        }
+	}
 
     public static final void info(String msg) {
         m_MainLogger.info(msg);
+        flush();
     }
     
     public static final void info(double d) {
@@ -93,11 +100,13 @@ public class ClusLogger {
 
     public static final void severe(String msg) {
         m_MainLogger.severe(msg);
+        flush();
     }
 
 
     public static final void fine(String msg) {
         m_MainLogger.fine(msg);
+        flush();
     }
     
     public static final void fine() {
@@ -107,5 +116,6 @@ public class ClusLogger {
 
     public static final void finer(String msg) {
         m_MainLogger.finer(msg);
+        flush();
     }
 }
