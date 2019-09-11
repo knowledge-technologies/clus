@@ -7,6 +7,8 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.LogManager;
 import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
+import java.util.logging.StreamHandler;
 
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 
@@ -50,17 +52,24 @@ public class ClusLogger {
 		}
 
 		m_MainLogger = Logger.getLogger("");
+		
 		Handler[] handlers = m_MainLogger.getHandlers();
-		if (handlers[0] instanceof ConsoleHandler) {
-			handlers[0].setLevel(Level.ALL);
+		for (Handler h : handlers) {
+			m_MainLogger.removeHandler(h);
 		}
+//		if (handlers[0] instanceof ConsoleHandler) {
+//			handlers[0].setLevel(Level.ALL);
+			
+//		}
 
+		m_MainLogger.addHandler(new StreamHandler(System.out, new SimpleFormatter()));
 		m_MainLogger.setLevel(Level.ALL);
 	}
 
 	private static Logger initialize_simple() {
 		System.setProperty("java.util.logging.SimpleFormatter.format", "[%1$tF %1$tT] [%4$s] %5$s %n");
 		Logger l = Logger.getLogger("");
+		l.addHandler(new StreamHandler(System.out, new SimpleFormatter()));
 		Handler[] handlers = l.getHandlers();
 		if (handlers[0] instanceof ConsoleHandler) {
 			handlers[0].setLevel(Level.ALL);
@@ -69,9 +78,16 @@ public class ClusLogger {
 		l.setLevel(Level.ALL);
 		return l;
 	}
+	
+	private static void flush() {
+		for (Handler h : m_MainLogger.getHandlers()) {
+        	h.flush();
+        }
+	}
 
     public static final void info(String msg) {
         m_MainLogger.info(msg);
+        flush();
     }
     
     public static final void info(double d) {
@@ -84,11 +100,13 @@ public class ClusLogger {
 
     public static final void severe(String msg) {
         m_MainLogger.severe(msg);
+        flush();
     }
 
 
     public static final void fine(String msg) {
         m_MainLogger.fine(msg);
+        flush();
     }
     
     public static final void fine() {
@@ -98,5 +116,6 @@ public class ClusLogger {
 
     public static final void finer(String msg) {
         m_MainLogger.finer(msg);
+        flush();
     }
 }
