@@ -295,6 +295,16 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         m_DiscrMean = meantuple.getVectorBooleanNodeAndAncestors(m_Hier);
         performSignificanceTest();
     }
+        
+    public String getArrayOfStatisticExtended() {
+    	String[] labelThresholdPairs = new String[m_Means.length];
+    	for (int i = 0; i < m_Means.length; i++) {
+    		String label = m_Hier.getTermAt(i).toStringHuman(m_Hier);
+    		double p = m_Means[i];
+    		labelThresholdPairs[i] = String.format("('%s', %f)", label, p);
+    	}
+        return  "[" + String.join(",", labelThresholdPairs) + "]";
+    }
 
 
     @Override

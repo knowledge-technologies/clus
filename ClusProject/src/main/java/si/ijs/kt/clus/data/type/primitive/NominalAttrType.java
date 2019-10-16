@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.Hashtable;
 import java.util.StringTokenizer;
 
+import org.apache.commons.lang3.ArrayUtils;
+
 import si.ijs.kt.clus.algo.kNN.distance.valentin.NominalStatistic;
 import si.ijs.kt.clus.data.cols.ColTarget;
 import si.ijs.kt.clus.data.cols.attribute.ClusAttribute;
@@ -48,7 +50,10 @@ public class NominalAttrType extends ClusAttrType {
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-    public final static String[] BINARY_NAMES = { "1", "0" };
+    public final static String POSITIVE_CLASS = "1";
+    public final static String NEGATIVE_CLASS = "0";
+    public final static String[] BINARY_NAMES = { POSITIVE_CLASS, NEGATIVE_CLASS };
+    public final static int POSITIVE_CLASS_INDEX = ArrayUtils.indexOf(BINARY_NAMES, POSITIVE_CLASS);
     private NominalStatistic m_StatNominal;
 
     /**

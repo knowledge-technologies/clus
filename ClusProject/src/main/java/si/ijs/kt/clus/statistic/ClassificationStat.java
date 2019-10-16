@@ -1109,12 +1109,19 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     }
     
-    public String getArrayOfStatisticExtended() {
+    public String getArrayOfStatisticExtended(boolean isMLC) {
     	String[] majorityClasses = new String[m_NbTarget];
     	for (int i = 0; i < m_NbTarget; i++) {
     		NominalAttrType a = m_Attrs[i];
-    		int maj_ind = m_MajorityClasses[i];
-    		String maj_str = a.getValue(maj_ind);
+    		String maj_str;
+    		int maj_ind;
+    		if (isMLC) {
+    			maj_str = a.getName();
+    			maj_ind = NominalAttrType.POSITIVE_CLASS_INDEX;
+    		} else {
+    			maj_ind = m_MajorityClasses[i];
+        		maj_str = a.getValue(maj_ind);
+    		}
     		double p = m_ClassCounts[i][maj_ind] / m_SumWeights[i];
     		majorityClasses[i] = String.format("('%s', %f)", maj_str, p);
     	}
