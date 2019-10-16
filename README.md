@@ -1,4 +1,4 @@
-# CLUS Software from Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia
+# CLUS Software from Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia.
 
 CLUS is a decision tree and rule induction software that implements the predictive clustering framework.
 This framework combines clustering with predictive modelling and allows for a natural extension to more complex prediction tasks. 
