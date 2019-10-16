@@ -5,6 +5,7 @@ import numpy as np
 from typing import List, Union
 from tqdm import trange
 
+
 class Fimp:
     def __init__(self, f_name=None, num_feat=float("inf"), attr_dict=None, header=None):
         self.f_name = f_name
