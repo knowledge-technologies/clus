@@ -175,6 +175,14 @@ public class ClusStatManager implements Serializable {
             return this == HIERARCHICAL || this == HIER_CLASS_AND_REG;
         }
     }
+    
+    public enum TargetType{
+    	CLASSIFICATION,  // single- or multi-target
+    	REGRESSION,      // single- or multi-target
+    	MULTI_LABEL_CLASSIFICATION,
+    	HIERACHICAL_MULTI_LABEL_CLASSIFICATION,
+    	OTHER            // used since the list of values above is not exhaustive, most probably
+    }
 
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
@@ -219,12 +227,56 @@ public class ClusStatManager implements Serializable {
     }
 
 
+
     public ClusStatManager(ClusSchema schema, Settings sett, boolean docheck) throws ClusException, IOException {
         m_Schema = schema;
         m_Settings = sett;
         if (docheck) {
             check();
         }
+    }
+    
+    public TargetType getTargetType() {
+    	// test MLC
+    	if (getSettings().getMLC().getSection().isEnabled()) {
+    		return TargetType.MULTI_LABEL_CLASSIFICATION;
+    	}
+    	ClusAttrType[] targets = m_Schema.getAllAttrUse(AttributeUseType.Target);
+    	// test HMLC
+    	boolean isHMLC = true;
+    	for (ClusAttrType a : targets) {
+    		if (!(a instanceof ClassesAttrType)) {
+    			isHMLC = false;
+    			break;
+    		}
+    	}
+    	if (isHMLC) {
+    		return TargetType.HIERACHICAL_MULTI_LABEL_CLASSIFICATION;
+    	}
+    	// test classification
+    	boolean isClassification = true;
+    	for (ClusAttrType a : targets) {
+    		if (!(a instanceof NominalAttrType)) {
+    			isClassification = false;
+    			break;
+    		}
+    	}
+    	if (isClassification) {
+    		return TargetType.CLASSIFICATION;
+    	}
+    	// test regression
+    	boolean isRegression = true;
+    	for (ClusAttrType a : targets) {
+    		if (!(a instanceof NumericAttrType)) {
+    			isRegression = false;
+    			break;
+    		}
+    	}
+    	if (isRegression) {
+    		return TargetType.REGRESSION;
+    	}
+    	// return other ...
+    	return TargetType.OTHER;
     }
 
 

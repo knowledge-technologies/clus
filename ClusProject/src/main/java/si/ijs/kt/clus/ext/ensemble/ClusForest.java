@@ -782,59 +782,27 @@ public class ClusForest implements ClusModel, Serializable {
     }
 
 
-    public static void writePythonAggregation(PrintWriter wrtr, String treeFile, ClusStatManager.Mode mode) {
+    public static void writePythonAggregation(PrintWriter wrtr, String treeFile, ClusStatManager.TargetType targetType) {
         wrtr.println(String.format("import %s", treeFile));
-        wrtr.print("\n\n"); // two empty lines
         String aggregation;
-        switch (mode) {
-            case CLASSIFY:
-                aggregation =
-                		"def aggregate(predictions, sizes=None):\n" +
-                		"    n = len(predictions)\n" +
-            			"    m = len(predictions[0])\n" +
-            			"    if sizes is None:\n" + 
-                		"        sizes = [n]\n" +
-                		"    aggregated = []\n" +
-                		"    counts = [{} for _ in range(m)]\n" +
-                		"    size_index = 0\n" + 
-            			"    for i in range(n):\n" +
-            			"        for j in range(m):\n" +
-            			"            pred = predictions[i][j]\n" +
-            			"            if pred not in counts[j]:\n" +
-            			"                counts[j][pred] = 0\n" +
-            			"            counts[j][pred] += 1\n" +
-            			"        if sizes[size_index] == i + 1:\n" + 
-                		"            aggregated.append([max(counts[j], key=lambda pred: counts[j][pred]) for j in range(m)])\n" + 
-                		"            size_index += 1\n" + 
-            			"    return aggregated";
+        switch (targetType) {
+            case CLASSIFICATION:
+                aggregation = "aggregate_classification";
                 break;
             case REGRESSION:
-                aggregation =
-                		"def aggregate(predictions, sizes=None):\n" + 
-                		"    n = len(predictions)\n" + 
-                		"    m = len(predictions[0])\n" + 
-                		"    if sizes is None:\n" + 
-                		"        sizes = [n]\n" + 
-                		"    sums = [0 for _ in range(m)]\n" + 
-                		"    aggregated = []\n" + 
-                		"    size_index = 0\n" + 
-                		"    for i in range(n):\n" + 
-                		"        for j in range(m):\n" + 
-                		"            sums[j] += predictions[i][j]\n" + 
-                		"        if sizes[size_index] == i + 1:\n" + 
-                		"            aggregated.append([sums[j] / sizes[size_index] for j in range(m)])\n" + 
-                		"            size_index += 1\n" + 
-                		"    return aggregated";
+                aggregation = "aggregate_regression";
                 break;
+            case MULTI_LABEL_CLASSIFICATION:
+            case HIERACHICAL_MULTI_LABEL_CLASSIFICATION:
+            	aggregation = "aggregate_multi_label";
+            	break;
+            case OTHER:
             default:
                 System.err.println("Unsupported mode, you will have to write your own aggregation function.");
-                aggregation =
-                		"def aggregate(predictions):\n" +
-                		"    return None";
+                aggregation = "aggregation_other";
         }
-        wrtr.println(aggregation);
-        wrtr.println();
-        wrtr.println();
+        wrtr.println(String.format("from prediction_aggregators import %s as aggregate", aggregation));
+        wrtr.print("\n\n"); // two empty lines
     }
 
 

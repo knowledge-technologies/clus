@@ -122,6 +122,12 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
                     <include>fimp_manipulation.py</include>
                 </includes>
             </resource>
+            <resource>
+                <directory>${project.basedir}/resources/python_models/</directory>
+                <includes>
+                    <include>prediction_aggregators.py</include>
+                </includes>
+            </resource>
 		</resources>
 		<plugins>
 			<plugin>

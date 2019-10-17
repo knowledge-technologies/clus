@@ -112,6 +112,7 @@ class RegressionStat(Statistics):
 class ClassificationStat(Statistics):
     """
     Implementation of `Statistics` for (multi-target) classification task.
+    That includes (hierarchical) multi-label classification.
     """
 
     def __init__(self, predicted_values):
@@ -132,20 +133,19 @@ class ClassificationStat(Statistics):
 
     def fresh_stats(self, number_targets):
         """
-        Creates a `RegressionStat` object with zeros as current prediction for each target.
+        Creates a `ClassificationStat` object with zeros as current prediction for each target.
         """
         return ClassificationStat([(None, -1.0) for _ in range(number_targets)])
 
     def add_another_stats(self, other, other_weight):
         """
-        Adds the prediction :math:`o_i` of the other `RegressionStat` object to the current prediction :math:`c_i`,
-        for all i, :math:`0\leq i < n`, where :math:`n` is the number of targets. New predictions are defined as
-        :math:`w\; o_i + c_i`, where :math:`i` is given as parameter `other_weight`.
+        Finds the majority class between the current and other prediction.
+        Compares the thresholds. The other threshold is multiplied by the other_weight.
 
         Parameters
         ----------
-        other : RegressionStat
-            Another regression statistic
+        other : ClassificationStat
+            Another classification statistic
         other_weight: float
             Weight for the other statistic.
         """
