@@ -320,11 +320,10 @@ public class SettingsEnsemble extends SettingsBase {
             value = "0";
         }
 
-        if (value.equalsIgnoreCase("SQRT")) {
+        if (value.equalsIgnoreCase("SQRT") || value.equalsIgnoreCase("0")) {
             fsize = (int) Math.ceil(Math.sqrt(ubound));// upper bound of sqrt
         }
-        else if (value.equalsIgnoreCase("LOG") || value.equalsIgnoreCase("0")) {// the 0 is to keep the previous
-                                                                                // setting
+        else if (value.equalsIgnoreCase("LOG") ) {
             fsize = (int) Math.ceil(Math.log(ubound) / Math.log(2));// upper bound of log2
         }
         else if (value.equalsIgnoreCase("RANDOM")) { // sample independently at random
