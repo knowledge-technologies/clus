@@ -242,7 +242,7 @@ public class SettingsEnsemble extends SettingsBase {
 
     public INIFileNominalOrIntOrVector getNbBaggingSets() {
         if (!m_NbBags.isVector() && (m_NbBags.getInt() == 0))
-            m_NbBags.setInt(10);
+            m_NbBags.setInt(100);
         return m_NbBags;
     }
 

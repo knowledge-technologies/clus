@@ -527,13 +527,19 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
         TupleIterator train_iterator = m_OptMode ? cr.getTrainIter() : null; // = train set iterator
         TupleIterator test_iterator = m_OptMode ? cr.getTestIter() : null; // = test set iterator
+        
+        int max_number_of_bags = m_NbMaxBags;
+        if (cr.getIsInternalXValRun()) {
+        	// SSL internal X-val
+        	max_number_of_bags = m_Schema.getSettings().getSSL().getNumberOfTreesSupervisionOptimisation(m_NbMaxBags);
+        }
 
         Random bagSeedGenerator = new Random(getSettings().getGeneral().getRandomSeed());
-        int[] seeds = new int[m_NbMaxBags];
-        for (int i = 0; i < m_NbMaxBags; i++) {
+        int[] seeds = new int[max_number_of_bags];
+        for (int i = 0; i < max_number_of_bags; i++) {
             seeds[i] = bagSeedGenerator.nextInt();
         }
-        for (int i = 1; i <= m_NbMaxBags; i++) {
+        for (int i = 1; i <= max_number_of_bags; i++) {
             // long one_bag_time = ResourceInfo.getTime();
             if (getSettings().getGeneral().getVerbose() > 0)
                 ClusLogger.info("Bag: " + i);
@@ -570,7 +576,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             }
 
             // Valid only when test set is supplied
-            if (m_OptMode && (i != m_NbMaxBags) && checkToOutEnsemble(i)) {
+            if (m_OptMode && (i != max_number_of_bags) && checkToOutEnsemble(i)) {
 
                 // crSingle.setInductionTime(summ_time);
                 // postProcessForest(crSingle);
@@ -592,13 +598,19 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         for (int i = 0; i < m_OForests.length; i++) {
             m_OForests[i].setEnsembleROSForestInfo(new ClusROSForestInfo(getSettings().getEnsemble().getEnsembleROSAlgorithmType(), getSettings().getEnsemble().getEnsembleROSVotingType(), m_Schema.getNbTargetAttributes()));
         }
+        
+        int max_number_of_bags = m_NbMaxBags;
+        if (cr.getIsInternalXValRun()) {
+        	// SSL internal X-val
+        	max_number_of_bags = m_Schema.getSettings().getSSL().getNumberOfTreesSupervisionOptimisation(m_NbMaxBags);
+        }
 
         Random bagSeedGenerator = new Random(getSettings().getGeneral().getRandomSeed());
-        int[] seeds = new int[m_NbMaxBags];
-        for (int i = 0; i < m_NbMaxBags; i++) {
+        int[] seeds = new int[max_number_of_bags];
+        for (int i = 0; i < max_number_of_bags; i++) {
             seeds[i] = bagSeedGenerator.nextInt();
         }
-        for (int i = 1; i <= m_NbMaxBags; i++) {
+        for (int i = 1; i <= max_number_of_bags; i++) {
             // long one_bag_time = ResourceInfo.getTime();
             if (getSettings().getGeneral().getVerbose() > 0)
                 ClusLogger.info("Bag: " + i);
@@ -636,7 +648,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 // m_DForest.addModelToForest(defmod);
             }
             // Valid only when test set is supplied
-            if (m_OptMode && (i != m_NbMaxBags) && checkToOutEnsemble(i)) {
+            if (m_OptMode && (i != max_number_of_bags) && checkToOutEnsemble(i)) {
                 // crSingle.setInductionTime(summ_time);
                 // postProcessForest(crSingle);
                 // crSingle.setTestSet(cr.getTestIter());
@@ -689,8 +701,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         // bagSelections is either -1, 0, a value in [1,Iterations], or 2 values in [1,Iterations]
 
         Random bagSeedGenerator = new Random(getSettings().getGeneral().getRandomSeed());
-        int[] seeds = new int[m_NbMaxBags];
-        for (int i = 0; i < m_NbMaxBags; i++) {
+        
+        int max_number_of_bags = m_NbMaxBags;
+        if (cr.getIsInternalXValRun()) {
+        	// SSL internal X-val
+        	max_number_of_bags = m_Schema.getSettings().getSSL().getNumberOfTreesSupervisionOptimisation(m_NbMaxBags);
+        }
+        
+        int[] seeds = new int[max_number_of_bags];
+        for (int i = 0; i < max_number_of_bags; i++) {
             seeds[i] = bagSeedGenerator.nextInt();
         }
 
@@ -703,7 +722,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             // normal bagging procedure
             m_Timer.reset();
             m_Timer.start();
-            for (int i = 1; i <= m_NbMaxBags; i++) {
+            for (int i = 1; i <= max_number_of_bags; i++) {
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
 
                 if (nbUnlabeled > 0) {
@@ -797,7 +816,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
                     postProcessForest(crSingle);
                     if (sett.shouldEstimateOOB()) {
-                        if (i == m_NbMaxBags) {
+                        if (i == max_number_of_bags) {
                             m_OOBEstimation.postProcessForestForOOBEstimate(crSingle, oob_total, (RowData) cr.getTrainingSet(), m_BagClus, "");
                         }
                         else {

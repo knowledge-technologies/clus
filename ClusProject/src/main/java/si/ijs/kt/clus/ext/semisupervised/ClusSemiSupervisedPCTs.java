@@ -132,6 +132,9 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 						}
 						foldRun.setTrainingSet(trainingSet);
 					}
+					
+					// take care of number of trees in xval: may have 0 influence when building a single tree
+					adjustNumberOfTrees(foldRun);
 
 					// Initialize normalization weights
 					foldRun.getStatManager().initNormalizationWeights(
@@ -190,6 +193,9 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 
 			// merge unlabeled data with the training set, if paramOpt was not performed,
 			// merging was already performed in partitionData
+			
+			// Matej and Tomaz deduced that actually, merging is not necessary if w = 1,
+			// since the unlabeled examples are given weight 0 later on ...
 			if (bestWeight != 1) {
 				RowData trainingSet = (RowData) cr.getTrainingSet();
 
@@ -395,4 +401,19 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 		}
 	}
 
+	/**
+	 * Notifies the foldRun (used in ClusEnsembleInduce) that this is an internal xval run, so different number of trees may be built.
+	 * 
+	 * Due to a stupid implementation of n_Bags being a static variable, we are forced to use a workaround.
+	 * @param foldRun
+	 */
+	private void adjustNumberOfTrees(ClusRun foldRun) {
+		// This is what we would like to do:
+//		int[] ts_in_general = m_Schema.getSettings().getEnsemble().getNbBaggingSets().getIntVectorSorted();
+//		int t_in_general = ts_in_general[ts_in_general.length - 1];
+//		int n_trees_xval = m_Schema.getSettings().getSSL().getNumberOfTreesSupervisionOptimisation(t_in_general);
+//		foldRun.getStatManager().getSettings().getEnsemble().setNbBags(n_trees_xval);
+		// This is what we actually do:
+		foldRun.setIsInternalXValRun(true);
+	}
 }

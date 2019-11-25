@@ -16,7 +16,6 @@ public class SettingsSSL extends SettingsBase {
 
     private static final long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
-
     public SettingsSSL(int position) {
         super(position, "SemiSupervised");
     }
@@ -217,6 +216,10 @@ public class SettingsSSL extends SettingsBase {
     private INIFileInt m_SSL_InternalFolds;
     /** How many folds for internal cross validation for optimizing w */
     private INIFileString m_SSL_WeightScoresFile;
+    
+    private INIFileInt m_SSL_SupervisionOptimisationTrees;
+    private static final int DEFAULT_SUPERVISION_OPT_TREES = 0;  // something <= 0 that does not make sense otherwise
+    private static final int MAX_SUPERVISION_OPT_TREES = 50;
 
 
     /** File where results for each candidate w will be written during optimization */
@@ -239,6 +242,15 @@ public class SettingsSSL extends SettingsBase {
 
     public void setSemiSupervisedMode(boolean value) {
         m_SemiSupervisedMode = value;
+    }
+    
+    /**
+     * If the number of trees for internal cross-validation was specified, this number is returned.
+     * Otherwise, the minimum of the ensemble size setting and MAX_SUPERVISION_OPT_TREES is returned.
+     */
+    public int getNumberOfTreesSupervisionOptimisation(int nIterationsActually) {
+    	int t = m_SSL_SupervisionOptimisationTrees.getValue();
+    	return t == DEFAULT_SUPERVISION_OPT_TREES ? Math.min(MAX_SUPERVISION_OPT_TREES, nIterationsActually) : t;
     }
 
 
@@ -415,5 +427,8 @@ public class SettingsSSL extends SettingsBase {
         temp.setDoubleArray(new double[] { 0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1 });
         m_Section.addNode(m_SSL_PossibleWeights = temp);
         // end added by Tomaz
+        
+        // matejp
+        m_Section.addNode(m_SSL_SupervisionOptimisationTrees = new INIFileInt("IterationsSupervisionOptimisation", -1));
     }
 }

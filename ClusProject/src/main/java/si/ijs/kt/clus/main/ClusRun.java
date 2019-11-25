@@ -48,6 +48,8 @@ public class ClusRun extends ClusModelInfoList {
     protected TupleIterator m_Test;
     protected TupleIterator m_UnlabeledData;
     protected ClusSummary m_Summary;
+    
+    private boolean m_IsInternalXValRun = false;
 
     ClusReadWriteLock m_Lock = new ClusReadWriteLock();
 
@@ -70,6 +72,7 @@ public class ClusRun extends ClusModelInfoList {
         m_UnlabeledData = other.m_UnlabeledData;
         m_Summary = other.m_Summary.getSummaryClone();
         setModels(other.cloneModels());
+        m_IsInternalXValRun = other.m_IsInternalXValRun;
     }
 
 
@@ -324,4 +327,17 @@ public class ClusRun extends ClusModelInfoList {
         deleteData();
         deleteModels();
     }
+    
+    /***************************************************************************
+     * Other
+     ***************************************************************************/
+    
+    public boolean getIsInternalXValRun() {
+    	return m_IsInternalXValRun;
+    }
+    
+    public void setIsInternalXValRun(boolean v) {
+    	m_IsInternalXValRun = v;
+    }
+    
 }
