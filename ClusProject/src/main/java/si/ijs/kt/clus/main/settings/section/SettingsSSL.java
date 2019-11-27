@@ -429,6 +429,6 @@ public class SettingsSSL extends SettingsBase {
         // end added by Tomaz
         
         // matejp
-        m_Section.addNode(m_SSL_SupervisionOptimisationTrees = new INIFileInt("IterationsSupervisionOptimisation", -1));
+        m_Section.addNode(m_SSL_SupervisionOptimisationTrees = new INIFileInt("IterationsSupervisionOptimisation", DEFAULT_SUPERVISION_OPT_TREES));
     }
 }
