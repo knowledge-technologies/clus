@@ -1740,7 +1740,7 @@ public class ClusNode extends MyNode implements ClusModel {
 			statArg = String.format("prediction_statistics=RegressionStat(%s)",
 			        leaf.m_TargetStat.getArrayOfStatistic());
 		} else if (m_TargetStat instanceof ClassificationStat) {
-			boolean isMLC = getClusteringStat().getSettings().getMLC().getSection().isEnabled();
+			boolean isMLC = getTargetStat().getSettings().getMLC().getSection().isEnabled();
 			statArg = String.format("prediction_statistics=ClassificationStat(%s)",
 			        ((ClassificationStat) leaf.m_TargetStat).getArrayOfStatisticExtended(isMLC));
 		} else if (m_TargetStat instanceof WHTDStatistic) {
