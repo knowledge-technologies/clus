@@ -117,6 +117,37 @@ class Fimp:
                                                                           attribute_relevances)}
         return Fimp(attr_dict=d, header=fimp_header)
 
+    def create_extended_feature_weights(self, ranking_index=0, normalise=False):
+        return Fimp._create_extended_feature_weights_static(self.get_attr_indices(),
+                                                            self.get_relevances(ranking_index),
+                                                            self.f_name,
+                                                            normalise)
+
+    @staticmethod
+    def _create_extended_feature_weights_static(attribute_indices, attribute_relevances, ranking_file, normalise):
+        n = max(attribute_indices)
+        ws = [0] * n
+        for attribute_index, w in zip(attribute_indices, attribute_relevances):
+            ws[attribute_index - 1] = max(0, w)
+        if normalise:
+            w_max = max(ws)
+            if w_max == 0.0:
+                ws = [1.0] * len(ws)
+                print("Only default models in", ranking_file)
+            elif w_max == float("inf"):
+                ws = [0.0 if w < w_max else 1.0 for w in ws]
+                print("Maximal weight = inf, for", ranking_file)
+            else:
+                ws = [w / w_max for w in ws]
+        return ws
+
+    @staticmethod
+    def create_extended_feature_weights_dict(feature_ranking, normalise=True):
+        pairs = sorted(feature_ranking.items())
+        ranking_file = "no file"
+        return Fimp._create_extended_feature_weights_static([p[0] for p in pairs], [p[1] for p in pairs], ranking_file,
+                                                            normalise)
+
 
 def fimp_aggregation(partial_fimp_files, out=None):
     """
