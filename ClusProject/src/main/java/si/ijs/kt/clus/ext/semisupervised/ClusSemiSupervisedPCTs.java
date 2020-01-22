@@ -34,6 +34,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 	ClusModel m_Model;
 	double[] m_ParameterValues; // Which values to try
 	int m_InternalXValFolds; // Number of internal XVal folds
+	boolean m_IsInternalXVal; // Do we run internal xval?
 	boolean m_Pruning; // Pruning when determining parameter score or not?
 	String m_ScoresPath; // Where to save weight scores
 	boolean m_SaveScores; // Should the scores be saved?
@@ -59,7 +60,11 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 		m_InternalXValFolds = sett.getSSLInternalFolds();
 		m_Pruning = sett.getSSLPruningWhenTuning();
 		m_ScoresPath = sett.getSSLWeightScoresFile();
-		m_SaveScores = (!m_ScoresPath.equalsIgnoreCase("NO"));
+		m_SaveScores = (!m_ScoresPath.equalsIgnoreCase("NO"));   // slow clap for hard-coded values for Tomaz :)
+		m_IsInternalXVal = sett.shouldForceInternalXVal() || m_ParameterValues.length > 1;
+		if (m_IsInternalXVal && !m_SaveScores) {
+			ClusLogger.info("It does not make any sense to force running the internal XVAL and not saving the score. Just saying.");
+		}
 		m_PercentageLabeled = sett.getPercentageLabeled() / 100.0;
 	}
 
@@ -106,7 +111,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 
 		double bestWeight = 0;
 
-		if (m_ParameterValues.length > 1) {
+		if (m_IsInternalXVal) {
 			XValMainSelection xvalmain = new XValRandomSelection(cr.getTrainingSet().getNbRows(), m_InternalXValFolds);
 
 			for (double weight : m_ParameterValues) {
@@ -305,7 +310,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 			 * just set their weights to 0, they will anyway be selected in bootstrapping
 			 * process
 			 */
-			if (m_ParameterValues.length > 1) {
+			if (m_IsInternalXVal) {
 				/*
 				 * we should do parameter optimization, we need unlabeled data in a separate set
 				 */
@@ -353,7 +358,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 			 * FIXME: if this is used with HMLC, slightly different results may occur, than
 			 * if unlabeled data are provided in train set, I did not manage to find out why
 			 */
-			if (m_ParameterValues.length > 1) {
+			if (m_IsInternalXVal) {
 				/*
 				 * we should do parameter optimization, we need unlabeled data in a separate set
 				 */
@@ -383,7 +388,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 
 		if (tempTrainingSet.getNbUnlabeled() > 0) {
 			/* if unlabeled examples are in the training set */
-			if (m_ParameterValues.length > 1) {
+			if (m_IsInternalXVal) {
 				/*
 				 * we should do parameter optimization, we need unlabeled data in a separate set
 				 */

@@ -216,10 +216,12 @@ public class SettingsSSL extends SettingsBase {
     private INIFileInt m_SSL_InternalFolds;
     /** How many folds for internal cross validation for optimizing w */
     private INIFileString m_SSL_WeightScoresFile;
+    /** Should force the internal cross-validation for optimizing w if only one candidate weight chosen? (in order to obtain the score for the weight)  */
+    private INIFileBool m_SSL_ForceInternalFolds;
     
     private INIFileInt m_SSL_SupervisionOptimisationTrees;
-    private static final int DEFAULT_SUPERVISION_OPT_TREES = 0;  // something <= 0 that does not make sense otherwise
-    private static final int MAX_SUPERVISION_OPT_TREES = 50;
+    private static final int DEFAULT_SUPERVISION_OPT_TREES = 0;  // something <= 0 that does not make sense
+    
 
 
     /** File where results for each candidate w will be written during optimization */
@@ -250,7 +252,7 @@ public class SettingsSSL extends SettingsBase {
      */
     public int getNumberOfTreesSupervisionOptimisation(int nIterationsActually) {
     	int t = m_SSL_SupervisionOptimisationTrees.getValue();
-    	return t == DEFAULT_SUPERVISION_OPT_TREES ? Math.min(MAX_SUPERVISION_OPT_TREES, nIterationsActually) : t;
+    	return t == DEFAULT_SUPERVISION_OPT_TREES ? nIterationsActually : t;
     }
 
 
@@ -261,6 +263,10 @@ public class SettingsSSL extends SettingsBase {
 
     public String getSSLWeightScoresFile() {
         return m_SSL_WeightScoresFile.getValue();
+    }
+    
+    public boolean shouldForceInternalXVal() {
+    	return m_SSL_ForceInternalFolds.getValue();
     }
 
 
@@ -430,5 +436,7 @@ public class SettingsSSL extends SettingsBase {
         
         // matejp
         m_Section.addNode(m_SSL_SupervisionOptimisationTrees = new INIFileInt("IterationsSupervisionOptimisation", DEFAULT_SUPERVISION_OPT_TREES));
+        m_Section.addNode(m_SSL_ForceInternalFolds = new INIFileBool("ForceInternalXValOptimisation", false));
+        
     }
 }
