@@ -221,7 +221,12 @@ public class SettingsSSL extends SettingsBase {
     
     private INIFileInt m_SSL_SupervisionOptimisationTrees;
     private static final int DEFAULT_SUPERVISION_OPT_TREES = 0;  // something <= 0 that does not make sense
-    
+    /**
+     * If yes, the values are imputed by using kNN: this is concordance with the clustering hypothesis ...
+     * The other relevant settings (number of neighbours, distance measure, neighbour files etc.) are taken from the kNN section.
+     * Note that if the neighbours are not computed for all the examples with the missing values, the forest or whatever model will not be grown.
+     */
+    private INIFileBool m_SSL_ImputeMissingTargetValues;
 
 
     /** File where results for each candidate w will be written during optimization */
@@ -234,6 +239,10 @@ public class SettingsSSL extends SettingsBase {
      */
     public boolean shouldCalibrateHmcThreshold() {
         return m_CalibrateHmcThreshold.getValue();
+    }
+    
+    public boolean imputeMissingTargetValues() {
+    	return m_SSL_ImputeMissingTargetValues.getValue();
     }
 
 
@@ -437,6 +446,7 @@ public class SettingsSSL extends SettingsBase {
         // matejp
         m_Section.addNode(m_SSL_SupervisionOptimisationTrees = new INIFileInt("IterationsSupervisionOptimisation", DEFAULT_SUPERVISION_OPT_TREES));
         m_Section.addNode(m_SSL_ForceInternalFolds = new INIFileBool("ForceInternalXValOptimisation", false));
+        m_Section.addNode(m_SSL_ImputeMissingTargetValues = new INIFileBool("ImputeMissingTargetValues", false));
         
     }
 }

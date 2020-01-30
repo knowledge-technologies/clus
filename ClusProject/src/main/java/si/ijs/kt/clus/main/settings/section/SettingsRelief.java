@@ -45,6 +45,13 @@ public class SettingsRelief extends SettingsBase {
     }
     private INIFileEnum<ReliefStatisticsType> mReliefStatistics;
     
+    public enum MissingTargetHandling {
+    	Impute, UseDescriptive
+    }
+    /** How to handle missing targets?     */
+    private INIFileEnum<MissingTargetHandling> m_MissingTargetHandling;
+    
+    
 
     public void setSectionReliefEnabled(boolean value) {
         m_Section.setEnabled(value);
@@ -143,6 +150,10 @@ public class SettingsRelief extends SettingsBase {
     public ReliefStatisticsType getReliefStatisticsType() {
     	return mReliefStatistics.getValue();
     }
+    
+    public MissingTargetHandling getMissingTargetHandling() {
+    	return m_MissingTargetHandling.getValue();
+    }
 
 
     @Override
@@ -160,6 +171,7 @@ public class SettingsRelief extends SettingsBase {
         m_ChosenInstances.setIntVector(DUMMY_INSTANCES);
         m_Section.addNode(m_MultilabelDistance = new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.HammingLoss));
         m_Section.addNode(mReliefStatistics = new INIFileEnum<ReliefStatisticsType>("ReliefStatisticsType", ReliefStatisticsType.DistanceClassic));
+        m_Section.addNode(m_MissingTargetHandling = new INIFileEnum<SettingsRelief.MissingTargetHandling>("MissingTargetHandling", MissingTargetHandling.Impute));
         m_Section.setEnabled(false);
     }
 }

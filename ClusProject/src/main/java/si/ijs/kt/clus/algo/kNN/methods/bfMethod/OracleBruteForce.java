@@ -1,6 +1,8 @@
 package si.ijs.kt.clus.algo.kNN.methods.bfMethod;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -13,6 +15,7 @@ import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.SaveLoadNeighbo
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 public class OracleBruteForce extends BruteForce {
@@ -27,6 +30,47 @@ public class OracleBruteForce extends BruteForce {
 		m_NearestNeighbours = new HashMap<Integer, HashMap<Integer, NearestNeighbour[][]>>();
 		m_NearestNeighbours.put(SaveLoadNeighbours.DUMMY_TARGET, new HashMap<Integer, NearestNeighbour[][]>());
 		
+	}
+	
+	/**
+	 * Keep those of the training examples with missing values that are in the chosen training instances and build the model.
+	 * @param k
+	 * @param trainingExamplesWithMissing
+	 * @param sett
+	 */
+	public void buildForMissingTargetImputation(int k, int[] trainingExamplesWithMissing, SettingsKNN sett) {
+		if (trainingExamplesWithMissing != null) {
+			// filter the candidate training instances
+			int[] chosenTrainingInstances = sett.getChosenIntancesTrain(m_ListTrain.length);
+			Arrays.sort(chosenTrainingInstances);
+			ArrayList<Integer> kept = new ArrayList<>();
+			int iWithMissing = 0, iTraining = 0;
+			while (iWithMissing < trainingExamplesWithMissing.length && iTraining < chosenTrainingInstances.length) {
+				int missing = trainingExamplesWithMissing[iWithMissing];
+				int training = chosenTrainingInstances[iTraining];
+				if (missing == training) {
+					kept.add(missing);
+					iWithMissing++;
+					iTraining++;
+				}
+				else if (missing < training) {
+					iWithMissing++;
+				} else {
+					iTraining++;
+				}
+			}
+			int[] filtered = new int[kept.size()];
+			for (int i = 0; i < filtered.length; i++) {
+				filtered[i] = kept.get(i);
+			}
+			sett.setChosenIntancesTrain(filtered);
+		}
+		try {
+			build(k);
+		} catch (ClusException | IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
    

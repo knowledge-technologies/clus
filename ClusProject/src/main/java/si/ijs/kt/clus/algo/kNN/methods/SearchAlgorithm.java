@@ -28,6 +28,7 @@ import java.util.LinkedList;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
 import si.ijs.kt.clus.main.ClusRun;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -57,6 +58,9 @@ public abstract class SearchAlgorithm {
      * @throws InterruptedException 
      */
     public abstract void build(int k) throws ClusException, IOException, InterruptedException;
+    
+    
+    public abstract void buildForMissingTargetImputation(int k, int[] trainingExamplesWithMissing, SettingsKNN sett);
 
 
     /**

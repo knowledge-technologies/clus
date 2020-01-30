@@ -60,6 +60,7 @@ import si.ijs.kt.clus.ext.timeseries.TimeSeriesStat;
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.Distance;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.DistanceWeights;
 import si.ijs.kt.clus.main.settings.section.SettingsKNN.SearchMethod;
@@ -105,11 +106,15 @@ public class KnnModel implements ClusModel, Serializable {
         this.m_StatTemplate = master.m_StatTemplate;
         this.m_Master = master;
     }
+    
+    public KnnModel(ClusRun cr, int k, DistanceWeights weighting, int maxK, boolean isSparse, ClusAttrType[] necessaryDescriptiveAttributes) throws ClusException, IOException, InterruptedException {
+    	this(cr, k, weighting, maxK, isSparse, necessaryDescriptiveAttributes, null);
+    }
 
 
     // Default constructor.
    	@SuppressWarnings("unused")
-    public KnnModel(ClusRun cr, int k, DistanceWeights weighting, int maxK, boolean isSparse, ClusAttrType[] necessaryDescriptiveAttributes) throws ClusException, IOException, InterruptedException {
+    public KnnModel(ClusRun cr, int k, DistanceWeights weighting, int maxK, boolean isSparse, ClusAttrType[] necessaryDescriptiveAttributes, int[] trainingExamplesWithMissing) throws ClusException, IOException, InterruptedException {
         this.m_ClusRun = cr;
         this.m_K = k;
         this.m_MaxK = Math.max(Math.max(this.m_K, this.m_MaxK), maxK);
@@ -170,63 +175,7 @@ public class KnnModel implements ClusModel, Serializable {
         // int dist = sett.getKNN().getKNNDistance();
         Distance dist = sett.getKNN().getDistance();
 
-        SearchDistance searchDistance = new SearchDistance();
-        ClusDistance distance;
-        
-        // descriptive attributes with weight 0 can be safely omitted from distance computation
-        necessaryDescriptiveAttributes = ClusDistance.attributesWithNonZeroWeight(necessaryDescriptiveAttributes, attrWe);
-
-        switch(dist) {
-	        case Euclidean:
-	        	distance = new EuclideanDistance(searchDistance, isSparse, necessaryDescriptiveAttributes);
-	        	break;
-	        case Chebyshev:
-	        	distance = new ChebyshevDistance(searchDistance, isSparse, necessaryDescriptiveAttributes);
-	        	break;
-	        case Manhattan:
-	        	distance = new ManhattanDistance(searchDistance, isSparse, necessaryDescriptiveAttributes);
-	        	break;
-        	default:
-        		throw new RuntimeException("Wrong distance.");
-        }
-
-        // initialize min values of numeric attributes: needed for normalization in the distance computation
-        int[] data_types = new int[] { ClusModelInfoList.TRAINSET, ClusModelInfoList.TESTSET, ClusModelInfoList.VALIDATIONSET };
-        double[] mins = null;
-        double[] maxs = null;
-        int nb_attrs = -1;
-        for (int type = 0; type < data_types.length; type++) {
-            RowData data = cr.getDataSet(type);
-            ClusSchema schema = cr.getStatManager().getSchema();
-            if (data != null) {
-                if (mins == null) {
-                    nb_attrs = schema.getNbAttributes();
-                    mins = new double[nb_attrs];
-                    Arrays.fill(mins, Double.POSITIVE_INFINITY);
-                    maxs = new double[nb_attrs];
-                    Arrays.fill(maxs, Double.NEGATIVE_INFINITY);
-                }
-                // compute max and min for every numeric attribute
-                for (int tuple_ind = 0; tuple_ind < data.getNbRows(); tuple_ind++) {
-                    for (int i = 0; i < nb_attrs; i++) {
-                        ClusAttrType attr_type = schema.getAttrType(i);
-                        if (!attr_type.isDisabled() && attr_type instanceof NumericAttrType) {
-                            double t = attr_type.getNumeric(data.getTuple(tuple_ind));
-                            if (t < mins[i] && t != Double.POSITIVE_INFINITY) {
-                                mins[i] = t;
-                            }
-                            if (t > maxs[i] && t != Double.POSITIVE_INFINITY) {
-                                maxs[i] = t;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        searchDistance.setDistance(distance);
-        distance.setWeighting(attrWe);
-        searchDistance.setNormalizationWeights(mins, maxs);
+        SearchDistance searchDistance = createSearchDistance(cr, sett.getKNN(), attrWe);
 
         // Select search method according to settings file.
         SearchMethod searchMethod = sett.getKNN().getSearchMethod();
@@ -257,7 +206,11 @@ public class KnnModel implements ClusModel, Serializable {
         }
 
         // build tree, preprocessing
-        this.m_Search.build(m_MaxK);
+        if (trainingExamplesWithMissing != null) {
+        	this.m_Search.buildForMissingTargetImputation(maxK, trainingExamplesWithMissing, sett.getKNN());
+        } else {
+        	this.m_Search.build(m_MaxK);
+        }
         RowData train = this.m_ClusRun.getDataSet(ClusModelInfoList.TRAINSET);
         RowData test = this.m_ClusRun.getDataSet(ClusModelInfoList.TESTSET);
         if (searchMethod == SearchMethod.Oracle) {
@@ -313,6 +266,80 @@ public class KnnModel implements ClusModel, Serializable {
         // ClusLogger.info("----------------------");
         // }
     }
+   	
+   	public static SearchDistance createSearchDistance(ClusRun cr, SettingsKNN sett, AttributeWeighting attrWe) {
+   		Distance dist = sett.getDistance();
+
+        SearchDistance searchDistance = new SearchDistance();
+        ClusDistance distance;
+        RowData data = null;
+		try {
+			data = cr.getDataSet(ClusModelInfoList.TRAINSET);
+		} catch (ClusException | IOException | InterruptedException e) {
+			e.printStackTrace();
+		}
+        ClusAttrType[] necessaryDescriptiveAttributes = KnnClassifier.getNecessaryDescriptiveAttributes(data);
+        
+        // descriptive attributes with weight 0 can be safely omitted from distance computation
+        necessaryDescriptiveAttributes = ClusDistance.attributesWithNonZeroWeight(necessaryDescriptiveAttributes, attrWe);
+        boolean isSparse = data.isSparse();
+        switch(dist) {
+	        case Euclidean:
+	        	distance = new EuclideanDistance(searchDistance, isSparse, necessaryDescriptiveAttributes);
+	        	break;
+	        case Chebyshev:
+	        	distance = new ChebyshevDistance(searchDistance, isSparse, necessaryDescriptiveAttributes);
+	        	break;
+	        case Manhattan:
+	        	distance = new ManhattanDistance(searchDistance, isSparse, necessaryDescriptiveAttributes);
+	        	break;
+        	default:
+        		throw new RuntimeException("Wrong distance.");
+        }
+        
+     // initialize min values of numeric attributes: needed for normalization in the distance computation
+        int[] data_types = new int[] { ClusModelInfoList.TRAINSET, ClusModelInfoList.TESTSET, ClusModelInfoList.VALIDATIONSET };
+        double[] mins = null;
+        double[] maxs = null;
+        int nb_attrs = -1;
+        for (int type = 0; type < data_types.length; type++) {
+            try {
+				data = cr.getDataSet(type);
+			} catch (ClusException | IOException | InterruptedException e) {
+				e.printStackTrace();
+			}
+            ClusSchema schema = cr.getStatManager().getSchema();
+            if (data != null) {
+                if (mins == null) {
+                    nb_attrs = schema.getNbAttributes();
+                    mins = new double[nb_attrs];
+                    Arrays.fill(mins, Double.POSITIVE_INFINITY);
+                    maxs = new double[nb_attrs];
+                    Arrays.fill(maxs, Double.NEGATIVE_INFINITY);
+                }
+                // compute max and min for every numeric attribute
+                for (int tuple_ind = 0; tuple_ind < data.getNbRows(); tuple_ind++) {
+                    for (int i = 0; i < nb_attrs; i++) {
+                        ClusAttrType attr_type = schema.getAttrType(i);
+                        if (!attr_type.isDisabled() && attr_type instanceof NumericAttrType) {
+                            double t = attr_type.getNumeric(data.getTuple(tuple_ind));
+                            if (t < mins[i] && t != Double.POSITIVE_INFINITY) {
+                                mins[i] = t;
+                            }
+                            if (t > maxs[i] && t != Double.POSITIVE_INFINITY) {
+                                maxs[i] = t;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        searchDistance.setDistance(distance);
+        distance.setWeighting(attrWe);
+        searchDistance.setNormalizationWeights(mins, maxs);
+        return searchDistance;
+   	}
 
 
     @Override
