@@ -243,6 +243,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 
 		if (!m_InduceMain) {
 			ClusLogger.info("Internal folds computed. Exiting now.");
+			ClusLogger.info("Done.");
 			System.exit(0);
 			
 		}

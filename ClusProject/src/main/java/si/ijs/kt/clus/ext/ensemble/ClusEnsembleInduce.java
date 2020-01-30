@@ -113,6 +113,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     // Output ensemble at different values
     int[] m_OutEnsembleAt;// sorted values (ascending)!
     private static int m_NbMaxBags;
+    
+    private boolean m_WriteOOB;
 
     // ROS
     private Integer m_EnsembleROSSubspaceSize = null; // -1 = Random, -2 = RandomPerTree, >0 = actual number of
@@ -180,9 +182,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     public void initialize(ClusSchema schema, Settings settMain, Clus clus) throws ClusException, IOException {
         m_BagClus = clus;
         m_Timer = new StopWatch();
+        
         // optimize if not XVAL and HMC
 
         SettingsEnsemble sett = settMain.getEnsemble();
+        
+        m_WriteOOB = sett.shouldEstimateOOB();
+        
         m_MaxTime = sett.getTimeBudget().getValue();
 
         m_OptMode = sett.shouldOptimizeEnsemble() && (
@@ -815,7 +821,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     // crSingle.setInductionTime(m_SummTime);
 
                     postProcessForest(crSingle);
-                    if (sett.shouldEstimateOOB()) {
+                    if (m_WriteOOB) {  // sett.shouldEstimateOOB()
                         if (i == max_number_of_bags) {
                             m_OOBEstimation.postProcessForestForOOBEstimate(crSingle, oob_total, (RowData) cr.getTrainingSet(), m_BagClus, "");
                         }
