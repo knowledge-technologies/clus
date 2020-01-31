@@ -1347,6 +1347,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             type.setNominal(prediction, m_MajorityClasses[i]);
         }
     }
+    
+    @Override
+    public void predictTupleOneComponent(DataTuple tuple, int i, int value) {
+    	NominalAttrType type = m_Attrs[i];
+        type.setNominal(tuple, value);
+
+    }
 
 
     @Override

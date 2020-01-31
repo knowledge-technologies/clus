@@ -66,16 +66,21 @@ public class OracleBruteForce extends BruteForce {
 			sett.setChosenIntancesTrain(filtered);
 		}
 		try {
-			build(k);
+			build(k, true);
 		} catch (ClusException | IOException | InterruptedException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
 
+	
+	@Override
+	public void build(int k) throws ClusException, IOException, InterruptedException {
+		build(k, false);
+	}
    
-   @Override
-   public void build(int k) throws ClusException, IOException, InterruptedException {
+   
+   public void build(int k, boolean skipFirstNeighbour) throws ClusException, IOException, InterruptedException {
 	   m_ListTrain = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData(); // Must not be null ...
 	   for(DataTuple tuple : m_ListTrain) {
 		   tuple.setTraining(true);
@@ -104,6 +109,7 @@ public class OracleBruteForce extends BruteForce {
 	   }
 	   
 	   // obtaining neighbours
+	   int actualK = skipFirstNeighbour ? k : k + 1;
 	   if (sett.getKNN().shouldLoadNeighbours()) {
 		   ClusReliefFeatureRanking.printMessage("Loading nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
 		   SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(sett.getKNN().getLoadNeighboursFiles(), null);
@@ -117,7 +123,8 @@ public class OracleBruteForce extends BruteForce {
 		   int percents = percentStep;
 		   for(DataTuple tuple : new ArrayOfArraysIterator<>(new DataTuple[][] {m_ChosenInstancesTrain, m_ChosenInstancesTest})) {
 			   counter++;
-			   NN[] temp = super.returnPureNNs(tuple, k);
+			   NN[] temp = super.returnPureNNs(tuple, actualK);
+			   temp = Arrays.copyOfRange(temp, temp.length - k, temp.length);  // skip first if necessary
 			   NearestNeighbour[] nns = new NearestNeighbour[temp.length];
 			   for(int n = 0; n < nns.length; n++) {
 				   nns[n] = new NearestNeighbour(temp[n].getTuple().getDatasetIndex(), temp[n].getDistance());
