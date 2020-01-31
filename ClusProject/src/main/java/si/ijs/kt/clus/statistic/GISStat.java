@@ -36,7 +36,7 @@ public class GISStat extends RegressionStat {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
     public int m_NbTarget;
     public double[] m_SumValues;
-    public double[] m_SumWeights;
+    //public double[] m_SumWeights;
     public double[] m_SumSqValues;
     public GISStat m_Training;
 

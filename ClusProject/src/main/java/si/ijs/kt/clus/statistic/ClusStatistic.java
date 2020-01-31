@@ -55,6 +55,7 @@ public abstract class ClusStatistic implements Serializable {
 
     /** The weighted sum of all examples */
     protected double m_SumWeight;
+    public double[] m_SumWeights;  // Sharing is caring
     protected double m_SumWeightLabeled;
     public int m_NbExamples;
 
@@ -69,6 +70,14 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public abstract ClusStatistic cloneStat();
+    
+    public boolean isAnyLabeled(int target) {
+    	if (m_SumWeights == null) {
+    		return m_SumWeightLabeled > 0.0;
+    	} else {
+    		return m_SumWeights[target] > 0.0;
+    	}
+    }
 
 
     /**

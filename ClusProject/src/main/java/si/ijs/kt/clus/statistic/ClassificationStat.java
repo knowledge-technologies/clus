@@ -70,7 +70,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     // * Class counts with [Target index][Class]
     public double[][] m_ClassCounts;
-    public double[] m_SumWeights;
+    //public double[] m_SumWeights;
     public int[] m_MajorityClasses;
     // Thresholds used in making predictions in multi-label classification
     public double[] m_Thresholds;

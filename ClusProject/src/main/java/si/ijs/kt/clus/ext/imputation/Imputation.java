@@ -55,6 +55,7 @@ public class Imputation {
 			neededNeighbours[i++] = j;
 		}
 		Arrays.sort(neededNeighbours);
+		ClusLogger.info(String.format("%d examples needs imputation.", neededNeighbours.length));
 		// build the knn model
 		int maxK = KnnClassifier.getMaxK(settings.getKNNk());
 		ClusAttrType[] necessaryDescriptiveAttributes = KnnClassifier.getNecessaryDescriptiveAttributes(data);
@@ -66,29 +67,50 @@ public class Imputation {
 			e.printStackTrace();
 		}
 		// impute the values
-		double[] predictedNum = null;
-		int[] predictedNom = null;
-		for (int example : missing.keySet()) {
-			ClusStatistic prediction = null;
-			DataTuple tuple = data.getTuple(example);
-			try {
-				prediction = knn.predictWeighted(tuple);
-			} catch (ClusException e) {
-				e.printStackTrace();
-			}
-			if (allNumeric) {
-				predictedNum = prediction.getNumericPred();
-			} else {
-				predictedNom = prediction.getNominalPred();
-			}
-			for (int targetIndex : missing.get(example)) {
+		int iterations = 0;
+		ArrayList<Integer> toProcess = new ArrayList<Integer>();
+		for(int example : neededNeighbours) {
+			toProcess.add(example);
+		}
+		while (toProcess.size() > 0) {
+			ArrayList<Integer> toProcessNext = new ArrayList<>();
+			double[] predictedNum = null;
+			int[] predictedNom = null;
+			for (int example : missing.keySet()) {
+				ClusStatistic prediction = null;
+				DataTuple tuple = data.getTuple(example);
+				try {
+					prediction = knn.predictWeighted(tuple, missing.get(example));
+					if (prediction == null) {
+						toProcessNext.add(example);
+						continue;
+					}
+				} catch (ClusException e) {
+					e.printStackTrace();
+				}
 				if (allNumeric) {
-					prediction.predictTupleOneComponent(tuple, targetIndex, predictedNum[targetIndex]);
+					predictedNum = prediction.getNumericPred();
 				} else {
-					prediction.predictTupleOneComponent(tuple, targetIndex, predictedNom[targetIndex]);
+					predictedNom = prediction.getNominalPred();
+				}
+				for (int targetIndex : missing.get(example)) {
+					if (allNumeric) {
+						prediction.predictTupleOneComponent(tuple, targetIndex, predictedNum[targetIndex]);
+					} else {
+						prediction.predictTupleOneComponent(tuple, targetIndex, predictedNom[targetIndex]);
+					}
 				}
 			}
+			iterations++;
+			if (toProcess.size() > toProcessNext.size()) {
+				toProcess = toProcessNext;
+			} else {
+				break;
+			}
 		}
-		ClusLogger.info("Values imputed.");
+		if (toProcess.size() >  0) {
+			System.err.println("Cannot impute the values in a finite number of steps. Number of examples with missing values: " + toProcess.size());
+		}
+		ClusLogger.info(String.format("(Some) values imputed (%d iteration(s) needed).", iterations));
 	}
 }

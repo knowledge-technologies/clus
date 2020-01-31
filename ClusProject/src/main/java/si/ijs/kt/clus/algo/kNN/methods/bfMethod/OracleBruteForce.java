@@ -39,6 +39,11 @@ public class OracleBruteForce extends BruteForce {
 	 * @param sett
 	 */
 	public void buildForMissingTargetImputation(int k, int[] trainingExamplesWithMissing, SettingsKNN sett) {
+		try {
+			m_ListTrain = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData();
+		} catch (ClusException | IOException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
 		if (trainingExamplesWithMissing != null) {
 			// filter the candidate training instances
 			int[] chosenTrainingInstances = sett.getChosenIntancesTrain(m_ListTrain.length);
@@ -81,7 +86,6 @@ public class OracleBruteForce extends BruteForce {
    
    
    public void build(int k, boolean skipFirstNeighbour) throws ClusException, IOException, InterruptedException {
-	   m_ListTrain = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData(); // Must not be null ...
 	   for(DataTuple tuple : m_ListTrain) {
 		   tuple.setTraining(true);
 	   }
@@ -109,7 +113,7 @@ public class OracleBruteForce extends BruteForce {
 	   }
 	   
 	   // obtaining neighbours
-	   int actualK = skipFirstNeighbour ? k : k + 1;
+	   int actualK = skipFirstNeighbour ? k + 1: k;
 	   if (sett.getKNN().shouldLoadNeighbours()) {
 		   ClusReliefFeatureRanking.printMessage("Loading nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
 		   SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(sett.getKNN().getLoadNeighboursFiles(), null);

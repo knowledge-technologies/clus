@@ -213,7 +213,7 @@ public class KnnModel implements ClusModel, Serializable {
         }
         RowData train = this.m_ClusRun.getDataSet(ClusModelInfoList.TRAINSET);
         RowData test = this.m_ClusRun.getDataSet(ClusModelInfoList.TESTSET);
-        if (searchMethod == SearchMethod.Oracle) {
+        if (searchMethod == SearchMethod.Oracle && trainingExamplesWithMissing == null) {
             if (sett.getKNN().mustNotComputeTrainingError(train.getNbRows())) {
                 sett.getOutput().setOutTrainError(false);
                 System.err.println("Training error will not be computed, since we do not know the neighbours for each training instance.");
@@ -341,9 +341,12 @@ public class KnnModel implements ClusModel, Serializable {
         return searchDistance;
    	}
 
-
-    @Override
-    public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException {
+   	@Override
+   	public ClusStatistic predictWeighted(DataTuple tuple) throws ClusException {
+   		return predictWeighted(tuple, null);
+   	}
+   	
+    public ClusStatistic predictWeighted(DataTuple tuple, ArrayList<Integer> targetsNeeded) throws ClusException {
         LinkedList<DataTuple> nearest = new LinkedList<DataTuple>(); // the first m_K neigbhours of the m_MaxK
                                                                      // neighbours: OK, because the neighbours are
                                                                      // sorted from the nearest to the farthest
@@ -392,10 +395,18 @@ public class KnnModel implements ClusModel, Serializable {
                 stat.addPrediction(dtStat, weighting.weight(dt));
             }
             stat.computePrediction();
+            return stat;
         }
         else {
             for (DataTuple dt : nearest)
                 stat.updateWeighted(dt, weighting.weight(dt));
+            if (targetsNeeded != null){
+            	for (int target : targetsNeeded) {
+            		if (!stat.isAnyLabeled(target)) {
+            			return null;
+            		}
+            	}
+            }
             stat.calcMean();
         }
         return stat;
