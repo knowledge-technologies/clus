@@ -406,6 +406,13 @@ public abstract class RegressionStatBase extends ClusStatistic {
             type.setNumeric(prediction, m_Means[i]);
         }
     }
+    
+    @Override
+    public void predictTupleOneComponent(DataTuple tuple, int i, double value) {
+        NumericAttrType type = m_Attrs[i];
+        type.setNumeric(tuple, value);
+
+    }
 
 
     @Override

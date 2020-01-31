@@ -25,6 +25,7 @@ package si.ijs.kt.clus.algo.kNN.methods.vpTree;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.math3.random.RandomData;// this is not with the CLUS spirit...
 import org.apache.commons.math3.random.RandomDataImpl;
 
@@ -35,6 +36,7 @@ import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -226,4 +228,10 @@ public class VPTree extends SearchAlgorithm {
                 this.search(n.getLeftSubtree(), q);
         }
     }
+    
+	@Override
+	public void buildForMissingTargetImputation(int k, int[] trainingExamplesWithMissing, SettingsKNN sett) {
+		throw new NotImplementedException("Use OracleBruteForce");
+		
+	}
 }

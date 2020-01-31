@@ -93,19 +93,11 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             List<DistanceWeights> distWeight = getSettings().getKNN().getKNNDistanceWeights(); // .split(",");
 
             RowData trainData = cr.getDataSet(ClusModelInfoList.TRAINSET);
-            boolean isSparse = trainData.getTuple(0).isSparse(); // assuming all tuples in TRAIN and TEST are in the same form
+            boolean isSparse = trainData.isSparse();
 
-            int maxK = 1;
-            for (int k : ks) {
-            	maxK = Math.max(maxK, k);
-            }
+            int maxK = getMaxK(ks);
             Arrays.sort(ks);
-            ClusAttrType[] necessaryDescriptiveAttributes;
-            if (isSparse) {
-            	necessaryDescriptiveAttributes = trainData.getSchema().getNominalAttrUse(AttributeUseType.Descriptive);
-            } else {
-            	necessaryDescriptiveAttributes = trainData.getSchema().getAllAttrUse(AttributeUseType.Descriptive);
-            }
+            ClusAttrType[] necessaryDescriptiveAttributes = getNecessaryDescriptiveAttributes(trainData);
             // base model
             String model_name = DEFAULT_MODEL_NAME_WITH_CONSTANT_WEIGHTS;            
             KnnModel model = new KnnModel(cr, 1, DistanceWeights.Constant, maxK, isSparse, necessaryDescriptiveAttributes);
@@ -133,6 +125,25 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
             }
             return model;
         }
+    }
+    
+    public static int getMaxK(int[] ks) {
+    	int maxK = 1;
+        for (int k : ks) {
+        	maxK = Math.max(maxK, k);
+        }
+        return maxK;
+    }
+  
+   
+    public static ClusAttrType[] getNecessaryDescriptiveAttributes(RowData data) {
+    	ClusAttrType[] necessaryDescriptiveAttributes;
+        if (data.isSparse()) {
+        	necessaryDescriptiveAttributes = data.getSchema().getNominalAttrUse(AttributeUseType.Descriptive);
+        } else {
+        	necessaryDescriptiveAttributes = data.getSchema().getAllAttrUse(AttributeUseType.Descriptive);
+        }
+        return necessaryDescriptiveAttributes;
     }
 
 

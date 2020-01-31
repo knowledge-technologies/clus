@@ -111,6 +111,10 @@ public class SettingsKNN extends SettingsBase {
         int[] inSettings = m_ChosenInstancesTrain.getIntVector();
         return getChosenInstances(nbTrainInstances, inSettings);
     }
+    
+    public void setChosenIntancesTrain(int[] trainInstances) {
+    	m_ChosenInstancesTrain.setIntVector(trainInstances);
+    }
 
 
     public int[] getChosenIntancesTest(int nbTestInstances) {
