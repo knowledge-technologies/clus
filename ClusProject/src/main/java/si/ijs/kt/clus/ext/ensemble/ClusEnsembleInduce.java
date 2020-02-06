@@ -65,7 +65,7 @@ import si.ijs.kt.clus.ext.ensemble.ros.ClusROSOOBWeights;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.ensemble.ClusEnsembleFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.ensemble.ClusEnsembleFeatureRankings;
-import si.ijs.kt.clus.ext.imputation.Imputation;
+import si.ijs.kt.clus.ext.imputation.MissingTargetImputation;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.*;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -384,7 +384,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         
         if (getSettings().getSSL().imputeMissingTargetValues()) {
-        	Imputation.impute(cr, getSettings().getKNN());
+        	MissingTargetImputation.impute(cr);
         }
         
 

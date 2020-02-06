@@ -86,6 +86,9 @@ public class OracleBruteForce extends BruteForce {
    
    
    public void build(int k, boolean skipFirstNeighbour) throws ClusException, IOException, InterruptedException {
+	   if (m_ListTrain == null) {
+		   m_ListTrain = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData();
+	   }
 	   for(DataTuple tuple : m_ListTrain) {
 		   tuple.setTraining(true);
 	   }

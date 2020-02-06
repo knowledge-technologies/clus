@@ -61,16 +61,18 @@ public class Classic extends Statistics {
 			// but need d_target(tuple, neigh).
 			targetDistance = mRelief.computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), mRelief.getTargetAttribute(trueIndex));
 		} else {
-			targetDistance = mRelief.computeDistance(tuple, data.getTuple(neigh.getIndexInDataset()),
-			        ClusReliefFeatureRanking.TARGET_SPACE);
+			if (tuple.isUnlabeled() || data.getTuple(neigh.getIndexInDataset()).isUnlabeled()) {
+				targetDistance = neigh.getDescriptiveDidstance(); // take descriptive distance instead
+			} else {
+				targetDistance = mRelief.computeDistance(tuple, data.getTuple(neigh.getIndexInDataset()), ClusReliefFeatureRanking.TARGET_SPACE);
+			}
 		}
 		if (!isStdClassification) {
 			tempSumDistTarget += targetDistance * neighWeightNonnormalized;
 		}
 		for (int attrInd = 0; attrInd < m_NbDescriptiveAttrs; attrInd++) {
 			ClusAttrType attr = mRelief.getDescriptiveAttribute(attrInd);
-			double distAttr = mRelief.computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), attr)
-			        * neighWeightNonnormalized;
+			double distAttr = mRelief.computeDistance1D(tuple, data.getTuple(neigh.getIndexInDataset()), attr) * neighWeightNonnormalized;
 			if (isStdClassification) {
 				int tupleTarget = ((NominalAttrType) mRelief.getTargetAttribute(trueIndex)).getNominal(tuple); // m_DescriptiveTargetAttr[TARGET_SPACE][trueIndex]
 				if (targetValue == tupleTarget) {

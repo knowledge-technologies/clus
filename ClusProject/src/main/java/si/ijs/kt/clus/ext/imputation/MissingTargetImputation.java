@@ -18,14 +18,19 @@ import si.ijs.kt.clus.statistic.ClusStatistic;
 import si.ijs.kt.clus.util.ClusLogger;
 import si.ijs.kt.clus.util.exception.ClusException;
 
-public class Imputation {
+public class MissingTargetImputation {
 
-	public Imputation() {
+	public MissingTargetImputation() {
 		// TODO Auto-generated constructor stub
 	}
+	
+	public static void impute(ClusRun cr) {
+		impute(cr, null);
+	}
 
-	public static void impute(ClusRun cr, SettingsKNN settings) {
+	public static void impute(ClusRun cr, HashMap<Integer, ArrayList<Integer>> missing) {
 		// check the target types
+		SettingsKNN settings = cr.getStatManager().getSettings().getKNN();
 		ClusAttrType[] targets = cr.getStatManager().getSchema().getAllAttrUse(AttributeUseType.Target);
 		boolean allNominal = true;
 		boolean allNumeric = true;
@@ -47,7 +52,9 @@ public class Imputation {
 		} catch (InterruptedException e) {
 			e.printStackTrace();
 		}
-		HashMap<Integer, ArrayList<Integer>> missing = data.getMissingTargets();
+		if (missing == null) {
+			missing = data.getMissingTargets();
+		}
 		boolean isSparse = data.isSparse();
 		int[] neededNeighbours = new int[missing.keySet().size()];
 		int i = 0;
