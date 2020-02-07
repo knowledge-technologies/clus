@@ -45,6 +45,12 @@ public class OracleBruteForce extends BruteForce {
 			e1.printStackTrace();
 		}
 		if (trainingExamplesWithMissing != null) {
+			// this was meant as a code for filtering the training instances with those
+			// that actually have missing values. However, this is wrong!
+			// All missing target values should be imputed, so we must compute
+			// the neighbours off all such examples. This code will only check whether
+			// the chosen training instances contain all examples with missig target values
+			
 			// filter the candidate training instances
 			int[] chosenTrainingInstances = sett.getChosenIntancesTrain(m_ListTrain.length);
 			Arrays.sort(chosenTrainingInstances);
@@ -67,6 +73,9 @@ public class OracleBruteForce extends BruteForce {
 			int[] filtered = new int[kept.size()];
 			for (int i = 0; i < filtered.length; i++) {
 				filtered[i] = kept.get(i);
+			}
+			if (trainingExamplesWithMissing.length != filtered.length) {
+				throw new RuntimeException("Choosen instances should contain all examples with missing target data! Reconsider your life choices.");
 			}
 			sett.setChosenIntancesTrain(filtered);
 		}

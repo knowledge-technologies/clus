@@ -4,7 +4,6 @@ package si.ijs.kt.clus.ext.featureRanking.relief;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Random;
@@ -14,8 +13,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import org.apache.commons.lang.ArrayUtils;
 
 import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.DataTuple;
@@ -295,6 +292,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 		initializeInstanceOrder();
 		initializeTimeSeriesDistance();
 		initializeDescriptiveTargetAttributes();
+		initializeNumericRanges();	
 		// semi-supervised: this can modify the data, so keep it as high as possible
 		prepareForSemiSupervised();
 		
@@ -302,8 +300,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 		initializeRankings();
 		m_IsMLC = getSettings().getMLC().getSectionMultiLabel().isEnabled();
 		initializeTargetProbabilities();
-		initializeNumericRanges();		
-
 
 		// depends on m_TargetProbabilities ...
 		if (m_IsMLC) {

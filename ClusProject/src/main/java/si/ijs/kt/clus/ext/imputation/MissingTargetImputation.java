@@ -62,7 +62,8 @@ public class MissingTargetImputation {
 			neededNeighbours[i++] = j;
 		}
 		Arrays.sort(neededNeighbours);
-		ClusLogger.info(String.format("%d examples needs imputation.", neededNeighbours.length));
+		boolean singular = neededNeighbours.length == 1;
+		ClusLogger.info(String.format("%d example%s need%s imputation.", neededNeighbours.length, singular ? "" : "s", singular ? "s" : ""));
 		// build the knn model
 		int maxK = KnnClassifier.getMaxK(settings.getKNNk());
 		ClusAttrType[] necessaryDescriptiveAttributes = KnnClassifier.getNecessaryDescriptiveAttributes(data);
@@ -118,6 +119,6 @@ public class MissingTargetImputation {
 		if (toProcess.size() >  0) {
 			System.err.println("Cannot impute the values in a finite number of steps. Number of examples with missing values: " + toProcess.size());
 		}
-		ClusLogger.info(String.format("(Some) values imputed (%d iteration(s) needed).", iterations));
+		ClusLogger.info(String.format("Values imputed in %d iteration(s).", iterations));
 	}
 }
