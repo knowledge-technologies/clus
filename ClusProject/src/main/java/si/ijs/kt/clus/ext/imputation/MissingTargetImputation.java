@@ -34,6 +34,7 @@ public class MissingTargetImputation {
 		ClusAttrType[] targets = cr.getStatManager().getSchema().getAllAttrUse(AttributeUseType.Target);
 		boolean allNominal = true;
 		boolean allNumeric = true;
+		boolean allClasses = true;
 		for (ClusAttrType target : targets) {
 			if (!target.isNominal()) {
 				allNominal = false;
@@ -41,9 +42,12 @@ public class MissingTargetImputation {
 			if (!target.isNumeric()) {
 				allNumeric = false;
 			}
+			if (!target.isClasses()) {
+				allClasses = false;
+			}
 		}
-		if (!(allNominal || allNumeric)) {
-			throw new RuntimeException("Target attributes should all be numeric or all nominal.");
+		if (!(allNominal || allNumeric || allClasses)) {
+			throw new RuntimeException("Targets should be all numeric or all nominal or all classes.");
 		}
 		// find the examples that need to be imputed
 		RowData data = null;
@@ -98,14 +102,16 @@ public class MissingTargetImputation {
 				}
 				if (allNumeric) {
 					predictedNum = prediction.getNumericPred();
-				} else {
+				} else if (allNominal) {
 					predictedNom = prediction.getNominalPred();
 				}
 				for (int targetIndex : missing.get(example)) {
 					if (allNumeric) {
 						prediction.predictTupleOneComponent(tuple, targetIndex, predictedNum[targetIndex]);
-					} else {
+					} else if (allNominal){
 						prediction.predictTupleOneComponent(tuple, targetIndex, predictedNom[targetIndex]);
+					} else {
+						prediction.predictTuple(tuple);
 					}
 				}
 			}
