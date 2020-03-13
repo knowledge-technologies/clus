@@ -112,7 +112,6 @@ class RegressionStat(Statistics):
 class ClassificationStat(Statistics):
     """
     Implementation of `Statistics` for (multi-target) classification task.
-    That includes (hierarchical) multi-label classification.
     """
 
     def __init__(self, predicted_values):
@@ -297,14 +296,17 @@ class Tree:
     Class that implements binary decision trees.
     """
 
-    def __init__(self, root):
+    def __init__(self, root, target_names=None):
         """
         Parameters
         ----------
         root : `BinaryTreeNode`
             The root of the tree.
+        target_names : list or None
+            For HMLC problems, this is the list of label names.
         """
         self.root = root
+        self.target_names = target_names
 
     def predict(self, xs, missing_value="?", randomize_unknown=False):
         """
@@ -382,4 +384,10 @@ class Tree:
                 my_stack.pop()
         prediction = self.root.temp_statistics.stats_to_predictions()
         self.root.reset_temp_statistics()
-        return prediction
+        return self.update_prediction_list_with_target_names(prediction)
+
+    def update_prediction_list_with_target_names(self, prediction):
+        if self.target_names is not None:
+            return list(zip(self.target_names, prediction))
+        else:
+            return prediction

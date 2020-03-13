@@ -303,9 +303,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     	for (int i = 0; i < m_Means.length; i++) {
     		String label = m_Hier.getTermAt(i).toStringHuman(m_Hier);
     		double p = m_Means[i];
-    		labelThresholdPairs[i] = String.format("('%s', %f)", label, p);
+    		// labelThresholdPairs[i] = String.format("('%s', %f)", label, p);
+    		labelThresholdPairs[i] = String.format("%f", p);
     	}
         return  "[" + String.join(",", labelThresholdPairs) + "]";
+    }
+    
+    public String getTargetNames(){
+        String[] names = new String[m_Means.length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = "'" + m_Hier.getTermAt(i).toStringHuman(m_Hier) + "'";
+        }
+        return  "[" + String.join(", ", names) + "]";
     }
 
 

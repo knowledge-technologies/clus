@@ -1123,9 +1123,18 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         		maj_str = a.getValue(maj_ind);
     		}
     		double p = m_ClassCounts[i][maj_ind] / m_SumWeights[i];
-    		majorityClasses[i] = String.format("('%s', %f)", maj_str, p);
+    		// majorityClasses[i] = String.format("('%s', %f)", maj_str, p);
+    		majorityClasses[i] = String.format("%f", p);
     	}
         return  "[" + String.join(",", majorityClasses) + "]";
+    }
+    
+    public String getTargetNames(){
+        String[] names = new String[m_NbTarget];
+        for (int i = 0; i < m_NbTarget; i++) {
+            names[i] = "'" + m_Attrs[i].getName() + "'";
+        }
+        return  "[" + String.join(", ", names) + "]";
     }
 
 

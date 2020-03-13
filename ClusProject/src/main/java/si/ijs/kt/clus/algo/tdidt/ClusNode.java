@@ -1713,7 +1713,11 @@ public class ClusNode extends MyNode implements ClusModel {
 				temp.pop();
 			}
 		}
-		writer.println(String.format("tree_%s = Tree(%s)", modelIdentifier, pythonNodeName(this, modelIdentifier)));
+		String targetNames = pythonTargetNames(this);
+		writer.println(String.format("tree_%s = Tree(%s, target_names=%s)",
+		        modelIdentifier,
+		        pythonNodeName(this, modelIdentifier),
+		        targetNames));
 	}
 
 	private static String pythonNodeName(ClusNode node, String modelIdentifier) {
@@ -1750,6 +1754,23 @@ public class ClusNode extends MyNode implements ClusModel {
 			throw new RuntimeException("Python code for your target-type statistics not implemented.");
 		}
 		return String.format("%s = TreeNode(%s)", pythonNodeName(leaf, modelIdentifier), statArg);
+	}
+	
+	private String pythonTargetNames(ClusNode leaf){
+	    if (m_TargetStat instanceof RegressionStat) {
+            return "None";
+        } else if (m_TargetStat instanceof ClassificationStat) {
+            boolean isMLC = getTargetStat().getSettings().getMLC().getSection().isEnabled();
+            if (isMLC){
+                return ((ClassificationStat) leaf.m_TargetStat).getTargetNames();
+            } else{
+                return "None";
+            }
+        } else if (m_TargetStat instanceof WHTDStatistic) {
+            return ((WHTDStatistic) leaf.m_TargetStat).getTargetNames();
+        } else {
+            throw new RuntimeException("Python code for your target-type statistics not implemented.");
+        }
 	}
 
 	public final void showAlternatives(PrintWriter writer) {
