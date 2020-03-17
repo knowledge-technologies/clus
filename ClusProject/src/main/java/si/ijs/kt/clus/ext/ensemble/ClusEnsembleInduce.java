@@ -957,6 +957,14 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
             }
         }
+        
+        if (seto.shouldWritePerBagModelFiles() && (sett.getBagSelection().getIntVectorSorted()[0] != -1 || sett.isPrintEnsembleModelFiles())) {
+            ClusModelCollectionIO io = new ClusModelCollectionIO();
+            ClusModelInfo orig_info = crSingle.addModelInfo("Original");
+            orig_info.setModel(model);
+            m_BagClus.saveModels(crSingle, io);
+            io.save(m_BagClus.getSettings().getGeneric().getFileAbsolute(cr.getStatManager().getSettings().getGeneric().getAppName() + "_bag" + i + ".model"));
+        }
 
         if (m_OptMode) {
             // m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
@@ -993,14 +1001,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     giveParallelisationWarning(ParallelTrap.Optimization);
                 }
             }
-        }
-
-        if (seto.shouldWritePerBagModelFiles() && (sett.getBagSelection().getIntVectorSorted()[0] != -1 || sett.isPrintEnsembleModelFiles())) {
-            ClusModelCollectionIO io = new ClusModelCollectionIO();
-            ClusModelInfo orig_info = crSingle.addModelInfo("Original");
-            orig_info.setModel(model);
-            m_BagClus.saveModels(crSingle, io);
-            io.save(m_BagClus.getSettings().getGeneric().getFileAbsolute(cr.getStatManager().getSettings().getGeneric().getAppName() + "_bag" + i + ".model"));
         }
 
         if (canForgetTheRun) {
