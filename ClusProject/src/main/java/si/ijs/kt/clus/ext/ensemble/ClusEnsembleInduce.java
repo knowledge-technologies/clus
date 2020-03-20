@@ -1078,6 +1078,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     public void makeForestFromBags(ClusRun cr, TupleIterator train_iterator, TupleIterator test_iterator) throws ClusException, IOException, InterruptedException {
+    	int nFound = 0;
+        // The model file may not exist due to 
+        // - bag selection parameter, e.g., only trees 4 and 5 were trained but nBags = 10
+        // - some other error
+        // We will try to load some trees and if at least one succeeds, we will consider this a success
         try {
             OOBSelection oob_total = null; // = total OOB selection
             OOBSelection oob_sel = null; // = current OOB selection
@@ -1092,20 +1097,24 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             for (int i = 1; i <= m_NbMaxBags; i++) {
                 ClusLogger.info("Loading model for bag " + i);
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-
-                ClusModelCollectionIO io = ClusModelCollectionIO.load(m_BagClus.getSettings().getGeneric().getFileAbsolute(getSettings().getGeneric().getAppName() + "_bag" + i + ".model"));
+                
+                String fileName = m_BagClus.getSettings().getGeneric().getFileAbsolute(getSettings().getGeneric().getAppName() + "_bag" + i + ".model");
+                File tempFile = new File(fileName);
+                if (!tempFile.exists()) {
+                	ClusLogger.info("The corresponding file does not exist. Skipping this bag.");
+                	continue;
+                }
+                nFound++;            
+                ClusModelCollectionIO io = ClusModelCollectionIO.load(fileName);
                 ClusModel orig_bag_model = io.getModel("Original");
-                if (orig_bag_model == null) { throw new ClusException(cr.getStatManager().getSettings().getGeneric().getAppName() + "_bag" + i + ".model file does not contain model named 'Original'"); }
+                if (orig_bag_model == null) { throw new ClusException(fileName + " file does not contain model named 'Original'"); }
 
-                // m_OForest.updateCounts((ClusNode) orig_bag_model);
                 updateCounts((ClusNode) orig_bag_model, i);
 
                 if (m_OptMode) {
-                    // m_Optimization.updatePredictionsForTuples(orig_bag_model, train_iterator, test_iterator);
                     updatePredictionsForTuples(orig_bag_model, train_iterator, test_iterator, i);
                 }
                 else {
-                    // m_OForest.addModelToForest(orig_bag_model);
                     addModelToForests(orig_bag_model, i);
                 }
                 if (getSettings().getEnsemble().shouldEstimateOOB()) { // OOB estimate is on
@@ -1147,6 +1156,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         catch (ClassNotFoundException e) {
             throw new ClusException("Error: not all of the _bagX.model files were found");
+        }
+        if (nFound < m_NbMaxBags && nFound > 0) {
+        	ClusLogger.info("WARNING: Not all model files could be found");
+        } else if (nFound == 0) {
+        	throw new ClusException("No model file could be found");
         }
     }
 
