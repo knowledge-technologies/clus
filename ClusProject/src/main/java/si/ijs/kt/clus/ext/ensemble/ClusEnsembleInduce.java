@@ -962,8 +962,16 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             ClusModelCollectionIO io = new ClusModelCollectionIO();
             ClusModelInfo orig_info = crSingle.addModelInfo("Original");
             orig_info.setModel(model);
+            // cut the trees
+            ArrayList<ClusNode> submodels = ClusNode.cutTrees((ClusNode) model);
+            for(int s = 0; s < submodels.size(); s++) {
+            	ClusModelInfo subInfo = crSingle.addModelInfo(ClusNode.getSubmodelName(s));
+            	subInfo.setModel(submodels.get(s));
+            }            
             m_BagClus.saveModels(crSingle, io);
             io.save(m_BagClus.getSettings().getGeneric().getFileAbsolute(cr.getStatManager().getSettings().getGeneric().getAppName() + "_bag" + i + ".model"));
+            // join them back so that the other stuff will still work
+            ((ClusNode) model).joinWithSubmodels(submodels);
         }
 
         if (m_OptMode) {
@@ -1108,7 +1116,15 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 ClusModelCollectionIO io = ClusModelCollectionIO.load(fileName);
                 ClusModel orig_bag_model = io.getModel("Original");
                 if (orig_bag_model == null) { throw new ClusException(fileName + " file does not contain model named 'Original'"); }
-
+                // join the submodels
+                ArrayList<ClusNode> submodels = new ArrayList<>();
+                for (int s = 0; s < ((ClusNode) orig_bag_model).getNumberSubmodels(); s++) {
+                	ClusNode submodel = (ClusNode) io.getModel(ClusNode.getSubmodelName(s));
+                	submodels.add(submodel);
+                }
+                ((ClusNode) orig_bag_model).joinWithSubmodels(submodels);
+                
+                
                 updateCounts((ClusNode) orig_bag_model, i);
 
                 if (m_OptMode) {
