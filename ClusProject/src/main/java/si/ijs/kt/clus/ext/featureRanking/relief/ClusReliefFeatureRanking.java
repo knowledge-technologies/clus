@@ -554,11 +554,14 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 				prefixes.add(m_DescriptiveTargetAttr[TARGET_SPACE][targetInd].getName());
 			}
 		}
+		boolean useIndices = m_Run.getStatManager().getSettings().getRelief().shouldUseIndicesInNames();
 		for (String prefix : prefixes) {
 			for (int iterInd = 0; iterInd < m_NbIterations.length; iterInd++) {
 				for (int neighInd = 0; neighInd < m_NbNeighbours.length; neighInd++) {
-					rankings.add(String.format("%sIter%dNeigh%d", prefix, m_NbIterations[iterInd],
-					        m_NbNeighbours[neighInd]));
+				    int iter = useIndices ? iterInd : m_NbIterations[iterInd];
+				    int neig = useIndices ? neighInd : m_NbNeighbours[neighInd]; 
+					rankings.add(String.format("%sIter%dNeigh%d", prefix, iter, neig));
+					
 				}
 			}
 		}

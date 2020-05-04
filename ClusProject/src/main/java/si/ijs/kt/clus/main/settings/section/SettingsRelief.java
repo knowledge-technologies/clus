@@ -31,6 +31,7 @@ public class SettingsRelief extends SettingsBase {
     private INIFileBool m_ReliefShouldHaveNeighbourWeighting;
     private INIFileDouble m_ReliefWeightingSigma;
     private INIFileNominalOrIntOrVector m_ChosenInstances;
+    private INIFileBool m_ReliefIndicesInRankingNames;
     public static int[] DUMMY_INSTANCES = new int[] { -1 };
 
     // If new types are introduced use the same names as in SettingsMLC class
@@ -64,6 +65,10 @@ public class SettingsRelief extends SettingsBase {
 
     public int[] getReliefNbNeighboursValue() {
         return m_ReliefNbNeighbours.getIntVector();
+    }
+    
+    public boolean shouldUseIndicesInNames(){
+        return m_ReliefIndicesInRankingNames.getValue();
     }
 
 
@@ -170,6 +175,7 @@ public class SettingsRelief extends SettingsBase {
         m_ChosenInstances.setIntVector(DUMMY_INSTANCES);
         m_Section.addNode(m_MultilabelDistance = new INIFileEnum<MultilabelDistance>("MultilabelDistance", MultilabelDistance.HammingLoss));
         m_Section.addNode(mReliefStatistics = new INIFileEnum<ReliefStatisticsType>("ReliefStatisticsType", ReliefStatisticsType.DistanceClassic));
+        m_Section.addNode(m_ReliefIndicesInRankingNames = new INIFileBool("UseIndicesInRankingNames", false));
         // sss: semi-supervsied scenario
         m_Section.addNode(m_MissingTargetHandling = new INIFileEnum<SettingsRelief.MissingTargetHandling>("MissingTargetHandling", MissingTargetHandling.Impute));        
         m_Section.setEnabled(false);
