@@ -22,6 +22,7 @@ public class SettingsModel extends SettingsBase {
     protected INIFileInt m_MinNbEx;
     protected INIFileString m_TuneFolds;
     protected INIFileBool m_NominalSubsetTests;
+    protected INIFileBool m_LoadFromModelFile;
 
 
     public SettingsModel(int position) {
@@ -57,6 +58,10 @@ public class SettingsModel extends SettingsBase {
     public boolean isNominalSubsetTests() {
         return m_NominalSubsetTests.getValue();
     }
+    
+    public boolean loadFromFile() {
+    	return m_LoadFromModelFile.getValue();
+    }
 
 
     @Override
@@ -66,5 +71,6 @@ public class SettingsModel extends SettingsBase {
         m_Section.addNode(m_MinKnownW = new INIFileDouble("MinimalKnownWeight", 0));
         m_Section.addNode(m_TuneFolds = new INIFileString("ParamTuneNumberFolds", "3"));
         m_Section.addNode(m_NominalSubsetTests = new INIFileBool("NominalSubsetTests", true));
+        m_Section.addNode(m_LoadFromModelFile = new INIFileBool("LoadFromModelFile", false));
     }
 }

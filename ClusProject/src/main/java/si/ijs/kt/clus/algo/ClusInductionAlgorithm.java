@@ -124,8 +124,15 @@ public abstract class ClusInductionAlgorithm {
 
 
     public void induceAll(ClusRun cr) throws ClusException, IOException, InterruptedException, Exception {
-        ClusModel model = induceSingleUnpruned(cr);
-        ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL);
+    	ClusModel model;
+    	if (cr.getStatManager().getSettings().getModel().loadFromFile()) {
+    		String fname = cr.getStatManager().getSettings().getGeneric().getFileAbsolute(getSettings().getGeneric().getAppName() + ".model");
+    		ClusModelCollectionIO io = ClusModelCollectionIO.load(fname);
+    		model = io.getModel("Original");
+    	} else {
+	        model = induceSingleUnpruned(cr);   
+    	}
+    	ClusModelInfo model_info = cr.addModelInfo(ClusModel.ORIGINAL);
         model_info.setModel(model);
     }
 
