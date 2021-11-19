@@ -48,7 +48,7 @@ public class RegressionStat extends RegressionStatBase implements ComponentStati
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     public double[] m_SumValues;
-    public double[] m_SumWeights;
+    //public double[] m_SumWeights;
     private double[] m_SumSqValues;
     private RegressionStat m_Training;
 

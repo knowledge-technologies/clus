@@ -25,6 +25,8 @@ package si.ijs.kt.clus.algo.kNN.methods.bfMethod;
 import java.io.IOException;
 import java.util.LinkedList;
 
+import org.apache.commons.lang.NotImplementedException;
+
 import si.ijs.kt.clus.algo.kNN.methods.NN;
 import si.ijs.kt.clus.algo.kNN.methods.NNStack;
 import si.ijs.kt.clus.algo.kNN.methods.SearchAlgorithm;
@@ -32,6 +34,7 @@ import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.distance.primitive.SearchDistance;
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 
@@ -72,4 +75,11 @@ public class BruteForce extends SearchAlgorithm {
             m_Stack.addToStack(d, getDistance().calcDistance(tuple, d));
         return m_Stack.returnPureStack();
     }
+
+
+	@Override
+	public void buildForMissingTargetImputation(int k, int[] trainingExamplesWithMissing, SettingsKNN sett) {
+		throw new NotImplementedException("Use OracleBruteForce");
+		
+	}
 }

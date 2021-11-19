@@ -215,25 +215,63 @@ public class SettingsSSL extends SettingsBase {
     /** Should the trees be pruned when optimizing w parameter */
     private INIFileInt m_SSL_InternalFolds;
     /** How many folds for internal cross validation for optimizing w */
+    
+    /** Which internal fold */
+    private INIFileInt m_SSL_InternalFold;
+    public static int DEFAULT_INTERNAL_FOLD = -1; // something useless
+    /** Should proceed to main ? */
+    private INIFileBool m_SSL_InduceMain;
+        
+    /** File where results for each candidate w will be written during optimization */
     private INIFileString m_SSL_WeightScoresFile;
     /** Should force the internal cross-validation for optimizing w if only one candidate weight chosen? (in order to obtain the score for the weight)  */
     private INIFileBool m_SSL_ForceInternalFolds;
     
     private INIFileInt m_SSL_SupervisionOptimisationTrees;
     private static final int DEFAULT_SUPERVISION_OPT_TREES = 0;  // something <= 0 that does not make sense
-    
 
-
-    /** File where results for each candidate w will be written during optimization */
+    /**
+     * If yes, the values are imputed by using kNN: this is concordance with the clustering hypothesis ...
+     * The other relevant settings (number of neighbours, distance measure, neighbour files etc.) are taken from the kNN section.
+     * Note that if the neighbours are not computed for all the examples with the missing values, the forest or whatever model will not be grown.
+     */
+    private INIFileBool m_SSL_ImputeMissingTargetValues;
+  
 
     /**
      * Should calibrate HMC threshold so that the difference between label cardinality of labeled examples and predicted
      * unlabeled examples is minimal
-     * 
-
      */
     public boolean shouldCalibrateHmcThreshold() {
         return m_CalibrateHmcThreshold.getValue();
+    }
+    
+
+    public int[] getInternalFoldIndices() {
+    	int[] answer;
+    	int internalFold = m_SSL_InternalFold.getValue();
+    	if (internalFold == 0 || internalFold >= getSSLInternalFolds()) {
+    		throw new RuntimeException("We must have 1 <= internal fold < internal fold indices");
+    	}
+    	if (internalFold == DEFAULT_INTERNAL_FOLD) {
+    		answer = new int[getSSLInternalFolds() - 1]; // to be consistent with the off-by-one error
+    		for (int i = 0; i < answer.length; i++) {
+    			answer[i] = i + 1;
+    		}
+    	} else {
+    		answer = new int[] {internalFold};
+    	}
+    	return answer;
+    }
+    
+    public boolean shouldInduceMain() {
+    	return m_SSL_InduceMain.getValue();
+    }
+
+    	
+    public boolean imputeMissingTargetValues() {
+    	return m_SSL_ImputeMissingTargetValues.getValue();
+
     }
 
 
@@ -277,6 +315,10 @@ public class SettingsSSL extends SettingsBase {
 
     public int getSSLInternalFolds() {
         return m_SSL_InternalFolds.getValue();
+    }
+    
+    public int getSSLInternalFold() {
+        return m_SSL_InternalFold.getValue();
     }
 
 
@@ -437,6 +479,10 @@ public class SettingsSSL extends SettingsBase {
         // matejp
         m_Section.addNode(m_SSL_SupervisionOptimisationTrees = new INIFileInt("IterationsSupervisionOptimisation", DEFAULT_SUPERVISION_OPT_TREES));
         m_Section.addNode(m_SSL_ForceInternalFolds = new INIFileBool("ForceInternalXValOptimisation", false));
+        m_Section.addNode(m_SSL_ImputeMissingTargetValues = new INIFileBool("ImputeMissingTargetValues", false));
+        
+        m_Section.addNode(m_SSL_InternalFold = new INIFileInt("InternalFold", DEFAULT_INTERNAL_FOLD));
+        m_Section.addNode(m_SSL_InduceMain = new INIFileBool("ProceedToMain", true));
         
     }
 }

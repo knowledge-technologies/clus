@@ -65,6 +65,7 @@ import si.ijs.kt.clus.ext.ensemble.ros.ClusROSOOBWeights;
 import si.ijs.kt.clus.ext.featureRanking.ClusFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.ensemble.ClusEnsembleFeatureRanking;
 import si.ijs.kt.clus.ext.featureRanking.ensemble.ClusEnsembleFeatureRankings;
+import si.ijs.kt.clus.ext.imputation.MissingTargetImputation;
 import si.ijs.kt.clus.heuristic.ClusHeuristic;
 import si.ijs.kt.clus.main.*;
 import si.ijs.kt.clus.main.settings.Settings;
@@ -113,6 +114,8 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     // Output ensemble at different values
     int[] m_OutEnsembleAt;// sorted values (ascending)!
     private static int m_NbMaxBags;
+    
+    private boolean m_WriteOOB;
 
     // ROS
     private Integer m_EnsembleROSSubspaceSize = null; // -1 = Random, -2 = RandomPerTree, >0 = actual number of
@@ -180,9 +183,13 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     public void initialize(ClusSchema schema, Settings settMain, Clus clus) throws ClusException, IOException {
         m_BagClus = clus;
         m_Timer = new StopWatch();
+        
         // optimize if not XVAL and HMC
 
         SettingsEnsemble sett = settMain.getEnsemble();
+        
+        m_WriteOOB = sett.shouldEstimateOOB();
+        
         m_MaxTime = sett.getTimeBudget().getValue();
 
         m_OptMode = sett.shouldOptimizeEnsemble() && (
@@ -375,6 +382,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
              * }
              */
         }
+        
+        if (getSettings().getSSL().imputeMissingTargetValues()) {
+        	MissingTargetImputation.impute(cr);
+        }
+        
 
         // initialize ranking stuff here: we need stat manager with clustering statistics != null
         // m_FeatureRanking = new ClusEnsembleFeatureRanking();
@@ -815,7 +827,7 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     // crSingle.setInductionTime(m_SummTime);
 
                     postProcessForest(crSingle);
-                    if (sett.shouldEstimateOOB()) {
+                    if (m_WriteOOB) {  // sett.shouldEstimateOOB()
                         if (i == max_number_of_bags) {
                             m_OOBEstimation.postProcessForestForOOBEstimate(crSingle, oob_total, (RowData) cr.getTrainingSet(), m_BagClus, "");
                         }
@@ -945,6 +957,22 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                 }
             }
         }
+        
+        if (seto.shouldWritePerBagModelFiles() && (sett.getBagSelection().getIntVectorSorted()[0] != -1 || sett.isPrintEnsembleModelFiles())) {
+            ClusModelCollectionIO io = new ClusModelCollectionIO();
+            ClusModelInfo orig_info = crSingle.addModelInfo("Original");
+            orig_info.setModel(model);
+            // cut the trees
+            ArrayList<ClusNode> submodels = ClusNode.cutTrees((ClusNode) model);
+            for(int s = 0; s < submodels.size(); s++) {
+            	ClusModelInfo subInfo = crSingle.addModelInfo(ClusNode.getSubmodelName(s));
+            	subInfo.setModel(submodels.get(s));
+            }            
+            m_BagClus.saveModels(crSingle, io);
+            io.save(m_BagClus.getSettings().getGeneric().getFileAbsolute(cr.getStatManager().getSettings().getGeneric().getAppName() + "_bag" + i + ".model"));
+            // join them back so that the other stuff will still work
+            ((ClusNode) model).joinWithSubmodels(submodels);
+        }
 
         if (m_OptMode) {
             // m_Optimization.updatePredictionsForTuples(model, train_iterator, test_iterator);
@@ -981,14 +1009,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
                     giveParallelisationWarning(ParallelTrap.Optimization);
                 }
             }
-        }
-
-        if (seto.shouldWritePerBagModelFiles() && (sett.getBagSelection().getIntVectorSorted()[0] != -1 || sett.isPrintEnsembleModelFiles())) {
-            ClusModelCollectionIO io = new ClusModelCollectionIO();
-            ClusModelInfo orig_info = crSingle.addModelInfo("Original");
-            orig_info.setModel(model);
-            m_BagClus.saveModels(crSingle, io);
-            io.save(m_BagClus.getSettings().getGeneric().getFileAbsolute(cr.getStatManager().getSettings().getGeneric().getAppName() + "_bag" + i + ".model"));
         }
 
         if (canForgetTheRun) {
@@ -1066,6 +1086,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
 
     public void makeForestFromBags(ClusRun cr, TupleIterator train_iterator, TupleIterator test_iterator) throws ClusException, IOException, InterruptedException {
+    	int nFound = 0;
+        // The model file may not exist due to 
+        // - bag selection parameter, e.g., only trees 4 and 5 were trained but nBags = 10
+        // - some other error
+        // We will try to load some trees and if at least one succeeds, we will consider this a success
         try {
             OOBSelection oob_total = null; // = total OOB selection
             OOBSelection oob_sel = null; // = current OOB selection
@@ -1080,20 +1105,32 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
             for (int i = 1; i <= m_NbMaxBags; i++) {
                 ClusLogger.info("Loading model for bag " + i);
                 ClusRandomNonstatic rnd = new ClusRandomNonstatic(seeds[i - 1]);
-
-                ClusModelCollectionIO io = ClusModelCollectionIO.load(m_BagClus.getSettings().getGeneric().getFileAbsolute(getSettings().getGeneric().getAppName() + "_bag" + i + ".model"));
+                
+                String fileName = m_BagClus.getSettings().getGeneric().getFileAbsolute(getSettings().getGeneric().getAppName() + "_bag" + i + ".model");
+                File tempFile = new File(fileName);
+                if (!tempFile.exists()) {
+                	ClusLogger.info("The corresponding file does not exist. Skipping this bag.");
+                	continue;
+                }
+                nFound++;            
+                ClusModelCollectionIO io = ClusModelCollectionIO.load(fileName);
                 ClusModel orig_bag_model = io.getModel("Original");
-                if (orig_bag_model == null) { throw new ClusException(cr.getStatManager().getSettings().getGeneric().getAppName() + "_bag" + i + ".model file does not contain model named 'Original'"); }
-
-                // m_OForest.updateCounts((ClusNode) orig_bag_model);
+                if (orig_bag_model == null) { throw new ClusException(fileName + " file does not contain model named 'Original'"); }
+                // join the submodels
+                ArrayList<ClusNode> submodels = new ArrayList<>();
+                for (int s = 0; s < ((ClusNode) orig_bag_model).getNumberSubmodels(); s++) {
+                	ClusNode submodel = (ClusNode) io.getModel(ClusNode.getSubmodelName(s));
+                	submodels.add(submodel);
+                }
+                ((ClusNode) orig_bag_model).joinWithSubmodels(submodels);
+                
+                
                 updateCounts((ClusNode) orig_bag_model, i);
 
                 if (m_OptMode) {
-                    // m_Optimization.updatePredictionsForTuples(orig_bag_model, train_iterator, test_iterator);
                     updatePredictionsForTuples(orig_bag_model, train_iterator, test_iterator, i);
                 }
                 else {
-                    // m_OForest.addModelToForest(orig_bag_model);
                     addModelToForests(orig_bag_model, i);
                 }
                 if (getSettings().getEnsemble().shouldEstimateOOB()) { // OOB estimate is on
@@ -1135,6 +1172,11 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
         }
         catch (ClassNotFoundException e) {
             throw new ClusException("Error: not all of the _bagX.model files were found");
+        }
+        if (nFound < m_NbMaxBags && nFound > 0) {
+        	ClusLogger.info("WARNING: Not all model files could be found");
+        } else if (nFound == 0) {
+        	throw new ClusException("No model file could be found");
         }
     }
 

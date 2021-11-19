@@ -88,10 +88,15 @@ public class ClusNode extends MyNode implements ClusModel {
 	public List<Integer> m_LeafTuples; // contains hash codes of tuples which ended in a leaf
 	// - end added by Jurica
 	private UniqueNodeIdentifier m_UniqueNodeIdentifier; // matejp: used because hashCode & equals do not form a
-	                                                     // considerable good team for leaves
-
+	                                                     // considerably good team for leaves
 	// ROS
 	private ClusROSModelInfo m_ROSModelInfo;
+	
+	// for iterative model file saving
+	private int m_SerializationIndex;
+	private ArrayList<Integer> m_SerializationIndexChildren;
+	private int m_AtDepth;
+	private int m_NumSubmodels;
 
 	public void setROSModelInfo(ClusROSModelInfo info) {
 		m_ROSModelInfo = info;
@@ -1713,7 +1718,11 @@ public class ClusNode extends MyNode implements ClusModel {
 				temp.pop();
 			}
 		}
-		writer.println(String.format("tree_%s = Tree(%s)", modelIdentifier, pythonNodeName(this, modelIdentifier)));
+		String targetNames = pythonTargetNames(this);
+		writer.println(String.format("tree_%s = Tree(%s, target_names=%s)",
+		        modelIdentifier,
+		        pythonNodeName(this, modelIdentifier),
+		        targetNames));
 	}
 
 	private static String pythonNodeName(ClusNode node, String modelIdentifier) {
@@ -1750,6 +1759,23 @@ public class ClusNode extends MyNode implements ClusModel {
 			throw new RuntimeException("Python code for your target-type statistics not implemented.");
 		}
 		return String.format("%s = TreeNode(%s)", pythonNodeName(leaf, modelIdentifier), statArg);
+	}
+	
+	private String pythonTargetNames(ClusNode leaf){
+	    if (m_TargetStat instanceof RegressionStat) {
+            return "None";
+        } else if (m_TargetStat instanceof ClassificationStat) {
+            boolean isMLC = getTargetStat().getSettings().getMLC().getSection().isEnabled();
+            if (isMLC){
+                return ((ClassificationStat) leaf.m_TargetStat).getTargetNames();
+            } else{
+                return "None";
+            }
+        } else if (m_TargetStat instanceof WHTDStatistic) {
+            return ((WHTDStatistic) leaf.m_TargetStat).getTargetNames();
+        } else {
+            throw new RuntimeException("Python code for your target-type statistics not implemented.");
+        }
 	}
 
 	public final void showAlternatives(PrintWriter writer) {
@@ -1843,5 +1869,89 @@ public class ClusNode extends MyNode implements ClusModel {
 
 	public int getNbNodes() {
 		return computeNodesLeavesDepth()[0];
+	}
+	
+	private boolean shouldCut() {
+		return Math.floorMod(this.m_AtDepth, 5) == 0 && this.hasBestTest();
+	}
+	
+	
+	public static ArrayList<ClusNode> cutTrees(ClusNode model){
+		ClusNode.computeDepthsAt(model);
+		
+		ArrayList<ClusNode> models = new ArrayList<>();
+		// serialization index of model is also initialized to 0 but this is not a problem
+		// since model does not appear in the models
+		
+		Stack<ClusNode> stack = new Stack<>();
+		stack.add(model);
+		ClusNode currentNode;
+		while (!stack.isEmpty()) {
+			currentNode = stack.pop();
+			if (!currentNode.hasBestTest()) {
+				continue;
+			}
+			for (ClusNode child : currentNode.getChildren()) {
+				stack.push(child);
+			}
+			if (currentNode.shouldCut()) {
+				currentNode.m_SerializationIndexChildren = new ArrayList<>();
+				for (ClusNode child : currentNode.getChildren()) {
+					int serializationIndex = models.size();
+					models.add(child);
+					child.m_SerializationIndex = serializationIndex;
+					currentNode.m_SerializationIndexChildren.add(serializationIndex);
+					child.m_Parent = null;
+				}
+				currentNode.m_Children = null;
+			}
+		}
+		model.m_NumSubmodels = models.size();
+		return models;
+	}
+	
+	public void joinWithSubmodels(ArrayList<ClusNode> models){
+		Stack<ClusNode> stack = new Stack<>();
+		stack.add(this);
+		ClusNode currentNode;
+		while (!stack.isEmpty()) {
+			currentNode = stack.pop();
+			if (currentNode.shouldCut()) {
+				// create current <--> children connection
+				currentNode.m_Children = new MyArray();
+				for (int i : currentNode.m_SerializationIndexChildren) {
+					ClusNode child = models.get(i);
+					currentNode.m_Children.addElement(child);
+					child.m_Parent = currentNode;
+				}
+			}
+			for (ClusNode child : currentNode.getChildren()) {
+				stack.push(child);
+			}
+		}
+	}
+	
+	private static void computeDepthsAt(ClusNode model) {
+		model.m_AtDepth = 1;
+		Stack<ClusNode> stack = new Stack<>();
+		stack.add(model);
+		ClusNode currentNode;
+		while (!stack.isEmpty()) {
+			currentNode = stack.pop();
+			if (currentNode.hasBestTest()) {
+				for (ClusNode child : currentNode.getChildren()) {
+					child.m_AtDepth = currentNode.m_AtDepth + 1;
+					stack.push(child);
+				}
+			}
+		}
+	}
+	
+	public static String getSubmodelName(int i) {
+		return String.format("Submodel%d", i);
+	}
+	
+	public int getNumberSubmodels() {
+		return m_NumSubmodels;
 	}
 }

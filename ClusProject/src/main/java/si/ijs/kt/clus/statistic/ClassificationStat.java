@@ -70,7 +70,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
 
     // * Class counts with [Target index][Class]
     public double[][] m_ClassCounts;
-    public double[] m_SumWeights;
+    //public double[] m_SumWeights;
     public int[] m_MajorityClasses;
     // Thresholds used in making predictions in multi-label classification
     public double[] m_Thresholds;
@@ -1123,9 +1123,18 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         		maj_str = a.getValue(maj_ind);
     		}
     		double p = m_ClassCounts[i][maj_ind] / m_SumWeights[i];
-    		majorityClasses[i] = String.format("('%s', %f)", maj_str, p);
+    		// majorityClasses[i] = String.format("('%s', %f)", maj_str, p);
+    		majorityClasses[i] = String.format("%f", p);
     	}
         return  "[" + String.join(",", majorityClasses) + "]";
+    }
+    
+    public String getTargetNames(){
+        String[] names = new String[m_NbTarget];
+        for (int i = 0; i < m_NbTarget; i++) {
+            names[i] = "'" + m_Attrs[i].getName() + "'";
+        }
+        return  "[" + String.join(", ", names) + "]";
     }
 
 
@@ -1346,6 +1355,13 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
             NominalAttrType type = m_Attrs[i];
             type.setNominal(prediction, m_MajorityClasses[i]);
         }
+    }
+    
+    @Override
+    public void predictTupleOneComponent(DataTuple tuple, int i, int value) {
+    	NominalAttrType type = m_Attrs[i];
+        type.setNominal(tuple, value);
+
     }
 
 

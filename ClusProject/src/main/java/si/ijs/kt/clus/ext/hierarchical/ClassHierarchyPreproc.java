@@ -75,6 +75,11 @@ public class ClassHierarchyPreproc implements TuplePreproc {
     @Override
     public void preproc(int pass, DataTuple tuple) throws ClusException {
         ClassesTuple ct = (ClassesTuple) tuple.getObjVal(m_Type.getArrayIndex());
+        // send ? to empty classess
+        if (ct.toString().contains("?")) {
+        	tuple.setObjectVal(new ClassesTuple(ClassesValue.EMPTY_SET_INDICATOR, null), m_Type.getArrayIndex());
+        	ct = (ClassesTuple) tuple.getObjVal(m_Type.getArrayIndex());
+        }
         if (!isSinglePass() && pass == 0) {
             ct.addToHierarchy(getHier());
         }

@@ -933,6 +933,18 @@ public class RowData extends ClusData implements MSortable, Serializable {
 
         return nbUnlabeled;
     }
+    
+    public HashMap<Integer, ArrayList<Integer>> getMissingTargets(){
+        HashMap<Integer, ArrayList<Integer>> missing = new HashMap<>();
+
+        for (int i = 0; i < m_Data.length; i++) {
+        	ArrayList<Integer> missingTargets = m_Data[i].getMissingTargets();
+            if (missingTargets.size() > 0) {
+                missing.put(i, missingTargets);
+            }
+        }
+        return missing;
+    }
 
 
     public final RowData applyWeighted(NodeTest test, int branch) {

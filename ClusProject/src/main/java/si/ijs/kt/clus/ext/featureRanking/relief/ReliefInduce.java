@@ -10,6 +10,7 @@ import si.ijs.kt.clus.data.ClusSchema;
 import si.ijs.kt.clus.data.rows.RowData;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsRelief.MissingTargetHandling;
 import si.ijs.kt.clus.model.ClusModel;
 import si.ijs.kt.clus.util.exception.ClusException;
 
@@ -33,15 +34,19 @@ public class ReliefInduce extends ClusInductionAlgorithm {
 
     @Override
     public ClusModel induceSingleUnpruned(ClusRun cr) throws ClusException, IOException, InterruptedException, ExecutionException {
-        int[] nbNeighbours = cr.getStatManager().getSettings().getRelief().getReliefNbNeighboursValue();
-        int[] nbIterations = cr.getStatManager().getSettings().getRelief().getReliefNbIterationsValue(cr.getTrainingSet().getNbRows());
-        boolean shouldWeight = cr.getStatManager().getSettings().getRelief().getReliefWeightNeighbours();
-        double sigma = cr.getStatManager().getSettings().getRelief().getReliefWeightingSigma();
-        int randomSeed = cr.getStatManager().getSettings().getGeneral().getRandomSeed();
-
+    	Settings settings = cr.getStatManager().getSettings();
+        int[] nbNeighbours = settings.getRelief().getReliefNbNeighboursValue();
+        int[] nbIterations = settings.getRelief().getReliefNbIterationsValue(cr.getTrainingSet().getNbRows());
+        boolean shouldWeight = settings.getRelief().getReliefWeightNeighbours();
+        double sigma = settings.getRelief().getReliefWeightingSigma();
+        int randomSeed = settings.getGeneral().getRandomSeed();
+        MissingTargetHandling missingTargetHandling = settings.getRelief().getMissingTargetHandling();
+        double[] sslWinterval = amountOfSupervisionInterval(settings);
+        
         ReliefModel reliefModel = new ReliefModel(nbNeighbours, nbIterations, shouldWeight, sigma, (RowData) cr.getTrainingSet());
 
-        m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getData(), reliefModel.getNbNeighbours(), reliefModel.getNbIterations(), reliefModel.getWeightNeighbours(), reliefModel.getSigma(), randomSeed, getSettings());
+        m_FeatureRanking = new ClusReliefFeatureRanking(reliefModel.getData(), reliefModel.getNbNeighbours(), reliefModel.getNbIterations(), reliefModel.getWeightNeighbours(), reliefModel.getSigma(), randomSeed, getSettings(),
+        		missingTargetHandling, sslWinterval, cr);
         m_FeatureRanking.initializeAttributes(cr.getStatManager().getSchema().getDescriptiveAttributes(), m_FeatureRanking.getNbFeatureRankings());
         m_FeatureRanking.computeReliefImportance(reliefModel.getData());
 
@@ -52,30 +57,20 @@ public class ReliefInduce extends ClusInductionAlgorithm {
         return reliefModel;
     }
 
-
     public ClusNode induceSingleUnpruned(RowData data) throws ClusException, IOException {
         m_Root = null;
-
-        // while (true) {
-        //
-        // // Init root node
-        // m_Root = new ClusNode();
-        // m_Root.initClusteringStat(m_StatManager, data);
-        // m_Root.initTargetStat(m_StatManager, data);
-        // m_Root.getClusteringStat().showRootInfo();
-        //// initSelectorAndSplit(m_Root.getClusteringStat());
-        //// setInitialData(m_Root.getClusteringStat(),data);
-        // // Induce the tree
-        // data.addIndices();
-        //
-        // induce(m_Root, data);
-        //
-        // // rankFeatures(m_Root, data);
-        // // Refinement finished
-        // if (Settings.EXACT_TIME == false) break;
-        // }
-
         return m_Root;
+    }
+    
+    private static double[] amountOfSupervisionInterval(Settings settings) {
+    	double[] amountsOfSupervision = settings.getSSL().getSSLPossibleWeights();
+    	double min = 1.0, max = 0.0; // [0, 1] is the biggest interval
+    	for (double w : amountsOfSupervision) {
+    		if (w < min) min = w;
+    		if (w > max) max = w;
+    	}
+    	return new double[] {min, max};
+    	
     }
 
 }

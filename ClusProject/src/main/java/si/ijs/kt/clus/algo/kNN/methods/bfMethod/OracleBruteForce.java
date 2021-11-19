@@ -1,6 +1,8 @@
 package si.ijs.kt.clus.algo.kNN.methods.bfMethod;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 
@@ -13,6 +15,7 @@ import si.ijs.kt.clus.ext.featureRanking.relief.nearestNeighbour.SaveLoadNeighbo
 import si.ijs.kt.clus.main.ClusModelInfoList;
 import si.ijs.kt.clus.main.ClusRun;
 import si.ijs.kt.clus.main.settings.Settings;
+import si.ijs.kt.clus.main.settings.section.SettingsKNN;
 import si.ijs.kt.clus.util.exception.ClusException;
 
 public class OracleBruteForce extends BruteForce {
@@ -28,11 +31,73 @@ public class OracleBruteForce extends BruteForce {
 		m_NearestNeighbours.put(SaveLoadNeighbours.DUMMY_TARGET, new HashMap<Integer, NearestNeighbour[][]>());
 		
 	}
+	
+	/**
+	 * Keep those of the training examples with missing values that are in the chosen training instances and build the model.
+	 * @param k
+	 * @param trainingExamplesWithMissing
+	 * @param sett
+	 */
+	public void buildForMissingTargetImputation(int k, int[] trainingExamplesWithMissing, SettingsKNN sett) {
+		try {
+			m_ListTrain = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData();
+		} catch (ClusException | IOException | InterruptedException e1) {
+			e1.printStackTrace();
+		}
+		if (trainingExamplesWithMissing != null) {
+			// this was meant as a code for filtering the training instances with those
+			// that actually have missing values. However, this is wrong!
+			// All missing target values should be imputed, so we must compute
+			// the neighbours off all such examples. This code will only check whether
+			// the chosen training instances contain all examples with missig target values
+			
+			// filter the candidate training instances
+			int[] chosenTrainingInstances = sett.getChosenIntancesTrain(m_ListTrain.length);
+			Arrays.sort(chosenTrainingInstances);
+			ArrayList<Integer> kept = new ArrayList<>();
+			int iWithMissing = 0, iTraining = 0;
+			while (iWithMissing < trainingExamplesWithMissing.length && iTraining < chosenTrainingInstances.length) {
+				int missing = trainingExamplesWithMissing[iWithMissing];
+				int training = chosenTrainingInstances[iTraining];
+				if (missing == training) {
+					kept.add(missing);
+					iWithMissing++;
+					iTraining++;
+				}
+				else if (missing < training) {
+					iWithMissing++;
+				} else {
+					iTraining++;
+				}
+			}
+			int[] filtered = new int[kept.size()];
+			for (int i = 0; i < filtered.length; i++) {
+				filtered[i] = kept.get(i);
+			}
+			if (trainingExamplesWithMissing.length != filtered.length) {
+				throw new RuntimeException("Choosen instances should contain all examples with missing target data! Reconsider your life choices.");
+			}
+			sett.setChosenIntancesTrain(filtered);
+		}
+		try {
+			build(k, true);
+		} catch (ClusException | IOException | InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 
+	
+	@Override
+	public void build(int k) throws ClusException, IOException, InterruptedException {
+		build(k, false);
+	}
    
-   @Override
-   public void build(int k) throws ClusException, IOException, InterruptedException {
-	   m_ListTrain = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData(); // Must not be null ...
+   
+   public void build(int k, boolean skipFirstNeighbour) throws ClusException, IOException, InterruptedException {
+	   if (m_ListTrain == null) {
+		   m_ListTrain = getRun().getDataSet(ClusModelInfoList.TRAINSET).getData();
+	   }
 	   for(DataTuple tuple : m_ListTrain) {
 		   tuple.setTraining(true);
 	   }
@@ -60,6 +125,7 @@ public class OracleBruteForce extends BruteForce {
 	   }
 	   
 	   // obtaining neighbours
+	   int actualK = skipFirstNeighbour ? k + 1: k;
 	   if (sett.getKNN().shouldLoadNeighbours()) {
 		   ClusReliefFeatureRanking.printMessage("Loading nearest neighbours from file(s)", 1, sett.getGeneral().getVerbose());
 		   SaveLoadNeighbours nnLoader = new SaveLoadNeighbours(sett.getKNN().getLoadNeighboursFiles(), null);
@@ -73,7 +139,8 @@ public class OracleBruteForce extends BruteForce {
 		   int percents = percentStep;
 		   for(DataTuple tuple : new ArrayOfArraysIterator<>(new DataTuple[][] {m_ChosenInstancesTrain, m_ChosenInstancesTest})) {
 			   counter++;
-			   NN[] temp = super.returnPureNNs(tuple, k);
+			   NN[] temp = super.returnPureNNs(tuple, actualK);
+			   temp = Arrays.copyOfRange(temp, temp.length - k, temp.length);  // skip first if necessary
 			   NearestNeighbour[] nns = new NearestNeighbour[temp.length];
 			   for(int n = 0; n < nns.length; n++) {
 				   nns[n] = new NearestNeighbour(temp[n].getTuple().getDatasetIndex(), temp[n].getDistance());

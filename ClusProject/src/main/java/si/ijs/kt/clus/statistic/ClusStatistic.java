@@ -34,6 +34,7 @@ import si.ijs.kt.clus.data.attweights.ClusAttributeWeights;
 import si.ijs.kt.clus.data.cols.ColTarget;
 import si.ijs.kt.clus.data.rows.DataTuple;
 import si.ijs.kt.clus.data.rows.RowData;
+import si.ijs.kt.clus.data.type.primitive.NominalAttrType;
 import si.ijs.kt.clus.distance.ClusDistance;
 import si.ijs.kt.clus.ext.beamsearch.ClusBeam;
 import si.ijs.kt.clus.ext.ensemble.ClusOOBWeights;
@@ -54,6 +55,7 @@ public abstract class ClusStatistic implements Serializable {
 
     /** The weighted sum of all examples */
     protected double m_SumWeight;
+    public double[] m_SumWeights;  // Sharing is caring
     protected double m_SumWeightLabeled;
     public int m_NbExamples;
 
@@ -68,6 +70,14 @@ public abstract class ClusStatistic implements Serializable {
 
 
     public abstract ClusStatistic cloneStat();
+    
+    public boolean isAnyLabeled(int target) {
+    	if (m_SumWeights == null) {
+    		return m_SumWeightLabeled > 0.0;
+    	} else {
+    		return m_SumWeights[target] > 0.0;
+    	}
+    }
 
 
     /**
@@ -438,6 +448,16 @@ public abstract class ClusStatistic implements Serializable {
 
     public void predictTuple(DataTuple prediction) {
         System.err.println(getClass().getName() + " does not implement predictTuple()");
+    }
+    
+
+    public void predictTupleOneComponent(DataTuple tuple, int i, int value) {
+    	System.err.println(getClass().getName() + " does not implement predictTupleOneComponent(DataTuple tuple, int i, int value)");
+
+    }
+    
+    public void predictTupleOneComponent(DataTuple tuple, int i, double value) {
+    	System.err.println(getClass().getName() + " does not implement predictTupleOneComponent(DataTuple tuple, int i, double value)");
     }
 
 

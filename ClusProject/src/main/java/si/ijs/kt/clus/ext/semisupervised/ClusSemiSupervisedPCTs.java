@@ -39,6 +39,9 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 	String m_ScoresPath; // Where to save weight scores
 	boolean m_SaveScores; // Should the scores be saved?
 	PrintWriter writer;
+	
+	int[] m_InternalFolds; // which folds 
+	boolean m_InduceMain;
 
 	public ClusSemiSupervisedPCTs(ClusInductionAlgorithm clss_induce) throws ClusException, IOException {
 		super(clss_induce);
@@ -66,6 +69,9 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 			ClusLogger.info("It does not make any sense to force running the internal XVAL and not saving the score. Just saying.");
 		}
 		m_PercentageLabeled = sett.getPercentageLabeled() / 100.0;
+		
+		m_InternalFolds = sett.getInternalFoldIndices();
+		m_InduceMain = sett.shouldInduceMain();
 	}
 
 	@Override
@@ -115,10 +121,11 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 			XValMainSelection xvalmain = new XValRandomSelection(cr.getTrainingSet().getNbRows(), m_InternalXValFolds);
 
 			for (double weight : m_ParameterValues) {
-
+				
 				double error = 0;
 
-				for (int fold = 1; fold < m_InternalXValFolds; fold++) {
+				for (int fold : m_InternalFolds) {
+					ClusLogger.info(String.format("Inducing fold %d for weihgt %f", fold, weight));
 					// Set train and test sets for the fold ClusRun
 					XValSelection sel = new XValSelection(xvalmain, fold);
 					foldRun = new ClusRun(cr);
@@ -234,6 +241,12 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 
 		setWeights(clusteringWeights, clustering, bestWeight);
 
+		if (!m_InduceMain) {
+			ClusLogger.info("Internal folds computed. Exiting now.");
+			ClusLogger.info("Done.");
+			System.exit(0);
+			
+		}
 		// learn model with new training set and best w parameter
 		return m_Induce.induceSingleUnpruned(cr);
 

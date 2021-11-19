@@ -59,12 +59,13 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     public final static long serialVersionUID = Settings.SERIAL_VERSION_ID;
 
     // protected static DistributionFactory m_Fac = DistributionFactory.newInstance();
-
+    private static final double DUMMY_THETA = -1.0;
+    
     protected ClassHierarchy m_Hier;
     protected boolean[] m_DiscrMean;
     protected WHTDStatistic m_Global, m_Validation;
     protected double m_SigLevel;
-    protected double m_Threshold = -1.0;
+    protected double m_Threshold = DUMMY_THETA;
     // Hackishe Porzion des Codes fuer die pooled AUPRC: all other parts of the code that serve this purpose will be
     // simply denoted by poolAUPRC case
     protected HierarchyDistance m_Distance;
@@ -236,12 +237,12 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
         ClassesTuple tp = (ClassesTuple) tuple.getObjVal(sidx);
 
         if (tp.getNbClasses() > 0) { // if nbClasses == 0, example is unlabeled
+        	m_SumWeightLabeled += weight; // added by matejp 21. 2. 2020; Now, what is interesting is that apparently ensembles can be grown without this.
             m_SumWeight += weight;
             // Add one to the elements in the tuple, zero to the others
             for (int j = 0; j < tp.getNbClasses(); j++) {
                 ClassesValue val = tp.getClass(j);
                 int idx = val.getIndex();
-                // if (Settings.VERBOSE > 10) ClusLogger.info("idx = "+idx+" weight = "+weight);
                 m_SumValues[idx] += weight;
                 if (m_Distance.equals(HierarchyDistance.PooledAUPRC)) {// poolAUPRC case
                     m_P[idx] += weight;
@@ -291,7 +292,8 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     @Override
     public void computePrediction() {
-        ClassesTuple meantuple = m_Hier.getBestTupleMaj(m_Means, m_Threshold);
+    	double threshold = m_Threshold == DUMMY_THETA ? 0.5 : m_Threshold;
+        ClassesTuple meantuple = m_Hier.getBestTupleMaj(m_Means, threshold);
         m_DiscrMean = meantuple.getVectorBooleanNodeAndAncestors(m_Hier);
         performSignificanceTest();
     }
@@ -301,9 +303,18 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
     	for (int i = 0; i < m_Means.length; i++) {
     		String label = m_Hier.getTermAt(i).toStringHuman(m_Hier);
     		double p = m_Means[i];
-    		labelThresholdPairs[i] = String.format("('%s', %f)", label, p);
+    		// labelThresholdPairs[i] = String.format("('%s', %f)", label, p);
+    		labelThresholdPairs[i] = String.format("%f", p);
     	}
         return  "[" + String.join(",", labelThresholdPairs) + "]";
+    }
+    
+    public String getTargetNames(){
+        String[] names = new String[m_Means.length];
+        for (int i = 0; i < names.length; i++) {
+            names[i] = "'" + m_Hier.getTermAt(i).toStringHuman(m_Hier) + "'";
+        }
+        return  "[" + String.join(", ", names) + "]";
     }
 
 
@@ -419,8 +430,7 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
                 m_Means[i] = 1.0;
         }
     }
-
-
+    
     public boolean[] getDiscretePred() {
         return m_DiscrMean;
     }

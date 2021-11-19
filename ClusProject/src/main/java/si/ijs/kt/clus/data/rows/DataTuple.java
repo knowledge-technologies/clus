@@ -24,6 +24,7 @@ package si.ijs.kt.clus.data.rows;
 
 import java.io.PrintWriter;
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import si.ijs.kt.clus.data.ClusSchema;
@@ -222,6 +223,23 @@ public class DataTuple implements Serializable {
         }
         
         return missingNb;
+    }
+    
+    /**
+     * Returns the indices of the targets with missing values. 
+     * @return 
+     */
+    public final ArrayList<Integer> getMissingTargets() {
+        ClusAttrType[] targets = m_Schema.getTargetAttributes();
+        
+        ArrayList<Integer> missing = new ArrayList<>();
+        
+        for(int i = 0; i < targets.length; i++) {
+            if(targets[i].isMissing(this)) {
+                missing.add(i);
+            }
+        }
+        return missing;
     }
     
     /**
