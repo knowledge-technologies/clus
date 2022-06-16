@@ -26,7 +26,7 @@ public class SettingsSSL extends SettingsBase {
 
     public enum SSLMethod {
         SelfTraining, SelfTrainingFTF, PCT
-    };
+    }
 
     /**
      * unlabeled criteria is the criteria by which the unlabeled data will be added to the training set (used by the
@@ -68,7 +68,7 @@ public class SettingsSSL extends SettingsBase {
          * threshold is in next iterations
          */
         AutomaticOOBInitial
-    };
+    }
 
     private INIFileEnum<SSLUnlabeledCriteria> m_SSL_UnlabeledCriteria;
 
@@ -85,7 +85,7 @@ public class SettingsSSL extends SettingsBase {
          * method for the Self Training is Random Forest)
          */
         Airbag
-    };
+    }
 
     private INIFileEnum<SSLStoppingCriteria> m_SSL_StoppingCriteria;
 
@@ -124,7 +124,7 @@ public class SettingsSSL extends SettingsBase {
 
         /** Reliability score for MLC and HMLC, based on empirical probabilities of classes */
         ClassesProbabilities
-    };
+    }
 
     private INIFileEnum<SSLConfidenceMeasure> m_SSL_ConfidenceMeasure;
 
@@ -174,7 +174,7 @@ public class SettingsSSL extends SettingsBase {
          * are also considered
          */
         AllData
-    };
+    }
 
     private INIFileEnum<SSLNormalization> m_SSL_normalization;
 
@@ -194,28 +194,30 @@ public class SettingsSSL extends SettingsBase {
 
         /** does nothing, leaves per-target scores as they are */
         NoNormalization
-    };
+    }
 
     private INIFileEnum<SSLAggregation> m_SSL_aggregation;
 
     /** Aggregation of per target reliability scores */
     public enum SSLAggregation {
         Average, Minimum, Maximum, AverageIgnoreZeros
-    };
+    }
 
-    private INIFileBool m_CalibrateHmcThreshold;
     /**
      * if set to yes, HMC threshold is calibrated such that the difference between label cardinality of labeled examples
      * and predicted unlabeled examples is minimal
      */
+    private INIFileBool m_CalibrateHmcThreshold;
 
-    private INIFileNominalOrDoubleOrVector m_SSL_PossibleWeights;
     /** Candidate weights for automatic w optimization */
-    private INIFileBool m_SSL_PruningWhenTuning;
+    private INIFileNominalOrDoubleOrVector m_SSL_PossibleWeights;
+
     /** Should the trees be pruned when optimizing w parameter */
-    private INIFileInt m_SSL_InternalFolds;
+    private INIFileBool m_SSL_PruningWhenTuning;
+
     /** How many folds for internal cross validation for optimizing w */
-    
+    private INIFileInt m_SSL_InternalFolds;
+
     /** Which internal fold */
     private INIFileInt m_SSL_InternalFold;
     public static int DEFAULT_INTERNAL_FOLD = -1; // something useless
@@ -254,7 +256,7 @@ public class SettingsSSL extends SettingsBase {
     		throw new RuntimeException("We must have 1 <= internal fold < internal fold indices");
     	}
     	if (internalFold == DEFAULT_INTERNAL_FOLD) {
-    		answer = new int[getSSLInternalFolds() - 1]; // to be consistent with the off-by-one error
+    		answer = new int[getSSLInternalFolds()];
     		for (int i = 0; i < answer.length; i++) {
     			answer[i] = i + 1;
     		}
@@ -401,7 +403,7 @@ public class SettingsSSL extends SettingsBase {
 
 
     public boolean isNullUnlabeledFile() {
-        return m_SSL_UnlabeledData.getValue() == null || m_SSL_UnlabeledData.getValue() == "";
+        return m_SSL_UnlabeledData.getValue() == null || m_SSL_UnlabeledData.getValue().equals("");
     }
 
 
@@ -451,7 +453,7 @@ public class SettingsSSL extends SettingsBase {
         m_Section.addNode(m_SSL_StoppingCriteria = new INIFileEnum<>("StoppingCriteria", SSLStoppingCriteria.NoneAdded));
         m_Section.addNode(m_SSL_UnlabeledCriteria = new INIFileEnum<>("UnlabeledCriteria", SSLUnlabeledCriteria.Threshold));
         m_Section.addNode(m_SSL_ConfidenceThreshold = new INIFileDouble("ConfidenceThreshold", 0.8));
-        m_Section.addNode(m_SSL_ConfidenceMeasure = new INIFileEnum<SSLConfidenceMeasure>("ConfidenceMeasure", SSLConfidenceMeasure.Variance));
+        m_Section.addNode(m_SSL_ConfidenceMeasure = new INIFileEnum<>("ConfidenceMeasure", SSLConfidenceMeasure.Variance));
         m_Section.addNode(m_SSL_Iterations = new INIFileInt("Iterations", 10));
         m_Section.addNode(m_SSL_K = new INIFileInt("K", 5));
         m_Section.addNode(m_SSL_UnlabeledData = new INIFileStringOrDouble("UnlabeledData"));
