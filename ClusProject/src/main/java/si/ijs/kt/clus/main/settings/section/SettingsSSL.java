@@ -220,7 +220,7 @@ public class SettingsSSL extends SettingsBase {
 
     /** Which internal fold */
     private INIFileInt m_SSL_InternalFold;
-    public static int DEFAULT_INTERNAL_FOLD = -1; // something useless
+    public static int DEFAULT_INTERNAL_FOLD = -1234; // something useless
     /** Should proceed to main ? */
     private INIFileBool m_SSL_InduceMain;
         
@@ -252,13 +252,15 @@ public class SettingsSSL extends SettingsBase {
     public int[] getInternalFoldIndices() {
     	int[] answer;
     	int internalFold = m_SSL_InternalFold.getValue();
-    	if (internalFold == 0 || internalFold >= getSSLInternalFolds()) {
-    		throw new RuntimeException("We must have 1 <= internal fold < internal fold indices");
-    	}
+        if (internalFold != DEFAULT_INTERNAL_FOLD){
+            if (internalFold < 0 || internalFold >= getSSLInternalFolds()) {
+                throw new RuntimeException("We must have 0 <= internal fold < internal fold indices");
+            }
+        }
     	if (internalFold == DEFAULT_INTERNAL_FOLD) {
     		answer = new int[getSSLInternalFolds()];
     		for (int i = 0; i < answer.length; i++) {
-    			answer[i] = i + 1;
+    			answer[i] = i;
     		}
     	} else {
     		answer = new int[] {internalFold};
