@@ -42,7 +42,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     protected double[] m_SumPi, m_SumSPi;
     protected double[] m_SumAi, m_SumSAi;
     protected double[] m_SumPiAi;
-
+    protected int[] m_NbLabeledEx; //to dynamically monitor the number of labeled examples, because we cannot calculate correlation for unlabeled examples 
 
     public PearsonCorrelation(ClusErrorList par, NumericAttrType[] num) {
         this(par, num, "");
@@ -56,7 +56,8 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
         m_SumAi = new double[m_Dim];
         m_SumSAi = new double[m_Dim];
         m_SumPiAi = new double[m_Dim];
-
+        m_NbLabeledEx = new int[m_Dim];
+        
         setAdditionalInfo(info);
     }
 
@@ -69,6 +70,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
             m_SumAi[i] = 0.0;
             m_SumSAi[i] = 0.0;
             m_SumPiAi[i] = 0.0;
+            m_NbLabeledEx[i] = 0;
         }
     }
 
@@ -81,7 +83,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
 
     public double getCorrelation(int i) {
 
-        int nb = getNbExamples();
+        int nb = m_NbLabeledEx[i];
 
         double Pi_ss = m_SumSPi[i] - m_SumPi[i] * m_SumPi[i] / nb;
 
@@ -90,7 +92,12 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
             return 0;
         }
         double Ai_ss = m_SumSAi[i] - m_SumAi[i] * m_SumAi[i] / nb;
-
+        
+        if (Ai_ss == 0) {
+            // constant real case
+            return 0;
+        }
+        
         double root = Math.sqrt(Pi_ss * Ai_ss);
         double above = m_SumPiAi[i] - m_SumPi[i] * m_SumAi[i] / nb;
 
@@ -114,17 +121,23 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     }
 
 
+    protected void updateSums(double real, double predicted, int i) {
+    	if (!Double.isInfinite(real) && !Double.isNaN(real)) { // maybe we should also check this for  predicted, but for now Clus always predicts something, i.e., it cannot predict missing value
+        	m_SumPi[i] += predicted;
+            m_SumSPi[i] += predicted * predicted;
+            // Real
+            m_SumAi[i] += real;
+            m_SumSAi[i] += real * real;
+            // Cross real, predicted
+            m_SumPiAi[i] += predicted * real;
+            m_NbLabeledEx[i]++;
+    	}
+    }
+    
     @Override
     public void addExample(double[] real, double[] predicted) {
         for (int i = 0; i < m_Dim; i++) {
-            // Predicted
-            m_SumPi[i] += predicted[i];
-            m_SumSPi[i] += predicted[i] * predicted[i];
-            // Real
-            m_SumAi[i] += real[i];
-            m_SumSAi[i] += real[i] * real[i];
-            // Cross real, predicted
-            m_SumPiAi[i] += predicted[i] * real[i];
+            updateSums(real[i], predicted[i], i);
         }
     }
 
@@ -139,15 +152,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
         double[] predicted = pred.getNumericPred();
         for (int i = 0; i < m_Dim; i++) {
             double real_i = getAttr(i).getNumeric(tuple);
-
-            // Predicted
-            m_SumPi[i] += predicted[i];
-            m_SumSPi[i] += predicted[i] * predicted[i];
-            // Real
-            m_SumAi[i] += real_i;
-            m_SumSAi[i] += real_i * real_i;
-            // Cross real, predicted
-            m_SumPiAi[i] += predicted[i] * real_i;
+            updateSums(real_i, predicted[i], i);
         }
     }
 
@@ -157,15 +162,7 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
         for (int i = 0; i < m_Dim; i++) {
             double real_i = getAttr(i).getNumeric(real);
             double predicted_i = getAttr(i).getNumeric(pred);
-
-            // Predicted
-            m_SumPi[i] += predicted_i;
-            m_SumSPi[i] += predicted_i * predicted_i;
-            // Real
-            m_SumAi[i] += real_i;
-            m_SumSAi[i] += real_i * real_i;
-            // Cross real, predicted
-            m_SumPiAi[i] += predicted_i * real_i;
+            updateSums(real_i, predicted_i, i);
         }
     }
 
@@ -182,9 +179,11 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
             m_SumSAi[i] += oe.m_SumSAi[i];
             // Cross real, predicted
             m_SumPiAi[i] += oe.m_SumPiAi[i];
+            
+            m_NbLabeledEx[i]  += oe.m_NbLabeledEx[i];
         }
     }
-
+  
 
     /**
      * Compute Pearson correlation coefficient
@@ -194,23 +193,14 @@ public class PearsonCorrelation extends ClusNumericError implements ComponentErr
     	ClusNumberFormat fr = getFormat();
         StringBuffer buf = new StringBuffer();
         buf.append("[");
-        int nb = getNbExamples();
+        
         double avg_sq_r = 0.0;
-        double root, above, el, Ai_ss, Pi_ss;
-
+        double el;
+        
         for (int i = 0; i < m_Dim; i++) {
-            Pi_ss = m_SumSPi[i] - m_SumPi[i] * m_SumPi[i] / nb;
-            Ai_ss = m_SumSAi[i] - m_SumAi[i] * m_SumAi[i] / nb;
-
-            if (Pi_ss <= 0 || Ai_ss <= 0) {
-                el = 0F;
-            }
-            else {
-                root = Math.sqrt(Pi_ss * Ai_ss);
-                above = m_SumPiAi[i] - m_SumPi[i] * m_SumAi[i] / nb;
-
-                el = above / root;
-            }
+        	
+            el = getCorrelation(i);
+        	
             if (i != 0)
                 buf.append(",");
 
