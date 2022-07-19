@@ -168,7 +168,7 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 				</dependencies>
 				<configuration>
 				        <!-- black magic -->
-<!--                         <argLine>&#45;- add-opens=java.base/java.util=ALL-UNNAMED</argLine>                         -->
+                         <argLine>-- add-opens=java.base/java.util=ALL-UNNAMED</argLine>                       
                 </configuration>
 			</plugin>
 			<plugin>
