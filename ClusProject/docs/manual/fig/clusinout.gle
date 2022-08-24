@@ -37,10 +37,24 @@ begin object arff
    grestore
 end object
 
-amove x pageheight()-0.05
-draw disk.tc 1.5 1.5 0.1 name sdisk
+begin object fimp
+   gsave
+   set hei 0.15
+   begin text
+	attribute importance
+	-----------------
+	x1	0.84
+	x2	0.71
+	x3	0.21
+   ...
+   end text
+   grestore
+end object
 
-amove ptx(sdisk.cc) pty(sdisk.cc)-0.2
+amove x pageheight()-0.05
+draw disk.tc 1.5 1.3 0.0 name sdisk
+
+amove ptx(sdisk.cc) pty(sdisk.cc)-0.1
 draw sfile.cc
 
 set just cc
@@ -78,7 +92,7 @@ amove ptx(vdisk.lc)-dxl pty(vdisk.lc)
 begin tex name vdata
 \begin{tabular}{c}
 Validation data\\
-(optional)\\
+\lbrack optional\rbrack \\
 \end{tabular}
 end tex
 
@@ -93,7 +107,7 @@ amove ptx(tsdisk.lc)-dxl pty(tsdisk.lc)
 begin tex
 \begin{tabular}{c}
 Test data\\
-(optional)\\
+\lbrack optional\rbrack \\
 \end{tabular}
 end tex
 
@@ -114,7 +128,7 @@ set just lc
 amove diskr+dx+0.15 (pty(tdisk.rc)+pty(vdisk.rc))/2
 begin box add 0.15 round 0.2 name clus
    begin tex name clus
-   Clus system
+   \textsc{CLUSplus} system
    end tex
    abound ptx(clus.cc) pty(clus.tc)+0.5
    abound ptx(clus.cc) pty(clus.bc)-0.5
@@ -137,7 +151,7 @@ aline diskr+dx pty(clus.lc) arrow end
 x = ptx(clus.rc)+dx+1.5/2
 
 amove x pageheight()-0.05
-draw disk.tc 1.5 1.5 0.1 name odisk
+draw disk.tc 1.5 1.3 0.0 name odisk
 
 set just cc
 amove ptx(odisk.rc)+dxl pty(odisk.rc)
@@ -148,11 +162,11 @@ Output file\\
 \end{tabular}
 end tex
 
-amove ptx(odisk.cc) pty(odisk.cc)-0.15
+amove ptx(odisk.cc) pty(odisk.cc)-0.0
 draw l_tree.cc 0.9 0.9 0.3 0.2
 
 amove x pty(odisk.bc)-0.3
-draw disk.tc 1.5 1.5 0.1 name xdisk
+draw disk.tc 1.5 1.3 0.0 name xdisk
 
 set just cc
 amove ptx(xdisk.rc)+dxl pty(xdisk.rc)
@@ -161,10 +175,11 @@ begin tex
 Cross-validation\\
 details\\
 (filename.xval)\\
+\lbrack optional\rbrack \\
 \end{tabular}
 end tex
 
-amove ptx(xdisk.cc) pty(xdisk.cc)-0.15
+amove ptx(xdisk.cc) pty(xdisk.cc)-0.0
 rmove -0.35 0.2
 draw l_tree.cc 0.4 0.4 0.3 0.2
 rmove +0.7 -0.05
@@ -184,12 +199,29 @@ begin tex
 \begin{tabular}{c}
 Predictions\\
 (ARFF format)\\
+\lbrack optional\rbrack \\
+\end{tabular}
+end tex
+
+amove x pty(pdisk.bc)-0.3
+draw disk.tc 1.5 1.3 0.0 name fdisk
+
+amove ptx(fdisk.cc) pty(fdisk.cc)-0.0
+draw fimp.cc
+
+set just cc
+amove ptx(fdisk.rc)+dxl pty(fdisk.rc)
+begin tex
+\begin{tabular}{c}
+Feature importance\\
+(filename.fimp)\\
+\lbrack optional\rbrack \\
 \end{tabular}
 end tex
 
 gsave
 set hei 0.5
-amove x pty(pdisk.bc)-0.5
+amove x pty(fdisk.bc)-0.5
 tex "\ldots"
 grestore
 
@@ -197,12 +229,16 @@ amove ptx(clus.rc) pty(clus.rc)
 aline ptx(clus.rc)+dx/2 pty(clus.rc)
 amove ptx(clus.rc)+dx/2 pty(odisk.lc)
 aline ptx(clus.rc)+dx/2 pty(pdisk.lc)
+amove ptx(clus.rc)+dx/2 pty(pdisk.lc)
+aline ptx(clus.rc)+dx/2 pty(fdisk.lc)
 amove ptx(clus.rc)+dx/2 pty(odisk.lc)
 aline ptx(odisk.lc) pty(odisk.lc) arrow end
 amove ptx(clus.rc)+dx/2 pty(xdisk.lc)
 aline ptx(xdisk.lc) pty(xdisk.lc) arrow end
 amove ptx(clus.rc)+dx/2 pty(pdisk.lc)
 aline ptx(pdisk.lc) pty(pdisk.lc) arrow end
+amove ptx(clus.rc)+dx/2 pty(fdisk.lc)
+aline ptx(fdisk.lc) pty(fdisk.lc) arrow end
 
 
 
