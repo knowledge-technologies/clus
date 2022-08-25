@@ -45,15 +45,15 @@ build:
   rules:
     - if: $CI_COMMIT_BRANCH      
 
-deploy:jdk8:
-  stage: deploy
-  script:
-    - git remote set-url origin http://${CLUS_PUBLIC_USERNAME}:${CLUS_PUBLIC_TOKEN}@${CLUS_PUBLIC_REPOSITORY}
-    - git config --global user.email '${GITLAB_USER_EMAIL}'
-    - git config --global user.name '${GITLAB_USER_ID}'
-    #- git pull origin master
-    - git add -A && git commit -m '${CI_COMMIT_MESSAGE}'
-    - git push origin HEAD:$CI_DEFAULT_BRANCH --force
-  only:
-    variables:
-      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#deploy:jdk8:
+#  stage: deploy
+#  script:
+#    - git remote set-url origin http://${CLUS_PUBLIC_USERNAME}:${CLUS_PUBLIC_TOKEN}@${CLUS_PUBLIC_REPOSITORY}
+#    - git config --global user.email '${GITLAB_USER_EMAIL}'
+#    - git config --global user.name '${GITLAB_USER_ID}'
+#    #- git pull origin master
+#    - git add -A && git commit -m '${CI_COMMIT_MESSAGE}'
+#    - git push origin HEAD:$CI_DEFAULT_BRANCH --force
+#  only:
+#    variables:
+#      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
