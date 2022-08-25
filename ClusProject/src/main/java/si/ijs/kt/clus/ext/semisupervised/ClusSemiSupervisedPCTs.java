@@ -36,7 +36,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 	int m_InternalXValFolds; // Number of internal XVal folds
 	boolean m_IsInternalXVal; // Do we run internal xval?
 	boolean m_Pruning; // Pruning when determining parameter score or not?
-	boolean n_IsEnsemble;
+	boolean m_IsEnsemble;
 	String m_ScoresPath; // Where to save weight scores
 	boolean m_SaveScores; // Should the scores be saved?
 	PrintWriter writer;
@@ -73,7 +73,11 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 		
 		m_InternalFolds = sett.getInternalFoldIndices();
 		m_InduceMain = sett.shouldInduceMain();
+<<<<<<< Upstream, based on origin/master
 		//n_IsEnsemble = settx.n_IsEnsemble()
+=======
+		m_IsEnsemble = settx.getEnsemble().isEnsembleMode();
+>>>>>>> a854ed4 Fixed error with ClusSemiSupervisedPCTs.java.
 	}
 
 	@Override
@@ -127,7 +131,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 				double error = 0;
 
 				for (int fold : m_InternalFolds) {
-					ClusLogger.info(String.format("Inducing fold %d for weihgt %f", fold, weight));
+					ClusLogger.info(String.format("Inducing fold %d for weight %f", fold, weight));
 					// Set train and test sets for the fold ClusRun
 					XValSelection sel = new XValSelection(xvalmain, fold);
 					foldRun = new ClusRun(cr);
@@ -171,7 +175,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 					model = m_Induce.induceSingleUnpruned(foldRun);
 
 					// pruning
-					if (m_Pruning && !n_IsEnsemble) {
+					if (m_Pruning && !m_IsEnsemble) {
 						ClusNode orig = (ClusNode) model;
 						orig.numberTree();
 						PruneTree pruner = m_Induce.getStatManager().getTreePruner(trainingSet);
