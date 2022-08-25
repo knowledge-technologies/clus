@@ -49,7 +49,7 @@ deploy:jdk8:
   stage: deploy
   script:
     - echo test
-    - git remote set-url origin https://${CLUS_PUBLIC_USERNAME}:${CLUS_PUBLIC_TOKEN}@${CLUS_PUBLIC_REPOSITORY}
+    - git remote set-url origin http://${CLUS_PUBLIC_USERNAME}:${CLUS_PUBLIC_TOKEN}@${CLUS_PUBLIC_REPOSITORY}
     - git config --global user.email '${GITLAB_USER_EMAIL}'
     - git config --global user.name '${GITLAB_USER_ID}'
     - git add -A && git commit -m '${CI_COMMIT_MESSAGE}'
