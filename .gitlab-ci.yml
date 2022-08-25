@@ -6,8 +6,10 @@ variables:
   # when running from the command line.
   # `installAtEnd` and `deployAtEnd` are only effective with recent version of the corresponding plugins.
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
-  #PUBLIC_GIT_USERNAME: $CLUS_PLUS_GIT_USERNAME
-  #PUBLIC_GIT_TOKEN: $CLUS_PLUS_DEPLOY_TOKEN
+  CLUS_PUBLIC_USERNAME: $CLUS_PUBLIC_USERNAME
+  CLUS_PUBLIC_TOKEN: $CLUS_PUBLIC_TOKEN
+  CLUS_PUBLIC_REPOSITORY: $CLUS_PUBLIC_REPOSITORY
+
 
 # This template uses jdk8 for verifying and deploying images
 image: maven:3.3.9-jdk-8
@@ -47,11 +49,11 @@ deploy:jdk8:
   stage: deploy
   script:
     - echo test
-#    - git remote set-url origin https://${CI_USERNAME}:${CI_PUSH_TOKEN}@$REPO
-#    - git config --global user.email '${GITLAB_USER_EMAIL}'
-#    - git config --global user.name '${GITLAB_USER_ID}'
-#    - git add -A && git commit -m 'added/updated json files'
-#    - git push origin HEAD:$BRANCH
-#  only:
-#    variables:
-#      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - git remote set-url origin https://${CLUS_PUBLIC_USERNAME}:${CLUS_PUBLIC_TOKEN}@${CLUS_PUBLIC_REPOSITORY}
+    - git config --global user.email '${GITLAB_USER_EMAIL}'
+    - git config --global user.name '${GITLAB_USER_ID}'
+    - git add -A && git commit -m '${CI_COMMIT_MESSAGE}'
+    - git push origin HEAD:$BRANCH
+  only:
+    variables:
+      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
