@@ -36,7 +36,7 @@ build:
   stage: build
   script:
     - cd ClusProject/
-    - mvn clean package
+    - mvn clean package -Dmaven.test.skip
   artifacts:
     paths:
       - target/*.jar
