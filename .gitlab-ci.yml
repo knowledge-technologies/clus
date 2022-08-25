@@ -53,7 +53,7 @@ deploy:jdk8:
     - git config --global user.name '${GITLAB_USER_ID}'
     - git pull origin master
     - git add -A && git commit -m '${CI_COMMIT_MESSAGE}'
-    - git push origin HEAD:$CI_DEFAULT_BRANCH
+    - git push origin HEAD:$CI_DEFAULT_BRANCH --force
   only:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
