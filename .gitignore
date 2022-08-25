@@ -3,6 +3,7 @@
 *.aux
 *.log
 *.synctex.gz
+.m2/
 *.pdf
 *.iml
 **/.idea
