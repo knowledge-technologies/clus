@@ -35,6 +35,7 @@ verify:jdk8:
 build:
   stage: build
   script:
+    - cd ClusProject/
     - mvn clean package
   artifacts:
     paths:
