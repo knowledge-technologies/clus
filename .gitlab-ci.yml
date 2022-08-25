@@ -39,7 +39,7 @@ build:
     - mvn clean package -Dmaven.test.skip
   artifacts:
     paths:
-      - target/*.jar
+      - ClusProject/target/*.jar
   rules:
     - if: $CI_COMMIT_BRANCH      
 
