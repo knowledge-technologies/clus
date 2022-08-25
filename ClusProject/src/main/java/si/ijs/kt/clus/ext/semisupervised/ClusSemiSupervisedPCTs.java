@@ -73,11 +73,7 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 		
 		m_InternalFolds = sett.getInternalFoldIndices();
 		m_InduceMain = sett.shouldInduceMain();
-<<<<<<< Upstream, based on origin/master
-		//n_IsEnsemble = settx.n_IsEnsemble()
-=======
 		m_IsEnsemble = settx.getEnsemble().isEnsembleMode();
->>>>>>> a854ed4 Fixed error with ClusSemiSupervisedPCTs.java.
 	}
 
 	@Override
