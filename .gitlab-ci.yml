@@ -32,6 +32,16 @@ cache:
 verify:jdk8:
   <<: *verify
 
+build:
+  stage: build
+  script:
+    - mvn clean package
+  artifacts:
+    paths:
+      - target/*.jar
+  rules:
+    - if: $CI_COMMIT_BRANCH      
+
 deploy:jdk8:
   stage: deploy
   script:
