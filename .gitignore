@@ -11,6 +11,7 @@
 /src/META-INF/
 ClusProject/target/
 /.settings/
+.metadata
 .project
 .classpath
 ClusProject/resources/unitTests/**/*.fimp
