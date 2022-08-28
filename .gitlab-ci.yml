@@ -7,7 +7,7 @@ variables:
   # `installAtEnd` and `deployAtEnd` are only effective with recent version of the corresponding plugins.
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   CLUS_PUBLIC_DEPLOY_TOKEN: $CLUS_PUBLIC_DEPLOY_TOKEN
-  CLUS_PUBLIC_TRIGGER_TOKEN: $CLUS_PUBLIC_TRIGGER_TOKEN
+  CI_COMMIT_MESSAGE: $CI_COMMIT_MESSAGE
 
 # This template uses jdk8 for verifying and deploying images
 image: maven:3.3.9-jdk-8
@@ -59,10 +59,10 @@ deploy:jdk8:
     #- git branch
     - rm .gitlab-ci.yml
 #    #- git pull origin master
-    - git add . && git commit -m '$CI_COMMIT_MESSAGE'
+    - git add . && git commit -m $CI_COMMIT_MESSAGE
 #    #- git push origin HEAD:$CI_DEFAULT_BRANCH --force
     #- git push origin $CI_DEFAULT_BRANCH:code --force
-    - git push origin HEAD:code --force
+    - git push origin HEAD:master --force
   only:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
