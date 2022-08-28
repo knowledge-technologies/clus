@@ -8,7 +8,7 @@ variables:
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   CLUS_PUBLIC_TOKEN: $CLUS_PUBLIC_TOKEN
   CLUS_PUBLIC_REPOSITORY: $CLUS_PUBLIC_REPOSITORY
-
+  CLUS_PUBLIC_TRIGGER_TOKEN: $CLUS_PUBLIC_TRIGGER_TOKEN
 
 # This template uses jdk8 for verifying and deploying images
 image: maven:3.3.9-jdk-8
@@ -43,6 +43,13 @@ build:
       - ClusProject/target/*.jar
   rules:
     - if: $CI_COMMIT_BRANCH      
+
+deploy:
+  stage: deploy
+  script:
+    - "curl -X POST --fail -F token=$CLUS_PUBLIC_TRIGGER_TOKEN -F ref=$CI_DEFAULT_BRANCH http://source.ijs.si/api/v4/projects/455/trigger/pipeline"
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 #deploy:jdk8:
 #  stage: deploy
