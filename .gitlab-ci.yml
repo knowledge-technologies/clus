@@ -59,7 +59,7 @@ copy-to-public:
     #- git branch
     - rm .gitlab-ci.yml
 #    #- git pull origin master
-    - git add . && git commit -m $CI_COMMIT_MESSAGE
+    - git add . && git commit -m '$CI_COMMIT_MESSAGE'
 #    #- git push origin HEAD:$CI_DEFAULT_BRANCH --force
     #- git push origin $CI_DEFAULT_BRANCH:code --force
     - git push origin HEAD:master --force
