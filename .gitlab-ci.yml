@@ -7,7 +7,6 @@ variables:
   # `installAtEnd` and `deployAtEnd` are only effective with recent version of the corresponding plugins.
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   CLUS_PUBLIC_DEPLOY_TOKEN: $CLUS_PUBLIC_DEPLOY_TOKEN
-  CI_COMMIT_MESSAGE: $CI_COMMIT_MESSAGE
 
 # Cache downloaded dependencies and plugins between builds.
 # To keep cache across branches add 'key: "$CI_JOB_NAME"'
@@ -57,12 +56,8 @@ copy-to-public:
     - git config --global user.email '$GITLAB_USER_EMAIL'
     - git config --global user.name '$GITLAB_USER_ID'
     - git remote -v 
-    #- git branch
     - rm .gitlab-ci.yml
-#    #- git pull origin master
     - git add . && git commit -m '$CI_COMMIT_MESSAGE'
-#    #- git push origin HEAD:$CI_DEFAULT_BRANCH --force
-    #- git push origin $CI_DEFAULT_BRANCH:code --force
     - git push origin HEAD:master --force
   only:
     variables:
