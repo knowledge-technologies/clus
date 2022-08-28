@@ -9,9 +9,6 @@ variables:
   CLUS_PUBLIC_DEPLOY_TOKEN: $CLUS_PUBLIC_DEPLOY_TOKEN
   CI_COMMIT_MESSAGE: $CI_COMMIT_MESSAGE
 
-# This template uses jdk8 for verifying and deploying images
-image: maven:3.3.9-jdk-8
-
 # Cache downloaded dependencies and plugins between builds.
 # To keep cache across branches add 'key: "$CI_JOB_NAME"'
 cache:
@@ -21,6 +18,7 @@ cache:
 # For merge requests do not `deploy` but only run `verify`.
 # See https://maven.apache.org/guides/introduction/introduction-to-the-lifecycle.html
 .verify: &verify
+  image: maven:3.3.9-jdk-8
   stage: test
   script:
     - 'mvn $MAVEN_CLI_OPTS verify'
@@ -33,6 +31,7 @@ verify:jdk8:
   <<: *verify
 
 build:
+  image: maven:3.3.9-jdk-8
   stage: build
   script:
     - cd ClusProject/
@@ -51,6 +50,7 @@ build:
 #    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
 copy-to-public:
+  image: maven:3.3.9-jdk-8
   stage: deploy
   script:
     - git remote set-url origin http://irrelevant:${CLUS_PUBLIC_DEPLOY_TOKEN}@source.ijs.si/ktclus/clus-public.git
