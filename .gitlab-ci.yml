@@ -47,13 +47,13 @@ build:
 deploy:jdk8:
   stage: deploy
   script:
-    - git remote set-url clus-public http://irrelevant:${CLUS_PUBLIC_TOKEN}@${CLUS_PUBLIC_REPOSITORY}
+    - git remote set-url origin http://irrelevant:${CLUS_PUBLIC_TOKEN}@${CLUS_PUBLIC_REPOSITORY}
     - git config --global user.email '${GITLAB_USER_EMAIL}'
     - git config --global user.name '${GITLAB_USER_ID}'
     #- git pull origin master
     #- git add -A && git commit -m '${CI_COMMIT_MESSAGE}'
     #- git push origin HEAD:$CI_DEFAULT_BRANCH --force
-    - git push clus-public $CI_DEFAULT_BRANCH --force
+    - git push origin $CI_DEFAULT_BRANCH --force
   only:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
