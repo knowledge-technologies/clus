@@ -6,8 +6,7 @@ variables:
   # when running from the command line.
   # `installAtEnd` and `deployAtEnd` are only effective with recent version of the corresponding plugins.
   MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
-  CLUS_PUBLIC_TOKEN: $CLUS_PUBLIC_TOKEN
-  CLUS_PUBLIC_REPOSITORY: $CLUS_PUBLIC_REPOSITORY
+  CLUS_PUBLIC_DEPLOY_TOKEN: $CLUS_PUBLIC_DEPLOY_TOKEN
   CLUS_PUBLIC_TRIGGER_TOKEN: $CLUS_PUBLIC_TRIGGER_TOKEN
 
 # This template uses jdk8 for verifying and deploying images
@@ -44,23 +43,23 @@ build:
   rules:
     - if: $CI_COMMIT_BRANCH      
 
-deploy:
-  stage: deploy
-  script:
-    - "curl -X POST --fail -F token=$CLUS_PUBLIC_TRIGGER_TOKEN -F ref=$CI_DEFAULT_BRANCH http://source.ijs.si/api/v4/projects/455/trigger/pipeline"
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-
-#deploy:jdk8:
+#deploy:
 #  stage: deploy
 #  script:
-#    - git remote set-url origin http://irrelevant:${CLUS_PUBLIC_TOKEN}@${CLUS_PUBLIC_REPOSITORY}
-#    - git config --global user.email '${GITLAB_USER_EMAIL}'
-#    - git config --global user.name '${GITLAB_USER_ID}'
+#    - "curl -X POST --fail -F token=$CLUS_PUBLIC_TRIGGER_TOKEN -F ref=$CI_DEFAULT_BRANCH http://source.ijs.si/api/v4/projects/455/trigger/pipeline"
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+deploy:jdk8:
+  stage: deploy
+  script:
+    - git remote set-url origin http://irrelevant:${CLUS_PUBLIC_DEPLOY_TOKEN}@source.ijs.si/ktclus/clus-public.git
+    - git config --global user.email '${GITLAB_USER_EMAIL}'
+    - git config --global user.name '${GITLAB_USER_ID}'
 #    #- git pull origin master
 #    #- git add -A && git commit -m '${CI_COMMIT_MESSAGE}'
 #    #- git push origin HEAD:$CI_DEFAULT_BRANCH --force
-#    - git push origin HEAD:$CI_DEFAULT_BRANCH --force
-#  only:
-#    variables:
-#      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - git push origin $CI_DEFAULT_BRANCH:code --force
+  only:
+    variables:
+      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
