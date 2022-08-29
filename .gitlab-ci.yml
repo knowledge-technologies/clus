@@ -35,13 +35,22 @@ compile:
   stage: build
   script:
     - cd ClusProject/
-    #- mvn clean package -Dmaven.test.skip
-    - mvn clean compile #-Dmaven.test.skip
+    - mvn clean compile
   #artifacts:
   #  paths:
   #    - ClusProject/target/*.jar
   rules:
     - if: $CI_COMMIT_BRANCH      
+
+test:
+  image: 
+    name: maven:3.3.9-jdk-8
+  stage: build
+  script:
+    - cd ClusProject/
+    - mvn test
+  rules:
+    - if: $CI_COMMIT_BRANCH  
 
 copy-to-public:
   image: 
