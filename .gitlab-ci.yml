@@ -31,7 +31,8 @@ verify:jdk8:
 
 compile:
   image: 
-    name: maven:3.3.9-jdk-8
+    #name: maven:3.3.9-jdk-8
+    name: maven:3.8.1-openjdk-11    
   stage: build
   script:
     - cd ClusProject/
@@ -44,7 +45,8 @@ compile:
 
 test:
   image: 
-    name: maven:3.3.9-jdk-8
+    #name: maven:3.3.9-jdk-8
+    name: maven:3.8.1-openjdk-11
   stage: test
   script:
     - cd ClusProject/
@@ -54,7 +56,8 @@ test:
 
 copy-to-public:
   image: 
-    name: maven:3.3.9-jdk-8
+    #name: maven:3.3.9-jdk-8
+    name: maven:3.8.1-openjdk-11
   stage: deploy
   script:
     - git remote set-url origin http://irrelevant:${CLUS_PUBLIC_DEPLOY_TOKEN}@source.ijs.si/ktclus/clus-public.git
