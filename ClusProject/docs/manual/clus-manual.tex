@@ -149,7 +149,7 @@ For background information on the rationale behind the \clus{} system and its al
   
 \item J. Levati\'{c}, D. Kocev, M. Ceci, and S. D\v{z}eroski.
 \newblock Semi-supervised trees for multi-target regression.
-\newblock In \emph{Information Sciences}, 450:109–-127, 2018.
+\newblock In \emph{Information Sciences}, 450:109-127, 2018.
 
 \item M. Breskvar, D. Kocev, and S. D\v{z}eroski.
 \newblock Ensembles for multi-target regression with random output selections.
@@ -184,7 +184,7 @@ The \clus\ software is released under the GNU General Public License version 3 o
 \begin{flushleft}
 	\verb^git clone^ \clusgit{} \\
 	\verb^cd ClusProject^ \\
-	\verb^mvn package^
+	\verb^mvn clean package^
 \end{flushleft}
 
 \clus{} executable is located in the \verb^ClusProject/target^ folder. In order to verify that your copy of \clus{} is working properly, you can run it without parameters like so:
@@ -193,8 +193,8 @@ The \clus\ software is released under the GNU General Public License version 3 o
 \end{flushleft}
 
 \noindent{}You should receive an output similar to the one below:\\
-\verb^Clus v2.12.0 - Software for Predictive Clustering^\\
-\verb^Copyright (C) 2007 - 2018^\\
+\verb^Clus <VERSION> - Software for Predictive Clustering^\\
+\verb^Copyright (C) 2007 - 2022^\\
 \verb^Katholieke Universiteit Leuven, Leuven, Belgium^\\
 \verb^Jozef Stefan Institute, Ljubljana, Slovenia^\\
 \\
@@ -1067,79 +1067,79 @@ Here we only provide a rough guide to the \clus\ code by listing some of the key
 \chapter*{Acknowledgments}
 The research involved in development of this software was supported by the Research Foundation Flanders (FWO-Vlaanderen) and the Slovenian Research Agency. We thank all our collaborators who have contributed to the development of \clus{}, and in particular (in inverse alphabetical order) L. Schietgat, I. Slavkov, D. Kocev, V. Gjorgjioski, E. Fromont and T. Aho.
 
-\appendix
-\chapter{Constructing Phylogenetic Trees or Protein Subfamilies Using Clus}
-
-In this appendix, we describe the use of \clusphy{}, a method for phylogenetic tree reconstruction \cite{Vens10:proc}, which can also be used for identifying protein subfamilies \cite{Costa2012}.
-Example files can be found in the following directory:  
-\begin{flushleft}
-\verb^$CLUS_DIR/data/phylo/.^
-\end{flushleft}
-
-The input to \clusphy{} consists of a multiple alignment (in ARFF format), a settings file, and optionally a distance matrix.
-
-\section{Input Format}
-Each position in the multiple alignment becomes an attribute in the ARFF file. The domain of these attributes is discrete and will typically consist of the values $A$, $C$, $T$, and $G$ for DNA sequences, and the amino acids for protein sequences. If gaps occur, they have to be listed in the attribute domain. Gaps are represented as `-'.
-Moreover, \clusphy{} requires a string attribute, that contains an identifier for the sequence.
-
-Perl scripts for converting PHY and FASTA files into the ARFF file format are available in the {\tt data/phylo/} directory.
-
-\section{Settings File}
-In order to construct phylogenetic trees or protein subfamilies, the settings file looks like the one shown in Fig.~\ref{phylosettingsreq:fig}. The {\tt PruningMethod} parameter defines which one of the two tasks is chosen. Apart from the settings shown in the figure, there are a number of extra settings that can be set (see Fig.~\ref{phylosettingsopt:fig}). We discuss them in detail.
-
-\begin{figure}[tb]
-\hrule\vspace{1em}
-\begin{verbatim}
-[Tree]
-PruningMethod = None    	% To construct phylogenetic trees (use value EncodingCost for subfamily identification)
-FTest = 1.0    
-AlternativeSplits = true    % Gives a listing of all equivalent mutations in the nodes 
-Heuristic = GeneticDistance
-
-[Attributes]
-Key = 1                     % The identifier attribute
-Descriptive = 2-897         % All attributes corresponding to the alignment
-Target = 2-897              % All attributes corresponding to the alignment
-Weights = 1
-
-[Model]
-MinimalWeight = 1
-    
-[Data]
-File = chimp.arff
-
-[Output]
-TrainErrors = No
-PrintModelAndExamples = true
-\end{verbatim}
-\hrule
-\caption{Required settings for learning phylogenetic trees or protein subfamilies}
-\label{phylosettingsreq:fig}
-\end{figure}
-
-\begin{figure}[tb]
-\hrule\vspace{1em}
-\begin{verbatim}
-[Phylogeny]
-Sequence = DNA
-OptimizationCriterion = MinTotBranchLength
-DistanceMatrix = mydistancematrix
-DistanceMeasure = JC
-\end{verbatim}
-\hrule
-\caption{Optional settings for learning phylogenetic trees or protein subfamilies}
-\label{phylosettingsopt:fig}
-\end{figure}
-
-\begin{itemize}
-\item {\tt Sequence = $o$} : defines which type of sequences is used. Possible values for $o$ are {\tt DNA}, {\tt Protein}, or {\tt Any}. The latter can be used in case a different alphabet than nucleotides or amino acids is used. The default value for $o$ is {\tt DNA}.
-\item {\tt OptimizationCriterion = $o$} : defines which criterion is optimized in the phylogenetic tree heuristic. Possible values for $o$ are {\tt MinTotBranchLength}, for minimizing the total branch length of the tree, and {\tt MaxAvgPWDistance} and {\tt MaxMinPWDistance}, for maximizing the average or minimum pairwise distance between two subclusters (e.g., as done in the PTDC algorithm \cite{Arslan07:proc}). The default value for $o$ is {\tt MinTotBranchLength}.
-\item {\tt DistanceMatrix = $s$} : $s$ is the name of the optional pairwise distance matrix file. This file has to be formatted in the same way as in the Phylip software package \cite{Phylip3.6-08:misc}, i.e., the first line contains the number of sequences, and then for each sequence there is a line starting with its identifier and listing the pairwise distances to all the other sequences. See the example in the file \texttt{mydistancematrix}. The rows in the distance matrix need to have the same ordering as the rows in the ARFF file.
-\item {\tt DistanceMeasure = $o$} : defines which genetic distance is used between pairs of sequences, in the case no distance matrix is given. Possible values for $o$ are {\tt Edit} for edit distance, {\tt PDist} for p-distance, i.e., the same as edit distance, with positions with gaps or missing values discarded, {\tt JC} for Jukes-Cantor distance, {\tt Kimura} for Kimura distance, and {\tt AminoKimura} for Kimura distance between amino acid sequences. See the Phylip documentation \cite{Phylip3.6-08:misc} for details.
-\end{itemize}
-
-\section{Output Files}
-The \emph{filename.out} file returned by \clusphy{} can be postprocessed by the \emph{postprocess\_tree.pl} perl script in the {\tt data/phylo/} directory. This script returns two files: \emph{filename.clus-phy\_tree}, which contains two tree representations (one with just the topology, and one with all mutations listed), and \emph{filename.clus-phy\_newick}, which contains the tree in the so-called Newick format, where clusters are represented by pairs of parentheses.
+%\appendix
+%\chapter{Constructing Phylogenetic Trees or Protein Subfamilies Using Clus}
+%
+%In this appendix, we describe the use of \clusphy{}, a method for phylogenetic tree reconstruction \cite{Vens10:proc}, which can also be used for identifying protein subfamilies \cite{Costa2012}.
+%Example files can be found in the following directory:  
+%\begin{flushleft}
+%\verb^$CLUS_DIR/data/phylo/.^
+%\end{flushleft}
+%
+%The input to \clusphy{} consists of a multiple alignment (in ARFF format), a settings file, and optionally a distance matrix.
+%
+%\section{Input Format}
+%Each position in the multiple alignment becomes an attribute in the ARFF file. The domain of these attributes is discrete and will typically consist of the values $A$, $C$, $T$, and $G$ for DNA sequences, and the amino acids for protein sequences. If gaps occur, they have to be listed in the attribute domain. Gaps are represented as `-'.
+%Moreover, \clusphy{} requires a string attribute, that contains an identifier for the sequence.
+%
+%Perl scripts for converting PHY and FASTA files into the ARFF file format are available in the {\tt data/phylo/} directory.
+%
+%\section{Settings File}
+%In order to construct phylogenetic trees or protein subfamilies, the settings file looks like the one shown in Fig.~\ref{phylosettingsreq:fig}. The {\tt PruningMethod} parameter defines which one of the two tasks is chosen. Apart from the settings shown in the figure, there are a number of extra settings that can be set (see Fig.~\ref{phylosettingsopt:fig}). We discuss them in detail.
+%
+%\begin{figure}[tb]
+%\hrule\vspace{1em}
+%\begin{verbatim}
+%[Tree]
+%PruningMethod = None    	% To construct phylogenetic trees (use value EncodingCost for subfamily identification)
+%FTest = 1.0    
+%AlternativeSplits = true    % Gives a listing of all equivalent mutations in the nodes 
+%Heuristic = GeneticDistance
+%
+%[Attributes]
+%Key = 1                     % The identifier attribute
+%Descriptive = 2-897         % All attributes corresponding to the alignment
+%Target = 2-897              % All attributes corresponding to the alignment
+%Weights = 1
+%
+%[Model]
+%MinimalWeight = 1
+%    
+%[Data]
+%File = chimp.arff
+%
+%[Output]
+%TrainErrors = No
+%PrintModelAndExamples = true
+%\end{verbatim}
+%\hrule
+%\caption{Required settings for learning phylogenetic trees or protein subfamilies}
+%\label{phylosettingsreq:fig}
+%\end{figure}
+%
+%\begin{figure}[tb]
+%\hrule\vspace{1em}
+%\begin{verbatim}
+%[Phylogeny]
+%Sequence = DNA
+%OptimizationCriterion = MinTotBranchLength
+%DistanceMatrix = mydistancematrix
+%DistanceMeasure = JC
+%\end{verbatim}
+%\hrule
+%\caption{Optional settings for learning phylogenetic trees or protein subfamilies}
+%\label{phylosettingsopt:fig}
+%\end{figure}
+%
+%\begin{itemize}
+%\item {\tt Sequence = $o$} : defines which type of sequences is used. Possible values for $o$ are {\tt DNA}, {\tt Protein}, or {\tt Any}. The latter can be used in case a different alphabet than nucleotides or amino acids is used. The default value for $o$ is {\tt DNA}.
+%\item {\tt OptimizationCriterion = $o$} : defines which criterion is optimized in the phylogenetic tree heuristic. Possible values for $o$ are {\tt MinTotBranchLength}, for minimizing the total branch length of the tree, and {\tt MaxAvgPWDistance} and {\tt MaxMinPWDistance}, for maximizing the average or minimum pairwise distance between two subclusters (e.g., as done in the PTDC algorithm \cite{Arslan07:proc}). The default value for $o$ is {\tt MinTotBranchLength}.
+%\item {\tt DistanceMatrix = $s$} : $s$ is the name of the optional pairwise distance matrix file. This file has to be formatted in the same way as in the Phylip software package \cite{Phylip3.6-08:misc}, i.e., the first line contains the number of sequences, and then for each sequence there is a line starting with its identifier and listing the pairwise distances to all the other sequences. See the example in the file \texttt{mydistancematrix}. The rows in the distance matrix need to have the same ordering as the rows in the ARFF file.
+%\item {\tt DistanceMeasure = $o$} : defines which genetic distance is used between pairs of sequences, in the case no distance matrix is given. Possible values for $o$ are {\tt Edit} for edit distance, {\tt PDist} for p-distance, i.e., the same as edit distance, with positions with gaps or missing values discarded, {\tt JC} for Jukes-Cantor distance, {\tt Kimura} for Kimura distance, and {\tt AminoKimura} for Kimura distance between amino acid sequences. See the Phylip documentation \cite{Phylip3.6-08:misc} for details.
+%\end{itemize}
+%
+%\section{Output Files}
+%The \emph{filename.out} file returned by \clusphy{} can be postprocessed by the \emph{postprocess\_tree.pl} perl script in the {\tt data/phylo/} directory. This script returns two files: \emph{filename.clus-phy\_tree}, which contains two tree representations (one with just the topology, and one with all mutations listed), and \emph{filename.clus-phy\_newick}, which contains the tree in the so-called Newick format, where clusters are represented by pairs of parentheses.
 
 
 \bibliographystyle{plain}
