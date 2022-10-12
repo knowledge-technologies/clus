@@ -69,3 +69,19 @@ copy-to-public:
   only:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+pages:
+  image: maven:3.8.6-openjdk-18-slim
+  stage: deploy
+  script:
+    - echo "Starting to generate docs"
+    - cd kg
+    - mvn site #javadoc:javadoc
+    - mv target/site ../public
+    - cd ..
+    - ls
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+  artifacts:
+    paths:
+      - public
