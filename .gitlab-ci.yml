@@ -75,7 +75,7 @@ pages:
   stage: deploy
   script:
     - echo "Starting to generate docs"
-    - cd kg
+    - cd ClusProject
     - mvn site #javadoc:javadoc
     - mv target/site ../public
     - cd ..
