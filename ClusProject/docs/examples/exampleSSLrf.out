@@ -1,0 +1,494 @@
+Clus run example
+****************
+
+Date: 11/05/2023, 16:53
+File: exampleSSL.out
+Attributes: 6 (input: 3, output: 3)
+Missing values: Yes
+
+[General]
+Verbose = 1
+RandomSeed = 0
+ResourceInfoLoaded = No
+DoNotInduce = No
+LoggingProperties = logging.properties
+
+[Data]
+File = example_ssl.arff
+TestSet = None
+PruneSet = None
+XVal = 10
+RemoveMissingTarget = No
+NormalizeData = None
+
+[Attributes]
+Target = 4-6
+Clustering = 1-6
+Descriptive = 1-3
+Key = None
+Disable = None
+Weights = Normalize
+ClusteringWeights = 1.0
+ReduceMemoryNominalAttrs = No
+GIS = None
+
+[Constraints]
+Syntactic = None
+MaxSize = Infinity
+MaxError = 0.0
+MaxDepth = Infinity
+
+[Nominal]
+MEstimate = 1.0
+
+[Model]
+MinimalWeight = 2.0
+MinimalNumberExamples = 0
+MinimalKnownWeight = 0.0
+ParamTuneNumberFolds = 3
+NominalSubsetTests = Yes
+LoadFromModelFile = No
+
+[Tree]
+Heuristic = VarianceReduction
+HeuristicComplexity = N2
+SetDistance = GSMDistance
+TupleDistance = Euclidean
+TSDistance = DTW
+PruningMethod = Default
+FTest = 1.0
+BinarySplit = Yes
+ConvertToRules = No
+AlternativeSplits = No
+Optimize = []
+MSENominal = No
+SplitSampling = None
+MissingClusteringAttrHandling = EstimateFromParentNode
+MissingTargetAttrHandling = ParentNode
+InductionOrder = DepthFirst
+EntropyType = StandardEntropy
+ConsiderUnlableInstancesInIGCalc = No
+SpatialMatrix = Binary
+SpatialMeasure = GlobalMoran
+Bandwidth = 0.001
+Longlat = No
+NumNeightbours = 0.0
+Alpha = 1.0
+SplitPosition = Exact
+
+[Multilabel]
+MLCThreshold = 0.5
+OptimizeThresholds = No
+MultiLabelRankingMeasure = [HammingLoss]
+ShowThresholds = Yes
+
+[Ensemble]
+Iterations = 10
+TimeBudget = 0
+EnsembleMethod = RForest
+EnsembleBootstrapping = Yes
+VotingType = ProbabilityDistribution
+SelectRandomSubspaces = 2
+ROSTargetSubspaceSize = SQRT
+ROSAlgorithmType = Disabled
+ROSVotingType = SubspaceAveraging
+PrintAllModels = No
+PrintAllModelFiles = No
+PrintAllModelInfo = No
+PrintPaths = No
+Optimize = No
+OOBestimate = No
+FeatureRanking = [Genie3]
+FeatureRankingPerTarget = No
+SymbolicWeight = 0.5
+SortRankingByRelevance = Yes
+WriteEnsemblePredictions = No
+EnsembleRandomDepth = No
+BagSelection = -1
+BagSize = 0
+NumberOfThreads = 1
+
+[SemiSupervised]
+SemiSupervisedMethod = PCT
+StoppingCriteria = NoneAdded
+UnlabeledCriteria = Threshold
+ConfidenceThreshold = 0.8
+ConfidenceMeasure = Variance
+Iterations = 10
+K = 5
+UnlabeledData = 
+PercentageLabeled = 5
+UseWeights = No
+AirbagTrials = 0
+ExhaustiveSearchThresholds = [0.5,0.6,0.7,0.8,0.9,0.99]
+OOBErrorCalculation = LabeledOnly
+Normalization = MinMaxNormalization
+Aggregation = Average
+CalibrateHmcThreshold = No
+PruningWhenTuning = No
+InternalFolds = 5
+WeightScoresFile = NO
+PossibleWeights = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
+IterationsSupervisionOptimisation = 0
+ForceInternalXValOptimisation = No
+ImputeMissingTargetValues = No
+InternalFold = -1
+ProceedToMain = Yes
+
+[Output]
+ShowModels = [Default, Pruned, Others]
+TrainErrors = Yes
+ValidErrors = Yes
+TestErrors = Yes
+AllFoldModels = Yes
+AllFoldErrors = No
+AllFoldDatasets = No
+UnknownFrequency = No
+BranchFrequency = No
+ShowInfo = [Count]
+PrintModelAndExamples = No
+WriteErrorFile = No
+WriteModelFile = No
+WritePerBagModelFile = Yes
+WriteOOBFile = Yes
+WritePredictions = []
+GzipOutput = No
+ModelIDFiles = No
+WriteCurves = No
+OutputPythonModel = No
+PythonModelType = Object
+OutputROSSubspaces = No
+OutputJSONModel = No
+OutputDatabaseQueries = No
+OutputClowdFlowsJSON = No
+ComputeSpearman = No
+
+Run: 01
+*******
+
+Statistics
+----------
+
+FTValue (FTest): 1.0
+Induction Time: 1.152 sec
+Pruning Time: 0 sec
+Prediction Time (total for ClusModel.Original): 
+	0 microsecs
+	0 millisecs
+	0 secs
+Prediction Time (average for ClusModel.Original): 0 microsecs
+Model information:
+     Default: Nodes = 1; Leaves = 1; Depth = 1
+     Original: FOREST with 10 models (Total nodes: 28; leaves: 19; average tree depth: 1
+               9)
+
+MultiLabelThresholds:
+---------------------
+Default
+[5.0000e-1, 5.0000e-1, 5.0000e-1]
+
+Original
+Tree 1: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+Tree 2: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+Tree 3: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+Tree 4: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+Tree 5: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+Tree 6: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+Tree 7: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+Tree 8: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+Tree 9: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+Tree 10: [5.0000e-1, 5.0000e-1, 5.0000e-1]
+
+
+Training error
+--------------
+
+Number of examples: 8
+Classification Error
+   Default: 
+   Attribute: y1_x1ANDx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 0 | 1 | 0 | 1
+             0 | 0 | 3 | 0 | 3
+             ? | 0 | 4 | 0 | 4
+     -------------------------
+               | 0 | 8 | 0 | 8
+     Accuracy: 7.500000e-1
+     Cramer's coefficient: 7.071068e-1
+
+
+   Attribute: y2_x1ORx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 5 | 0 | 0 | 5
+             0 | 1 | 0 | 0 | 1
+             ? | 2 | 0 | 0 | 2
+     -------------------------
+               | 8 | 0 | 0 | 8
+     Accuracy: 8.333333e-1
+     Cramer's coefficient: 2.886751e-1
+
+
+   Attribute: y3_x1XORx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 3 | 0 | 0 | 3
+             0 | 2 | 0 | 0 | 2
+             ? | 3 | 0 | 0 | 3
+     -------------------------
+               | 8 | 0 | 0 | 8
+     Accuracy: 6.000000e-1
+     Cramer's coefficient: 4.743416e-1
+
+   Original: 
+   Attribute: y1_x1ANDx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 0 | 1 | 0 | 1
+             0 | 0 | 3 | 0 | 3
+             ? | 0 | 4 | 0 | 4
+     -------------------------
+               | 0 | 8 | 0 | 8
+     Accuracy: 7.500000e-1
+     Cramer's coefficient: 7.071068e-1
+
+
+   Attribute: y2_x1ORx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 5 | 0 | 0 | 5
+             0 | 1 | 0 | 0 | 1
+             ? | 2 | 0 | 0 | 2
+     -------------------------
+               | 8 | 0 | 0 | 8
+     Accuracy: 8.333333e-1
+     Cramer's coefficient: 2.886751e-1
+
+
+   Attribute: y3_x1XORx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 3 | 0 | 0 | 3
+             0 | 2 | 0 | 0 | 2
+             ? | 3 | 0 | 0 | 3
+     -------------------------
+               | 8 | 0 | 0 | 8
+     Accuracy: 6.000000e-1
+     Cramer's coefficient: 4.743416e-1
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [2.667,3.6,2.083])
+   Default        : [1.3333,1.4,1.0312]: 1.2549
+   Original       : [8.6483e-1,1.7164,9.5306e-1]: 1.1781
+HammingLoss
+   Default        : 2.2222e-1
+   Original       : 2.2222e-1
+RankingLoss
+   Default        : 6.2500e-2
+   Original       : 6.2500e-2
+OneError
+   Default        : 1.6667e-1
+   Original       : 1.6667e-1
+Coverage
+   Default        : 2(label cardinality: 1.8)
+   Original       : 2(label cardinality: 1.8)
+AveragePrecision
+   Default        : NaN
+   Original       : NaN
+MLAccuracy
+   Default        : 7.2222e-1
+   Original       : 7.2222e-1
+MLPrecision
+   Default        : 7.5000e-1
+   Original       : 7.5000e-1
+MLRecall
+   Default        : 7.5000e-1
+   Original       : 7.5000e-1
+MLFOneMeasure
+   Default        : 7.5000e-1
+   Original       : 7.5000e-1
+SubsetAccuracy
+   Default        : 6.6667e-1
+   Original       : 6.6667e-1
+MacroPrecision
+   Default        : [NaN, 8.3333e-1, 6.0000e-1]: NaN
+   Original       : [NaN, 8.3333e-1, 6.0000e-1]: NaN
+MacroRecall
+   Default        : [0, 1, 1]: 6.6667e-1
+   Original       : [0, 1, 1]: 6.6667e-1
+MacroFOne
+   Default        : [NaN, 9.0909e-1, 7.5000e-1]: NaN
+   Original       : [NaN, 9.0909e-1, 7.5000e-1]: NaN
+MicroPrecision
+   Default        : 7.2727e-1
+   Original       : 7.2727e-1
+MicroRecall
+   Default        : 8.8889e-1
+   Original       : 8.8889e-1
+MicroFOne
+   Default        : 8.0000e-1
+   Original       : 8.0000e-1
+averageAUROC
+   Default        : 5.000000e-1
+   Original       : 1
+averageAUPRC
+   Default        : 5.611111e-1
+   Original       : 1
+weightedAUPRC
+   Default        : 6.635314e-1
+   Original       : 1
+pooledAUPRC
+   Default        : 7.936905e-1
+   Original       : 9.709596e-1
+
+Testing error
+-------------
+
+Number of examples: 0
+Classification Error
+   Default: 
+   Attribute: y1_x1ANDx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 0 | 0 | 0 | 0
+             0 | 0 | 0 | 0 | 0
+             ? | 0 | 0 | 0 | 0
+     -------------------------
+               | 0 | 0 | 0 | 0
+     Accuracy: NaN
+     Cramer's coefficient: NaN
+
+
+   Attribute: y2_x1ORx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 0 | 0 | 0 | 0
+             0 | 0 | 0 | 0 | 0
+             ? | 0 | 0 | 0 | 0
+     -------------------------
+               | 0 | 0 | 0 | 0
+     Accuracy: NaN
+     Cramer's coefficient: NaN
+
+
+   Attribute: y3_x1XORx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 0 | 0 | 0 | 0
+             0 | 0 | 0 | 0 | 0
+             ? | 0 | 0 | 0 | 0
+     -------------------------
+               | 0 | 0 | 0 | 0
+     Accuracy: NaN
+     Cramer's coefficient: NaN
+
+   Original: 
+   Attribute: y1_x1ANDx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 0 | 0 | 0 | 0
+             0 | 0 | 0 | 0 | 0
+             ? | 0 | 0 | 0 | 0
+     -------------------------
+               | 0 | 0 | 0 | 0
+     Accuracy: NaN
+     Cramer's coefficient: NaN
+
+
+   Attribute: y2_x1ORx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 0 | 0 | 0 | 0
+             0 | 0 | 0 | 0 | 0
+             ? | 0 | 0 | 0 | 0
+     -------------------------
+               | 0 | 0 | 0 | 0
+     Accuracy: NaN
+     Cramer's coefficient: NaN
+
+
+   Attribute: y3_x1XORx2
+     REAL\PRED | 1 | 0 | ? |
+     -------------------------
+             1 | 0 | 0 | 0 | 0
+             0 | 0 | 0 | 0 | 0
+             ? | 0 | 0 | 0 | 0
+     -------------------------
+               | 0 | 0 | 0 | 0
+     Accuracy: NaN
+     Cramer's coefficient: NaN
+
+Weighted mean squared error (MSE) for Nominal Attributes (Weights [2.667,3.6,2.083])
+   Default        : [0,0,0]: 0
+   Original       : [0,0,0]: 0
+HammingLoss
+   Default        : NaN
+   Original       : NaN
+RankingLoss
+   Default        : NaN
+   Original       : NaN
+OneError
+   Default        : NaN
+   Original       : NaN
+Coverage
+   Default        : NaN(label cardinality: NaN)
+   Original       : NaN(label cardinality: NaN)
+AveragePrecision
+   Default        : NaN
+   Original       : NaN
+MLAccuracy
+   Default        : NaN
+   Original       : NaN
+MLPrecision
+   Default        : NaN
+   Original       : NaN
+MLRecall
+   Default        : NaN
+   Original       : NaN
+MLFOneMeasure
+   Default        : NaN
+   Original       : NaN
+SubsetAccuracy
+   Default        : NaN
+   Original       : NaN
+MacroPrecision
+   Default        : [NaN, NaN, NaN]: NaN
+   Original       : [NaN, NaN, NaN]: NaN
+MacroRecall
+   Default        : [NaN, NaN, NaN]: NaN
+   Original       : [NaN, NaN, NaN]: NaN
+MacroFOne
+   Default        : [NaN, NaN, NaN]: NaN
+   Original       : [NaN, NaN, NaN]: NaN
+MicroPrecision
+   Default        : NaN
+   Original       : NaN
+MicroRecall
+   Default        : NaN
+   Original       : NaN
+MicroFOne
+   Default        : NaN
+   Original       : NaN
+averageAUROC
+   Default        : 5.000000e-1
+   Original       : 5.000000e-1
+averageAUPRC
+   Default        : 0
+   Original       : 0
+weightedAUPRC
+   Default        : NaN
+   Original       : NaN
+pooledAUPRC
+   Default        : 0
+   Original       : 0
+
+Default Model
+*************
+
+[0,1,1] [3.0,5.0,3.0]: 8
+
+Original Model
+**************
+
+Forest with 10 models
+

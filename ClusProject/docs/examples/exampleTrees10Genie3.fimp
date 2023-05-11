@@ -1,0 +1,8 @@
+Ensemble method: RForest
+Ranking method: Genie3
+Ensemble size: 10
+attributeDatasetIndex	attributeName	[overAllRank]	[overAll]
+-----------------------------------------------------------
+1	x1	[1]	[1.1388888888888888]
+2	x2	[2]	[0.7777777777777778]
+3	x3	[3]	[0.25000000000000006]

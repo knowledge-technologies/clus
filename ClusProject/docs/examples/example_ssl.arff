@@ -1,0 +1,18 @@
+@relation example
+
+@attribute x1 {0,1}
+@attribute x2 {0,1}
+@attribute x3 {0,1}
+@attribute y1_x1ANDx2 {0,1}
+@attribute y2_x1ORx2 {0,1}
+@attribute y3_x1XORx2 {0,1}
+
+@data
+1,0,0,0,1,1
+0,1,1,0,1,1
+1,1,0,1,1,0
+0,0,1,0,0,0
+1,0,1,?,1,1
+0,1,0,?,1,?
+1,1,1,?,?,?
+0,0,0,?,?,?
