@@ -15,7 +15,7 @@ public class FindNeighboursCallable implements Callable<Triple<ArrayList<Integer
 	/** Index of the tuple in the dataset where we look for the neighbours. */
 	private int m_TupleIndex;
 	
-	/** List of {@code -1 <= index < m_NbAttributes} with the same meaning as in the {@link clus.ext.featureRanking.relief.ClusReliefFeatureRanking} class. */
+	/** List of {@literal -1 <= index < m_NbAttributes} with the same meaning as in the clus.ext.featureRanking.relief.ClusReliefFeatureRanking class. */
 	private ArrayList<Integer> m_TargetIndices;
 	
 	public FindNeighboursCallable(ClusReliefFeatureRanking relief, int tupleIndex, ArrayList<Integer> necessaryTargets) {

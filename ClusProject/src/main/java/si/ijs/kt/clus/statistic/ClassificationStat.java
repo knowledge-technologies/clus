@@ -445,7 +445,7 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
      * Returns the majority class for a given attribute. If m_Thresholds are not
      * defined, we return the majority class (equivalent to threshold = 0.5),
      * otherwise, it is currently guaranteed that this is MLC-case, and the label is
-     * considered relevant if P(label) >= threshold. Usually, this can be computed
+     * considered relevant if P(label) {@literal >=} threshold. Usually, this can be computed
      * as
      * <p>
      * 
@@ -525,35 +525,6 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
         }
         return m_class;
     }
-
-    // /**
-    // * Computes relative frequency of a given label. Used in MLC only.
-    // * @param attr index of the attribute
-    // * @return Relative frequency of the label indexed by {@code attr} if there is
-    // at least one example with known
-    // value for this label.
-    // * Otherwise, Double.Nan is returned.
-    // */
-    // public double computeRelativeFrequencyOfLabel(int attr){
-    // double sum = m_ClassCounts[attr][0] + m_ClassCounts[attr][1];
-    // if(sum > 0){
-    // return m_ClassCounts[attr][0] / sum;
-    // } else{
-    // return Double.NaN;
-    // }
-    // }
-    // /**
-    // * Will be removed.
-    // * @return
-    // */
-    // public double[] getRelativeFrequenciesLabels(){
-    // double[] freqs = new double[m_NbTarget];
-    // for(int i = 0; i < freqs.length; i++){
-    // freqs[i] = computeRelativeFrequencyOfLabel(i);
-    // }
-    // return freqs;
-    // }
-
 
     // daniela
     public double entropy() {
@@ -1020,7 +991,6 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
      * @param att
      *        attribute index
      * @return p-value
-     * @throws MathException
      */
     public double getGTestPValue(int att, ClusStatManager stat_manager) {
         double global_n = ((CombStat) stat_manager.getTrainSetStat()).getTotalWeight();
@@ -1050,7 +1020,6 @@ public class ClassificationStat extends ClusStatistic implements ComponentStatis
      * @param att
      *        attribute index
      * @return p-value
-     * @throws MathException
      */
     public boolean getGTest(int att, ClusStatManager stat_manager) {
         double global_n = ((CombStat) stat_manager.getTrainSetStat()).getTotalWeight();

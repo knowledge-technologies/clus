@@ -113,9 +113,6 @@ public abstract class MTLearnerImpl implements MTLearner {
 
     /**
      * Sets the testdata to test
-     * 
-     * @param the
-     *        testdata
      */
     @Override
     public void setTestData(RowData test) {

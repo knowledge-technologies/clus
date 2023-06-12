@@ -11,28 +11,9 @@ import java.util.HashMap;
 import si.ijs.kt.clus.util.ClusLogger;
 
 public class SaveLoadNeighbours {
-	/**
-	 * The file, storing the nearest neighbours data:<br>
-	 * START_TARGET;index1<br>
-	 * START_TUPLE;index1<br>
-	 * NB_TARGET_VALUES;numberOfTargetValues1<br>
-	 * NN(2;0.21;0.21)&...&NN(32;0.121;0.51)<br>
-	 * ...<br>
-	 * NN(4;0.31;0.11)&...&NN(112;0.1;0.1)<br>
-	 * END_TUPLE<br>
-	 * START_TUPLE;index2<br>
-	 * ...<br>
-	 * END_TUPLE2<br>
-	 * ...<br>
-	 * END_TUPLE<br>
-	 * END_TARGET<br>
-	 * START_TARGET;index2<br>
-	 * ...<br>
-	 * where NN-lines are produced by the NearestNeighbour.toFileString() method. Each line corresponds to one target value.
-	 */
 	private String m_OutputFile;
 	
-	/** The file names that store the NN-s, which are given in the same way as in the {@link #m_OutputFile}.
+	/** The file names that store the NN-s, which are given in the same way as in the {@link m_OutputFile}.
 	 * They are joined into one structure when loading. */
 	private String[] m_InputFiles;
 	

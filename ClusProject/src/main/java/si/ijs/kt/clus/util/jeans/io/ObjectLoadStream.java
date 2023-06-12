@@ -39,14 +39,8 @@ public class ObjectLoadStream extends ObjectInputStream {
     /**
      * Opens a file for loading objects from
      *
-     * @param fileName
+     * @param file
      *        the file name of the file to load from
-     *
-     * @pre (fileName != null) and
-     *      the file exists
-     *      and no file should be opened by the class
-     *
-     * @effect the file specified by fileName is opened for reading
      *
      * @exception IOException
      *            if an error occurred while opening the file

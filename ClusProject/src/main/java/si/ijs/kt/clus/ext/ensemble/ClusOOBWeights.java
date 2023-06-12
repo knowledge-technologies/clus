@@ -86,8 +86,8 @@ public class ClusOOBWeights {
      * Normalize errors to get weights
      * 
      * Loss functions (less is better):
-     * => RMSE for regression
-     * => 1-CA for classification
+     * {@literal =>} RMSE for regression
+     * {@literal =>} 1-CA for classification
      * 
      * Weights are proportionate to the loss function: 1/error
      */

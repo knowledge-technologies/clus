@@ -15,8 +15,6 @@ public class TestHelper {
    *
    * @param settingsFile name of the settings file
    * @return RowData object
-   * @throws IOException
-   * @throws ClusException
    */
   public static RowData getRowData(String settingsFile) {
     RowData data = null;

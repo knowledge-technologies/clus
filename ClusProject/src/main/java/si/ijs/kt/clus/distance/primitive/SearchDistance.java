@@ -95,11 +95,6 @@ public class SearchDistance extends ClusDistance {
      * When both are missing 1 is returned.
      * For nominal values: if both are non missing and same 0 is returned, 1 otherwise.
      * This function just helps to define different distances.
-     * 
-     * @param t1
-     * @param t2
-     * @param attr
-
      */
     public double calcDistanceOnAttr(DataTuple t1, DataTuple t2, ClusAttrType attr) {
         if (attr instanceof NumericAttrType) {

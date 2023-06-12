@@ -42,11 +42,6 @@ public class OptSmoothLocalSearch {
 
     /**
      * Smooth Local Search optimization
-     * 
-     * @param initialRuleSet
-     * @param delta
-     * @param deltaPrime
-
      */
 
     public ClusRuleSet SmoothLocalSearch(ClusRuleSet initialRuleSet, double delta, double deltaPrime, Function<ClusRuleSet, Double> objectiveFunction) {
@@ -234,14 +229,6 @@ public class OptSmoothLocalSearch {
      * Randomly sample rules with bias
      * 
      * @param probabilityBiased
-     * @param initialRuleSet2
-     * @param initialRuleSet
-     * @param a2
-     * @param indicesOfBiasedRules
-     * @param probabilityBiased
-     *        (1+delta)/2 probabilityNormal = 1- (probabilityBiased)
-     * @param calculateDefaultRuleAndPrototypes
-     *        Should the method calculate default rule and prototypes?
      * @return A randomly sampled rule set with bias towards some of the elements
      */
     ClusRuleSet randomSampleWithBias(double probabilityBiased) {
@@ -278,7 +265,6 @@ public class OptSmoothLocalSearch {
     /**
      * Randomly sample from rule set without bias
      * 
-     * @param initialRuleSet
      * @return Randomly sampled rule set
      */
     ClusRuleSet randomSampleWithoutBias(ClusRuleSet rules) {
@@ -305,15 +291,6 @@ public class OptSmoothLocalSearch {
 
     /**
      * Calculate expected value for objectiveFunction given error margin and a rule set
-     * 
-     * @param probabilityBiased
-     * @param rules
-     *        Rule set to use for estimation calculation
-     * @param errorMargin
-     *        Treshold that is used as stopping criterion
-     * @param objectiveFunction
-     *        Objective function to use for value calculation
-     * @return Expected value
      */
     double getEstimate(ClusRule ruleToCheck, double probabilityBiased) {
         ArrayList<Double> differenceValuesArray = new ArrayList<Double>(100);

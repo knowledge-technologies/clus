@@ -149,9 +149,6 @@ public class KnnClassifier extends ClusInductionAlgorithmType {
 
     /**
      * Induced default model - prediction to majority class.
-     * 
-     * @param cr
-
      * @throws ClusException
      * @throws InterruptedException
      */

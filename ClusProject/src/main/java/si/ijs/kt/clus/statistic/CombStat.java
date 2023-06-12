@@ -497,8 +497,6 @@ public class CombStat extends ClusStatistic {
      * 
      * @param attr
      *        the attribute
-     * @param total
-     *        the number of possible values of this attribute
      * @return the entropy
      */
     // TODO: Move to ClassificationStat
@@ -666,8 +664,6 @@ public class CombStat extends ClusStatistic {
      * @param att
      *        attribute index
      * @return true if this distribution significantly different from global distribution
-     * @throws IllegalArgumentException
-     * @throws MathException
      */
     private boolean SignDifferentNom(int att) {
         /*
@@ -703,7 +699,6 @@ public class CombStat extends ClusStatistic {
      *        attribute index
      * @return true if this distribution significantly different from global distribution
      * @throws IllegalArgumentException
-     * @throws MathException
      */
     private boolean SignDifferentNum(int att) throws IllegalArgumentException {
         // alpha = significance level, confidence = 1-alpha

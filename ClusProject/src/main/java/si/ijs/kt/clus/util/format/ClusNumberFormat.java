@@ -14,18 +14,18 @@ import si.ijs.kt.clus.util.jeans.util.StringUtils;
  * <ul>
  * 	<li> Zero and the numbers whose absolute value is at least one are rounded to {@code precision} decimal places, e.g., 
  *  	<ul>
- *  		<li> {@code 12345} is transformed to {@code "12345"} <il>
- *  		<li> {@code 12345.0} is transformed to {@code "12345"} <il>
- *  		<li> {@code 12345.678} is transformed to {@code "12345.68"} <il>
+ *  		<li> {@code 12345} is transformed to {@code "12345"} </li>
+ *  		<li> {@code 12345.0} is transformed to {@code "12345"} </li>
+ *  		<li> {@code 12345.678} is transformed to {@code "12345.68"} </li>
  *  	</ul>     
- *  <il>
+ *  </li>
  *  <li> The numbers whose absolute value is smaller than one (except for zero) are rounded to {@code precision} number of significant digits, e.g.,
  *  	<ul>
- *  		<li> {@code 0.12345} is transformed to {@code "1.2E-1"} <il>
- *  		<li> {@code 0.012345} is transformed to {@code "1.2E-2"} <il>
- *  		<li> {@code 0.0012345678} is transformed to {@code "1.2E-3"} <il>
+ *  		<li> {@code 0.12345} is transformed to {@code "1.2E-1"} </li>
+ *  		<li> {@code 0.012345} is transformed to {@code "1.2E-2"} </li>
+ *  		<li> {@code 0.0012345678} is transformed to {@code "1.2E-3"} </li>
  *  	</ul> 
- *  <il>
+ *  </li>
  * </ul>
  * A negative number {@code x} is transformed to the string {@code "-" + transformation(-x)}.
  * As a decimal separator, dot is always used.

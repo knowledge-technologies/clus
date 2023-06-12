@@ -240,8 +240,8 @@ public class ClassesAttrType extends ClusAttrType {
     /**
      * Guesses hierarchy type if the current type from the label names. The first rule that fires, wins.
      * <ul>
-     * <li> If there is a label "L1/.../Ln", n >= 3 ---> we return Tree <il>
-     * <li> We return DAG <il> 
+     * <li> If there is a label "L1/.../Ln", n {@literal >= 3 --->} we return Tree </li>
+     * <li> We return DAG </li> 
      * </ul>
      * @param labels
      * @return

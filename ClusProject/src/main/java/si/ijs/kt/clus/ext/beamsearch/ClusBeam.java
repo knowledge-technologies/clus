@@ -214,8 +214,6 @@ public class ClusBeam {
      * Dragi
      * This part is used only when we have similarity constraints
      * 
-     * @param model
-     *        - candidate model
      * @return 0 - no change in the beam (the candidate didn't entered the beam)
      * @return 1 - change in the beam (the candidate entered the beam)
      */

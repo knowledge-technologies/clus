@@ -74,9 +74,6 @@ public class HierarchicalMultiLabelDistance {
     
     /**
      * Computes the depth of each term in the hierarchy, which can be DAG or tree-shaped.
-     * 
-     * @param attr
-     *        The attribute, which the hierarchy belongs to.
      */
     private static void computeDepthsOfTerms(ClassHierarchy hier) {
         ArrayList<ClassTerm> toProcess = new ArrayList<ClassTerm>();

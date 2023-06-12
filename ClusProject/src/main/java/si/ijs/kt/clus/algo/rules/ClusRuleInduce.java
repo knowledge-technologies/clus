@@ -1102,7 +1102,7 @@ public class ClusRuleInduce extends ClusInductionAlgorithm {
      * That is, the random attributes are chosen with random split points.
      * However, the predictions are the means of covered examples.
      * 
-     * @param cr
+     * @param run
      *        ClusRun
      * @return RuleSet
      * @throws InterruptedException

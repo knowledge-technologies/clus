@@ -75,9 +75,7 @@ public abstract class ClusError implements Serializable {
 
 
     /**
-     * 
-     * @param Info
-     *        that should be concatenated with error name. This is optional.
+     * @param info that should be concatenated with error name. This is optional.
      */
     protected void setAdditionalInfo(String info) {
         if (!info.trim().equals("")) {

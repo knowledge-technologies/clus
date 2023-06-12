@@ -54,9 +54,6 @@ public class ClusSemiSupervisedPCTs extends ClusSemiSupervisedInduce {
 
 	/**
 	 * * Initialize parameters
-	 *
-	 * @param schema
-	 * @param sett
 	 */
 	public void initialize(ClusSchema schema, Settings settx) {
 		SettingsSSL sett = settx.getSSL();

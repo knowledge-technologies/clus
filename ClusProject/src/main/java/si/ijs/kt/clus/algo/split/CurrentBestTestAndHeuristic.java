@@ -510,7 +510,7 @@ public class CurrentBestTestAndHeuristic {
 
 
     /**
-     * Take the inverse test '<=' instead of the default '>'.
+     * Take the inverse test '{@code <=}' instead of the default '{@code >}'.
      * 
      * @param val
      *        Split value.

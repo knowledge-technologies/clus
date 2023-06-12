@@ -101,7 +101,7 @@ public class GDProblem extends OptimizationProblem {
 
 	/**
 	 * Includes the weights that are banned. One value for each of the weights, if
-	 * value > nbOfIterations, weight is banned.
+	 * value {@literal >} nbOfIterations, weight is banned.
 	 */
 	protected int[] m_bannedWeights;
 
@@ -132,10 +132,6 @@ public class GDProblem extends OptimizationProblem {
 	 * for regression.
 	 * 
 	 * @param stat_mgr         Statistics
-	 * @param dataInformation  The true values and predictions for the instances.
-	 *                         These are used by OptimProbl. The optimization
-	 *                         procedure is based on this data information
-	 * @param isClassification Is it classification or regression?
 	 */
 	public GDProblem(ClusStatManager stat_mgr, OptimizationParameter optInfo, ClusRuleSet rset) {
 		super(stat_mgr, optInfo);
@@ -333,7 +329,7 @@ public class GDProblem extends OptimizationProblem {
 	 * we compute all the pairs where this takes part. Because for covariance
 	 * cov(a,b) = cov(b,a) compute only one of them.
 	 * 
-	 * @par dimension The dimension for which the covariances are computed
+	 * @param dimension The dimension for which the covariances are computed
 	 */
 	private void computeWeightCov(int dimension) {
 		// Because of symmetry cov(dimension, b) is already computed if for some earlier
@@ -371,7 +367,7 @@ public class GDProblem extends OptimizationProblem {
 	 * be greater or equal to first
 	 * 
 	 * @param iPrevious Base learner index
-	 * @param iLatter   Base learner index. NOTE: iLatter >= iPrevious
+	 * @param iLatter   Base learner index. NOTE: iLatter {@literal >=} iPrevious
 	 * 
 	 */
 	// private double[] computeCovFor2Preds(int iFirstRule, int iSecondRule) {
@@ -393,8 +389,7 @@ public class GDProblem extends OptimizationProblem {
 	/**
 	 * For two linear terms.
 	 * 
-	 * @param iPrevious
-	 * @param iLatter   Rule index. NOTE: iLatter >= iPrevious
+	 * @param iLatter   Rule index. NOTE: iLatter {@literal >}= iPrevious
 	 * 
 	 */
 	private double computeCovFor2Lin(int iPrevious, int iLatter) {
@@ -430,7 +425,7 @@ public class GDProblem extends OptimizationProblem {
 	 * For rule and linear term we skip the instances rule does not cover.
 	 * 
 	 * @param iRule   Rule index.
-	 * @param iLinear Linear term index. NOTE: iLinear >= iRule
+	 * @param iLinear Linear term index. NOTE: iLinear {@literal >=} iRule
 	 * 
 	 */
 	private double computeCovForRuleAndLin(int iRule, int iLinear) {
@@ -486,7 +481,7 @@ public class GDProblem extends OptimizationProblem {
 	 * pred1*pred2*([nb both rules cover]/[nb of instances])
 	 * 
 	 * @param iPrevious
-	 * @param iLatter   Rule index. NOTE: iLatter >= iPrevious
+	 * @param iLatter   Rule index. NOTE: iLatter {@literal >=} iPrevious
 	 * 
 	 */
 	private double computeCovFor2Rules(int iPrevious, int iLatter) {
@@ -586,10 +581,9 @@ public class GDProblem extends OptimizationProblem {
 	}
 
 	/**
-	 * Squared loss gradient. p. 18 in Friedman & Popescu, 2004
+	 * Squared loss gradient. p. 18 in Friedman {@literal &} Popescu, 2004
 	 * 
 	 * @param iGradWeightDim Weight dimension for which the gradient is computed.
-	 * @return Gradient average
 	 */
 	private double gradientSquared(int iGradWeightDim, ArrayList<Double> weights) {
 
@@ -610,7 +604,7 @@ public class GDProblem extends OptimizationProblem {
 	 * 
 	 * @param changedWeightIndex The index of weights that have changed. Only these
 	 *                           affect the change in the new gradient.
-	 *                           Friedman&Popescu p.18
+	 *                           Friedman {@literal &} Popescu p.18
 	 */
 	final protected void modifyGradients(int[] changedWeightIndex, ArrayList<Double> weights) {
 

@@ -1132,9 +1132,6 @@ public class ClusStatManager implements Serializable {
     /**
      * Initializes a table with Chi Squared inverse probabilities used in
      * significance testing of rules.
-     *
-     * @throws MathException
-     *
      */
     public void initSignifcanceTestingTable() {
         int max_nom_val = 0;

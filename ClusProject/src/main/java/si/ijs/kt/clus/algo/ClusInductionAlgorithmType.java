@@ -98,7 +98,6 @@ public abstract class ClusInductionAlgorithmType {
      * Calls the induce function for each of the learning algorithms of this TYPE.
      * Also collects the information about computational cost of training.
      * 
-     * @param cr
      * @throws Exception 
      */
     public void induceAll(ClusRun cr) throws Exception {

@@ -34,9 +34,6 @@ public class OracleBruteForce extends BruteForce {
 	
 	/**
 	 * Keep those of the training examples with missing values that are in the chosen training instances and build the model.
-	 * @param k
-	 * @param trainingExamplesWithMissing
-	 * @param sett
 	 */
 	public void buildForMissingTargetImputation(int k, int[] trainingExamplesWithMissing, SettingsKNN sett) {
 		try {

@@ -24,13 +24,6 @@ import si.ijs.kt.clus.util.exception.ClusException;
  */
 public class ClassesProbabilities extends PredictionConfidence {
 
-    /**
-     *
-     * @param statManager
-     * @param Type
-     *        \in {"average", "minimum"}
-     * @throws ClusException
-     */
     public ClassesProbabilities(ClusStatManager statManager, SSLNormalization normalizationType, SSLAggregation aggregationType) throws ClusException {
         super(statManager, normalizationType, aggregationType);
     }

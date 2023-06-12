@@ -463,7 +463,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
     /**
      * Sorts the instances with respect to the given attribute {@code at}, so that
      * <p>
-     * missing > decreasing regular values > zeros
+     * missing {@literal >} decreasing regular values {@literal >} zeros
      * 
      * @param at
      * @param helper
@@ -800,7 +800,7 @@ public class RowData extends ClusData implements MSortable, Serializable {
 
     /**
      * Only used in efficient XVal code
-     * TODO Could be a bug: changeWeight -> multiplyWeight
+     * TODO Could be a bug: changeWeight {@literal ->} multiplyWeight
      * 
 
      */
@@ -1324,38 +1324,18 @@ public class RowData extends ClusData implements MSortable, Serializable {
      * Create a random sample with replacement of this RowData.
      * Uses the ClusRandom.RANDOM_SAMPLE random generator
      * 
-     * 
+     * Be careful when using this method! Current use in FindBestTest is wrong in the case when N != 0: 
+     * this is used for finding the best test. However, if N != 0 (otherwise we simply return all the data),
+     * this can lead to problems (duplicates of tuples --{@literal >} wrong statistics --{@literal >} ...)
+     * This is considered a small bug since usually N = 0, because the option SplitSampling in section [Tree] is usually
+     * not used.
      * @param N
      *        The size of the random subset
-     * @return If N > 0: a new RowData containing the random sample of size N
+     * @return If N {@literal >} 0: a new RowData containing the random sample of size N
      *         If N == 0: a copy of this RowData object (i.e. no sampling)
      * @throws IllegalArgumentException
-     *         if N < 0
+     *         if N {@literal <} 0
      */
-    /*
-     * public RowData sample2(int N, ClusRandomNonstatic rnd) {
-     * if (N < 0)
-     * throw new IllegalArgumentException("N should be larger than or equal to zero");
-     * int nbRows = getNbRows();
-     * if (N == 0)
-     * return new RowData(this);
-     * ArrayList<DataTuple> res = new ArrayList<DataTuple>();
-     * // sample with replacement
-     * int i;
-     * for (int size = 0; size < N; size++) {
-     * i = rnd.nextInt(ClusRandomNonstatic.RANDOM_SAMPLE, nbRows); // <---- i =
-     * // ClusRandom.nextInt(ClusRandom.RANDOM_SAMPLE,nbRows);
-     * res.add(getTuple(i));
-     * }
-     * return new RowData(res, getSchema().cloneSchema());
-     * }
-     */
-
-    // Be careful when using this method! Current use in FindBestTest is wrong in the case when N != 0:
-    // this is used for finding the best test. However, if N != 0 (otherwise we simply return all the data),
-    // this can lead to problems (duplicates of tuples --> wrong statistics --> ...)
-    // This is considered a small bug since usually N = 0, because the option SplitSampling in section [Tree] is usually
-    // not used.
     public RowData sample(int N, ClusRandomNonstatic rnd) {
         if (N < 0)
             throw new IllegalArgumentException("N should be larger than or equal to zero");

@@ -49,9 +49,6 @@ public class RForestProximities extends PredictionConfidence {
      * example e_u as follows: r(e_u) = sum_{e_l} w_l * oobError(e_l), where w_l
      * is proximity of e_u to labeled example e_l, and oonError return
      * out-of-bag error of labeled example e_u
-     *
-     * @param model
-
      * @throws ClusException
      * @throws InterruptedException
      */

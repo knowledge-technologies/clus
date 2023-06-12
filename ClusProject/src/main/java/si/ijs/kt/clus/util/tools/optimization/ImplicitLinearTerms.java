@@ -59,10 +59,6 @@ public class ImplicitLinearTerms {
     /**
      * Create implicit linear terms
      * 
-     * @param data
-     * @param statMgr
-     * @param values
-     *        Scaling values and truncate values for the linear terms.
      */
     public ImplicitLinearTerms(RowData data, ClusStatManager statMgr) {
         m_StatManager = statMgr;

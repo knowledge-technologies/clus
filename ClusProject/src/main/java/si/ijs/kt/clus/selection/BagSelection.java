@@ -41,7 +41,6 @@ public class BagSelection extends ClusSelection {
      * 
      * @param nbrows
      *        the number of instances
-     * @see clus.main.Settings#getEnsembleBagSize()
      */
 
     public BagSelection(int nbrows) {

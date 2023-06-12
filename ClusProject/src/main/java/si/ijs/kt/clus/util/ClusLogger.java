@@ -13,13 +13,12 @@ import java.util.logging.StreamHandler;
 import si.ijs.kt.clus.main.settings.section.SettingsGeneral;
 
 /**
- * This is the logging class. From anywhere in Clus use ClusLogger.<logging
- * method> to log messages. Default output stream is the console. If you want to
+ * This is the logging class. From anywhere in Clus use ClusLogger.{@literal <}logging
+ * method{@literal >} to log messages. Default output stream is the console. If you want to
  * log to file, create a logging.properties file in the same folder as the Clus
  * executable.
  * 
- * Read {@link http://www.vogella.com/tutorials/Logging/article.html} before
- * changing anything.
+ * @see <a href="http://www.vogella.com/tutorials/Logging/article.html">Read before changing anything.</a>
  * 
  * @author martinb
  *

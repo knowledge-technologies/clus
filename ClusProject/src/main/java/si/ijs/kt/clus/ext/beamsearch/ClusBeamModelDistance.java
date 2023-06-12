@@ -267,8 +267,6 @@ public class ClusBeamModelDistance {
      * Dragi
      * Calculates the distance between a given model and the syntactic constraint
      * 
-     * @param model
-     * @param constraint
      * @return Similarity between the candidate and the constraint
      */
     public double getDistToConstraint(ClusBeamModel model, ClusBeamSyntacticConstraint constraint) {

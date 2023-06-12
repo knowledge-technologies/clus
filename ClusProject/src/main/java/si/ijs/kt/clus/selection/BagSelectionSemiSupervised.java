@@ -9,9 +9,7 @@ public class BagSelectionSemiSupervised extends BagSelection {
      * Creates a new bag selection from dataset consisting of labeled and unlabeled examples. Labeled and unlabeled examples are sampled separately
      * to avoid having only unlabeled examples in a bag. Dataset is assumed to be sorted so that the labeled examples come first, while unlabeled second. 
      * @param nbrows the total number of instances
-     * @param labeledStart starting position of labeled examples (usually 0)
      * @param labeledNo the number of labeled examples to be sampled
-     * @param unlabeledstart starting position of unlabeled examples in dataset
      * @param unlabeledNo  the number of unlabeled examples to be sampled 
      */
     public BagSelectionSemiSupervised(int nbrows, int labeledNo, int unlabeledNo, ClusRandomNonstatic rnd) {

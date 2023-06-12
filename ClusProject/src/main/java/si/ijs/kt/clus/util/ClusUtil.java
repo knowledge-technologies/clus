@@ -166,8 +166,6 @@ public class ClusUtil {
     
     /**
      * Computes the rank of each value in the given array
-     * 
-     * @param values
      * @return an array with the corresponding ranking
      */
     public static double[] getRanks(double[] values) {

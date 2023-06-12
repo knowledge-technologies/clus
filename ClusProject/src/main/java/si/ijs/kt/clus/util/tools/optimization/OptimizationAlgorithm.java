@@ -48,7 +48,6 @@ public abstract class OptimizationAlgorithm {
      * 
      * @param stat_mgr
      *        Statistics
-     * @param dataInformation
      *        The true values and predictions for the instances. These are used by OptimProbl.
      *        The optimization procedure is based on this data information
      */

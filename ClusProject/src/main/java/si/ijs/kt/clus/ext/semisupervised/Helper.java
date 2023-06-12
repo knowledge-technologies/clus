@@ -15,9 +15,6 @@ public class Helper {
 
     /**
      * Calculates average of an array of values
-     *
-     * @param values
-
      */
     public static double average(double[] values) {
         double avg = 0;
@@ -43,9 +40,6 @@ public class Helper {
 
     /**
      * Calculates minimum of an array of values
-     *
-     * @param values
-
      */
     public static double min(double[] values) {
         double min = Double.MAX_VALUE;
@@ -60,9 +54,6 @@ public class Helper {
     
     /**
      * Calculates sum of an array of values
-     *
-     * @param values
-
      */
     public static double sum(double[] values) {
         double sum = 0;
@@ -75,9 +66,6 @@ public class Helper {
 
     /**
      * Calculates maximum of an array of values
-     *
-     * @param values
-
      */
     public static double max(double[] values) {
         double max = Double.MIN_VALUE;
@@ -172,9 +160,6 @@ public class Helper {
     /**
      * Calculates standard deviation IMPORTANT: this implementation is buggy, it
      * returns Double.NaN, when stdDev should be 0
-     *
-     * @param values
-
      */
     public static double stDevOpt(double[] a) {
         double avg = 0;
@@ -190,9 +175,6 @@ public class Helper {
 
     /**
      * Return array containing just the second values of the DoublePairs array
-     *
-     * @param dpArrray
-
      */
     public static double[] getArrayOfSecond(DoublesPair[] dpArrray) {
         double[] temp = new double[dpArrray.length];

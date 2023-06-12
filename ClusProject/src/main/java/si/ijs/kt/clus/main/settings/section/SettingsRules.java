@@ -170,7 +170,7 @@ public class SettingsRules extends SettingsBase {
         RRMSE,
 
         /**
-         * Optimization Loss function type. Huber 1962 error. Like squared but robust for outliers. Friedman&Popescu
+         * Optimization Loss function type. Huber 1962 error. Like squared but robust for outliers. Friedman {@literal &} Popescu
          * 2005, p. 7
          */
         Huber
@@ -296,7 +296,7 @@ public class SettingsRules extends SettingsBase {
     private INIFileDouble m_OptRegPar;
     /** Optimization regularization parameter - number of zeroes. Especially useful for DE optimization. */
     private INIFileDouble m_OptNbZeroesPar;
-    /** The treshold for rule weights. If weight < this, rule is removed. */
+    /** The treshold for rule weights. If weight {@literal <} this, rule is removed. */
     private INIFileDouble m_OptRuleWeightThreshold;
     /** If this flag is set, weights higher than m_OptRuleWeightThreshold will get value 1, others will be set to 0 */
     protected INIFileBool m_OptRuleWeightBinarization;

@@ -191,7 +191,6 @@ public abstract class RegressionStatBase extends ClusStatistic {
      * @param att
      *        attribute index
      * @return t p-value
-     * @throws MathException
      */
     public double getTTestPValue(int att, ClusStatManager stat_manager) {
         double global_mean = ((CombStat) stat_manager.getTrainSetStat()).m_RegStat.getMean(att);

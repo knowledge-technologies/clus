@@ -1,4 +1,5 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>si.ijs.kt</groupId>
@@ -6,7 +7,7 @@
 	<version>2.12.8</version>
 
 
-	<name>Clus</name>
+	<name>CLUS</name>
 	<description>Clus is a decision tree and rule induction software that implements the predictive clustering framework. This framework combines clustering with predictive modelling and allows for a natural extension to more complex prediction tasks. 
 
 Clus is able to solve tasks such as (hierarchical) multi-label classification, (hierarchical) multi-target regression, network regression, and tasks with even more complex output types such as tuples and sets. In addition to this, ensemble learning, feature ranking and semi-supervised learning methods are also included. The software is available as a standalone tool.</description>
@@ -15,7 +16,6 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 		<name>Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia</name>
 		<url>http://kt.ijs.si</url>
 	</organization>
-
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -30,13 +30,13 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 		<surefire.plugin.version>2.19</surefire.plugin.version>
 		<assembly.plugin.version>3.1.0</assembly.plugin.version>
 		<shade.plugin.version>3.1.0</shade.plugin.version>
-		<site.plugin.version>3.7</site.plugin.version>
+		<site.plugin.version>4.0.0-M8</site.plugin.version>
 		<info.reports.plugin.version>2.9</info.reports.plugin.version>
 		<surefire.report.plugin.version>2.20</surefire.report.plugin.version>
 		<jxr.plugin.version>2.5</jxr.plugin.version>
-		<javadoc.report.plugin>3.0.0</javadoc.report.plugin>
+		<javadoc.report.plugin>3.5.0</javadoc.report.plugin>
 		<antrun.plugin.version>1.8</antrun.plugin.version>
-
+		
 		<maven.enforcer.plugin.version>3.0.0-M1</maven.enforcer.plugin.version>
 		<maven.version>3.3.9</maven.version>
 		<maven-model.version>3.5.2</maven-model.version>
@@ -89,14 +89,14 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 			<version>${maven-model.version}</version>
 		</dependency>
 		<dependency>
-		  <groupId>org.jblas</groupId>
-		  <artifactId>jblas</artifactId>
-		  <version>${jblas.version}</version>
+			<groupId>org.jblas</groupId>
+			<artifactId>jblas</artifactId>
+			<version>${jblas.version}</version>
 		</dependency>
 		<dependency>
-		  <groupId>org.ejml</groupId>
-		  <artifactId>ejml-all</artifactId>
-		  <version>${ejml.version}</version>
+			<groupId>org.ejml</groupId>
+			<artifactId>ejml-all</artifactId>
+			<version>${ejml.version}</version>
 		</dependency>
 	</dependencies>
 
@@ -117,17 +117,17 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 				</includes>
 			</resource>
 			<resource>
-                <directory>${project.basedir}/resources/python_models/</directory>
-                <includes>
-                    <include>fimp_manipulation.py</include>
-                </includes>
-            </resource>
-            <resource>
-                <directory>${project.basedir}/resources/python_models/</directory>
-                <includes>
-                    <include>prediction_aggregators.py</include>
-                </includes>
-            </resource>
+				<directory>${project.basedir}/resources/python_models/</directory>
+				<includes>
+					<include>fimp_manipulation.py</include>
+				</includes>
+			</resource>
+			<resource>
+				<directory>${project.basedir}/resources/python_models/</directory>
+				<includes>
+					<include>prediction_aggregators.py</include>
+				</includes>
+			</resource>
 		</resources>
 		<plugins>
 			<plugin>
@@ -167,9 +167,9 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 					</dependency>
 				</dependencies>
 				<configuration>
-				        <!-- black magic -->
-                         <argLine>--add-opens=java.base/java.util=ALL-UNNAMED</argLine>                       
-                </configuration>
+					<!-- black magic -->
+					<argLine>--add-opens=java.base/java.util=ALL-UNNAMED</argLine>
+				</configuration>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -283,6 +283,13 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-project-info-reports-plugin</artifactId>
 				<version>${info.reports.plugin.version}</version>
+				<reportSets>
+					<reportSet>
+						<reports><!-- select reports -->
+							<report>index</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
@@ -297,10 +304,44 @@ Clus is able to solve tasks such as (hierarchical) multi-label classification, (
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-antrun-plugin</artifactId>
-				<version>
-				${antrun.plugin.version}
-				</version>
+				<version>${antrun.plugin.version}</version>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<version>${javadoc.report.plugin}</version>
+				<configuration>
+					<show>private</show>
+				</configuration>
+				<reportSets>
+					<reportSet><!-- by default, id = "default" -->
+						<reports><!-- select non-aggregate reports -->
+							<report>javadoc</report>
+							<report>test-javadoc</report>
+						</reports>
+					</reportSet>
+					<reportSet><!-- aggregate reportSet, to define in poms having modules -->
+						<id>aggregate</id>
+						<inherited>false</inherited><!-- don't run aggregate in child modules -->
+						<reports>
+							<report>aggregate</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 		</plugins>
 	</reporting>
+
+
+	<profiles>
+		<profile>
+			<id>disable-java8-doclint</id>
+			<activation>
+				<jdk>[1.8,)</jdk>
+			</activation>
+			<properties>
+				<additionalparam>-Xdoclint:none</additionalparam>
+			</properties>
+		</profile>
+	</profiles>
 </project>

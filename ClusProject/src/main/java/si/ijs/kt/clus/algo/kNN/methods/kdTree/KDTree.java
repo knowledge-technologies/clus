@@ -62,10 +62,6 @@ public class KDTree extends SearchAlgorithm {
 
     /**
      * Builds tree.
-     * 
-     * @throws clus.util.ClusException
-     * @throws java.io.IOException
-     * @throws InterruptedException 
      */
     @Override
     public void build(int k) throws ClusException, IOException, InterruptedException {

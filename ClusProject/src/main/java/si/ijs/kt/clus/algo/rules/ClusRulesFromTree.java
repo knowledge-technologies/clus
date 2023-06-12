@@ -225,7 +225,6 @@ public class ClusRulesFromTree {
      *        The root node of the tree
      * @param mgr
      *        The data in statistics manager may be used
-     * @return Rule set.
      * @throws ClusException
      */
     public ClusRuleSet constructRules(ClusNode node, ClusStatManager mgr) throws ClusException {

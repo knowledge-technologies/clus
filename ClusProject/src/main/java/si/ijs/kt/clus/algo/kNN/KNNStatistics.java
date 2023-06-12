@@ -75,7 +75,7 @@ public class KNNStatistics {
     }
     /**
      * Calculates the meaningful measures for given nominal attribute
-     * in the data : -> find most frequent value for given attribute
+     * in the data : {@literal ->} find most frequent value for given attribute
      * Also calculates the prototype values of this attribute
      */
     public void calcNominalMeasures(RowData data,NominalAttrType attr){
@@ -228,7 +228,7 @@ public class KNNStatistics {
      * Returns the idx'th prototype
      * (meaning: of the idx'th value of the target attribute )
      * require
-     *  idx < amount of possible target values
+     *  idx {@literal <} amount of possible target values
      */
     public DataTuple getPrototype(int idx){
         return $prototypes[idx];

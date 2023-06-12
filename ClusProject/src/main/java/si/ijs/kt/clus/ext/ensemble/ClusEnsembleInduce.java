@@ -1473,10 +1473,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
     /**
      * Updates the counts of nodes, leaves and trees in the forests, by adding the corresponding statistics
      * of a new tree to the current statistics in forest.
-     * 
-     * @param model
-     * @param treeNumber
-     * @throws InterruptedException
      */
     private void updateCounts(ClusNode model, int treeNumber) throws InterruptedException {
         // nodes, leaves, depth;
@@ -1575,11 +1571,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     /**
      * Writes the tree to a temporary file.
-     * 
-     * @param cr
-     * @param tree
-     * @param treeIndex
-     * @throws FileNotFoundException
      */
     private void writeTreeToTempPythonFile(ClusRun cr, ClusModel tree, int treeIndex) throws FileNotFoundException {
         File tempPy = new File(getTemporaryPythonTreeFileName(cr, treeIndex));
@@ -1592,10 +1583,6 @@ public class ClusEnsembleInduce extends ClusInductionAlgorithm {
 
     /**
      * Returns the name of temporary python script, containing a single tree in the forests.
-     * 
-     * @param cr
-     * @param treeIndex
-     * 
      */
     public static String getTemporaryPythonTreeFileName(ClusRun cr, int treeIndex) {
         return cr.getStatManager().getSettings().getGeneric().getFileAbsolute(String.format("temp_tree%d.py", treeIndex));

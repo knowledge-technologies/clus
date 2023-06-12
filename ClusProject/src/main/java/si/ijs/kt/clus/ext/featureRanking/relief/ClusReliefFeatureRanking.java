@@ -141,8 +141,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 	public static double BOTH_MISSING_DIST = 1.0;
 
 	/**
-	 * Random generator for sampling of the next instance. It is used iff not
-	 * {@link #m_isDeterministic}
+	 * Random generator for sampling of the next instance.
 	 */
 	private Random m_rnd;
 
@@ -193,7 +192,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 	/**
 	 * {@code m_NearestNeighbours[target index][tuple index]}: the nearest
 	 * neighbours for a given tuple as returned by
-	 * {@link #findNearestNeighbours(int, RowData, int, boolean)}.
+	 * {@link findNearestNeighbours}.
 	 * <p>
 	 * If {@code target index = -1}, these are the neighbours used in the
 	 * computation of the overall ranking(s). Otherwise, these are the neighbours
@@ -278,8 +277,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 
 	/**
 	 * Initialises some fields etc.
-	 * 
-	 * @param data
 	 */
 	private void initialize() {
 		// note: keep the order of the inicialization fixed, sometimes it is important
@@ -576,7 +573,7 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 	 * @param iterationsIndex
 	 *            The index of the number of iterations in {@link #m_NbIterations}
 	 * @param neighboursIndex
-	 *            The index of the number of neighbours in {@link #m_NbNeighnours}
+	 *            The index of the number of neighbours
 	 * @param targetIndex
 	 *            If non-negative, then this is the index of the target and we are
 	 *            looking for a index of a per-target ranking. If -1, then we are
@@ -710,7 +707,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 	 *            Tells, whether the given overall/per-target ranking statistics
 	 *            should be updated. Has the same structure as
 	 *            {@code successfulItearions}.
-	 * @throws InterruptedException
 	 */
 	private void updateImportances(RowData data, int numIterInd, double successfulItearions[], boolean[] shouldUpdate)
 	        throws InterruptedException {
@@ -735,12 +731,6 @@ public class ClusReliefFeatureRanking extends ClusFeatureRanking {
 	 * In each iteration, this method updates distance statistics after the
 	 * neighbours of a chosen tuple are found.
 	 * 
-	 * @param data
-	 * @param tuple
-	 * @param nearestNeighbours
-	 * @param targetIndex
-	 * 
-	 * @throws ClusException
 	 */
 	private int updateDistanceStatistics(RowData data, DataTuple tuple, int tupleIndex, NearestNeighbour[][] nearestNeighbours,
 	        int targetIndex) throws ClusException {

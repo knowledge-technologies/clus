@@ -138,8 +138,6 @@ public class GDAlgorithm extends OptimizationAlgorithm {
 	/**
 	 * Optimize the weights for the given data with gradient descent algorithm. This
 	 * is the algorithm by Friedman, Popescu 2004
-	 * 
-	 * @throws Exception
 	 */
 	@Override
 	public ArrayList<Double> optimize() {

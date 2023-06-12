@@ -29,7 +29,7 @@ import si.ijs.kt.clus.main.settings.Settings;
 
 /**
  * 
- * Parent class of the {@ code DoubleBooleanCount} that stores statistics that are used when building ROC- and
+ * Parent class of the {@code DoubleBooleanCount} that stores statistics that are used when building ROC- and
  * PR-curves.
  *
  */

@@ -49,7 +49,7 @@ public abstract class VectorDistance {
     }
     /**
      * Returns index'th attribute.
-     * Require index :  0 <= index < amountAttribs()
+     * Require index :  0 {@literal <=} index {@literal <} amountAttribs()
      */
 
     public ClusAttrType getAttrib(int idx){

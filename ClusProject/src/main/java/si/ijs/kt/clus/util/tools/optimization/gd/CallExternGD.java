@@ -29,10 +29,6 @@ public class CallExternGD {
 
     /**
      * Returns weights
-     * 
-     * @param clusStatManager
-     * @param rset
-     * @param clusData
      */
     public static ArrayList<Double> main(ClusStatManager clusStatManager, OptimizationProblem.OptimizationParameter optInfo, ClusRuleSet rset) {
         int nbOfWeights = optInfo.m_rulePredictions.length;

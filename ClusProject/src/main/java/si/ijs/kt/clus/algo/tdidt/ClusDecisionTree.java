@@ -97,13 +97,7 @@ public class ClusDecisionTree extends ClusInductionAlgorithmType {
 
 	/**
 	 * Convert the tree to rules
-	 * 
-	 * @param cr
-	 * @param model
-	 *            ClusModelInfo to convert to rules (default, pruned, original).
-	 * @throws ClusException
-	 * @throws IOException
-	 * @throws InterruptedException
+	 * @param model ClusModelInfo to convert to rules (default, pruned, original).
 	 */
 	public void convertToRules(ClusRun cr, ClusModelInfo model)
 			throws ClusException, IOException, InterruptedException {

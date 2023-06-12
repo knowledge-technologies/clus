@@ -16,9 +16,6 @@ public interface Normalization {
     /**
      *
      * @param perTargetScores Per-target confidence scores
-     * @param confidenceScores Array where the final confidence scores will be
-     * stored
-     * @param nbTargetAttributes The number of target attributes
      */
     public void normalize(Map<Integer, double[]> perTargetScores);
 

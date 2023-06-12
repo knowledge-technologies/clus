@@ -425,7 +425,7 @@ public class ClusFeatureRanking {
 	 *         where {@code signI = errorI.shouldBeLow() ? -1.0 : 1.0}, and
 	 *         {@code listOfResultsForErr} always contains the overall {@code Err}
 	 *         error in the position 0, and possibly also per target calculations
-	 *         for {@code Err} in the positions i > 0.
+	 *         for {@code error} in the positions i {@literal >} 0.
 	 */
 	public double[][][] calcAverageErrors(RowData data, ClusModel model, ClusStatManager mgr)
 	        throws ClusException, InterruptedException {

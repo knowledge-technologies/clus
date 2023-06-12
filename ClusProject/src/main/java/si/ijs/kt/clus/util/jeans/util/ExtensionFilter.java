@@ -54,7 +54,6 @@ public class ExtensionFilter implements FilenameFilter {
      * @param dir
      *        the Name of the File.
      *
-     * @returns true if the given File is accepted.
      */
     @Override
     public boolean accept(File dir, String name) {

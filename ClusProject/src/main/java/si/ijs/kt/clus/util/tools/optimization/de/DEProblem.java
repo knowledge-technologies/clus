@@ -42,8 +42,6 @@ public class DEProblem extends si.ijs.kt.clus.util.tools.optimization.Optimizati
    * regression.
    *
    * @param stat_mgr Statistics
-   * @param dataInformation The true values and predictions for the instances. These are used by
-   *     OptimProbl. The optimization procedure is based on this data information
    */
   public DEProblem(ClusStatManager stat_mgr, OptimizationParameter optInfo, ClusRuleSet rset) {
     super(stat_mgr, optInfo);

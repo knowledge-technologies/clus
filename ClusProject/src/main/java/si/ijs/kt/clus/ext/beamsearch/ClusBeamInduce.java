@@ -122,10 +122,8 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
      * Dragi, JSI
      * Post Pruning of the models in the beam
      *
-     * @param cr
-     *        - ClusRun
-     * @param arr
-     *        - List with the beam
+     * @param cr ClusRun
+     * @param arr List with the beam
      * @throws ClusException
      * @throws InterruptedException
      */
@@ -154,11 +152,8 @@ public class ClusBeamInduce extends ClusInductionAlgorithm {
      * In case of equal train accuracy/correlation
      * then the tree with greater heuristic score are put higher
      * 
-     * @param cr
-     *        - Clus Run
-     * @param arr
-     *        - List with the beam
-     * @throws ClusException
+     * @param cr Clus Run
+     * @param arr List with the beam
      * @throws ClusException
      * @throws IOException
      * @throws InterruptedException

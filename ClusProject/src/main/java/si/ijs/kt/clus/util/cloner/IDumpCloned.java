@@ -5,8 +5,8 @@ import java.lang.reflect.Field;
 
 
 /**
- * @author: kostas.kougios
- *          Date: 06/08/13
+ * @author kostas.kougios
+ *         Date: 06/08/13
  */
 public interface IDumpCloned {
 

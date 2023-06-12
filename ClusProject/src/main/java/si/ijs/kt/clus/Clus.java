@@ -1990,7 +1990,7 @@ public class Clus implements CMDLineArgsProvider {
 	/**
 	 * This sets global debugging flags.
 	 * 
-	 * @param flags Use EnumSet.of(<your debug types>) to set the desired debugging
+	 * @param flags Use EnumSet.of({@literal <}your debug types{@literal >}) to set the desired debugging
 	 *              flags
 	 */
 

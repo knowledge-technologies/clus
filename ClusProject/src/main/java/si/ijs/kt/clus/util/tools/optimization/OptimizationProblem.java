@@ -224,10 +224,6 @@ public class OptimizationProblem {
 	 * and regression.
 	 * 
 	 * @param stat_mgr         Statistics
-	 * @param dataInformation  The true values and predictions for the instances.
-	 *                         These are used by OptimProbl. The optimization
-	 *                         procedure is based on this data information
-	 * @param isClassification Is it classification or regression?
 	 */
 	public OptimizationProblem(ClusStatManager stat_mgr, OptimizationParameter optInfo) {
 		m_StatMgr = stat_mgr;
@@ -400,7 +396,7 @@ public class OptimizationProblem {
 	 * prediction is voting without weights. Smaller is better.
 	 * 
 	 * @param genes   The current generation (population).
-	 * @param iTarget For which target we are computing the fitness. If -1 for all
+	 * @param iFitnessTarget For which target we are computing the fitness. If -1 for all
 	 *                of them.
 	 * @return fitness score
 	 */
@@ -582,8 +578,6 @@ public class OptimizationProblem {
 	 * 
 	 * @param predictionSums The weighted sum of rules for all targets. The second
 	 *                       dimension not used i.e. [Target][1].
-	 * @param nbOfTargets    Number of targets
-	 * @param nbOfValues     Number of class values
 	 * @return Array of prediction [target]
 	 */
 	private double[] predictRegression(double[][] predictionSums) {
@@ -607,8 +601,6 @@ public class OptimizationProblem {
 	 * 
 	 * @param predictionSums The weighted sum of rules for different classes.
 	 *                       [Target][Class value]
-	 * @param nbOfTargets    Number of targets
-	 * @param nbOfValues     Number of class values
 	 * @return Array of prediction [target]
 	 */
 	protected double[] predictClass(double[][] predictionSums) {
@@ -652,7 +644,6 @@ public class OptimizationProblem {
 	 * Loss function for data set. Chooses the right loss function based on the
 	 * settings file.
 	 * 
-	 * @param trueValue  The true values of targets. [Instance][Target]
 	 * @param prediction The prediction. [Instance][Target]
 	 * @param iTarget    Over this target index we compute loss. If -1, over all
 	 *                   examples
@@ -693,9 +684,8 @@ public class OptimizationProblem {
 	 * Squared distance loss function for data set. Is ok, because the data is
 	 * normalized.
 	 * 
-	 * @param trueValue  The true values of targets. [Instance][Target]
 	 * @param prediction The prediction. [Instance][Target]
-	 * @return Loss for the data.
+	 * @return loss for the data.
 	 */
 	private double lossSquared(double[][] prediction, int indTarget) {
 
@@ -777,7 +767,7 @@ public class OptimizationProblem {
 	 * @param prediction The prediction. [Instance][Target]
 	 * @return Loss for the data.
 	 */
-	// Suggested by Friedman&Popescu 2007, p. 7
+	// Suggested by Friedman {@ literal &} Popescu 2007, p. 7
 	private double lossHuber(TrueValues[] trueValue, double[][] prediction) {
 
 		double loss = 0;

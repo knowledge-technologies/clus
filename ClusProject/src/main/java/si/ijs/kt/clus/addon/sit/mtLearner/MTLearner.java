@@ -45,8 +45,6 @@ public interface MTLearner {
      * @param targets
      *        The targets used in the MT model
      * @return predictions on the testset and the testset
-     * @throws throws
-     *         an exception if the testset is not set by setTestData();
      */
     public RowData[] LearnModel(TargetSet targets) throws Exception;
 

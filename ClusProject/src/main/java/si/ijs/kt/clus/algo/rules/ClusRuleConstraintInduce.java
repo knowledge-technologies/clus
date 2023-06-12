@@ -593,8 +593,7 @@ public class ClusRuleConstraintInduce extends ClusInductionAlgorithm {
     /**
      * Method that induces a specified number of random rules.
      * 
-     * @param cr
-     *        ClusRun
+     * @param run ClusRun
      * @return RuleSet
      * @throws InterruptedException
      */

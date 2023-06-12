@@ -1317,8 +1317,6 @@ public class ClusRuleSet implements ClusModel, Serializable {
 	/**
 	 * Changes the rule predictions such that they always predict 1. This is by
 	 * Friedman 2005;
-	 * 
-	 * @param stdDevs Used for omitting. Target std devs.
 	 */
 	private void omitRulePredictions() {
 		ClusLogger.info("Omitting rule predictions for optimization.");
@@ -1439,7 +1437,6 @@ public class ClusRuleSet implements ClusModel, Serializable {
 	 * not make rules different.
 	 * 
 	 * @param newRules      Rules to be added.
-	 * @param addOnlyUnique Add only unique rules.
 	 * @return How many added rules were unique when only descriptions are
 	 *         considered.
 	 */
@@ -1628,9 +1625,6 @@ public class ClusRuleSet implements ClusModel, Serializable {
 	/**
 	 * Calculate a BitSet vector of uncovered examples with respect to the input
 	 * data
-	 * 
-	 * @param trainingData
-	 * 
 	 */
 	public BitSet getUncovered(int numberOfExamples) {
 

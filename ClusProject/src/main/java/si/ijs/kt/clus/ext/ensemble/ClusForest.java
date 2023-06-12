@@ -312,8 +312,6 @@ public class ClusForest implements ClusModel, Serializable {
     /**
      * Used for more efficient updating if the corresponding tree is a part of more than one forest.
      * 
-     * @param nbModels
-     *        Should equal 1, i.e., a tree is one model
      * @param nbNodes
      *        number of nodes in the tree
      * @param nbLeaves
@@ -881,7 +879,7 @@ public class ClusForest implements ClusModel, Serializable {
 
     /**
      * Used when optimization of ensembles is ON. Reads the temporary files and joins them into one file,
-     * so that the output is the same as in the case of {@link #printForestToPython()}.
+     * so that the output is the same as in the case of printForestToPython().
      * 
      * @param cr
      */
@@ -1050,10 +1048,8 @@ public class ClusForest implements ClusModel, Serializable {
      * @param addOnlyUnique
      *        Add only unique rules to rule set. Do NOT use this if you want to count something
      *        on the original forest.
-     * @return rule set.
      * @throws InterruptedException
      * @throws ClusException
-     * @throws IOException
      */
     public void convertToRules(ClusRun cr, boolean addOnlyUnique) throws InterruptedException, ClusException {
         /**

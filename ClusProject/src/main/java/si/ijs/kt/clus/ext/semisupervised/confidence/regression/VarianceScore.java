@@ -19,7 +19,7 @@ import si.ijs.kt.clus.util.exception.ClusException;
 
 /**
  * Calculates the confidence of predictions as standard deviation of votes of
- * the trees in random forest tree ensemble. High variance -> small reliability,
+ * the trees in random forest tree ensemble. High variance equals small reliability,
  * and vice versa.
  * This also handles HMC, since HMC is implemented via RegressionStat
  * 
@@ -114,9 +114,6 @@ public class VarianceScore extends PredictionConfidence {
 
     /**
      * Calculates per target standard deviations of votes of ensemble
-     *
-     * @param values
-
      */
     private double[] calcStDev(double[][] values) {
         double[] result = new double[values.length];

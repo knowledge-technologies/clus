@@ -182,12 +182,6 @@ public class ClusRuleLinearTerm extends ClusRule {
 
     /**
      * A constructor for creating linear terms.
-     * 
-     * @par linearTermDimension Descriptive dimension that the linear term is based on.
-     * @par linearTermTargetDim Target dimension this linear term is predicting.
-     * @par maxValue Maximum value of the dimension in the data set. Used for truncation.
-     * @par minValue Minimum value of the dimension in the data set. Used for truncation.
-     * @par offSetValue Value used for shifting the linear prediction.
      */
     public ClusRuleLinearTerm(ClusStatManager statManager, int iDescriptDim, int iTargetDim) {
         super(statManager);

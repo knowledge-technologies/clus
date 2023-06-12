@@ -48,7 +48,7 @@ public class FindBestTestRules extends FindBestTest {
 
 
     /**
-     * Generate nominal split value and rule (and inverse '<=') for that.
+     * Generate nominal split value and rule (and inverse {@literal '<='}) for that.
      * 
      * @param at
      * @param data
@@ -136,7 +136,7 @@ public class FindBestTestRules extends FindBestTest {
 
 
     /**
-     * Generate numeric split value and rule (and inverse '<=') for that.
+     * Generate numeric split value and rule (and inverse {@literal '<='}) for that.
      * 
      * @param at
      * @param data
@@ -216,7 +216,7 @@ public class FindBestTestRules extends FindBestTest {
 
     /**
      * Randomly generates numeric split value. Also randomly chooses
-     * the > or inverse <= for the rule.
+     * the {@literal >} or inverse {@literal <=} for the rule.
      * 
      * @param at
      * @param data

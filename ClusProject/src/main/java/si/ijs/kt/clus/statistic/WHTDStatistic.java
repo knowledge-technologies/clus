@@ -95,10 +95,6 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     /**
      * Constructor for poolAUPRC case
-     * 
-     * @param hier
-     * @param comp
-     * @param distance
      */
 //    public WHTDStatistic(Settings sett, ClassHierarchy hier, HierarchyDistance distance) {
 //        this(sett, hier, false, distance);
@@ -107,11 +103,6 @@ public class WHTDStatistic extends RegressionStatBinaryNomiss {
 
     /**
      * Constructor for poolAUPRC case
-     * 
-     * @param hier
-     * @param onlymean
-     * @param comp
-     * @param distance
      */
 //    public WHTDStatistic(Settings sett, ClassHierarchy hier, boolean onlymean,  HierarchyDistance distance) {
 //        // super(hier.getDummyAttrs(), onlymean);

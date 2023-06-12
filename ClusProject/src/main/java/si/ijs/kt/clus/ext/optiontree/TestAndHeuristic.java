@@ -356,7 +356,7 @@ public class TestAndHeuristic {
 
 
     /**
-     * Take the inverse test '<=' instead of the default '>'.
+     * Take the inverse test {@literal '<='} instead of the default {@literal '>'}.
      * @param val Split value.
      * @param at Attribute
      * @throws ClusException 

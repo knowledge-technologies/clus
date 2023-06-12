@@ -44,13 +44,8 @@ public class ObjectSaveStream {
     /**
      * Opens a file for saving objects to
      *
-     * @param fileName
+     * @param file
      *        the file name of the file to save to
-     *
-     * @pre (fileName != null)
-     *      and no file should be opened by the class
-     *
-     * @effect the file specified by fileName is opened for writing
      *
      * @exception IOException
      *            if an error occurred while opening or creating the file
@@ -66,10 +61,6 @@ public class ObjectSaveStream {
 
     /**
      * Closes a file previously opened for saving
-     *
-     * @pre a file has been opened for saving by calling initiate(String)
-     *
-     * @effect the currently open file is closed
      *
      * @exception IOException
      *            if an error occurred while closing the file
