@@ -83,7 +83,7 @@ pages:
     - echo "Starting to generate docs"
     - cd ClusProject
     - mvn site javadoc:javadoc
-    - mv target/site ../public
+    - mv target/site ../docs
     - cd ..
     - ls
   rules:
