@@ -70,18 +70,34 @@ copy-to-public:
     variables:
       - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 
-pages:
-  image: maven:3.8.6-openjdk-18-slim
+copy-to-GITHUB:
+  image: 
+    #name: maven:3.3.9-jdk-8
+    name: maven:3.8.1-openjdk-11
   stage: deploy
   script:
-    - echo "Starting to generate docs"
-    - cd ClusProject
-    - mvn site #javadoc:javadoc
-    - mv target/site ../public
-    - cd ..
-    - ls
-  rules:
-    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
-  artifacts:
-    paths:
-      - public
+    - git remote set-url origin https://mbreskvar:${CLUS_PUBLIC_DEPLOY_TOKEN_GITHUB}@github.com/knowledge-technologies/clus.git
+    - git config --global user.email "$GITLAB_USER_EMAIL"
+    - git config --global user.name "$GITLAB_USER_ID"
+    - rm .gitlab-ci.yml
+    - git add . && git commit -m "$CI_COMMIT_MESSAGE"
+    - git push origin HEAD:main --force
+  only:
+    variables:
+      - $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+
+#pages:
+#  image: maven:3.8.6-openjdk-18-slim
+#  stage: deploy
+#  script:
+#    - echo "Starting to generate docs"
+#    - cd ClusProject
+#    - mvn site #javadoc:javadoc
+#    - mv target/site ../public
+#    - cd ..
+#    - ls
+#  rules:
+#    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+#  artifacts:
+#    paths:
+#      - public
