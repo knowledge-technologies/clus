@@ -82,7 +82,7 @@ pages:
   script:
     - echo "Starting to generate docs"
     - cd ClusProject
-    - mvn site #javadoc:javadoc
+    - mvn site javadoc:javadoc
     - mv target/site ../public
     - cd ..
     - ls

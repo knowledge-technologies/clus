@@ -6,3 +6,5 @@ This framework combines clustering with predictive modelling and allows for a na
 CLUS is able to solve tasks such as (hierarchical) multi-label classification, (hierarchical) multi-target regression, network regression, and tasks with even more complex output types such as tuples and sets. In addition to this, ensemble learning, feature ranking and semi-supervised learning methods are also included. 
 
 The software is available as a standalone tool.
+
+The developer documentation is available at: https://knowledge-technologies.github.io/clus/public/
