@@ -7,4 +7,4 @@ CLUS is able to solve tasks such as (hierarchical) multi-label classification, (
 
 The software is available as a standalone tool.
 
-The developer documentation is available at: https://knowledge-technologies.github.io/clus/public/
+The developer documentation is available at: https://knowledge-technologies.github.io/clus
