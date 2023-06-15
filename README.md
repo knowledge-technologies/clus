@@ -98,4 +98,8 @@ produces a random forest of SSL trees (output file `exampleSSLrf.out`). Since th
 
 ### User manual
 
-User manual with detailed instructions of use and descriptions of all parameters and functionalities is available here: [https://github.com/knowledge-technologies/clus/blob/main/ClusProject/docs/manual/clus-manual.pdf](https://github.com/knowledge-technologies/clus/blob/main/ClusProject/docs/manual/clus-manual.pdf) 
+User manual with detailed instructions of use and descriptions of all parameters and functionalities is available here: [https://github.com/knowledge-technologies/clus/blob/main/ClusProject/docs/manual/clus-manual.pdf](https://github.com/knowledge-technologies/clus/blob/main/ClusProject/docs/manual/clus-manual.pdf)
+
+### Contact Information
+
+Please address any queries or bug reports to clus@ijs.si
