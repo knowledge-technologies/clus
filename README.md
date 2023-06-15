@@ -46,7 +46,7 @@ CLUS+ requires at least two input files (see also Figure below):
 1. A settings file (e.g., filename.s) in the form of an [INI config file](https://en.wikipedia.org/wiki/INI_file) 
 2. A dataset file in the [attribute-relation file format](https://www.cs.waikato.ac.nz/~ml/weka/arff.html) (.arff).
 
-<img src="clusInOut.PNG" alt= “CLUS input and output” width="850" height="420">
+![CLUS input and output](clusInOut.PNG)
 
 The parameters for machine learning algorithms and path to the `.arff` dataset(s) are specified in the settings `.s` file, while additional command-line switches are used to drive the behavior of the software. For example, `-xval` switch is used to perform cross-validation or `-ssl` to perform semi-supervised learning. A complete description of the parameters and command-line switches is given in the [user manual](https://github.com/knowledge-technologies/clus/blob/main/ClusProject/docs/manual/clus-manual.pdf).
 
