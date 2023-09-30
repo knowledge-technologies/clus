@@ -1,0 +1,50 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>ClusEnsembleFeatureRankingTest xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../testapidocs/si/ijs/kt/clus/ext/featureRanking/ensemble/ClusEnsembleFeatureRankingTest.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> si.ijs.kt.clus.ext.featureRanking.ensemble;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.ext.featureRanking.ClusFeatureRankingTest;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.tuple.Pair;
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.tuple.Triple;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../si/ijs/kt/clus/ext/featureRanking/ensemble/ClusEnsembleFeatureRankingTest.html">ClusEnsembleFeatureRankingTest</a> {
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> Pair&lt;ArrayList&lt;Triple&lt;String, String, String&gt;&gt;, String[]&gt; generateNames() <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  		String formatSetting = ClusFeatureRankingTest.getSubfolder() + <span class="jxr_string">"/test%s%s.s"</span>;
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  		String formatFimpTruth = ClusFeatureRankingTest.getSubfolder() + <span class="jxr_string">"/test%s%sTrees%s.fimpTruth"</span>;
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  		String formatFimpNew = ClusFeatureRankingTest.getSubfolder() + <span class="jxr_string">"/test%s%sTrees%s%s.fimp"</span>;
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  		String[] tasks = <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"DagHMLC-RealWorld"</span>, <span class="jxr_string">"TreeHMLC-RealWorld"</span>, <span class="jxr_string">"MLC-RealWorld"</span>, <span class="jxr_string">"MTR-RealWorld"</span>,
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  		        <span class="jxr_string">"STC-RealWorld"</span> };
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  		String[][] rankingSubsets = <strong class="jxr_keyword">new</strong> String[][] { { <span class="jxr_string">"Genie3"</span> }, { <span class="jxr_string">"RForest"</span> }, { <span class="jxr_string">"Symbolic"</span> },
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  		        { <span class="jxr_string">"RForest"</span>, <span class="jxr_string">"Genie3"</span> }, { <span class="jxr_string">"Symbolic"</span>, <span class="jxr_string">"Genie3"</span> }, { <span class="jxr_string">"Symbolic"</span>, <span class="jxr_string">"RForest"</span> },
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  		        { <span class="jxr_string">"Symbolic"</span>, <span class="jxr_string">"RForest"</span>, <span class="jxr_string">"Genie3"</span> } };
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  		ArrayList&lt;Triple&lt;String, String, String&gt;&gt; settingsFimps = <strong class="jxr_keyword">new</strong> ArrayList&lt;&gt;();
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  		<strong class="jxr_keyword">for</strong> (String task : tasks) {
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  			<strong class="jxr_keyword">for</strong> (String[] subset : rankingSubsets) {
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  				String sFile = String.format(formatSetting, task, String.join(<span class="jxr_string">""</span>, subset));
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  				<strong class="jxr_keyword">for</strong> (String size : <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"2"</span>, <span class="jxr_string">"4"</span> }) {
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  					<strong class="jxr_keyword">for</strong> (String ranking : subset) {
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  						String fimpTruth = String.format(formatFimpTruth, task, ranking, size);
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  						String fimpNew = String.format(formatFimpNew, task, String.join(<span class="jxr_string">""</span>, subset), size, ranking);
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  						settingsFimps.add(<strong class="jxr_keyword">new</strong> Triple&lt;String, String, String&gt;(sFile, fimpTruth, fimpNew));
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  					}
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  				}
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  			}
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  		}
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  		String[] args = <strong class="jxr_keyword">new</strong> String[] { <span class="jxr_string">"-silent"</span>, <span class="jxr_string">"-forest"</span>, <span class="jxr_string">""</span> };
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  		<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">new</strong> Pair&lt;ArrayList&lt;Triple&lt;String, String, String&gt;&gt;, String[]&gt;(settingsFimps, args);
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  	}
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2023 <a href="http://kt.ijs.si">Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia</a>. All rights reserved.</div>
+</body>
+</html>

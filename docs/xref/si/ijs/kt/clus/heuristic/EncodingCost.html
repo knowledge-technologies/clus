@@ -1,0 +1,379 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>EncodingCost xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/si/ijs/kt/clus/heuristic/EncodingCost.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <strong class="jxr_keyword">package</strong> si.ijs.kt.clus.heuristic;
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">import</strong> org.apache.commons.math3.special.Gamma;
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.algo.tdidt.ClusNode;
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.data.rows.RowData;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.data.type.ClusAttrType;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.ClusLogger;
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../si/ijs/kt/clus/heuristic/EncodingCost.html">EncodingCost</a> {
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>      <strong class="jxr_keyword">protected</strong> ArrayList&lt;RowData&gt; data;
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>      <strong class="jxr_keyword">protected</strong> ArrayList&lt;Integer&gt; m_ClusterIds;
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>      <strong class="jxr_keyword">protected</strong> ArrayList&lt;ClusNode&gt; nodes;
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>      <strong class="jxr_keyword">protected</strong> <a href="../../../../../si/ijs/kt/clus/data/type/ClusAttrType.html">ClusAttrType</a>[] attributes;
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">int</strong> m_nbSequences;
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>      <em class="jxr_comment">// Blocks9 model</em>
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong>[] m_MixtureValues = { 0.178091, 0.056591, 0.0960191, 0.0781233, 0.0834977, 0.0904123, 0.114468, 0.0682132, 0.234585 };
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong>[][] m_AlphaValues = { { 1.18065, 0.270671, 0.039848, 0.017576, 0.016415, 0.014268, 0.131916, 0.012391, 0.022599, 0.020358, 0.030727, 0.015315, 0.048298, 0.053803, 0.020662, 0.023612, 0.216147, 0.147226, 0.065438, 0.003758, 0.009621 }, { 1.35583, 0.021465, 0.0103, 0.011741, 0.010883, 0.385651, 0.016416, 0.076196, 0.035329, 0.013921, 0.093517, 0.022034, 0.028593, 0.013086, 0.023011, 0.018866, 0.029156, 0.018153, 0.0361, 0.07177, 0.419641 }, { 6.66436, 0.561459, 0.045448, 0.438366, 0.764167, 0.087364, 0.259114, 0.21494, 0.145928, 0.762204, 0.24732, 0.118662, 0.441564, 0.174822, 0.53084, 0.465529, 0.583402, 0.445586, 0.22705, 0.02951, 0.12109 },
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>              { 2.08141, 0.070143, 0.01114, 0.019479, 0.094657, 0.013162, 0.048038, 0.077, 0.032939, 0.576639, 0.072293, 0.02824, 0.080372, 0.037661, 0.185037, 0.506783, 0.073732, 0.071587, 0.042532, 0.011254, 0.028723 }, { 2.08101, 0.041103, 0.014794, 0.00561, 0.010216, 0.153602, 0.007797, 0.007175, 0.299635, 0.010849, 0.999446, 0.210189, 0.006127, 0.013021, 0.019798, 0.014509, 0.012049, 0.035799, 0.180085, 0.012744, 0.026466 }, { 2.56819, 0.115607, 0.037381, 0.012414, 0.018179, 0.051778, 0.017255, 0.004911, 0.796882, 0.017074, 0.285858, 0.075811, 0.014548, 0.015092, 0.011382, 0.012696, 0.027535, 0.088333, 0.94434, 0.004373, 0.016741 },
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>              { 1.76606, 0.093461, 0.004737, 0.387252, 0.347841, 0.010822, 0.105877, 0.049776, 0.014963, 0.094276, 0.027761, 0.01004, 0.187869, 0.050018, 0.110039, 0.038668, 0.119471, 0.065802, 0.02543, 0.003215, 0.018742 }, { 4.98768, 0.452171, 0.114613, 0.06246, 0.115702, 0.284246, 0.140204, 0.100358, 0.55023, 0.143995, 0.700649, 0.27658, 0.118569, 0.09747, 0.126673, 0.143634, 0.278983, 0.358482, 0.66175, 0.061533, 0.199373 }, { 0.0995, 0.005193, 0.004039, 0.006722, 0.006121, 0.003468, 0.016931, 0.003647, 0.002184, 0.005019, 0.00599, 0.001473, 0.004158, 0.009055, 0.00363, 0.006583, 0.003172, 0.00369, 0.002967, 0.002772, 0.002686 } };
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>      <em class="jxr_comment">// Recode4 model</em>
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong>[] m_MixtureValuesRecode4 = { 0.383048, 0.174635, 0.0852555, 0.0594628, 0.0406419, 0.0398597, 0.0297682, 0.0280806, 0.0242095, 0.019244, 0.0178775, 0.0174343, 0.0168758, 0.0139663, 0.0123711, 0.0123012, 0.0111316, 0.00698083, 0.00365577, 0.00320122 };
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong>[][] m_AlphaValuesRecode4 = { { 4.04735, 0.335796, 0.0276254, 0.270793, 0.348046, 0.0863198, 0.225768, 0.115656, 0.120617, 0.395388, 0.21713, 0.0692591, 0.22952, 0.159096, 0.25475, 0.307135, 0.275135, 0.265742, 0.182309, 0.043852, 0.117411 }, { 3.5659, 0.273194, 0.0647217, 0.0365618, 0.0448084, 0.266448, 0.0796421, 0.039374, 0.522913, 0.0461325, 0.864337, 0.183843, 0.0445531, 0.0609869, 0.050193, 0.0545329, 0.0736139, 0.136326, 0.533931, 0.057054, 0.132732 }, { 0.803228, 0.05911, 0.0127852, 0.0785758, 0.0363021, 0.0289509, 0.160842, 0.0281857, 0.0130422, 0.0203385, 0.0267507, 0.00397971, 0.0430017, 0.0689402, 0.0127304, 0.026, 0.0605953, 0.0423799, 0.0340264, 0.0125806, 0.0341105 },
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>              { 9.08397, 2.29698, 0.265451, 0.155901, 0.171394, 0.3867, 0.869853, 0.102854, 0.514941, 0.0695931, 0.759599, 0.234631, 0.14661, 0.177732, 0.127139, 0.135953, 0.74977, 0.457832, 1.05026, 0.0986083, 0.312162 }, { 53.6176, 3.26115, 0.745759, 3.18917, 2.67227, 4.15961, 4.55029, 3.01435, 2.39119, 0.70697, 4.38827, 1.29158, 3.68427, 1.80724, 1.47, 1.6602, 3.67109, 2.30334, 2.75308, 2.05938, 3.8384 }, { 105.708, 12.1186, 0.472681, 3.87403, 6.5048, 3.46117, 2.97363, 1.67069, 8.55045, 9.64583, 13.6136, 3.75321, 2.19455, 1.68259, 4.18394, 10.7077, 2.96826, 3.09571, 8.1825, 1.72721, 4.32637 }, { 76.7013, 10.2085, 1.7407, 2.52751, 1.66695, 4.64628, 2.93189, 2.32366, 7.7074, 1.63543, 12.4467, 3.3191, 2.36645, 0.915427, 2.74109, 1.49944, 2.30864, 3.94574, 7.72884, 0.865209, 3.17628 },
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>              { 34.3245, 1.69321, 0.561402, 0.242201, 0.163758, 1.3284, 0.426017, 0.217733, 9.19979, 0.365122, 3.00267, 0.470859, 0.200578, 0.454379, 0.166355, 0.285794, 0.566137, 1.17851, 12.8947, 0.182001, 0.724889 }, { 13.549, 0.699016, 0.123918, 0.564493, 0.441809, 0.265585, 0.455207, 0.157372, 0.45222, 0.315356, 0.285096, 0.11236, 0.700959, 0.384523, 0.341402, 0.19505, 3.04705, 3.86283, 0.771455, 0.0747102, 0.298617 }, { 27.5029, 2.69506, 0.0984665, 0.999399, 0.702161, 0.18828, 14.7923, 0.204418, 0.341519, 0.895261, 0.604879, 0.264405, 1.20003, 0.526937, 0.485106, 0.528848, 1.54988, 0.759294, 0.220308, 0.11594, 0.330426 },
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>              { 40.1814, 3.07208, 0.179581, 1.59068, 1.1802, 1.04447, 1.82765, 0.299515, 1.5785, 2.07133, 2.48759, 0.1886, 1.17791, 13.8668, 0.831189, 1.07904, 2.36316, 1.88465, 2.35323, 0.274462, 0.83075 }, { 17.5374, 1.41269, 0.00565739, 3.37209, 5.65739, 0.244139, 0.61415, 0.121496, 0.154197, 0.767153, 0.494589, 0.155884, 0.280603, 0.263088, 1.48884, 0.353594, 1.00131, 0.538288, 0.33596, 0.0728146, 0.20351 }, { 86.0527, 3.33374, 1.15604, 1.93175, 1.30643, 4.97546, 21.2633, 2.00541, 9.73505, 1.95251, 5.17488, 3.25167, 2.10234, 3.3081, 1.36967, 2.43658, 2.02859, 5.17926, 7.52289, 1.61701, 4.402 }, { 58.4428, 2.53998, 0.64182, 6.22299, 1.7898, 1.14222, 9.70006, 1.57777, 0.358056, 2.07334, 1.25521, 0.410731, 11.0338, 3.16446, 1.38371, 1.5993, 9.83971, 1.71336, 0.41867, 0.428225, 1.14954 },
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>              { 157.364, 25.0469, 0.0287555, 14.1297, 23.3767, 0.557453, 5.28742, 2.81354, 1.20677, 28.7555, 4.133, 0.151853, 6.64437, 2.01447, 14.4893, 12.8818, 10.9112, 3.32116, 1.0243, 0.0487539, 0.54082 }, { 37.4997, 1.50426, 0.106938, 15.2516, 2.40265, 0.329304, 1.80122, 0.505069, 0.674739, 1.40725, 0.728632, 0.237147, 5.72791, 0.73936, 0.725283, 0.628562, 2.17878, 1.44031, 0.811792, 0.0152516, 0.283625 }, { 17.3228, 0.485358, 0.120765, 0.132386, 0.22325, 2.74084, 0.290926, 0.536354, 0.448205, 0.240466, 0.81734, 0.216503, 0.223577, 0.141958, 0.247041, 0.367824, 0.470015, 0.441281, 0.803322, 0.635744, 7.73963 },
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>              { 16.9772, 0.422519, 0.162589, 0.063178, 0.232174, 8.8294, 0.198806, 0.135336, 0.589954, 0.127259, 1.13028, 0.213526, 0.0760594, 0.140012, 0.15649, 0.0125594, 0.33088, 0.331744, 0.624835, 0.909754, 2.28988 }, { 20.8417, 0.350372, 0.113692, 0.0720512, 0.210516, 1.2529, 0.258305, 0.13086, 0.43595, 0.15333, 1.31274, 0.32149, 0.0944224, 0.0966389, 0.0963917, 0.356382, 0.206486, 0.167836, 0.582403, 13.55, 1.07893 }, { 29.9957, 0.161616, 28.1472, 0.0281472, 0.0281472, 0.26712, 0.0281472, 0.0281472, 0.220459, 0.0281472, 0.0527309, 0.0281472, 0.0440255, 0.0281472, 0.0281472, 0.0281472, 0.152965, 0.0886627, 0.456531, 0.0947103, 0.0563106 } };
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong>[] m_ZAlpha;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">long</strong>[] m_Duration = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">long</strong>[3];
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong>[][] m_LogGammaAlpha;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong>[][] m_LogPMatrix;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../si/ijs/kt/clus/heuristic/EncodingCost.html">EncodingCost</a>(ArrayList&lt;ClusNode&gt; listNodes, ArrayList&lt;RowData&gt; subsets, <a href="../../../../../si/ijs/kt/clus/data/type/ClusAttrType.html">ClusAttrType</a>[] attrs) {
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>          data = subsets;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>          nodes = listNodes;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>          attributes = attrs;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>          <em class="jxr_comment">// we do it here because we do not need to calculate it again every time</em>
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>          m_ZAlpha = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[m_AlphaValues.length];
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> k = 0; k &lt; m_AlphaValues.length; k++) {
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>              <em class="jxr_comment">// here we use 1 as the start and 20 as the end</em>
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>              <em class="jxr_comment">// remember that the first index (0 - zero) contains the sum of the vector</em>
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>              m_ZAlpha[k] = functionZ(m_AlphaValues[k], 1, 20);
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>          }
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>      }
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../si/ijs/kt/clus/heuristic/EncodingCost.html">EncodingCost</a>(ArrayList&lt;RowData&gt; subsets, <a href="../../../../../si/ijs/kt/clus/data/type/ClusAttrType.html">ClusAttrType</a>[] attrs) {
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          data = subsets;
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>          attributes = attrs;
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>          <em class="jxr_comment">// we do it here because we do not need to calculate it again every time</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>          m_ZAlpha = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[m_AlphaValues.length];
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> k = 0; k &lt; m_AlphaValues.length; k++) {
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>              <em class="jxr_comment">// here we use 1 as the start and 20 as the end</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>              <em class="jxr_comment">// remember that the first index (0 - zero) contains the sum of the vector</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>              m_ZAlpha[k] = functionZ(m_AlphaValues[k], 1, 20);
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>          }
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>      }
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../si/ijs/kt/clus/heuristic/EncodingCost.html">EncodingCost</a>() {
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          <em class="jxr_comment">// we do it here because we do not need to calculate it again every time</em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>          m_ZAlpha = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[m_AlphaValues.length];
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> k = 0; k &lt; m_AlphaValues.length; k++) {
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>              <em class="jxr_comment">// here we use 1 as the start and 20 as the end</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>              <em class="jxr_comment">// remember that the first index (0 - zero) contains the sum of the vector</em>
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>              m_ZAlpha[k] = functionZ(m_AlphaValues[k], 1, 20);
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          }
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>          calculateLogGammaAlphaValues();
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>      }
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setNbSequences(<strong class="jxr_keyword">int</strong> nbSeq) {
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>          m_nbSequences = nbSeq;
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>      }
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initializeLogPMatrix(<strong class="jxr_keyword">int</strong> nbnodes) {
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>          System.out.print(<span class="jxr_string">"Initializing matrix with "</span> + nbnodes + <span class="jxr_string">" lines and "</span> + attributes.length + <span class="jxr_string">" columns\n"</span>);
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          m_LogPMatrix = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[nbnodes][attributes.length];
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>      }
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> calculateLogGammaAlphaValues() {
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>          m_LogGammaAlpha = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[m_AlphaValues.length][m_AlphaValues[0].length];
+<a class="jxr_linenumber" name="L100" href="#L100">100</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; m_LogGammaAlpha.length; j++) {
+<a class="jxr_linenumber" name="L101" href="#L101">101</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; m_LogGammaAlpha[0].length; i++) {
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>                 m_LogGammaAlpha[j][i] = Gamma.logGamma(m_AlphaValues[j][i]);
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>             }
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         }
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>     }
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> 
+<a class="jxr_linenumber" name="L107" href="#L107">107</a> 
+<a class="jxr_linenumber" name="L108" href="#L108">108</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> printDuration() {
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>         System.out.print(<span class="jxr_string">"Timings: "</span>);
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; m_Duration.length; i++) {
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>             System.out.print(m_Duration[i] + <span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         }
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         ClusLogger.info();
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>     }
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> 
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> 
+<a class="jxr_linenumber" name="L117" href="#L117">117</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setClusters(ArrayList&lt;RowData&gt; clusters, ArrayList&lt;Integer&gt; clusterIds) {
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>         data = clusters;
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         m_ClusterIds = clusterIds;
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     }
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> 
+<a class="jxr_linenumber" name="L122" href="#L122">122</a> 
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setNodeClusters(ArrayList&lt;ClusNode&gt; listNodes, ArrayList&lt;RowData&gt; clusters) {
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         data = clusters;
+<a class="jxr_linenumber" name="L125" href="#L125">125</a>         nodes = listNodes;
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>     }
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> 
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> 
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> generateAndSetClusterIDs(ArrayList&lt;ClusNode&gt; listNodes) {
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         ArrayList&lt;Integer&gt; clusterIds = <strong class="jxr_keyword">new</strong> ArrayList&lt;Integer&gt;();
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; listNodes.size(); i++) {
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>             clusterIds.add(<strong class="jxr_keyword">new</strong> Integer(listNodes.get(i).getID() - 1));
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>             m_ClusterIds = clusterIds;
+<a class="jxr_linenumber" name="L134" href="#L134">134</a>         }
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>     }
+<a class="jxr_linenumber" name="L136" href="#L136">136</a> 
+<a class="jxr_linenumber" name="L137" href="#L137">137</a> 
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> setAttributes(<a href="../../../../../si/ijs/kt/clus/data/type/ClusAttrType.html">ClusAttrType</a>[] attrs) {
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>         attributes = attrs;
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>     }
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> 
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> 
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> getNbClusters() {
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         <strong class="jxr_keyword">return</strong> data.size();
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>     }
+<a class="jxr_linenumber" name="L146" href="#L146">146</a> 
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> 
+<a class="jxr_linenumber" name="L148" href="#L148">148</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">int</strong> printAlphaValues() {
+<a class="jxr_linenumber" name="L149" href="#L149">149</a>         <em class="jxr_comment">// Iterating over rows</em>
+<a class="jxr_linenumber" name="L150" href="#L150">150</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; m_AlphaValues.length; i++) {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a>             <em class="jxr_comment">// Iterating over columns</em>
+<a class="jxr_linenumber" name="L152" href="#L152">152</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; m_AlphaValues[i].length; j++) {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a>                 System.out.print(m_AlphaValues[i][j] + <span class="jxr_string">"\t"</span>);
+<a class="jxr_linenumber" name="L154" href="#L154">154</a>             }
+<a class="jxr_linenumber" name="L155" href="#L155">155</a>             System.out.print(<span class="jxr_string">"\n"</span>);
+<a class="jxr_linenumber" name="L156" href="#L156">156</a>         }
+<a class="jxr_linenumber" name="L157" href="#L157">157</a>         <strong class="jxr_keyword">return</strong> 0;
+<a class="jxr_linenumber" name="L158" href="#L158">158</a>     }
+<a class="jxr_linenumber" name="L159" href="#L159">159</a> 
+<a class="jxr_linenumber" name="L160" href="#L160">160</a>     <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> <em class="jxr_comment">     * private int printMatrix(int[][] frequency) {</em>
+<a class="jxr_linenumber" name="L162" href="#L162">162</a> <em class="jxr_comment">     * // Iterating over rows</em>
+<a class="jxr_linenumber" name="L163" href="#L163">163</a> <em class="jxr_comment">     * for (int i = 0; i &lt; frequency.length; i++) {</em>
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> <em class="jxr_comment">     * // Iterating over columns</em>
+<a class="jxr_linenumber" name="L165" href="#L165">165</a> <em class="jxr_comment">     * for (int j = 0; j &lt; frequency[i].length; j++) {</em>
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> <em class="jxr_comment">     * System.out.print(frequency[i][j] + "\t");</em>
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> <em class="jxr_comment">     * }</em>
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> <em class="jxr_comment">     * System.out.print("\n");</em>
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> <em class="jxr_comment">     * }</em>
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> <em class="jxr_comment">     * return 0;</em>
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> <em class="jxr_comment">     * }</em>
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> <em class="jxr_comment">     */</em>
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> 
+<a class="jxr_linenumber" name="L174" href="#L174">174</a>     <em class="jxr_comment">// // This is currently being used to generate the output</em>
+<a class="jxr_linenumber" name="L175" href="#L175">175</a>     <em class="jxr_comment">// private int printInstanceLabels(int nbSubsets) {</em>
+<a class="jxr_linenumber" name="L176" href="#L176">176</a>     <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L177" href="#L177">177</a>     <em class="jxr_comment">// for (int i = 0; i &lt; nbSubsets; i++) {</em>
+<a class="jxr_linenumber" name="L178" href="#L178">178</a>     <em class="jxr_comment">// int nbRows = data.get(i).getNbRows();</em>
+<a class="jxr_linenumber" name="L179" href="#L179">179</a>     <em class="jxr_comment">// for (int r = 0; r &lt; nbRows; r++) {</em>
+<a class="jxr_linenumber" name="L180" href="#L180">180</a>     <em class="jxr_comment">// String key = data.get(i).getSchema().getKeyAttribute()[0].getString(data.get(i).getTuple(r));</em>
+<a class="jxr_linenumber" name="L181" href="#L181">181</a>     <em class="jxr_comment">// System.out.print(key + " ");</em>
+<a class="jxr_linenumber" name="L182" href="#L182">182</a>     <em class="jxr_comment">//</em>
+<a class="jxr_linenumber" name="L183" href="#L183">183</a>     <em class="jxr_comment">// // Eduardo's code</em>
+<a class="jxr_linenumber" name="L184" href="#L184">184</a>     <em class="jxr_comment">// // String[] parts = data.get(i).getTuple(r).toString().split(",");</em>
+<a class="jxr_linenumber" name="L185" href="#L185">185</a>     <em class="jxr_comment">// // System.out.print(parts[0]+" ");</em>
+<a class="jxr_linenumber" name="L186" href="#L186">186</a>     <em class="jxr_comment">// }</em>
+<a class="jxr_linenumber" name="L187" href="#L187">187</a>     <em class="jxr_comment">// System.out.print("\n");</em>
+<a class="jxr_linenumber" name="L188" href="#L188">188</a>     <em class="jxr_comment">// }</em>
+<a class="jxr_linenumber" name="L189" href="#L189">189</a>     <em class="jxr_comment">// return 0;</em>
+<a class="jxr_linenumber" name="L190" href="#L190">190</a>     <em class="jxr_comment">// }</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a> 
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> 
+<a class="jxr_linenumber" name="L193" href="#L193">193</a>     <em class="jxr_comment">// Generate the vector Ncs, which contains the number of occurrence of each amino acid</em>
+<a class="jxr_linenumber" name="L194" href="#L194">194</a>     <em class="jxr_comment">// Gaps are not included in this counting</em>
+<a class="jxr_linenumber" name="L195" href="#L195">195</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">int</strong>[][] calculateFrequency(<strong class="jxr_keyword">int</strong> position, <strong class="jxr_keyword">int</strong> nbSubsets) {
+<a class="jxr_linenumber" name="L196" href="#L196">196</a>         <strong class="jxr_keyword">int</strong>[][] frequency = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[nbSubsets][21];
+<a class="jxr_linenumber" name="L197" href="#L197">197</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; nbSubsets; i++) {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a> 
+<a class="jxr_linenumber" name="L199" href="#L199">199</a>             <strong class="jxr_keyword">int</strong> nbRows = data.get(i).getNbRows();
+<a class="jxr_linenumber" name="L200" href="#L200">200</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> r = 0; r &lt; nbRows; r++) {
+<a class="jxr_linenumber" name="L201" href="#L201">201</a> 
+<a class="jxr_linenumber" name="L202" href="#L202">202</a>                 <strong class="jxr_keyword">int</strong> index = attributes[position].getNominal(data.get(i).getTuple(r));
+<a class="jxr_linenumber" name="L203" href="#L203">203</a>                 <strong class="jxr_keyword">if</strong> (index &lt; 20) {
+<a class="jxr_linenumber" name="L204" href="#L204">204</a>                     frequency[i][index + 1]++;
+<a class="jxr_linenumber" name="L205" href="#L205">205</a>                     frequency[i][0]++;
+<a class="jxr_linenumber" name="L206" href="#L206">206</a>                 }
+<a class="jxr_linenumber" name="L207" href="#L207">207</a>                 <em class="jxr_comment">// else gap</em>
+<a class="jxr_linenumber" name="L208" href="#L208">208</a> 
+<a class="jxr_linenumber" name="L209" href="#L209">209</a>                 <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> <em class="jxr_comment">                 * // Eduardo's code</em>
+<a class="jxr_linenumber" name="L211" href="#L211">211</a> <em class="jxr_comment">                 * String[] parts = data.get(i).getTuple(r).toString().split(",");</em>
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> <em class="jxr_comment">                 * int index2=returnIndexAlphaMatrix(parts[position+1].charAt(0));</em>
+<a class="jxr_linenumber" name="L213" href="#L213">213</a> <em class="jxr_comment">                 * if(index2!=0){</em>
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> <em class="jxr_comment">                 * frequency[i][index2]++;</em>
+<a class="jxr_linenumber" name="L215" href="#L215">215</a> <em class="jxr_comment">                 * frequency[i][0]++;</em>
+<a class="jxr_linenumber" name="L216" href="#L216">216</a> <em class="jxr_comment">                 * }</em>
+<a class="jxr_linenumber" name="L217" href="#L217">217</a> <em class="jxr_comment">                 */</em>
+<a class="jxr_linenumber" name="L218" href="#L218">218</a> 
+<a class="jxr_linenumber" name="L219" href="#L219">219</a>             }
+<a class="jxr_linenumber" name="L220" href="#L220">220</a>         }
+<a class="jxr_linenumber" name="L221" href="#L221">221</a>         <strong class="jxr_keyword">return</strong> frequency;
+<a class="jxr_linenumber" name="L222" href="#L222">222</a>     }
+<a class="jxr_linenumber" name="L223" href="#L223">223</a> 
+<a class="jxr_linenumber" name="L224" href="#L224">224</a> 
+<a class="jxr_linenumber" name="L225" href="#L225">225</a>     <em class="jxr_comment">// Returns value for the gamma function,</em>
+<a class="jxr_linenumber" name="L226" href="#L226">226</a>     <em class="jxr_comment">// which is the exponential of the library function logGamma</em>
+<a class="jxr_linenumber" name="L227" href="#L227">227</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">double</strong> functionGamma(<strong class="jxr_keyword">double</strong> x) {
+<a class="jxr_linenumber" name="L228" href="#L228">228</a>         <strong class="jxr_keyword">return</strong> Math.exp(Gamma.logGamma(x));
+<a class="jxr_linenumber" name="L229" href="#L229">229</a>     }
+<a class="jxr_linenumber" name="L230" href="#L230">230</a> 
+<a class="jxr_linenumber" name="L231" href="#L231">231</a> 
+<a class="jxr_linenumber" name="L232" href="#L232">232</a>     <em class="jxr_comment">// returns value for the function Z defined in the SCI-PHY encoding cost function</em>
+<a class="jxr_linenumber" name="L233" href="#L233">233</a>     <em class="jxr_comment">// it allows to specify the range of the vector that is going to be given as input</em>
+<a class="jxr_linenumber" name="L234" href="#L234">234</a>     <em class="jxr_comment">// to the function</em>
+<a class="jxr_linenumber" name="L235" href="#L235">235</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong> functionZ(<strong class="jxr_keyword">double</strong>[] vector, <strong class="jxr_keyword">int</strong> start, <strong class="jxr_keyword">int</strong> end) {
+<a class="jxr_linenumber" name="L236" href="#L236">236</a>         <strong class="jxr_keyword">double</strong> valueFunction = 1;
+<a class="jxr_linenumber" name="L237" href="#L237">237</a>         <strong class="jxr_keyword">double</strong> sum = 0;
+<a class="jxr_linenumber" name="L238" href="#L238">238</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = start; i &lt;= end; i++) {
+<a class="jxr_linenumber" name="L239" href="#L239">239</a>             valueFunction = valueFunction * functionGamma(vector[i]);
+<a class="jxr_linenumber" name="L240" href="#L240">240</a>             sum = sum + vector[i];
+<a class="jxr_linenumber" name="L241" href="#L241">241</a>         }
+<a class="jxr_linenumber" name="L242" href="#L242">242</a>         valueFunction = valueFunction / functionGamma(sum);
+<a class="jxr_linenumber" name="L243" href="#L243">243</a>         <strong class="jxr_keyword">return</strong> valueFunction;
+<a class="jxr_linenumber" name="L244" href="#L244">244</a>     }
+<a class="jxr_linenumber" name="L245" href="#L245">245</a> 
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> 
+<a class="jxr_linenumber" name="L247" href="#L247">247</a>     <em class="jxr_comment">// This function uses the log properties to deal with the large values</em>
+<a class="jxr_linenumber" name="L248" href="#L248">248</a>     <em class="jxr_comment">// outputted by the gamma function</em>
+<a class="jxr_linenumber" name="L249" href="#L249">249</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong> functionZAlternative(<strong class="jxr_keyword">double</strong>[] vector) {
+<a class="jxr_linenumber" name="L250" href="#L250">250</a>         <strong class="jxr_keyword">double</strong> valueFunction = 1;
+<a class="jxr_linenumber" name="L251" href="#L251">251</a>         <strong class="jxr_keyword">double</strong> sum = 0;
+<a class="jxr_linenumber" name="L252" href="#L252">252</a>         <strong class="jxr_keyword">double</strong> logpart1 = 0;
+<a class="jxr_linenumber" name="L253" href="#L253">253</a>         <em class="jxr_comment">// log(prod(X))=log(X1)+log(X2)+.........+log(Xn)</em>
+<a class="jxr_linenumber" name="L254" href="#L254">254</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; vector.length; i++) {
+<a class="jxr_linenumber" name="L255" href="#L255">255</a>             logpart1 = logpart1 + Gamma.logGamma(vector[i]);
+<a class="jxr_linenumber" name="L256" href="#L256">256</a>             sum = sum + vector[i];
+<a class="jxr_linenumber" name="L257" href="#L257">257</a>         }
+<a class="jxr_linenumber" name="L258" href="#L258">258</a>         <strong class="jxr_keyword">double</strong> logpart2 = Gamma.logGamma(sum);
+<a class="jxr_linenumber" name="L259" href="#L259">259</a>         valueFunction = Math.exp(logpart1 - logpart2);
+<a class="jxr_linenumber" name="L260" href="#L260">260</a>         <strong class="jxr_keyword">return</strong> valueFunction;
+<a class="jxr_linenumber" name="L261" href="#L261">261</a>     }
+<a class="jxr_linenumber" name="L262" href="#L262">262</a> 
+<a class="jxr_linenumber" name="L263" href="#L263">263</a> 
+<a class="jxr_linenumber" name="L264" href="#L264">264</a>     <em class="jxr_comment">// This function does not return the value of the function Z</em>
+<a class="jxr_linenumber" name="L265" href="#L265">265</a>     <em class="jxr_comment">// but instead it returns the value of log(function Z)</em>
+<a class="jxr_linenumber" name="L266" href="#L266">266</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong> functionLogZ(<strong class="jxr_keyword">double</strong>[] vector) {
+<a class="jxr_linenumber" name="L267" href="#L267">267</a>         <strong class="jxr_keyword">double</strong> valueFunction;
+<a class="jxr_linenumber" name="L268" href="#L268">268</a>         <strong class="jxr_keyword">double</strong> sum = 0;
+<a class="jxr_linenumber" name="L269" href="#L269">269</a>         <strong class="jxr_keyword">double</strong> logpart1 = 0;
+<a class="jxr_linenumber" name="L270" href="#L270">270</a>         <em class="jxr_comment">// log(prod(X))=log(X1)+log(X2)+.........+log(Xn)</em>
+<a class="jxr_linenumber" name="L271" href="#L271">271</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; vector.length; i++) {
+<a class="jxr_linenumber" name="L272" href="#L272">272</a>             logpart1 = logpart1 + Gamma.logGamma(vector[i]);
+<a class="jxr_linenumber" name="L273" href="#L273">273</a>             sum = sum + vector[i];
+<a class="jxr_linenumber" name="L274" href="#L274">274</a>         }
+<a class="jxr_linenumber" name="L275" href="#L275">275</a>         <strong class="jxr_keyword">double</strong> logpart2 = Gamma.logGamma(sum);
+<a class="jxr_linenumber" name="L276" href="#L276">276</a>         valueFunction = logpart1 - logpart2;
+<a class="jxr_linenumber" name="L277" href="#L277">277</a>         <strong class="jxr_keyword">return</strong> valueFunction;
+<a class="jxr_linenumber" name="L278" href="#L278">278</a>     }
+<a class="jxr_linenumber" name="L279" href="#L279">279</a> 
+<a class="jxr_linenumber" name="L280" href="#L280">280</a> 
+<a class="jxr_linenumber" name="L281" href="#L281">281</a>     <em class="jxr_comment">// This function adds a line of the alpha matrix with the vector ncs</em>
+<a class="jxr_linenumber" name="L282" href="#L282">282</a>     <em class="jxr_comment">// and returns a vector containing the sum of these vectors</em>
+<a class="jxr_linenumber" name="L283" href="#L283">283</a>     <em class="jxr_comment">// Observe that the returned vector has only 20 positions</em>
+<a class="jxr_linenumber" name="L284" href="#L284">284</a>     <strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">double</strong>[] addAlphaVectorAndFrequencyvector(<strong class="jxr_keyword">double</strong>[] alphaVector, <strong class="jxr_keyword">int</strong>[] frequencyVector) {
+<a class="jxr_linenumber" name="L285" href="#L285">285</a>         <strong class="jxr_keyword">double</strong>[] addedVector = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[20];
+<a class="jxr_linenumber" name="L286" href="#L286">286</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 1; i &lt; 21; i++) {
+<a class="jxr_linenumber" name="L287" href="#L287">287</a>             addedVector[i - 1] = frequencyVector[i] + alphaVector[i];
+<a class="jxr_linenumber" name="L288" href="#L288">288</a>         }
+<a class="jxr_linenumber" name="L289" href="#L289">289</a>         <strong class="jxr_keyword">return</strong> addedVector;
+<a class="jxr_linenumber" name="L290" href="#L290">290</a>     }
+<a class="jxr_linenumber" name="L291" href="#L291">291</a> 
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> 
+<a class="jxr_linenumber" name="L293" href="#L293">293</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">double</strong> getEncodingCostValueWithNormalizer() {
+<a class="jxr_linenumber" name="L294" href="#L294">294</a>         <strong class="jxr_keyword">int</strong> nbAttr = attributes.length;
+<a class="jxr_linenumber" name="L295" href="#L295">295</a>         <strong class="jxr_keyword">int</strong> nbSubsets = data.size();
+<a class="jxr_linenumber" name="L296" href="#L296">296</a>         <strong class="jxr_keyword">double</strong> encodingCostValue = m_nbSequences * (Math.log(nbSubsets) / Math.log(2));
+<a class="jxr_linenumber" name="L297" href="#L297">297</a>         <strong class="jxr_keyword">double</strong> totalLogProb = 0;
+<a class="jxr_linenumber" name="L298" href="#L298">298</a>         <em class="jxr_comment">// iterating over all columns</em>
+<a class="jxr_linenumber" name="L299" href="#L299">299</a>         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> c = 0; c &lt; nbAttr; c++) {
+<a class="jxr_linenumber" name="L300" href="#L300">300</a>             <em class="jxr_comment">// we are going to produce a matrix with the frequency of occurrence of each amino acid</em>
+<a class="jxr_linenumber" name="L301" href="#L301">301</a>             <em class="jxr_comment">// the columns are going to be the amino acids</em>
+<a class="jxr_linenumber" name="L302" href="#L302">302</a>             <em class="jxr_comment">// the lines are going to be the subsets</em>
+<a class="jxr_linenumber" name="L303" href="#L303">303</a>             <strong class="jxr_keyword">int</strong>[][] frequency = calculateFrequency(c, nbSubsets);
+<a class="jxr_linenumber" name="L304" href="#L304">304</a>             <em class="jxr_comment">// printMatrix(frequency);</em>
+<a class="jxr_linenumber" name="L305" href="#L305">305</a>             <strong class="jxr_keyword">double</strong> totalLogProbCol = 0;
+<a class="jxr_linenumber" name="L306" href="#L306">306</a>             <em class="jxr_comment">// iterating over all subsets</em>
+<a class="jxr_linenumber" name="L307" href="#L307">307</a>             <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> s = 0; s &lt; nbSubsets; s++) {
+<a class="jxr_linenumber" name="L308" href="#L308">308</a>                 <strong class="jxr_keyword">double</strong> logProb;
+<a class="jxr_linenumber" name="L309" href="#L309">309</a>                 <strong class="jxr_keyword">if</strong> (m_LogPMatrix[m_ClusterIds.get(s).intValue()][c] != 0.0) {
+<a class="jxr_linenumber" name="L310" href="#L310">310</a>                     logProb = m_LogPMatrix[m_ClusterIds.get(s).intValue()][c];
+<a class="jxr_linenumber" name="L311" href="#L311">311</a>                 }
+<a class="jxr_linenumber" name="L312" href="#L312">312</a>                 <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L313" href="#L313">313</a>                     <em class="jxr_comment">// calculate probability</em>
+<a class="jxr_linenumber" name="L314" href="#L314">314</a>                     <strong class="jxr_keyword">double</strong>[] logP = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[m_MixtureValues.length];
+<a class="jxr_linenumber" name="L315" href="#L315">315</a>                     <strong class="jxr_keyword">double</strong> normalizer = Double.NEGATIVE_INFINITY;
+<a class="jxr_linenumber" name="L316" href="#L316">316</a> 
+<a class="jxr_linenumber" name="L317" href="#L317">317</a>                     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; m_MixtureValues.length; j++) {
+<a class="jxr_linenumber" name="L318" href="#L318">318</a>                         <strong class="jxr_keyword">double</strong> tmp = 0;
+<a class="jxr_linenumber" name="L319" href="#L319">319</a>                         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 1; i &lt; m_AlphaValues[0].length; i++) {
+<a class="jxr_linenumber" name="L320" href="#L320">320</a>                             <strong class="jxr_keyword">if</strong> (frequency[s][i] &gt; 0) {
+<a class="jxr_linenumber" name="L321" href="#L321">321</a>                                 tmp += (Gamma.logGamma(m_AlphaValues[j][i] + frequency[s][i]) - m_LogGammaAlpha[j][i]);
+<a class="jxr_linenumber" name="L322" href="#L322">322</a>                             }
+<a class="jxr_linenumber" name="L323" href="#L323">323</a>                         }
+<a class="jxr_linenumber" name="L324" href="#L324">324</a>                         <strong class="jxr_keyword">double</strong>[] sumVectors = addAlphaVectorAndFrequencyvector(m_AlphaValues[j], frequency[s]);
+<a class="jxr_linenumber" name="L325" href="#L325">325</a>                         <strong class="jxr_keyword">double</strong> sum = 0;
+<a class="jxr_linenumber" name="L326" href="#L326">326</a>                         <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> x = 0; x &lt; sumVectors.length; x++) {
+<a class="jxr_linenumber" name="L327" href="#L327">327</a>                             sum += sumVectors[x];
+<a class="jxr_linenumber" name="L328" href="#L328">328</a>                         }
+<a class="jxr_linenumber" name="L329" href="#L329">329</a>                         <strong class="jxr_keyword">double</strong> tmp2 = m_LogGammaAlpha[j][0] - Gamma.logGamma(sum);
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> 
+<a class="jxr_linenumber" name="L331" href="#L331">331</a>                         logP[j] = Math.log(m_MixtureValues[j]) + tmp + tmp2;
+<a class="jxr_linenumber" name="L332" href="#L332">332</a> 
+<a class="jxr_linenumber" name="L333" href="#L333">333</a>                         <em class="jxr_comment">// Calculating normalizer</em>
+<a class="jxr_linenumber" name="L334" href="#L334">334</a>                         <strong class="jxr_keyword">if</strong> (logP[j] &gt; normalizer) {
+<a class="jxr_linenumber" name="L335" href="#L335">335</a>                             normalizer = logP[j];
+<a class="jxr_linenumber" name="L336" href="#L336">336</a>                         }
+<a class="jxr_linenumber" name="L337" href="#L337">337</a>                     }
+<a class="jxr_linenumber" name="L338" href="#L338">338</a> 
+<a class="jxr_linenumber" name="L339" href="#L339">339</a>                     <strong class="jxr_keyword">double</strong> sumAllPJ = 0;
+<a class="jxr_linenumber" name="L340" href="#L340">340</a>                     <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> j = 0; j &lt; m_MixtureValues.length; j++) {
+<a class="jxr_linenumber" name="L341" href="#L341">341</a>                         <strong class="jxr_keyword">double</strong> convertingBackValue = Math.exp(logP[j] - normalizer);
+<a class="jxr_linenumber" name="L342" href="#L342">342</a>                         sumAllPJ = sumAllPJ + convertingBackValue;
+<a class="jxr_linenumber" name="L343" href="#L343">343</a>                     }
+<a class="jxr_linenumber" name="L344" href="#L344">344</a> 
+<a class="jxr_linenumber" name="L345" href="#L345">345</a>                     <em class="jxr_comment">// log base 2</em>
+<a class="jxr_linenumber" name="L346" href="#L346">346</a>                     logProb = (Math.log(sumAllPJ) / Math.log(2)) + normalizer;
+<a class="jxr_linenumber" name="L347" href="#L347">347</a> 
+<a class="jxr_linenumber" name="L348" href="#L348">348</a>                     <em class="jxr_comment">// log base e</em>
+<a class="jxr_linenumber" name="L349" href="#L349">349</a>                     <em class="jxr_comment">// logProb = Math.log(sumAllPJ)+normalizer;</em>
+<a class="jxr_linenumber" name="L350" href="#L350">350</a> 
+<a class="jxr_linenumber" name="L351" href="#L351">351</a>                     m_LogPMatrix[m_ClusterIds.get(s).intValue()][c] = logProb;
+<a class="jxr_linenumber" name="L352" href="#L352">352</a>                 }
+<a class="jxr_linenumber" name="L353" href="#L353">353</a>                 totalLogProbCol += logProb;
+<a class="jxr_linenumber" name="L354" href="#L354">354</a>             }
+<a class="jxr_linenumber" name="L355" href="#L355">355</a>             totalLogProb += totalLogProbCol;
+<a class="jxr_linenumber" name="L356" href="#L356">356</a>         }
+<a class="jxr_linenumber" name="L357" href="#L357">357</a>         encodingCostValue = encodingCostValue - totalLogProb;
+<a class="jxr_linenumber" name="L358" href="#L358">358</a>         <strong class="jxr_keyword">return</strong> encodingCostValue;
+<a class="jxr_linenumber" name="L359" href="#L359">359</a>     }
+<a class="jxr_linenumber" name="L360" href="#L360">360</a> 
+<a class="jxr_linenumber" name="L361" href="#L361">361</a> 
+<a class="jxr_linenumber" name="L362" href="#L362">362</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">double</strong> getEncodingCostValue() {
+<a class="jxr_linenumber" name="L363" href="#L363">363</a>         <strong class="jxr_keyword">return</strong> getEncodingCostValueWithNormalizer();
+<a class="jxr_linenumber" name="L364" href="#L364">364</a>     }
+<a class="jxr_linenumber" name="L365" href="#L365">365</a> 
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2023 <a href="http://kt.ijs.si">Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia</a>. All rights reserved.</div>
+</body>
+</html>

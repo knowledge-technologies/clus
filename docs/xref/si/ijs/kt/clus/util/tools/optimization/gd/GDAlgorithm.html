@@ -1,0 +1,519 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>GDAlgorithm xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../../apidocs/si/ijs/kt/clus/util/tools/optimization/gd/GDAlgorithm.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_javadoccomment">/*************************************************************************</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * Clus - Software for Predictive Clustering *</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_javadoccomment"> * Copyright (C) 2008 *</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_javadoccomment"> * Katholieke Universiteit Leuven, Leuven, Belgium *</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_javadoccomment"> * Jozef Stefan Institute, Ljubljana, Slovenia *</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_javadoccomment"> * *</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_javadoccomment"> * This program is free software: you can redistribute it and/or modify *</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_javadoccomment"> * it under the terms of the GNU General Public License as published by *</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_javadoccomment"> * the Free Software Foundation, either version 3 of the License, or *</em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_javadoccomment"> * (at your option) any later version. *</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_javadoccomment"> * *</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_javadoccomment"> * This program is distributed in the hope that it will be useful, *</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_javadoccomment"> * but WITHOUT ANY WARRANTY; without even the implied warranty of *</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_javadoccomment"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the *</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_javadoccomment"> * GNU General Public License for more details. *</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_javadoccomment"> * *</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_javadoccomment"> * You should have received a copy of the GNU General Public License *</em>
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_javadoccomment"> * along with this program. If not, see &lt;<a href="http://www.gnu.org/licenses/&gt;." target="alexandria_uri">http://www.gnu.org/licenses/&gt;.</a> *</em>
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <em class="jxr_javadoccomment"> * *</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_javadoccomment"> * Contact information: &lt;<a href="http://www.cs.kuleuven.be/~dtai/clus/&gt;." target="alexandria_uri">http://www.cs.kuleuven.be/~dtai/clus/&gt;.</a> *</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_javadoccomment"> *************************************************************************/</em>
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <em class="jxr_comment">/*</em>
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  <em class="jxr_comment"> * Created on 27.11.2008</em>
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <em class="jxr_comment"> */</em>
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">package</strong> si.ijs.kt.clus.util.tools.optimization.gd;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  <strong class="jxr_keyword">import</strong> java.io.FileNotFoundException;
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">import</strong> java.io.FileOutputStream;
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  <strong class="jxr_keyword">import</strong> java.io.OutputStreamWriter;
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  <strong class="jxr_keyword">import</strong> java.io.PrintWriter;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  <strong class="jxr_keyword">import</strong> java.util.ArrayList;
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.algo.rules.ClusRuleSet;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.main.ClusStatManager;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.main.settings.section.SettingsRules.OptimizationGDMTCombineGradient;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.ClusLogger;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.exception.ClusException;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.format.ClusFormat;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.format.ClusNumberFormat;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.tools.optimization.OptimizationAlgorithm;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.tools.optimization.OptimizationProblem;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.tools.optimization.OptimizationProblem.OptimizationParameter;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>  
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  <em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>  <em class="jxr_javadoccomment"> * Class for gradient descent optimization.</em>
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  <em class="jxr_javadoccomment"> * </em>
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  <em class="jxr_javadoccomment"> * @author Timo Aho</em>
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>  <em class="jxr_javadoccomment"> *</em>
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  <em class="jxr_javadoccomment"> */</em>
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../../si/ijs/kt/clus/util/tools/optimization/gd/GDAlgorithm.html">GDAlgorithm</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../../../../si/ijs/kt/clus/util/tools/optimization/OptimizationAlgorithm.html">OptimizationAlgorithm</a> {
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>  
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>  <em class="jxr_javadoccomment">	 * Includes the information about settings of optimization. Has all the helping</em>
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  <em class="jxr_javadoccomment">	 * functions and variables.</em>
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>  	<strong class="jxr_keyword">private</strong> <a href="../../../../../../../../si/ijs/kt/clus/util/tools/optimization/gd/GDProblem.html">GDProblem</a> m_GDProbl;
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>  
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>  	<em class="jxr_javadoccomment">/** Current weights */</em>
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>  	<strong class="jxr_keyword">protected</strong> ArrayList&lt;Double&gt; m_weights;
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>  
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  	<em class="jxr_javadoccomment">/** After how many steps check if early stopping is ok already */</em>
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">int</strong> m_earlyStopStep;
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>  
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>  <em class="jxr_javadoccomment">	 * After finding the early stop, how many times we have tried to reduce the step</em>
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>  <em class="jxr_javadoccomment">	 * size</em>
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  	<strong class="jxr_keyword">protected</strong> <strong class="jxr_keyword">int</strong> m_earlyStopStepsizeReducedNb;
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>  	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>  <em class="jxr_javadoccomment">	 * Constructor for classification and regression optimization.</em>
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>  <em class="jxr_javadoccomment">	 * </em>
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>  <em class="jxr_javadoccomment">	 * @param stat_mgr        Statistics</em>
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>  <em class="jxr_javadoccomment">	 * @param dataInformation The true values and predictions for the instances.</em>
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  <em class="jxr_javadoccomment">	 *                        These are used by OptimProbl. The optimization</em>
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  <em class="jxr_javadoccomment">	 *                        procedure is based on this data information. Warning:</em>
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>  <em class="jxr_javadoccomment">	 *                        The parameter may be modified!</em>
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>  <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>  	<strong class="jxr_keyword">public</strong> <a href="../../../../../../../../si/ijs/kt/clus/util/tools/optimization/gd/GDAlgorithm.html">GDAlgorithm</a>(<a href="../../../../../../../../si/ijs/kt/clus/main/ClusStatManager.html">ClusStatManager</a> stat_mgr, OptimizationProblem.OptimizationParameter dataInformation,
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>  			ClusRuleSet rset) {
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>  		<strong class="jxr_keyword">super</strong>(stat_mgr);
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  		m_GDProbl = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../../si/ijs/kt/clus/util/tools/optimization/gd/GDProblem.html">GDProblem</a>(stat_mgr, dataInformation, rset);
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>  		initGDForNewRunWithSamePredictions();
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>  		m_earlyStopStep = 100;
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>  
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>  		<em class="jxr_comment">// If you want to check these, put early stop amount to 0</em>
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>  		<strong class="jxr_keyword">if</strong> (GDProblem.m_printGDDebugInformation) {
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  			String fname = getSettings().getData().getDataFile();
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>  			<strong class="jxr_keyword">try</strong> (PrintWriter wrt_pred = <strong class="jxr_keyword">new</strong> PrintWriter(
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>  					<strong class="jxr_keyword">new</strong> OutputStreamWriter(<strong class="jxr_keyword">new</strong> FileOutputStream(fname + <span class="jxr_string">".gd-pred"</span>)));
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>  					PrintWriter wrt_<strong class="jxr_keyword">true</strong> = <strong class="jxr_keyword">new</strong> PrintWriter(
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>  							<strong class="jxr_keyword">new</strong> OutputStreamWriter(<strong class="jxr_keyword">new</strong> FileOutputStream(fname + <span class="jxr_string">".gd-true"</span>)))) {
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>  
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>  				m_GDProbl.printPredictionsToFile(wrt_pred);
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>  				wrt_pred.close();
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> 				m_GDProbl.printTrueValuesToFile(wrt_<strong class="jxr_keyword">true</strong>);
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> 				wrt_<strong class="jxr_keyword">true</strong>.close();
+<a class="jxr_linenumber" name="L102" href="#L102">102</a> 
+<a class="jxr_linenumber" name="L103" href="#L103">103</a> 			} <strong class="jxr_keyword">catch</strong> (FileNotFoundException e) {
+<a class="jxr_linenumber" name="L104" href="#L104">104</a> 				e.printStackTrace();
+<a class="jxr_linenumber" name="L105" href="#L105">105</a> 				System.exit(1);
+<a class="jxr_linenumber" name="L106" href="#L106">106</a> 			}
+<a class="jxr_linenumber" name="L107" href="#L107">107</a> 		}
+<a class="jxr_linenumber" name="L108" href="#L108">108</a> 
+<a class="jxr_linenumber" name="L109" href="#L109">109</a> 	}
+<a class="jxr_linenumber" name="L110" href="#L110">110</a> 
+<a class="jxr_linenumber" name="L111" href="#L111">111</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L112" href="#L112">112</a> <em class="jxr_javadoccomment">	 * Initialize GD optimization for new run with same predictions and true values</em>
+<a class="jxr_linenumber" name="L113" href="#L113">113</a> <em class="jxr_javadoccomment">	 * This can be used if some parameters change. Thus we e.g. do not compute</em>
+<a class="jxr_linenumber" name="L114" href="#L114">114</a> <em class="jxr_javadoccomment">	 * covariances again</em>
+<a class="jxr_linenumber" name="L115" href="#L115">115</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> initGDForNewRunWithSamePredictions() {
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> 		m_GDProbl.initGDForNewRunWithSamePredictions();
+<a class="jxr_linenumber" name="L118" href="#L118">118</a> 
+<a class="jxr_linenumber" name="L119" href="#L119">119</a> 		m_weights = m_GDProbl.getInitialWeightVector();
+<a class="jxr_linenumber" name="L120" href="#L120">120</a> 
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> 		<em class="jxr_comment">// Oscillation detection</em>
+<a class="jxr_linenumber" name="L122" href="#L122">122</a> 		m_prevChange = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L123" href="#L123">123</a> 		m_iPrevDimension = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L124" href="#L124">124</a> 		m_iNewDimension = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> 		m_newChange = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L126" href="#L126">126</a> 		m_minStepSizeReduction = 1;
+<a class="jxr_linenumber" name="L127" href="#L127">127</a> 
+<a class="jxr_linenumber" name="L128" href="#L128">128</a> 		m_earlyStopStepsizeReducedNb = 0;
+<a class="jxr_linenumber" name="L129" href="#L129">129</a> 
+<a class="jxr_linenumber" name="L130" href="#L130">130</a> 		<em class="jxr_comment">// If weigths can be banned, oscillation is stored</em>
+<a class="jxr_linenumber" name="L131" href="#L131">131</a> 		<strong class="jxr_keyword">if</strong> (m_GDProbl.m_bannedWeights != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L132" href="#L132">132</a> 			m_iOscillatingWeights = <strong class="jxr_keyword">new</strong> ArrayList&lt;Integer&gt;();
+<a class="jxr_linenumber" name="L133" href="#L133">133</a> 		} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L134" href="#L134">134</a> 			m_iOscillatingWeights = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L135" href="#L135">135</a> 		}
+<a class="jxr_linenumber" name="L136" href="#L136">136</a> 	}
+<a class="jxr_linenumber" name="L137" href="#L137">137</a> 
+<a class="jxr_linenumber" name="L138" href="#L138">138</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L139" href="#L139">139</a> <em class="jxr_javadoccomment">	 * Optimize the weights for the given data with gradient descent algorithm. This</em>
+<a class="jxr_linenumber" name="L140" href="#L140">140</a> <em class="jxr_javadoccomment">	 * is the algorithm by Friedman, Popescu 2004</em>
+<a class="jxr_linenumber" name="L141" href="#L141">141</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L142" href="#L142">142</a> 	@Override
+<a class="jxr_linenumber" name="L143" href="#L143">143</a> 	<strong class="jxr_keyword">public</strong> ArrayList&lt;Double&gt; optimize() {
+<a class="jxr_linenumber" name="L144" href="#L144">144</a> 		ClusLogger.info(
+<a class="jxr_linenumber" name="L145" href="#L145">145</a> 				<span class="jxr_string">"Gradient descent: Optimizing rule weights ("</span> + getSettings().getRules().getOptGDMaxIter() + <span class="jxr_string">") "</span>);
+<a class="jxr_linenumber" name="L146" href="#L146">146</a> 
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> 		PrintWriter wrt_log = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L148" href="#L148">148</a> 
+<a class="jxr_linenumber" name="L149" href="#L149">149</a> 		<strong class="jxr_keyword">if</strong> (GDProblem.m_printGDDebugInformation) {
+<a class="jxr_linenumber" name="L150" href="#L150">150</a> 			<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L151" href="#L151">151</a> 				wrt_log = <strong class="jxr_keyword">new</strong> PrintWriter(<strong class="jxr_keyword">new</strong> OutputStreamWriter(<strong class="jxr_keyword">new</strong> FileOutputStream(<span class="jxr_string">"gradDesc.log"</span>)));
+<a class="jxr_linenumber" name="L152" href="#L152">152</a> 			} <strong class="jxr_keyword">catch</strong> (Exception e) {
+<a class="jxr_linenumber" name="L153" href="#L153">153</a> 				e.printStackTrace();
+<a class="jxr_linenumber" name="L154" href="#L154">154</a> 				ClusLogger.severe(<span class="jxr_string">"Log file could not be opened. Logging omitted."</span>);
+<a class="jxr_linenumber" name="L155" href="#L155">155</a> 			}
+<a class="jxr_linenumber" name="L156" href="#L156">156</a> 		}
+<a class="jxr_linenumber" name="L157" href="#L157">157</a> 
+<a class="jxr_linenumber" name="L158" href="#L158">158</a> 		<strong class="jxr_keyword">if</strong> (m_GDProbl.isClassifTask()) {
+<a class="jxr_linenumber" name="L159" href="#L159">159</a> 			<strong class="jxr_keyword">try</strong> {
+<a class="jxr_linenumber" name="L160" href="#L160">160</a> 				<strong class="jxr_keyword">throw</strong> <strong class="jxr_keyword">new</strong> <a href="../../../../../../../../si/ijs/kt/clus/util/exception/ClusException.html">ClusException</a>(
+<a class="jxr_linenumber" name="L161" href="#L161">161</a> 						<span class="jxr_string">"Classification not yeat implemented for gradient descent. Skipping the optimization."</span>);
+<a class="jxr_linenumber" name="L162" href="#L162">162</a> 			} <strong class="jxr_keyword">catch</strong> (Exception s) {
+<a class="jxr_linenumber" name="L163" href="#L163">163</a> 				s.printStackTrace();
+<a class="jxr_linenumber" name="L164" href="#L164">164</a> 			}
+<a class="jxr_linenumber" name="L165" href="#L165">165</a> 			<strong class="jxr_keyword">return</strong> <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L166" href="#L166">166</a> 		}
+<a class="jxr_linenumber" name="L167" href="#L167">167</a> 		<em class="jxr_comment">// Compute initial gradients</em>
+<a class="jxr_linenumber" name="L168" href="#L168">168</a> 		m_GDProbl.fullGradientComputation(m_weights);
+<a class="jxr_linenumber" name="L169" href="#L169">169</a> 
+<a class="jxr_linenumber" name="L170" href="#L170">170</a> 		<strong class="jxr_keyword">int</strong> nbOfIterations = 0;
+<a class="jxr_linenumber" name="L171" href="#L171">171</a> 		<strong class="jxr_keyword">while</strong> (nbOfIterations &lt; getSettings().getRules().getOptGDMaxIter()) {
+<a class="jxr_linenumber" name="L172" href="#L172">172</a> 
+<a class="jxr_linenumber" name="L173" href="#L173">173</a> 			<strong class="jxr_keyword">if</strong> (nbOfIterations % (Math.ceil(getSettings().getRules().getOptGDMaxIter() / 50.0)) == 0) {
+<a class="jxr_linenumber" name="L174" href="#L174">174</a> 				ClusLogger.finer(String.format(<span class="jxr_string">"%s %%"</span>,
+<a class="jxr_linenumber" name="L175" href="#L175">175</a> 						nbOfIterations * 100 / Math.ceil(getSettings().getRules().getOptGDMaxIter())));
+<a class="jxr_linenumber" name="L176" href="#L176">176</a> 			}
+<a class="jxr_linenumber" name="L177" href="#L177">177</a> 			<strong class="jxr_keyword">if</strong> (nbOfIterations % m_earlyStopStep == 0) {
+<a class="jxr_linenumber" name="L178" href="#L178">178</a> 
+<a class="jxr_linenumber" name="L179" href="#L179">179</a> 				<strong class="jxr_keyword">if</strong> (getSettings().getRules().getOptGDEarlyStopAmount() &gt; 0 &amp;&amp; m_GDProbl.isEarlyStop(m_weights)) {
+<a class="jxr_linenumber" name="L180" href="#L180">180</a> 					<strong class="jxr_keyword">if</strong> (GDProblem.m_printGDDebugInformation) {
+<a class="jxr_linenumber" name="L181" href="#L181">181</a> 						wrt_log.println(<span class="jxr_string">"Increase in test fitness. Reducing step size or stopping."</span>);
+<a class="jxr_linenumber" name="L182" href="#L182">182</a> 					}
+<a class="jxr_linenumber" name="L183" href="#L183">183</a> 
+<a class="jxr_linenumber" name="L184" href="#L184">184</a> 					ClusLogger.fine(<span class="jxr_string">"Overfitting after "</span> + nbOfIterations + <span class="jxr_string">" iterations."</span>);
+<a class="jxr_linenumber" name="L185" href="#L185">185</a> 
+<a class="jxr_linenumber" name="L186" href="#L186">186</a> 					<strong class="jxr_keyword">if</strong> (!getSettings().getRules().isOptGDIsDynStepsize()
+<a class="jxr_linenumber" name="L187" href="#L187">187</a> 							&amp;&amp; m_earlyStopStepsizeReducedNb &lt; getSettings().getRules().getOptGDNbOfStepSizeReduce()) {
+<a class="jxr_linenumber" name="L188" href="#L188">188</a> 						m_earlyStopStepsizeReducedNb++;
+<a class="jxr_linenumber" name="L189" href="#L189">189</a> 						m_GDProbl.dropStepSize(0.1); <em class="jxr_comment">// Drop stepsize to tenth.</em>
+<a class="jxr_linenumber" name="L190" href="#L190">190</a> 						m_GDProbl.restoreBestWeight(m_weights); <em class="jxr_comment">// restoring the weight with minimum fitness</em>
+<a class="jxr_linenumber" name="L191" href="#L191">191</a> 						m_GDProbl.fullGradientComputation(m_weights);
+<a class="jxr_linenumber" name="L192" href="#L192">192</a> 
+<a class="jxr_linenumber" name="L193" href="#L193">193</a> 						ClusLogger.fine(<span class="jxr_string">"Reducing step, continuing."</span>);
+<a class="jxr_linenumber" name="L194" href="#L194">194</a> 					} <strong class="jxr_keyword">else</strong> { <em class="jxr_comment">// If dynamic step size, stop always</em>
+<a class="jxr_linenumber" name="L195" href="#L195">195</a> 						ClusLogger.info(<span class="jxr_string">"Stopping."</span>);
+<a class="jxr_linenumber" name="L196" href="#L196">196</a> 
+<a class="jxr_linenumber" name="L197" href="#L197">197</a> 						<strong class="jxr_keyword">if</strong> (GDProblem.m_printGDDebugInformation) {
+<a class="jxr_linenumber" name="L198" href="#L198">198</a> 							wrt_log.println(<span class="jxr_string">"Early stopping detected after "</span> + nbOfIterations + <span class="jxr_string">" iterations."</span>);
+<a class="jxr_linenumber" name="L199" href="#L199">199</a> 						}
+<a class="jxr_linenumber" name="L200" href="#L200">200</a> 						<strong class="jxr_keyword">break</strong>;
+<a class="jxr_linenumber" name="L201" href="#L201">201</a> 					}
+<a class="jxr_linenumber" name="L202" href="#L202">202</a> 				}
+<a class="jxr_linenumber" name="L203" href="#L203">203</a> 			}
+<a class="jxr_linenumber" name="L204" href="#L204">204</a> 
+<a class="jxr_linenumber" name="L205" href="#L205">205</a> 			<em class="jxr_comment">// Print</em>
+<a class="jxr_linenumber" name="L206" href="#L206">206</a> 			OutputLog(nbOfIterations, wrt_log); <em class="jxr_comment">// Weights</em>
+<a class="jxr_linenumber" name="L207" href="#L207">207</a> 
+<a class="jxr_linenumber" name="L208" href="#L208">208</a> 			<em class="jxr_comment">// 3)</em>
+<a class="jxr_linenumber" name="L209" href="#L209">209</a> 			<em class="jxr_comment">// Search for maximum gradients</em>
+<a class="jxr_linenumber" name="L210" href="#L210">210</a> 			<strong class="jxr_keyword">int</strong>[] maxGradients = m_GDProbl.getMaxGradients(nbOfIterations);
+<a class="jxr_linenumber" name="L211" href="#L211">211</a> 
+<a class="jxr_linenumber" name="L212" href="#L212">212</a> 			<strong class="jxr_keyword">boolean</strong> oscillation = false;
+<a class="jxr_linenumber" name="L213" href="#L213">213</a> 
+<a class="jxr_linenumber" name="L214" href="#L214">214</a> 			<em class="jxr_comment">// For detecting oscillation</em>
+<a class="jxr_linenumber" name="L215" href="#L215">215</a> 			storeGradientsForOscillation(maxGradients);
+<a class="jxr_linenumber" name="L216" href="#L216">216</a> 
+<a class="jxr_linenumber" name="L217" href="#L217">217</a> 			<em class="jxr_comment">// b) // Take the gradient step on the peak dimension</em>
+<a class="jxr_linenumber" name="L218" href="#L218">218</a> 
+<a class="jxr_linenumber" name="L219" href="#L219">219</a> 			<em class="jxr_comment">// First compute the change values and detect possible oscillation</em>
+<a class="jxr_linenumber" name="L220" href="#L220">220</a> 
+<a class="jxr_linenumber" name="L221" href="#L221">221</a> 			<em class="jxr_comment">// Change of the weight according to this gradient.</em>
+<a class="jxr_linenumber" name="L222" href="#L222">222</a> 			<strong class="jxr_keyword">double</strong>[] valueChange = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[maxGradients.length];
+<a class="jxr_linenumber" name="L223" href="#L223">223</a> 
+<a class="jxr_linenumber" name="L224" href="#L224">224</a> 			<strong class="jxr_keyword">boolean</strong> debugPrint = getSettings().getGeneral().getVerbose() &gt; 0 &amp;&amp; false; <em class="jxr_comment">// DEBUG</em>
+<a class="jxr_linenumber" name="L225" href="#L225">225</a> 
+<a class="jxr_linenumber" name="L226" href="#L226">226</a> 			<strong class="jxr_keyword">if</strong> (debugPrint) {
+<a class="jxr_linenumber" name="L227" href="#L227">227</a> 				System.out.println(<span class="jxr_string">"\nDEBUG: Computing covariances, total "</span> + maxGradients.length);
+<a class="jxr_linenumber" name="L228" href="#L228">228</a> 			}
+<a class="jxr_linenumber" name="L229" href="#L229">229</a> 
+<a class="jxr_linenumber" name="L230" href="#L230">230</a> 			<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> iiGradient = 0; iiGradient &lt; maxGradients.length; iiGradient++) {
+<a class="jxr_linenumber" name="L231" href="#L231">231</a> 				<strong class="jxr_keyword">if</strong> (debugPrint) {
+<a class="jxr_linenumber" name="L232" href="#L232">232</a> 					System.out.print(iiGradient % 10);
+<a class="jxr_linenumber" name="L233" href="#L233">233</a> 				}
+<a class="jxr_linenumber" name="L234" href="#L234">234</a> 				<em class="jxr_comment">// c) We are changing the value of the weight. Let's compute the covariance if</em>
+<a class="jxr_linenumber" name="L235" href="#L235">235</a> 				<em class="jxr_comment">// it is not yet done</em>
+<a class="jxr_linenumber" name="L236" href="#L236">236</a> 				m_GDProbl.computeCovariancesIfNeeded(maxGradients[iiGradient]);
+<a class="jxr_linenumber" name="L237" href="#L237">237</a> 
+<a class="jxr_linenumber" name="L238" href="#L238">238</a> 				<em class="jxr_comment">// Change of the weight according to this gradient.</em>
+<a class="jxr_linenumber" name="L239" href="#L239">239</a> 				valueChange[iiGradient] = m_GDProbl.howMuchWeightChanges(maxGradients[iiGradient]);
+<a class="jxr_linenumber" name="L240" href="#L240">240</a> 
+<a class="jxr_linenumber" name="L241" href="#L241">241</a> 				<em class="jxr_comment">// For detecting oscillation. If oscillation is already true, do not change it</em>
+<a class="jxr_linenumber" name="L242" href="#L242">242</a> 				<em class="jxr_comment">// to false.</em>
+<a class="jxr_linenumber" name="L243" href="#L243">243</a> 				<strong class="jxr_keyword">if</strong> (nbOfIterations &lt; 100) {
+<a class="jxr_linenumber" name="L244" href="#L244">244</a> 					oscillation = (detectOscillation(iiGradient, valueChange[iiGradient]) || oscillation);
+<a class="jxr_linenumber" name="L245" href="#L245">245</a> 				}
+<a class="jxr_linenumber" name="L246" href="#L246">246</a> 			}
+<a class="jxr_linenumber" name="L247" href="#L247">247</a> 			<strong class="jxr_keyword">if</strong> (debugPrint) {
+<a class="jxr_linenumber" name="L248" href="#L248">248</a> 				System.out.println(<span class="jxr_string">"\nDEBUG: Computing covariances ended"</span>);
+<a class="jxr_linenumber" name="L249" href="#L249">249</a> 			}
+<a class="jxr_linenumber" name="L250" href="#L250">250</a> 			<em class="jxr_comment">// If oscillation was detected we do not take real steps.</em>
+<a class="jxr_linenumber" name="L251" href="#L251">251</a> 			<em class="jxr_comment">// we reduce the step size until the new step is smaller than the first one.</em>
+<a class="jxr_linenumber" name="L252" href="#L252">252</a> 			<em class="jxr_comment">// It should be smaller because otherwise we are going even further from the</em>
+<a class="jxr_linenumber" name="L253" href="#L253">253</a> 			<em class="jxr_comment">// optimal point.</em>
+<a class="jxr_linenumber" name="L254" href="#L254">254</a> 			<strong class="jxr_keyword">if</strong> (oscillation &amp;&amp; !getSettings().getRules().isOptGDIsDynStepsize()) {
+<a class="jxr_linenumber" name="L255" href="#L255">255</a> 				<strong class="jxr_keyword">if</strong> (GDProblem.m_printGDDebugInformation) {
+<a class="jxr_linenumber" name="L256" href="#L256">256</a> 					wrt_log.println(<span class="jxr_string">"Detected oscillation, reducing step size of: "</span> + m_GDProbl.m_stepSize);
+<a class="jxr_linenumber" name="L257" href="#L257">257</a> 				}
+<a class="jxr_linenumber" name="L258" href="#L258">258</a> 
+<a class="jxr_linenumber" name="L259" href="#L259">259</a> 				<strong class="jxr_keyword">if</strong> (debugPrint) {
+<a class="jxr_linenumber" name="L260" href="#L260">260</a> 					ClusLogger.info(<span class="jxr_string">"DEBUG: Detected oscillation on iteration "</span> + nbOfIterations
+<a class="jxr_linenumber" name="L261" href="#L261">261</a> 							+ <span class="jxr_string">", reducing step size of: "</span> + m_GDProbl.m_stepSize);
+<a class="jxr_linenumber" name="L262" href="#L262">262</a> 				}
+<a class="jxr_linenumber" name="L263" href="#L263">263</a> 				<em class="jxr_comment">// System.exit(1); //DEBUG</em>
+<a class="jxr_linenumber" name="L264" href="#L264">264</a> 				<em class="jxr_comment">// For MaxLoss combination the oscillation may be because we are finding some</em>
+<a class="jxr_linenumber" name="L265" href="#L265">265</a> 				<em class="jxr_comment">// local</em>
+<a class="jxr_linenumber" name="L266" href="#L266">266</a> 				<em class="jxr_comment">// optimum point for some weight and it is the most significant. Let us put this</em>
+<a class="jxr_linenumber" name="L267" href="#L267">267</a> 				<em class="jxr_comment">// weight</em>
+<a class="jxr_linenumber" name="L268" href="#L268">268</a> 				<em class="jxr_comment">// to a banned list for some iterations</em>
+<a class="jxr_linenumber" name="L269" href="#L269">269</a> 				<strong class="jxr_keyword">if</strong> (nbOfIterations &gt; 10 &amp;&amp; (getSettings().getRules().getOptGDMTGradientCombine()
+<a class="jxr_linenumber" name="L270" href="#L270">270</a> 						.equals(OptimizationGDMTCombineGradient.MaxLoss)
+<a class="jxr_linenumber" name="L271" href="#L271">271</a> 						|| getSettings().getRules().getOptGDMTGradientCombine()
+<a class="jxr_linenumber" name="L272" href="#L272">272</a> 								.equals(OptimizationGDMTCombineGradient.MaxLossFast))) {
+<a class="jxr_linenumber" name="L273" href="#L273">273</a> 					putOscillatingWeightsToBan(nbOfIterations);
+<a class="jxr_linenumber" name="L274" href="#L274">274</a> 				} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L275" href="#L275">275</a> 					<em class="jxr_comment">// This is needed if we are changing more than one dimension at time.</em>
+<a class="jxr_linenumber" name="L276" href="#L276">276</a> 					<em class="jxr_comment">// The step size is made for the biggest oscillation and thus some of the other</em>
+<a class="jxr_linenumber" name="L277" href="#L277">277</a> 					<em class="jxr_comment">// oscillating ones</em>
+<a class="jxr_linenumber" name="L278" href="#L278">278</a> 					<em class="jxr_comment">// never come back to sensible values.</em>
+<a class="jxr_linenumber" name="L279" href="#L279">279</a> 					reversePreviousStep(); <em class="jxr_comment">// Reverse the previous step. We also skip this step.</em>
+<a class="jxr_linenumber" name="L280" href="#L280">280</a> 					reduceStepSizeDueOscillation();
+<a class="jxr_linenumber" name="L281" href="#L281">281</a> 				}
+<a class="jxr_linenumber" name="L282" href="#L282">282</a> 				<strong class="jxr_keyword">continue</strong>; <em class="jxr_comment">// Start next iteration</em>
+<a class="jxr_linenumber" name="L283" href="#L283">283</a> 			} <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L284" href="#L284">284</a> 				<em class="jxr_comment">// Store the current data for use in the next iterations.</em>
+<a class="jxr_linenumber" name="L285" href="#L285">285</a> 				<strong class="jxr_keyword">if</strong> (nbOfIterations &lt; 100) {
+<a class="jxr_linenumber" name="L286" href="#L286">286</a> 					storeTheOscillationData();
+<a class="jxr_linenumber" name="L287" href="#L287">287</a> 				}
+<a class="jxr_linenumber" name="L288" href="#L288">288</a> 			}
+<a class="jxr_linenumber" name="L289" href="#L289">289</a> 
+<a class="jxr_linenumber" name="L290" href="#L290">290</a> 			<em class="jxr_comment">// After it is sure no oscillation is detected, make the changes</em>
+<a class="jxr_linenumber" name="L291" href="#L291">291</a> 			<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> iiGradient = 0; iiGradient &lt; maxGradients.length; iiGradient++) {
+<a class="jxr_linenumber" name="L292" href="#L292">292</a> 				m_weights.set(maxGradients[iiGradient],
+<a class="jxr_linenumber" name="L293" href="#L293">293</a> 						m_weights.get(maxGradients[iiGradient]).doubleValue() + valueChange[iiGradient]);
+<a class="jxr_linenumber" name="L294" href="#L294">294</a> 			}
+<a class="jxr_linenumber" name="L295" href="#L295">295</a> 
+<a class="jxr_linenumber" name="L296" href="#L296">296</a> 			<em class="jxr_comment">// d) compute the gradients again for the weights that changed</em>
+<a class="jxr_linenumber" name="L297" href="#L297">297</a> 			<em class="jxr_comment">// This must not affect the computation during this iteration</em>
+<a class="jxr_linenumber" name="L298" href="#L298">298</a> 			m_GDProbl.modifyGradients(maxGradients, m_weights);
+<a class="jxr_linenumber" name="L299" href="#L299">299</a> 
+<a class="jxr_linenumber" name="L300" href="#L300">300</a> 			nbOfIterations++;
+<a class="jxr_linenumber" name="L301" href="#L301">301</a> 		} <em class="jxr_comment">// While</em>
+<a class="jxr_linenumber" name="L302" href="#L302">302</a> 
+<a class="jxr_linenumber" name="L303" href="#L303">303</a> 		ClusLogger.info(<span class="jxr_string">"Done!"</span>);
+<a class="jxr_linenumber" name="L304" href="#L304">304</a> 
+<a class="jxr_linenumber" name="L305" href="#L305">305</a> 		<strong class="jxr_keyword">if</strong> (getSettings().getRules().getOptGDEarlyStopAmount() &gt; 0) {
+<a class="jxr_linenumber" name="L306" href="#L306">306</a> 			m_GDProbl.isEarlyStop(m_weights); <em class="jxr_comment">// Check if current weights have better fitness than the best so far</em>
+<a class="jxr_linenumber" name="L307" href="#L307">307</a> 			m_GDProbl.restoreBestWeight(m_weights); <em class="jxr_comment">// Result are the weights with best fitness</em>
+<a class="jxr_linenumber" name="L308" href="#L308">308</a> 		}
+<a class="jxr_linenumber" name="L309" href="#L309">309</a> 
+<a class="jxr_linenumber" name="L310" href="#L310">310</a> 		<strong class="jxr_keyword">if</strong> (GDProblem.m_printGDDebugInformation) {
+<a class="jxr_linenumber" name="L311" href="#L311">311</a> 			wrt_log.println(<span class="jxr_string">"The result of optimization"</span>);
+<a class="jxr_linenumber" name="L312" href="#L312">312</a> 		}
+<a class="jxr_linenumber" name="L313" href="#L313">313</a> 		OutputLog(nbOfIterations, wrt_log);
+<a class="jxr_linenumber" name="L314" href="#L314">314</a> 		<strong class="jxr_keyword">if</strong> (GDProblem.m_printGDDebugInformation) {
+<a class="jxr_linenumber" name="L315" href="#L315">315</a> 			wrt_log.close();
+<a class="jxr_linenumber" name="L316" href="#L316">316</a> 		}
+<a class="jxr_linenumber" name="L317" href="#L317">317</a> 		<em class="jxr_comment">// System.err.println("CHANGING THE WEIGHTS&lt; REMOVE THISE");</em>
+<a class="jxr_linenumber" name="L318" href="#L318">318</a> 		<em class="jxr_comment">// for (int i=0; i&lt; m_weights.size(); i++)</em>
+<a class="jxr_linenumber" name="L319" href="#L319">319</a> 		<em class="jxr_comment">// m_weights.set(i,1.0); // default rule</em>
+<a class="jxr_linenumber" name="L320" href="#L320">320</a> 
+<a class="jxr_linenumber" name="L321" href="#L321">321</a> 		<strong class="jxr_keyword">return</strong> m_weights;
+<a class="jxr_linenumber" name="L322" href="#L322">322</a> 	}
+<a class="jxr_linenumber" name="L323" href="#L323">323</a> 
+<a class="jxr_linenumber" name="L324" href="#L324">324</a> 	<em class="jxr_javadoccomment">/** If weight banning is in use, store the oscillation dimensions here */</em>
+<a class="jxr_linenumber" name="L325" href="#L325">325</a> 	<strong class="jxr_keyword">private</strong> ArrayList&lt;Integer&gt; m_iOscillatingWeights;
+<a class="jxr_linenumber" name="L326" href="#L326">326</a> 
+<a class="jxr_linenumber" name="L327" href="#L327">327</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L328" href="#L328">328</a> <em class="jxr_javadoccomment">	 * Puts oscillating weights to ban, so that we can continue on the rest of</em>
+<a class="jxr_linenumber" name="L329" href="#L329">329</a> <em class="jxr_javadoccomment">	 * weights. This is used only if for maxLoss combining something happens.</em>
+<a class="jxr_linenumber" name="L330" href="#L330">330</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L331" href="#L331">331</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> putOscillatingWeightsToBan(<strong class="jxr_keyword">int</strong> iterationNb) {
+<a class="jxr_linenumber" name="L332" href="#L332">332</a> 		<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> iWeight = 0; iWeight &lt; m_iOscillatingWeights.size(); iWeight++) {
+<a class="jxr_linenumber" name="L333" href="#L333">333</a> 			m_GDProbl.m_bannedWeights[m_iOscillatingWeights.get(iWeight)] = iterationNb + 50;
+<a class="jxr_linenumber" name="L334" href="#L334">334</a> 		}
+<a class="jxr_linenumber" name="L335" href="#L335">335</a> 		m_iOscillatingWeights.clear();
+<a class="jxr_linenumber" name="L336" href="#L336">336</a> 	}
+<a class="jxr_linenumber" name="L337" href="#L337">337</a> 
+<a class="jxr_linenumber" name="L338" href="#L338">338</a> 	<em class="jxr_javadoccomment">/** Maximum step size reduction found on this iteration */</em>
+<a class="jxr_linenumber" name="L339" href="#L339">339</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">double</strong> m_minStepSizeReduction;
+<a class="jxr_linenumber" name="L340" href="#L340">340</a> 
+<a class="jxr_linenumber" name="L341" href="#L341">341</a> 	<em class="jxr_javadoccomment">/** Reduce the step size. Take the biggest needed reduction and do that */</em>
+<a class="jxr_linenumber" name="L342" href="#L342">342</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> reduceStepSizeDueOscillation() {
+<a class="jxr_linenumber" name="L343" href="#L343">343</a> 		<em class="jxr_comment">// System.err.print("Dropping the step size.\n");</em>
+<a class="jxr_linenumber" name="L344" href="#L344">344</a> 
+<a class="jxr_linenumber" name="L345" href="#L345">345</a> 		<em class="jxr_comment">// We are lowering the step size just enough to prevent further oscillation</em>
+<a class="jxr_linenumber" name="L346" href="#L346">346</a> 		<em class="jxr_comment">// We make the new step size a little smaller than is limit (because of rounding</em>
+<a class="jxr_linenumber" name="L347" href="#L347">347</a> 		<em class="jxr_comment">// mistakes)</em>
+<a class="jxr_linenumber" name="L348" href="#L348">348</a> 		m_GDProbl.dropStepSize(m_minStepSizeReduction * 0.99);
+<a class="jxr_linenumber" name="L349" href="#L349">349</a> 		m_minStepSizeReduction = 1; <em class="jxr_comment">// Step done, reset this now</em>
+<a class="jxr_linenumber" name="L350" href="#L350">350</a> 	}
+<a class="jxr_linenumber" name="L351" href="#L351">351</a> 
+<a class="jxr_linenumber" name="L352" href="#L352">352</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L353" href="#L353">353</a> <em class="jxr_javadoccomment">	 * Information about the previous change for oscillation warning. The change</em>
+<a class="jxr_linenumber" name="L354" href="#L354">354</a> <em class="jxr_javadoccomment">	 * value</em>
+<a class="jxr_linenumber" name="L355" href="#L355">355</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L356" href="#L356">356</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">double</strong>[] m_prevChange;
+<a class="jxr_linenumber" name="L357" href="#L357">357</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">double</strong>[] m_newChange;
+<a class="jxr_linenumber" name="L358" href="#L358">358</a> 
+<a class="jxr_linenumber" name="L359" href="#L359">359</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L360" href="#L360">360</a> <em class="jxr_javadoccomment">	 * Information about the previous change for oscillation warning. The changed</em>
+<a class="jxr_linenumber" name="L361" href="#L361">361</a> <em class="jxr_javadoccomment">	 * dimension.</em>
+<a class="jxr_linenumber" name="L362" href="#L362">362</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L363" href="#L363">363</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong>[] m_iPrevDimension;
+<a class="jxr_linenumber" name="L364" href="#L364">364</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">int</strong>[] m_iNewDimension;
+<a class="jxr_linenumber" name="L365" href="#L365">365</a> 
+<a class="jxr_linenumber" name="L366" href="#L366">366</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L367" href="#L367">367</a> <em class="jxr_javadoccomment">	 * A iteration has been done and oscillation not detected - store the previous</em>
+<a class="jxr_linenumber" name="L368" href="#L368">368</a> <em class="jxr_javadoccomment">	 * changes</em>
+<a class="jxr_linenumber" name="L369" href="#L369">369</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L370" href="#L370">370</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> storeTheOscillationData() {
+<a class="jxr_linenumber" name="L371" href="#L371">371</a> 		<strong class="jxr_keyword">if</strong> (getSettings().getRules().isOptGDIsDynStepsize())
+<a class="jxr_linenumber" name="L372" href="#L372">372</a> 			<strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L373" href="#L373">373</a> 		m_prevChange = m_newChange.clone();
+<a class="jxr_linenumber" name="L374" href="#L374">374</a> 		m_iPrevDimension = m_iNewDimension.clone();
+<a class="jxr_linenumber" name="L375" href="#L375">375</a> 	}
+<a class="jxr_linenumber" name="L376" href="#L376">376</a> 
+<a class="jxr_linenumber" name="L377" href="#L377">377</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L378" href="#L378">378</a> <em class="jxr_javadoccomment">	 * Reverse previous (not this) step if oscillation found. Thus the state should</em>
+<a class="jxr_linenumber" name="L379" href="#L379">379</a> <em class="jxr_javadoccomment">	 * be like it was before. This has to be called before storeTheOscillationData.</em>
+<a class="jxr_linenumber" name="L380" href="#L380">380</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L381" href="#L381">381</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> reversePreviousStep() {
+<a class="jxr_linenumber" name="L382" href="#L382">382</a> 		<em class="jxr_comment">// First reverse the weights</em>
+<a class="jxr_linenumber" name="L383" href="#L383">383</a> 		<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> iiGradient = 0; iiGradient &lt; m_iPrevDimension.length; iiGradient++) {
+<a class="jxr_linenumber" name="L384" href="#L384">384</a> 			m_weights.set(m_iPrevDimension[iiGradient],
+<a class="jxr_linenumber" name="L385" href="#L385">385</a> 					m_weights.get(m_iPrevDimension[iiGradient]).doubleValue() - m_prevChange[iiGradient]);
+<a class="jxr_linenumber" name="L386" href="#L386">386</a> 		}
+<a class="jxr_linenumber" name="L387" href="#L387">387</a> 
+<a class="jxr_linenumber" name="L388" href="#L388">388</a> 		<em class="jxr_comment">// Compute the gradients again. This should no be done so often that this costs</em>
+<a class="jxr_linenumber" name="L389" href="#L389">389</a> 		<em class="jxr_comment">// very much. Thus we</em>
+<a class="jxr_linenumber" name="L390" href="#L390">390</a> 		<em class="jxr_comment">// Can compute them again from scratch.</em>
+<a class="jxr_linenumber" name="L391" href="#L391">391</a> 		m_GDProbl.fullGradientComputation(m_weights);
+<a class="jxr_linenumber" name="L392" href="#L392">392</a> 
+<a class="jxr_linenumber" name="L393" href="#L393">393</a> 		<em class="jxr_comment">// Empty the oscillation control parameters (previous step was never done)</em>
+<a class="jxr_linenumber" name="L394" href="#L394">394</a> 		m_prevChange = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L395" href="#L395">395</a> 		m_iPrevDimension = <strong class="jxr_keyword">null</strong>;
+<a class="jxr_linenumber" name="L396" href="#L396">396</a> 
+<a class="jxr_linenumber" name="L397" href="#L397">397</a> 		<em class="jxr_comment">// Also this has to be cleared.</em>
+<a class="jxr_linenumber" name="L398" href="#L398">398</a> 		<strong class="jxr_keyword">if</strong> (m_iOscillatingWeights != <strong class="jxr_keyword">null</strong>)
+<a class="jxr_linenumber" name="L399" href="#L399">399</a> 			m_iOscillatingWeights.clear();
+<a class="jxr_linenumber" name="L400" href="#L400">400</a> 	}
+<a class="jxr_linenumber" name="L401" href="#L401">401</a> 
+<a class="jxr_linenumber" name="L402" href="#L402">402</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L403" href="#L403">403</a> <em class="jxr_javadoccomment">	 * Stores the used gradients for oscillation detection later. Also</em>
+<a class="jxr_linenumber" name="L404" href="#L404">404</a> <em class="jxr_javadoccomment">	 * initialization tasks for oscillation.</em>
+<a class="jxr_linenumber" name="L405" href="#L405">405</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L406" href="#L406">406</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">void</strong> storeGradientsForOscillation(<strong class="jxr_keyword">int</strong>[] maxGradients) {
+<a class="jxr_linenumber" name="L407" href="#L407">407</a> 		<strong class="jxr_keyword">if</strong> (getSettings().getRules().isOptGDIsDynStepsize())
+<a class="jxr_linenumber" name="L408" href="#L408">408</a> 			<strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L409" href="#L409">409</a> 		m_iNewDimension = maxGradients.clone();
+<a class="jxr_linenumber" name="L410" href="#L410">410</a> 		m_newChange = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">double</strong>[maxGradients.length];
+<a class="jxr_linenumber" name="L411" href="#L411">411</a> 	}
+<a class="jxr_linenumber" name="L412" href="#L412">412</a> 
+<a class="jxr_linenumber" name="L413" href="#L413">413</a> 	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L414" href="#L414">414</a> <em class="jxr_javadoccomment">	 * Oscillation is detected if same dimension is changed such that the direction</em>
+<a class="jxr_linenumber" name="L415" href="#L415">415</a> <em class="jxr_javadoccomment">	 * is different and the new step is bigger than previous.</em>
+<a class="jxr_linenumber" name="L416" href="#L416">416</a> <em class="jxr_javadoccomment">	 * </em>
+<a class="jxr_linenumber" name="L417" href="#L417">417</a> <em class="jxr_javadoccomment">	 * @param iiNewChange The index of MaxGradients/m_iNewDimension we are going on.</em>
+<a class="jxr_linenumber" name="L418" href="#L418">418</a> <em class="jxr_javadoccomment">	 * @param valueChange How much the weight is going to be changed</em>
+<a class="jxr_linenumber" name="L419" href="#L419">419</a> <em class="jxr_javadoccomment">	 * @return If oscillation was detected.</em>
+<a class="jxr_linenumber" name="L420" href="#L420">420</a> <em class="jxr_javadoccomment">	 */</em>
+<a class="jxr_linenumber" name="L421" href="#L421">421</a> 	<strong class="jxr_keyword">private</strong> <strong class="jxr_keyword">boolean</strong> detectOscillation(<strong class="jxr_keyword">int</strong> iiNewChange, <strong class="jxr_keyword">double</strong> valueChange) {
+<a class="jxr_linenumber" name="L422" href="#L422">422</a> 		<strong class="jxr_keyword">if</strong> (getSettings().getRules().isOptGDIsDynStepsize())
+<a class="jxr_linenumber" name="L423" href="#L423">423</a> 			<strong class="jxr_keyword">return</strong> false;
+<a class="jxr_linenumber" name="L424" href="#L424">424</a> 		<strong class="jxr_keyword">boolean</strong> detectOscillation = false;
+<a class="jxr_linenumber" name="L425" href="#L425">425</a> 
+<a class="jxr_linenumber" name="L426" href="#L426">426</a> 		<em class="jxr_comment">// Store the value for the change, dimensions have already been stored</em>
+<a class="jxr_linenumber" name="L427" href="#L427">427</a> 		m_newChange[iiNewChange] = valueChange;
+<a class="jxr_linenumber" name="L428" href="#L428">428</a> 
+<a class="jxr_linenumber" name="L429" href="#L429">429</a> 		<em class="jxr_comment">// Go through the previous changes and check if some of them is for same</em>
+<a class="jxr_linenumber" name="L430" href="#L430">430</a> 		<em class="jxr_comment">// dimension</em>
+<a class="jxr_linenumber" name="L431" href="#L431">431</a> 		<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> iiPrevChange = 0; m_prevChange != <strong class="jxr_keyword">null</strong> &amp;&amp; iiPrevChange &lt; m_prevChange.length; iiPrevChange++) {
+<a class="jxr_linenumber" name="L432" href="#L432">432</a> 
+<a class="jxr_linenumber" name="L433" href="#L433">433</a> 			<em class="jxr_comment">// Is the modified dimension same as before</em>
+<a class="jxr_linenumber" name="L434" href="#L434">434</a> 			<strong class="jxr_keyword">if</strong> (m_iPrevDimension[iiPrevChange] == m_iNewDimension[iiNewChange]) {
+<a class="jxr_linenumber" name="L435" href="#L435">435</a> 				<em class="jxr_comment">// Does the change tell us about oscillation</em>
+<a class="jxr_linenumber" name="L436" href="#L436">436</a> 
+<a class="jxr_linenumber" name="L437" href="#L437">437</a> 				<strong class="jxr_keyword">if</strong> (valueChange * m_prevChange[iiPrevChange] &lt; 0
+<a class="jxr_linenumber" name="L438" href="#L438">438</a> 						&amp;&amp; Math.abs(valueChange) &gt; Math.abs(m_prevChange[iiPrevChange])) {
+<a class="jxr_linenumber" name="L439" href="#L439">439</a> 
+<a class="jxr_linenumber" name="L440" href="#L440">440</a> 					<em class="jxr_comment">// System.err.println("DEBUG: Found out oscillation for weight " +</em>
+<a class="jxr_linenumber" name="L441" href="#L441">441</a> 					<em class="jxr_comment">// m_iPrevDimension[iiPrevChange] +</em>
+<a class="jxr_linenumber" name="L442" href="#L442">442</a> 					<em class="jxr_comment">// " that was nb " +iiPrevChange + " last iteration and "+ iiNewChange + "</em>
+<a class="jxr_linenumber" name="L443" href="#L443">443</a> 					<em class="jxr_comment">// now.");</em>
+<a class="jxr_linenumber" name="L444" href="#L444">444</a> 					<em class="jxr_comment">// OSCILLATION DETECTED</em>
+<a class="jxr_linenumber" name="L445" href="#L445">445</a> 					<strong class="jxr_keyword">if</strong> (m_iOscillatingWeights != <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L446" href="#L446">446</a> 						m_iOscillatingWeights.add(m_iPrevDimension[iiPrevChange]);
+<a class="jxr_linenumber" name="L447" href="#L447">447</a> 					}
+<a class="jxr_linenumber" name="L448" href="#L448">448</a> 
+<a class="jxr_linenumber" name="L449" href="#L449">449</a> 					<em class="jxr_comment">// System.err.print("\nLikely oscillation detected in GDAlg.\n The dimension "</em>
+<a class="jxr_linenumber" name="L450" href="#L450">450</a> 					<em class="jxr_comment">// + m_iPrevDimension[iiPrevChange]</em>
+<a class="jxr_linenumber" name="L451" href="#L451">451</a> 					<em class="jxr_comment">// + " was changed consequently with change values: " +</em>
+<a class="jxr_linenumber" name="L452" href="#L452">452</a> 					<em class="jxr_comment">// m_prevChange[iiPrevChange]</em>
+<a class="jxr_linenumber" name="L453" href="#L453">453</a> 					<em class="jxr_comment">// + " and " + valueChange + ".\n");</em>
+<a class="jxr_linenumber" name="L454" href="#L454">454</a> 
+<a class="jxr_linenumber" name="L455" href="#L455">455</a> 					<em class="jxr_comment">// How much we need step size reduction</em>
+<a class="jxr_linenumber" name="L456" href="#L456">456</a> 					<strong class="jxr_keyword">double</strong> needReduction = Math.abs(m_prevChange[iiPrevChange]) / Math.abs(valueChange);
+<a class="jxr_linenumber" name="L457" href="#L457">457</a> 
+<a class="jxr_linenumber" name="L458" href="#L458">458</a> 					<em class="jxr_comment">// If the reduction is greater than any of the previous on this iteration, do</em>
+<a class="jxr_linenumber" name="L459" href="#L459">459</a> 					<em class="jxr_comment">// it.</em>
+<a class="jxr_linenumber" name="L460" href="#L460">460</a> 					<strong class="jxr_keyword">if</strong> (needReduction &lt; m_minStepSizeReduction)
+<a class="jxr_linenumber" name="L461" href="#L461">461</a> 						m_minStepSizeReduction = needReduction;
+<a class="jxr_linenumber" name="L462" href="#L462">462</a> 
+<a class="jxr_linenumber" name="L463" href="#L463">463</a> 					detectOscillation = <strong class="jxr_keyword">true</strong>;
+<a class="jxr_linenumber" name="L464" href="#L464">464</a> 					<em class="jxr_comment">// System.exit(1);</em>
+<a class="jxr_linenumber" name="L465" href="#L465">465</a> 				}
+<a class="jxr_linenumber" name="L466" href="#L466">466</a> 
+<a class="jxr_linenumber" name="L467" href="#L467">467</a> 				<strong class="jxr_keyword">break</strong>; <em class="jxr_comment">// The dimension was found. do not check the latter ones.</em>
+<a class="jxr_linenumber" name="L468" href="#L468">468</a> 			}
+<a class="jxr_linenumber" name="L469" href="#L469">469</a> 		}
+<a class="jxr_linenumber" name="L470" href="#L470">470</a> 
+<a class="jxr_linenumber" name="L471" href="#L471">471</a> 		<strong class="jxr_keyword">return</strong> detectOscillation;
+<a class="jxr_linenumber" name="L472" href="#L472">472</a> 	}
+<a class="jxr_linenumber" name="L473" href="#L473">473</a> 
+<a class="jxr_linenumber" name="L474" href="#L474">474</a> 	<em class="jxr_javadoccomment">/** Print the current weights output file. */</em>
+<a class="jxr_linenumber" name="L475" href="#L475">475</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> OutputLog(<strong class="jxr_keyword">int</strong> iterNro, PrintWriter wrt) {
+<a class="jxr_linenumber" name="L476" href="#L476">476</a> 		<strong class="jxr_keyword">if</strong> (!GDProblem.m_printGDDebugInformation)
+<a class="jxr_linenumber" name="L477" href="#L477">477</a> 			<strong class="jxr_keyword">return</strong>;
+<a class="jxr_linenumber" name="L478" href="#L478">478</a> 
+<a class="jxr_linenumber" name="L479" href="#L479">479</a> 		ClusNumberFormat fr = ClusFormat.SIX_AFTER_DOT;
+<a class="jxr_linenumber" name="L480" href="#L480">480</a> 		<strong class="jxr_keyword">double</strong> trainingFitness = m_GDProbl.calcFitness(m_weights, m_GDProbl.m_ruleSet);
+<a class="jxr_linenumber" name="L481" href="#L481">481</a> 		<strong class="jxr_keyword">double</strong> testFitness = 0;
+<a class="jxr_linenumber" name="L482" href="#L482">482</a> 		<strong class="jxr_keyword">if</strong> (getSettings().getRules().getOptGDEarlyStopAmount() &gt; 0)
+<a class="jxr_linenumber" name="L483" href="#L483">483</a> 			testFitness = m_GDProbl.m_earlyStopProbl.calcFitness(m_weights, m_GDProbl.m_ruleSet);
+<a class="jxr_linenumber" name="L484" href="#L484">484</a> 
+<a class="jxr_linenumber" name="L485" href="#L485">485</a> 		wrt.print(<span class="jxr_string">"Iteration "</span> + iterNro + <span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="L486" href="#L486">486</a> 		<strong class="jxr_keyword">if</strong> (getSettings().getRules().isOptGDIsDynStepsize())
+<a class="jxr_linenumber" name="L487" href="#L487">487</a> 			wrt.print(<span class="jxr_string">"Step size: "</span> + m_GDProbl.m_stepSize + <span class="jxr_string">" "</span>);
+<a class="jxr_linenumber" name="L488" href="#L488">488</a> 		wrt.print(<span class="jxr_string">"("</span> + fr.format(trainingFitness) + <span class="jxr_string">", "</span> + fr.format(testFitness) + <span class="jxr_string">"): "</span>);
+<a class="jxr_linenumber" name="L489" href="#L489">489</a> 		<em class="jxr_comment">// else</em>
+<a class="jxr_linenumber" name="L490" href="#L490">490</a> 		<em class="jxr_comment">// wrt.print("Iteration " + iterNro + ": ");</em>
+<a class="jxr_linenumber" name="L491" href="#L491">491</a> 		<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; m_weights.size(); i++) {
+<a class="jxr_linenumber" name="L492" href="#L492">492</a> 			wrt.print(fr.format((<strong class="jxr_keyword">double</strong>) m_weights.get(i)) + <span class="jxr_string">"\t"</span>);
+<a class="jxr_linenumber" name="L493" href="#L493">493</a> 		}
+<a class="jxr_linenumber" name="L494" href="#L494">494</a> 		wrt.print(<span class="jxr_string">"\n"</span>);
+<a class="jxr_linenumber" name="L495" href="#L495">495</a> 		<em class="jxr_comment">// m_GDProbl.printGradientsToFile(nbOfIterations, wrt_log); //gradients //DEBUG</em>
+<a class="jxr_linenumber" name="L496" href="#L496">496</a> 	}
+<a class="jxr_linenumber" name="L497" href="#L497">497</a> 
+<a class="jxr_linenumber" name="L498" href="#L498">498</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">double</strong> getBestFitness() {
+<a class="jxr_linenumber" name="L499" href="#L499">499</a> 		<strong class="jxr_keyword">return</strong> m_GDProbl.getBestFitness();
+<a class="jxr_linenumber" name="L500" href="#L500">500</a> 	}
+<a class="jxr_linenumber" name="L501" href="#L501">501</a> 
+<a class="jxr_linenumber" name="L502" href="#L502">502</a> 	@Override
+<a class="jxr_linenumber" name="L503" href="#L503">503</a> 	<strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">void</strong> postProcess(<a href="../../../../../../../../si/ijs/kt/clus/algo/rules/ClusRuleSet.html">ClusRuleSet</a> rset) {
+<a class="jxr_linenumber" name="L504" href="#L504">504</a> 		m_GDProbl.changeRuleSetToUndoNormNormalization(rset);
+<a class="jxr_linenumber" name="L505" href="#L505">505</a> 	}
+<a class="jxr_linenumber" name="L506" href="#L506">506</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2023 <a href="http://kt.ijs.si">Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia</a>. All rights reserved.</div>
+</body>
+</html>

@@ -1,0 +1,62 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>BagSelectionSemiSupervised xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/si/ijs/kt/clus/selection/BagSelectionSemiSupervised.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <strong class="jxr_keyword">package</strong> si.ijs.kt.clus.selection;
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.ClusRandom;
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.ClusRandomNonstatic;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../si/ijs/kt/clus/selection/BagSelectionSemiSupervised.html">BagSelectionSemiSupervised</a> <strong class="jxr_keyword">extends</strong> <a href="../../../../../si/ijs/kt/clus/selection/BagSelection.html">BagSelection</a> {
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   	
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   	<em class="jxr_javadoccomment">/**</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_javadoccomment">     * Creates a new bag selection from dataset consisting of labeled and unlabeled examples. Labeled and unlabeled examples are sampled separately</em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_javadoccomment">     * to avoid having only unlabeled examples in a bag. Dataset is assumed to be sorted so that the labeled examples come first, while unlabeled second. </em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_javadoccomment">     * @param nbrows the total number of instances</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_javadoccomment">     * @param labeledNo the number of labeled examples to be sampled</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_javadoccomment">     * @param unlabeledNo  the number of unlabeled examples to be sampled </em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_javadoccomment">     */</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>      <strong class="jxr_keyword">public</strong> <a href="../../../../../si/ijs/kt/clus/selection/BagSelectionSemiSupervised.html">BagSelectionSemiSupervised</a>(<strong class="jxr_keyword">int</strong> nbrows, <strong class="jxr_keyword">int</strong> labeledNo, <strong class="jxr_keyword">int</strong> unlabeledNo, <a href="../../../../../si/ijs/kt/clus/util/ClusRandomNonstatic.html">ClusRandomNonstatic</a> rnd) {
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>          <strong class="jxr_keyword">super</strong>(nbrows);
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>          m_Counts = <strong class="jxr_keyword">new</strong> <strong class="jxr_keyword">int</strong>[nbrows];
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>          
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>          <em class="jxr_comment">//select labeled</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>          <strong class="jxr_keyword">if</strong>(rnd == <strong class="jxr_keyword">null</strong>) {
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  	        <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; labeledNo; i++) {
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  	            m_Counts[ClusRandom.nextInt(ClusRandom.RANDOM_SELECTION, labeledNo)]++;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  	        }
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  	        
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  	        <em class="jxr_comment">//select unlabeled</em>
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  	        <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; unlabeledNo; i++) {
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  	            m_Counts[labeledNo + ClusRandom.nextInt(ClusRandom.RANDOM_SELECTION, unlabeledNo)]++;
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  	        }
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>          } <strong class="jxr_keyword">else</strong> {
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>          	<strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; labeledNo; i++) {
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>  	            m_Counts[rnd.nextInt(ClusRandom.RANDOM_SELECTION, labeledNo)]++;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  	        }
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>  	        
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>  	        <em class="jxr_comment">//select unlabeled</em>
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>  	        <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; unlabeledNo; i++) {
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  	            m_Counts[labeledNo + rnd.nextInt(ClusRandom.RANDOM_SELECTION, unlabeledNo)]++;
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>  	        }
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>          }
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>          
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>          <strong class="jxr_keyword">for</strong> (<strong class="jxr_keyword">int</strong> i = 0; i &lt; nbrows; i++) {
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>              <strong class="jxr_keyword">if</strong> (m_Counts[i] != 0) {
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>                  m_NbSel++;
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>              }
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>          }
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>  
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      }
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>  
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2023 <a href="http://kt.ijs.si">Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia</a>. All rights reserved.</div>
+</body>
+</html>

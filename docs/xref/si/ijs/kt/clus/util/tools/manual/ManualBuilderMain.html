@@ -1,0 +1,38 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>ManualBuilderMain xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../../../apidocs/si/ijs/kt/clus/util/tools/manual/ManualBuilderMain.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <strong class="jxr_keyword">package</strong> si.ijs.kt.clus.util.tools.manual;
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <strong class="jxr_keyword">import</strong> java.io.IOException;
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../../../si/ijs/kt/clus/util/tools/manual/ManualBuilderMain.html">ManualBuilderMain</a> {
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>       <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MANUAL_DIR = <span class="jxr_string">"docs/manual/"</span>;
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MANUAL_OPTIONS_LISTS_DIR = MANUAL_DIR + <span class="jxr_string">"optionListsHatchery"</span>;
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">final</strong> String MANUAL_OPTIONS_LISTS_DIR_EXISTING = MANUAL_DIR + <span class="jxr_string">"optionListsForUse"</span>;
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> main(String[] args) <strong class="jxr_keyword">throws</strong> IOException {
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>          <a href="../../../../../../../si/ijs/kt/clus/util/tools/manual/ManualBuilder.html">ManualBuilder</a> mb = <strong class="jxr_keyword">new</strong> <a href="../../../../../../../si/ijs/kt/clus/util/tools/manual/ManualBuilder.html">ManualBuilder</a>();
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>          mb.buildSettingsTables(MANUAL_OPTIONS_LISTS_DIR);
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>          mb.mergeExistingTables(MANUAL_OPTIONS_LISTS_DIR, MANUAL_OPTIONS_LISTS_DIR_EXISTING);
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>          
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>          
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>          System.out.println(String.format(<span class="jxr_string">"Look inside %s for merged files"</span>, MANUAL_OPTIONS_LISTS_DIR));
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>      }
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2023 <a href="http://kt.ijs.si">Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia</a>. All rights reserved.</div>
+</body>
+</html>

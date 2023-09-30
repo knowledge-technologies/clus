@@ -1,0 +1,160 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="" lang="">
+<head><meta http-equiv="content-type" content="text/html; charset=UTF-8" />
+<title>ClusStat xref</title>
+<link type="text/css" rel="stylesheet" href="../../../../../stylesheet.css" />
+</head>
+<body>
+<div id="overview"><a href="../../../../../../apidocs/si/ijs/kt/clus/main/ClusStat.html">View Javadoc</a></div><pre>
+<a class="jxr_linenumber" name="L1" href="#L1">1</a>   <em class="jxr_javadoccomment">/*************************************************************************</em>
+<a class="jxr_linenumber" name="L2" href="#L2">2</a>   <em class="jxr_javadoccomment"> * Clus - Software for Predictive Clustering *</em>
+<a class="jxr_linenumber" name="L3" href="#L3">3</a>   <em class="jxr_javadoccomment"> * Copyright (C) 2007 *</em>
+<a class="jxr_linenumber" name="L4" href="#L4">4</a>   <em class="jxr_javadoccomment"> * Katholieke Universiteit Leuven, Leuven, Belgium *</em>
+<a class="jxr_linenumber" name="L5" href="#L5">5</a>   <em class="jxr_javadoccomment"> * Jozef Stefan Institute, Ljubljana, Slovenia *</em>
+<a class="jxr_linenumber" name="L6" href="#L6">6</a>   <em class="jxr_javadoccomment"> * *</em>
+<a class="jxr_linenumber" name="L7" href="#L7">7</a>   <em class="jxr_javadoccomment"> * This program is free software: you can redistribute it and/or modify *</em>
+<a class="jxr_linenumber" name="L8" href="#L8">8</a>   <em class="jxr_javadoccomment"> * it under the terms of the GNU General Public License as published by *</em>
+<a class="jxr_linenumber" name="L9" href="#L9">9</a>   <em class="jxr_javadoccomment"> * the Free Software Foundation, either version 3 of the License, or *</em>
+<a class="jxr_linenumber" name="L10" href="#L10">10</a>  <em class="jxr_javadoccomment"> * (at your option) any later version. *</em>
+<a class="jxr_linenumber" name="L11" href="#L11">11</a>  <em class="jxr_javadoccomment"> * *</em>
+<a class="jxr_linenumber" name="L12" href="#L12">12</a>  <em class="jxr_javadoccomment"> * This program is distributed in the hope that it will be useful, *</em>
+<a class="jxr_linenumber" name="L13" href="#L13">13</a>  <em class="jxr_javadoccomment"> * but WITHOUT ANY WARRANTY; without even the implied warranty of *</em>
+<a class="jxr_linenumber" name="L14" href="#L14">14</a>  <em class="jxr_javadoccomment"> * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the *</em>
+<a class="jxr_linenumber" name="L15" href="#L15">15</a>  <em class="jxr_javadoccomment"> * GNU General Public License for more details. *</em>
+<a class="jxr_linenumber" name="L16" href="#L16">16</a>  <em class="jxr_javadoccomment"> * *</em>
+<a class="jxr_linenumber" name="L17" href="#L17">17</a>  <em class="jxr_javadoccomment"> * You should have received a copy of the GNU General Public License *</em>
+<a class="jxr_linenumber" name="L18" href="#L18">18</a>  <em class="jxr_javadoccomment"> * along with this program. If not, see &lt;<a href="http://www.gnu.org/licenses/&gt;." target="alexandria_uri">http://www.gnu.org/licenses/&gt;.</a> *</em>
+<a class="jxr_linenumber" name="L19" href="#L19">19</a>  <em class="jxr_javadoccomment"> * *</em>
+<a class="jxr_linenumber" name="L20" href="#L20">20</a>  <em class="jxr_javadoccomment"> * Contact information: &lt;<a href="http://www.cs.kuleuven.be/~dtai/clus/&gt;." target="alexandria_uri">http://www.cs.kuleuven.be/~dtai/clus/&gt;.</a> *</em>
+<a class="jxr_linenumber" name="L21" href="#L21">21</a>  <em class="jxr_javadoccomment"> *************************************************************************/</em>
+<a class="jxr_linenumber" name="L22" href="#L22">22</a>  
+<a class="jxr_linenumber" name="L23" href="#L23">23</a>  <strong class="jxr_keyword">package</strong> si.ijs.kt.clus.main;
+<a class="jxr_linenumber" name="L24" href="#L24">24</a>  
+<a class="jxr_linenumber" name="L25" href="#L25">25</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.ClusLogger;
+<a class="jxr_linenumber" name="L26" href="#L26">26</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.ResourceInfo;
+<a class="jxr_linenumber" name="L27" href="#L27">27</a>  <strong class="jxr_keyword">import</strong> si.ijs.kt.clus.util.jeans.io.MyFile;
+<a class="jxr_linenumber" name="L28" href="#L28">28</a>  
+<a class="jxr_linenumber" name="L29" href="#L29">29</a>  
+<a class="jxr_linenumber" name="L30" href="#L30">30</a>  <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">class</strong> <a href="../../../../../si/ijs/kt/clus/main/ClusStat.html">ClusStat</a> {
+<a class="jxr_linenumber" name="L31" href="#L31">31</a>  
+<a class="jxr_linenumber" name="L32" href="#L32">32</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> m_PrevTime;
+<a class="jxr_linenumber" name="L33" href="#L33">33</a>  
+<a class="jxr_linenumber" name="L34" href="#L34">34</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> m_InitialMemory;
+<a class="jxr_linenumber" name="L35" href="#L35">35</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> m_LoadedMemory;
+<a class="jxr_linenumber" name="L36" href="#L36">36</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> m_FinalMemory;
+<a class="jxr_linenumber" name="L37" href="#L37">37</a>  
+<a class="jxr_linenumber" name="L38" href="#L38">38</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> m_TimeTest;
+<a class="jxr_linenumber" name="L39" href="#L39">39</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> m_TimeSplit;
+<a class="jxr_linenumber" name="L40" href="#L40">40</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> m_TimeStat;
+<a class="jxr_linenumber" name="L41" href="#L41">41</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> m_TimeSort;
+<a class="jxr_linenumber" name="L42" href="#L42">42</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">long</strong> m_TimeHeur;
+<a class="jxr_linenumber" name="L43" href="#L43">43</a>  
+<a class="jxr_linenumber" name="L44" href="#L44">44</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">double</strong> m_TTimeTest;
+<a class="jxr_linenumber" name="L45" href="#L45">45</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">double</strong> m_TTimeSplit;
+<a class="jxr_linenumber" name="L46" href="#L46">46</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">double</strong> m_TTimeStat;
+<a class="jxr_linenumber" name="L47" href="#L47">47</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">double</strong> m_TTimeSort;
+<a class="jxr_linenumber" name="L48" href="#L48">48</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">double</strong> m_TTimeHeur;
+<a class="jxr_linenumber" name="L49" href="#L49">49</a>  
+<a class="jxr_linenumber" name="L50" href="#L50">50</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">double</strong> m_TTimeTotal;
+<a class="jxr_linenumber" name="L51" href="#L51">51</a>  
+<a class="jxr_linenumber" name="L52" href="#L52">52</a>  
+<a class="jxr_linenumber" name="L53" href="#L53">53</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> initTime() {
+<a class="jxr_linenumber" name="L54" href="#L54">54</a>          m_PrevTime = ResourceInfo.getCPUTime();
+<a class="jxr_linenumber" name="L55" href="#L55">55</a>      }
+<a class="jxr_linenumber" name="L56" href="#L56">56</a>  
+<a class="jxr_linenumber" name="L57" href="#L57">57</a>  
+<a class="jxr_linenumber" name="L58" href="#L58">58</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> deltaStat() {
+<a class="jxr_linenumber" name="L59" href="#L59">59</a>          <strong class="jxr_keyword">long</strong> now = ResourceInfo.getCPUTime();
+<a class="jxr_linenumber" name="L60" href="#L60">60</a>          m_TimeStat += now - m_PrevTime;
+<a class="jxr_linenumber" name="L61" href="#L61">61</a>          m_PrevTime = now;
+<a class="jxr_linenumber" name="L62" href="#L62">62</a>      }
+<a class="jxr_linenumber" name="L63" href="#L63">63</a>  
+<a class="jxr_linenumber" name="L64" href="#L64">64</a>  
+<a class="jxr_linenumber" name="L65" href="#L65">65</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> deltaTest() {
+<a class="jxr_linenumber" name="L66" href="#L66">66</a>          <strong class="jxr_keyword">long</strong> now = ResourceInfo.getCPUTime();
+<a class="jxr_linenumber" name="L67" href="#L67">67</a>          m_TimeTest += now - m_PrevTime;
+<a class="jxr_linenumber" name="L68" href="#L68">68</a>          m_PrevTime = now;
+<a class="jxr_linenumber" name="L69" href="#L69">69</a>      }
+<a class="jxr_linenumber" name="L70" href="#L70">70</a>  
+<a class="jxr_linenumber" name="L71" href="#L71">71</a>  
+<a class="jxr_linenumber" name="L72" href="#L72">72</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> deltaSplit() {
+<a class="jxr_linenumber" name="L73" href="#L73">73</a>          <strong class="jxr_keyword">long</strong> now = ResourceInfo.getCPUTime();
+<a class="jxr_linenumber" name="L74" href="#L74">74</a>          m_TimeSplit += now - m_PrevTime;
+<a class="jxr_linenumber" name="L75" href="#L75">75</a>          m_PrevTime = now;
+<a class="jxr_linenumber" name="L76" href="#L76">76</a>      }
+<a class="jxr_linenumber" name="L77" href="#L77">77</a>  
+<a class="jxr_linenumber" name="L78" href="#L78">78</a>  
+<a class="jxr_linenumber" name="L79" href="#L79">79</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> deltaSort() {
+<a class="jxr_linenumber" name="L80" href="#L80">80</a>          <strong class="jxr_keyword">long</strong> now = ResourceInfo.getCPUTime();
+<a class="jxr_linenumber" name="L81" href="#L81">81</a>          m_TimeSort += now - m_PrevTime;
+<a class="jxr_linenumber" name="L82" href="#L82">82</a>          m_PrevTime = now;
+<a class="jxr_linenumber" name="L83" href="#L83">83</a>      }
+<a class="jxr_linenumber" name="L84" href="#L84">84</a>  
+<a class="jxr_linenumber" name="L85" href="#L85">85</a>  
+<a class="jxr_linenumber" name="L86" href="#L86">86</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> deltaHeur() {
+<a class="jxr_linenumber" name="L87" href="#L87">87</a>          <strong class="jxr_keyword">long</strong> now = ResourceInfo.getCPUTime();
+<a class="jxr_linenumber" name="L88" href="#L88">88</a>          m_TimeHeur += now - m_PrevTime;
+<a class="jxr_linenumber" name="L89" href="#L89">89</a>          m_PrevTime = now;
+<a class="jxr_linenumber" name="L90" href="#L90">90</a>      }
+<a class="jxr_linenumber" name="L91" href="#L91">91</a>  
+<a class="jxr_linenumber" name="L92" href="#L92">92</a>  
+<a class="jxr_linenumber" name="L93" href="#L93">93</a>      <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> resetTimes() {
+<a class="jxr_linenumber" name="L94" href="#L94">94</a>          m_TimeTest = 0;
+<a class="jxr_linenumber" name="L95" href="#L95">95</a>          m_TimeSplit = 0;
+<a class="jxr_linenumber" name="L96" href="#L96">96</a>          m_TimeStat = 0;
+<a class="jxr_linenumber" name="L97" href="#L97">97</a>          m_TimeSort = 0;
+<a class="jxr_linenumber" name="L98" href="#L98">98</a>          m_TimeHeur = 0;
+<a class="jxr_linenumber" name="L99" href="#L99">99</a>      }
+<a class="jxr_linenumber" name="L100" href="#L100">100</a> 
+<a class="jxr_linenumber" name="L101" href="#L101">101</a> 
+<a class="jxr_linenumber" name="L102" href="#L102">102</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">double</strong> addToTotal(<strong class="jxr_keyword">long</strong> value, <strong class="jxr_keyword">int</strong> div) {
+<a class="jxr_linenumber" name="L103" href="#L103">103</a>         <strong class="jxr_keyword">double</strong> mean = (<strong class="jxr_keyword">double</strong>) value / div;
+<a class="jxr_linenumber" name="L104" href="#L104">104</a>         m_TTimeTotal += mean;
+<a class="jxr_linenumber" name="L105" href="#L105">105</a>         <strong class="jxr_keyword">return</strong> mean;
+<a class="jxr_linenumber" name="L106" href="#L106">106</a>     }
+<a class="jxr_linenumber" name="L107" href="#L107">107</a> 
+<a class="jxr_linenumber" name="L108" href="#L108">108</a> 
+<a class="jxr_linenumber" name="L109" href="#L109">109</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> addTimes(<strong class="jxr_keyword">int</strong> div) {
+<a class="jxr_linenumber" name="L110" href="#L110">110</a>         m_TTimeTest += (<strong class="jxr_keyword">double</strong>) m_TimeTest / div;
+<a class="jxr_linenumber" name="L111" href="#L111">111</a>         m_TTimeSplit += (<strong class="jxr_keyword">double</strong>) m_TimeSplit / div;
+<a class="jxr_linenumber" name="L112" href="#L112">112</a>         m_TTimeStat += (<strong class="jxr_keyword">double</strong>) m_TimeStat / div;
+<a class="jxr_linenumber" name="L113" href="#L113">113</a>         m_TTimeSort += (<strong class="jxr_keyword">double</strong>) m_TimeSort / div;
+<a class="jxr_linenumber" name="L114" href="#L114">114</a>         m_TTimeHeur += (<strong class="jxr_keyword">double</strong>) m_TimeHeur / div;
+<a class="jxr_linenumber" name="L115" href="#L115">115</a>     }
+<a class="jxr_linenumber" name="L116" href="#L116">116</a> 
+<a class="jxr_linenumber" name="L117" href="#L117">117</a> 
+<a class="jxr_linenumber" name="L118" href="#L118">118</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> updateMaxMemory() {
+<a class="jxr_linenumber" name="L119" href="#L119">119</a>         m_FinalMemory = Math.max(m_FinalMemory, ResourceInfo.getMemorySize());
+<a class="jxr_linenumber" name="L120" href="#L120">120</a>     }
+<a class="jxr_linenumber" name="L121" href="#L121">121</a> 
+<a class="jxr_linenumber" name="L122" href="#L122">122</a> 
+<a class="jxr_linenumber" name="L123" href="#L123">123</a>     <strong class="jxr_keyword">public</strong> <strong class="jxr_keyword">static</strong> <strong class="jxr_keyword">void</strong> show() {
+<a class="jxr_linenumber" name="L124" href="#L124">124</a>         <strong class="jxr_keyword">double</strong> sum = m_TTimeStat + m_TTimeTest + m_TTimeSplit + m_TTimeSort + m_TTimeHeur;
+<a class="jxr_linenumber" name="L125" href="#L125">125</a> 
+<a class="jxr_linenumber" name="L126" href="#L126">126</a>         ClusLogger.info(<span class="jxr_string">"Mem usage (KB) [initial, loaded, max]: ["</span> + m_InitialMemory + <span class="jxr_string">","</span> + m_LoadedMemory + <span class="jxr_string">","</span> + m_FinalMemory + <span class="jxr_string">"]"</span>);
+<a class="jxr_linenumber" name="L127" href="#L127">127</a>         ClusLogger.info(<span class="jxr_string">"Total estimate: "</span> + m_TTimeTotal);
+<a class="jxr_linenumber" name="L128" href="#L128">128</a>         ClusLogger.info(<span class="jxr_string">"Total induction time: "</span> + sum);
+<a class="jxr_linenumber" name="L129" href="#L129">129</a>         ClusLogger.info(<span class="jxr_string">"Time for stats: "</span> + m_TTimeStat);
+<a class="jxr_linenumber" name="L130" href="#L130">130</a>         ClusLogger.info(<span class="jxr_string">"Time for evaluating: "</span> + m_TTimeTest);
+<a class="jxr_linenumber" name="L131" href="#L131">131</a>         ClusLogger.info(<span class="jxr_string">"Time for splitting: "</span> + m_TTimeSplit);
+<a class="jxr_linenumber" name="L132" href="#L132">132</a>         ClusLogger.info(<span class="jxr_string">"Time for sorting: "</span> + m_TTimeSort);
+<a class="jxr_linenumber" name="L133" href="#L133">133</a>         ClusLogger.info(<span class="jxr_string">"Time for heuristics: "</span> + m_TTimeHeur);
+<a class="jxr_linenumber" name="L134" href="#L134">134</a> 
+<a class="jxr_linenumber" name="L135" href="#L135">135</a>         <a href="../../../../../si/ijs/kt/clus/util/jeans/io/MyFile.html">MyFile</a> file = <strong class="jxr_keyword">new</strong> <a href="../../../../../si/ijs/kt/clus/util/jeans/io/MyFile.html">MyFile</a>(<span class="jxr_string">"stats.txt"</span>);
+<a class="jxr_linenumber" name="L136" href="#L136">136</a>         file.log(<span class="jxr_string">"Mem usage (KB) [initial, loaded, max]: ["</span> + m_InitialMemory + <span class="jxr_string">","</span> + m_LoadedMemory + <span class="jxr_string">","</span> + m_FinalMemory + <span class="jxr_string">"]"</span>);
+<a class="jxr_linenumber" name="L137" href="#L137">137</a>         file.log(<span class="jxr_string">"Total estimate: "</span> + m_TTimeTotal);
+<a class="jxr_linenumber" name="L138" href="#L138">138</a>         file.log(<span class="jxr_string">"Total induction time: "</span> + sum);
+<a class="jxr_linenumber" name="L139" href="#L139">139</a>         file.log(<span class="jxr_string">"Time for stats: "</span> + m_TTimeStat);
+<a class="jxr_linenumber" name="L140" href="#L140">140</a>         file.log(<span class="jxr_string">"Time for evaluating: "</span> + m_TTimeTest);
+<a class="jxr_linenumber" name="L141" href="#L141">141</a>         file.log(<span class="jxr_string">"Time for splitting: "</span> + m_TTimeSplit);
+<a class="jxr_linenumber" name="L142" href="#L142">142</a>         file.log(<span class="jxr_string">"Time for sorting: "</span> + m_TTimeSort);
+<a class="jxr_linenumber" name="L143" href="#L143">143</a>         file.log(<span class="jxr_string">"Time for heuristics: "</span> + m_TTimeHeur);
+<a class="jxr_linenumber" name="L144" href="#L144">144</a>         file.close();
+<a class="jxr_linenumber" name="L145" href="#L145">145</a>     }
+<a class="jxr_linenumber" name="L146" href="#L146">146</a> 
+<a class="jxr_linenumber" name="L147" href="#L147">147</a> }
+</pre>
+<hr/>
+<div id="footer">Copyright &#169; 2023 <a href="http://kt.ijs.si">Department of Knowledge Technologies, Jožef Stefan Institute, Ljubljana, Slovenia</a>. All rights reserved.</div>
+</body>
+</html>
