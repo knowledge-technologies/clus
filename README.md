@@ -100,6 +100,23 @@ produces a random forest of SSL trees (output file `exampleSSLrf.out`). Since th
 
 User manual with detailed instructions of use and descriptions of all parameters and functionalities is available here: [https://github.com/knowledge-technologies/clus/blob/main/ClusProject/docs/manual/clus-manual.pdf](https://github.com/knowledge-technologies/clus/blob/main/ClusProject/docs/manual/clus-manual.pdf)
 
+### Python wrapper
+
+A python wrapper for CLUS+ is available on PyPi: https://pypi.org/project/pyclus/.
+
 ### Contact Information
 
 Please address any queries or bug reports to clus@ijs.si
+
+### Citation
+```
+@article{petkovic2023clusplus,
+  title={CLUSplus: A decision tree-based framework for predicting structured outputs},
+  author={Petkovi{\'c}, Matej and Levati{\'c}, Jurica and Kocev, Dragi and Breskvar, Martin and D{\v{z}}eroski, Sa{\v{s}}o},
+  journal={SoftwareX},
+  volume={24},
+  pages={101526},
+  year={2023},
+  publisher={Elsevier}
+}
+```
